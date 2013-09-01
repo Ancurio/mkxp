@@ -1,0 +1,7 @@
+*.o
+*.pro.*
+*.bak
+*.frag.xxd
+*.ttf.xxd
+
+mkxp
