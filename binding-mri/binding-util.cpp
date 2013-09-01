@@ -47,22 +47,6 @@ RbData *getRbData()
 	return static_cast<RbData*>(gState->bindingData());
 }
 
-//enum RbException
-//{
-//	RGSS = 0,
-//	PHYSFS,
-//	SDL,
-
-//	ErrnoENOENT,
-
-//	IOError,
-
-//	TypeError,
-//	ArgumentError,
-
-//	RbExceptionsMax
-//};
-
 struct
 {
 	RbException id;
