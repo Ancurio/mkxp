@@ -155,13 +155,13 @@ BINDING_MRI {
 	DEPENDPATH += ruby/include
 	DEFINES += BINDING_MRI
 
-	EMBED2 = binding-mri/module_rpg.rb
-	xxdp.output = ${QMAKE_FILE_NAME}.xxd
-	xxdp.commands = xxd+/xxd+ ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT} --string
-	xxdp.depends = $$EMBED2
-	xxdp.input = EMBED2
-	xxdp.variable_out = HEADERS
-	QMAKE_EXTRA_COMPILERS += xxdp
+#	EMBED2 = binding-mri/module_rpg.rb
+#	xxdp.output = ${QMAKE_FILE_NAME}.xxd
+#	xxdp.commands = xxd+/xxd+ ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT} --string
+#	xxdp.depends = $$EMBED2
+#	xxdp.input = EMBED2
+#	xxdp.variable_out = HEADERS
+#	QMAKE_EXTRA_COMPILERS += xxdp
 
 	HEADERS += \
     binding-mri/binding-util.h \
