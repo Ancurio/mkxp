@@ -166,6 +166,12 @@ static void runRMXPScripts()
 {
 	const QByteArray &scriptPack = gState->rtData().config.game.scripts;
 
+	if (scriptPack.isEmpty())
+	{
+		showMsg("No game scripts specified (missing Game.ini?)");
+		return;
+	}
+
 	if (!gState->fileSystem().exists(scriptPack.constData()))
 	{
 		showMsg("Unable to open '" + scriptPack + "'");

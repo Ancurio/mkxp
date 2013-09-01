@@ -225,9 +225,15 @@ runCustomScript(mrb_state *mrb, mrbc_context *ctx, const char *filename)
 static void
 runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 {
-	const QByteArray &scriptLoc = gState->rtData().config.game.scripts;
+	const QByteArray &scriptPack = gState->rtData().config.game.scripts;
 
-	if (!gState->fileSystem().exists(scriptLoc.constData()))
+	if (scriptPack.isEmpty())
+	{
+		showError("No game scripts specified (missing Game.ini?)");
+		return;
+	}
+
+	if (!gState->fileSystem().exists(scriptPack.constData()))
 	{
 		showError("Unable to open '" + scriptLoc + "'");
 		return;
@@ -237,7 +243,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 	mrb_state *scriptMrb = mrb_open();
 	SDL_RWops ops;
 
-	gState->fileSystem().openRead(ops, scriptLoc.constData());
+	gState->fileSystem().openRead(ops, scriptPack.constData());
 
 	mrb_value scriptArray = marshalLoadInt(scriptMrb, &ops);
 	SDL_RWclose(&ops);
