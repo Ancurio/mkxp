@@ -91,8 +91,8 @@ EMBED = shader/transSimple.frag \
         shader/trans.frag \
         shader/hue.frag \
         shader/sprite.frag \
-	    shader/bitmapBlit.frag \
-		assets/liberation.ttf
+        shader/bitmapBlit.frag \
+        assets/liberation.ttf
 
 # xxd
 xxd.output = ${QMAKE_FILE_NAME}.xxd
