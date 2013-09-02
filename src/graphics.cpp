@@ -565,6 +565,7 @@ struct GraphicsPrivate
 	void blitToScreen()
 	{
 		FBO::unbind(FBO::Draw);
+		glClear(GL_COLOR_BUFFER_BIT);
 		blitBufferFlippedScaled();
 	}
 
@@ -680,6 +681,8 @@ void Graphics::transition(int duration,
 	/* Capture new scene */
 	p->compositeToBuffer(p->currentScene.fbo);
 
+	/* If no transition bitmap is provided,
+	 * we can use a simplified shader */
 	if (transMap)
 	{
 		TransShader &shader = gState->transShader();
@@ -717,12 +720,15 @@ void Graphics::transition(int duration,
 		else
 			gState->sTransShader().setProg(prog);
 
+		/* Draw the composed frame to a buffer first
+		 * (we need this because we're skipping PingPong) */
 		FBO::bind(p->transBuffer.fbo);
 		glClear(GL_COLOR_BUFFER_BIT);
 		p->screenQuad.draw();
 
 		p->checkResize();
 
+		/* Then blit it flipped and scaled to the screen */
 		FBO::bind(p->transBuffer.fbo, FBO::Read);
 		p->blitToScreen();
 
@@ -848,6 +854,7 @@ void Graphics::repaintWait(volatile bool *exitCond)
 	{
 		gState->checkShutdown();
 
+		glClear(GL_COLOR_BUFFER_BIT);
 		p->blitBufferFlippedScaled();
 		SDL_GL_SwapWindow(p->threadData->window);
 		p->fpsLimiter.delay();
