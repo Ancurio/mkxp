@@ -56,7 +56,7 @@ struct KbBindingData
 
 struct JsBindingData
 {
-	unsigned int      source;
+	int source;
 	Input::ButtonCode target;
 };
 
@@ -117,7 +117,7 @@ struct JsButtonBinding : public Binding
 		return true;
 	}
 
-	unsigned int source;
+	int source;
 };
 
 /* Joystick axis binding */
@@ -233,6 +233,8 @@ static const JsBindingData defaultJsBindings[] =
 
 static elementsN(defaultJsBindings);
 
+/* Maps ButtonCode enum values to indices
+ * in the button state array */
 static const int mapToIndex[] =
 {
 	0, 0,
@@ -269,10 +271,10 @@ static const int deadDirFlags[] =
 
 static const Input::ButtonCode otherDirs[4][3] =
 {
-	{ Input::Left, Input::Right, Input::Up    }, // Down
-	{ Input::Down, Input::Up,    Input::Right }, // Left
-	{ Input::Down, Input::Up,    Input::Left  }, // Right
-	{ Input::Left, Input::Right, Input::Up    }  // Up
+	{ Input::Left, Input::Right, Input::Up    }, /* Down  */
+	{ Input::Down, Input::Up,    Input::Right }, /* Left  */
+	{ Input::Down, Input::Up,    Input::Left  }, /* Right */
+	{ Input::Left, Input::Right, Input::Up    }  /* Up    */
 };
 
 struct InputPrivate
@@ -363,7 +365,7 @@ struct InputPrivate
 
 	void clearBuffer()
 	{
-		static int size = sizeof(ButtonState) * Input::buttonCodeSize;
+		const size_t size = sizeof(ButtonState) * Input::buttonCodeSize;
 		memset(states, 0, size);
 	}
 
@@ -424,8 +426,8 @@ struct InputPrivate
 
 	void pollBindings(Input::ButtonCode &repeatCand)
 	{
-		Q_FOREACH (const Binding *b, bindings)
-			pollBindingPriv(*b, repeatCand);
+		for (int i = 0; i < bindings.count(); ++i)
+			pollBindingPriv(*bindings[i], repeatCand);
 
 		updateDir4();
 		updateDir8();
