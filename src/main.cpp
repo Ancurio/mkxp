@@ -35,13 +35,11 @@
 
 static const char *reqExt[] =
 {
-	"GL_ARB_fragment_program",
 	"GL_ARB_fragment_shader",
 	"GL_ARB_framebuffer_object",
 	"GL_ARB_imaging",
 	"GL_ARB_shader_objects",
 	"GL_ARB_vertex_shader",
-	"GL_ARB_fragment_shader",
 	"GL_ARB_shading_language_100",
 	"GL_ARB_texture_non_power_of_two",
 	"GL_ARB_vertex_array_object",
