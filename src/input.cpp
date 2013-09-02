@@ -243,8 +243,8 @@ static const int mapToIndex[] =
 	13, 14, 15,
 	0,
 	16, 17, 18, 19, 20,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    21, 22, 23
+	0, 0, 0, 0, 0, 0, 0, 0,
+	21, 22, 23
 };
 
 static elementsN(mapToIndex);
@@ -254,17 +254,17 @@ static const Input::ButtonCode dirs[] =
 
 static const int dirFlags[] =
 {
-    1 << Input::Down,
-    1 << Input::Left,
-    1 << Input::Right,
-    1 << Input::Up
+	1 << Input::Down,
+	1 << Input::Left,
+	1 << Input::Right,
+	1 << Input::Up
 };
 
 /* Dir4 is always zero on these combinations */
 static const int deadDirFlags[] =
 {
-    dirFlags[0] | dirFlags[3],
-    dirFlags[1] | dirFlags[2]
+	dirFlags[0] | dirFlags[3],
+	dirFlags[1] | dirFlags[2]
 };
 
 static const Input::ButtonCode otherDirs[4][3] =
