@@ -118,7 +118,7 @@ static mrb_value
 mkxpTimeOp(mrb_state *mrb, mrb_value)
 {
 	mrb_int iterations = 1;
-	const char *opName = 0;
+	const char *opName = "";
 	mrb_value block;
 
 	mrb_get_args(mrb, "|iz&", &iterations, &opName, &block);
