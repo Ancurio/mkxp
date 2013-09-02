@@ -221,7 +221,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 
 	if (!gState->fileSystem().exists(scriptPack.constData()))
 	{
-		showError("Unable to open '" + scriptLoc + "'");
+		showError("Unable to open '" + scriptPack + "'");
 		return;
 	}
 
