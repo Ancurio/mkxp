@@ -89,8 +89,6 @@ struct KbBinding : public Binding
 
 	bool sourceRepeatable() const
 	{
-//		return (source >= sf::Keyboard::A    && source <= sf::Keyboard::Num9) ||
-//			   (source >= sf::Keyboard::Left && source <= sf::Keyboard::F15);
 		return (source >= SDL_SCANCODE_A     && source <= SDL_SCANCODE_0)    ||
 		       (source >= SDL_SCANCODE_RIGHT && source <= SDL_SCANCODE_UP)   ||
 		       (source >= SDL_SCANCODE_F1    && source <= SDL_SCANCODE_F12);
@@ -174,24 +172,6 @@ struct MsBinding : public Binding
 };
 
 /* Not rebindable */
-//static const KbBindingData staticKbBindings[] =
-//{
-//	{ sf::Keyboard::Left,     Input::Left  },
-//	{ sf::Keyboard::Right,    Input::Right },
-//	{ sf::Keyboard::Up,       Input::Up    },
-//	{ sf::Keyboard::Down,     Input::Down  },
-//	{ sf::Keyboard::LShift,   Input::Shift },
-//	{ sf::Keyboard::RShift,   Input::Shift },
-//	{ sf::Keyboard::LControl, Input::Ctrl  },
-//	{ sf::Keyboard::RControl, Input::Ctrl  },
-//	{ sf::Keyboard::LAlt,     Input::Alt   },
-//	{ sf::Keyboard::RAlt,     Input::Alt   },
-//	{ sf::Keyboard::F5,       Input::F5    },
-//	{ sf::Keyboard::F6,       Input::F6    },
-//	{ sf::Keyboard::F7,       Input::F7    },
-//	{ sf::Keyboard::F8,       Input::F8    },
-//	{ sf::Keyboard::F9,       Input::F9    }
-//};
 static const KbBindingData staticKbBindings[] =
 {
 	{ SDL_SCANCODE_LEFT,   Input::Left  },
@@ -214,25 +194,6 @@ static const KbBindingData staticKbBindings[] =
 static elementsN(staticKbBindings);
 
 /* Rebindable */
-//static const KbBindingData defaultKbBindings[] =
-//{
-//	{ sf::Keyboard::Space,  Input::C    },
-//	{ sf::Keyboard::Return, Input::C    },
-//	{ sf::Keyboard::Escape, Input::B    },
-//	{ sf::Keyboard::Num0,   Input::B    },
-//	{ sf::Keyboard::LShift, Input::A    },
-//	{ sf::Keyboard::RShift, Input::A    },
-//	{ sf::Keyboard::Z,      Input::A    },
-//	{ sf::Keyboard::X,      Input::B    },
-//	{ sf::Keyboard::C,      Input::C    },
-//	{ sf::Keyboard::V,      Input::None },
-//	{ sf::Keyboard::B,      Input::None },
-//	{ sf::Keyboard::A,      Input::X    },
-//	{ sf::Keyboard::S,      Input::Y    },
-//	{ sf::Keyboard::D,      Input::Z    },
-//	{ sf::Keyboard::Q,      Input::L    },
-//	{ sf::Keyboard::W,      Input::R    }
-//};
 static const KbBindingData defaultKbBindings[] =
 {
 	{ SDL_SCANCODE_SPACE,  Input::C    },
