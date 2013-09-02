@@ -117,41 +117,27 @@ static void mrbBindingInit(mrb_state *mrb)
 static mrb_value
 mkxpTimeOp(mrb_state *mrb, mrb_value)
 {
-	const char *opName;
+	mrb_int iterations = 1;
+	const char *opName = 0;
 	mrb_value block;
 
-	mrb_get_args(mrb, "z&", &opName, &block);
+	mrb_get_args(mrb, "|iz&", &iterations, &opName, &block);
 
 	Uint64 start = SDL_GetPerformanceCounter();
 
-	mrb_yield(mrb, block, mrb_nil_value());
+	for (int i = 0; i < iterations; ++i)
+		mrb_yield(mrb, block, mrb_nil_value());
 
 	Uint64 diff = SDL_GetPerformanceCounter() - start;
-	double sec = (double) diff / SDL_GetPerformanceFrequency();
+	double avg = (double) diff / iterations;
+
+	double sec = avg / SDL_GetPerformanceFrequency();
 	float ms = sec * 1000;
 
 	printf("<%s> [%f ms]\n", opName, ms);
 	fflush(stdout);
 
-	return mrb_nil_value();
-}
-
-static mrb_value
-mkxpEvalBlock(mrb_state *mrb, mrb_value)
-{
-	mrb_value block;
-	mrb_get_args(mrb, "&", &block);
-
-//	mrb_yield_argv(mrb, block, 0, 0);
-
-	mrb_run(mrb, mrb_proc_ptr(block), mrb_obj_value(mrb->top_self));
-
-	if (mrb->exc)
-	{
-		qDebug() << "Got exc!" << mrb_class_name(mrb, mrb_class(mrb, mrb_obj_value(mrb->exc)));
-	}
-
-	return mrb_nil_value();
+	return mrb__float_value(ms);
 }
 
 static const char *
@@ -329,9 +315,8 @@ void mrbBindingExecute()
 	MrbData mrbData(mrb);
 	mrb->ud = &mrbData;
 
-	RClass *mkxpMod = mrb_define_module(mrb, "MKXP");
-	mrb_define_module_function(mrb, mkxpMod, "time_op", mkxpTimeOp, MRB_ARGS_REQ(1) | MRB_ARGS_BLOCK());
-	mrb_define_module_function(mrb, mkxpMod, "eval_block", mkxpEvalBlock, MRB_ARGS_BLOCK());
+	mrb_define_module_function(mrb, mrb->kernel_module, "time_op",
+	                           mkxpTimeOp, MRB_ARGS_OPT(2) | MRB_ARGS_BLOCK());
 
 	mrbBindingInit(mrb);
 
