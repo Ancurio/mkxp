@@ -44,6 +44,7 @@ To select this backend, run `qmake BINDING=BINDING_NULL`
 * SDL2_ttf
 * sfml-system 2.0
 * sfml-audio 2.0
+* zlib (only ruby backends)
 
 (If no version specified, assume latest)
  
@@ -61,13 +62,20 @@ mkxp employs Qt's qmake build system, so you'll need to install that beforehand.
 
 ## Configuration
 
-mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style.
+mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. The "[General]" group may contain following entries:
 
-* "gameFolder": Specifies where mkxp will look for the game scripts. Default is the current directory.
-* "customScript": Specifies a raw ruby script file to be run instead of an RPG Maker game, residing in "gameFolder".
-* "RTPs": Specifies a list of space separated paths to RTPs to be used. (See next section)
-
-Most other entries are self explanatory.
+| Key          | Type        | Description                                                                     |
+| ------------ | ----------- | ------------------------------------------------------------------------------- |
+| debugMode    | bool        | Log OpenGL debug information to the console                                     |
+| winResizable | bool        | Game window is resizable                                                        |
+| fullscreen   | bool        | Start game in fullscreen (this can always be toggled with Alt-Enter at runtime) |
+| vsync        | bool        | Sync screen redraws to the monitor refresh rate                                 |
+| defScreenW   | int         | Width the game window starts in (this is **not** the game resolution)           |
+| defScreenH   | int         | Height the game window starts in                                                |
+| solidFonts   | bool        | Don't use alpha blending for fonts                                              |
+| gameFolder   | string      | mkxp will look for all game related files here                                  |
+| customScript | string      | Execute a raw ruby script file instead of an RPG Maker game.                    |
+| RTPs         | string list | A list of space separated paths to RTPs to be used (See next section)           |
 
 ## RTPs
 
