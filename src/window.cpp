@@ -86,17 +86,7 @@ static Sides<IntRect> scrollArrowSrc =
 	IntRect(152, 40, 16,  8)
 };
 
-///* Cycling */
-//static unsigned char cursorAniAlpha[] =
-//{
-//    /* Fade out */
-//	0xFF, 0xF0, 0xE8, 0xE0, 0xD8, 0xD0, 0xC8, 0xC0,
-//	0xB8, 0xB0, 0xA8, 0xA0, 0x98, 0x90, 0x88, 0x80,
-//	/* Fade in */
-//	0x78, 0x80, 0x88, 0x90, 0x98, 0xA0, 0xA8, 0xB0,
-//    0xB8, 0xC0, 0xC8, 0xD0, 0xD8, 0xE0, 0xE8, 0xF0
-//};
-
+/* Cycling */
 static unsigned char cursorAniAlpha[] =
 {
     /* Fade out */
@@ -151,10 +141,10 @@ struct QuadChunk
 
 /* Vocabulary:
  *
- * Base: Base layer of window; includes background and borders.
+ * Base: 'Base' layer of window; includes background and borders.
  *   Drawn at z+0.
  *
- * Controls: Controls layer of window; includes scroll arrows,
+ * Controls: 'Controls' layer of window; includes scroll arrows,
  *   pause animation, cursor rectangle and contents bitmap.
  *   Drawn at z+2.
  *
@@ -417,8 +407,6 @@ struct WindowPrivate
 
 		gState->texPool().release(baseTex);
 		baseTex = gState->texPool().request(newW, newH);
-
-		qDebug() << "Allocated bg tex:" << newW << newH;
 
 		baseTexDirty = true;
 	}
