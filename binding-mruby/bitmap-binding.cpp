@@ -48,7 +48,7 @@ MRB_METHOD(bitmapInitialize)
 		mrb_int width, height;
 		mrb_get_args(mrb, "ii", &width, &height);
 
-		b = new Bitmap(width, height);
+		GUARD_EXC( b = new Bitmap(width, height); )
 	}
 
 	setPrivateData(mrb, self, b, BitmapType);

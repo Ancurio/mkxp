@@ -66,7 +66,8 @@ static const MrbExcData excData[] =
 	{ RGSS,     "RGSSError"   },
 	{ PHYSFS,   "PHYSFSError" },
 	{ SDL,      "SDLError"    },
-    { IO,       "IOError"     }
+	{ MKXP,     "MKXPError"   },
+	{ IO,       "IOError"     }
 };
 
 static elementsN(excData);
@@ -75,22 +76,22 @@ static elementsN(excData);
 
 static const MrbExcData enoExcData[] =
 {
-    ENO(E2BIG),
-    ENO(EACCES),
-    ENO(EAGAIN),
-    ENO(EBADF),
-    ENO(ECHILD),
-    ENO(EDEADLOCK),
-    ENO(EDOM),
-    ENO(EEXIST),
-    ENO(EINVAL),
-    ENO(EMFILE),
-    ENO(ENOENT),
-    ENO(ENOEXEC),
-    ENO(ENOMEM),
-    ENO(ENOSPC),
-    ENO(ERANGE),
-    ENO(EXDEV)
+	ENO(E2BIG),
+	ENO(EACCES),
+	ENO(EAGAIN),
+	ENO(EBADF),
+	ENO(ECHILD),
+	ENO(EDEADLOCK),
+	ENO(EDOM),
+	ENO(EEXIST),
+	ENO(EINVAL),
+	ENO(EMFILE),
+	ENO(ENOENT),
+	ENO(ENOEXEC),
+	ENO(ENOMEM),
+	ENO(ENOSPC),
+	ENO(ERANGE),
+	ENO(EXDEV)
 };
 
 static elementsN(enoExcData);
@@ -117,33 +118,19 @@ MrbData::MrbData(mrb_state *mrb)
 	mrb_gc_arena_restore(mrb, arena);
 }
 
-//enum Type
-//{
-//	RGSSError,
-//	NoFileError,
-//	IOError,
-
-//	/* Already defined by ruby */
-//	TypeError,
-//	ArgumentError,
-
-//	/* New types introduced in mkxp */
-//	PHYSFSError,
-//	SDLError
-//};
-
 /* Indexed with Exception::Type */
 static const MrbException excToMrbExc[] =
 {
-    RGSS,        /* RGSSError   */
-    ErrnoENOENT, /* NoFileError */
-    IO,
+	RGSS,        /* RGSSError   */
+	ErrnoENOENT, /* NoFileError */
+	IO,
 
-    TypeError,
-    ArgumentError,
+	TypeError,
+	ArgumentError,
 
-    PHYSFS,      /* PHYSFSError */
-    SDL,         /* SDLError    */
+	PHYSFS,      /* PHYSFSError */
+	SDL,         /* SDLError    */
+	MKXP         /* MKXPError   */
 };
 
 void raiseMrbExc(mrb_state *mrb, const Exception &exc)

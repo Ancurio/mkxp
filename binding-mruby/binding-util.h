@@ -64,6 +64,7 @@ enum MrbException
 	RGSS,
 	PHYSFS,
 	SDL,
+	MKXP,
 
 	ErrnoE2BIG,
 	ErrnoEACCES,

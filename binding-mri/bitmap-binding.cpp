@@ -48,7 +48,7 @@ RB_METHOD(bitmapInitialize)
 		int width, height;
 		rb_get_args(argc, argv, "ii", &width, &height);
 
-		b = new Bitmap(width, height);
+		GUARD_EXC( b = new Bitmap(width, height); )
 	}
 
 	setPrivateData(self, b, BitmapType);

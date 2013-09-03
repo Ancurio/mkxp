@@ -53,6 +53,7 @@ struct
 	const char *name;
 } static customExc[] =
 {
+	{ MKXP,   "MKXPError"   },
 	{ RGSS,   "RGSSError"   },
 	{ PHYSFS, "PHYSFSError" },
 	{ SDL,    "SDLError"    }
@@ -85,7 +86,8 @@ static const RbException excToRbExc[] =
     ArgumentError,
 
     PHYSFS,      /* PHYSFSError */
-    SDL          /* SDLError    */
+    SDL,         /* SDLError    */
+    MKXP         /* MKXPError   */
 };
 
 void raiseRbExc(const Exception &exc)

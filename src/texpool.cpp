@@ -20,6 +20,9 @@
 */
 
 #include "texpool.h"
+#include "exception.h"
+#include "globalstate.h"
+#include "glstate.h"
 
 #include <QHash>
 #include <QQueue>
@@ -121,7 +124,11 @@ TexFBO TexPool::request(int width, int height)
 		return cobj.obj;
 	}
 
-	// FIXME check here that requested dimensions don't exceed OpenGL limits
+	int maxSize = glState.caps.maxTexSize;
+	if (width > maxSize || height > maxSize)
+		throw Exception(Exception::MKXPError,
+	                    "Texture dimensions [%s, %s] exceed hardware capabilities",
+	                    QByteArray::number(width), QByteArray::number(height));
 
 	/* Nope, create it instead */
 	TexFBO::init(cobj.obj);

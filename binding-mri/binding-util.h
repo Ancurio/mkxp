@@ -31,6 +31,7 @@ enum RbException
 	RGSS = 0,
 	PHYSFS,
 	SDL,
+	MKXP,
 
 	ErrnoENOENT,
 
