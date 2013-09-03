@@ -565,7 +565,6 @@ void Bitmap::bindTexWithMatrix()
 	p->bindTextureWithMatrix();
 }
 
-
 void Bitmap::releaseResources()
 {
 	gState->texPool().release(p->tex);
