@@ -39,10 +39,8 @@
 
 void mrbBindingTerminate();
 
-MRB_METHOD(kernelEval)
+MRB_FUNCTION(kernelEval)
 {
-	MRB_UNUSED_PARAM;
-
 	const char *exp;
 	mrb_int expLen;
 	mrb_get_args(mrb, "s", &exp, &expLen);
@@ -74,19 +72,15 @@ static void printP(mrb_state *mrb,
 	gState->eThread().showMessageBox(RSTRING_PTR(buffer), SDL_MESSAGEBOX_INFORMATION);
 }
 
-MRB_METHOD(kernelP)
+MRB_FUNCTION(kernelP)
 {
-	MRB_UNUSED_PARAM;
-
 	printP(mrb, "inspect", "\n");
 
 	return mrb_nil_value();
 }
 
-MRB_METHOD(kernelPrint)
+MRB_FUNCTION(kernelPrint)
 {
-	MRB_UNUSED_PARAM;
-
 	printP(mrb, "to_s", "");
 
 	return mrb_nil_value();
@@ -108,10 +102,8 @@ srandCurrentTime(int *currentSeed)
 	srand(*currentSeed);
 }
 
-MRB_METHOD(kernelRand)
+MRB_FUNCTION(kernelRand)
 {
-	MRB_UNUSED_PARAM;
-
 	if (!srandCalled)
 	{
 		srandCurrentTime(&currentSeed);
@@ -142,10 +134,8 @@ MRB_METHOD(kernelRand)
 	}
 }
 
-MRB_METHOD(kernelSrand)
+MRB_FUNCTION(kernelSrand)
 {
-	MRB_UNUSED_PARAM;
-
 	srandCalled = true;
 
 	if (mrb->c->ci->argc == 1)
@@ -168,19 +158,17 @@ MRB_METHOD(kernelSrand)
 	}
 }
 
-MRB_METHOD(kernelExit)
+MRB_FUNCTION(kernelExit)
 {
-	MRB_UNUSED_PARAM;
+	MRB_FUN_UNUSED_PARAM;
 
 	mrbBindingTerminate();
 
 	return mrb_nil_value();
 }
 
-MRB_METHOD(kernelLoadData)
+MRB_FUNCTION(kernelLoadData)
 {
-	MRB_UNUSED_PARAM;
-
 	const char *filename;
 	mrb_get_args(mrb, "z", &filename);
 
@@ -200,10 +188,8 @@ MRB_METHOD(kernelLoadData)
 	return obj;
 }
 
-MRB_METHOD(kernelSaveData)
+MRB_FUNCTION(kernelSaveData)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value obj;
 	const char *filename;
 
@@ -225,10 +211,8 @@ MRB_METHOD(kernelSaveData)
 	return mrb_nil_value();
 }
 
-MRB_METHOD(kernelInteger)
+MRB_FUNCTION(kernelInteger)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value obj;
 	mrb_get_args(mrb, "o", &obj);
 

@@ -156,10 +156,8 @@ findLastDot(char *str)
 }
 
 /* File class methods */
-MRB_METHOD(fileBasename)
+MRB_FUNCTION(fileBasename)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value filename;
 	const char *suffix = 0;
 
@@ -186,10 +184,8 @@ MRB_METHOD(fileBasename)
 	return str;
 }
 
-MRB_METHOD(fileDelete)
+MRB_FUNCTION(fileDelete)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_int argc;
 	mrb_value *argv;
 
@@ -209,10 +205,8 @@ MRB_METHOD(fileDelete)
 	return mrb_nil_value();
 }
 
-MRB_METHOD(fileDirname)
+MRB_FUNCTION(fileDirname)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value filename;
 	mrb_get_args(mrb, "S", &filename);
 
@@ -222,10 +216,8 @@ MRB_METHOD(fileDirname)
 	return mrb_str_new_cstr(mrb, dir);
 }
 
-MRB_METHOD(fileExpandPath)
+MRB_FUNCTION(fileExpandPath)
 {
-	MRB_UNUSED_PARAM;
-
 	const char *path;
 	const char *defDir = 0;
 
@@ -242,10 +234,8 @@ MRB_METHOD(fileExpandPath)
 	return mrb_str_new_cstr(mrb, buffer);
 }
 
-MRB_METHOD(fileExtname)
+MRB_FUNCTION(fileExtname)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value filename;
 	mrb_get_args(mrb, "S", &filename);
 
@@ -254,10 +244,8 @@ MRB_METHOD(fileExtname)
 	return mrb_str_new_cstr(mrb, ext);
 }
 
-MRB_METHOD(fileOpen)
+MRB_FUNCTION(fileOpen)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value path;
 	const char *mode = "r";
 	mrb_value block = mrb_nil_value();
@@ -294,10 +282,8 @@ MRB_METHOD(fileOpen)
 	return obj;
 }
 
-MRB_METHOD(fileRename)
+MRB_FUNCTION(fileRename)
 {
-	MRB_UNUSED_PARAM;
-
 	const char *from, *to;
 	mrb_get_args(mrb, "zz", &from, &to);
 
@@ -307,11 +293,11 @@ MRB_METHOD(fileRename)
 }
 
 
-MRB_METHOD(mrbNoop)
+MRB_FUNCTION(mrbNoop)
 {
-	MRB_UNUSED_PARAM;
+	MRB_FUN_UNUSED_PARAM;
 
-	return self;
+	return mrb_nil_value();
 }
 
 /* File instance methods */
@@ -540,10 +526,8 @@ MRB_METHOD(fileGetMtime)
 }
 
 /* FileTest module functions */
-MRB_METHOD(fileTestDoesExist)
+MRB_FUNCTION(fileTestDoesExist)
 {
-	MRB_UNUSED_PARAM;
-
 	const char *filename;
 	mrb_get_args(mrb, "z", &filename);
 
@@ -552,30 +536,24 @@ MRB_METHOD(fileTestDoesExist)
 	return mrb_bool_value(result == 0);
 }
 
-MRB_METHOD(fileTestIsFile)
+MRB_FUNCTION(fileTestIsFile)
 {
-	MRB_UNUSED_PARAM;
-
 	struct stat fileStat;
 	getFileStat(mrb, fileStat);
 
 	return mrb_bool_value(S_ISREG(fileStat.st_mode));
 }
 
-MRB_METHOD(fileTestIsDirectory)
+MRB_FUNCTION(fileTestIsDirectory)
 {
-	MRB_UNUSED_PARAM;
-
 	struct stat fileStat;
 	getFileStat(mrb, fileStat);
 
 	return mrb_bool_value(S_ISDIR(fileStat.st_mode));
 }
 
-MRB_METHOD(fileTestSize)
+MRB_FUNCTION(fileTestSize)
 {
-	MRB_UNUSED_PARAM;
-
 	struct stat fileStat;
 	getFileStat(mrb, fileStat);
 

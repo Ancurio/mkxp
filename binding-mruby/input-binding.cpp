@@ -24,19 +24,15 @@
 #include "exception.h"
 #include "binding-util.h"
 
-MRB_METHOD(inputUpdate)
+MRB_FUNCTION(inputUpdate)
 {
-	MRB_UNUSED_PARAM;
-
 	gState->input().update();
 
 	return mrb_nil_value();
 }
 
-MRB_METHOD(inputPress)
+MRB_FUNCTION(inputPress)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_int num;
 	mrb_get_args(mrb, "i", &num);
 
@@ -45,10 +41,8 @@ MRB_METHOD(inputPress)
 	return mrb_bool_value(gState->input().isPressed(bc));
 }
 
-MRB_METHOD(inputTrigger)
+MRB_FUNCTION(inputTrigger)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_int num;
 	mrb_get_args(mrb, "i", &num);
 
@@ -57,10 +51,8 @@ MRB_METHOD(inputTrigger)
 	return mrb_bool_value(gState->input().isTriggered(bc));
 }
 
-MRB_METHOD(inputRepeat)
+MRB_FUNCTION(inputRepeat)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_int num;
 	mrb_get_args(mrb, "i", &num);
 
@@ -69,32 +61,24 @@ MRB_METHOD(inputRepeat)
 	return mrb_bool_value(gState->input().isRepeated(bc));
 }
 
-MRB_METHOD(inputDir4)
+MRB_FUNCTION(inputDir4)
 {
-	MRB_UNUSED_PARAM;
-
 	return mrb_fixnum_value(gState->input().dir4Value());
 }
 
-MRB_METHOD(inputDir8)
+MRB_FUNCTION(inputDir8)
 {
-	MRB_UNUSED_PARAM;
-
 	return mrb_fixnum_value(gState->input().dir8Value());
 }
 
 /* Non-standard extensions */
-MRB_METHOD(inputMouseX)
+MRB_FUNCTION(inputMouseX)
 {
-	MRB_UNUSED_PARAM;
-
 	return mrb_fixnum_value(gState->input().mouseX());
 }
 
-MRB_METHOD(inputMouseY)
+MRB_FUNCTION(inputMouseY)
 {
-	MRB_UNUSED_PARAM;
-
 	return mrb_fixnum_value(gState->input().mouseY());
 }
 

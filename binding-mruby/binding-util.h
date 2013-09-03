@@ -129,8 +129,13 @@ getMrbData(mrb_state *mrb)
 
 #define MRB_METHOD(name) static MRB_METHOD_PUB(name)
 
+#define MRB_FUNCTION(name) \
+	static mrb_value name(mrb_state *mrb, mrb_value)
+
 #define MRB_UNUSED_PARAM \
 	{ (void) mrb; (void) self; }
+
+#define MRB_FUN_UNUSED_PARAM { (void) mrb; }
 
 /* If we're not binding a disposable class,
  * we want to #undef DEF_PROP_CHK_DISP */

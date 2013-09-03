@@ -25,9 +25,8 @@
 #include "exception.h"
 
 #define DEF_PLAY_STOP(entity) \
-	MRB_METHOD(audio_##entity##Play) \
+	MRB_FUNCTION(audio_##entity##Play) \
 	{ \
-		MRB_UNUSED_PARAM; \
 		char *filename; \
 		mrb_int volume = 100; \
 		mrb_int pitch = 100; \
@@ -35,17 +34,16 @@
 		GUARD_EXC( gState->audio().entity##Play(filename, volume, pitch); ) \
 		return mrb_nil_value(); \
 	} \
-	MRB_METHOD(audio_##entity##Stop) \
+	MRB_FUNCTION(audio_##entity##Stop) \
 	{ \
-		MRB_UNUSED_PARAM; \
+		MRB_FUN_UNUSED_PARAM; \
 		gState->audio().entity##Stop(); \
 		return mrb_nil_value(); \
 	}
 
 #define DEF_FADE(entity) \
-MRB_METHOD(audio_##entity##Fade) \
+MRB_FUNCTION(audio_##entity##Fade) \
 { \
-	MRB_UNUSED_PARAM; \
 	mrb_int time; \
 	mrb_get_args(mrb, "i", &time); \
 	gState->audio().entity##Fade(time); \

@@ -28,10 +28,8 @@
 
 DEF_TYPE(Font);
 
-MRB_METHOD(fontDoesExist)
+MRB_FUNCTION(fontDoesExist)
 {
-	MRB_UNUSED_PARAM;
-
 	const char *name;
 	mrb_get_args(mrb, "z", &name);
 
@@ -102,17 +100,13 @@ DEF_KLASS_PROP(Font, mrb_int, DefaultSize, "i", fixnum)
 DEF_KLASS_PROP(Font, mrb_bool, DefaultBold, "b", bool)
 DEF_KLASS_PROP(Font, mrb_bool, DefaultItalic, "b", bool)
 
-MRB_METHOD(FontGetDefaultName)
+MRB_FUNCTION(FontGetDefaultName)
 {
-	MRB_UNUSED_PARAM;
-
 	return mrb_str_new_cstr(mrb, Font::getDefaultName());
 }
 
-MRB_METHOD(FontSetDefaultName)
+MRB_FUNCTION(FontSetDefaultName)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value nameObj;
 	mrb_get_args(mrb, "S", &nameObj);
 

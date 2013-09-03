@@ -882,10 +882,8 @@ verifyMarshalHeader(MarshalContext *ctx)
 		throw Exception(Exception::TypeError, "incompatible marshal file format (can't be read)");
 }
 
-MRB_METHOD(marshalDump)
+MRB_FUNCTION(marshalDump)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value val;
 	mrb_value port = mrb_nil_value();
 	mrb_int limit = 100;
@@ -945,10 +943,8 @@ MRB_METHOD(marshalDump)
 	return ret;
 }
 
-MRB_METHOD(marshalLoad)
+MRB_FUNCTION(marshalLoad)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_value port;
 
 	mrb_get_args(mrb, "o", &port);

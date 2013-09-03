@@ -25,28 +25,26 @@
 #include "binding-util.h"
 #include "exception.h"
 
-MRB_METHOD(graphicsUpdate)
+MRB_FUNCTION(graphicsUpdate)
 {
-	MRB_UNUSED_PARAM;
+	MRB_FUN_UNUSED_PARAM;
 
 	gState->graphics().update();
 
 	return mrb_nil_value();
 }
 
-MRB_METHOD(graphicsFreeze)
+MRB_FUNCTION(graphicsFreeze)
 {
-	MRB_UNUSED_PARAM;
+	MRB_FUN_UNUSED_PARAM;
 
 	gState->graphics().freeze();
 
 	return mrb_nil_value();
 }
 
-MRB_METHOD(graphicsTransition)
+MRB_FUNCTION(graphicsTransition)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_int duration = 8;
 	const char *filename = 0;
 	mrb_int vague = 40;
@@ -58,9 +56,9 @@ MRB_METHOD(graphicsTransition)
 	return mrb_nil_value();
 }
 
-MRB_METHOD(graphicsFrameReset)
+MRB_FUNCTION(graphicsFrameReset)
 {
-	MRB_UNUSED_PARAM;
+	MRB_FUN_UNUSED_PARAM;
 
 	gState->graphics().frameReset();
 
@@ -68,14 +66,13 @@ MRB_METHOD(graphicsFrameReset)
 }
 
 #define DEF_GRA_PROP_I(PropName) \
-	MRB_METHOD(graphics##Get##PropName) \
+	MRB_FUNCTION(graphics##Get##PropName) \
 	{ \
-		MRB_UNUSED_PARAM; \
+		MRB_FUN_UNUSED_PARAM; \
 		return mrb_fixnum_value(gState->graphics().get##PropName()); \
 	} \
-	MRB_METHOD(graphics##Set##PropName) \
+	MRB_FUNCTION(graphics##Set##PropName) \
 	{ \
-		MRB_UNUSED_PARAM; \
 		mrb_int value; \
 		mrb_get_args(mrb, "i", &value); \
 		gState->graphics().set##PropName(value); \
@@ -85,17 +82,15 @@ MRB_METHOD(graphicsFrameReset)
 DEF_GRA_PROP_I(FrameRate)
 DEF_GRA_PROP_I(FrameCount)
 
-MRB_METHOD(graphicsGetFullscreen)
+MRB_FUNCTION(graphicsGetFullscreen)
 {
-	MRB_UNUSED_PARAM;
+	MRB_FUN_UNUSED_PARAM;
 
 	return mrb_bool_value(gState->graphics().getFullscreen());
 }
 
-MRB_METHOD(graphicsSetFullscreen)
+MRB_FUNCTION(graphicsSetFullscreen)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_bool mode;
 	mrb_get_args(mrb, "b", &mode);
 

@@ -53,20 +53,16 @@ timeFromSecondsInt(mrb_state *mrb, time_t seconds)
 	return obj;
 }
 
-MRB_METHOD(timeAt)
+MRB_FUNCTION(timeAt)
 {
-	MRB_UNUSED_PARAM;
-
 	mrb_int seconds;
 	mrb_get_args(mrb, "i", &seconds);
 
 	return timeFromSecondsInt(mrb, seconds);
 }
 
-MRB_METHOD(timeNow)
+MRB_FUNCTION(timeNow)
 {
-	MRB_UNUSED_PARAM;
-
 	TimeImpl *p = new TimeImpl;
 
 	gettimeofday(&p->_tv, 0);
