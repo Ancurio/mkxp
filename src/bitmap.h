@@ -100,6 +100,7 @@ public:
 
 	DECL_ATTR(Font, Font*)
 
+	/* <internal> */
 	void flush() const;
 	TexFBO &getGLTypes();
 	void bindTexWithMatrix();
