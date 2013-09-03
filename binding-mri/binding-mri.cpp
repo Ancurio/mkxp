@@ -249,17 +249,11 @@ static void runRMXPScripts()
 			break;
 		}
 
-//		QFile file(QString("/home/Ancurio/programming/C++/mkxp/dump/%1.rb").arg(i, 3, 10, QChar('0')));
-//		if (file.open(QFile::WriteOnly))
-//			file.write(decodeBuffer.constData(), bufferLen);
-
 		sc.decData = QByteArray(decodeBuffer.constData(), bufferLen);
 
 		ruby_script(sc.name.constData());
 
 		rb_gc_start();
-
-		qDebug() << "Executing script:" << QString("%1").arg(i, 3, 10, QChar('0'));
 
 		/* Execute code */
 		rb_eval_string_protect(decodeBuffer.constData(), 0);
@@ -268,16 +262,6 @@ static void runRMXPScripts()
 		if (rb_type(exc) != RUBY_T_NIL)
 			break;
 	}
-
-//	QFile file("/home/Ancurio/programming/C++/mkxp/dump/index");
-//	if (file.open(QFile::WriteOnly))
-//	{
-//		for (int i = 0; i < encScripts.size(); ++i)
-//		{
-//			const Script &sc = encScripts[i];
-//			file.write(sc.name);
-//		}
-//	}
 }
 
 static void mriBindingExecute()
