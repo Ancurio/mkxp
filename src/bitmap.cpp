@@ -24,6 +24,9 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
+#include "SDL2/SDL_rect.h"
+
+#include "pixman.h"
 
 #include "gl-util.h"
 #include "quad.h"
@@ -63,10 +66,62 @@ struct BitmapPrivate
 	 * any context other than as Tilesets */
 	SDL_Surface *megaSurface;
 
+	/* The 'tainted' area describes which parts of the
+	 * bitmap are not cleared, ie. don't have 0 opacity.
+	 * If we're blitting / drawing text to a cleared part
+	 * with full opacity, we can disregard any old contents
+	 * in the texture and blit to it directly, saving
+	 * ourselves the expensive blending calculation */
+	pixman_region16_t tainted;
+
 	BitmapPrivate()
 	    : megaSurface(0)
 	{
 		font = &gState->defaultFont();
+		pixman_region_init(&tainted);
+	}
+
+	~BitmapPrivate()
+	{
+		pixman_region_fini(&tainted);
+	}
+
+	void clearTaintedArea()
+	{
+		pixman_region_clear(&tainted);
+	}
+
+	void addTaintedArea(const IntRect &rect)
+	{
+		pixman_region_union_rect
+		        (&tainted, &tainted, rect.x, rect.y, rect.w, rect.h);
+	}
+
+	void substractTaintedArea(const IntRect &rect)
+	{
+		if (!touchesTaintedArea(rect))
+			return;
+
+		pixman_region16_t m_reg;
+		pixman_region_init_rect(&m_reg, rect.x, rect.y, rect.w, rect.h);
+
+		pixman_region_subtract(&tainted, &m_reg, &tainted);
+
+		pixman_region_fini(&m_reg);
+	}
+
+	bool touchesTaintedArea(const IntRect &rect)
+	{
+		pixman_box16_t box;
+		box.x1 = rect.x;
+		box.y1 = rect.y;
+		box.x2 = rect.x + rect.w;
+		box.y2 = rect.y + rect.h;
+
+		pixman_region_overlap_t result =
+		        pixman_region_contains_rectangle(&tainted, &box);
+
+		return result != PIXMAN_REGION_OUT;
 	}
 
 	void bindTexture(ShaderBase &shader)
@@ -188,6 +243,8 @@ Bitmap::Bitmap(const char *filename)
 
 		SDL_FreeSurface(imgSurf);
 	}
+
+	p->addTaintedArea(rect());
 }
 
 Bitmap::Bitmap(int width, int height)
@@ -252,8 +309,8 @@ void Bitmap::blt(int x, int y,
 }
 
 void Bitmap::stretchBlt(const IntRect &destRect,
-                         const Bitmap &source, const IntRect &sourceRect,
-                         int opacity)
+                        const Bitmap &source, const IntRect &sourceRect,
+                        int opacity)
 {
 	GUARD_DISPOSED;
 
@@ -265,18 +322,20 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	{
 		return;
 	}
-//	else if (opacity == 255) /* Fast blit */
-//	{
-//		flush();
-
-//		FBO::bind(source.p->tex.fbo, FBO::Read);
-//		FBO::bind(p->tex.fbo, FBO::Draw);
-
-//		FBO::blit(sourceRect.x, sourceRect.y, sourceRect.w, sourceRect.h,
-//		          destRect.x,   destRect.y,   destRect.w,   destRect.h);
-//	}
-	else /* Fragment pipeline */
+	else if (opacity == 255 && !p->touchesTaintedArea(destRect))
 	{
+		/* Fast blit */
+		flush();
+
+		FBO::bind(source.p->tex.fbo, FBO::Read);
+		FBO::bind(p->tex.fbo, FBO::Draw);
+
+		FBO::blit(sourceRect.x, sourceRect.y, sourceRect.w, sourceRect.h,
+		          destRect.x,   destRect.y,   destRect.w,   destRect.h);
+	}
+	else
+	{
+		/* Fragment pipeline */
 		flush();
 
 		float normOpacity = (float) opacity / 255.0f;
@@ -311,6 +370,8 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		p->popViewport();
 	}
 
+	p->addTaintedArea(destRect);
+
 	modified();
 }
 
@@ -328,6 +389,13 @@ void Bitmap::fillRect(const IntRect &rect, const Vec4 &color)
 	GUARD_MEGA;
 
 	p->fillRect(rect, color);
+
+	if (color.w == 0)
+		/* Clear op */
+		p->substractTaintedArea(rect);
+	else
+		/* Fill op */
+		p->addTaintedArea(rect);
 
 	modified();
 }
@@ -380,6 +448,8 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	p->popViewport();
 
+	p->addTaintedArea(rect);
+
 	modified();
 }
 
@@ -416,6 +486,8 @@ void Bitmap::clear()
 
 	glState.clearColor.pop();
 
+	p->clearTaintedArea();
+
 	modified();
 }
 
@@ -446,6 +518,8 @@ void Bitmap::setPixel(int x, int y, const Vec4 &color)
 	GUARD_MEGA;
 
 	p->pointArray.append(Vec2(x+.5, y+.5), color);
+
+	p->addTaintedArea(IntRect(x, y, 1, 1));
 
 	modified();
 }
@@ -514,9 +588,12 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	flush();
 
 	TTF_Font *font = p->font->getSdlFont();
+	Color *fontColor = p->font->getColor();
 
 	SDL_Color c;
-	p->font->getColor()->toSDLColor(c);
+	fontColor->toSDLColor(c);
+
+	float txtAlpha = fontColor->norm.w;
 
 	SDL_Surface *txtSurf;
 
@@ -559,7 +636,35 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	Vec2i gpTexSize;
 	gState->ensureTexSize(txtSurf->w, txtSurf->h, gpTexSize);
 
-//	if (str[1] != '\0')
+	IntRect drawnRect = posRect;
+
+	bool fastBlit = !p->touchesTaintedArea(drawnRect) && txtAlpha == 1.0;
+
+	if (fastBlit)
+	{
+		if (squeeze == 1.0)
+		{
+			/* Even faster: upload directly to bitmap texture */
+			TEX::bind(p->tex.tex);
+			TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_RGBA);
+		}
+		else
+		{
+			/* Squeezing involved: need to use intermediary TexFBO */
+			TEXFBO &gpTF = gState->gpTexFBO(txtSurf->w, txtSurf->h);
+
+			TEX::bind(gpTF.tex);
+			TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_RGBA);
+
+			FBO::bind(gpTF.fbo, FBO::Read);
+			p->bindFBO();
+
+			FBO::blit(0, 0, txtSurf->w, txtSurf->h,
+			          posRect.x, posRect.y, posRect.w, posRect.h,
+			          FBO::Linear);
+		}
+	}
+	else
 	{
 		/* Aquire a partial copy of the destination
 		 * buffer we're about to render to */
@@ -579,26 +684,29 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		shader.setSource();
 		shader.setDestination(gpTex2.tex);
 		shader.setSubRect(bltRect);
-		shader.setOpacity(p->font->getColor()->norm.w);
+		shader.setOpacity(txtAlpha);
+
+		gState->bindTex();
+		TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA_EXT);
+		TEX::setSmooth(true);
+
+		Quad &quad = gState->gpQuad();
+		quad.setTexRect(FloatRect(0, 0, txtSurf->w, txtSurf->h));
+		quad.setPosRect(posRect);
+
+		p->bindFBO();
+		p->pushSetViewport(shader);
+
+		glState.blendMode.pushSet(BlendNone);
+
+		quad.draw();
+
+		glState.blendMode.pop();
+		p->popViewport();
 	}
 
-	gState->bindTex();
-	TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA_EXT);
-	TEX::setSmooth(true);
-
-	Quad &quad = gState->gpQuad();
-	quad.setTexRect(FloatRect(0, 0, txtSurf->w, txtSurf->h));
-	quad.setPosRect(posRect);
 	SDL_FreeSurface(txtSurf);
-
-	p->bindFBO();
-	p->pushSetViewport(gState->bltShader());
-	glState.blendMode.pushSet(BlendNone);
-
-	quad.draw();
-
-	glState.blendMode.pop();
-	p->popViewport();
+	p->addTaintedArea(drawnRect);
 
 	modified();
 }

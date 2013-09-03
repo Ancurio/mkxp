@@ -42,6 +42,7 @@ To select this backend, run `qmake BINDING=BINDING_NULL`
 * SDL2
 * SDL2_image
 * SDL2_ttf
+* pixman
 * sfml-system 2.0
 * sfml-audio 2.0
 * zlib (only ruby backends)

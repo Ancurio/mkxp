@@ -14,7 +14,7 @@ CONFIG += $$BINDING
 
 unix {
     CONFIG += link_pkgconfig
-    PKGCONFIG += sigc++-2.0 sdl2 SDL2_image SDL2_ttf sfml-audio
+    PKGCONFIG += sigc++-2.0 sdl2 SDL2_image SDL2_ttf pixman-1 sfml-audio
 	LIBS += -lGLEW -lphysfs -lz
 }
 
