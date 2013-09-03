@@ -58,6 +58,22 @@ void Config::read()
 	QStringList _rtps = confFile.value("RTPs").toStringList();
 	Q_FOREACH(const QString &s, _rtps)
 		rtps << s.toUtf8();
+
+	confFile.beginGroup("Binding");
+
+	QStringList bindingKeys = confFile.childKeys();
+	Q_FOREACH (const QString &key, bindingKeys)
+	{
+		QVariant value = confFile.value(key);
+
+		/* Convert QString to QByteArray */
+		if (value.type() == QVariant::String)
+			value = value.toString().toUtf8();
+
+		bindingConf.insert(key.toAscii(), value);
+	}
+
+	confFile.endGroup();
 }
 
 void Config::readGameINI()

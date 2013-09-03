@@ -24,6 +24,8 @@
 
 #include <QByteArray>
 #include <QVector>
+#include <QHash>
+#include <QVariant>
 
 struct Config
 {
@@ -42,6 +44,10 @@ struct Config
 
 	QByteArray customScript;
 	QVector<QByteArray> rtps;
+
+	/* Any values in the [Binding]
+	 * group are collected here */
+	QHash<QByteArray, QVariant> bindingConf;
 
 	/* Game INI contents */
 	struct {
