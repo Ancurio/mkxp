@@ -96,8 +96,8 @@ struct MusicEntity
 	{
 		terminateFade();
 
-		volume = bound<int>(volume, 0, 100);
-		pitch = bound<int>(pitch, 50, 150);
+		volume = clamp<int>(volume, 0, 100);
+		pitch = clamp<int>(pitch, 50, 150);
 
 		if (filename == this->filename
 		&&  volume == (int)music.getVolume()
@@ -386,7 +386,7 @@ struct SoundEntity
 	{
 		(void) pitch;
 
-		volume = bound<int>(volume, 0, 100);
+		volume = clamp<int>(volume, 0, 100);
 
 		sf::SoundBuffer &buffer = allocateBuffer(filename);
 

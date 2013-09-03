@@ -208,7 +208,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 {
 	GUARD_DISPOSED;
 
-	opacity = bound(opacity, 0, 255);
+	opacity = clamp(opacity, 0, 255);
 
 	if (opacity == 0)
 	{

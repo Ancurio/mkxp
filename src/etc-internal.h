@@ -243,7 +243,7 @@ struct NormValue
 
 	void operator =(int value)
 	{
-		unNorm = bound(value, 0, 255);
+		unNorm = clamp(value, 0, 255);
 		norm = unNorm / 255.0;
 	}
 

@@ -81,33 +81,33 @@ void Color::set(double red, double green, double blue, double alpha)
 void Color::setRed(double value)
 {
 	red = value;
-	norm.x = bound<double>(value, 0, 255) / 255;
+	norm.x = clamp<double>(value, 0, 255) / 255;
 }
 
 void Color::setGreen(double value)
 {
 	green = value;
-	norm.y = bound<double>(value, 0, 255) / 255;
+	norm.y = clamp<double>(value, 0, 255) / 255;
 }
 
 void Color::setBlue(double value)
 {
 	blue = value;
-	norm.z = bound<double>(value, 0, 255) / 255;
+	norm.z = clamp<double>(value, 0, 255) / 255;
 }
 
 void Color::setAlpha(double value)
 {
 	alpha = value;
-	norm.w = bound<double>(value, 0, 255) / 255;
+	norm.w = clamp<double>(value, 0, 255) / 255;
 }
 
 void Color::toSDLColor(SDL_Color &c) const
 {
-	c.r = bound<double>(red, 0, 255);
-	c.g = bound<double>(green, 0, 255);
-	c.b = bound<double>(blue, 0, 255);
-//	c.a = bound<double>(alpha, 0, 255);
+	c.r = clamp<double>(red, 0, 255);
+	c.g = clamp<double>(green, 0, 255);
+	c.b = clamp<double>(blue, 0, 255);
+//	c.a = clamp<double>(alpha, 0, 255);
 	c.a = 255;
 }
 
@@ -166,10 +166,10 @@ bool Tone::operator==(const Tone &o) const
 
 void Tone::updateInternal()
 {
-	norm.x = (float) bound<double>(red,   -255, 255) / 255;
-	norm.y = (float) bound<double>(green, -255, 255) / 255;
-	norm.z = (float) bound<double>(blue,  -255, 255) / 255;
-	norm.w = (float) bound<double>(gray,     0, 255) / 255;
+	norm.x = (float) clamp<double>(red,   -255, 255) / 255;
+	norm.y = (float) clamp<double>(green, -255, 255) / 255;
+	norm.z = (float) clamp<double>(blue,  -255, 255) / 255;
+	norm.w = (float) clamp<double>(gray,     0, 255) / 255;
 }
 
 void Tone::set(double red, double green, double blue, double gray)
@@ -185,25 +185,25 @@ void Tone::set(double red, double green, double blue, double gray)
 void Tone::setRed(double value)
 {
 	red = value;
-	norm.x = (float) bound<double>(value, -255, 255) / 255;
+	norm.x = (float) clamp<double>(value, -255, 255) / 255;
 }
 
 void Tone::setGreen(double value)
 {
 	green = value;
-	norm.y = (float) bound<double>(value, -255, 255) / 255;
+	norm.y = (float) clamp<double>(value, -255, 255) / 255;
 }
 
 void Tone::setBlue(double value)
 {
 	blue = value;
-	norm.z = (float) bound<double>(value, -255, 255) / 255;
+	norm.z = (float) clamp<double>(value, -255, 255) / 255;
 }
 
 void Tone::setGray(double value)
 {
 	gray = value;
-	norm.w = (float) bound<double>(value, 0, 255) / 255;
+	norm.w = (float) clamp<double>(value, 0, 255) / 255;
 }
 
 /* Serializable */

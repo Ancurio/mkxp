@@ -35,7 +35,7 @@ wrapRange(int value, int min, int max)
 }
 
 template<typename T>
-static inline T bound(T value, T min, T max)
+static inline T clamp(T value, T min, T max)
 {
 	if (value < min)
 		return min;

@@ -673,7 +673,7 @@ void Graphics::transition(int duration,
                           const char *filename,
                           int vague)
 {
-	vague = bound(vague, 0, 512);
+	vague = clamp(vague, 0, 512);
 	Bitmap *transMap = filename ? new Bitmap(filename) : 0;
 
 	setBrightness(255);
@@ -770,8 +770,8 @@ int Graphics::height() const
 
 void Graphics::resizeScreen(int width, int height)
 {
-	width = bound(width, 1, 640);
-	height = bound(height, 1, 480);
+	width = clamp(width, 1, 640);
+	height = clamp(height, 1, 480);
 
 	Vec2i size(width, height);
 
@@ -811,13 +811,13 @@ DEF_ATTR_SIMPLE(Graphics, FrameCount, int, p->frameCount)
 
 void Graphics::setFrameRate(int value)
 {
-	p->frameRate = bound(value, 10, 120);
+	p->frameRate = clamp(value, 10, 120);
 	p->fpsLimiter.setDesiredFPS(p->frameRate);
 }
 
 void Graphics::setBrightness(int value)
 {
-	value = bound(value, 0, 255);
+	value = clamp(value, 0, 255);
 
 	if (p->brightness == value)
 		return;
