@@ -26,6 +26,8 @@
 
 MRB_FUNCTION(inputUpdate)
 {
+	MRB_FUN_UNUSED_PARAM;
+
 	gState->input().update();
 
 	return mrb_nil_value();
@@ -63,22 +65,30 @@ MRB_FUNCTION(inputRepeat)
 
 MRB_FUNCTION(inputDir4)
 {
+	MRB_FUN_UNUSED_PARAM;
+
 	return mrb_fixnum_value(gState->input().dir4Value());
 }
 
 MRB_FUNCTION(inputDir8)
 {
+	MRB_FUN_UNUSED_PARAM;
+
 	return mrb_fixnum_value(gState->input().dir8Value());
 }
 
 /* Non-standard extensions */
 MRB_FUNCTION(inputMouseX)
 {
+	MRB_FUN_UNUSED_PARAM;
+
 	return mrb_fixnum_value(gState->input().mouseX());
 }
 
 MRB_FUNCTION(inputMouseY)
 {
+	MRB_FUN_UNUSED_PARAM;
+
 	return mrb_fixnum_value(gState->input().mouseY());
 }
 
