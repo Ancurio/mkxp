@@ -28,6 +28,7 @@
 #include "mruby/irep.h"
 #include "mruby/compile.h"
 #include "mruby/proc.h"
+#include "mruby/dump.h"
 
 #include "binding-util.h"
 
@@ -209,6 +210,37 @@ runCustomScript(mrb_state *mrb, mrbc_context *ctx, const char *filename)
 }
 
 static void
+runMrbFile(mrb_state *mrb, const char *filename)
+{
+	/* Execute compiled script */
+	FILE *f = fopen(filename, "r");
+
+	if (!f)
+	{
+		static char buffer[256];
+		snprintf(buffer, sizeof(buffer), "Unable to open compiled script '%s'", filename);
+		showError(buffer);
+
+		return;
+	}
+
+	int n = mrb_read_irep_file(mrb, f);
+
+	if (n < 0)
+	{
+		static char buffer[256];
+		snprintf(buffer, sizeof(buffer), "Unable to read compiled script '%s'", filename);
+		showError(buffer);
+
+		return;
+	}
+
+	mrb_run(mrb, mrb_proc_new(mrb, mrb->irep[n]), mrb_top_self(mrb));
+
+	fclose(f);
+}
+
+static void
 runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 {
 	const QByteArray &scriptPack = gState->rtData().config.game.scripts;
@@ -323,9 +355,14 @@ void mrbBindingExecute()
 	mrbc_context *ctx = mrbc_context_new(mrb);
 	ctx->capture_errors = 1;
 
-	QByteArray &customScript = gState->rtData().config.customScript;
+	Config &conf = gState->rtData().config;
+	QByteArray &customScript = conf.customScript;
+	QByteArray mrbFile = conf.bindingConf.value("mrbFile").toByteArray();
+
 	if (!customScript.isEmpty())
 		runCustomScript(mrb, ctx, customScript.constData());
+	else if (!mrbFile.isEmpty())
+		runMrbFile(mrb, mrbFile.constData());
 	else
 		runRMXPScripts(mrb, ctx);
 
