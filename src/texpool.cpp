@@ -127,8 +127,8 @@ TexFBO TexPool::request(int width, int height)
 	int maxSize = glState.caps.maxTexSize;
 	if (width > maxSize || height > maxSize)
 		throw Exception(Exception::MKXPError,
-	                    "Texture dimensions [%s, %s] exceed hardware capabilities",
-	                    QByteArray::number(width), QByteArray::number(height));
+		                "Texture dimensions [%s, %s] exceed hardware capabilities",
+		                QByteArray::number(width), QByteArray::number(height));
 
 	/* Nope, create it instead */
 	TexFBO::init(cobj.obj);
