@@ -156,9 +156,10 @@ findLastDot(char *str)
 }
 
 /* File class methods */
-static mrb_value
-fileBasename(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileBasename)
 {
+	MRB_UNUSED_PARAM;
+
 	mrb_value filename;
 	const char *suffix = 0;
 
@@ -185,9 +186,10 @@ fileBasename(mrb_state *mrb, mrb_value)
 	return str;
 }
 
-static mrb_value
-fileDelete(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileDelete)
 {
+	MRB_UNUSED_PARAM;
+
 	mrb_int argc;
 	mrb_value *argv;
 
@@ -207,9 +209,10 @@ fileDelete(mrb_state *mrb, mrb_value)
 	return mrb_nil_value();
 }
 
-static mrb_value
-fileDirname(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileDirname)
 {
+	MRB_UNUSED_PARAM;
+
 	mrb_value filename;
 	mrb_get_args(mrb, "S", &filename);
 
@@ -219,9 +222,10 @@ fileDirname(mrb_state *mrb, mrb_value)
 	return mrb_str_new_cstr(mrb, dir);
 }
 
-static mrb_value
-fileExpandPath(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileExpandPath)
 {
+	MRB_UNUSED_PARAM;
+
 	const char *path;
 	const char *defDir = 0;
 
@@ -238,9 +242,10 @@ fileExpandPath(mrb_state *mrb, mrb_value)
 	return mrb_str_new_cstr(mrb, buffer);
 }
 
-static mrb_value
-fileExtname(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileExtname)
 {
+	MRB_UNUSED_PARAM;
+
 	mrb_value filename;
 	mrb_get_args(mrb, "S", &filename);
 
@@ -249,9 +254,10 @@ fileExtname(mrb_state *mrb, mrb_value)
 	return mrb_str_new_cstr(mrb, ext);
 }
 
-static mrb_value
-fileOpen(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileOpen)
 {
+	MRB_UNUSED_PARAM;
+
 	mrb_value path;
 	const char *mode = "r";
 	mrb_value block = mrb_nil_value();
@@ -288,9 +294,10 @@ fileOpen(mrb_state *mrb, mrb_value)
 	return obj;
 }
 
-static mrb_value
-fileRename(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileRename)
 {
+	MRB_UNUSED_PARAM;
+
 	const char *from, *to;
 	mrb_get_args(mrb, "zz", &from, &to);
 
@@ -300,15 +307,15 @@ fileRename(mrb_state *mrb, mrb_value)
 }
 
 
-static mrb_value
-mrbNoop(mrb_state *, mrb_value self)
+MRB_METHOD(mrbNoop)
 {
+	MRB_UNUSED_PARAM;
+
 	return self;
 }
 
 /* File instance methods */
-static mrb_value
-fileClose(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileClose)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p);
@@ -337,8 +344,7 @@ readLine(FILE *f, QVector<char> &buffer)
 	}
 }
 
-static mrb_value
-fileEachLine(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileEachLine)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p, FileImpl::Read);
@@ -368,8 +374,7 @@ fileEachLine(mrb_state *mrb, mrb_value self)
 	return self;
 }
 
-static mrb_value
-fileEachByte(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileEachByte)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p, FileImpl::Read);
@@ -391,8 +396,7 @@ fileEachByte(mrb_state *mrb, mrb_value self)
 	return self;
 }
 
-static mrb_value
-fileIsEof(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileIsEof)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p);
@@ -404,8 +408,7 @@ fileIsEof(mrb_state *mrb, mrb_value self)
 	return mrb_bool_value(isEof);
 }
 
-static mrb_value
-fileSetPos(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileSetPos)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p);
@@ -419,8 +422,7 @@ fileSetPos(mrb_state *mrb, mrb_value self)
 	return self;
 }
 
-static mrb_value
-fileGetPos(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileGetPos)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p);
@@ -432,8 +434,7 @@ fileGetPos(mrb_state *mrb, mrb_value self)
 	return mrb_fixnum_value(pos);
 }
 
-static mrb_value
-fileRead(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileRead)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p, FileImpl::Read);
@@ -458,8 +459,7 @@ fileRead(mrb_state *mrb, mrb_value self)
 
 // FIXME this function always splits on newline right now,
 // to make rs fully work, I'll have to use some strrstr magic I guess
-static mrb_value
-fileReadLines(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileReadLines)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p, FileImpl::Read);
@@ -497,8 +497,7 @@ fileReadLines(mrb_state *mrb, mrb_value self)
 	return ary;
 }
 
-static mrb_value
-fileWrite(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileWrite)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p, FileImpl::Write);
@@ -513,8 +512,7 @@ fileWrite(mrb_state *mrb, mrb_value self)
 	return mrb_fixnum_value(count);
 }
 
-static mrb_value
-fileGetPath(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileGetPath)
 {
 	FileImpl *p = getPrivateData<FileImpl>(mrb, self);
 	checkValid(mrb, p);
@@ -531,8 +529,7 @@ getFileStat(mrb_state *mrb, struct stat &fileStat)
 	stat(filename, &fileStat);
 }
 
-static mrb_value
-fileGetMtime(mrb_state *mrb, mrb_value self)
+MRB_METHOD(fileGetMtime)
 {
 	mrb_value path = getProperty(mrb, self, CSpath);
 
@@ -543,9 +540,10 @@ fileGetMtime(mrb_state *mrb, mrb_value self)
 }
 
 /* FileTest module functions */
-static mrb_value
-fileTestDoesExist(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileTestDoesExist)
 {
+	MRB_UNUSED_PARAM;
+
 	const char *filename;
 	mrb_get_args(mrb, "z", &filename);
 
@@ -554,27 +552,30 @@ fileTestDoesExist(mrb_state *mrb, mrb_value)
 	return mrb_bool_value(result == 0);
 }
 
-static mrb_value
-fileTestIsFile(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileTestIsFile)
 {
+	MRB_UNUSED_PARAM;
+
 	struct stat fileStat;
 	getFileStat(mrb, fileStat);
 
 	return mrb_bool_value(S_ISREG(fileStat.st_mode));
 }
 
-static mrb_value
-fileTestIsDirectory(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileTestIsDirectory)
 {
+	MRB_UNUSED_PARAM;
+
 	struct stat fileStat;
 	getFileStat(mrb, fileStat);
 
 	return mrb_bool_value(S_ISDIR(fileStat.st_mode));
 }
 
-static mrb_value
-fileTestSize(mrb_state *mrb, mrb_value)
+MRB_METHOD(fileTestSize)
 {
+	MRB_UNUSED_PARAM;
+
 	struct stat fileStat;
 	getFileStat(mrb, fileStat);
 

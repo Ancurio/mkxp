@@ -39,9 +39,10 @@
 
 void mrbBindingTerminate();
 
-static mrb_value
-kernelEval(mrb_state *mrb, mrb_value)
+MRB_METHOD(kernelEval)
 {
+	MRB_UNUSED_PARAM;
+
 	const char *exp;
 	mrb_int expLen;
 	mrb_get_args(mrb, "s", &exp, &expLen);
@@ -73,17 +74,19 @@ static void printP(mrb_state *mrb,
 	gState->eThread().showMessageBox(RSTRING_PTR(buffer), SDL_MESSAGEBOX_INFORMATION);
 }
 
-static mrb_value
-kernelP(mrb_state *mrb, mrb_value)
+MRB_METHOD(kernelP)
 {
+	MRB_UNUSED_PARAM;
+
 	printP(mrb, "inspect", "\n");
 
 	return mrb_nil_value();
 }
 
-static mrb_value
-kernelPrint(mrb_state *mrb, mrb_value)
+MRB_METHOD(kernelPrint)
 {
+	MRB_UNUSED_PARAM;
+
 	printP(mrb, "to_s", "");
 
 	return mrb_nil_value();
@@ -105,9 +108,10 @@ srandCurrentTime(int *currentSeed)
 	srand(*currentSeed);
 }
 
-static mrb_value
-kernelRand(mrb_state *mrb, mrb_value)
+MRB_METHOD(kernelRand)
 {
+	MRB_UNUSED_PARAM;
+
 	if (!srandCalled)
 	{
 		srandCurrentTime(&currentSeed);
@@ -138,9 +142,10 @@ kernelRand(mrb_state *mrb, mrb_value)
 	}
 }
 
-static mrb_value
-kernelSrand(mrb_state *mrb, mrb_value)
+MRB_METHOD(kernelSrand)
 {
+	MRB_UNUSED_PARAM;
+
 	srandCalled = true;
 
 	if (mrb->c->ci->argc == 1)
@@ -163,17 +168,19 @@ kernelSrand(mrb_state *mrb, mrb_value)
 	}
 }
 
-static mrb_value
-kernelExit(mrb_state *, mrb_value)
+MRB_METHOD(kernelExit)
 {
+	MRB_UNUSED_PARAM;
+
 	mrbBindingTerminate();
 
 	return mrb_nil_value();
 }
 
-static mrb_value
-kernelLoadData(mrb_state *mrb, mrb_value)
+MRB_METHOD(kernelLoadData)
 {
+	MRB_UNUSED_PARAM;
+
 	const char *filename;
 	mrb_get_args(mrb, "z", &filename);
 
@@ -193,9 +200,10 @@ kernelLoadData(mrb_state *mrb, mrb_value)
 	return obj;
 }
 
-static mrb_value
-kernelSaveData(mrb_state *mrb, mrb_value)
+MRB_METHOD(kernelSaveData)
 {
+	MRB_UNUSED_PARAM;
+
 	mrb_value obj;
 	const char *filename;
 
@@ -217,9 +225,10 @@ kernelSaveData(mrb_state *mrb, mrb_value)
 	return mrb_nil_value();
 }
 
-static mrb_value
-kernelInteger(mrb_state *mrb, mrb_value)
+MRB_METHOD(kernelInteger)
 {
+	MRB_UNUSED_PARAM;
+
 	mrb_value obj;
 	mrb_get_args(mrb, "o", &obj);
 

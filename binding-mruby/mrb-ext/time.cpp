@@ -53,18 +53,20 @@ timeFromSecondsInt(mrb_state *mrb, time_t seconds)
 	return obj;
 }
 
-static mrb_value
-timeAt(mrb_state *mrb, mrb_value)
+MRB_METHOD(timeAt)
 {
+	MRB_UNUSED_PARAM;
+
 	mrb_int seconds;
 	mrb_get_args(mrb, "i", &seconds);
 
 	return timeFromSecondsInt(mrb, seconds);
 }
 
-static mrb_value
-timeNow(mrb_state *mrb, mrb_value)
+MRB_METHOD(timeNow)
 {
+	MRB_UNUSED_PARAM;
+
 	TimeImpl *p = new TimeImpl;
 
 	gettimeofday(&p->_tv, 0);
@@ -87,8 +89,7 @@ secondsAdded(mrb_state *mrb, TimeImpl *p, mrb_int seconds)
 	return wrapObject(mrb, newP, TimeType);
 }
 
-static mrb_value
-timePlus(mrb_state *mrb, mrb_value self)
+MRB_METHOD(timePlus)
 {
 	mrb_int seconds;
 	mrb_get_args(mrb, "i", &seconds);
@@ -104,8 +105,7 @@ timePlus(mrb_state *mrb, mrb_value self)
 	return wrapObject(mrb, newP, TimeType);
 }
 
-static mrb_value
-timeMinus(mrb_state *mrb, mrb_value self)
+MRB_METHOD(timeMinus)
 {
 	mrb_value minuent;
 	mrb_get_args(mrb, "o", &minuent);
@@ -133,8 +133,7 @@ timeMinus(mrb_state *mrb, mrb_value self)
 	return mrb_nil_value();
 }
 
-static mrb_value
-timeCompare(mrb_state *mrb, mrb_value self)
+MRB_METHOD(timeCompare)
 {
 	mrb_value cmpTo;
 	mrb_get_args(mrb, "o", &cmpTo);
@@ -167,8 +166,7 @@ timeCompare(mrb_state *mrb, mrb_value self)
 		return mrb_fixnum_value(1);
 }
 
-static mrb_value
-timeStrftime(mrb_state *mrb, mrb_value self)
+MRB_METHOD(timeStrftime)
 {
 	const char *format;
 	mrb_get_args(mrb, "z", &format);
@@ -182,8 +180,7 @@ timeStrftime(mrb_state *mrb, mrb_value self)
 }
 
 #define TIME_ATTR(attr) \
-	static mrb_value \
-	timeGet_##attr(mrb_state *mrb, mrb_value self) \
+	MRB_METHOD(timeGet_##attr) \
 	{ \
 		TimeImpl *p = getPrivateData<TimeImpl>(mrb, self); \
 		return mrb_fixnum_value(p->_tm.tm_##attr); \
