@@ -183,6 +183,11 @@ struct FloatRect
 	    : x(r.x), y(r.y), w(r.w), h(r.h)
 	{}
 
+	operator IntRect() const
+	{
+		return IntRect(x, y, w, h);
+	}
+
 	Vec2 topLeft() const { return Vec2(x, y); }
 	Vec2 bottomLeft() const { return Vec2(x, y+h); }
 	Vec2 topRight() const { return Vec2(x+w, y); }
