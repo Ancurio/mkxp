@@ -50,6 +50,13 @@ int16_t Table::get(int x, int y, int z) const
 
 void Table::set(int16_t value, int x, int y, int z)
 {
+	if (x < 0 || x >= m_x
+	||  y < 0 || y >= m_y
+	||  z < 0 || z >= m_z)
+	{
+		return;
+	}
+
 	data[m_x*m_y*z + m_x*y + x] = value;
 
 	modified();
