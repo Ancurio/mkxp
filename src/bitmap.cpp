@@ -139,11 +139,14 @@ Bitmap::Bitmap(const char *filename)
 	if (!imgSurf)
 		throw Exception(Exception::SDLError, "SDL: %s", SDL_GetError());
 
-	p = new BitmapPrivate;
+	TexFBO tex;
 
 	p->ensureFormat(imgSurf, SDL_PIXELFORMAT_ABGR8888);
 
-	p->tex = gState->texPool().request(imgSurf->w, imgSurf->h);
+	tex = gState->texPool().request(imgSurf->w, imgSurf->h);
+
+	p = new BitmapPrivate;
+	p->tex = tex;
 
 	Tex::bind(p->tex.tex);
 	Tex::uploadImage(p->tex.width, p->tex.height, imgSurf->pixels, GL_RGBA);
@@ -153,9 +156,13 @@ Bitmap::Bitmap(const char *filename)
 
 Bitmap::Bitmap(int width, int height)
 {
-	p = new BitmapPrivate;
+	if (width <= 0 || height <= 0)
+		throw Exception(Exception::RGSSError, "failed to create bitmap");
 
-	p->tex = gState->texPool().request(width, height);
+	TexFBO tex = gState->texPool().request(width, height);
+
+	p = new BitmapPrivate;
+	p->tex = tex;
 
 	clear();
 }
