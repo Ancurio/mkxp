@@ -93,7 +93,7 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
 
 			case SDL_WINDOWEVENT_FOCUS_LOST :
-				resetInput();
+				resetInputStates();
 				break;
 			}
 			break;
@@ -159,7 +159,7 @@ void EventThread::process(RGSSThreadData &rtData)
 			break;
 
 		case SDL_JOYDEVICEREMOVED :
-			resetInput();
+			resetInputStates();
 			break;
 
 		case SDL_MOUSEBUTTONDOWN :
@@ -196,7 +196,7 @@ void EventThread::cleanup()
 	}
 }
 
-void EventThread::resetInput()
+void EventThread::resetInputStates()
 {
 	memset(&keyStates, 0, sizeof(keyStates));
 	memset(&joyState, 0, sizeof(joyState));
@@ -250,7 +250,7 @@ void EventThread::showMessageBox(const char *body, int flags)
 	/* Keep repainting screen while box is open */
 	gState->graphics().repaintWait(&msgBoxDone);
 	/* Prevent endless loops */
-	resetInput();
+	resetInputStates();
 }
 
 bool EventThread::getFullscreen()

@@ -77,7 +77,7 @@ public:
 	void showMessageBox(const char *body, int flags = 0);
 
 private:
-	void resetInput();
+	void resetInputStates();
 	void setFullscreen(SDL_Window *, bool mode);
 	bool fullscreen;
 	volatile bool msgBoxDone;
