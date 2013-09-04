@@ -98,9 +98,6 @@ int rgssThreadFun(void *userdata)
 
 	SDL_GL_SetSwapInterval(threadData->config.vsync ? 1 : 0);
 
-	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-
 	DebugLogger dLogger;
 
 	GlobalState::initInstance(threadData);

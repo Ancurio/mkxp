@@ -131,6 +131,9 @@ GLState::Caps::Caps()
 
 GLState::GLState()
 {
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+
 	clearColor.init(Vec4(0, 0, 0, 1));
 	blendMode.init(BlendNormal);
 	scissorTest.init(false);
