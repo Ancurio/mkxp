@@ -330,8 +330,8 @@ struct InputPrivate
 
 	~InputPrivate()
 	{
-		delete states;
-		delete statesOld;
+		delete[] states;
+		delete[] statesOld;
 	}
 
 	inline ButtonState &getStateCheck(int code)
