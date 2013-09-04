@@ -40,6 +40,7 @@
 #include "../simple.vert.xxd"
 #include "../simpleColor.vert.xxd"
 #include "../sprite.vert.xxd"
+#include "../simpleMatrix.vert.xxd"
 
 
 #define INIT_SHADER(vert, frag) \
@@ -223,6 +224,21 @@ SimpleSpriteShader::SimpleSpriteShader()
 void SimpleSpriteShader::setSpriteMat(const float value[16])
 {
 	glUniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
+}
+
+
+SimpleMatrixShader::SimpleMatrixShader()
+{
+	INIT_SHADER(simpleMatrix, simpleAlpha);
+
+	ShaderBase::init();
+
+	GET_U(matrix);
+}
+
+void SimpleMatrixShader::setMatrix(const float value[16])
+{
+	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, value);
 }
 
 

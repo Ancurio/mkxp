@@ -118,6 +118,17 @@ private:
 	GLint u_spriteMat;
 };
 
+class SimpleMatrixShader : public ShaderBase
+{
+public:
+	SimpleMatrixShader();
+
+	void setMatrix(const float value[16]);
+
+private:
+	GLint u_matrix;
+};
+
 class TransShader : public ShaderBase
 {
 public:

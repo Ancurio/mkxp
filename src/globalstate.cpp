@@ -69,6 +69,7 @@ struct GlobalStatePrivate
 	SimpleColorShader simpleColorShader;
 	SimpleAlphaShader simpleAlphaShader;
 	SimpleSpriteShader simpleSpriteShader;
+	SimpleMatrixShader simpleMatrixShader;
 	SpriteShader spriteShader;
 	PlaneShader planeShader;
 	FlashMapShader flashMapShader;
@@ -188,6 +189,7 @@ GSATT(SimpleShader&, simpleShader)
 GSATT(SimpleColorShader&, simpleColorShader)
 GSATT(SimpleAlphaShader&, simpleAlphaShader)
 GSATT(SimpleSpriteShader&, simpleSpriteShader)
+GSATT(SimpleMatrixShader&, simpleMatrixShader)
 GSATT(SpriteShader&, spriteShader)
 GSATT(PlaneShader&, planeShader)
 GSATT(FlashMapShader&, flashMapShader)
