@@ -33,6 +33,7 @@ struct GlobalIBO;
 struct mrb_state;
 struct SDL_Window;
 struct TexFBO;
+struct Quad;
 
 class Scene;
 class FileSystem;
@@ -100,6 +101,8 @@ struct GlobalState
 	void ensureTexSize(int minW, int minH, Vec2 &currentSizeOut);
 
 	TexFBO &gpTexFBO(int minW, int minH);
+
+	Quad &gpQuad();
 
 	/* Checks EventThread's shutdown request flag and if set,
 	 * requests the binding to terminate. In this case, this

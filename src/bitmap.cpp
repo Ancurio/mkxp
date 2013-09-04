@@ -254,7 +254,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		shader.setSubRect(bltSubRect);
 		shader.setOpacity(normOpacity);
 
-		Quad quad;
+		Quad &quad = gState->gpQuad();
 		quad.setTexPosRect(sourceRect, destRect);
 		quad.setColor(Vec4(1, 1, 1, normOpacity));
 
@@ -303,7 +303,7 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	flush();
 
-	Quad quad;
+	Quad &quad = gState->gpQuad();
 
 	if (vertical)
 	{
@@ -405,8 +405,9 @@ void Bitmap::hueChange(int hue)
 
 	FloatRect texRect(rect());
 
-	Quad quad;
+	Quad &quad = gState->gpQuad();
 	quad.setTexPosRect(texRect, texRect);
+	quad.setColor(Vec4(1, 1, 1, 1));
 
 	/* Calculate hue parameter */
 	hue = wrapRange(hue, 0, 359);
@@ -521,7 +522,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	Tex::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
 	Tex::setSmooth(true);
 
-	Quad quad;
+	Quad &quad = gState->gpQuad();
 	quad.setTexRect(FloatRect(0, 0, txtSurf->w, txtSurf->h));
 	quad.setPosRect(posRect);
 	SDL_FreeSurface(txtSurf);

@@ -33,6 +33,7 @@
 #include "eventthread.h"
 #include "gl-util.h"
 #include "global-ibo.h"
+#include "quad.h"
 #include "binding.h"
 
 #include <QFile>
@@ -79,6 +80,8 @@ struct GlobalStatePrivate
 	int globalTexW, globalTexH;
 
 	TexFBO gpTexFBO;
+
+	Quad gpQuad;
 
 	unsigned int stampCounter;
 
@@ -180,6 +183,7 @@ GSATT(HueShader&, hueShader)
 GSATT(BltShader&, bltShader)
 GSATT(TexPool&, texPool)
 GSATT(FontPool&, fontPool)
+GSATT(Quad&, gpQuad)
 
 void GlobalState::setBindingData(void *data)
 {
