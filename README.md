@@ -93,3 +93,11 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 * Audio "pitch" parameter
 * The Win32API ruby class (for obvious reasons)
 * Loading Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)
+
+## Nonstandard RGSS extensions
+
+To alleviate possible porting of heavily Win32API reliant scripts, I have added certain functionality that you won't find in the RGSS spec. Currently this amounts to the following:
+
+* The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
+* The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game window.
+* The `Graphics` module has an additional property `fullscreen`, which represents the current fullscreen mode (`true` = fullscreen, `false` = windowed).
