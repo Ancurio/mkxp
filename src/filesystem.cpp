@@ -706,6 +706,8 @@ static int SDL_RWopsClose(SDL_RWops *ops)
 
 	int result = PHYSFS_close(f);
 
+	f = 0;
+
 	return (result != 0) ? 0 : -1;
 }
 
