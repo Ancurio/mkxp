@@ -83,7 +83,8 @@ private:
 	volatile bool msgBoxDone;
 };
 
-
+/* Used to asynchronously inform the rgss thread
+ * about window size changes */
 struct WindowSizeNotify
 {
 	SDL_mutex *mutex;
