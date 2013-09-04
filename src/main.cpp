@@ -84,13 +84,12 @@ int rgssThreadFun(void *userdata)
 	}
 
 	/* Check for required GL extensions */
-	const char **ext = reqExt;
-	for (int i = 0; ext[i]; ++i)
+	for (int i = 0; reqExt[i]; ++i)
 	{
-		if (!glewIsSupported(ext[i]))
+		if (!glewIsSupported(reqExt[i]))
 		{
 			threadData->rgssErrorMsg =
-			        QByteArray("Required GL extension \"") + ext[i] + "\" not present";
+			        QByteArray("Required GL extension \"") + reqExt[i] + "\" not present";
 			threadData->ethread->requestTerminate();
 			threadData->rqTermAck = true;
 			return 0;
