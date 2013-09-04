@@ -36,16 +36,16 @@
 
 struct RGSS_entryData
 {
-	qint64 offset;
-	quint64 size;
-	quint32 startMagic;
+	int64_t offset;
+	uint64_t size;
+	uint32_t startMagic;
 };
 
 struct RGSS_entryHandle
 {
 	RGSS_entryData data;
-	quint32 currentMagic;
-	quint64 currentOffset;
+	uint32_t currentMagic;
+	uint64_t currentOffset;
 	PHYSFS_Io *io;
 
 	RGSS_entryHandle(const RGSS_entryData &data)
@@ -71,7 +71,7 @@ struct RGSS_archiveData
 };
 
 static bool
-readUint32(PHYSFS_Io *io, quint32 &result)
+readUint32(PHYSFS_Io *io, uint32_t &result)
 {
 	char buff[4];
 	PHYSFS_sint64 count = io->read(io, buff, 4);
@@ -92,10 +92,10 @@ readUint32(PHYSFS_Io *io, quint32 &result)
 #define PHYSFS_ALLOC(type) \
 	static_cast<type*>(PHYSFS_getAllocator()->Malloc(sizeof(type)))
 
-static inline quint32
-advanceMagic(quint32 &magic)
+static inline uint32_t
+advanceMagic(uint32_t &magic)
 {
-	quint32 old = magic;
+	uint32_t old = magic;
 
 	magic = magic * 7 + 3;
 
@@ -104,10 +104,10 @@ advanceMagic(quint32 &magic)
 
 struct MagicState
 {
-	quint32 magic;
-	quint64 offset;
+	uint32_t magic;
+	uint64_t offset;
 
-	MagicState(quint64 offset = 0)
+	MagicState(uint64_t offset = 0)
 	    : offset(offset)
 	{
 		magic = RGSS_MAGIC;
@@ -116,9 +116,9 @@ struct MagicState
 			advanceBlock();
 	}
 
-	quint8 advancePath()
+	uint8_t advancePath()
 	{
-		quint8 ret = magic & 0xFF;
+		uint8_t ret = magic & 0xFF;
 
 		offset++;
 		advanceBlock();
@@ -126,9 +126,9 @@ struct MagicState
 		return ret;
 	}
 
-	quint8 advanceData()
+	uint8_t advanceData()
 	{
-		quint8 ret = magic & 0xFF;
+		uint8_t ret = magic & 0xFF;
 
 		if (offset++ % 4 == 0)
 			advanceBlock();
@@ -148,21 +148,21 @@ RGSS_ioRead(PHYSFS_Io *self, void *buffer, PHYSFS_uint64 len)
 {
 	RGSS_entryHandle *entry = static_cast<RGSS_entryHandle*>(self->opaque);
 
-	quint64 toRead = qMin(entry->data.size - entry->currentOffset, len);
-	quint64 offs = entry->currentOffset;
+	uint64_t toRead = min<uint64_t>(entry->data.size - entry->currentOffset, len);
+	uint64_t offs = entry->currentOffset;
 
 	entry->io->seek(entry->io, entry->data.offset + offs);
 
-	quint64 buffI = 0;
-	for (quint64 o = offs; o < offs + toRead;)
+	uint64_t buffI = 0;
+	for (uint64_t o = offs; o < offs + toRead;)
 	{
-		quint8 bitOffset = (0x8 * (o % 4));
-		quint8 magicByte = (entry->currentMagic >> bitOffset) & 0xFF;
+		uint8_t bitOffset = (0x8 * (o % 4));
+		uint8_t magicByte = (entry->currentMagic >> bitOffset) & 0xFF;
 
-		quint8 byte;
+		uint8_t byte;
 		entry->io->read(entry->io, &byte, 1);
 
-		((quint8*) buffer)[buffI++] = byte ^ magicByte;
+		((uint8_t*) buffer)[buffI++] = byte ^ magicByte;
 
 		if (++o % 4 == 0)
 			advanceMagic(entry->currentMagic);
@@ -192,8 +192,8 @@ RGSS_ioSeek(PHYSFS_Io *self, PHYSFS_uint64 offset)
 	}
 
 	/* For each 4 bytes sought, advance magic */
-	quint64 dwordsSought = (offset - entry->currentOffset) / 4;
-	for (quint64 i = 0; i < dwordsSought; ++i)
+	uint64_t dwordsSought = (offset - entry->currentOffset) / 4;
+	for (uint64_t i = 0; i < dwordsSought; ++i)
 		advanceMagic(entry->currentMagic);
 
 	entry->currentOffset = offset;
@@ -262,7 +262,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 		return 0;
 
 	/* Check header */
-	quint32 header1, header2;
+	uint32_t header1, header2;
 	readUint32(io, header1);
 	readUint32(io, header2);
 
@@ -272,13 +272,13 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 	RGSS_archiveData *data = new RGSS_archiveData;
 	data->archiveIo = io;
 
-	quint32 magic = RGSS_MAGIC;
+	uint32_t magic = RGSS_MAGIC;
 
 	while (true)
 	{
 		/* Read filename length,
          * if nothing was read, no files remain */
-		quint32 nameLen;
+		uint32_t nameLen;
 		if (!readUint32(io, nameLen))
 			break;
 
@@ -296,7 +296,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 		}
 		nameBuf[i] = 0;
 
-		quint32 entrySize;
+		uint32_t entrySize;
 		readUint32(io, entrySize);
 		entrySize ^= advanceMagic(magic);
 

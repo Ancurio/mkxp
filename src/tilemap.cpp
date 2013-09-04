@@ -245,7 +245,7 @@ struct TilemapPrivate
 	} elem;
 
 	/* Replica bitmask */
-	quint8 replicas;
+	uint8_t replicas;
 
 	/* Affected by: autotiles, tileset */
 	bool atlasSizeDirty;

@@ -134,8 +134,8 @@ struct GPUTimer
 	const int iter;
 
 	uchar ind;
-	quint64 acc;
-	qint32 counter;
+	uint64_t acc;
+	int32_t counter;
 	bool first;
 
 	GPUTimer(int iter)
@@ -186,8 +186,8 @@ struct CPUTimer
 {
 	const int iter;
 
-	quint64 acc;
-	qint32 counter;
+	uint64_t acc;
+	int32_t counter;
 	sf::Clock clock;
 
 	CPUTimer(int iter)

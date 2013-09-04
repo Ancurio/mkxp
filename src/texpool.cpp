@@ -32,10 +32,10 @@
 
 #include <QDebug>
 
-typedef QPair<quint16, quint16> Size;
+typedef QPair<uint16_t, uint16_t> Size;
 typedef QQueue<TexFBO> ObjList;
 
-static quint32 byteCount(Size &s)
+static uint32_t byteCount(Size &s)
 {
 	return s.first * s.second * 4;
 }
@@ -62,18 +62,18 @@ struct TexPoolPrivate
 	QLinkedList<TexFBO> priorityQueue;
 
 	/* Maximal allowed cache memory */
-	const quint32 maxMemSize;
+	const uint32_t maxMemSize;
 
 	/* Current amound of memory consumed by the cache */
-	quint32 memSize;
+	uint32_t memSize;
 
 	/* Current amount of TexFBOs cached */
-	quint16 objCount;
+	uint16_t objCount;
 
 	/* Has this pool been disabled? */
 	bool disabled;
 
-	TexPoolPrivate(quint32 maxMemSize)
+	TexPoolPrivate(uint32_t maxMemSize)
 	    : maxMemSize(maxMemSize),
 	      memSize(0),
 	      objCount(0),
@@ -81,7 +81,7 @@ struct TexPoolPrivate
 	{}
 };
 
-TexPool::TexPool(quint32 maxMemSize)
+TexPool::TexPool(uint32_t maxMemSize)
 {
 	p = new TexPoolPrivate(maxMemSize);
 }
@@ -158,7 +158,7 @@ void TexPool::release(TexFBO &obj)
 
 	Size size(obj.width, obj.height);
 
-	quint32 newMemSize = p->memSize + byteCount(size);
+	uint32_t newMemSize = p->memSize + byteCount(size);
 
 	/* If caching this object would spill over the allowed memory budget,
 	 * delete least used objects until we're good again */
@@ -181,7 +181,7 @@ void TexPool::release(TexFBO &obj)
 
 		TexFBO::fini(last.obj);
 
-		quint32 removedMem = byteCount(removedSize);
+		uint32_t removedMem = byteCount(removedSize);
 		newMemSize -= removedMem;
 		p->memSize -= removedMem;
 		--p->objCount;

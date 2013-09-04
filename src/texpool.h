@@ -29,7 +29,7 @@ struct TexPoolPrivate;
 class TexPool
 {
 public:
-	TexPool(quint32 maxMemSize = 20000000 /* 20 MB */);
+	TexPool(uint32_t maxMemSize = 20000000 /* 20 MB */);
 	~TexPool();
 
 	TexFBO request(int width, int height);

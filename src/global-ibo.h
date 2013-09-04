@@ -28,7 +28,7 @@
 struct GlobalIBO
 {
 	IBO::ID ibo;
-	QVector<quint32> buffer;
+	QVector<uint32_t> buffer;
 
 	GlobalIBO()
 	{

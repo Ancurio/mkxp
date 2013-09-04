@@ -27,7 +27,7 @@
 #include "globalstate.h"
 #include "global-ibo.h"
 
-typedef quint32 index_t;
+typedef uint32_t index_t;
 #define _GL_INDEX_TYPE GL_UNSIGNED_INT
 
 struct ColorQuadArray
