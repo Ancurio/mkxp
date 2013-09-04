@@ -180,13 +180,20 @@ private:
 	void terminateFade()
 	{
 		if (!fading)
+		{
+			delete fadeData.thread;
+			fadeData.thread = 0;
 			return;
+		}
 
 		/* Tell our thread to wrap up and wait for it */
 		fadeData.terminate = true;
 		fadeData.thread->wait();
 
 		fading = false;
+
+		delete fadeData.thread;
+		fadeData.thread = 0;
 	}
 
 	void stopPriv()
