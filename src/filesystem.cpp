@@ -85,7 +85,7 @@ readUint32(PHYSFS_Io *io, uint32_t &result)
 }
 
 #define RGSS_HEADER_1 0x53534752
-#define RGSS_HEADER_2 0x1004441
+#define RGSS_HEADER_2 0x01004441
 
 #define RGSS_MAGIC 0xDEADCAFE
 
