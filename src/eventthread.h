@@ -66,7 +66,7 @@ public:
 	void process(RGSSThreadData &rtData);
 	void cleanup();
 
-	/* Called from render thread */
+	/* Called from rgss thread */
 	void requestFullscreenMode(bool mode);
 	void requestWindowResize(int width, int height);
 
@@ -135,9 +135,9 @@ struct WindowSizeNotify
 
 struct RGSSThreadData
 {
-	/* Main thread sets this to request render thread to terminate */
+	/* Main thread sets this to request rgss thread to terminate */
 	volatile bool rqTerm;
-	/* In response, render thread sets this to confirm
+	/* In response, rgss thread sets this to confirm
 	 * that it received the request and isn't stuck */
 	volatile bool rqTermAck;
 
