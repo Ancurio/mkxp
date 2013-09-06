@@ -81,6 +81,10 @@ protected:
 	virtual void draw() = 0;
 	virtual void onGeometryChange(const Scene::Geometry &) {}
 
+	/* Compares to elements in terms of their display priority;
+	 * elements with lower priority are drawn earlier */
+	bool operator<(const SceneElement &o) const;
+
 	void unlink();
 
 	IntruListLink<SceneElement> link;

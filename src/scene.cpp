@@ -38,12 +38,8 @@ void Scene::insert(SceneElement &element)
 	{
 		SceneElement *e = iter->data;
 
-		if (element.z <= e->z)
+		if (element < *e)
 		{
-			if (element.z == e->z)
-				if (element.creationStamp > e->creationStamp)
-					continue;
-
 			elements.insertBefore(element.link, *iter);
 			return;
 		}
@@ -138,6 +134,20 @@ void SceneElement::setVisible(bool value)
 	aboutToAccess();
 
 	visible = value;
+}
+
+bool SceneElement::operator<(const SceneElement &o) const
+{
+	if (z <= o.z)
+	{
+		if (z == o.z)
+			if (creationStamp > o.creationStamp)
+				return false;
+
+		return true;
+	}
+
+	return false;
 }
 
 void SceneElement::unlink()
