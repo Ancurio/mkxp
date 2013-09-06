@@ -92,7 +92,7 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 * Audio formats other than ogg/wav (this might change in the future)
 * Audio "pitch" parameter
 * The Win32API ruby class (for obvious reasons)
-* Loading Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)
+* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)
 
 ## Nonstandard RGSS extensions
 
