@@ -46,6 +46,7 @@ struct ID \
 	}  \
 };
 
+/* 2D Texture */
 namespace TEX
 {
 	DEF_GL_ID
@@ -116,6 +117,7 @@ namespace TEX
 	}
 }
 
+/* Renderbuffer Object */
 namespace RBO
 {
 	DEF_GL_ID
@@ -149,6 +151,7 @@ namespace RBO
 	}
 }
 
+/* Framebuffer Object */
 namespace FBO
 {
 	DEF_GL_ID
@@ -228,6 +231,7 @@ namespace FBO
 	}
 }
 
+/* Vertex Array Object */
 namespace VAO
 {
 	DEF_GL_ID
@@ -300,9 +304,14 @@ struct GenericBO
 	}
 };
 
+/* Vertex Buffer Object */
 typedef struct GenericBO<GL_ARRAY_BUFFER> VBO;
+
+/* Index Buffer Object */
 typedef struct GenericBO<GL_ELEMENT_ARRAY_BUFFER> IBO;
 
+/* Convenience struct wrapping a framebuffer
+ * and a 2D texture as its target */
 struct TEXFBO
 {
 	TEX::ID tex;
@@ -348,6 +357,8 @@ struct TEXFBO
 	}
 };
 
+/* Convenience struct wrapping a framebuffer
+ * and a renderbuffer as its target */
 struct RBOFBO
 {
 	RBO::ID rbo;
