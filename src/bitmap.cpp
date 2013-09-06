@@ -143,7 +143,15 @@ Bitmap::Bitmap(const char *filename)
 
 	p->ensureFormat(imgSurf, SDL_PIXELFORMAT_ABGR8888);
 
-	tex = gState->texPool().request(imgSurf->w, imgSurf->h);
+	try
+	{
+		tex = gState->texPool().request(imgSurf->w, imgSurf->h);
+	}
+	catch (const Exception &e)
+	{
+		SDL_FreeSurface(imgSurf);
+		throw e;
+	}
 
 	p = new BitmapPrivate;
 	p->tex = tex;
