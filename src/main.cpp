@@ -36,7 +36,6 @@
 static const char *reqExt[] =
 {
 	"GL_ARB_fragment_shader",
-	"GL_ARB_framebuffer_object",
 	"GL_ARB_imaging",
 	"GL_ARB_shader_objects",
 	"GL_ARB_vertex_shader",
@@ -47,6 +46,7 @@ static const char *reqExt[] =
 	"GL_EXT_bgra",
 	"GL_EXT_blend_func_separate",
 	"GL_EXT_blend_subtract",
+	"GL_EXT_framebuffer_object",
 	"GL_EXT_framebuffer_blit",
 	0
 };
