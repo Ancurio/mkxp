@@ -29,7 +29,7 @@
 #include "sigc++/signal.h"
 
 class Font;
-struct TexFBO;
+struct TEXFBO;
 
 struct BitmapPrivate;
 // FIXME make this class use proper RGSS classes again
@@ -102,7 +102,7 @@ public:
 
 	/* <internal> */
 	void flush() const;
-	TexFBO &getGLTypes();
+	TEXFBO &getGLTypes();
 	void bindTexWithMatrix();
 
 	sigc::signal<void> modified;

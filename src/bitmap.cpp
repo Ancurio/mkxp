@@ -42,7 +42,7 @@
 
 struct BitmapPrivate
 {
-	TexFBO tex;
+	TEXFBO tex;
 
 	/* 'setPixel()' calls are cached and executed
 	 * in batches on 'flush()' */
@@ -57,8 +57,8 @@ struct BitmapPrivate
 
 	void bindTextureWithMatrix()
 	{
-		Tex::bind(tex.tex);
-		Tex::bindMatrix(tex.width, tex.height);
+		TEX::bind(tex.tex);
+		TEX::bindMatrix(tex.width, tex.height);
 	}
 
 	void bindFBO()
@@ -88,7 +88,7 @@ struct BitmapPrivate
 		if (pointArray.count() == 0)
 			return;
 
-		Tex::unbind();
+		TEX::unbind();
 		bindFBO();
 		pushSetViewport();
 		glState.blendMode.pushSet(BlendNone);
@@ -139,7 +139,7 @@ Bitmap::Bitmap(const char *filename)
 	if (!imgSurf)
 		throw Exception(Exception::SDLError, "SDL: %s", SDL_GetError());
 
-	TexFBO tex;
+	TEXFBO tex;
 
 	p->ensureFormat(imgSurf, SDL_PIXELFORMAT_ABGR8888);
 
@@ -148,8 +148,8 @@ Bitmap::Bitmap(const char *filename)
 	p = new BitmapPrivate;
 	p->tex = tex;
 
-	Tex::bind(p->tex.tex);
-	Tex::uploadImage(p->tex.width, p->tex.height, imgSurf->pixels, GL_RGBA);
+	TEX::bind(p->tex.tex);
+	TEX::uploadImage(p->tex.width, p->tex.height, imgSurf->pixels, GL_RGBA);
 
 	SDL_FreeSurface(imgSurf);
 }
@@ -159,7 +159,7 @@ Bitmap::Bitmap(int width, int height)
 	if (width <= 0 || height <= 0)
 		throw Exception(Exception::RGSSError, "failed to create bitmap");
 
-	TexFBO tex = gState->texPool().request(width, height);
+	TEXFBO tex = gState->texPool().request(width, height);
 
 	p = new BitmapPrivate;
 	p->tex = tex;
@@ -237,7 +237,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 
 		float normOpacity = (float) opacity / 255.0f;
 
-		TexFBO &gpTex = gState->gpTexFBO(destRect.w, destRect.h);
+		TEXFBO &gpTex = gState->gpTexFBO(destRect.w, destRect.h);
 
 		FBO::bind(gpTex.fbo, FBO::Draw);
 		FBO::bind(p->tex.fbo, FBO::Read);
@@ -322,7 +322,7 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	quad.setPosRect(rect);
 
-	Tex::unbind();
+	TEX::unbind();
 	p->bindFBO();
 	p->pushSetViewport();
 
@@ -401,7 +401,7 @@ void Bitmap::hueChange(int hue)
 
 	flush();
 
-	TexFBO newTex = gState->texPool().request(width(), height());
+	TEXFBO newTex = gState->texPool().request(width(), height());
 
 	FloatRect texRect(rect());
 
@@ -419,7 +419,7 @@ void Bitmap::hueChange(int hue)
 	shader.setInputTexture(p->tex.tex);
 
 	FBO::bind(newTex.fbo);
-	Tex::bindMatrix(width(), height());
+	TEX::bindMatrix(width(), height());
 	p->pushSetViewport();
 
 	p->blitQuad(quad);
@@ -500,7 +500,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	{
 		/* Aquire a partial copy of the destination
 		 * buffer we're about to render to */
-		TexFBO &gpTex2 = gState->gpTexFBO(posRect.w, posRect.h);
+		TEXFBO &gpTex2 = gState->gpTexFBO(posRect.w, posRect.h);
 
 		FBO::bind(gpTex2.fbo, FBO::Draw);
 		FBO::bind(p->tex.fbo, FBO::Read);
@@ -519,8 +519,8 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	}
 
 	gState->bindTex();
-	Tex::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
-	Tex::setSmooth(true);
+	TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
+	TEX::setSmooth(true);
 
 	Quad &quad = gState->gpQuad();
 	quad.setTexRect(FloatRect(0, 0, txtSurf->w, txtSurf->h));
@@ -563,7 +563,7 @@ void Bitmap::flush() const
 	p->flushPoints();
 }
 
-TexFBO &Bitmap::getGLTypes()
+TEXFBO &Bitmap::getGLTypes()
 {
 	return p->tex;
 }

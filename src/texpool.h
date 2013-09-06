@@ -32,8 +32,8 @@ public:
 	TexPool(uint32_t maxMemSize = 20000000 /* 20 MB */);
 	~TexPool();
 
-	TexFBO request(int width, int height);
-	void release(TexFBO &obj);
+	TEXFBO request(int width, int height);
+	void release(TEXFBO &obj);
 
 	void disable();
 

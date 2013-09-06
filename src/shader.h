@@ -38,7 +38,7 @@ protected:
 	void initFromFile(const char *filename);
 
 	void setVec4Uniform(GLint location, const Vec4 &vec);
-	void setTexUniform(GLint location, unsigned unitIndex, Tex::ID texture);
+	void setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture);
 
 	GLuint shader;
 	GLuint program;
@@ -49,9 +49,9 @@ class TransShader : public FragShader
 public:
 	TransShader();
 
-	void setCurrentScene(Tex::ID tex);
-	void setFrozenScene(Tex::ID tex);
-	void setTransMap(Tex::ID tex);
+	void setCurrentScene(TEX::ID tex);
+	void setFrozenScene(TEX::ID tex);
+	void setTransMap(TEX::ID tex);
 	void setProg(float value);
 	void setVague(float value);
 
@@ -64,8 +64,8 @@ class SimpleTransShader : public FragShader
 public:
 	SimpleTransShader();
 
-	void setCurrentScene(Tex::ID tex);
-	void setFrozenScene(Tex::ID tex);
+	void setCurrentScene(TEX::ID tex);
+	void setFrozenScene(TEX::ID tex);
 	void setProg(float value);
 
 private:
@@ -95,7 +95,7 @@ public:
 	HueShader();
 
 	void setHueAdjust(float value);
-	void setInputTexture(Tex::ID tex);
+	void setInputTexture(TEX::ID tex);
 
 private:
 	GLint u_hueAdjust, u_inputTexture;
@@ -108,7 +108,7 @@ public:
 	BltShader();
 
 	void setSource();
-	void setDestination(const Tex::ID value);
+	void setDestination(const TEX::ID value);
 	void setDestCoorF(const Vec2 &value);
 	void setSubRect(const FloatRect &value);
 	void setOpacity(float value);

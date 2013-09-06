@@ -33,7 +33,7 @@
 #include <QDebug>
 
 typedef QPair<uint16_t, uint16_t> Size;
-typedef QQueue<TexFBO> ObjList;
+typedef QQueue<TEXFBO> ObjList;
 
 static uint32_t byteCount(Size &s)
 {
@@ -42,8 +42,8 @@ static uint32_t byteCount(Size &s)
 
 struct CacheObject
 {
-	TexFBO obj;
-	QLinkedList<TexFBO>::iterator prioIter;
+	TEXFBO obj;
+	QLinkedList<TEXFBO>::iterator prioIter;
 
 	bool operator==(const CacheObject &o)
 	{
@@ -59,7 +59,7 @@ struct TexPoolPrivate
 	QHash<Size, CObjList> poolHash;
 
 	/* Contains all cached TexFBOs, sorted by release time */
-	QLinkedList<TexFBO> priorityQueue;
+	QLinkedList<TEXFBO> priorityQueue;
 
 	/* Maximal allowed cache memory */
 	const uint32_t maxMemSize;
@@ -90,8 +90,8 @@ TexPool::~TexPool()
 {
 	while (!p->priorityQueue.isEmpty())
 	{
-		TexFBO obj = p->priorityQueue.takeFirst();
-		TexFBO::fini(obj);
+		TEXFBO obj = p->priorityQueue.takeFirst();
+		TEXFBO::fini(obj);
 		--p->objCount;
 	}
 
@@ -100,7 +100,7 @@ TexPool::~TexPool()
 	delete p;
 }
 
-TexFBO TexPool::request(int width, int height)
+TEXFBO TexPool::request(int width, int height)
 {
 	CacheObject cobj;
 	Size size(width, height);
@@ -131,20 +131,20 @@ TexFBO TexPool::request(int width, int height)
 		                QByteArray::number(width), QByteArray::number(height));
 
 	/* Nope, create it instead */
-	TexFBO::init(cobj.obj);
-	TexFBO::allocEmpty(cobj.obj, width, height);
-	TexFBO::linkFBO(cobj.obj);
+	TEXFBO::init(cobj.obj);
+	TEXFBO::allocEmpty(cobj.obj, width, height);
+	TEXFBO::linkFBO(cobj.obj);
 
 //	qDebug() << "TexPool: <?-> (" << width << height << ")";
 
 	return cobj.obj;
 }
 
-void TexPool::release(TexFBO &obj)
+void TexPool::release(TEXFBO &obj)
 {
-	if (obj.tex == Tex::ID(0) || obj.fbo == FBO::ID(0))
+	if (obj.tex == TEX::ID(0) || obj.fbo == FBO::ID(0))
 	{
-		TexFBO::fini(obj);
+		TEXFBO::fini(obj);
 		return;
 	}
 
@@ -152,7 +152,7 @@ void TexPool::release(TexFBO &obj)
 	{
 		/* If we're disabled, delete without caching */
 //		qDebug() << "TexPool: <!#> (" << obj.width << obj.height << ")";
-		TexFBO::fini(obj);
+		TEXFBO::fini(obj);
 		return;
 	}
 
@@ -179,7 +179,7 @@ void TexPool::release(TexFBO &obj)
 		bucket.removeOne(last);
 		p->priorityQueue.removeLast();
 
-		TexFBO::fini(last.obj);
+		TEXFBO::fini(last.obj);
 
 		uint32_t removedMem = byteCount(removedSize);
 		newMemSize -= removedMem;

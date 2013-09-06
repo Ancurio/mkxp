@@ -32,7 +32,7 @@ struct RGSSThreadData;
 struct GlobalIBO;
 struct mrb_state;
 struct SDL_Window;
-struct TexFBO;
+struct TEXFBO;
 struct Quad;
 
 class Scene;
@@ -100,7 +100,7 @@ struct GlobalState
 	void bindTex();
 	void ensureTexSize(int minW, int minH, Vec2 &currentSizeOut);
 
-	TexFBO &gpTexFBO(int minW, int minH);
+	TEXFBO &gpTexFBO(int minW, int minH);
 
 	Quad &gpQuad();
 

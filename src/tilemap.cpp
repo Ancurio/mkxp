@@ -194,7 +194,7 @@ struct TilemapPrivate
 
 	/* Tile atlas */
 	struct {
-		TexFBO gl;
+		TEXFBO gl;
 		bool animated;
 		int frameH;
 		int width;
@@ -711,8 +711,8 @@ struct TilemapPrivate
 
 	void bindAtlasWithMatrix()
 	{
-		Tex::bind(atlas.gl.tex);
-		Tex::bindMatrix(atlas.animated ? atlasFrameW * 4 : atlasFrameW, atlas.frameH,
+		TEX::bind(atlas.gl.tex);
+		TEX::bindMatrix(atlas.animated ? atlasFrameW * 4 : atlasFrameW, atlas.frameH,
 		                atlas.frameIdx * atlasFrameW);
 	}
 

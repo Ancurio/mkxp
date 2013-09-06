@@ -187,11 +187,11 @@ void Plane::draw()
 
 	p->bitmap->flush();
 	p->bitmap->bindTexWithMatrix();
-	Tex::setRepeat(true);
+	TEX::setRepeat(true);
 
 	p->quad.draw();
 
-	Tex::setRepeat(false);
+	TEX::setRepeat(false);
 	FragShader::unbind();
 }
 

@@ -76,10 +76,10 @@ struct GlobalStatePrivate
 
 	Font *defaultFont;
 
-	Tex::ID globalTex;
+	TEX::ID globalTex;
 	int globalTexW, globalTexH;
 
-	TexFBO gpTexFBO;
+	TEXFBO gpTexFBO;
 
 	Quad gpQuad;
 
@@ -114,22 +114,22 @@ struct GlobalStatePrivate
 		globalTexW = 128;
 		globalTexH = 64;
 
-		globalTex = Tex::gen();
-		Tex::bind(globalTex);
-		Tex::setRepeat(false);
-		Tex::setSmooth(false);
-		Tex::allocEmpty(globalTexW, globalTexH);
+		globalTex = TEX::gen();
+		TEX::bind(globalTex);
+		TEX::setRepeat(false);
+		TEX::setSmooth(false);
+		TEX::allocEmpty(globalTexW, globalTexH);
 
-		TexFBO::init(gpTexFBO);
+		TEXFBO::init(gpTexFBO);
 		/* Reuse starting values */
-		TexFBO::allocEmpty(gpTexFBO, globalTexW, globalTexH);
-		TexFBO::linkFBO(gpTexFBO);
+		TEXFBO::allocEmpty(gpTexFBO, globalTexW, globalTexH);
+		TEXFBO::linkFBO(gpTexFBO);
 	}
 
 	~GlobalStatePrivate()
 	{
-		Tex::del(globalTex);
-		TexFBO::fini(gpTexFBO);
+		TEX::del(globalTex);
+		TEXFBO::fini(gpTexFBO);
 	}
 };
 
@@ -202,9 +202,9 @@ void GlobalState::bindQuadIBO()
 
 void GlobalState::bindTex()
 {
-	Tex::bind(p->globalTex);
-	Tex::allocEmpty(p->globalTexW, p->globalTexH);
-	Tex::bindMatrix(p->globalTexW, p->globalTexH);
+	TEX::bind(p->globalTex);
+	TEX::allocEmpty(p->globalTexW, p->globalTexH);
+	TEX::bindMatrix(p->globalTexW, p->globalTexH);
 }
 
 void GlobalState::ensureTexSize(int minW, int minH, Vec2 &currentSizeOut)
@@ -218,7 +218,7 @@ void GlobalState::ensureTexSize(int minW, int minH, Vec2 &currentSizeOut)
 	currentSizeOut = Vec2(p->globalTexW, p->globalTexH);
 }
 
-TexFBO &GlobalState::gpTexFBO(int minW, int minH)
+TEXFBO &GlobalState::gpTexFBO(int minW, int minH)
 {
 	bool needResize = false;
 
@@ -236,8 +236,8 @@ TexFBO &GlobalState::gpTexFBO(int minW, int minH)
 
 	if (needResize)
 	{
-		Tex::bind(p->gpTexFBO.tex);
-		Tex::allocEmpty(p->gpTexFBO.width, p->gpTexFBO.height);
+		TEX::bind(p->gpTexFBO.tex);
+		TEX::allocEmpty(p->gpTexFBO.width, p->gpTexFBO.height);
 	}
 
 	return p->gpTexFBO;

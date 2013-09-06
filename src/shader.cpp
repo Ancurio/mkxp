@@ -85,7 +85,7 @@ void FragShader::setVec4Uniform(GLint location, const Vec4 &vec)
 	glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
 }
 
-void FragShader::setTexUniform(GLint location, unsigned unitIndex, Tex::ID texture)
+void FragShader::setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture)
 {
 	GLenum texUnit = GL_TEXTURE0 + unitIndex;
 
@@ -108,17 +108,17 @@ TransShader::TransShader()
 	GET_U(vague);
 }
 
-void TransShader::setCurrentScene(Tex::ID tex)
+void TransShader::setCurrentScene(TEX::ID tex)
 {
 	setTexUniform(u_currentScene, 0, tex);
 }
 
-void TransShader::setFrozenScene(Tex::ID tex)
+void TransShader::setFrozenScene(TEX::ID tex)
 {
 	setTexUniform(u_frozenScene, 1, tex);
 }
 
-void TransShader::setTransMap(Tex::ID tex)
+void TransShader::setTransMap(TEX::ID tex)
 {
 	setTexUniform(u_transMap, 2, tex);
 }
@@ -144,12 +144,12 @@ SimpleTransShader::SimpleTransShader()
 	GET_U(prog);
 }
 
-void SimpleTransShader::setCurrentScene(Tex::ID tex)
+void SimpleTransShader::setCurrentScene(TEX::ID tex)
 {
 	setTexUniform(u_currentScene, 0, tex);
 }
 
-void SimpleTransShader::setFrozenScene(Tex::ID tex)
+void SimpleTransShader::setFrozenScene(TEX::ID tex)
 {
 	setTexUniform(u_frozenScene, 1, tex);
 }
@@ -232,7 +232,7 @@ void HueShader::setHueAdjust(float value)
 	glUniform1f(u_hueAdjust, value);
 }
 
-void HueShader::setInputTexture(Tex::ID tex)
+void HueShader::setInputTexture(TEX::ID tex)
 {
 	setTexUniform(u_inputTexture, 0, tex);
 }
@@ -254,7 +254,7 @@ void BltShader::setSource()
 	glUniform1i(u_source, 0);
 }
 
-void BltShader::setDestination(const Tex::ID value)
+void BltShader::setDestination(const TEX::ID value)
 {
 	setTexUniform(u_destination, 1, value);
 }

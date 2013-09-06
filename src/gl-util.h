@@ -46,7 +46,7 @@ struct ID \
 	}  \
 };
 
-namespace Tex
+namespace TEX
 {
 	DEF_GL_ID
 
@@ -190,7 +190,7 @@ namespace FBO
 		bind(ID(0), mode);
 	}
 
-	inline void setTarget(Tex::ID target, unsigned colorAttach = 0)
+	inline void setTarget(TEX::ID target, unsigned colorAttach = 0)
 	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
 	}
@@ -303,48 +303,48 @@ struct GenericBO
 typedef struct GenericBO<GL_ARRAY_BUFFER> VBO;
 typedef struct GenericBO<GL_ELEMENT_ARRAY_BUFFER> IBO;
 
-struct TexFBO
+struct TEXFBO
 {
-	Tex::ID tex;
+	TEX::ID tex;
 	FBO::ID fbo;
 	int width, height;
 
-	TexFBO()
+	TEXFBO()
 	    : tex(0), fbo(0), width(0), height(0)
 	{}
 
-	bool operator==(const TexFBO &other) const
+	bool operator==(const TEXFBO &other) const
 	{
 		return (tex == other.tex) && (fbo == other.fbo);
 	}
 
-	static inline void init(TexFBO &obj)
+	static inline void init(TEXFBO &obj)
 	{
-		obj.tex = Tex::gen();
+		obj.tex = TEX::gen();
 		obj.fbo = FBO::gen();
-		Tex::bind(obj.tex);
-		Tex::setRepeat(false);
-		Tex::setSmooth(false);
+		TEX::bind(obj.tex);
+		TEX::setRepeat(false);
+		TEX::setSmooth(false);
 	}
 
-	static inline void allocEmpty(TexFBO &obj, int width, int height)
+	static inline void allocEmpty(TEXFBO &obj, int width, int height)
 	{
-		Tex::bind(obj.tex);
-		Tex::allocEmpty(width, height);
+		TEX::bind(obj.tex);
+		TEX::allocEmpty(width, height);
 		obj.width = width;
 		obj.height = height;
 	}
 
-	static inline void linkFBO(TexFBO &obj)
+	static inline void linkFBO(TEXFBO &obj)
 	{
 		FBO::bind(obj.fbo);
 		FBO::setTarget(obj.tex);
 	}
 
-	static inline void fini(TexFBO &obj)
+	static inline void fini(TEXFBO &obj)
 	{
 		FBO::del(obj.fbo);
-		Tex::del(obj.tex);
+		TEX::del(obj.tex);
 	}
 };
 

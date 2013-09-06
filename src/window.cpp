@@ -196,7 +196,7 @@ struct WindowPrivate
 	ColorQuadArray baseQuadArray;
 
 	/* Used when opacity < 255 */
-	TexFBO baseTex;
+	TEXFBO baseTex;
 	bool useBaseTex;
 
 	QuadChunk backgroundVert;
@@ -414,9 +414,9 @@ struct WindowPrivate
 	void redrawBaseTex()
 	{
 		/* Discard old buffer */
-		Tex::bind(baseTex.tex);
-		Tex::allocEmpty(baseTex.width, baseTex.height);
-		Tex::unbind();
+		TEX::bind(baseTex.tex);
+		TEX::allocEmpty(baseTex.width, baseTex.height);
+		TEX::unbind();
 
 		FBO::bind(baseTex.fbo);
 		glState.pushSetViewport(baseTex.width, baseTex.height);
@@ -428,7 +428,7 @@ struct WindowPrivate
 		/* Repaint base */
 		windowskin->flush();
 		windowskin->bindTexWithMatrix();
-		Tex::setSmooth(true);
+		TEX::setSmooth(true);
 		glState.pushSetViewport(baseTex.width, baseTex.height);
 
 		/* We need to blit the background without blending,
@@ -445,7 +445,7 @@ struct WindowPrivate
 
 		glState.blendMode.pop();
 		glState.popViewport();
-		Tex::setSmooth(false);
+		TEX::setSmooth(false);
 
 		glState.clearColor.pop();
 		glState.popViewport();
@@ -555,18 +555,18 @@ struct WindowPrivate
 
 		if (useBaseTex)
 		{
-			Tex::bindWithMatrix(baseTex.tex, baseTex.width, baseTex.height);
+			TEX::bindWithMatrix(baseTex.tex, baseTex.width, baseTex.height);
 			baseTexQuad.draw();
 		}
 		else
 		{
 			windowskin->flush();
 			windowskin->bindTexWithMatrix();
-			Tex::setSmooth(true);
+			TEX::setSmooth(true);
 
 			baseQuadArray.draw();
 
-			Tex::setSmooth(false);
+			TEX::setSmooth(false);
 		}
 
 		glPopMatrix();

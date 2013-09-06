@@ -216,7 +216,7 @@ struct CPUTimer
 
 struct PingPong
 {
-	TexFBO rt[2];
+	TEXFBO rt[2];
 	unsigned srcInd, dstInd;
 	int screenW, screenH;
 
@@ -226,9 +226,9 @@ struct PingPong
 	{
 		for (int i = 0; i < 2; ++i)
 		{
-			TexFBO::init(rt[i]);
-			TexFBO::allocEmpty(rt[i], screenW, screenH);
-			TexFBO::linkFBO(rt[i]);
+			TEXFBO::init(rt[i]);
+			TEXFBO::allocEmpty(rt[i], screenW, screenH);
+			TEXFBO::linkFBO(rt[i]);
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
@@ -237,7 +237,7 @@ struct PingPong
 	~PingPong()
 	{
 		for (int i = 0; i < 2; ++i)
-			TexFBO::fini(rt[i]);
+			TEXFBO::fini(rt[i]);
 	}
 
 	/* Binds FBO of last good buffer for reading */
@@ -253,8 +253,8 @@ struct PingPong
 		screenH = height;
 		for (int i = 0; i < 2; ++i)
 		{
-			Tex::bind(rt[i].tex);
-			Tex::allocEmpty(width, height);
+			TEX::bind(rt[i].tex);
+			TEX::allocEmpty(width, height);
 		}
 	}
 
@@ -268,8 +268,8 @@ struct PingPong
 		swapIndices();
 
 		/* Discard dest buffer */
-		Tex::bind(rt[dstInd].tex);
-		Tex::allocEmpty(screenW, screenH);
+		TEX::bind(rt[dstInd].tex);
+		TEX::allocEmpty(screenW, screenH);
 
 		bind();
 	}
@@ -288,7 +288,7 @@ struct PingPong
 private:
 	void bind()
 	{
-		Tex::bindWithMatrix(rt[srcInd].tex, screenW, screenH, true);
+		TEX::bindWithMatrix(rt[srcInd].tex, screenW, screenH, true);
 		FBO::bind(rt[srcInd].fbo, FBO::Read);
 		FBO::bind(rt[dstInd].fbo, FBO::Draw);
 	}
@@ -352,7 +352,7 @@ public:
 
 		glState.blendMode.pushSet(BlendNone);
 
-		Tex::bindMatrix(geometry.rect.w, geometry.rect.h);
+		TEX::bindMatrix(geometry.rect.w, geometry.rect.h);
 		screenQuad.draw();
 
 		glState.blendMode.pop();
@@ -466,8 +466,8 @@ struct GraphicsPrivate
 	CPUTimer cpuTimer;
 
 	bool frozen;
-	TexFBO frozenScene;
-	TexFBO currentScene;
+	TEXFBO frozenScene;
+	TEXFBO currentScene;
 	Quad screenQuad;
 	RBOFBO transBuffer;
 
@@ -483,13 +483,13 @@ struct GraphicsPrivate
 	      cpuTimer(frameRate),
 	      frozen(false)
 	{
-		TexFBO::init(frozenScene);
-		TexFBO::allocEmpty(frozenScene, scRes.x, scRes.y);
-		TexFBO::linkFBO(frozenScene);
+		TEXFBO::init(frozenScene);
+		TEXFBO::allocEmpty(frozenScene, scRes.x, scRes.y);
+		TEXFBO::linkFBO(frozenScene);
 
-		TexFBO::init(currentScene);
-		TexFBO::allocEmpty(currentScene, scRes.x, scRes.y);
-		TexFBO::linkFBO(currentScene);
+		TEXFBO::init(currentScene);
+		TEXFBO::allocEmpty(currentScene, scRes.x, scRes.y);
+		TEXFBO::linkFBO(currentScene);
 
 		FloatRect screenRect(0, 0, scRes.x, scRes.y);
 		screenQuad.setTexPosRect(screenRect, screenRect);
@@ -501,8 +501,8 @@ struct GraphicsPrivate
 
 	~GraphicsPrivate()
 	{
-		TexFBO::fini(frozenScene);
-		TexFBO::fini(currentScene);
+		TEXFBO::fini(frozenScene);
+		TEXFBO::fini(currentScene);
 
 		RBOFBO::fini(transBuffer);
 	}
@@ -700,7 +700,7 @@ void Graphics::transition(int duration,
 		shader.setCurrentScene(p->currentScene.tex);
 	}
 
-	Tex::bindMatrix(p->scRes.x, p->scRes.y);
+	TEX::bindMatrix(p->scRes.x, p->scRes.y);
 
 	glState.blendMode.pushSet(BlendNone);
 
@@ -784,10 +784,10 @@ void Graphics::resizeScreen(int width, int height)
 
 	p->screen.setResolution(width, height);
 
-	Tex::bind(p->frozenScene.tex);
-	Tex::allocEmpty(width, height);
-	Tex::bind(p->currentScene.tex);
-	Tex::allocEmpty(width, height);
+	TEX::bind(p->frozenScene.tex);
+	TEX::allocEmpty(width, height);
+	TEX::bind(p->currentScene.tex);
+	TEX::allocEmpty(width, height);
 
 	FloatRect screenRect(0, 0, width, height);
 	p->screenQuad.setTexPosRect(screenRect, screenRect);
