@@ -190,14 +190,14 @@ namespace FBO
 		bind(ID(0), mode);
 	}
 
-	inline void setTexTarget(Tex::ID texTarget, unsigned colorAttach = 0)
+	inline void setTarget(Tex::ID target, unsigned colorAttach = 0)
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, texTarget.gl, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
 	}
 
-	inline void setRBOTarget(RBO::ID rbTarget, unsigned colorAttach = 0)
+	inline void setTarget(RBO::ID target, unsigned colorAttach = 0)
 	{
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, rbTarget.gl);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, target.gl);
 	}
 
 	inline void blit(int srcX, int srcY,
@@ -338,7 +338,7 @@ struct TexFBO
 	static inline void linkFBO(TexFBO &obj)
 	{
 		FBO::bind(obj.fbo);
-		FBO::setTexTarget(obj.tex);
+		FBO::setTarget(obj.tex);
 	}
 
 	static inline void fini(TexFBO &obj)
@@ -375,7 +375,7 @@ struct RBOFBO
 	static inline void linkFBO(RBOFBO &obj)
 	{
 		FBO::bind(obj.fbo);
-		FBO::setRBOTarget(obj.rbo);
+		FBO::setTarget(obj.rbo);
 	}
 
 	static inline void fini(RBOFBO &obj)
