@@ -478,7 +478,7 @@ struct TilemapPrivate
 		QVector<uint8_t> &animatedATs = atlas.animatedATs;
 
 		/* Clear atlas */
-		FBO::bind(atlas.gl.fbo);
+		FBO::bind(atlas.gl.fbo, FBO::Draw);
 		glState.clearColor.pushSet(Vec4());
 		glState.scissorTest.pushSet(false);
 

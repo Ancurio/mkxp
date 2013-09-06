@@ -722,7 +722,7 @@ void Graphics::transition(int duration,
 
 		/* Draw the composed frame to a buffer first
 		 * (we need this because we're skipping PingPong) */
-		FBO::bind(p->transBuffer.fbo);
+		FBO::bind(p->transBuffer.fbo, FBO::Draw);
 		glClear(GL_COLOR_BUFFER_BIT);
 		p->screenQuad.draw();
 

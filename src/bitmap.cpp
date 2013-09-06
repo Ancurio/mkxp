@@ -63,7 +63,7 @@ struct BitmapPrivate
 
 	void bindFBO()
 	{
-		FBO::bind(tex.fbo);
+		FBO::bind(tex.fbo, FBO::Draw);
 	}
 
 	void pushSetViewport() const
@@ -418,7 +418,7 @@ void Bitmap::hueChange(int hue)
 	shader.setHueAdjust(hueAdj);
 	shader.setInputTexture(p->tex.tex);
 
-	FBO::bind(newTex.fbo);
+	FBO::bind(newTex.fbo, FBO::Draw);
 	TEX::bindMatrix(width(), height());
 	p->pushSetViewport();
 

@@ -418,7 +418,7 @@ struct WindowPrivate
 		TEX::allocEmpty(baseTex.width, baseTex.height);
 		TEX::unbind();
 
-		FBO::bind(baseTex.fbo);
+		FBO::bind(baseTex.fbo, FBO::Draw);
 		glState.pushSetViewport(baseTex.width, baseTex.height);
 		glState.clearColor.pushSet(Vec4());
 

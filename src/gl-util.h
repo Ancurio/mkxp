@@ -159,8 +159,7 @@ namespace FBO
 	enum Mode
 	{
 		Draw = 0,
-		Read = 1,
-		Default = 2
+		Read = 1
 	};
 
 	inline ID gen()
@@ -176,19 +175,18 @@ namespace FBO
 		glDeleteFramebuffersEXT(1, &id.gl);
 	}
 
-	inline void bind(ID id, Mode mode = Default)
+	inline void bind(ID id, Mode mode)
 	{
 		static const GLenum modes[] =
 		{
 			GL_DRAW_FRAMEBUFFER_EXT,
-			GL_READ_FRAMEBUFFER_EXT,
-			GL_FRAMEBUFFER_EXT
+			GL_READ_FRAMEBUFFER_EXT
 		};
 
 		glBindFramebufferEXT(modes[mode], id.gl);
 	}
 
-	inline void unbind(Mode mode = Default)
+	inline void unbind(Mode mode)
 	{
 		bind(ID(0), mode);
 	}
@@ -348,7 +346,7 @@ struct TEXFBO
 
 	static inline void linkFBO(TEXFBO &obj)
 	{
-		FBO::bind(obj.fbo);
+		FBO::bind(obj.fbo, FBO::Draw);
 		FBO::setTarget(obj.tex);
 	}
 
@@ -387,7 +385,7 @@ struct RBOFBO
 
 	static inline void linkFBO(RBOFBO &obj)
 	{
-		FBO::bind(obj.fbo);
+		FBO::bind(obj.fbo, FBO::Draw);
 		FBO::setTarget(obj.rbo);
 	}
 
