@@ -310,6 +310,8 @@ typedef struct GenericBO<GL_ARRAY_BUFFER> VBO;
 /* Index Buffer Object */
 typedef struct GenericBO<GL_ELEMENT_ARRAY_BUFFER> IBO;
 
+#undef DEF_GL_ID
+
 /* Convenience struct wrapping a framebuffer
  * and a 2D texture as its target */
 struct TEXFBO
