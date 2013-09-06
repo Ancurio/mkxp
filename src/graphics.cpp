@@ -469,7 +469,7 @@ struct GraphicsPrivate
 	TexFBO frozenScene;
 	TexFBO currentScene;
 	Quad screenQuad;
-	RBFBO transBuffer;
+	RBOFBO transBuffer;
 
 	GraphicsPrivate()
 	    : scRes(640, 480),
@@ -494,9 +494,9 @@ struct GraphicsPrivate
 		FloatRect screenRect(0, 0, scRes.x, scRes.y);
 		screenQuad.setTexPosRect(screenRect, screenRect);
 
-		RBFBO::init(transBuffer);
-		RBFBO::allocEmpty(transBuffer, scRes.x, scRes.y);
-		RBFBO::linkFBO(transBuffer);
+		RBOFBO::init(transBuffer);
+		RBOFBO::allocEmpty(transBuffer, scRes.x, scRes.y);
+		RBOFBO::linkFBO(transBuffer);
 	}
 
 	~GraphicsPrivate()
@@ -504,7 +504,7 @@ struct GraphicsPrivate
 		TexFBO::fini(frozenScene);
 		TexFBO::fini(currentScene);
 
-		RBFBO::fini(transBuffer);
+		RBOFBO::fini(transBuffer);
 	}
 
 	void updateScreenResoRatio()
@@ -792,8 +792,8 @@ void Graphics::resizeScreen(int width, int height)
 	FloatRect screenRect(0, 0, width, height);
 	p->screenQuad.setTexPosRect(screenRect, screenRect);
 
-	RB::bind(p->transBuffer.rb);
-	RB::allocEmpty(width, height);
+	RBO::bind(p->transBuffer.rbo);
+	RBO::allocEmpty(width, height);
 
 	p->updateScreenResoRatio();
 }

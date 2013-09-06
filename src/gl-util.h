@@ -116,7 +116,7 @@ namespace Tex
 	}
 }
 
-namespace RB
+namespace RBO
 {
 	DEF_GL_ID
 
@@ -195,7 +195,7 @@ namespace FBO
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, texTarget.gl, 0);
 	}
 
-	inline void setRBTarget(RB::ID rbTarget, unsigned colorAttach = 0)
+	inline void setRBOTarget(RBO::ID rbTarget, unsigned colorAttach = 0)
 	{
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, rbTarget.gl);
 	}
@@ -348,40 +348,40 @@ struct TexFBO
 	}
 };
 
-struct RBFBO
+struct RBOFBO
 {
-	RB::ID rb;
+	RBO::ID rbo;
 	FBO::ID fbo;
 	int width, height;
 
-	RBFBO()
-	    : rb(0), fbo(0), width(0), height(0)
+	RBOFBO()
+	    : rbo(0), fbo(0), width(0), height(0)
 	{}
 
-	static inline void init(RBFBO &obj)
+	static inline void init(RBOFBO &obj)
 	{
-		obj.rb = RB::gen();
+		obj.rbo = RBO::gen();
 		obj.fbo = FBO::gen();
 	}
 
-	static inline void allocEmpty(RBFBO &obj, int width, int height)
+	static inline void allocEmpty(RBOFBO &obj, int width, int height)
 	{
-		RB::bind(obj.rb);
-		RB::allocEmpty(width, height);
+		RBO::bind(obj.rbo);
+		RBO::allocEmpty(width, height);
 		obj.width = width;
 		obj.height = height;
 	}
 
-	static inline void linkFBO(RBFBO &obj)
+	static inline void linkFBO(RBOFBO &obj)
 	{
 		FBO::bind(obj.fbo);
-		FBO::setRBTarget(obj.rb);
+		FBO::setRBOTarget(obj.rbo);
 	}
 
-	static inline void fini(RBFBO &obj)
+	static inline void fini(RBOFBO &obj)
 	{
 		FBO::del(obj.fbo);
-		RB::del(obj.rb);
+		RBO::del(obj.rbo);
 	}
 };
 
