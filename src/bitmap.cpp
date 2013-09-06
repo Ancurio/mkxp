@@ -519,7 +519,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	}
 
 	gState->bindTex();
-	TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
+	TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA_EXT);
 	TEX::setSmooth(true);
 
 	Quad &quad = gState->gpQuad();

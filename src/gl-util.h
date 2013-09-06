@@ -166,26 +166,26 @@ namespace FBO
 	inline ID gen()
 	{
 		ID id;
-		glGenFramebuffers(1, &id.gl);
+		glGenFramebuffersEXT(1, &id.gl);
 
 		return id;
 	}
 
 	inline void del(ID id)
 	{
-		glDeleteFramebuffers(1, &id.gl);
+		glDeleteFramebuffersEXT(1, &id.gl);
 	}
 
 	inline void bind(ID id, Mode mode = Default)
 	{
 		static const GLenum modes[] =
 		{
-			GL_DRAW_FRAMEBUFFER,
-			GL_READ_FRAMEBUFFER,
-			GL_FRAMEBUFFER
+			GL_DRAW_FRAMEBUFFER_EXT,
+			GL_READ_FRAMEBUFFER_EXT,
+			GL_FRAMEBUFFER_EXT
 		};
 
-		glBindFramebuffer(modes[mode], id.gl);
+		glBindFramebufferEXT(modes[mode], id.gl);
 	}
 
 	inline void unbind(Mode mode = Default)
@@ -195,12 +195,12 @@ namespace FBO
 
 	inline void setTarget(TEX::ID target, unsigned colorAttach = 0)
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
 	}
 
 	inline void setTarget(RBO::ID target, unsigned colorAttach = 0)
 	{
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, target.gl);
+		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, target.gl);
 	}
 
 	inline void blit(int srcX, int srcY,
@@ -208,9 +208,9 @@ namespace FBO
 	                 int dstX, int dstY,
 	                 int dstW, int dstH)
 	{
-		glBlitFramebuffer(srcX, srcY, srcX+srcW, srcY+srcH,
-		                  dstX, dstY, dstX+dstW, dstY+dstH,
-		                  GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		glBlitFramebufferEXT(srcX, srcY, srcX+srcW, srcY+srcH,
+		                     dstX, dstY, dstX+dstW, dstY+dstH,
+		                     GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	}
 
 	inline void blit(int srcX, int srcY,

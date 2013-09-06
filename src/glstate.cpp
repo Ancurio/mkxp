@@ -69,21 +69,21 @@ void GLBlendMode::apply(const BlendType &value)
 
 	case BlendNormal :
 		glBlendEquation(GL_FUNC_ADD);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
-		                    GL_ONE,       GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+		                       GL_ONE,       GL_ONE_MINUS_SRC_ALPHA);
 		break;
 
 	case BlendAddition :
 		glBlendEquation(GL_FUNC_ADD);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE,
-		                    GL_ONE,       GL_ONE);
+		glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE,
+		                       GL_ONE,       GL_ONE);
 		break;
 
 	case BlendSubstraction :
 		// FIXME Alpha calculation is untested
-		glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE,
-		                    GL_ONE,       GL_ONE);
+		glBlendEquation(GL_FUNC_REVERSE_SUBTRACT_EXT);
+		glBlendFuncSeparateEXT(GL_SRC_ALPHA, GL_ONE,
+		                       GL_ONE,       GL_ONE);
 		break;
 	}
 }
