@@ -125,19 +125,19 @@ namespace RBO
 	inline ID gen()
 	{
 		ID id;
-		glGenRenderbuffers(1, &id.gl);
+		glGenRenderbuffersEXT(1, &id.gl);
 
 		return id;
 	}
 
 	inline void del(ID id)
 	{
-		glDeleteRenderbuffers(1, &id.gl);
+		glDeleteRenderbuffersEXT(1, &id.gl);
 	}
 
 	inline void bind(ID id)
 	{
-		glBindRenderbuffer(GL_RENDERBUFFER, id.gl);
+		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, id.gl);
 	}
 
 	inline void unbind()
@@ -147,7 +147,7 @@ namespace RBO
 
 	inline void allocEmpty(GLsizei width, GLsizei height)
 	{
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+		glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, width, height);
 	}
 }
 
