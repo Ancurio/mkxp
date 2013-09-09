@@ -53,7 +53,7 @@ enum
 	REQUEST_TERMINATION,
 	REQUEST_SETFULLSCREEN,
 	REQUEST_WINRESIZE,
-	SHOW_MESSAGEBOX
+	REQUEST_MESSAGEBOX
 };
 
 EventThread::EventThread()
@@ -127,7 +127,7 @@ void EventThread::process(RGSSThreadData &rtData)
 			SDL_SetWindowSize(win, event.window.data1, event.window.data2);
 			break;
 
-		case SHOW_MESSAGEBOX :
+		case REQUEST_MESSAGEBOX :
 			SDL_ShowSimpleMessageBox(event.user.code,
 			                         rtData.config.game.title.constData(),
 			                         (const char*) event.user.data1, win);
@@ -193,7 +193,7 @@ void EventThread::cleanup()
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
-		if (event.type == SHOW_MESSAGEBOX)
+		if (event.type == REQUEST_MESSAGEBOX)
 		{
 			free(event.user.data1);
 		}
@@ -248,7 +248,7 @@ void EventThread::showMessageBox(const char *body, int flags)
 	SDL_Event event;
 	event.user.code = flags;
 	event.user.data1 = strdup(body);
-	event.type = SHOW_MESSAGEBOX;
+	event.type = REQUEST_MESSAGEBOX;
 	SDL_PushEvent(&event);
 
 	/* Keep repainting screen while box is open */
