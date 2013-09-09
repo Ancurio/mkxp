@@ -38,12 +38,12 @@ bool EventThread::keyStates[] = { false };
 
 EventThread::JoyState EventThread::joyState =
 {
-     0, 0, { false }
+	0, 0, { false }
 };
 
 EventThread::MouseState EventThread::mouseState =
 {
-    0, 0, { false }
+	0, 0, { false }
 };
 
 enum
