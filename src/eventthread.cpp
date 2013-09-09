@@ -46,11 +46,15 @@ EventThread::MouseState EventThread::mouseState =
     0, 0, { false }
 };
 
-const Uint32 REQUEST_TERMINATION   = SDL_USEREVENT+0;
-const Uint32 REQUEST_SETFULLSCREEN = SDL_USEREVENT+1;
-const Uint32 REQUEST_WINRESIZE     = SDL_USEREVENT+2;
-const Uint32 SHOW_MESSAGEBOX       = SDL_USEREVENT+3;
+enum
+{
+	REQUEST_FIRST = SDL_USEREVENT,
 
+	REQUEST_TERMINATION,
+	REQUEST_SETFULLSCREEN,
+	REQUEST_WINRESIZE,
+	SHOW_MESSAGEBOX
+};
 
 EventThread::EventThread()
     : fullscreen(false)
