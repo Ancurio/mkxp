@@ -4,4 +4,7 @@
 *.frag.xxd
 *.ttf.xxd
 
+Makefile
+
 mkxp
+xxd+
