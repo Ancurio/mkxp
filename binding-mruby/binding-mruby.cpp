@@ -43,6 +43,7 @@
 #include "texpool.h"
 #include "eventthread.h"
 #include "filesystem.h"
+#include "exception.h"
 
 #include "binding-types.h"
 #include "mrb-ext/marshal.h"
@@ -263,12 +264,25 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 
 	gState->fileSystem().openRead(ops, scriptPack.constData());
 
-	mrb_value scriptArray = marshalLoadInt(scriptMrb, &ops);
+	mrb_value scriptArray = mrb_nil_value();
+	QByteArray readError;
+
+	try
+	{
+		scriptArray = marshalLoadInt(scriptMrb, &ops);
+	}
+	catch (const Exception &e)
+	{
+		char buffer[512];
+		snprintf(buffer, sizeof(buffer), e.fmt.constData(), e.arg1.constData(), e.arg2.constData());
+		readError = QByteArray(": ") + QByteArray(buffer);
+	}
+
 	SDL_RWclose(&ops);
 
 	if (!mrb_array_p(scriptArray))
 	{
-		showError("Failed to read script data");
+		showError(QByteArray("Failed to read script data") + readError);
 		mrb_close(scriptMrb);
 		return;
 	}
