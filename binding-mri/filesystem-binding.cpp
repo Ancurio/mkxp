@@ -116,6 +116,7 @@ kernelLoadDataInt(const char *filename)
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
+	// FIXME need to catch exceptions here with begin rescue
 	VALUE result = rb_funcall(marsh, rb_intern("load"), 1, port);
 
 	rb_funcall(port, rb_intern("close"), 0);
