@@ -76,6 +76,11 @@ struct Vec2i
 	{
 		return x == other.x && y == other.y;
 	}
+
+	operator Vec2() const
+	{
+		return Vec2(x, y);
+	}
 };
 
 /* Simple Vertex */
