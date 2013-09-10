@@ -71,7 +71,8 @@ public:
 
 	void openRead(SDL_RWops &ops,
 	              const char *filename,
-	              FileType type = Undefined);
+	              FileType type = Undefined,
+	              bool freeOnClose = false);
 
 	bool exists(const char *filename,
 	            FileType type = Undefined);

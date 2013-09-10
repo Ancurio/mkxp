@@ -107,7 +107,7 @@ _TTF_Font *FontPool::request(const char *filename,
 	else
 	{
 		ops = SDL_AllocRW();
-		gState->fileSystem().openRead(*ops, path.constData(), FileSystem::Font);
+		gState->fileSystem().openRead(*ops, path.constData(), FileSystem::Font, true);
 	}
 
 	// FIXME 0.9 is guesswork at this point

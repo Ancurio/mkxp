@@ -711,11 +711,21 @@ static int SDL_RWopsClose(SDL_RWops *ops)
 	return (result != 0) ? 0 : -1;
 }
 
+static int SDL_RWopsCloseFree(SDL_RWops *ops)
+{
+	int result = SDL_RWopsClose(ops);
+
+	SDL_FreeRW(ops);
+
+	return result;
+}
+
 const Uint32 SDL_RWOPS_PHYSFS = SDL_RWOPS_UNKNOWN+10;
 
 void FileSystem::openRead(SDL_RWops &ops,
                           const char *filename,
-                          FileType type)
+                          FileType type,
+                          bool freeOnClose)
 {
 	PHYSFS_File *handle = openReadInt(filename, type);
 
@@ -723,7 +733,11 @@ void FileSystem::openRead(SDL_RWops &ops,
 	ops.seek  = SDL_RWopsSeek;
 	ops.read  = SDL_RWopsRead;
 	ops.write = SDL_RWopsWrite;
-	ops.close = SDL_RWopsClose;
+
+	if (freeOnClose)
+		ops.close = SDL_RWopsCloseFree;
+	else
+		ops.close = SDL_RWopsClose;
 
 	ops.type = SDL_RWOPS_PHYSFS;
 	ops.hidden.unknown.data1 = handle;
