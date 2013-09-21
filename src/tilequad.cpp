@@ -162,7 +162,7 @@ int build(const IntRect &sourceRect,
 }
 
 static void buildFrameInt(const IntRect &rect,
-                          FloatRect *quadRects /* 9 big */)
+                          FloatRect quadRects[9])
 {
 	int w  = rect.w; int h  = rect.h;
 	int x1 = rect.x; int x2 = x1 + w;
@@ -186,7 +186,7 @@ static void buildFrameInt(const IntRect &rect,
 }
 
 int buildFrameSource(const IntRect &rect,
-                     Vertex *vert /* 36 big */)
+                     Vertex vert[36])
 {
 	FloatRect quadRects[9];
 
@@ -199,7 +199,7 @@ int buildFrameSource(const IntRect &rect,
 }
 
 int buildFrame(const IntRect &rect,
-               Vertex *vert /* 36 big */)
+               Vertex vert[36])
 {
 	FloatRect quadRects[9];
 

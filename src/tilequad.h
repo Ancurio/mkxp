@@ -58,10 +58,10 @@ namespace TileQuads
 
 	/* Build a quad "frame" (see Window cursor_rect) */
 	int buildFrame(const IntRect &rect,
-				   Vertex *vert /* 36 big */);
+				   Vertex vert[36]);
 
 	int buildFrameSource(const IntRect &rect,
-						 Vertex *vert /* 36 big */);
+	                     Vertex vert[36]);
 }
 
 #endif // TILEQUAD_H
