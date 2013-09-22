@@ -4,7 +4,7 @@ TEMPLATE = app
 QT = core
 TARGET = mkxp
 DEPENDPATH += src shader assets
-INCLUDEPATH += . src SFML/include libsigc++
+INCLUDEPATH += . src
 
 isEmpty(BINDING) {
 	BINDING = BINDING_MRI
@@ -91,11 +91,22 @@ EMBED = shader/transSimple.frag \
         shader/trans.frag \
         shader/hue.frag \
         shader/sprite.frag \
+        shader/plane.frag \
         shader/bitmapBlit.frag \
+        shader/simple.frag \
+        shader/simpleColor.frag \
+        shader/simpleAlpha.frag \
+        shader/simple.vert \
+        shader/simpleColor.vert \
+        shader/sprite.vert \
         assets/liberation.ttf
 
+defineReplace(xxdOutput) {
+	return($$basename(1).xxd)
+}
+
 # xxd
-xxd.output = ${QMAKE_FILE_NAME}.xxd
+xxd.output_function = xxdOutput
 xxd.commands = xxd -i ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
 xxd.depends = $$EMBED
 xxd.input = EMBED
