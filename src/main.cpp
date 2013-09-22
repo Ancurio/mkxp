@@ -105,6 +105,7 @@ int rgssThreadFun(void *userdata)
 	/* Start script execution */
 	scriptBinding->execute();
 
+	threadData->rqTermAck = true;
 	threadData->ethread->requestTerminate();
 
 	GlobalState::finiInstance();
