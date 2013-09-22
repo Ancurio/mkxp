@@ -165,10 +165,15 @@ struct Rect : public Serializable
 		return !(x || y || width || height);
 	}
 
-	DECL_ATTR_INLINE(X,      int, x)
-	DECL_ATTR_INLINE(Y,      int, y)
-	DECL_ATTR_INLINE(Width,  int, width)
-	DECL_ATTR_INLINE(Height, int, height)
+	void setX(int value);
+	void setY(int value);
+	void setWidth(int value);
+	void setHeight(int value);
+
+	int getX() const { return x; }
+	int getY() const { return y; }
+	int getWidth() const { return width; }
+	int getHeight() const { return height; }
 
 	int serialSize() const;
 	void serialize(char *buffer) const;

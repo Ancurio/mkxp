@@ -284,6 +284,30 @@ void Rect::empty()
 	valueChanged();
 }
 
+void Rect::setX(int value)
+{
+	x = value;
+	valueChanged();
+}
+
+void Rect::setY(int value)
+{
+	y = value;
+	valueChanged();
+}
+
+void Rect::setWidth(int value)
+{
+	width = value;
+	valueChanged();
+}
+
+void Rect::setHeight(int value)
+{
+	height = value;
+	valueChanged();
+}
+
 int Rect::serialSize() const
 {
 	return 4 * 4;
