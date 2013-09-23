@@ -54,7 +54,7 @@ Place a recent version of ruby in the project folder and build it.
 ### mruby binding:
 Place a recent version of mruby in the project folder and build it.
 
-To run mkxp, you should have a graphics card capable of at least **OpenGL 3.0**
+To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed
 
 ## Building
 
