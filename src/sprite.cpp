@@ -304,12 +304,24 @@ void Sprite::draw()
 	if (emptyFlashFlag)
 		return;
 
-	if (p->color->hasEffect() || p->tone->hasEffect() || p->opacity != 255 || flashing || p->bushDepth != 0)
+	p->bitmap->flush();
+
+	ShaderBase *base;
+
+	bool renderEffect = p->color->hasEffect() ||
+	                    p->tone->hasEffect()  ||
+	                    p->opacity != 255     ||
+	                    flashing              ||
+	                    p->bushDepth != 0;
+
+	if (renderEffect)
 	{
 		SpriteShader &shader = gState->spriteShader();
 
 		shader.bind();
-		shader.setFlash(Vec4());
+		shader.applyViewportProj();
+		shader.setSpriteMat(p->trans.getMatrix());
+
 		shader.setTone(p->tone->norm);
 		shader.setOpacity(p->opacity.norm);
 		shader.setBushDepth(p->efBushDepth);
@@ -321,23 +333,26 @@ void Sprite::draw()
 			                 &flashColor : &p->color->norm;
 
 		shader.setColor(*blend);
+
+		base = &shader;
+	}
+	else
+	{
+		SimpleSpriteShader &shader = gState->simpleSpriteShader();
+		shader.bind();
+
+		shader.setSpriteMat(p->trans.getMatrix());
+		shader.applyViewportProj();
+		base = &shader;
 	}
 
 	glState.blendMode.pushSet(p->blendType);
 
-	glPushMatrix();
-	glLoadMatrixf(p->trans.getMatrix());
-
-	p->bitmap->flush();
-	p->bitmap->bindTexWithMatrix();
+	p->bitmap->bindTex(*base);
 
 	p->quad.draw();
 
-	glPopMatrix();
-
 	glState.blendMode.pop();
-
-	FragShader::unbind();
 }
 
 void Sprite::onGeometryChange(const Scene::Geometry &geo)

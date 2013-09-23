@@ -55,10 +55,10 @@ struct BitmapPrivate
 		font = &gState->defaultFont();
 	}
 
-	void bindTextureWithMatrix()
+	void bindTexture(ShaderBase &shader)
 	{
 		TEX::bind(tex.tex);
-		TEX::bindMatrix(tex.width, tex.height);
+		shader.setTexSize(Vec2i(tex.width, tex.height));
 	}
 
 	void bindFBO()
@@ -66,14 +66,15 @@ struct BitmapPrivate
 		FBO::bind(tex.fbo, FBO::Draw);
 	}
 
-	void pushSetViewport() const
+	void pushSetViewport(ShaderBase &shader) const
 	{
-		glState.pushSetViewport(tex.width, tex.height);
+		glState.viewport.pushSet(IntRect(0, 0, tex.width, tex.height));
+		shader.applyViewportProj();
 	}
 
 	void popViewport() const
 	{
-		glState.popViewport();
+		glState.viewport.pop();
 	}
 
 	void blitQuad(Quad &quad)
@@ -88,9 +89,12 @@ struct BitmapPrivate
 		if (pointArray.count() == 0)
 			return;
 
-		TEX::unbind();
+		SimpleColorShader &shader = gState->simpleColorShader();
+		shader.bind();
+		shader.setTranslation(Vec2i());
+
 		bindFBO();
-		pushSetViewport();
+		pushSetViewport(shader);
 		glState.blendMode.pushSet(BlendNone);
 
 		pointArray.commit();
@@ -266,14 +270,13 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		quad.setTexPosRect(sourceRect, destRect);
 		quad.setColor(Vec4(1, 1, 1, normOpacity));
 
-		source.p->bindTextureWithMatrix();
+		source.p->bindTexture(shader);
 		p->bindFBO();
-		p->pushSetViewport();
+		p->pushSetViewport(shader);
 
 		p->blitQuad(quad);
 
 		p->popViewport();
-		shader.unbind();
 	}
 
 	modified();
@@ -311,6 +314,10 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	flush();
 
+	SimpleColorShader &shader = gState->simpleColorShader();
+	shader.bind();
+	shader.setTranslation(Vec2i());
+
 	Quad &quad = gState->gpQuad();
 
 	if (vertical)
@@ -330,9 +337,8 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	quad.setPosRect(rect);
 
-	TEX::unbind();
 	p->bindFBO();
-	p->pushSetViewport();
+	p->pushSetViewport(shader);
 
 	p->blitQuad(quad);
 
@@ -384,8 +390,8 @@ Vec4 Bitmap::getPixel(int x, int y) const
 
 	p->bindFBO();
 
-	glState.viewport.push();
-	Vec4 pixel = FBO::getPixel(x, y, width(), height());
+	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
+	Vec4 pixel = FBO::getPixel(x, y);
 	glState.viewport.pop();
 
 	return pixel;
@@ -424,17 +430,18 @@ void Bitmap::hueChange(int hue)
 	HueShader &shader = gState->hueShader();
 	shader.bind();
 	shader.setHueAdjust(hueAdj);
-	shader.setInputTexture(p->tex.tex);
 
 	FBO::bind(newTex.fbo, FBO::Draw);
-	TEX::bindMatrix(width(), height());
-	p->pushSetViewport();
+	p->pushSetViewport(shader);
+	p->bindTexture(shader);
 
 	p->blitQuad(quad);
 
 	shader.unbind();
 
 	p->popViewport();
+
+	TEX::unbind();
 
 	gState->texPool().release(p->tex);
 	p->tex = newTex;
@@ -501,7 +508,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 
 	FloatRect posRect(alignX, alignY, txtSurf->w * squeeze, txtSurf->h);
 
-	Vec2 gpTexSize;
+	Vec2i gpTexSize;
 	gState->ensureTexSize(txtSurf->w, txtSurf->h, gpTexSize);
 
 //	if (str[1] != '\0')
@@ -515,11 +522,12 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		FBO::blit(posRect.x, posRect.y, 0, 0, posRect.w, posRect.h);
 
 		FloatRect bltRect(0, 0,
-		                  gpTexSize.x / gpTex2.width,
-		                  gpTexSize.y / gpTex2.height);
+		                  (float) gpTexSize.x / gpTex2.width,
+		                  (float) gpTexSize.y / gpTex2.height);
 
 		BltShader &shader = gState->bltShader();
 		shader.bind();
+		shader.setTexSize(gpTexSize);
 		shader.setSource();
 		shader.setDestination(gpTex2.tex);
 		shader.setSubRect(bltRect);
@@ -536,15 +544,13 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	SDL_FreeSurface(txtSurf);
 
 	p->bindFBO();
-	p->pushSetViewport();
+	p->pushSetViewport(gState->bltShader());
 	glState.blendMode.pushSet(BlendNone);
 
 	quad.draw();
 
 	glState.blendMode.pop();
 	p->popViewport();
-
-	FragShader::unbind();
 
 	modified();
 }
@@ -568,6 +574,9 @@ DEF_ATTR_SIMPLE(Bitmap, Font, Font*, p->font)
 
 void Bitmap::flush() const
 {
+	if (isDisposed())
+		return;
+
 	p->flushPoints();
 }
 
@@ -576,9 +585,9 @@ TEXFBO &Bitmap::getGLTypes()
 	return p->tex;
 }
 
-void Bitmap::bindTexWithMatrix()
+void Bitmap::bindTex(ShaderBase &shader)
 {
-	p->bindTextureWithMatrix();
+	p->bindTexture(shader);
 }
 
 void Bitmap::releaseResources()

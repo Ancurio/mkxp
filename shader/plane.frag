@@ -5,9 +5,7 @@ uniform vec4 tone;
 
 uniform float opacity;
 uniform vec4 color;
-
-uniform float bushDepth;
-uniform float bushOpacity;
+uniform vec4 flash;
 
 varying vec2 v_texCoord;
 
@@ -31,9 +29,8 @@ void main()
 	/* Apply color */
 	frag.rgb = mix(frag.rgb, color.rgb, color.a);
 
-	/* Apply bush alpha by mathematical if */
-	float underBush = float(v_texCoord.y < bushDepth);
-	frag.a *= clamp(bushOpacity + underBush, 0, 1);
+	/* Apply flash */
+	frag.rgb = mix(frag.rgb, flash.rgb, flash.a);
 	
 	gl_FragColor = frag;
 }

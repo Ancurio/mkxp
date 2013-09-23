@@ -419,17 +419,20 @@ struct WindowPrivate
 		TEX::unbind();
 
 		FBO::bind(baseTex.fbo, FBO::Draw);
-		glState.pushSetViewport(baseTex.width, baseTex.height);
+		glState.viewport.pushSet(IntRect(0, 0, baseTex.width, baseTex.height));
 		glState.clearColor.pushSet(Vec4());
+
+		SimpleAlphaShader &shader = gState->simpleAlphaShader();
+		shader.bind();
+		shader.applyViewportProj();
+		shader.setTranslation(Vec2i());
 
 		/* Clear texture */
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		/* Repaint base */
-		windowskin->flush();
-		windowskin->bindTexWithMatrix();
+		windowskin->bindTex(shader);
 		TEX::setSmooth(true);
-		glState.pushSetViewport(baseTex.width, baseTex.height);
 
 		/* We need to blit the background without blending,
 		 * because we want to retain its correct alpha value.
@@ -443,12 +446,10 @@ struct WindowPrivate
 
 		baseQuadArray.draw(backgroundVert.count, baseQuadArray.count()-backgroundVert.count);
 
-		glState.blendMode.pop();
-		glState.popViewport();
-		TEX::setSmooth(false);
-
 		glState.clearColor.pop();
-		glState.popViewport();
+		glState.blendMode.pop();
+		glState.viewport.pop();
+		TEX::setSmooth(false);
 	}
 
 	void buildControlsVert()
@@ -508,6 +509,12 @@ struct WindowPrivate
 	{
 		bool updateBaseQuadArray = false;
 
+		if (windowskin)
+			windowskin->flush();
+
+		if (contents)
+			contents->flush();
+
 		if (baseVertDirty)
 		{
 			buildBaseVert();
@@ -548,28 +555,30 @@ struct WindowPrivate
 		if (size == Vec2i(0, 0))
 			return;
 
-		glPushMatrix();
-		glLoadIdentity();
-		glTranslatef(position.x + sceneOffset.x,
-		             position.y + sceneOffset.y, 0);
+		Vec2i trans(position.x + sceneOffset.x,
+		            position.y + sceneOffset.y);
+
+		SimpleAlphaShader &shader = gState->simpleAlphaShader();
+		shader.bind();
+		shader.applyViewportProj();
+		shader.setTranslation(trans);
 
 		if (useBaseTex)
 		{
-			TEX::bindWithMatrix(baseTex.tex, baseTex.width, baseTex.height);
+			shader.setTexSize(Vec2i(baseTex.width, baseTex.height));
+
+			TEX::bind(baseTex.tex);
 			baseTexQuad.draw();
 		}
 		else
 		{
-			windowskin->flush();
-			windowskin->bindTexWithMatrix();
+			windowskin->bindTex(shader);
 			TEX::setSmooth(true);
 
 			baseQuadArray.draw();
 
 			TEX::setSmooth(false);
 		}
-
-		glPopMatrix();
 	}
 
 	void drawControls()
@@ -591,10 +600,6 @@ struct WindowPrivate
 		int effectX = position.x + sceneOffset.x;
 		int effectY = position.y + sceneOffset.y;
 
-		glPushMatrix();
-		glLoadIdentity();
-		glTranslatef(effectX, effectY, 0);
-
 		IntRect windowRect(effectX, effectY, size.x, size.y);
 		IntRect contentsRect(effectX+16, effectY+16, size.x-32, size.y-32);
 
@@ -602,24 +607,30 @@ struct WindowPrivate
 		glState.scissorBox.push();
 		glState.scissorBox.setIntersect(windowRect);
 
+		SimpleAlphaShader &shader = gState->simpleAlphaShader();
+		shader.bind();
+		shader.applyViewportProj();
+		shader.setTranslation(Vec2i(effectX, effectY));
+
 		/* Draw arrows / cursors */
-		windowskin->bindTexWithMatrix();
+		windowskin->bindTex(shader);
 		controlsQuadArray.draw(0, controlsQuadCount);
 
 		if (contents)
 		{
 			/* Draw contents bitmap */
 			glState.scissorBox.setIntersect(contentsRect);
-			glTranslatef(16-contentsOffset.x, 16-contentsOffset.y, 0);
 
-			contents->flush();
-			contents->bindTexWithMatrix();
+			effectX += 16-contentsOffset.x;
+			effectY += 16-contentsOffset.y;
+			shader.setTranslation(Vec2i(effectX, effectY));
+
+			contents->bindTex(shader);
 			contentsQuad.draw();
 		}
 
 		glState.scissorBox.pop();
 		glState.scissorTest.pop();
-		glPopMatrix();
 	}
 
 	void updateControls()

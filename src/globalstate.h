@@ -42,7 +42,12 @@ class Graphics;
 class Input;
 class Audio;
 class GLState;
+class SimpleShader;
+class SimpleColorShader;
+class SimpleAlphaShader;
+class SimpleSpriteShader;
 class SpriteShader;
+class PlaneShader;
 class TransShader;
 class SimpleTransShader;
 class HueShader;
@@ -52,7 +57,7 @@ class FontPool;
 class Font;
 struct GlobalIBO;
 struct Config;
-struct Vec2;
+struct Vec2i;
 
 struct GlobalState
 {
@@ -76,7 +81,12 @@ struct GlobalState
 
 	GLState &_glState();
 
+	SimpleShader &simpleShader();
+	SimpleColorShader &simpleColorShader();
+	SimpleAlphaShader &simpleAlphaShader();
+	SimpleSpriteShader &simpleSpriteShader();
 	SpriteShader &spriteShader();
+	PlaneShader &planeShader();
 	TransShader &transShader();
 	SimpleTransShader &sTransShader();
 	HueShader &hueShader();
@@ -98,7 +108,7 @@ struct GlobalState
 
 	/* Global general purpose texture */
 	void bindTex();
-	void ensureTexSize(int minW, int minH, Vec2 &currentSizeOut);
+	void ensureTexSize(int minW, int minH, Vec2i &currentSizeOut);
 
 	TEXFBO &gpTexFBO(int minW, int minH);
 

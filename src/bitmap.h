@@ -29,6 +29,7 @@
 #include "sigc++/signal.h"
 
 class Font;
+class ShaderBase;
 struct TEXFBO;
 
 struct BitmapPrivate;
@@ -103,7 +104,10 @@ public:
 	/* <internal> */
 	void flush() const;
 	TEXFBO &getGLTypes();
-	void bindTexWithMatrix();
+
+	/* Binds the backing texture and sets the correct
+	 * texture size uniform in shader */
+	void bindTex(ShaderBase &shader);
 
 	sigc::signal<void> modified;
 

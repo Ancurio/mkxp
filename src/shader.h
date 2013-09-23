@@ -24,27 +24,101 @@
 
 #include "etc-internal.h"
 #include "gl-util.h"
+#include "glstate.h"
 
-class FragShader
+class Shader
 {
 public:
 	void bind();
 	static void unbind();
 
+	enum Attribute
+	{
+		Position = 0,
+		TexCoord = 1,
+		Color = 2
+	};
+
 protected:
-	~FragShader();
+	Shader();
+	~Shader();
 
-	void init(const unsigned char *source, int length);
-	void initFromFile(const char *filename);
+	void init(const unsigned char *vert, int vertSize,
+	          const unsigned char *frag, int fragSize);
+	void initFromFile(const char *vertFile, const char *fragFile);
 
-	void setVec4Uniform(GLint location, const Vec4 &vec);
-	void setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture);
+	static void setVec4Uniform(GLint location, const Vec4 &vec);
+	static void setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture);
 
-	GLuint shader;
+	GLuint vertShader, fragShader;
 	GLuint program;
 };
 
-class TransShader : public FragShader
+class ShaderBase : public Shader
+{
+public:
+
+	struct GLProjMat : public GLProperty<Vec2i>
+	{
+	private:
+		void apply(const Vec2i &value);
+		GLint u_mat;
+
+		friend class ShaderBase;
+	};
+
+	/* Stack is not used (only 'set()') */
+	GLProjMat projMat;
+
+	/* Retrieves the current glState.viewport size,
+	 * calculates the corresponding ortho projection matrix
+	 * and loads it into the shaders uniform */
+	void applyViewportProj();
+
+	void setTexSize(const Vec2i &value);
+	void setTranslation(const Vec2i &value);
+
+protected:
+	void init();
+
+	GLint u_texSizeInv, u_translation;
+};
+
+class SimpleShader : public ShaderBase
+{
+public:
+	SimpleShader();
+
+	void setTexOffsetX(int value);
+
+private:
+	GLint u_texOffsetX;
+};
+
+class SimpleColorShader : public ShaderBase
+{
+public:
+	SimpleColorShader();
+};
+
+class SimpleAlphaShader : public ShaderBase
+{
+public:
+	SimpleAlphaShader();
+};
+
+class SimpleSpriteShader : public ShaderBase
+{
+public:
+	SimpleSpriteShader();
+
+	void setSpriteMat(const float value[16]);
+
+private:
+	GLint u_spriteMat;
+};
+
+class TransShader : public ShaderBase
 {
 public:
 	TransShader();
@@ -59,7 +133,7 @@ private:
 	GLint u_currentScene, u_frozenScene, u_transMap, u_prog, u_vague;
 };
 
-class SimpleTransShader : public FragShader
+class SimpleTransShader : public ShaderBase
 {
 public:
 	SimpleTransShader();
@@ -72,24 +146,37 @@ private:
 	GLint u_currentScene, u_frozenScene, u_prog;
 };
 
-class SpriteShader : public FragShader
+class SpriteShader : public ShaderBase
 {
 public:
 	SpriteShader();
 
-	void resetUniforms();
+	void setSpriteMat(const float value[16]);
 	void setTone(const Vec4 &value);
 	void setColor(const Vec4 &value);
-	void setFlash(const Vec4 &value);
 	void setOpacity(float value);
 	void setBushDepth(float value);
 	void setBushOpacity(float value);
 
 private:
-	GLint u_tone, u_opacity, u_color, u_flash, u_bushDepth, u_bushOpacity;
+	GLint u_spriteMat, u_tone, u_opacity, u_color, u_bushDepth, u_bushOpacity;
 };
 
-class HueShader : public FragShader
+class PlaneShader : public ShaderBase
+{
+public:
+	PlaneShader();
+
+	void setTone(const Vec4 &value);
+	void setColor(const Vec4 &value);
+	void setFlash(const Vec4 &value);
+	void setOpacity(float value);
+
+private:
+	GLint u_tone, u_color, u_flash, u_opacity;
+};
+
+class HueShader : public ShaderBase
 {
 public:
 	HueShader();
@@ -102,7 +189,7 @@ private:
 };
 
 /* Bitmap blit */
-class BltShader : public FragShader
+class BltShader : public ShaderBase
 {
 public:
 	BltShader();

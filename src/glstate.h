@@ -124,13 +124,6 @@ public:
 	GLBlendMode blendMode;
 	GLViewport viewport;
 
-	/* These functions pushSet/pop both the viewport
-	 * and a glOrtho projection matrix.
-	 * Useful for setting up rendering to FBOs of differing sizes */
-	void setViewport(int width, int height);
-	void pushSetViewport(int width, int height);
-	void popViewport();
-
 	struct Caps
 	{
 		int maxTexSize;

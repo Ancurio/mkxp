@@ -301,14 +301,15 @@ struct TilemapPrivate
 
 		tiles.vao = VAO::gen();
 		VAO::bind(tiles.vao);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		glEnableVertexAttribArray(Shader::Position);
+		glEnableVertexAttribArray(Shader::TexCoord);
 
 		VBO::bind(tiles.vbo);
 		gState->bindQuadIBO();
 
-		glVertexPointer  (2, GL_FLOAT, sizeof(SVertex), SVertex::posOffset());
-		glTexCoordPointer(2, GL_FLOAT, sizeof(SVertex), SVertex::texPosOffset());
+		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
+		glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
 
 		VAO::unbind();
 		VBO::unbind();
@@ -321,14 +322,14 @@ struct TilemapPrivate
 
 		VAO::bind(flash.vao);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
+		glEnableVertexAttribArray(Shader::Color);
+		glEnableVertexAttribArray(Shader::Position);
 
 		VBO::bind(flash.vbo);
 		gState->bindQuadIBO();
 
-		glVertexPointer(2, GL_FLOAT, sizeof(CVertex), CVertex::posOffset());
-		glColorPointer(4, GL_FLOAT, sizeof(CVertex), CVertex::colorOffset());
+		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::colorOffset());
+		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::posOffset());
 
 		VAO::unbind();
 		VBO::unbind();
@@ -709,11 +710,11 @@ struct TilemapPrivate
 		gState->ensureQuadIBO(quadCount);
 	}
 
-	void bindAtlasWithMatrix()
+	void bindAtlas(SimpleShader &shader)
 	{
 		TEX::bind(atlas.gl.tex);
-		TEX::bindMatrix(atlas.animated ? atlasFrameW * 4 : atlasFrameW, atlas.frameH,
-		                atlas.frameIdx * atlasFrameW);
+		shader.setTexSize(Vec2i(atlas.animated ? atlasFrameW * 4 : atlasFrameW, atlas.frameH));
+		shader.setTexOffsetX(atlas.frameIdx * atlasFrameW);
 	}
 
 	Vec2i getReplicaOffset(Position pos)
@@ -732,12 +733,12 @@ struct TilemapPrivate
 		return offset;
 	}
 
-	void translateMatrix(Position replicaPos)
+	void setTranslation(Position replicaPos, ShaderBase &shader)
 	{
 		Vec2i repOff = getReplicaOffset(replicaPos);
+		repOff += dispPos;
 
-		glTranslatef(dispPos.x + repOff.x,
-		             dispPos.y + repOff.y, 0);
+		shader.setTranslation(repOff);
 	}
 
 	bool sampleFlashColor(Vec4 &out, int x, int y)
@@ -894,11 +895,15 @@ GroundLayer::GroundLayer(TilemapPrivate *p, Viewport *viewport)
 
 void GroundLayer::draw()
 {
-	p->bindAtlasWithMatrix();
+	SimpleShader &shader = gState->simpleShader();
+	shader.bind();
+	shader.applyViewportProj();
+
+	p->bindAtlas(shader);
 
 	VAO::bind(p->tiles.vao);
 
-	glPushMatrix();
+	p->setTranslation(Normal, shader);
 
 	for (int i = 0; i < positionsN; ++i)
 	{
@@ -907,8 +912,7 @@ void GroundLayer::draw()
 		if (!(p->replicas & pos))
 			continue;
 
-		glLoadIdentity();
-		p->translateMatrix(pos);
+		p->setTranslation(pos, shader);
 
 		drawInt();
 	}
@@ -919,6 +923,10 @@ void GroundLayer::draw()
 		glState.blendMode.pushSet(BlendAddition);
 		glState.texture2D.pushSet(false);
 
+		SimpleColorShader &shader = gState->simpleColorShader();
+		shader.bind();
+		shader.applyViewportProj();
+
 		for (int i = 0; i < positionsN; ++i)
 		{
 			const Position pos = positions[i];
@@ -926,8 +934,7 @@ void GroundLayer::draw()
 			if (!(p->replicas & pos))
 				continue;
 
-			glLoadIdentity();
-			p->translateMatrix(pos);
+			p->setTranslation(pos, shader);
 
 			drawFlashInt();
 		}
@@ -935,8 +942,6 @@ void GroundLayer::draw()
 		glState.texture2D.pop();
 		glState.blendMode.pop();
 	}
-
-	glPopMatrix();
 
 	VAO::unbind();
 }
@@ -970,13 +975,15 @@ ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport, int index)
 
 void ScanRow::draw()
 {
-	p->bindAtlasWithMatrix();
+	SimpleShader &shader = gState->simpleShader();
+	shader.bind();
+	shader.applyViewportProj();
+
+	p->bindAtlas(shader);
 
 	VAO::bind(p->tiles.vao);
 
-	glPushMatrix();
-	glLoadIdentity();
-	p->translateMatrix(Normal);
+	p->setTranslation(Normal, shader);
 
 	for (int i = 0; i < positionsN; ++i)
 	{
@@ -985,13 +992,10 @@ void ScanRow::draw()
 		if (!(p->replicas & pos))
 			continue;
 
-		glLoadIdentity();
-		p->translateMatrix(pos);
+		p->setTranslation(pos, shader);
 
 		drawInt();
 	}
-
-	glPopMatrix();
 
 	VAO::unbind();
 }

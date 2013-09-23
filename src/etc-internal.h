@@ -72,9 +72,17 @@ struct Vec2i
 	    : x(x), y(y)
 	{}
 
-	bool operator==(const Vec2i &other)
+	bool operator==(const Vec2i &other) const
 	{
 		return x == other.x && y == other.y;
+	}
+
+	Vec2i &operator+=(const Vec2i &other)
+	{
+		x += other.x;
+		y += other.y;
+
+		return *this;
 	}
 
 	operator Vec2() const
@@ -163,6 +171,16 @@ struct IntRect
 	{
 		return (x == other.x && y == other.y &&
 		        w == other.w && h == other.h);
+	}
+
+	Vec2i pos() const
+	{
+		return Vec2i(x, y);
+	}
+
+	Vec2i size() const
+	{
+		return Vec2i(w, h);
 	}
 };
 

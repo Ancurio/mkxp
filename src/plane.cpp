@@ -170,29 +170,41 @@ void Plane::draw()
 		p->quadSourceDirty = false;
 	}
 
+	ShaderBase *base;
+
 	if (p->color->hasEffect() || p->tone->hasEffect() || p->opacity != 255)
 	{
-		SpriteShader &shader = gState->spriteShader();
+		PlaneShader &shader = gState->planeShader();
 
 		shader.bind();
+		shader.applyViewportProj();
 		shader.setTone(p->tone->norm);
 		shader.setColor(p->color->norm);
 		shader.setFlash(Vec4());
 		shader.setOpacity(p->opacity.norm);
-		shader.setBushOpacity(1);
-		shader.setBushDepth(0);
+
+		base = &shader;
+	}
+	else
+	{
+		SimpleShader &shader = gState->simpleShader();
+
+		shader.bind();
+		shader.applyViewportProj();
+		shader.setTranslation(Vec2i());
+
+		base = &shader;
 	}
 
 	glState.blendMode.pushSet(p->blendType);
 
 	p->bitmap->flush();
-	p->bitmap->bindTexWithMatrix();
+	p->bitmap->bindTex(*base);
 	TEX::setRepeat(true);
 
 	p->quad.draw();
 
 	TEX::setRepeat(false);
-	FragShader::unbind();
 }
 
 void Plane::onGeometryChange(const Scene::Geometry &geo)

@@ -26,6 +26,7 @@
 #include "gl-util.h"
 #include "globalstate.h"
 #include "global-ibo.h"
+#include "shader.h"
 
 typedef uint32_t index_t;
 #define _GL_INDEX_TYPE GL_UNSIGNED_INT
@@ -49,13 +50,13 @@ struct ColorQuadArray
 		VBO::bind(vbo);
 		gState->bindQuadIBO();
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
+		glEnableVertexAttribArray(Shader::Color);
+		glEnableVertexAttribArray(Shader::Position);
+		glEnableVertexAttribArray(Shader::TexCoord);
 
-		glVertexPointer  (2, GL_FLOAT, sizeof(Vertex), Vertex::posOffset());
-		glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), Vertex::texPosOffset());
-		glColorPointer   (4, GL_FLOAT, sizeof(Vertex), Vertex::colorOffset());
+		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
+		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
+		glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
 
 		VAO::unbind();
 		IBO::unbind();
@@ -120,12 +121,11 @@ struct PointArray
 		VAO::bind(vao);
 		VBO::bind(vbo);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableVertexAttribArray(Shader::Color);
+		glEnableVertexAttribArray(Shader::Position);
 
-		glVertexPointer(2, GL_FLOAT, sizeof(Vertex), (const GLvoid*) 0);
-		glColorPointer (4, GL_FLOAT, sizeof(Vertex), (const GLvoid*) sizeof(SVertex));
+		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
+		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
 
 		VAO::unbind();
 		VBO::unbind();

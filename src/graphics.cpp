@@ -288,7 +288,7 @@ struct PingPong
 private:
 	void bind()
 	{
-		TEX::bindWithMatrix(rt[srcInd].tex, screenW, screenH, true);
+		TEX::bind(rt[srcInd].tex);
 		FBO::bind(rt[srcInd].fbo, FBO::Read);
 		FBO::bind(rt[dstInd].fbo, FBO::Draw);
 	}
@@ -322,7 +322,7 @@ public:
 
 		pp.startRender();
 
-		glState.setViewport(w, h);
+		glState.viewport.set(IntRect(0, 0, w, h));
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -330,9 +330,12 @@ public:
 
 		if (brightEffect)
 		{
-			glState.texture2D.pushSet(false);
+			SimpleColorShader &shader = gState->simpleColorShader();
+			shader.bind();
+			shader.applyViewportProj();
+			shader.setTranslation(Vec2i());
+
 			brightnessQuad.draw();
-			glState.texture2D.pop();
 		}
 
 		pp.finishRender();
@@ -343,16 +346,16 @@ public:
 		pp.swapRender();
 		pp.blitFBOs();
 
-		SpriteShader &shader = gState->spriteShader();
+		PlaneShader &shader = gState->planeShader();
 		shader.bind();
-		shader.resetUniforms();
 		shader.setColor(c);
 		shader.setFlash(f);
 		shader.setTone(t);
+		shader.applyViewportProj();
+		shader.setTexSize(geometry.rect.size());
 
 		glState.blendMode.pushSet(BlendNone);
 
-		TEX::bindMatrix(geometry.rect.w, geometry.rect.h);
 		screenQuad.draw();
 
 		glState.blendMode.pop();
@@ -687,20 +690,22 @@ void Graphics::transition(int duration,
 	{
 		TransShader &shader = gState->transShader();
 		shader.bind();
+		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
 		shader.setCurrentScene(p->currentScene.tex);
 		shader.setTransMap(transMap->getGLTypes().tex);
 		shader.setVague(vague / 512.0f);
+		shader.setTexSize(p->scRes);
 	}
 	else
 	{
 		SimpleTransShader &shader = gState->sTransShader();
 		shader.bind();
+		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
 		shader.setCurrentScene(p->currentScene.tex);
+		shader.setTexSize(p->scRes);
 	}
-
-	TEX::bindMatrix(p->scRes.x, p->scRes.y);
 
 	glState.blendMode.pushSet(BlendNone);
 
@@ -708,7 +713,6 @@ void Graphics::transition(int duration,
 	{
 		if (p->threadData->rqTerm)
 		{
-			FragShader::unbind();
 			delete transMap;
 			p->shutdown();
 		}
@@ -736,8 +740,6 @@ void Graphics::transition(int duration,
 	}
 
 	glState.blendMode.pop();
-
-	FragShader::unbind();
 
 	delete transMap;
 

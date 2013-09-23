@@ -27,6 +27,7 @@
 #include "gl-util.h"
 #include "globalstate.h"
 #include "global-ibo.h"
+#include "shader.h"
 
 struct Quad
 {
@@ -111,13 +112,13 @@ struct Quad
 		VBO::bind(vbo);
 		gState->bindQuadIBO();
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableVertexAttribArray(Shader::Color);
+		glEnableVertexAttribArray(Shader::Position);
+		glEnableVertexAttribArray(Shader::TexCoord);
 
-		glColorPointer   (4, GL_FLOAT, sizeof(Vertex), Vertex::colorOffset());
-		glVertexPointer  (2, GL_FLOAT, sizeof(Vertex), Vertex::posOffset());
-		glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), Vertex::texPosOffset());
+		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
+		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
+		glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
 
 		VAO::unbind();
 		VBO::unbind();

@@ -65,7 +65,12 @@ struct GlobalStatePrivate
 
 	GLState _glState;
 
+	SimpleShader simpleShader;
+	SimpleColorShader simpleColorShader;
+	SimpleAlphaShader simpleAlphaShader;
+	SimpleSpriteShader simpleSpriteShader;
 	SpriteShader spriteShader;
+	PlaneShader planeShader;
 	TransShader transShader;
 	SimpleTransShader sTransShader;
 	HueShader hueShader;
@@ -176,7 +181,12 @@ GSATT(Graphics&, graphics)
 GSATT(Input&, input)
 GSATT(Audio&, audio)
 GSATT(GLState&, _glState)
+GSATT(SimpleShader&, simpleShader)
+GSATT(SimpleColorShader&, simpleColorShader)
+GSATT(SimpleAlphaShader&, simpleAlphaShader)
+GSATT(SimpleSpriteShader&, simpleSpriteShader)
 GSATT(SpriteShader&, spriteShader)
+GSATT(PlaneShader&, planeShader)
 GSATT(TransShader&, transShader)
 GSATT(SimpleTransShader&, sTransShader)
 GSATT(HueShader&, hueShader)
@@ -204,10 +214,9 @@ void GlobalState::bindTex()
 {
 	TEX::bind(p->globalTex);
 	TEX::allocEmpty(p->globalTexW, p->globalTexH);
-	TEX::bindMatrix(p->globalTexW, p->globalTexH);
 }
 
-void GlobalState::ensureTexSize(int minW, int minH, Vec2 &currentSizeOut)
+void GlobalState::ensureTexSize(int minW, int minH, Vec2i &currentSizeOut)
 {
 	if (minW > p->globalTexW)
 		p->globalTexW = findNextPow2(minW);
@@ -215,7 +224,7 @@ void GlobalState::ensureTexSize(int minW, int minH, Vec2 &currentSizeOut)
 	if (minH > p->globalTexH)
 		p->globalTexH = findNextPow2(minH);
 
-	currentSizeOut = Vec2(p->globalTexW, p->globalTexH);
+	currentSizeOut = Vec2i(p->globalTexW, p->globalTexH);
 }
 
 TEXFBO &GlobalState::gpTexFBO(int minW, int minH)

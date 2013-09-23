@@ -93,37 +93,6 @@ void GLViewport::apply(const IntRect &value)
 	glViewport(value.x, value.y, value.w, value.h);
 }
 
-
-void GLState::setViewport(int width, int height)
-{
-	viewport.set(IntRect(0, 0, width, height));
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, width, 0, height, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-}
-
-void GLState::pushSetViewport(int width, int height)
-{
-	viewport.pushSet(IntRect(0, 0, width, height));
-
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, width, 0, height, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-}
-
-void GLState::popViewport()
-{
-	viewport.pop();
-
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-}
-
 GLState::Caps::Caps()
 {
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);

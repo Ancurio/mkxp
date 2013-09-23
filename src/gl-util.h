@@ -74,21 +74,6 @@ namespace TEX
 		bind(ID(0));
 	}
 
-	inline void bindMatrix(int width, int height, int xOffset = 0)
-	{
-		glMatrixMode(GL_TEXTURE);
-		glLoadIdentity();
-		glScalef(1.f / width, 1.f / height, 1.f);
-		glTranslatef(xOffset, 0, 0);
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	inline void bindWithMatrix(ID id, int width, int height, int xOffset = 0)
-	{
-		bind(id);
-		bindMatrix(width, height, xOffset);
-	}
-
 	inline void uploadImage(GLsizei width, GLsizei height, const void *data, GLenum format)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -218,11 +203,10 @@ namespace FBO
 		blit(srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH);
 	}
 
-	inline Vec4 getPixel(int x, int y, int texWidth, int texHeight)
+	inline Vec4 getPixel(int x, int y)
 	{
 		Vec4 pixel;
 
-		glViewport(0, 0, texWidth, texHeight);
 		glReadPixels(x, y, 1, 1, GL_RGBA, GL_FLOAT, &pixel.x);
 
 		return pixel;

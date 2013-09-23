@@ -20,72 +20,113 @@
 */
 
 #include "shader.h"
+#include "globalstate.h"
+#include "glstate.h"
 
 #include "GL/glew.h"
 
 #include <QFile>
 
-#include "../shader/sprite.frag.xxd"
-#include "../shader/hue.frag.xxd"
-#include "../shader/trans.frag.xxd"
-#include "../shader/transSimple.frag.xxd"
-#include "../shader/bitmapBlit.frag.xxd"
+#include "../sprite.frag.xxd"
+#include "../hue.frag.xxd"
+#include "../trans.frag.xxd"
+#include "../transSimple.frag.xxd"
+#include "../bitmapBlit.frag.xxd"
+#include "../plane.frag.xxd"
+#include "../simple.frag.xxd"
+#include "../simpleColor.frag.xxd"
+#include "../simpleAlpha.frag.xxd"
+#include "../simple.vert.xxd"
+#include "../simpleColor.vert.xxd"
+#include "../sprite.vert.xxd"
 
+
+#define INIT_SHADER(vert, frag) \
+	Shader::init(shader_##vert##_vert, shader_##vert##_vert_len, shader_##frag##_frag, shader_##frag##_frag_len)
 #define GET_U(name) u_##name = glGetUniformLocation(program, #name)
 
-FragShader::~FragShader()
+Shader::Shader()
+{
+	vertShader = glCreateShader(GL_VERTEX_SHADER);
+	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+	program = glCreateProgram();
+}
+
+Shader::~Shader()
 {
 	glUseProgram(0);
 	glDeleteProgram(program);
-	glDeleteShader(shader);
+	glDeleteShader(vertShader);
+	glDeleteShader(fragShader);
 }
 
-void FragShader::bind()
+void Shader::bind()
 {
 	glUseProgram(program);
 }
 
-void FragShader::unbind()
+void Shader::unbind()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glUseProgram(0);
 }
 
-void FragShader::init(const unsigned char *source, int length)
+void Shader::init(const unsigned char *vert, int vertSize,
+                  const unsigned char *frag, int fragSize)
 {
 	GLint success;
 
-	shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(shader, 1, (const GLchar**) &source, (const GLint*) &length);
-	glCompileShader(shader);
+	/* Compile vertex shader */
+	glShaderSource(vertShader, 1, (const GLchar**) &vert, (const GLint*) &vertSize);
+	glCompileShader(vertShader);
 
-	glGetObjectParameterivARB(shader, GL_COMPILE_STATUS, &success);
+	glGetObjectParameterivARB(vertShader, GL_COMPILE_STATUS, &success);
 	Q_ASSERT(success);
 
-	program = glCreateProgram();
-	glAttachShader(program, shader);
+	/* Compile fragment shader */
+	glShaderSource(fragShader, 1, (const GLchar**) &frag, (const GLint*) &fragSize);
+	glCompileShader(fragShader);
+
+	glGetObjectParameterivARB(fragShader, GL_COMPILE_STATUS, &success);
+	Q_ASSERT(success);
+
+	/* Link shader program */
+	glAttachShader(program, vertShader);
+	glAttachShader(program, fragShader);
+
+	glBindAttribLocation(program, Position, "position");
+	glBindAttribLocation(program, TexCoord, "texCoord");
+	glBindAttribLocation(program, Color, "color");
+
 	glLinkProgram(program);
 
 	glGetObjectParameterivARB(program, GL_LINK_STATUS, &success);
 	Q_ASSERT(success);
 }
 
-void FragShader::initFromFile(const char *filename)
+void Shader::initFromFile(const char *_vertFile, const char *_fragFile)
 {
-	QFile shaderFile(filename);
-	shaderFile.open(QFile::ReadOnly);
-	QByteArray contents = shaderFile.readAll();
-	shaderFile.close();
+	QFile vertFile(_vertFile);
+	vertFile.open(QFile::ReadOnly);
+	QByteArray vertContents = vertFile.readAll();
+	vertFile.close();
 
-	init((const unsigned char*) contents.constData(), contents.size());
+	QFile fragFile(_fragFile);
+	fragFile.open(QFile::ReadOnly);
+	QByteArray fragContents = fragFile.readAll();
+	fragFile.close();
+
+	init((const unsigned char*) vertContents.constData(), vertContents.size(),
+	     (const unsigned char*) fragContents.constData(), fragContents.size());
 }
 
-void FragShader::setVec4Uniform(GLint location, const Vec4 &vec)
+void Shader::setVec4Uniform(GLint location, const Vec4 &vec)
 {
 	glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
 }
 
-void FragShader::setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture)
+void Shader::setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture)
 {
 	GLenum texUnit = GL_TEXTURE0 + unitIndex;
 
@@ -95,11 +136,100 @@ void FragShader::setTexUniform(GLint location, unsigned unitIndex, TEX::ID textu
 	glActiveTexture(GL_TEXTURE0);
 }
 
+void ShaderBase::GLProjMat::apply(const Vec2i &value)
+{
+	/* glOrtho replacement */
+	const float a = 2.f / value.x;
+	const float b = 2.f / value.y;
+	const float c = -2.f;
+
+	GLfloat mat[16] =
+	{
+		 a,  0,  0,  0,
+		 0,  b,  0,  0,
+		 0,  0,  c,  0,
+		-1, -1, -1,  1
+	};
+
+	glUniformMatrix4fv(u_mat, 1, GL_FALSE, mat);
+}
+
+void ShaderBase::init()
+{
+	GET_U(texSizeInv);
+	GET_U(translation);
+
+	projMat.u_mat = glGetUniformLocation(program, "projMat");
+}
+
+void ShaderBase::applyViewportProj()
+{
+	const IntRect &vp = glState.viewport.get();
+	projMat.set(Vec2i(vp.w, vp.h));
+}
+
+void ShaderBase::setTexSize(const Vec2i &value)
+{
+	glUniform2f(u_texSizeInv, 1.f / value.x, 1.f / value.y);
+}
+
+void ShaderBase::setTranslation(const Vec2i &value)
+{
+	glUniform2f(u_translation, value.x, value.y);
+}
+
+
+SimpleShader::SimpleShader()
+{
+	INIT_SHADER(simple, simple);
+
+	ShaderBase::init();
+
+	GET_U(texOffsetX);
+}
+
+void SimpleShader::setTexOffsetX(int value)
+{
+	glUniform1f(u_texOffsetX, value);
+}
+
+
+SimpleColorShader::SimpleColorShader()
+{
+	INIT_SHADER(simpleColor, simpleColor);
+
+	ShaderBase::init();
+}
+
+
+SimpleAlphaShader::SimpleAlphaShader()
+{
+	INIT_SHADER(simpleColor, simpleAlpha);
+
+	ShaderBase::init();
+}
+
+
+SimpleSpriteShader::SimpleSpriteShader()
+{
+	INIT_SHADER(sprite, simple);
+
+	ShaderBase::init();
+
+	GET_U(spriteMat);
+}
+
+void SimpleSpriteShader::setSpriteMat(const float value[16])
+{
+	glUniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
+}
+
 
 TransShader::TransShader()
 {
-	init(shader_trans_frag,
-	     shader_trans_frag_len);
+	INIT_SHADER(simple, trans);
+
+	ShaderBase::init();
 
 	GET_U(currentScene);
 	GET_U(frozenScene);
@@ -136,8 +266,9 @@ void TransShader::setVague(float value)
 
 SimpleTransShader::SimpleTransShader()
 {
-	init(shader_transSimple_frag,
-	     shader_transSimple_frag_len);
+	INIT_SHADER(simple, transSimple);
+
+	ShaderBase::init();
 
 	GET_U(currentScene);
 	GET_U(frozenScene);
@@ -162,29 +293,21 @@ void SimpleTransShader::setProg(float value)
 
 SpriteShader::SpriteShader()
 {
-	init(shader_sprite_frag,
-	     shader_sprite_frag_len);
+	INIT_SHADER(sprite, sprite);
 
+	ShaderBase::init();
+
+	GET_U(spriteMat);
 	GET_U(tone);
 	GET_U(color);
-	GET_U(flash);
 	GET_U(opacity);
 	GET_U(bushDepth);
 	GET_U(bushOpacity);
-
-	bind();
-	resetUniforms();
-	unbind();
 }
 
-void SpriteShader::resetUniforms()
+void SpriteShader::setSpriteMat(const float value[16])
 {
-	setTone(Vec4());
-	setColor(Vec4());
-	setFlash(Vec4());
-	setOpacity(1);
-	setBushDepth(0);
-	setBushOpacity(0.5);
+	glUniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
 }
 
 void SpriteShader::setTone(const Vec4 &tone)
@@ -195,11 +318,6 @@ void SpriteShader::setTone(const Vec4 &tone)
 void SpriteShader::setColor(const Vec4 &color)
 {
 	setVec4Uniform(u_color, color);
-}
-
-void SpriteShader::setFlash(const Vec4 &flash)
-{
-	setVec4Uniform(u_flash, flash);
 }
 
 void SpriteShader::setOpacity(float value)
@@ -218,10 +336,44 @@ void SpriteShader::setBushOpacity(float value)
 }
 
 
+PlaneShader::PlaneShader()
+{
+	INIT_SHADER(simple, plane);
+
+	ShaderBase::init();
+
+	GET_U(tone);
+	GET_U(color);
+	GET_U(flash);
+	GET_U(opacity);
+}
+
+void PlaneShader::setTone(const Vec4 &tone)
+{
+	setVec4Uniform(u_tone, tone);
+}
+
+void PlaneShader::setColor(const Vec4 &color)
+{
+	setVec4Uniform(u_color, color);
+}
+
+void PlaneShader::setFlash(const Vec4 &flash)
+{
+	setVec4Uniform(u_flash, flash);
+}
+
+void PlaneShader::setOpacity(float value)
+{
+	glUniform1f(u_opacity, value);
+}
+
+
 HueShader::HueShader()
 {
-	init(shader_hue_frag,
-	     shader_hue_frag_len);
+	INIT_SHADER(simple, hue);
+
+	ShaderBase::init();
 
 	GET_U(hueAdjust);
 	GET_U(inputTexture);
@@ -240,8 +392,9 @@ void HueShader::setInputTexture(TEX::ID tex)
 
 BltShader::BltShader()
 {
-	init(shader_bitmapBlit_frag,
-	     shader_bitmapBlit_frag_len);
+	INIT_SHADER(simple, bitmapBlit);
+
+	ShaderBase::init();
 
 	GET_U(source);
 	GET_U(destination);
