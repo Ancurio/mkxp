@@ -34,6 +34,7 @@ struct Config
 	bool winResizable;
 	bool fullscreen;
 	bool fixedAspectRatio;
+	bool smoothScaling;
 	bool vsync;
 
 	int defScreenW;

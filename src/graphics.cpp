@@ -537,7 +537,7 @@ struct GraphicsPrivate
 	{
 		scSize = winSize;
 
-		if (!gState->config().fixedAspectRatio)
+		if (!threadData->config.fixedAspectRatio)
 		{
 			scOffset = Vec2i(0, 0);
 			return;
@@ -591,7 +591,8 @@ struct GraphicsPrivate
 	void blitBufferFlippedScaled()
 	{
 		FBO::blit(0, 0, scRes.x, scRes.y,
-		          scOffset.x, scSize.y+scOffset.y, scSize.x, -scSize.y);
+		          scOffset.x, scSize.y+scOffset.y, scSize.x, -scSize.y,
+		          threadData->config.smoothScaling ? FBO::Linear : FBO::Nearest);
 	}
 
 	/* Blits currently bound read FBO to screen (upside-down) */

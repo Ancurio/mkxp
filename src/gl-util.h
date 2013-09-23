@@ -147,6 +147,12 @@ namespace FBO
 		Read = 1
 	};
 
+	enum BlitMode
+	{
+		Nearest = 0,
+		Linear  = 1
+	};
+
 	inline ID gen()
 	{
 		ID id;
@@ -189,18 +195,26 @@ namespace FBO
 	inline void blit(int srcX, int srcY,
 	                 int srcW, int srcH,
 	                 int dstX, int dstY,
-	                 int dstW, int dstH)
+	                 int dstW, int dstH,
+	                 BlitMode mode = Nearest)
 	{
+		static const GLenum modes[] =
+		{
+			GL_NEAREST,
+			GL_LINEAR
+		};
+
 		glBlitFramebufferEXT(srcX, srcY, srcX+srcW, srcY+srcH,
 		                     dstX, dstY, dstX+dstW, dstY+dstH,
-		                     GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		                     GL_COLOR_BUFFER_BIT, modes[mode]);
 	}
 
 	inline void blit(int srcX, int srcY,
 					 int dstX, int dstY,
-					 int srcW, int srcH)
+					 int srcW, int srcH,
+	                 BlitMode mode = Nearest)
 	{
-		blit(srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH);
+		blit(srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH, mode);
 	}
 
 	inline Vec4 getPixel(int x, int y)
