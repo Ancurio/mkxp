@@ -36,6 +36,7 @@
 #include "../simple.frag.xxd"
 #include "../simpleColor.frag.xxd"
 #include "../simpleAlpha.frag.xxd"
+#include "../flashMap.frag.xxd"
 #include "../simple.vert.xxd"
 #include "../simpleColor.vert.xxd"
 #include "../sprite.vert.xxd"
@@ -366,6 +367,21 @@ void PlaneShader::setFlash(const Vec4 &flash)
 void PlaneShader::setOpacity(float value)
 {
 	glUniform1f(u_opacity, value);
+}
+
+
+FlashMapShader::FlashMapShader()
+{
+	INIT_SHADER(simpleColor, flashMap);
+
+	ShaderBase::init();
+
+	GET_U(alpha);
+}
+
+void FlashMapShader::setAlpha(float value)
+{
+	glUniform1f(u_alpha, value);
 }
 
 

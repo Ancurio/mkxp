@@ -71,6 +71,7 @@ struct GlobalStatePrivate
 	SimpleSpriteShader simpleSpriteShader;
 	SpriteShader spriteShader;
 	PlaneShader planeShader;
+	FlashMapShader flashMapShader;
 	TransShader transShader;
 	SimpleTransShader sTransShader;
 	HueShader hueShader;
@@ -187,6 +188,7 @@ GSATT(SimpleAlphaShader&, simpleAlphaShader)
 GSATT(SimpleSpriteShader&, simpleSpriteShader)
 GSATT(SpriteShader&, spriteShader)
 GSATT(PlaneShader&, planeShader)
+GSATT(FlashMapShader&, flashMapShader)
 GSATT(TransShader&, transShader)
 GSATT(SimpleTransShader&, sTransShader)
 GSATT(HueShader&, hueShader)

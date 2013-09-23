@@ -96,6 +96,7 @@ EMBED = shader/transSimple.frag \
         shader/simple.frag \
         shader/simpleColor.frag \
         shader/simpleAlpha.frag \
+        shader/flashMap.frag \
         shader/simple.vert \
         shader/simpleColor.vert \
         shader/sprite.vert \

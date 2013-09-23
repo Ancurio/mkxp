@@ -176,6 +176,17 @@ private:
 	GLint u_tone, u_color, u_flash, u_opacity;
 };
 
+class FlashMapShader : public ShaderBase
+{
+public:
+	FlashMapShader();
+
+	void setAlpha(float value);
+
+private:
+	GLint u_alpha;
+};
+
 class HueShader : public ShaderBase
 {
 public:

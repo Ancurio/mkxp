@@ -144,6 +144,18 @@ static const Position positions[] =
 
 static elementsN(positions);
 
+static const uint8_t flashAlpha[] =
+{
+	/* Fade in */
+	0x3C, 0x3C, 0x3C, 0x3C, 0x4B, 0x4B, 0x4B, 0x4B,
+	0x5A, 0x5A, 0x5A, 0x5A, 0x69, 0x69, 0x69, 0x69,
+	/* Fade out */
+	0x78, 0x78, 0x78, 0x78, 0x69, 0x69, 0x69, 0x69,
+	0x5A, 0x5A, 0x5A, 0x5A, 0x4B, 0x4B, 0x4B, 0x4B
+};
+
+static elementsN(flashAlpha);
+
 struct GroundLayer : public ViewportElement
 {
 	GLsizei vboCount;
@@ -233,6 +245,7 @@ struct TilemapPrivate
 		VAO::ID vao;
 		VBO::ID vbo;
 		int quadCount;
+		uint8_t alphaIdx;
 	} flash;
 
 	/* Scene elements */
@@ -319,6 +332,7 @@ struct TilemapPrivate
 		flash.vbo = VBO::gen();
 		flash.vao = VAO::gen();
 		flash.quadCount = 0;
+		flash.alphaIdx = 0;
 
 		VAO::bind(flash.vao);
 
@@ -751,12 +765,11 @@ struct TilemapPrivate
 		if (packed == 0)
 			return false;
 
-		const float max = 60.0 / 255.0;
-		const float step = max / 0xF;
+		const float max = 0xF;
 
-		float b = ((packed & 0x000F) >> 0) * step;
-		float g = ((packed & 0x00F0) >> 4) * step;
-		float r = ((packed & 0x0F00) >> 8) * step;
+		float b = ((packed & 0x000F) >> 0) / max;
+		float g = ((packed & 0x00F0) >> 4) / max;
+		float r = ((packed & 0x0F00) >> 8) / max;
 
 		out = Vec4(r, g, b, 1);
 
@@ -923,9 +936,10 @@ void GroundLayer::draw()
 		glState.blendMode.pushSet(BlendAddition);
 		glState.texture2D.pushSet(false);
 
-		SimpleColorShader &shader = gState->simpleColorShader();
+		FlashMapShader &shader = gState->flashMapShader();
 		shader.bind();
 		shader.applyViewportProj();
+		shader.setAlpha(flashAlpha[p->flash.alphaIdx] / 255.f);
 
 		for (int i = 0; i < positionsN; ++i)
 		{
@@ -1062,6 +1076,11 @@ static const uchar atAnimation[16*4] =
 
 void Tilemap::update()
 {
+	/* Animate flash */
+	if (++p->flash.alphaIdx > flashAlphaN-1)
+		p->flash.alphaIdx = 0;
+
+	/* Animate autotiles */
 	if (!p->atlas.animated)
 		return;
 

@@ -48,6 +48,7 @@ class SimpleAlphaShader;
 class SimpleSpriteShader;
 class SpriteShader;
 class PlaneShader;
+class FlashMapShader;
 class TransShader;
 class SimpleTransShader;
 class HueShader;
@@ -87,6 +88,7 @@ struct GlobalState
 	SimpleSpriteShader &simpleSpriteShader();
 	SpriteShader &spriteShader();
 	PlaneShader &planeShader();
+	FlashMapShader &flashMapShader();
 	TransShader &transShader();
 	SimpleTransShader &sTransShader();
 	HueShader &hueShader();
