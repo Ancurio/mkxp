@@ -1,6 +1,7 @@
 *.o
 *.pro.*
 *.bak
+*.vert.xxd
 *.frag.xxd
 *.ttf.xxd
 
