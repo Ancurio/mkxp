@@ -451,10 +451,22 @@ struct Timer
 
 struct GraphicsPrivate
 {
-	/* Screen resolution */
+	/* Screen resolution, ie. the resolution at which
+	 * RGSS renders at (settable with Graphics.width/height).
+	 * Can only be changed from within RGSS */
 	Vec2i scRes;
-	/* Actual screen size */
+
+	/* Screen size, to which the rendered frames are scaled up.
+	 * This can be smaller than the window size when fixed aspect
+	 * ratio is enforced */
 	Vec2i scSize;
+
+	/* Actual physical size of the game window */
+	Vec2i winSize;
+
+	/* Offset in the game window at which the scaled game screen
+	 * is blitted inside the game window */
+	Vec2i scOffset;
 
 	ScreenScene screen;
 	RGSSThreadData *threadData;
@@ -477,6 +489,7 @@ struct GraphicsPrivate
 	GraphicsPrivate()
 	    : scRes(640, 480),
 	      scSize(scRes),
+	      winSize(scRes),
 	      screen(scRes.x, scRes.y),
 	      frameRate(40),
 	      frameCount(0),
@@ -515,12 +528,38 @@ struct GraphicsPrivate
 		Vec2 &ratio = gState->rtData().sizeResoRatio;
 		ratio.x = (float) scRes.x / scSize.x;
 		ratio.y = (float) scRes.y / scSize.y;
+
+		gState->rtData().screenOffset = scOffset;
+	}
+
+	/* Enforces fixed aspect ratio, if desired */
+	void recalculateScreenSize()
+	{
+		scSize = winSize;
+
+		if (!gState->config().fixedAspectRatio)
+		{
+			scOffset = Vec2i(0, 0);
+			return;
+		}
+
+		float resRatio = (float) scRes.x / scRes.y;
+		float winRatio = (float) winSize.x / winSize.y;
+
+		if (resRatio > winRatio)
+			scSize.y = scSize.x / resRatio;
+		else if (resRatio < winRatio)
+			scSize.x = scSize.y * resRatio;
+
+		scOffset.x = (winSize.x - scSize.x) / 2.f;
+		scOffset.y = (winSize.y - scSize.y) / 2.f;
 	}
 
 	void checkResize()
 	{
-		if (threadData->windowSizeMsg.pollChange(&scSize.x, &scSize.y))
+		if (threadData->windowSizeMsg.pollChange(&winSize.x, &winSize.y))
 		{
+			recalculateScreenSize();
 			screen.setScreenSize(scSize.x, scSize.y);
 			updateScreenResoRatio();
 		}
@@ -549,19 +588,10 @@ struct GraphicsPrivate
 		FBO::blit(0, 0, 0, 0, scRes.x, scRes.y);
 	}
 
-	void blitBuffer()
-	{
-		FBO::blit(0, 0, 0, 0, scRes.x, scRes.y);
-	}
-
-	void blitBufferScaled()
-	{
-		FBO::blit(0, 0, scRes.x, scRes.y, 0, 0, scSize.x, scSize.y);
-	}
-
 	void blitBufferFlippedScaled()
 	{
-		FBO::blit(0, 0, scRes.x, scRes.y, 0, scSize.y, scSize.x, -scSize.y);
+		FBO::blit(0, 0, scRes.x, scRes.y,
+		          scOffset.x, scSize.y+scOffset.y, scSize.x, -scSize.y);
 	}
 
 	/* Blits currently bound read FBO to screen (upside-down) */

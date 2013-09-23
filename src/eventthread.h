@@ -150,6 +150,7 @@ struct RGSSThreadData
 	SDL_Window *window;
 
 	Vec2 sizeResoRatio;
+	Vec2i screenOffset;
 
 	Config config;
 

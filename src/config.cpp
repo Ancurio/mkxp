@@ -32,6 +32,7 @@ Config::Config()
     : debugMode(false),
       winResizable(false),
       fullscreen(false),
+      fixedAspectRatio(false),
       vsync(false),
       defScreenW(640),
       defScreenH(480),
@@ -48,6 +49,7 @@ void Config::read()
 	READ_VAL(debugMode, Bool);
 	READ_VAL(winResizable, Bool);
 	READ_VAL(fullscreen, Bool);
+	READ_VAL(fixedAspectRatio, Bool);
 	READ_VAL(vsync, Bool);
 	READ_VAL(defScreenW, Int);
 	READ_VAL(defScreenH, Int);
