@@ -59,7 +59,8 @@ HEADERS += \
 	src/binding.h \
 	src/gl-util.h \
 	src/util.h \
-	src/config.h
+	src/config.h \
+	src/tileatlas.h
 
 SOURCES += \
 	src/main.cpp \
@@ -85,7 +86,8 @@ SOURCES += \
 	src/graphics.cpp \
 	src/debuglogger.cpp \
 	src/etc.cpp \
-	src/config.cpp
+	src/config.cpp \
+	src/tileatlas.cpp
 
 EMBED = shader/transSimple.frag \
         shader/trans.frag \

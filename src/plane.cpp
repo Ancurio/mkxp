@@ -85,20 +85,29 @@ Plane::Plane(Viewport *viewport)
 
 #define DISP_CLASS_NAME "plane"
 
-DEF_ATTR_RD_SIMPLE(Plane, OX,        int,   p->ox)
-DEF_ATTR_RD_SIMPLE(Plane, OY,        int,   p->oy)
-DEF_ATTR_RD_SIMPLE(Plane, ZoomX,     float, p->zoomX)
-DEF_ATTR_RD_SIMPLE(Plane, ZoomY,     float, p->zoomY)
-DEF_ATTR_RD_SIMPLE(Plane, BlendType, int,   p->blendType)
+DEF_ATTR_RD_SIMPLE(Plane, Bitmap,    Bitmap*, p->bitmap)
+DEF_ATTR_RD_SIMPLE(Plane, OX,        int,     p->ox)
+DEF_ATTR_RD_SIMPLE(Plane, OY,        int,     p->oy)
+DEF_ATTR_RD_SIMPLE(Plane, ZoomX,     float,   p->zoomX)
+DEF_ATTR_RD_SIMPLE(Plane, ZoomY,     float,   p->zoomY)
+DEF_ATTR_RD_SIMPLE(Plane, BlendType, int,     p->blendType)
 
 DEF_ATTR_SIMPLE(Plane, Opacity, int,     p->opacity)
-DEF_ATTR_SIMPLE(Plane, Bitmap,  Bitmap*, p->bitmap)
 DEF_ATTR_SIMPLE(Plane, Color,   Color*,  p->color)
 DEF_ATTR_SIMPLE(Plane, Tone,    Tone*,   p->tone)
 
 Plane::~Plane()
 {
 	dispose();
+}
+
+void Plane::setBitmap(Bitmap *value)
+{
+	GUARD_DISPOSED;
+
+	value->ensureNonMega();
+
+	p->bitmap = value;
 }
 
 void Plane::setOX(int value)
@@ -205,6 +214,8 @@ void Plane::draw()
 	p->quad.draw();
 
 	TEX::setRepeat(false);
+
+	glState.blendMode.pop();
 }
 
 void Plane::onGeometryChange(const Scene::Geometry &geo)

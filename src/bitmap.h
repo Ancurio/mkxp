@@ -31,6 +31,7 @@
 class Font;
 class ShaderBase;
 struct TEXFBO;
+struct SDL_Surface;
 
 struct BitmapPrivate;
 // FIXME make this class use proper RGSS classes again
@@ -104,6 +105,8 @@ public:
 	/* <internal> */
 	void flush() const;
 	TEXFBO &getGLTypes();
+	SDL_Surface *megaSurface();
+	void ensureNonMega();
 
 	/* Binds the backing texture and sets the correct
 	 * texture size uniform in shader */

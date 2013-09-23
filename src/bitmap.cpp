@@ -40,6 +40,13 @@
 
 #define DISP_CLASS_NAME "bitmap"
 
+#define GUARD_MEGA \
+	{ \
+		if (p->megaSurface) \
+			throw Exception(Exception::MKXPError, \
+                            "Operation not supported for mega surfaces"); \
+	}
+
 struct BitmapPrivate
 {
 	TEXFBO tex;
@@ -50,7 +57,14 @@ struct BitmapPrivate
 
 	Font *font;
 
+	/* "Mega surfaces" are a hack to allow Tilesets to be used
+	 * whose Bitmaps don't fit into a regular texture. They're
+	 * kept in RAM and will throw an error if they're used in
+	 * any context other than as Tilesets */
+	SDL_Surface *megaSurface;
+
 	BitmapPrivate()
+	    : megaSurface(0)
 	{
 		font = &gState->defaultFont();
 	}
@@ -143,27 +157,37 @@ Bitmap::Bitmap(const char *filename)
 	if (!imgSurf)
 		throw Exception(Exception::SDLError, "SDL: %s", SDL_GetError());
 
-	TEXFBO tex;
-
 	p->ensureFormat(imgSurf, SDL_PIXELFORMAT_ABGR8888);
 
-	try
+	if (imgSurf->w > glState.caps.maxTexSize || imgSurf->h > glState.caps.maxTexSize)
 	{
-		tex = gState->texPool().request(imgSurf->w, imgSurf->h);
+		/* Mega surface */
+		p = new BitmapPrivate;
+		p->megaSurface = imgSurf;
 	}
-	catch (const Exception &e)
+	else
 	{
+		/* Regular surface */
+
+		TEXFBO tex;
+		try
+		{
+			tex = gState->texPool().request(imgSurf->w, imgSurf->h);
+		}
+		catch (const Exception &e)
+		{
+			SDL_FreeSurface(imgSurf);
+			throw e;
+		}
+
+		p = new BitmapPrivate;
+		p->tex = tex;
+
+		TEX::bind(p->tex.tex);
+		TEX::uploadImage(p->tex.width, p->tex.height, imgSurf->pixels, GL_RGBA);
+
 		SDL_FreeSurface(imgSurf);
-		throw e;
 	}
-
-	p = new BitmapPrivate;
-	p->tex = tex;
-
-	TEX::bind(p->tex.tex);
-	TEX::uploadImage(p->tex.width, p->tex.height, imgSurf->pixels, GL_RGBA);
-
-	SDL_FreeSurface(imgSurf);
 }
 
 Bitmap::Bitmap(int width, int height)
@@ -196,14 +220,20 @@ Bitmap::~Bitmap()
 
 int Bitmap::width() const
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	if (p->megaSurface)
+		return p->megaSurface->w;
 
 	return p->tex.width;
 }
 
 int Bitmap::height() const
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	if (p->megaSurface)
+		return p->megaSurface->h;
 
 	return p->tex.height;
 }
@@ -226,6 +256,8 @@ void Bitmap::stretchBlt(const IntRect &destRect,
                          int opacity)
 {
 	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	opacity = clamp(opacity, 0, 255);
 
@@ -291,7 +323,9 @@ void Bitmap::fillRect(int x, int y,
 
 void Bitmap::fillRect(const IntRect &rect, const Vec4 &color)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	p->fillRect(rect, color);
 
@@ -310,7 +344,9 @@ void Bitmap::gradientFillRect(const IntRect &rect,
                               const Vec4 &color1, const Vec4 &color2,
                               bool vertical)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	flush();
 
@@ -354,7 +390,9 @@ void Bitmap::clearRect(int x, int y, int width, int height)
 
 void Bitmap::clearRect(const IntRect &rect)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	p->fillRect(rect, Vec4());
 
@@ -363,7 +401,9 @@ void Bitmap::clearRect(const IntRect &rect)
 
 void Bitmap::clear()
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	/* Any queued points won't be visible after this anyway */
 	p->pointArray.reset();
@@ -383,6 +423,8 @@ Vec4 Bitmap::getPixel(int x, int y) const
 {
 	GUARD_DISPOSED;
 
+	GUARD_MEGA;
+
 	if (x < 0 || y < 0 || x >= width() || y >= height())
 		return Vec4();
 
@@ -399,7 +441,9 @@ Vec4 Bitmap::getPixel(int x, int y) const
 
 void Bitmap::setPixel(int x, int y, const Vec4 &color)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	p->pointArray.append(Vec2(x+.5, y+.5), color);
 
@@ -408,7 +452,9 @@ void Bitmap::setPixel(int x, int y, const Vec4 &color)
 
 void Bitmap::hueChange(int hue)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	if ((hue % 360) == 0)
 		return;
@@ -458,7 +504,9 @@ void Bitmap::drawText(int x, int y,
 
 void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	if (*str == '\0')
 		return;
@@ -557,7 +605,9 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 
 IntRect Bitmap::textSize(const char *str)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
 
 	TTF_Font *font = p->font->getSdlFont();
 
@@ -577,12 +627,25 @@ void Bitmap::flush() const
 	if (isDisposed())
 		return;
 
+	if (p->megaSurface)
+		return;
+
 	p->flushPoints();
 }
 
 TEXFBO &Bitmap::getGLTypes()
 {
 	return p->tex;
+}
+
+SDL_Surface *Bitmap::megaSurface()
+{
+	return p->megaSurface;
+}
+
+void Bitmap::ensureNonMega()
+{
+	GUARD_MEGA;
 }
 
 void Bitmap::bindTex(ShaderBase &shader)
@@ -592,6 +655,10 @@ void Bitmap::bindTex(ShaderBase &shader)
 
 void Bitmap::releaseResources()
 {
-	gState->texPool().release(p->tex);
+	if (p->megaSurface)
+		SDL_FreeSurface(p->megaSurface);
+	else
+		gState->texPool().release(p->tex);
+
 	delete p;
 }

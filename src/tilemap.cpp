@@ -32,6 +32,7 @@
 #include "quadarray.h"
 #include "texpool.h"
 #include "quad.h"
+#include "tileatlas.h"
 
 #include "sigc++/connection.h"
 
@@ -40,14 +41,23 @@
 
 #include <QVector>
 
+#include <SDL2/SDL_surface.h>
+
 extern const StaticRect autotileRects[];
 
 typedef QVector<SVertex> SVVector;
+typedef struct { SVVector v[4]; } TileVBuffer;
 
 static const int tilesetW  = 8 * 32;
 static const int autotileW = 3 * 32;
 static const int autotileH = 4 * 32;
-static const int atlasFrameW = tilesetW + autotileW;
+
+static const int autotileCount = 7;
+
+static const int atAreaW = autotileW * 4;
+static const int atAreaH = autotileH * autotileCount;
+
+static const int tsLaneW = tilesetW / 2;
 
 /* Vocabulary:
  *
@@ -57,32 +67,57 @@ static const int atlasFrameW = tilesetW + autotileW;
  *   This means that we have to watch the 'modified' signals
  *   of all Bitmaps that make up the atlas, and update it
  *   as required during runtime.
- *   The atlas is made up of one or four 'atlas frames'.
- *   They look like this: ('AT' = Autotile)
+ *   The atlas is tightly packed, with the autotiles located
+ *   in the top left corener and the tileset image filing the
+ *   remaining open space (below the autotiles as well as
+ *   besides it). The tileset is vertically cut in half, where
+ *   the first half fills available texture space, and then the
+ *   other half (as if the right half was cut and pasted below
+ *   the left half before fitting it all into the atlas).
+ *   Internally these halves are called "tileset lanes".
  *
- *         Atlas frame
- *   ----------------*--------
- *   |               |       |
- *   |               |  AT1  |
- *   |               |       |
- *   |               |       |
- *   |               |-------|
- *   |    Tileset    |       |
- *   |               |  AT2  |
- *   |               |       |
- *   |               |       |
- *   |               |-------|
- *   |               |       |
- *              ...
+ *                  Tile atlas
+ *   *-----------------------*--------------*
+ *   |     |     |     |     |       ¦       |
+ *   | AT1 | AT1 | AT1 | AT1 |       ¦       |
+ *   | FR0 | FR1 | FR2 | FR3 |   |   ¦   |   |
+ *   |-----|-----|-----|-----|   v   ¦   v   |
+ *   |     |     |     |     |       ¦       |
+ *   | AT1 |     |     |     |       ¦       |
+ *   |     |     |     |     |       ¦       |
+ *   |-----|-----|-----|-----|       ¦       |
+ *   |[...]|     |     |     |       ¦       |
+ *   |-----|-----|-----|-----|       ¦       |
+ *   |     |     |     |     |   |   ¦   |   |
+ *   | AT7 |     |     |     |   v   ¦   v   |
+ *   |     |     |     |     |       ¦       |
+ *   |-----|-----|-----|-----|       ¦       |
+ *   |       ¦       ¦       ¦       ¦       |
+ *   | Tile- ¦   |   ¦   |   ¦       ¦       |
+ *   |  set  ¦   v   ¦   v   ¦       ¦       |
+ *   |       ¦       ¦       ¦   |   ¦   |   |
+ *   |   |   ¦       ¦       ¦   v   ¦   v   |
+ *   |   v   ¦   |   ¦   |   ¦       ¦       |
+ *   |       ¦   v   ¦   v   ¦       ¦       |
+ *   |       ¦       ¦       ¦       ¦       |
+ *   *---------------------------------------*
  *
- *   If none of the attached autotiles is animated, the
- *   atlas consists of only one such frame. In case of
- *   animated autotiles, it consists of four such frames,
- *   where each autotile area contains the respective
- *   animation frame of the autotile. Static autotiles
- *   and the tileset area are identical for all frames.
- *   This allows us to keep vertex data static and only
- *   change the x-offset in the atlas texture during animation.
+ *   When allocating the atlas size, we first expand vertically
+ *   until all the space immediately below the autotile area
+ *   is used up, and then, when the max texture size
+ *   is reached, horizontally.
+ *
+ *   To animate the autotiles, we keep 4 buffers (packed into
+ *   one big VBO and accessed using offsets) with vertex data
+ *   corresponding to the respective animation frame. Likewise,
+ *   the IBO is expanded to 4 times its usual size. In practice
+ *   this means that all vertex data which does not stem from an
+ *   animated autotile is duplicated across all 4 buffers.
+ *   The range of one such buffer inside the VBO is called
+ *   buffer frame, and tiles.bufferFrameSize * bufferIndex gives
+ *   us the base offset into the IBO to access it.
+ *   If there are no animated autotiles attached, we only use
+ *   the first buffer.
  *
  * Elements:
  *   Even though the Tilemap carries similarities with other
@@ -190,7 +225,7 @@ struct TilemapPrivate
 	Viewport *viewport;
 
 	Tilemap::Autotiles autotilesProxy;
-	Bitmap *autotiles[7];
+	Bitmap *autotiles[autotileCount];
 
 	Bitmap *tileset;
 	Table *mapData;
@@ -207,14 +242,15 @@ struct TilemapPrivate
 	/* Tile atlas */
 	struct {
 		TEXFBO gl;
-		bool animated;
-		int frameH;
-		int width;
+
+		Vec2i size;
+
+		/* Indices of usable
+		 * (not null, not disposed) autotiles */
+		QVector<uint8_t> usableATs;
+
 		/* Indices of animated autotiles */
 		QVector<uint8_t> animatedATs;
-		/* Animation state */
-		uint8_t frameIdx;
-		uint8_t aniIdx;
 	} atlas;
 
 	/* Map size in tiles */
@@ -222,10 +258,10 @@ struct TilemapPrivate
 	int mapHeight;
 
 	/* Ground layer vertices */
-	SVVector groundVert;
+	TileVBuffer groundVert;
 
 	/* Scanrow vertices */
-	QVector<SVVector> scanrowVert;
+	QVector<TileVBuffer> scanrowVert;
 
 	/* Base quad indices of each scanrow
 	 * in the shared buffer */
@@ -237,6 +273,17 @@ struct TilemapPrivate
 	{
 		VAO::ID vao;
 		VBO::ID vbo;
+		bool animated;
+
+		/* Buffer count is either 1 or 4 */
+		uint8_t bufferCount;
+
+		/* Size of an IBO buffer frame, in bytes */
+		GLintptr bufferFrameSize;
+
+		/* Animation state */
+		uint8_t frameIdx;
+		uint8_t aniIdx;
 	} tiles;
 
 	/* Flash buffers */
@@ -276,13 +323,13 @@ struct TilemapPrivate
 
 	/* Change watches */
 	sigc::connection tilesetCon;
-	sigc::connection autotilesCon[7];
+	sigc::connection autotilesCon[autotileCount];
 	sigc::connection mapDataCon;
 	sigc::connection prioritiesCon;
 	sigc::connection flashDataCon;
 
 	/* Dispose watches */
-	sigc::connection autotilesDispCon[7];
+	sigc::connection autotilesDispCon[autotileCount];
 
 	/* Draw prepare call */
 	sigc::connection prepareCon;
@@ -295,6 +342,8 @@ struct TilemapPrivate
 	      priorities(0),
 	      visible(true),
 	      tileYOffset(0),
+	      mapWidth(0),
+	      mapHeight(0),
 	      replicas(Normal),
 	      atlasSizeDirty(false),
 	      atlasDirty(false),
@@ -305,9 +354,11 @@ struct TilemapPrivate
 	{
 		memset(autotiles, 0, sizeof(autotiles));
 
-		atlas.animatedATs.reserve(7);
-		atlas.frameIdx = 0;
-		atlas.aniIdx = 0;
+		atlas.animatedATs.reserve(autotileCount);
+		tiles.animated = false;
+		tiles.bufferCount = 1;
+		tiles.frameIdx = 0;
+		tiles.aniIdx = 0;
 
 		/* Init tile buffers */
 		tiles.vbo = VBO::gen();
@@ -367,7 +418,7 @@ struct TilemapPrivate
 		VBO::del(flash.vbo);
 
 		tilesetCon.disconnect();
-		for (int i = 0; i < 7; ++i)
+		for (int i = 0; i < autotileCount; ++i)
 		{
 			autotilesCon[i].disconnect();
 			autotilesDispCon[i].disconnect();
@@ -379,6 +430,62 @@ struct TilemapPrivate
 		prepareCon.disconnect();
 	}
 
+	void updateAtlasInfo()
+	{
+		if (!tileset || tileset->isDisposed())
+		{
+			atlas.size = Vec2i();
+			return;
+		}
+
+		atlas.size = TileAtlas::minSize(tileset->height(), glState.caps.maxTexSize);
+
+		if (atlas.size.x < 0)
+			throw Exception(Exception::MKXPError,
+		                    "Cannot allocate big enough texture for tileset atlas");
+	}
+
+	void updateAutotileInfo()
+	{
+		/* Check if and which autotiles are animated */
+		QVector<uint8_t> &usableATs = atlas.usableATs;
+		QVector<uint8_t> &animatedATs = atlas.animatedATs;
+
+		usableATs.clear();
+
+		for (int i = 0; i < autotileCount; ++i)
+		{
+			if (!autotiles[i])
+				continue;
+
+			if (autotiles[i]->isDisposed())
+				continue;
+
+			usableATs.append(i);
+
+			autotiles[i]->flush();
+
+			if (autotiles[i]->width() > autotileW)
+				animatedATs.append(i);
+		}
+
+		tiles.animated = !animatedATs.empty();
+		tiles.bufferCount = animatedATs.empty() ? 1 : 4;
+	}
+
+	void updateMapDataInfo()
+	{
+		if (!mapData)
+		{
+			mapWidth  = 0;
+			mapHeight = 0;
+			return;
+		}
+
+		mapWidth = mapData->xSize();
+		mapHeight = mapData->ySize();
+	}
+
 	void updateSceneGeometry(const Scene::Geometry &geo)
 	{
 		elem.sceneOffset.x = geo.rect.x - geo.xOrigin;
@@ -388,11 +495,11 @@ struct TilemapPrivate
 
 	void updatePosition()
 	{
-		dispPos.x = -offset.x + elem.sceneOffset.x;
-		dispPos.y = -offset.y + elem.sceneOffset.y;
-
 		if (mapWidth == 0 || mapHeight == 0)
 			return;
+
+		dispPos.x = -offset.x + elem.sceneOffset.x;
+		dispPos.y = -offset.y + elem.sceneOffset.y;
 
 		dispPos.x %= mapWidth  * 32;
 		dispPos.y %= mapHeight * 32;
@@ -403,6 +510,10 @@ struct TilemapPrivate
 	void updateReplicas()
 	{
 		replicas = Normal;
+
+		if (mapWidth == 0 || mapHeight == 0)
+			return;
+
 		const IntRect &sRect = elem.sceneGeo.rect;
 
 		if (dispPos.x > sRect.x)
@@ -453,34 +564,11 @@ struct TilemapPrivate
 	/* Allocates correctly sized TexFBO for atlas */
 	void allocateAtlas()
 	{
-		/* Check if and which autotiles are animated */
-		QVector<uint8_t> &animatedATs = atlas.animatedATs;
-
-		for (int i = 0; i < 7; ++i)
-		{
-			Bitmap *autotile = autotiles[i];
-
-			if (!autotile)
-				continue;
-
-			if (autotile->isDisposed())
-				continue;
-
-			autotile->flush();
-
-			if (autotile->width() > autotileW)
-				animatedATs.append(i);
-		}
-
-		atlas.animated = !animatedATs.empty();
-
-		atlas.frameH = max(tileset->height(), autotileH*7);
+		updateAtlasInfo();
 
 		/* Aquire atlas tex */
-		atlas.width = animatedATs.empty() ? atlasFrameW : atlasFrameW * 4;
-
 		gState->texPool().release(atlas.gl);
-		atlas.gl = gState->texPool().request(atlas.width, atlas.frameH);
+		atlas.gl = gState->texPool().request(atlas.size.x, atlas.size.y);
 
 		atlasDirty = true;
 	}
@@ -490,7 +578,12 @@ struct TilemapPrivate
 	{
 		tileset->flush();
 
-		QVector<uint8_t> &animatedATs = atlas.animatedATs;
+		updateAutotileInfo();
+
+		Q_FOREACH (uint8_t i, atlas.usableATs)
+			autotiles[i]->flush();
+
+		TileAtlas::BlitList blits = TileAtlas::calcBlits(tileset->height(), atlas.size);
 
 		/* Clear atlas */
 		FBO::bind(atlas.gl.fbo, FBO::Draw);
@@ -502,52 +595,64 @@ struct TilemapPrivate
 		glState.scissorTest.pop();
 		glState.clearColor.pop();
 
-		int tsW = tilesetW;
-		int tsH = tileset->height();
-
-		/* Assemble first frame with static content */
-		FBO::bind(tileset->getGLTypes().fbo, FBO::Read);
-		FBO::blit(0, 0, 0, 0, tsW, tsH);
-
-		for (int i = 0; i < 7; ++i)
+		/* Blit autotiles */
+		Q_FOREACH (uint8_t i, atlas.usableATs)
 		{
-			if (!autotiles[i])
-				continue;
-
-			if (autotiles[i]->isDisposed())
-				continue;
-
-			if (animatedATs.contains(i))
-				continue;
+			int blitW = min(autotiles[i]->width(), atAreaW);
+			int blitH = min(autotiles[i]->height(), atAreaH);
 
 			FBO::bind(autotiles[i]->getGLTypes().fbo, FBO::Read);
-			FBO::blit(0, 0, tsW, i*autotileH, autotileW, autotileH);
+			FBO::blit(0, 0, 0, i*autotileH, blitW, blitH);
 		}
 
-		/* If there aren't any animated autotiles, we're done */
-		if (!atlas.animated)
-			return;
-
-		/* Copy the first frame to the remaining 3 */
-		FBO::bind(atlas.gl.fbo, FBO::Read);
-
-		for (int i = 1; i < 4; ++i)
-			FBO::blit(0, 0, i*atlasFrameW, 0, atlasFrameW, atlas.frameH);
-
-		/* Finally, patch in the animated autotiles */
-		for (int i = 0; i < animatedATs.count(); ++i)
+		/* Blit tileset */
+		if (tileset->megaSurface())
 		{
-			int atInd = animatedATs[i];
-			Bitmap *at = autotiles[atInd];
+			/* Mega surface tileset */
+			FBO::unbind(FBO::Draw);
+			TEX::bind(atlas.gl.tex);
 
-			if (at->isDisposed())
-				continue;
+			SDL_Surface *tsSurf = tileset->megaSurface();
 
-			FBO::bind(at->getGLTypes().fbo, FBO::Read);
+			int bpp;
+			Uint32 rMask, gMask, bMask, aMask;
+			SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ABGR8888,
+			                           &bpp, &rMask, &gMask, &bMask, &aMask);
 
-			for (int j = 0; j < 4; ++j)
-				FBO::blit(j*autotileW, 0, (j*atlasFrameW)+tsW, atInd*autotileH,
-				          autotileW, autotileH);
+			for (int i = 0; i < blits.count(); ++i)
+			{
+				TileAtlas::Blit &blitOp = blits[i];
+
+				SDL_Surface *blitTemp =
+				        SDL_CreateRGBSurface(0, tsLaneW, blitOp.h, bpp, rMask, gMask, bMask, aMask);
+
+				SDL_Rect tsRect;
+				tsRect.x = blitOp.src.x;
+				tsRect.y = blitOp.src.y;
+				tsRect.w = tsLaneW;
+				tsRect.h = blitOp.h;
+
+				SDL_Rect tmpRect = tsRect;
+				tmpRect.x = tmpRect.y = 0;
+
+				SDL_UpperBlit(tsSurf, &tsRect, blitTemp, &tmpRect);
+
+				TEX::uploadSubImage(blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, blitTemp->pixels, GL_RGBA);
+
+				SDL_FreeSurface(blitTemp);
+			}
+		}
+		else
+		{
+			/* Regular tileset */
+			FBO::bind(tileset->getGLTypes().fbo, FBO::Read);
+
+			for (int i = 0; i < blits.count(); ++i)
+			{
+				TileAtlas::Blit &blitOp = blits[i];
+
+				FBO::blit(blitOp.src.x, blitOp.src.y, blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h);
+			}
 		}
 	}
 
@@ -582,7 +687,7 @@ struct TilemapPrivate
 		return FloatRect(x, y, 16, 16);
 	}
 
-	void handleAutotile(int x, int y, int tileInd, SVVector &array)
+	void handleAutotile(int x, int y, int tileInd, TileVBuffer *array)
 	{
 		/* Which autotile [0-7] */
 		int atInd = tileInd / 48 - 1;
@@ -591,20 +696,29 @@ struct TilemapPrivate
 
 		const StaticRect *pieceRect = &autotileRects[subInd*4];
 
+		/* Iterate over the 4 tile pieces */
 		for (int i = 0; i < 4; ++i)
 		{
 			FloatRect posRect = getAutotilePieceRect(x*32, y*32, i);
 			FloatRect texRect = pieceRect[i];
 
 			/* Adjust to atlas coordinates */
-			texRect.x += tilesetW;
 			texRect.y += atInd * autotileH;
 
-			SVertex v[4];
-			Quad::setTexPosRect(v, texRect, posRect);
+			for (int k = 0; k < tiles.bufferCount; ++k)
+			{
+				FloatRect _texRect = texRect;
 
-			for (int i = 0; i < 4; ++i)
-				array.append(v[i]);
+				if (atlas.animatedATs.contains(atInd))
+					_texRect.x += autotileW*k;
+
+				SVertex v[4];
+				Quad::setTexPosRect(v, _texRect, posRect);
+
+				/* Iterate over 4 vertices */
+				for (int i = 0; i < 4; ++i)
+					array->v[k].append(v[i]);
+			}
 		}
 	}
 
@@ -622,7 +736,7 @@ struct TilemapPrivate
 		if (prio == -1)
 			return;
 
-		SVVector *targetArray;
+		TileVBuffer *targetArray;
 
 		/* Prio 0 tiles are all part of the same ground layer */
 		if (prio == 0)
@@ -638,7 +752,7 @@ struct TilemapPrivate
 		/* Check for autotile */
 		if (tileInd < 48*8)
 		{
-			handleAutotile(x, y, tileInd, *targetArray);
+			handleAutotile(x, y, tileInd, targetArray);
 			return;
 		}
 
@@ -646,19 +760,22 @@ struct TilemapPrivate
 		int tileX = tsInd % 8;
 		int tileY = tsInd / 8;
 
-		FloatRect texRect(tileX*32+.5, tileY*32+.5, 31, 31);
+		Vec2i texPos = TileAtlas::tileToAtlasCoor(tileX, tileY, tileset->height(), atlas.size.y);
+		FloatRect texRect((float) texPos.x+.5, (float) texPos.y+.5, 31, 31);
 		FloatRect posRect(x*32, y*32, 32, 32);
 
 		SVertex v[4];
 		Quad::setTexPosRect(v, texRect, posRect);
 
-		for (int i = 0; i < 4; ++i)
-			targetArray->append(v[i]);
+		for (int k = 0; k < tiles.bufferCount; ++k)
+			for (int i = 0; i < 4; ++i)
+				targetArray->v[k].append(v[i]);
 	}
 
 	void clearQuadArrays()
 	{
-		groundVert.clear();
+		for (int i = 0; i < 4; ++i)
+			groundVert.v[i].clear();
 		scanrowVert.clear();
 		scanrowBases.clear();
 	}
@@ -667,8 +784,6 @@ struct TilemapPrivate
 	{
 		clearQuadArrays();
 
-		mapWidth = mapData->xSize();
-		mapHeight = mapData->ySize();
 		int mapDepth = mapData->zSize();
 
 		scanrowVert.resize(mapHeight + 5);
@@ -695,40 +810,51 @@ struct TilemapPrivate
 		scanrowBases.resize(scanrowCount + 1);
 
 		/* Calculate total quad count */
-		int groundQuadCount = groundVert.count() / 4;
+		int groundQuadCount = groundVert.v[0].count() / 4;
 		int quadCount = groundQuadCount;
 
 		for (int i = 0; i < scanrowCount; ++i)
 		{
 			scanrowBases[i] = quadCount;
-			quadCount += scanrowVert[i].count() / 4;
+			quadCount += scanrowVert[i].v[0].count() / 4;
 		}
 
 		scanrowBases[scanrowCount] = quadCount;
 
+		int bufferFrameQuadCount = quadCount;
+		tiles.bufferFrameSize = quadCount * 6 * sizeof(uint32_t);
+
+		quadCount *= tiles.bufferCount;
+
 		VBO::bind(tiles.vbo);
 		VBO::allocEmpty(quadDataSize(quadCount));
 
-		VBO::uploadSubData(0, quadDataSize(groundQuadCount), groundVert.constData());
-
-		for (int i = 0; i < scanrowCount; ++i)
+		for (int k = 0; k < tiles.bufferCount; ++k)
 		{
-			VBO::uploadSubData(quadDataSize(scanrowBases[i]),
-			                   quadDataSize(scanrowSize(i)),
-			                   scanrowVert[i].constData());
+			VBO::uploadSubData(k*quadDataSize(bufferFrameQuadCount),
+			                   quadDataSize(groundQuadCount), groundVert.v[k].constData());
+
+			for (int i = 0; i < scanrowCount; ++i)
+			{
+				if (scanrowVert[i].v[0].empty())
+					continue;
+
+				VBO::uploadSubData(k*quadDataSize(bufferFrameQuadCount) + quadDataSize(scanrowBases[i]),
+								   quadDataSize(scanrowSize(i)),
+								   scanrowVert[i].v[k].constData());
+			}
 		}
 
 		VBO::unbind();
 
 		/* Ensure global IBO size */
-		gState->ensureQuadIBO(quadCount);
+		gState->ensureQuadIBO(quadCount*tiles.bufferCount);
 	}
 
 	void bindAtlas(SimpleShader &shader)
 	{
 		TEX::bind(atlas.gl.tex);
-		shader.setTexSize(Vec2i(atlas.animated ? atlasFrameW * 4 : atlasFrameW, atlas.frameH));
-		shader.setTexOffsetX(atlas.frameIdx * atlasFrameW);
+		shader.setTexSize(atlas.size);
 	}
 
 	Vec2i getReplicaOffset(Position pos)
@@ -839,7 +965,7 @@ struct TilemapPrivate
 		/* Only generate elements for non-emtpy scanrows */
 		QVector<int> scanrowInd;
 		for (int i = 0; i < scanrowCount; ++i)
-			if (scanrowVert[i].count() > 0)
+			if (scanrowVert[i].v[0].count() > 0)
 				scanrowInd.append(i);
 
 		generateElements(scanrowInd);
@@ -963,7 +1089,7 @@ void GroundLayer::draw()
 void GroundLayer::drawInt()
 {
 	glDrawElements(GL_TRIANGLES, vboCount,
-	               GL_UNSIGNED_INT, 0);
+	               GL_UNSIGNED_INT, (GLvoid*) (p->tiles.frameIdx * p->tiles.bufferFrameSize));
 }
 
 void GroundLayer::drawFlashInt()
@@ -983,7 +1109,7 @@ ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport, int index)
       index(index),
       p(p)
 {
-	vboOffset = p->scanrowBases[index] * sizeof(uint) * 6;
+	vboOffset = p->scanrowBases[index] * sizeof(uint32_t) * 6;
 	vboCount = p->scanrowSize(index) * 6;
 }
 
@@ -1017,7 +1143,7 @@ void ScanRow::draw()
 void ScanRow::drawInt()
 {
 	glDrawElements(GL_TRIANGLES, vboCount,
-	               GL_UNSIGNED_INT, (const GLvoid*) vboOffset);
+	               GL_UNSIGNED_INT, (GLvoid*) (vboOffset + p->tiles.frameIdx * p->tiles.bufferFrameSize));
 }
 
 void ScanRow::updateZ()
@@ -1028,7 +1154,7 @@ void ScanRow::updateZ()
 
 void Tilemap::Autotiles::set(int i, Bitmap *bitmap)
 {
-	if (i < 0 || i > 6)
+	if (i < 0 || i > autotileCount-1)
 		return;
 
 	if (p->autotiles[i] == bitmap)
@@ -1045,11 +1171,13 @@ void Tilemap::Autotiles::set(int i, Bitmap *bitmap)
 	p->autotilesDispCon[i].disconnect();
 	p->autotilesDispCon[i] = bitmap->wasDisposed.connect
 	        (sigc::mem_fun(p, &TilemapPrivate::invalidateAtlasContents));
+
+	p->updateAutotileInfo();
 }
 
 Bitmap *Tilemap::Autotiles::get(int i) const
 {
-	if (i < 0 || i > 6)
+	if (i < 0 || i > autotileCount-1)
 		return 0;
 
 	return p->autotiles[i];
@@ -1074,20 +1202,25 @@ static const uchar atAnimation[16*4] =
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 };
 
+static elementsN(atAnimation);
+
 void Tilemap::update()
 {
+	if (!p->tilemapReady)
+		return;
+
 	/* Animate flash */
-	if (++p->flash.alphaIdx > flashAlphaN-1)
+	if (++p->flash.alphaIdx >= flashAlphaN)
 		p->flash.alphaIdx = 0;
 
 	/* Animate autotiles */
-	if (!p->atlas.animated)
+	if (!p->tiles.animated)
 		return;
 
-	p->atlas.frameIdx = atAnimation[p->atlas.aniIdx];
+	p->tiles.frameIdx = atAnimation[p->tiles.aniIdx];
 
-	if (++p->atlas.aniIdx >= 16*4)
-		p->atlas.aniIdx = 0;
+	if (++p->tiles.aniIdx >= atAnimationN)
+		p->tiles.aniIdx = 0;
 }
 
 Tilemap::Autotiles &Tilemap::getAutotiles() const
@@ -1137,6 +1270,8 @@ void Tilemap::setTileset(Bitmap *value)
 	p->tilesetCon.disconnect();
 	p->tilesetCon = value->modified.connect
 	        (sigc::mem_fun(p, &TilemapPrivate::invalidateAtlasSize));
+
+	p->updateAtlasInfo();
 }
 
 void Tilemap::setMapData(Table *value)
@@ -1152,6 +1287,9 @@ void Tilemap::setMapData(Table *value)
 	p->mapDataCon.disconnect();
 	p->mapDataCon = value->modified.connect
 	        (sigc::mem_fun(p, &TilemapPrivate::invalidateBuffers));
+
+
+	p->updateMapDataInfo();
 }
 
 void Tilemap::setFlashData(Table *value)

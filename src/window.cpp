@@ -694,10 +694,10 @@ void Window::update()
 
 #define DISP_CLASS_NAME "window"
 
-DEF_ATTR_SIMPLE(Window, Windowskin, Bitmap*, p->windowskin)
 DEF_ATTR_SIMPLE(Window, X,          int,     p->position.x)
 DEF_ATTR_SIMPLE(Window, Y,          int,     p->position.y)
 
+DEF_ATTR_RD_SIMPLE(Window, Windowskin,      Bitmap*, p->windowskin)
 DEF_ATTR_RD_SIMPLE(Window, Contents,        Bitmap*, p->contents)
 DEF_ATTR_RD_SIMPLE(Window, Stretch,         bool,    p->bgStretch)
 DEF_ATTR_RD_SIMPLE(Window, CursorRect,      Rect*,   p->cursorRect)
@@ -711,9 +711,20 @@ DEF_ATTR_RD_SIMPLE(Window, Opacity,         int,     p->opacity)
 DEF_ATTR_RD_SIMPLE(Window, BackOpacity,     int,     p->backOpacity)
 DEF_ATTR_RD_SIMPLE(Window, ContentsOpacity, int,     p->contentsOpacity)
 
+void Window::setWindowskin(Bitmap *value)
+{
+	GUARD_DISPOSED;
+
+	value->ensureNonMega();
+
+	p->windowskin = value;
+}
+
 void Window::setContents(Bitmap *value)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	value->ensureNonMega();
 
 	p->contents = value;
 	p->controlsVertDirty = true;
