@@ -452,7 +452,7 @@ struct Timer
 struct GraphicsPrivate
 {
 	/* Screen resolution, ie. the resolution at which
-	 * RGSS renders at (settable with Graphics.width/height).
+	 * RGSS renders at (settable with Graphics.resize_screen).
 	 * Can only be changed from within RGSS */
 	Vec2i scRes;
 
