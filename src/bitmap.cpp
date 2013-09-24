@@ -645,6 +645,9 @@ SDL_Surface *Bitmap::megaSurface()
 
 void Bitmap::ensureNonMega()
 {
+	if (isDisposed())
+		return;
+
 	GUARD_MEGA;
 }
 

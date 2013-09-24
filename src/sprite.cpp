@@ -152,7 +152,8 @@ void Sprite::setBitmap(Bitmap *bitmap)
 	if (p->bitmap == bitmap)
 		return;
 
-	bitmap->ensureNonMega();
+	if (bitmap)
+		bitmap->ensureNonMega();
 
 	p->bitmap = bitmap;
 	*p->srcRect = bitmap->rect();

@@ -715,7 +715,8 @@ void Window::setWindowskin(Bitmap *value)
 {
 	GUARD_DISPOSED;
 
-	value->ensureNonMega();
+	if (value)
+		value->ensureNonMega();
 
 	p->windowskin = value;
 }

@@ -105,7 +105,8 @@ void Plane::setBitmap(Bitmap *value)
 {
 	GUARD_DISPOSED;
 
-	value->ensureNonMega();
+	if (value)
+		value->ensureNonMega();
 
 	p->bitmap = value;
 }
