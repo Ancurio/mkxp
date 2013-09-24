@@ -725,7 +725,8 @@ void Window::setContents(Bitmap *value)
 {
 	GUARD_DISPOSED;
 
-	value->ensureNonMega();
+	if (value)
+		value->ensureNonMega();
 
 	p->contents = value;
 	p->controlsVertDirty = true;
