@@ -81,7 +81,7 @@ struct TimerQuery
 		if (thisQueryActive)
 			return false;
 
-		GLint isReady;
+		GLint isReady = GL_FALSE;
 		glGetQueryObjectiv(query, GL_QUERY_RESULT_AVAILABLE, &isReady);
 
 		if (isReady != GL_TRUE)
