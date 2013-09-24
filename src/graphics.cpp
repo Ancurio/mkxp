@@ -869,6 +869,16 @@ void Graphics::setFullscreen(bool value)
 	p->threadData->ethread->requestFullscreenMode(value);
 }
 
+bool Graphics::getShowCursor() const
+{
+	return p->threadData->ethread->getShowCursor();
+}
+
+void Graphics::setShowCursor(bool value)
+{
+	p->threadData->ethread->requestShowCursor(value);
+}
+
 Scene *Graphics::getScreen() const
 {
 	return &p->screen;

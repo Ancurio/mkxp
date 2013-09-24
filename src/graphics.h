@@ -59,6 +59,7 @@ public:
 
 	/* Non-standard extension */
 	DECL_ATTR( Fullscreen, bool )
+	DECL_ATTR( ShowCursor, bool )
 
 	/* <internal> */
 	Scene *getScreen() const;

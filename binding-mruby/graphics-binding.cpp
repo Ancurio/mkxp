@@ -76,28 +76,28 @@ MRB_FUNCTION(graphicsFrameReset)
 		mrb_int value; \
 		mrb_get_args(mrb, "i", &value); \
 		gState->graphics().set##PropName(value); \
-		return mrb_nil_value(); \
+		return mrb_fixnum_value(value); \
+	}
+
+#define DEF_GRA_PROP_B(PropName) \
+	MRB_FUNCTION(graphics##Get##PropName) \
+	{ \
+		MRB_FUN_UNUSED_PARAM; \
+		return mrb_bool_value(gState->graphics().get##PropName()); \
+	} \
+	MRB_FUNCTION(graphics##Set##PropName) \
+	{ \
+		mrb_bool value; \
+		mrb_get_args(mrb, "b", &value); \
+		gState->graphics().set##PropName(value); \
+		return mrb_bool_value(value); \
 	}
 
 DEF_GRA_PROP_I(FrameRate)
 DEF_GRA_PROP_I(FrameCount)
 
-MRB_FUNCTION(graphicsGetFullscreen)
-{
-	MRB_FUN_UNUSED_PARAM;
-
-	return mrb_bool_value(gState->graphics().getFullscreen());
-}
-
-MRB_FUNCTION(graphicsSetFullscreen)
-{
-	mrb_bool mode;
-	mrb_get_args(mrb, "b", &mode);
-
-	gState->graphics().setFullscreen(mode);
-
-	return mrb_bool_value(mode);
-}
+DEF_GRA_PROP_B(Fullscreen)
+DEF_GRA_PROP_B(ShowCursor)
 
 #define INIT_GRA_PROP_BIND(PropName, prop_name_s) \
 { \
@@ -117,5 +117,6 @@ void graphicsBindingInit(mrb_state *mrb)
 	INIT_GRA_PROP_BIND( FrameRate,  "frame_rate"  );
 	INIT_GRA_PROP_BIND( FrameCount, "frame_count" );
 
-	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen" );
+	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
+	INIT_GRA_PROP_BIND( ShowCursor, "show_cursor" );
 }

@@ -69,17 +69,21 @@ public:
 	/* Called from rgss thread */
 	void requestFullscreenMode(bool mode);
 	void requestWindowResize(int width, int height);
+	void requestShowCursor(bool mode);
 
 	void requestTerminate();
 
-	bool getFullscreen();
+	bool getFullscreen() const;
+	bool getShowCursor() const;
 
 	void showMessageBox(const char *body, int flags = 0);
 
 private:
 	void resetInputStates();
 	void setFullscreen(SDL_Window *, bool mode);
+	void updateCursorState(bool inWindow);
 	bool fullscreen;
+	bool showCursor;
 	volatile bool msgBoxDone;
 };
 

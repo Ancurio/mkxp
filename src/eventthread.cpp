@@ -53,11 +53,13 @@ enum
 	REQUEST_TERMINATION,
 	REQUEST_SETFULLSCREEN,
 	REQUEST_WINRESIZE,
-	REQUEST_MESSAGEBOX
+	REQUEST_MESSAGEBOX,
+	REQUEST_SETCURSORVISIBLE
 };
 
 EventThread::EventThread()
-    : fullscreen(false)
+    : fullscreen(false),
+      showCursor(false)
 {}
 
 void EventThread::process(RGSSThreadData &rtData)
@@ -67,6 +69,8 @@ void EventThread::process(RGSSThreadData &rtData)
 	WindowSizeNotify &windowSizeMsg = rtData.windowSizeMsg;
 
 	fullscreen = rtData.config.fullscreen;
+
+	bool cursorInWindow = false;
 
 	bool terminate = false;
 
@@ -92,11 +96,28 @@ void EventThread::process(RGSSThreadData &rtData)
 				                           event.window.data2);
 				break;
 
+			case SDL_WINDOWEVENT_ENTER :
+				cursorInWindow = true;
+				updateCursorState(cursorInWindow);
+				break;
+
+			case SDL_WINDOWEVENT_LEAVE :
+				cursorInWindow = false;
+				updateCursorState(cursorInWindow);
+				break;
+
 			case SDL_WINDOWEVENT_CLOSE :
 				terminate = true;
 				break;
 
+			case SDL_WINDOWEVENT_FOCUS_GAINED :
+				cursorInWindow = true;
+				updateCursorState(cursorInWindow);
+				break;
+
 			case SDL_WINDOWEVENT_FOCUS_LOST :
+				cursorInWindow = false;
+				updateCursorState(cursorInWindow);
 				resetInputStates();
 				break;
 			}
@@ -133,6 +154,11 @@ void EventThread::process(RGSSThreadData &rtData)
 			                         (const char*) event.user.data1, win);
 			free(event.user.data1);
 			msgBoxDone = true;
+			break;
+
+		case REQUEST_SETCURSORVISIBLE :
+			showCursor = event.user.code;
+			updateCursorState(cursorInWindow);
 			break;
 
 		case SDL_KEYUP :
@@ -214,6 +240,14 @@ void EventThread::setFullscreen(SDL_Window *win, bool mode)
 	fullscreen = mode;
 }
 
+void EventThread::updateCursorState(bool inWindow)
+{
+	if (inWindow)
+		SDL_ShowCursor(showCursor ? SDL_TRUE : SDL_FALSE);
+	else
+		SDL_ShowCursor(SDL_TRUE);
+}
+
 void EventThread::requestTerminate()
 {
 	SDL_Event event;
@@ -241,6 +275,14 @@ void EventThread::requestWindowResize(int width, int height)
 	SDL_PushEvent(&event);
 }
 
+void EventThread::requestShowCursor(bool mode)
+{
+	SDL_Event event;
+	event.type = REQUEST_SETCURSORVISIBLE;
+	event.user.code = mode;
+	SDL_PushEvent(&event);
+}
+
 void EventThread::showMessageBox(const char *body, int flags)
 {
 	msgBoxDone = false;
@@ -257,7 +299,12 @@ void EventThread::showMessageBox(const char *body, int flags)
 	resetInputStates();
 }
 
-bool EventThread::getFullscreen()
+bool EventThread::getFullscreen() const
 {
 	return fullscreen;
+}
+
+bool EventThread::getShowCursor() const
+{
+	return showCursor;
 }

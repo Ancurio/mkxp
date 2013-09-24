@@ -100,4 +100,4 @@ To alleviate possible porting of heavily Win32API reliant scripts, I have added 
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
 * The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game window.
-* The `Graphics` module has an additional property `fullscreen`, which represents the current fullscreen mode (`true` = fullscreen, `false` = windowed).
+* The `Graphics` module has two additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`.

@@ -81,26 +81,26 @@ RB_METHOD(graphicsFrameReset)
 		return rb_fix_new(value); \
 	}
 
+#define DEF_GRA_PROP_B(PropName) \
+	RB_METHOD(graphics##Get##PropName) \
+	{ \
+		RB_UNUSED_PARAM; \
+		return rb_bool_new(gState->graphics().get##PropName()); \
+	} \
+	RB_METHOD(graphics##Set##PropName) \
+	{ \
+		RB_UNUSED_PARAM; \
+		bool value; \
+		rb_get_args(argc, argv, "b", &value); \
+		gState->graphics().set##PropName(value); \
+		return rb_bool_new(value); \
+	}
+
 DEF_GRA_PROP_I(FrameRate)
 DEF_GRA_PROP_I(FrameCount)
 
-RB_METHOD(graphicsGetFullscreen)
-{
-	RB_UNUSED_PARAM;
-	return rb_bool_new(gState->graphics().getFullscreen());
-}
-
-RB_METHOD(graphicsSetFullscreen)
-{
-	RB_UNUSED_PARAM;
-
-	bool mode;
-	rb_get_args(argc, argv, "b", &mode);
-
-	gState->graphics().setFullscreen(mode);
-
-	return rb_bool_new(mode);
-}
+DEF_GRA_PROP_B(Fullscreen)
+DEF_GRA_PROP_B(ShowCursor)
 
 #define INIT_GRA_PROP_BIND(PropName, prop_name_s) \
 { \
@@ -120,5 +120,6 @@ void graphicsBindingInit()
 	INIT_GRA_PROP_BIND( FrameRate,  "frame_rate"  );
 	INIT_GRA_PROP_BIND( FrameCount, "frame_count" );
 
-	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen" );
+	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
+	INIT_GRA_PROP_BIND( ShowCursor, "show_cursor" );
 }
