@@ -275,9 +275,6 @@ struct TilemapPrivate
 		VBO::ID vbo;
 		bool animated;
 
-		/* Buffer count is either 1 or 4 */
-		uint8_t bufferCount;
-
 		/* Size of an IBO buffer frame, in bytes */
 		GLintptr bufferFrameSize;
 
@@ -356,7 +353,6 @@ struct TilemapPrivate
 
 		atlas.animatedATs.reserve(autotileCount);
 		tiles.animated = false;
-		tiles.bufferCount = 1;
 		tiles.frameIdx = 0;
 		tiles.aniIdx = 0;
 
@@ -430,6 +426,11 @@ struct TilemapPrivate
 		prepareCon.disconnect();
 	}
 
+	uint8_t bufferCount() const
+	{
+		return tiles.animated ? 4 : 1;
+	}
+
 	void updateAtlasInfo()
 	{
 		if (!tileset || tileset->isDisposed())
@@ -470,7 +471,6 @@ struct TilemapPrivate
 		}
 
 		tiles.animated = !animatedATs.empty();
-		tiles.bufferCount = animatedATs.empty() ? 1 : 4;
 	}
 
 	void updateMapDataInfo()
@@ -705,7 +705,7 @@ struct TilemapPrivate
 			/* Adjust to atlas coordinates */
 			texRect.y += atInd * autotileH;
 
-			for (int k = 0; k < tiles.bufferCount; ++k)
+			for (int k = 0; k < bufferCount(); ++k)
 			{
 				FloatRect _texRect = texRect;
 
@@ -767,7 +767,7 @@ struct TilemapPrivate
 		SVertex v[4];
 		Quad::setTexPosRect(v, texRect, posRect);
 
-		for (int k = 0; k < tiles.bufferCount; ++k)
+		for (int k = 0; k < bufferCount(); ++k)
 			for (int i = 0; i < 4; ++i)
 				targetArray->v[k].append(v[i]);
 	}
@@ -824,12 +824,12 @@ struct TilemapPrivate
 		int bufferFrameQuadCount = quadCount;
 		tiles.bufferFrameSize = quadCount * 6 * sizeof(uint32_t);
 
-		quadCount *= tiles.bufferCount;
+		quadCount *= bufferCount();
 
 		VBO::bind(tiles.vbo);
 		VBO::allocEmpty(quadDataSize(quadCount));
 
-		for (int k = 0; k < tiles.bufferCount; ++k)
+		for (int k = 0; k < bufferCount(); ++k)
 		{
 			VBO::uploadSubData(k*quadDataSize(bufferFrameQuadCount),
 			                   quadDataSize(groundQuadCount), groundVert.v[k].constData());
@@ -848,7 +848,7 @@ struct TilemapPrivate
 		VBO::unbind();
 
 		/* Ensure global IBO size */
-		gState->ensureQuadIBO(quadCount*tiles.bufferCount);
+		gState->ensureQuadIBO(quadCount*bufferCount());
 	}
 
 	void bindAtlas(SimpleShader &shader)
