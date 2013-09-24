@@ -3,18 +3,18 @@
 namespace TileAtlas
 {
 
-/* A Row represents a Rect
+/* A Column represents a Rect
  * with undefined width */
-struct Row
+struct Column
 {
 	int x, y, h;
 
-	Row(int x, int y, int h)
+	Column(int x, int y, int h)
 	    : x(x), y(y), h(h)
 	{}
 };
 
-typedef QList<Row> RowList;
+typedef QList<Column> ColumnList;
 
 /* Autotile area width */
 static const int atAreaW = 96*4;
@@ -55,75 +55,75 @@ Vec2i minSize(int tilesetH, int maxAtlasSize)
 	return Vec2i(-1, -1);
 }
 
-static RowList calcSrcRows(int tilesetH)
+static ColumnList calcSrcCols(int tilesetH)
 {
-	RowList rows;
+	ColumnList cols;
 
-	rows << Row(0, 0, tilesetH);
-	rows << Row(tsLaneW, 0, tilesetH);
+	cols << Column(0, 0, tilesetH);
+	cols << Column(tsLaneW, 0, tilesetH);
 
-	return rows;
+	return cols;
 }
 
-static RowList calcDstRows(int atlasW, int atlasH)
+static ColumnList calcDstCols(int atlasW, int atlasH)
 {
-	RowList rows;
+	ColumnList cols;
 
-	/* Rows below the autotile area */
+	/* Columns below the autotile area */
 	const int underAt = atlasH - atAreaH;
 
 	for (int i = 0; i < 3; ++i)
-		rows << Row(i*tsLaneW, atAreaH, underAt);
+		cols << Column(i*tsLaneW, atAreaH, underAt);
 
 	if (atlasW <= atAreaW)
-		return rows;
+		return cols;
 
-	const int remRows = (atlasW - atAreaW) / tsLaneW;
+	const int remCols = (atlasW - atAreaW) / tsLaneW;
 
-	for (int i = 0; i < remRows; ++i)
-		rows << Row(i*tsLaneW + atAreaW, 0, atlasH);
+	for (int i = 0; i < remCols; ++i)
+		cols << Column(i*tsLaneW + atAreaW, 0, atlasH);
 
-	return rows;
+	return cols;
 }
 
-static BlitList calcBlitsInt(RowList &srcRows, RowList &dstRows)
+static BlitList calcBlitsInt(ColumnList &srcCols, ColumnList &dstCols)
 {
 	BlitList blits;
 
-	while (!srcRows.empty())
+	while (!srcCols.empty())
 	{
-		Row srcRow = srcRows.takeFirst();
-		Q_ASSERT(srcRow.h > 0);
+		Column srcCol = srcCols.takeFirst();
+		Q_ASSERT(srcCol.h > 0);
 
-		while (!dstRows.empty() && srcRow.h > 0)
+		while (!dstCols.empty() && srcCol.h > 0)
 		{
-			Row dstRow = dstRows.takeFirst();
+			Column dstCol = dstCols.takeFirst();
 
-			if (srcRow.h > dstRow.h)
+			if (srcCol.h > dstCol.h)
 			{
-				/* srcRow doesn't fully fit into dstRow */
-				blits << Blit(srcRow.x, srcRow.y,
-				              dstRow.x, dstRow.y, dstRow.h);
+				/* srcCol doesn't fully fit into dstCol */
+				blits << Blit(srcCol.x, srcCol.y,
+				              dstCol.x, dstCol.y, dstCol.h);
 
-				srcRow.y += dstRow.h;
-				srcRow.h -= dstRow.h;
+				srcCol.y += dstCol.h;
+				srcCol.h -= dstCol.h;
 			}
-			else if (srcRow.h < dstRow.h)
+			else if (srcCol.h < dstCol.h)
 			{
-				/* srcRow fits into dstRow with space remaining */
-				blits << Blit(srcRow.x, srcRow.y,
-				              dstRow.x, dstRow.y, srcRow.h);
+				/* srcCol fits into dstCol with space remaining */
+				blits << Blit(srcCol.x, srcCol.y,
+				              dstCol.x, dstCol.y, srcCol.h);
 
-				dstRow.y += srcRow.h;
-				dstRow.h -= srcRow.h;
-				dstRows.prepend(dstRow);
-				srcRow.h = 0;
+				dstCol.y += srcCol.h;
+				dstCol.h -= srcCol.h;
+				dstCols.prepend(dstCol);
+				srcCol.h = 0;
 			}
 			else
 			{
-				/* srcRow fits perfectly into dstRow */
-				blits << Blit(srcRow.x, srcRow.y,
-				              dstRow.x, dstRow.y, dstRow.h);
+				/* srcCol fits perfectly into dstCol */
+				blits << Blit(srcCol.x, srcCol.y,
+				              dstCol.x, dstCol.y, dstCol.h);
 			}
 		}
 	}
@@ -133,10 +133,10 @@ static BlitList calcBlitsInt(RowList &srcRows, RowList &dstRows)
 
 BlitList calcBlits(int tilesetH, const Vec2i &atlasSize)
 {
-	RowList srcRows = calcSrcRows(tilesetH);
-	RowList dstRows = calcDstRows(atlasSize.x, atlasSize.y);
+	ColumnList srcCols = calcSrcCols(tilesetH);
+	ColumnList dstCols = calcDstCols(atlasSize.x, atlasSize.y);
 
-	return calcBlitsInt(srcRows, dstRows);
+	return calcBlitsInt(srcCols, dstCols);
 }
 
 Vec2i tileToAtlasCoor(int tileX, int tileY, int tilesetH, int atlasH)
