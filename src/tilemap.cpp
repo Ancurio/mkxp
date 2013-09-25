@@ -635,7 +635,7 @@ struct TilemapPrivate
 				SDL_Rect tmpRect = tsRect;
 				tmpRect.x = tmpRect.y = 0;
 
-				SDL_UpperBlit(tsSurf, &tsRect, blitTemp, &tmpRect);
+				SDL_BlitSurface(tsSurf, &tsRect, blitTemp, &tmpRect);
 
 				TEX::uploadSubImage(blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, blitTemp->pixels, GL_RGBA);
 
