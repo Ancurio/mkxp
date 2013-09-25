@@ -71,6 +71,7 @@ void EventThread::process(RGSSThreadData &rtData)
 	fullscreen = rtData.config.fullscreen;
 
 	bool cursorInWindow = false;
+	bool windowFocused = false;
 
 	bool terminate = false;
 
@@ -98,12 +99,12 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			case SDL_WINDOWEVENT_ENTER :
 				cursorInWindow = true;
-				updateCursorState(cursorInWindow);
+				updateCursorState(cursorInWindow && windowFocused);
 				break;
 
 			case SDL_WINDOWEVENT_LEAVE :
 				cursorInWindow = false;
-				updateCursorState(cursorInWindow);
+				updateCursorState(cursorInWindow && windowFocused);
 				break;
 
 			case SDL_WINDOWEVENT_CLOSE :
@@ -111,13 +112,13 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
 
 			case SDL_WINDOWEVENT_FOCUS_GAINED :
-				cursorInWindow = true;
-				updateCursorState(cursorInWindow);
+				windowFocused = true;
+				updateCursorState(cursorInWindow && windowFocused);
 				break;
 
 			case SDL_WINDOWEVENT_FOCUS_LOST :
-				cursorInWindow = false;
-				updateCursorState(cursorInWindow);
+				windowFocused = false;
+				updateCursorState(cursorInWindow && windowFocused);
 				resetInputStates();
 				break;
 			}
