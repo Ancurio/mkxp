@@ -646,7 +646,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		{
 			/* Even faster: upload directly to bitmap texture */
 			TEX::bind(p->tex.tex);
-			TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_RGBA);
+			TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_BGRA_EXT);
 		}
 		else
 		{
@@ -654,7 +654,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 			TEXFBO &gpTF = gState->gpTexFBO(txtSurf->w, txtSurf->h);
 
 			TEX::bind(gpTF.tex);
-			TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_RGBA);
+			TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA_EXT);
 
 			FBO::bind(gpTF.fbo, FBO::Read);
 			p->bindFBO();
