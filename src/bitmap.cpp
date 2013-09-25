@@ -722,8 +722,8 @@ IntRect Bitmap::textSize(const char *str)
 	int w, h;
 	TTF_SizeUTF8(font, str, &w, &h);
 
-//	if (strlen(str) == 1)
-//		TTF_GlyphMetrics(font, *str, 0, 0, 0, 0, &w);
+	if (p->font->getItalic() && strlen(str) == 1)
+		TTF_GlyphMetrics(font, *str, 0, 0, 0, 0, &w);
 
 	return IntRect(0, 0, w, h);
 }
