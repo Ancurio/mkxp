@@ -105,8 +105,8 @@ public:
 	/* <internal> */
 	void flush() const;
 	TEXFBO &getGLTypes();
-	SDL_Surface *megaSurface();
-	void ensureNonMega();
+	SDL_Surface *megaSurface() const;
+	void ensureNonMega() const;
 
 	/* Binds the backing texture and sets the correct
 	 * texture size uniform in shader */

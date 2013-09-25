@@ -319,10 +319,48 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	opacity = clamp(opacity, 0, 255);
 
 	if (opacity == 0)
+		return;
+
+	if (source.megaSurface())
 	{
+		/* Don't do transparent blits for now */
+		if (opacity < 255)
+			source.ensureNonMega();
+
+		SDL_Surface *srcSurf = source.megaSurface();
+
+		int bpp;
+		Uint32 rMask, gMask, bMask, aMask;
+		SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ABGR8888,
+		                           &bpp, &rMask, &gMask, &bMask, &aMask);
+		SDL_Surface *blitTemp =
+		        SDL_CreateRGBSurface(0, destRect.w, destRect.h, bpp, rMask, gMask, bMask, aMask);
+
+		SDL_Rect srcRect;
+		srcRect.x = sourceRect.x;
+		srcRect.y = sourceRect.y;
+		srcRect.w = sourceRect.w;
+		srcRect.h = sourceRect.h;
+
+		SDL_Rect dstRect;
+		dstRect.x = dstRect.y = 0;
+		dstRect.w = blitTemp->w;
+		dstRect.h = blitTemp->h;
+
+		// FXIME: This is supposed to be a scaled blit, put SDL2 for some reason
+		// makes the source surface unusable after BlitScaled() is called. Investigate!
+		SDL_BlitSurface(srcSurf, &srcRect, blitTemp, &dstRect);
+
+		TEX::bind(p->tex.tex);
+		TEX::uploadSubImage(destRect.x, destRect.y, destRect.w, destRect.h, blitTemp->pixels, GL_RGBA);
+
+		SDL_FreeSurface(blitTemp);
+
+		modified();
 		return;
 	}
-	else if (opacity == 255 && !p->touchesTaintedArea(destRect))
+
+	if (opacity == 255 && !p->touchesTaintedArea(destRect))
 	{
 		/* Fast blit */
 		flush();
@@ -746,12 +784,12 @@ TEXFBO &Bitmap::getGLTypes()
 	return p->tex;
 }
 
-SDL_Surface *Bitmap::megaSurface()
+SDL_Surface *Bitmap::megaSurface() const
 {
 	return p->megaSurface;
 }
 
-void Bitmap::ensureNonMega()
+void Bitmap::ensureNonMega() const
 {
 	if (isDisposed())
 		return;
