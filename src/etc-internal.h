@@ -270,6 +270,11 @@ struct NormValue
 		norm = unNorm / 255.0;
 	}
 
+	bool operator ==(int value) const
+	{
+		return unNorm == clamp(value, 0, 255);
+	}
+
 	operator int() const
 	{
 		return unNorm;
