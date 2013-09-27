@@ -172,7 +172,7 @@ struct GPUTimer
 		if (++counter < iter)
 			return;
 
-		qDebug() << "  Avg. GPU time:" << ((double) acc / (iter * 1000 * 1000)) << "ms";
+		qDebug() << "                                  Avg. GPU time:" << ((double) acc / (iter * 1000 * 1000)) << "ms";
 		acc = counter = 0;
 	}
 
