@@ -30,6 +30,7 @@
 class SceneElement;
 class Viewport;
 class Window;
+class ScanRow;
 
 class Scene
 {
@@ -60,12 +61,14 @@ protected:
 
 	friend class SceneElement;
 	friend class Window;
+	friend class ScanRow;
 };
 
 class SceneElement
 {
 public:
 	SceneElement(Scene &scene, int z = 0);
+	SceneElement(Scene &scene, int z, unsigned int cStamp);
 	virtual ~SceneElement();
 
 	void setScene(Scene &scene);

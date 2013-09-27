@@ -65,6 +65,7 @@ class ViewportElement : public SceneElement
 {
 public:
 	ViewportElement(Viewport *viewport = 0, int z = 0);
+	ViewportElement(Viewport *viewport, int z, unsigned int cStamp);
 
 	Viewport *getViewport() const;
 

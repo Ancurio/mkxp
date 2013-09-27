@@ -231,6 +231,10 @@ ViewportElement::ViewportElement(Viewport *viewport, int z)
       m_viewport(viewport)
 {}
 
+ViewportElement::ViewportElement(Viewport *viewport, int z, unsigned int cStamp)
+    : SceneElement(viewport ? *viewport : *gState->screen(), z, cStamp)
+{}
+
 Viewport *ViewportElement::getViewport() const
 {
 	return m_viewport;

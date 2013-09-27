@@ -217,7 +217,8 @@ struct ScanRow : public ViewportElement
 	void draw();
 	void drawInt();
 
-	void updateZ();
+	void initUpdateZ();
+	void finiUpdateZ();
 };
 
 struct TilemapPrivate
@@ -235,9 +236,6 @@ struct TilemapPrivate
 	Vec2i offset;
 
 	Vec2i dispPos;
-
-	/* For updating scanrow z */
-	int tileYOffset;
 
 	/* Tile atlas */
 	struct {
@@ -299,6 +297,14 @@ struct TilemapPrivate
 		QVector<ScanRow*> scanrows;
 		Scene::Geometry sceneGeo;
 		Vec2i sceneOffset;
+
+		/* The ground and scanrow elements' creationStamp
+		 * should be aquired once (at Tilemap construction)
+		 * instead of regenerated everytime the elements are
+		 * (re)created. Scanrows can share one stamp because
+		 * their z always differs anway */
+		unsigned int groundStamp;
+		unsigned int scanrowStamp;
 	} elem;
 
 	/* Replica bitmask */
@@ -338,7 +344,6 @@ struct TilemapPrivate
 	      flashData(0),
 	      priorities(0),
 	      visible(true),
-	      tileYOffset(0),
 	      mapWidth(0),
 	      mapHeight(0),
 	      replicas(Normal),
@@ -397,6 +402,9 @@ struct TilemapPrivate
 		IBO::unbind();
 
 		elem.ground = 0;
+
+		elem.groundStamp = gState->genTimeStamp();
+		elem.scanrowStamp = gState->genTimeStamp();
 
 		prepareCon = gState->prepareDraw.connect
 		        (sigc::mem_fun(this, &TilemapPrivate::prepare));
@@ -974,7 +982,10 @@ struct TilemapPrivate
 	void updateZOrder()
 	{
 		for (int i = 0; i < elem.scanrows.count(); ++i)
-			elem.scanrows[i]->updateZ();
+			elem.scanrows[i]->initUpdateZ();
+
+		for (int i = 0; i < elem.scanrows.count(); ++i)
+			elem.scanrows[i]->finiUpdateZ();
 	}
 
 	void prepare()
@@ -1024,7 +1035,7 @@ struct TilemapPrivate
 };
 
 GroundLayer::GroundLayer(TilemapPrivate *p, Viewport *viewport)
-    : ViewportElement(viewport),
+    : ViewportElement(viewport, 0, p->elem.groundStamp),
       p(p)
 {
 	vboCount = p->scanrowBases[0] * 6;
@@ -1105,7 +1116,7 @@ void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
 }
 
 ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport, int index)
-    : ViewportElement(viewport, 32 + index*32),
+    : ViewportElement(viewport, 32 + index*32, p->elem.scanrowStamp),
       index(index),
       p(p)
 {
@@ -1146,10 +1157,16 @@ void ScanRow::drawInt()
 	               GL_UNSIGNED_INT, (GLvoid*) (vboOffset + p->tiles.frameIdx * p->tiles.bufferFrameSize));
 }
 
-void ScanRow::updateZ()
+void ScanRow::initUpdateZ()
 {
-	int y = (p->offset.y > 0) ? -p->offset.y : 0;
-	setZ(32 + (((y) / 32) + index) * 32);
+	unlink();
+}
+
+void ScanRow::finiUpdateZ()
+{
+	z = 32 * (index+1) - p->offset.y;
+
+	scene->insert(*this);
 }
 
 void Tilemap::Autotiles::set(int i, Bitmap *bitmap)
@@ -1362,12 +1379,7 @@ void Tilemap::setOY(int value)
 	p->updatePosition();
 	p->updateReplicas();
 
-	int tileYOffset = value / 32;
-	if (tileYOffset != p->tileYOffset)
-	{
-		p->tileYOffset = tileYOffset;
-		p->zOrderDirty = true;
-	}
+	p->zOrderDirty = true;
 }
 
 

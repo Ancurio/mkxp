@@ -88,6 +88,16 @@ SceneElement::SceneElement(Scene &scene, int z)
 	scene.insert(*this);
 }
 
+SceneElement::SceneElement(Scene &scene, int z, unsigned int cStamp)
+    : link(this),
+      creationStamp(cStamp),
+      z(z),
+      visible(true),
+      scene(&scene)
+{
+	scene.insert(*this);
+}
+
 SceneElement::~SceneElement()
 {
 	unlink();
