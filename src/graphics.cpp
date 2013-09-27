@@ -33,186 +33,10 @@
 #include "bitmap.h"
 #include "etc-internal.h"
 #include "binding.h"
+#include "perftimer.h"
 
 #include "SDL2/SDL_video.h"
 #include "SDL2/SDL_timer.h"
-
-#include "stdint.h"
-
-#include "SFML/System/Clock.hpp"
-
-struct TimerQuery
-{
-	GLuint query;
-	static bool queryActive;
-	bool thisQueryActive;
-
-	TimerQuery()
-	    : thisQueryActive(false)
-	{
-		glGenQueries(1, &query);
-	}
-
-	void begin()
-	{
-		if (queryActive)
-			return;
-
-		if (thisQueryActive)
-			return;
-
-		glBeginQuery(GL_TIME_ELAPSED, query);
-		queryActive = true;
-		thisQueryActive = true;
-	}
-
-	void end()
-	{
-		if (!thisQueryActive)
-			return;
-
-		glEndQuery(GL_TIME_ELAPSED);
-		queryActive = false;
-		thisQueryActive = false;
-	}
-
-	bool getResult(GLuint64 *result)
-	{
-		if (thisQueryActive)
-			return false;
-
-		GLint isReady = GL_FALSE;
-		glGetQueryObjectiv(query, GL_QUERY_RESULT_AVAILABLE, &isReady);
-
-		if (isReady != GL_TRUE)
-		{
-//			qDebug() << "TimerQuery result not ready";
-			return false;
-		}
-
-		glGetQueryObjectui64v(query, GL_QUERY_RESULT, result);
-
-		if (glGetError() == GL_INVALID_OPERATION)
-		{
-			qDebug() << "Something went wrong with getting TimerQuery results";
-			return false;
-		}
-
-		return true;
-	}
-
-	GLuint64 getResultSync()
-	{
-		if (thisQueryActive)
-			return 0;
-
-		GLuint64 result;
-		GLint isReady = GL_FALSE;
-
-		while (isReady == GL_FALSE)
-			glGetQueryObjectiv(query, GL_QUERY_RESULT_AVAILABLE, &isReady);
-
-		glGetQueryObjectui64v(query, GL_QUERY_RESULT, &result);
-
-		return result;
-	}
-
-	~TimerQuery()
-	{
-		if (thisQueryActive)
-			end();
-
-		glDeleteQueries(1, &query);
-	}
-};
-
-bool TimerQuery::queryActive = false;
-
-struct GPUTimer
-{
-	TimerQuery queries[2];
-	const int iter;
-
-	uchar ind;
-	uint64_t acc;
-	int32_t counter;
-	bool first;
-
-	GPUTimer(int iter)
-	    : iter(iter),
-	      ind(0),
-	      acc(0),
-	      counter(0),
-	      first(true)
-	{}
-
-	void startTiming()
-	{
-		queries[ind].begin();
-	}
-
-	void endTiming()
-	{
-		queries[ind].end();
-
-		if (first)
-		{
-			first = false;
-			return;
-		}
-
-		swapInd();
-
-		GLuint64 result;
-		if (!queries[ind].getResult(&result))
-			return;
-
-		acc += result;
-
-		if (++counter < iter)
-			return;
-
-		qDebug() << "                                  Avg. GPU time:" << ((double) acc / (iter * 1000 * 1000)) << "ms";
-		acc = counter = 0;
-	}
-
-	void swapInd()
-	{
-		ind = ind ? 0 : 1;
-	}
-};
-
-struct CPUTimer
-{
-	const int iter;
-
-	uint64_t acc;
-	int32_t counter;
-	sf::Clock clock;
-
-	CPUTimer(int iter)
-	    : iter(iter),
-	      acc(0),
-	      counter(0)
-	{
-	}
-
-	void startTiming()
-	{
-		clock.restart();
-	}
-
-	void endTiming()
-	{
-		acc += clock.getElapsedTime().asMicroseconds();
-
-		if (++counter < iter)
-			return;
-
-		qDebug() << "Avg. CPU time:" << ((double) acc / (iter * 1000)) << "ms";
-		acc = counter = 0;
-	}
-};
 
 struct PingPong
 {
@@ -436,19 +260,6 @@ struct FPSLimiter
 	}
 };
 
-struct Timer
-{
-	uint64_t lastTicks;
-	uint64_t acc;
-	int counter;
-
-	Timer()
-	    : lastTicks(SDL_GetPerformanceCounter()),
-	      acc(0),
-	      counter(0)
-	{}
-};
-
 struct GraphicsPrivate
 {
 	/* Screen resolution, ie. the resolution at which
@@ -477,8 +288,8 @@ struct GraphicsPrivate
 
 	FPSLimiter fpsLimiter;
 
-	GPUTimer gpuTimer;
-	CPUTimer cpuTimer;
+	PerfTimer *gpuTimer;
+	PerfTimer *cpuTimer;
 
 	bool frozen;
 	TEXFBO frozenScene;
@@ -495,10 +306,11 @@ struct GraphicsPrivate
 	      frameCount(0),
 	      brightness(255),
 	      fpsLimiter(frameRate),
-	      gpuTimer(frameRate),
-	      cpuTimer(frameRate),
 	      frozen(false)
 	{
+		gpuTimer = createGPUTimer(frameRate);
+		cpuTimer = createCPUTimer(frameRate);
+
 		TEXFBO::init(frozenScene);
 		TEXFBO::allocEmpty(frozenScene, scRes.x, scRes.y);
 		TEXFBO::linkFBO(frozenScene);
@@ -517,6 +329,9 @@ struct GraphicsPrivate
 
 	~GraphicsPrivate()
 	{
+		delete gpuTimer;
+		delete cpuTimer;
+
 		TEXFBO::fini(frozenScene);
 		TEXFBO::fini(currentScene);
 
@@ -627,8 +442,8 @@ void Graphics::update()
 {
 	gState->checkShutdown();
 
-//	p->cpuTimer.endTiming();
-//	p->gpuTimer.startTiming();
+//	p->cpuTimer->endTiming();
+//	p->gpuTimer->startTiming();
 
 	if (p->frozen)
 		return;
@@ -636,8 +451,8 @@ void Graphics::update()
 	p->checkResize();
 	p->redrawScreen();
 
-//	p->gpuTimer.endTiming();
-//	p->cpuTimer.startTiming();
+//	p->gpuTimer->endTiming();
+//	p->cpuTimer->startTiming();
 }
 
 void Graphics::wait(int duration)
