@@ -5,7 +5,7 @@ mkxp is a project that seeks to provide a fully open source implementation of th
 It is licensed under the GNU General Public License v2.
 
 ## Bindings
-Bindings provide the interpreted language environment to run game scripts in. As of right now, they are compiled directly into the executable. Currently there are three bindings:
+Bindings provide the glue code for an interpreted language environment to run game scripts in. As of right now, they are compiled directly into the executable (however, the scripting language itself might not be). Currently there are three bindings:
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
@@ -48,14 +48,14 @@ To select this backend, run `qmake BINDING=BINDING_NULL`
 * zlib (only ruby backends)
 
 (If no version specified, assume latest)
+
+To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed.
  
 ### MRI binding:
 Place a recent version of ruby in the project folder and build it.
 
 ### mruby binding:
 Place a recent version of mruby in the project folder and build it.
-
-To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed
 
 ## Building
 
@@ -93,7 +93,10 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 * Audio formats other than ogg/wav (this might change in the future)
 * Audio "pitch" parameter
 * The Win32API ruby class (for obvious reasons)
-* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)
+* Restarting the game with F12
+* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)*
+
+\* There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. It's sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
 
 ## Nonstandard RGSS extensions
 
