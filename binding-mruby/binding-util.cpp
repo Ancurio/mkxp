@@ -148,7 +148,7 @@ MRB_METHOD_PUB(inspectObject)
 	mrb_value priv = mrb_obj_iv_get(mrb, mrb_obj_ptr(self), getSym(mrb, CSpriv_iv));
 
 	static char buffer[64];
-	sprintf(buffer, "#<%s:%p>", DATA_TYPE(priv)->struct_name, DATA_PTR(priv));
+	snprintf(buffer, sizeof(buffer), "#<%s:%p>", DATA_TYPE(priv)->struct_name, DATA_PTR(priv));
 
 	return mrb_str_new_cstr(mrb, buffer);
 }
