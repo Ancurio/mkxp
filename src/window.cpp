@@ -371,6 +371,7 @@ struct WindowPrivate
 		FloatRect texRect = FloatRect(0, 0, size.x, size.y);
 		baseTexQuad.setTexPosRect(texRect, texRect);
 
+		opacityDirty = true;
 		baseTexDirty = true;
 	}
 
@@ -521,6 +522,7 @@ struct WindowPrivate
 			baseVertDirty = false;
 			updateBaseQuadArray = true;
 		}
+
 		if (opacityDirty)
 		{
 			updateBaseAlpha();
