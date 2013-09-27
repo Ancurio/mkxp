@@ -48,6 +48,8 @@ struct Color : public Serializable
 	Color(const Vec4 &norm);
 	Color(const Color &o);
 
+	virtual ~Color() {}
+
 	bool operator==(const Color &o) const;
 
 	void updateInternal();
@@ -95,6 +97,8 @@ struct Tone : public Serializable
 	Tone(double red, double green, double blue, double gray = 0);
 	Tone(const Tone &o);
 
+	virtual ~Tone() {}
+
 	bool operator==(const Tone &o) const;
 
 	void updateInternal();
@@ -139,6 +143,8 @@ struct Rect : public Serializable
 	Rect()
 	    : x(0), y(0), width(0), height(0)
 	{}
+
+	virtual ~Rect() {}
 
 	Rect(int x, int y, int width, int height);
 	Rect(const Rect &o);

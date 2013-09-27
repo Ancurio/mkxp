@@ -31,7 +31,7 @@ class Table : public Serializable
 {
 public:
 	Table(int x, int y = 1, int z = 1);
-	~Table();
+	virtual ~Table();
 
 	int xSize() const { return m_x; }
 	int ySize() const { return m_y; }

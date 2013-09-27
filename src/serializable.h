@@ -24,8 +24,6 @@
 
 struct Serializable
 {
-	virtual ~Serializable() {}
-
 	virtual int serialSize() const = 0;
 	virtual void serialize(char *buffer) const = 0;
 };
