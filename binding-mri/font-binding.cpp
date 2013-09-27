@@ -31,7 +31,7 @@ RB_METHOD(fontDoesExist)
 	RB_UNUSED_PARAM;
 
 	const char *name;
-	rb_get_args(argc, argv, "z", &name);
+	rb_get_args(argc, argv, "z", &name, RB_ARG_END);
 
 	return rb_bool_new(Font::doesExist(name));
 }
@@ -41,7 +41,7 @@ RB_METHOD(fontInitialize)
 	const char *name = 0;
 	int size = 0;
 
-	rb_get_args(argc, argv, "|zi", &name, &size);
+	rb_get_args(argc, argv, "|zi", &name, &size, RB_ARG_END);
 
 	Font *f = new Font(name, size);
 
@@ -68,7 +68,7 @@ RB_METHOD(FontSetName)
 	Font *f = getPrivateData<Font>(self);
 
 	VALUE name;
-	rb_get_args(argc, argv, "S", &name);
+	rb_get_args(argc, argv, "S", &name, RB_ARG_END);
 
 	f->setName(RSTRING_PTR(name));
 
@@ -93,7 +93,7 @@ DEF_PROP_OBJ(Font, Color, Color, "color")
 	{ \
 		RB_UNUSED_PARAM; \
 		type value; \
-		rb_get_args(argc, argv, param_t_s, &value); \
+		rb_get_args(argc, argv, param_t_s, &value, RB_ARG_END); \
 		Klass::set##PropName(value); \
 		return value_fun(value); \
 	}
@@ -112,7 +112,7 @@ RB_METHOD(FontSetDefaultName)
 {
 	RB_UNUSED_PARAM;
 	VALUE nameObj;
-	rb_get_args(argc, argv, "S", &nameObj);
+	rb_get_args(argc, argv, "S", &nameObj, RB_ARG_END);
 
 	Font::setDefaultName(RSTRING_PTR(nameObj));
 
@@ -129,7 +129,7 @@ RB_METHOD(FontGetDefaultColor)
 RB_METHOD(FontSetDefaultColor)
 {
 	VALUE colorObj;
-	rb_get_args(argc, argv, "o", &colorObj);
+	rb_get_args(argc, argv, "o", &colorObj, RB_ARG_END);
 
 	Color *c = getPrivateDataCheck<Color>(colorObj, ColorType);
 

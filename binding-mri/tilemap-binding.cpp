@@ -37,7 +37,7 @@ RB_METHOD(tilemapAutotilesSet)
 	int i;
 	VALUE bitmapObj;
 
-	rb_get_args(argc, argv, "io", &i, &bitmapObj);
+	rb_get_args(argc, argv, "io", &i, &bitmapObj, RB_ARG_END);
 
 	Bitmap *bitmap = getPrivateDataCheck<Bitmap>(bitmapObj, BitmapType);
 
@@ -52,7 +52,7 @@ RB_METHOD(tilemapAutotilesSet)
 RB_METHOD(tilemapAutotilesGet)
 {
 	int i;
-	rb_get_args (argc, argv, "i", &i);
+	rb_get_args (argc, argv, "i", &i, RB_ARG_END);
 
 	if (i < 0 || i > 6)
 		return Qnil;
@@ -72,7 +72,7 @@ RB_METHOD(tilemapInitialize)
 	VALUE viewportObj = Qnil;
 	Viewport *viewport = 0;
 
-	rb_get_args(argc, argv, "|o", &viewportObj);
+	rb_get_args(argc, argv, "|o", &viewportObj, RB_ARG_END);
 
 	if (rb_type(viewportObj) != RUBY_T_NIL)
 		viewport = getPrivateDataCheck<Viewport>(viewportObj, ViewportType);

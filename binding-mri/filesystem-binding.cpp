@@ -47,7 +47,7 @@ RB_METHOD(fileIntRead)
 {
 
 	int length = -1;
-	rb_get_args(argc, argv, "i", &length);
+	rb_get_args(argc, argv, "i", &length, RB_ARG_END);
 
 	SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
 
@@ -129,7 +129,7 @@ RB_METHOD(kernelLoadData)
 	RB_UNUSED_PARAM;
 
 	const char *filename;
-	rb_get_args(argc, argv, "z", &filename);
+	rb_get_args(argc, argv, "z", &filename, RB_ARG_END);
 
 	return kernelLoadDataInt(filename);
 }
@@ -141,7 +141,7 @@ RB_METHOD(kernelSaveData)
 	VALUE obj;
 	VALUE filename;
 
-	rb_get_args(argc, argv, "oS", &obj, &filename);
+	rb_get_args(argc, argv, "oS", &obj, &filename, RB_ARG_END);
 
 	VALUE file = rb_funcall(rb_cFile, rb_intern("open"), 2, filename, rb_str_new_cstr("w"));
 

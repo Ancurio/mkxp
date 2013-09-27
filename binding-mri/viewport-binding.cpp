@@ -39,7 +39,7 @@ RB_METHOD(viewportInitialize)
 		VALUE rectObj;
 		Rect *rect;
 
-		rb_get_args(argc, argv, "o", &rectObj);
+		rb_get_args(argc, argv, "o", &rectObj, RB_ARG_END);
 
 		rect = getPrivateDataCheck<Rect>(rectObj, RectType);
 
@@ -49,7 +49,7 @@ RB_METHOD(viewportInitialize)
 	{
 		int x, y, width, height;
 
-		rb_get_args(argc, argv, "iiii", &x, &y, &width, &height);
+		rb_get_args(argc, argv, "iiii", &x, &y, &width, &height, RB_ARG_END);
 
 		v = new Viewport(x, y, width, height);
 	}

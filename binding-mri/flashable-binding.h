@@ -36,7 +36,7 @@ RB_METHOD(flashableFlash)
 
 	Color *color;
 
-	rb_get_args(argc, argv, "oi", &colorObj, &duration);
+	rb_get_args(argc, argv, "oi", &colorObj, &duration, RB_ARG_END);
 
 	if (rb_type(colorObj) == RUBY_T_NIL)
 	{

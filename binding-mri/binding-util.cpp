@@ -282,9 +282,50 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 		}
 	}
 
+	/* Pop remaining arg pointers off
+	 * the stack to check for RB_ARG_END */
+	format--;
+
+	while ((c = *format++))
+	{
+		switch (c)
+		{
+		case 'o' :
+		case 'S' :
+			va_arg(ap, VALUE*);
+			break;
+
+		case 's' :
+			va_arg(ap, const char**);
+			va_arg(ap, int*);
+			break;
+
+		case 'z' :
+			va_arg(ap, const char**);
+			break;
+
+		case 'f' :
+			va_arg(ap, double*);
+			break;
+
+		case 'i' :
+			va_arg(ap, int*);
+			break;
+
+		case 'b' :
+			va_arg(ap, bool*);
+			break;
+		}
+	}
+
 	// FIXME print num of needed args vs provided
 	if (!c && argc > argI)
 		rb_raise(rb_eArgError, "wrong number of arguments");
+
+	/* Verify correct termination */
+	void *argEnd = va_arg(ap, void*);
+	Q_UNUSED(argEnd);
+	Q_ASSERT(argEnd == RB_ARG_END);
 
 	va_end(ap);
 

@@ -31,7 +31,7 @@
 		const char *filename; \
 		int volume = 100; \
 		int pitch = 100; \
-		rb_get_args(argc, argv, "z|ii", &filename, &volume, &pitch); \
+		rb_get_args(argc, argv, "z|ii", &filename, &volume, &pitch, RB_ARG_END); \
 		GUARD_EXC( gState->audio().entity##Play(filename, volume, pitch); ) \
 		return Qnil; \
 	} \
@@ -47,7 +47,7 @@ RB_METHOD(audio_##entity##Fade) \
 { \
 	RB_UNUSED_PARAM; \
 	int time; \
-	rb_get_args(argc, argv, "i", &time); \
+	rb_get_args(argc, argv, "i", &time, RB_ARG_END); \
 	gState->audio().bgmFade(time); \
 	return Qnil; \
 }

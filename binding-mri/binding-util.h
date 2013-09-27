@@ -69,7 +69,7 @@ void initType(rb_data_type_struct &type,
               void (*freeInst)(void*));
 
 template<class C>
-static inline void freeInstance(void *inst)
+static void freeInstance(void *inst)
 {
 	delete static_cast<C*>(inst);
 }
@@ -132,6 +132,9 @@ wrapNilProperty(VALUE self, const char *iv)
 int
 rb_get_args(int argc, VALUE *argv, const char *format, ...);
 
+/* Always terminate 'rb_get_args' with this */
+#define RB_ARG_END ((void*) -1)
+
 typedef VALUE (*RubyMethod)(int argc, VALUE *argv, VALUE self);
 
 static inline void
@@ -158,7 +161,7 @@ objectLoad(int argc, VALUE *argv, VALUE self, rb_data_type_struct &type)
 {
 	const char *data;
 	int dataLen;
-	rb_get_args(argc, argv, "s", &data, &dataLen);
+	rb_get_args(argc, argv, "s", &data, &dataLen, RB_ARG_END);
 
 	VALUE obj = rb_obj_alloc(self);
 
@@ -227,7 +230,7 @@ rb_bool_new(bool value)
 		Klass *k = getPrivateData<Klass>(self); \
 		VALUE propObj; \
 		PropKlass *prop; \
-		rb_get_args(argc, argv, "o", &propObj); \
+		rb_get_args(argc, argv, "o", &propObj, RB_ARG_END); \
 		prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type); \
 		GUARD_EXC( k->set##PropName(prop); ) \
 		rb_iv_set(self, prop_iv, propObj); \
@@ -249,7 +252,7 @@ rb_bool_new(bool value)
 		Klass *k = getPrivateData<Klass>(self); \
 		VALUE propObj; \
 		PropKlass *prop; \
-		rb_get_args(argc, argv, "o", &propObj); \
+		rb_get_args(argc, argv, "o", &propObj, RB_ARG_END); \
 		if (rb_type(propObj) == RUBY_T_NIL) \
 			prop = 0; \
 		else \
@@ -271,7 +274,7 @@ rb_bool_new(bool value)
 	{ \
 		Klass *k = getPrivateData<Klass>(self); \
 		type value; \
-		rb_get_args(argc, argv, param_t_s, &value); \
+		rb_get_args(argc, argv, param_t_s, &value, RB_ARG_END); \
 		GUARD_EXC( k->set##PropName(value); ) \
 		return value_fun(value); \
 	}

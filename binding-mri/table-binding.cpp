@@ -30,7 +30,7 @@ RB_METHOD(tableInitialize)
 	int x, y, z;
 	x = y = z = 1;
 
-	rb_get_args(argc, argv, "i|ii", &x, &y, &z);
+	rb_get_args(argc, argv, "i|ii", &x, &y, &z, RB_ARG_END);
 
 	Table *t = new Table(x, y, z);
 

@@ -38,7 +38,7 @@ RB_METHOD(inputPress)
 	RB_UNUSED_PARAM;
 
 	int num;
-	rb_get_args(argc, argv, "i", &num);
+	rb_get_args(argc, argv, "i", &num, RB_ARG_END);
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 
@@ -50,7 +50,7 @@ RB_METHOD(inputTrigger)
 	RB_UNUSED_PARAM;
 
 	int num;
-	rb_get_args(argc, argv, "i", &num);
+	rb_get_args(argc, argv, "i", &num, RB_ARG_END);
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 
@@ -62,7 +62,7 @@ RB_METHOD(inputRepeat)
 	RB_UNUSED_PARAM;
 
 	int num;
-	rb_get_args(argc, argv, "i", &num);
+	rb_get_args(argc, argv, "i", &num, RB_ARG_END);
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 

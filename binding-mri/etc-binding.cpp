@@ -40,7 +40,7 @@ DEF_TYPE(Rect);
 	{ \
 		Klass *p = getPrivateData<Klass>(self); \
 		arg_type arg; \
-		rb_get_args(argc, argv, arg_t_s, &arg); \
+		rb_get_args(argc, argv, arg_t_s, &arg, RB_ARG_END); \
 		p->set##Attr(arg); \
 		return *argv; \
 	}
@@ -69,7 +69,7 @@ ATTR_INT_RW(Rect, Height)
 		Klass *p = getPrivateData<Klass>(self); \
 		VALUE otherObj; \
 		Klass *other; \
-		rb_get_args(argc, argv, "o", &otherObj); \
+		rb_get_args(argc, argv, "o", &otherObj, RB_ARG_END); \
 		other = getPrivateDataCheck<Klass>(otherObj, Klass##Type); \
 		return rb_bool_new(*p == *other); \
 	}
@@ -82,7 +82,7 @@ EQUAL_FUN(Rect)
 	RB_METHOD(Klass##Initialize) \
 	{ \
 		param_type p1, p2, p3, p4 = last_param_def; \
-		rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4); \
+		rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4, RB_ARG_END); \
 		Klass *k = new Klass(p1, p2, p3, p4); \
 		setPrivateData(self, k, Klass##Type); \
 		return self; \
@@ -96,7 +96,7 @@ INIT_FUN(Rect, int, "iiii", 0)
 	RB_METHOD(Klass##Set) \
 	{ \
 		param_type p1, p2, p3, p4 = last_param_def; \
-		rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4); \
+		rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4, RB_ARG_END); \
 		Klass *k = getPrivateData<Klass>(self); \
 		k->set(p1, p2, p3, p4); \
 		return self; \
