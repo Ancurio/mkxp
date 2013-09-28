@@ -48,8 +48,8 @@
 #include "binding-types.h"
 #include "mrb-ext/marshal.h"
 
-void mrbBindingExecute();
-void mrbBindingTerminate();
+static void mrbBindingExecute();
+static void mrbBindingTerminate();
 
 ScriptBinding scriptBindingImpl =
 {
@@ -352,7 +352,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 	mrb_close(scriptMrb);
 }
 
-void mrbBindingExecute()
+static void mrbBindingExecute()
 {
 	mrb_state *mrb = mrb_open();
 
@@ -389,7 +389,7 @@ void mrbBindingExecute()
 	mrb_close(mrb);
 }
 
-void mrbBindingTerminate()
+static void mrbBindingTerminate()
 {
 	mrb_state *mrb = static_cast<mrb_state*>(gState->bindingData());
 	MrbData *data = static_cast<MrbData*>(mrb->ud);

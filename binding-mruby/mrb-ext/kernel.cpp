@@ -34,6 +34,7 @@
 #include "eventthread.h"
 #include "exception.h"
 #include "filesystem.h"
+#include "binding.h"
 
 #include <QDebug>
 
@@ -162,7 +163,7 @@ MRB_FUNCTION(kernelExit)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	mrbBindingTerminate();
+	scriptBinding->terminate();
 
 	return mrb_nil_value();
 }
