@@ -314,7 +314,7 @@ struct InputPrivate
 		states    = new ButtonState[Input::buttonCodeSize];
 		statesOld = new ButtonState[Input::buttonCodeSize];
 
-		// Clear buffers
+		/* Clear buffers */
 		clearBuffer();
 		swapBuffers();
 		clearBuffer();
@@ -434,7 +434,7 @@ struct InputPrivate
 	}
 
 	void pollBindingPriv(const Binding &b,
-						 Input::ButtonCode &repeatCand)
+	                     Input::ButtonCode &repeatCand)
 	{	
 		if (!b.sourceActive())
 			return;
