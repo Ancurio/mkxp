@@ -271,6 +271,14 @@ void Rect::operator=(const IntRect &rect)
 
 void Rect::set(int x, int y, int w, int h)
 {
+	if (this->x == x &&
+	    this->y == y &&
+	    width   == w &&
+	    height  == h)
+	{
+		return;
+	}
+
 	this->x = x;
 	this->y = y;
 	width = w;
@@ -280,30 +288,50 @@ void Rect::set(int x, int y, int w, int h)
 
 void Rect::empty()
 {
+	if (!(x || y || width || height))
+		return;
+
 	x = y = width = height = 0;
 	valueChanged();
 }
 
+bool Rect::isEmpty() const
+{
+	return !(width && height);
+}
+
 void Rect::setX(int value)
 {
+	if (x == value)
+		return;
+
 	x = value;
 	valueChanged();
 }
 
 void Rect::setY(int value)
 {
+	if (y == value)
+		return;
+
 	y = value;
 	valueChanged();
 }
 
 void Rect::setWidth(int value)
 {
+	if (width == value)
+		return;
+
 	width = value;
 	valueChanged();
 }
 
 void Rect::setHeight(int value)
 {
+	if (height == value)
+		return;
+
 	height = value;
 	valueChanged();
 }

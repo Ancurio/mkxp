@@ -165,11 +165,7 @@ struct Rect : public Serializable
 	}
 
 	void empty();
-
-	bool isEmpty() const
-	{
-		return !(x || y || width || height);
-	}
+	bool isEmpty() const;
 
 	void setX(int value);
 	void setY(int value);
