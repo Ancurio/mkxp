@@ -152,10 +152,13 @@ void Sprite::setBitmap(Bitmap *bitmap)
 	if (p->bitmap == bitmap)
 		return;
 
-	if (bitmap)
-		bitmap->ensureNonMega();
-
 	p->bitmap = bitmap;
+
+	if (!bitmap)
+		return;
+
+	bitmap->ensureNonMega();
+
 	*p->srcRect = bitmap->rect();
 	p->onSrcRectChange();
 	p->quad.setPosRect(p->srcRect->toFloatRect());

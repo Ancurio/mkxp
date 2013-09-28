@@ -717,24 +717,29 @@ void Window::setWindowskin(Bitmap *value)
 {
 	GUARD_DISPOSED;
 
-	if (value)
-		value->ensureNonMega();
-
 	p->windowskin = value;
+
+	if (!value)
+		return;
+
+	value->ensureNonMega();
 }
 
 void Window::setContents(Bitmap *value)
 {
 	GUARD_DISPOSED;
 
-	if (value)
-		value->ensureNonMega();
+	if (p->contents == value)
+		return;
 
 	p->contents = value;
 	p->controlsVertDirty = true;
 
-	if (value)
-		p->contentsQuad.setTexPosRect(value->rect(), value->rect());
+	if (!value)
+		return;
+
+	value->ensureNonMega();
+	p->contentsQuad.setTexPosRect(value->rect(), value->rect());
 }
 
 void Window::setStretch(bool value)

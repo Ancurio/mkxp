@@ -105,10 +105,12 @@ void Plane::setBitmap(Bitmap *value)
 {
 	GUARD_DISPOSED;
 
-	if (value)
-		value->ensureNonMega();
-
 	p->bitmap = value;
+
+	if (!value)
+		return;
+
+	value->ensureNonMega();
 }
 
 void Plane::setOX(int value)
