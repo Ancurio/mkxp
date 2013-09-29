@@ -243,6 +243,10 @@ struct TilemapPrivate
 
 		Vec2i size;
 
+		/* Effective tileset height,
+		 * clamped to a multiple of 32 */
+		int efTilesetH;
+
 		/* Indices of usable
 		 * (not null, not disposed) autotiles */
 		QVector<uint8_t> usableATs;
@@ -357,6 +361,8 @@ struct TilemapPrivate
 		memset(autotiles, 0, sizeof(autotiles));
 
 		atlas.animatedATs.reserve(autotileCount);
+		atlas.efTilesetH = 0;
+
 		tiles.animated = false;
 		tiles.frameIdx = 0;
 		tiles.aniIdx = 0;
@@ -447,7 +453,10 @@ struct TilemapPrivate
 			return;
 		}
 
-		atlas.size = TileAtlas::minSize(tileset->height(), glState.caps.maxTexSize);
+		int tsH = tileset->height();
+		atlas.efTilesetH = tsH - (tsH % 32);
+
+		atlas.size = TileAtlas::minSize(atlas.efTilesetH, glState.caps.maxTexSize);
 
 		if (atlas.size.x < 0)
 			throw Exception(Exception::MKXPError,
@@ -591,7 +600,7 @@ struct TilemapPrivate
 		Q_FOREACH (uint8_t i, atlas.usableATs)
 			autotiles[i]->flush();
 
-		TileAtlas::BlitList blits = TileAtlas::calcBlits(tileset->height(), atlas.size);
+		TileAtlas::BlitList blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
 
 		/* Clear atlas */
 		FBO::bind(atlas.gl.fbo, FBO::Draw);
@@ -768,7 +777,7 @@ struct TilemapPrivate
 		int tileX = tsInd % 8;
 		int tileY = tsInd / 8;
 
-		Vec2i texPos = TileAtlas::tileToAtlasCoor(tileX, tileY, tileset->height(), atlas.size.y);
+		Vec2i texPos = TileAtlas::tileToAtlasCoor(tileX, tileY, atlas.efTilesetH, atlas.size.y);
 		FloatRect texRect((float) texPos.x+.5, (float) texPos.y+.5, 31, 31);
 		FloatRect posRect(x*32, y*32, 32, 32);
 
