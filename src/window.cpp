@@ -268,7 +268,6 @@ struct WindowPrivate
 		refreshCursorRectCon();
 
 		controlsQuadArray.resize(14);
-		TileQuads::buildFrameSource(cursorSrc, controlsQuadArray.vertices.data());
 		cursorVert.count = 9;
 		pauseAniVert.count = 1;
 
@@ -465,7 +464,8 @@ struct WindowPrivate
 			IntRect effectRect(cursorRect->x+16, cursorRect->y+16,
 			                   cursorRect->width, cursorRect->height);
 			cursorVert.vert = &vert[i*4];
-			i += TileQuads::buildFrame(effectRect, &vert[i*4]);
+			TileQuads::buildFrameSource(cursorSrc, cursorVert.vert);
+			i += TileQuads::buildFrame(effectRect, cursorVert.vert);
 		}
 
 		/* Scroll arrows */
