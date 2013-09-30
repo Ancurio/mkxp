@@ -49,6 +49,8 @@ private:
 	PHYSFS_File *p; /* NULL denotes invalid stream */
 };
 
+struct FileSystemPrivate;
+
 class FileSystem
 {
 public:
@@ -56,6 +58,9 @@ public:
 	~FileSystem();
 
 	void addPath(const char *path);
+
+	/* Call this after the last 'addPath()' */
+	void createPathCache();
 
 	/* For extension supplementing */
 	enum FileType
@@ -76,6 +81,9 @@ public:
 
 	bool exists(const char *filename,
 	            FileType type = Undefined);
+
+private:
+	FileSystemPrivate *p;
 };
 
 extern const Uint32 SDL_RWOPS_PHYSFS;

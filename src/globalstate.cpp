@@ -117,6 +117,8 @@ struct GlobalStatePrivate
 		for (int i = 0; i < config.rtps.count(); ++i)
 			fileSystem.addPath(config.rtps[i].constData());
 
+		fileSystem.createPathCache();
+
 		globalTexW = 128;
 		globalTexH = 64;
 

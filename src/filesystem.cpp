@@ -525,32 +525,6 @@ void FileStream::close()
 	}
 }
 
-static void enumCB(void *, const char *origdir,
-                   const char *fname)
-{
-	qDebug() << origdir << fname;
-	char buf[128];
-	sprintf(buf, "%s/%s", origdir, fname);
-	PHYSFS_enumerateFilesCallback(buf, enumCB, 0);
-}
-
-FileSystem::FileSystem(const char *argv0)
-{
-	PHYSFS_init(argv0);
-	PHYSFS_registerArchiver(&RGSS_Archiver);
-}
-
-FileSystem::~FileSystem()
-{
-	if (PHYSFS_deinit() == 0)
-		qDebug() << "PhyFS failed to deinit.";
-}
-
-void FileSystem::addPath(const char *path)
-{
-	PHYSFS_mount(path, 0, 1);
-}
-
 static const char *imgExt[] =
 {
 	"jpg",
@@ -583,50 +557,117 @@ struct FileExtensions
 	{ fonExt, ARRAY_SIZE(fonExt) }
 };
 
-static const char *completeFileName(const char *filename,
-                                    FileSystem::FileType type)
+struct FileSystemPrivate
 {
-	static char buff[1024];
+	/* All keys are lower case */
+	QHash<QByteArray, QByteArray> pathCache;
 
-	if (PHYSFS_exists(filename))
-		return filename;
-
-	if (type != FileSystem::Undefined)
+	const char *completeFileName(const char *filename,
+	                             FileSystem::FileType type)
 	{
-		FileExtensions *extTest = &fileExtensions[type];
-		for (int i = 0; i < extTest->count; ++i)
+		char buff[512];
+		size_t i;
+
+		for (i = 0; i < sizeof(buff) && filename[i]; ++i)
+			buff[i] = tolower(filename[i]);
+
+		buff[i] = '\0';
+
+		QByteArray key(buff);
+
+		if (pathCache.contains(key))
+			return pathCache[key].constData();
+
+		char buff2[512];
+
+		if (type != FileSystem::Undefined)
 		{
-			snprintf(buff, sizeof(buff), "%s.%s", filename, extTest->ext[i]);
-			if (PHYSFS_exists(buff))
-				return buff;
+			FileExtensions *extTest = &fileExtensions[type];
+			for (int i = 0; i < extTest->count; ++i)
+			{
+				snprintf(buff2, sizeof(buff2), "%s.%s", buff, extTest->ext[i]);
+
+				key = buff2;
+				if (pathCache.contains(key))
+					return pathCache[key].constData();
+			}
 		}
+
+		return 0;
 	}
 
-	return 0;
+	PHYSFS_File *openReadInt(const char *filename,
+	                         FileSystem::FileType type)
+	{
+		const char *foundName = completeFileName(filename, type);
+
+		if (!foundName)
+			throw Exception(Exception::NoFileError,
+		                "No such file or directory - %s", filename);
+
+		PHYSFS_File *handle = PHYSFS_openRead(foundName);
+		if (!handle)
+			throw Exception(Exception::PHYSFSError, "PhysFS: %s", PHYSFS_getLastError());
+
+		PHYSFS_fileLength(handle);
+
+		return handle;
+	}
+};
+
+FileSystem::FileSystem(const char *argv0)
+{
+	p = new FileSystemPrivate;
+
+	PHYSFS_init(argv0);
+	PHYSFS_registerArchiver(&RGSS_Archiver);
 }
 
-static PHYSFS_File *openReadInt(const char *filename,
-                                FileSystem::FileType type)
+FileSystem::~FileSystem()
 {
-	const char *foundName = completeFileName(filename, type);
+	delete p;
 
-	if (!foundName)
-		throw Exception(Exception::NoFileError,
-	                "No such file or directory - %s", filename);
+	if (PHYSFS_deinit() == 0)
+		qDebug() << "PhyFS failed to deinit.";
+}
 
-	PHYSFS_File *handle = PHYSFS_openRead(foundName);
-	if (!handle)
-		throw Exception(Exception::PHYSFSError, "PhysFS: %s", PHYSFS_getLastError());
+void FileSystem::addPath(const char *path)
+{
+	PHYSFS_mount(path, 0, 1);
+}
 
-	PHYSFS_fileLength(handle);
+static void cacheEnumCB(void *d, const char *origdir,
+                        const char *fname)
+{
+	FileSystemPrivate *p = static_cast<FileSystemPrivate*>(d);
 
-	return handle;
+	char buf[512];
+
+	if (*origdir != '.')
+		snprintf(buf, sizeof(buf), "%s/%s", origdir, fname);
+	else
+		strncpy(buf, fname, sizeof(buf));
+
+	QByteArray mixedCase = buf;
+
+	QByteArray lowerCase = mixedCase;
+	for (char *p = lowerCase.data(); *p; ++p)
+		*p = tolower(*p);
+
+	p->pathCache.insert(lowerCase, mixedCase);
+
+	PHYSFS_enumerateFilesCallback(mixedCase.constData(), cacheEnumCB, p);
+}
+
+void FileSystem::createPathCache()
+{
+	PHYSFS_enumerateFilesCallback(".", cacheEnumCB, p);
 }
 
 FileStream FileSystem::openRead(const char *filename,
                                 FileType type)
 {
-	PHYSFS_File *handle = openReadInt(filename, type);
+	PHYSFS_File *handle = p->openReadInt(filename, type);
 
 	return FileStream(handle);
 }
@@ -727,7 +768,7 @@ void FileSystem::openRead(SDL_RWops &ops,
                           FileType type,
                           bool freeOnClose)
 {
-	PHYSFS_File *handle = openReadInt(filename, type);
+	PHYSFS_File *handle = p->openReadInt(filename, type);
 
 	ops.size  = SDL_RWopsSize;
 	ops.seek  = SDL_RWopsSeek;
@@ -745,7 +786,7 @@ void FileSystem::openRead(SDL_RWops &ops,
 
 bool FileSystem::exists(const char *filename, FileType type)
 {
-	const char *foundName = completeFileName(filename, type);
+	const char *foundName = p->completeFileName(filename, type);
 
 	return (foundName != 0);
 }
