@@ -30,6 +30,17 @@ Scene::Scene()
 	geometry.rect = IntRect();
 }
 
+Scene::~Scene()
+{
+	/* Ensure elements don't unlink from a destructed Scene */
+	IntruListLink<SceneElement> *iter;
+
+	for (iter = elements.begin(); iter != elements.end(); iter = iter->next)
+	{
+		iter->data->scene = 0;
+	}
+}
+
 void Scene::insert(SceneElement &element)
 {
 	IntruListLink<SceneElement> *iter;
@@ -162,5 +173,6 @@ bool SceneElement::operator<(const SceneElement &o) const
 
 void SceneElement::unlink()
 {
-	scene->elements.remove(link);
+	if (scene)
+		scene->elements.remove(link);
 }

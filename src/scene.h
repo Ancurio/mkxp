@@ -42,7 +42,7 @@ public:
 	};
 
 	Scene();
-	virtual ~Scene() {}
+	virtual ~Scene();
 
 	virtual void composite();
 	virtual void requestViewportRender(Vec4& /*color*/, Vec4& /*flash*/, Vec4& /*tone*/) {}
