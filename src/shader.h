@@ -210,6 +210,25 @@ private:
 	GLint u_hueAdjust, u_inputTexture;
 };
 
+/* Gaussian blur */
+struct BlurShader
+{
+	class HPass : public ShaderBase
+	{
+	public:
+		HPass();
+	};
+
+	class VPass : public ShaderBase
+	{
+	public:
+		VPass();
+	};
+
+	HPass pass1;
+	VPass pass2;
+};
+
 /* Bitmap blit */
 class BltShader : public ShaderBase
 {

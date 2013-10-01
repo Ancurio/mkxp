@@ -57,6 +57,7 @@ class BltShader;
 class TexPool;
 class FontPool;
 class Font;
+struct BlurShader;
 struct GlobalIBO;
 struct Config;
 struct Vec2i;
@@ -94,6 +95,7 @@ struct GlobalState
 	TransShader &transShader();
 	SimpleTransShader &sTransShader();
 	HueShader &hueShader();
+	BlurShader &blurShader();
 	BltShader &bltShader();
 
 	TexPool &texPool();

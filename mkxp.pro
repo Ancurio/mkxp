@@ -101,10 +101,13 @@ EMBED = shader/transSimple.frag \
         shader/simpleColor.frag \
         shader/simpleAlpha.frag \
         shader/flashMap.frag \
+        shader/blur.frag \
         shader/simple.vert \
         shader/simpleColor.vert \
         shader/sprite.vert \
         shader/simpleMatrix.vert \
+        shader/blurH.vert \
+        shader/blurV.vert \
         assets/liberation.ttf
 
 defineReplace(xxdOutput) {

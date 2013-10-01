@@ -74,8 +74,10 @@ public:
 	               int width, int height);
 	void clearRect(const IntRect &rect);
 
+	void blur();
+
 	void radialBlur(int angle, int divisions);
-//	/* ----- */
+	/* ----- */
 
 	void clear();
 

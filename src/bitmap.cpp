@@ -508,6 +508,53 @@ void Bitmap::clearRect(const IntRect &rect)
 	modified();
 }
 
+void Bitmap::blur()
+{
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
+
+	flush();
+
+	Quad &quad = gState->gpQuad();
+	FloatRect rect(0, 0, width(), height());
+	quad.setTexPosRect(rect, rect);
+
+	TEXFBO auxTex = gState->texPool().request(width(), height());
+
+	BlurShader &shader = gState->blurShader();
+	BlurShader::HPass &pass1 = shader.pass1;
+	BlurShader::VPass &pass2 = shader.pass2;
+
+	glState.blendMode.pushSet(BlendNone);
+	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
+
+	TEX::bind(p->tex.tex);
+	FBO::bind(auxTex.fbo, FBO::Draw);
+
+	pass1.bind();
+	pass1.setTexSize(Vec2i(width(), height()));
+	pass1.applyViewportProj();
+
+	quad.draw();
+
+	TEX::bind(auxTex.tex);
+	FBO::bind(p->tex.fbo, FBO::Draw);
+
+	pass2.bind();
+	pass2.setTexSize(Vec2i(width(), height()));
+	pass2.applyViewportProj();
+
+	quad.draw();
+
+	glState.viewport.pop();
+	glState.blendMode.pop();
+
+	gState->texPool().release(auxTex);
+
+	modified();
+}
+
 void Bitmap::radialBlur(int angle, int divisions)
 {
 	GUARD_DISPOSED;

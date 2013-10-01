@@ -37,10 +37,13 @@
 #include "../simpleColor.frag.xxd"
 #include "../simpleAlpha.frag.xxd"
 #include "../flashMap.frag.xxd"
+#include "../blur.frag.xxd"
 #include "../simple.vert.xxd"
 #include "../simpleColor.vert.xxd"
 #include "../sprite.vert.xxd"
 #include "../simpleMatrix.vert.xxd"
+#include "../blurH.vert.xxd"
+#include "../blurV.vert.xxd"
 
 
 #define INIT_SHADER(vert, frag) \
@@ -420,6 +423,22 @@ void HueShader::setInputTexture(TEX::ID tex)
 {
 	setTexUniform(u_inputTexture, 0, tex);
 }
+
+
+BlurShader::HPass::HPass()
+{
+	INIT_SHADER(blurH, blur);
+
+	ShaderBase::init();
+}
+
+BlurShader::VPass::VPass()
+{
+	INIT_SHADER(blurV, blur);
+
+	ShaderBase::init();
+}
+
 
 
 BltShader::BltShader()

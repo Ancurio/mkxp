@@ -76,6 +76,7 @@ struct GlobalStatePrivate
 	TransShader transShader;
 	SimpleTransShader sTransShader;
 	HueShader hueShader;
+	BlurShader blurShader;
 	BltShader bltShader;
 
 	TexPool texPool;
@@ -196,6 +197,7 @@ GSATT(FlashMapShader&, flashMapShader)
 GSATT(TransShader&, transShader)
 GSATT(SimpleTransShader&, sTransShader)
 GSATT(HueShader&, hueShader)
+GSATT(BlurShader&, blurShader)
 GSATT(BltShader&, bltShader)
 GSATT(TexPool&, texPool)
 GSATT(FontPool&, fontPool)
