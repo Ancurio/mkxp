@@ -82,6 +82,9 @@ struct SpritePrivate
 
 	void recomputeBushDepth()
 	{
+		if (!bitmap)
+			return;
+
 		/* Calculate effective (normalized) bush depth */
 		float texBushDepth = (bushDepth / trans.getScale().y) -
 		                     (srcRect->y + srcRect->height) +
