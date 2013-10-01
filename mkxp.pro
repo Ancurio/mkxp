@@ -14,8 +14,8 @@ CONFIG += $$BINDING
 
 unix {
     CONFIG += link_pkgconfig
-    PKGCONFIG += sigc++-2.0 sdl2 SDL2_image SDL2_ttf pixman-1 sfml-audio
-	LIBS += -lGLEW -lphysfs -lz
+    PKGCONFIG += sigc++-2.0 glew pixman-1 zlib sdl2 SDL2_image SDL2_ttf sfml-audio
+	LIBS += -lphysfs
 }
 
 # 'slots' keyword fucks with libsigc++
