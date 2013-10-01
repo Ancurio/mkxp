@@ -287,6 +287,8 @@ struct InputPrivate
 	/* Collective binding array */
 	QVector<Binding*> bindings;
 
+	ButtonState stateArray[Input::buttonCodeSize*2];
+
 	ButtonState *states;
 	ButtonState *statesOld;
 
@@ -311,8 +313,8 @@ struct InputPrivate
 		initJsBindings();
 		initMsBindings();
 
-		states    = new ButtonState[Input::buttonCodeSize];
-		statesOld = new ButtonState[Input::buttonCodeSize];
+		states    = stateArray;
+		statesOld = stateArray + Input::buttonCodeSize;
 
 		/* Clear buffers */
 		clearBuffer();
@@ -326,12 +328,6 @@ struct InputPrivate
 		dir4Data.previous = Input::None;
 
 		dir8Data.active = 0;
-	}
-
-	~InputPrivate()
-	{
-		delete[] states;
-		delete[] statesOld;
 	}
 
 	inline ButtonState &getStateCheck(int code)
