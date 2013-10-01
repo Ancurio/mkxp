@@ -225,6 +225,11 @@ namespace FBO
 
 		return pixel;
 	}
+
+	inline void clear()
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
 }
 
 /* Vertex Array Object */

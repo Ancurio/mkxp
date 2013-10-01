@@ -186,7 +186,7 @@ struct BitmapPrivate
 		glState.scissorBox.pushSet(rect);
 		glState.clearColor.pushSet(color);
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		FBO::clear();
 
 		glState.clearColor.pop();
 		glState.scissorBox.pop();
@@ -569,7 +569,7 @@ void Bitmap::radialBlur(int angle, int divisions)
 	FBO::bind(newTex.fbo, FBO::Draw);
 
 	glState.clearColor.pushSet(Vec4());
-	glClear(GL_COLOR_BUFFER_BIT);
+	FBO::clear();
 
 	Transform trans;
 	trans.setOrigin(Vec2(_width / 2.0f, _height / 2.0f));
@@ -618,7 +618,7 @@ void Bitmap::clear()
 
 	glState.clearColor.pushSet(Vec4());
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	FBO::clear();
 
 	glState.clearColor.pop();
 

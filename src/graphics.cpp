@@ -54,7 +54,7 @@ struct PingPong
 			TEXFBO::allocEmpty(rt[i], screenW, screenH);
 			TEXFBO::linkFBO(rt[i]);
 			glClearColor(0, 0, 0, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			FBO::clear();
 		}
 	}
 
@@ -148,7 +148,7 @@ public:
 
 		glState.viewport.set(IntRect(0, 0, w, h));
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		FBO::clear();
 
 		Scene::composite();
 
@@ -414,7 +414,7 @@ struct GraphicsPrivate
 	void blitToScreen()
 	{
 		FBO::unbind(FBO::Draw);
-		glClear(GL_COLOR_BUFFER_BIT);
+		FBO::clear();
 		blitBufferFlippedScaled();
 	}
 
@@ -573,7 +573,7 @@ void Graphics::transition(int duration,
 		/* Draw the composed frame to a buffer first
 		 * (we need this because we're skipping PingPong) */
 		FBO::bind(p->transBuffer.fbo, FBO::Draw);
-		glClear(GL_COLOR_BUFFER_BIT);
+		FBO::clear();
 		p->screenQuad.draw();
 
 		p->checkResize();
@@ -712,7 +712,7 @@ void Graphics::repaintWait(volatile bool *exitCond)
 	{
 		gState->checkShutdown();
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		FBO::clear();
 		p->blitBufferFlippedScaled();
 		SDL_GL_SwapWindow(p->threadData->window);
 		p->fpsLimiter.delay();

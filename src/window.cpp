@@ -428,7 +428,7 @@ struct WindowPrivate
 		shader.setTranslation(Vec2i());
 
 		/* Clear texture */
-		glClear(GL_COLOR_BUFFER_BIT);
+		FBO::clear();
 
 		/* Repaint base */
 		windowskin->bindTex(shader);

@@ -607,7 +607,7 @@ struct TilemapPrivate
 		glState.clearColor.pushSet(Vec4());
 		glState.scissorTest.pushSet(false);
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		FBO::clear();
 
 		glState.scissorTest.pop();
 		glState.clearColor.pop();
