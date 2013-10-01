@@ -585,7 +585,7 @@ void Bitmap::radialBlur(int angle, int divisions)
 
 	p->pushSetViewport(shader);
 
-	for (int i = 0; i < divisions; i++)
+	for (int i = 0; i < divisions; ++i)
 	{
 		trans.setRotation(baseAngle + i*angleStep);
 		shader.setMatrix(trans.getMatrix());
