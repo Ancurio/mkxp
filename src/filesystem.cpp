@@ -535,10 +535,10 @@ static const char *audExt[] =
 {
 //	"mid",
 //	"midi",
-	"mp3",
+//	"mp3",
+//	"wma",
 	"ogg",
-	"wav",
-	"wma"  // FIXME this prolly isn't even supported lol
+	"wav"
 };
 
 static const char *fonExt[] =
