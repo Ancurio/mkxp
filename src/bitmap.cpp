@@ -31,6 +31,7 @@
 #include "gl-util.h"
 #include "quad.h"
 #include "quadarray.h"
+#include "transform.h"
 #include "exception.h"
 
 #include "globalstate.h"
@@ -503,6 +504,103 @@ void Bitmap::clearRect(const IntRect &rect)
 	GUARD_MEGA;
 
 	p->fillRect(rect, Vec4());
+
+	modified();
+}
+
+void Bitmap::radialBlur(int angle, int divisions)
+{
+	GUARD_DISPOSED;
+
+	GUARD_MEGA;
+
+	flush();
+
+	angle     = clamp<int>(angle, 0, 359);
+	divisions = clamp<int>(divisions, 2, 100);
+
+	const int _width = width();
+	const int _height = height();
+
+	float angleStep = (float) angle / (divisions-1);
+	float opacity   = 1.0f / divisions;
+	float baseAngle = -((float) angle / 2);
+
+	ColorQuadArray qArray;
+	qArray.resize(5);
+
+	QVector<Vertex> &vert = qArray.vertices;
+
+	int i = 0;
+
+	/* Center */
+	FloatRect texRect(0, 0, _width, _height);
+	FloatRect posRect(0, 0, _width, _height);
+
+	i += Quad::setTexPosRect(&vert[i*4], texRect, posRect);
+
+	/* Upper */
+	posRect = FloatRect(0, 0, _width, -_height);
+
+	i += Quad::setTexPosRect(&vert[i*4], texRect, posRect);
+
+	/* Lower */
+	posRect = FloatRect(0, _height*2, _width, -_height);
+
+	i += Quad::setTexPosRect(&vert[i*4], texRect, posRect);
+
+	/* Left */
+	posRect = FloatRect(0, 0, -_width, _height);
+
+	i += Quad::setTexPosRect(&vert[i*4], texRect, posRect);
+
+	/* Right */
+	posRect = FloatRect(_width*2, 0, -_width, _height);
+
+	i += Quad::setTexPosRect(&vert[i*4], texRect, posRect);
+
+	for (int i = 0; i < 4*5; ++i)
+		vert[i].color = Vec4(1, 1, 1, opacity);
+
+	qArray.commit();
+
+	TEXFBO newTex = gState->texPool().request(_width, _height);
+
+	FBO::bind(newTex.fbo, FBO::Draw);
+
+	glState.clearColor.pushSet(Vec4());
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	Transform trans;
+	trans.setOrigin(Vec2(_width / 2.0f, _height / 2.0f));
+	trans.setPosition(Vec2(_width / 2.0f, _height / 2.0f));
+
+	glState.blendMode.pushSet(BlendAddition);
+
+	SimpleMatrixShader &shader = gState->simpleMatrixShader();
+	shader.bind();
+
+	p->bindTexture(shader);
+	TEX::setSmooth(true);
+
+	p->pushSetViewport(shader);
+
+	for (int i = 0; i < divisions; i++)
+	{
+		trans.setRotation(baseAngle + i*angleStep);
+		shader.setMatrix(trans.getMatrix());
+		qArray.draw();
+	}
+
+	p->popViewport();
+
+	TEX::setSmooth(false);
+
+	glState.blendMode.pop();
+	glState.clearColor.pop();
+
+	gState->texPool().release(p->tex);
+	p->tex = newTex;
 
 	modified();
 }

@@ -104,6 +104,7 @@ EMBED = shader/transSimple.frag \
         shader/simple.vert \
         shader/simpleColor.vert \
         shader/sprite.vert \
+        shader/simpleMatrix.vert \
         assets/liberation.ttf
 
 defineReplace(xxdOutput) {
