@@ -113,13 +113,13 @@ struct GPUTimerGLQuery : public PerfTimer
 	{
 		queries[ind].end();
 
+		swapInd();
+
 		if (first)
 		{
 			first = false;
 			return;
 		}
-
-		swapInd();
 
 		GLuint64 result;
 		if (!queries[ind].getResult(&result))
