@@ -26,6 +26,8 @@ Due to heavy differences between mruby and MRI as well as lacking modules, runni
 
 Some extensions to the standard classes/modules are provided taking the RPG Maker XP helpfile as a quasi "standard". These include Marshal, File, FileTest and Time.
 
+**Important:** If you decide to use mattn's oniguruma regexp gem, don't forget to add -lonig to the linker flags to avoid ugly symbol overlaps with libc.
+
 To select this backend, run `qmake BINDING=BINDING_MRUBY`
 
 ### null
