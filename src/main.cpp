@@ -127,8 +127,21 @@ int main(int, char *argv[])
 		return 0;
 	}
 
-	IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
-	TTF_Init();
+	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+	if (IMG_Init(imgFlags) != imgFlags)
+	{
+		qDebug() << "Error initializing SDL_image:" << SDL_GetError();
+		SDL_Quit();
+		return 0;
+	}
+
+	if (TTF_Init() < 0)
+	{
+		qDebug() << "Error initializing SDL_ttf:" << SDL_GetError();
+		IMG_Quit();
+		SDL_Quit();
+		return 0;
+	}
 
 	SDL_SetHint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0");
 
