@@ -5,6 +5,7 @@ QT = core
 TARGET = mkxp
 DEPENDPATH += src shader assets
 INCLUDEPATH += . src
+QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
 
 isEmpty(BINDING) {
 	BINDING = BINDING_MRI
