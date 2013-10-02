@@ -819,17 +819,64 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	Vec2i gpTexSize;
 	gState->ensureTexSize(txtSurf->w, txtSurf->h, gpTexSize);
 
-	IntRect drawnRect = posRect;
-
-	bool fastBlit = !p->touchesTaintedArea(drawnRect) && txtAlpha == 1.0;
+	bool fastBlit = !p->touchesTaintedArea(posRect) && txtAlpha == 1.0;
 
 	if (fastBlit)
 	{
 		if (squeeze == 1.0)
 		{
-			/* Even faster: upload directly to bitmap texture */
-			TEX::bind(p->tex.tex);
-			TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_BGRA_EXT);
+			/* Even faster: upload directly to bitmap texture.
+			 * We have to make sure the posRect lies within the texture
+			 * boundaries or texSubImage will generate errors.
+			 * If it partly lies outside bounds we have to upload
+			 * the clipped visible part of it. */
+			SDL_Rect btmRect;
+			btmRect.x = btmRect.y = 0;
+			btmRect.w = width();
+			btmRect.h = height();
+
+			SDL_Rect txtRect;
+			txtRect.x = posRect.x;
+			txtRect.y = posRect.y;
+			txtRect.w = posRect.w;
+			txtRect.h = posRect.h;
+
+			SDL_Rect inters;
+
+			/* If we have no intersection at all,
+			 * there's nothing to upload to begin with */
+			if (SDL_IntersectRect(&btmRect, &txtRect, &inters))
+			{
+				if (inters.w != txtRect.w || inters.h != txtRect.h)
+				{
+					/* Clip the text surface */
+					SDL_PixelFormat *form = txtSurf->format;
+					SDL_Surface *clip =
+					        SDL_CreateRGBSurface(0, inters.w, inters.h,
+					                             form->BitsPerPixel,
+					                             form->Rmask,
+					                             form->Gmask,
+					                             form->Bmask,
+					                             form->Amask);
+
+					SDL_Rect clipSrc = inters;
+					clipSrc.x -= txtRect.x;
+					clipSrc.y -= txtRect.y;
+
+					SDL_BlitSurface(txtSurf, &clipSrc, clip, 0);
+
+					posRect.x = inters.x;
+					posRect.y = inters.y;
+					posRect.w = inters.w;
+					posRect.h = inters.h;
+
+					SDL_FreeSurface(txtSurf);
+					txtSurf = clip;
+				}
+
+				TEX::bind(p->tex.tex);
+				TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_BGRA_EXT);
+			}
 		}
 		else
 		{
@@ -889,7 +936,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	}
 
 	SDL_FreeSurface(txtSurf);
-	p->addTaintedArea(drawnRect);
+	p->addTaintedArea(posRect);
 
 	modified();
 }
