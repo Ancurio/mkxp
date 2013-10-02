@@ -772,6 +772,9 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	if (*str == '\0')
 		return;
 
+	if (str[0] == ' ' && str[1] == '\0')
+		return;
+
 	flush();
 
 	TTF_Font *font = p->font->getSdlFont();
