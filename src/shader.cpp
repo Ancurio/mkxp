@@ -37,13 +37,16 @@
 #include "../simpleColor.frag.xxd"
 #include "../simpleAlpha.frag.xxd"
 #include "../flashMap.frag.xxd"
-#include "../blur.frag.xxd"
 #include "../simple.vert.xxd"
 #include "../simpleColor.vert.xxd"
 #include "../sprite.vert.xxd"
+
+#ifdef RGSS2
+#include "../blur.frag.xxd"
 #include "../simpleMatrix.vert.xxd"
 #include "../blurH.vert.xxd"
 #include "../blurV.vert.xxd"
+#endif
 
 
 #define INIT_SHADER(vert, frag) \
@@ -230,21 +233,6 @@ void SimpleSpriteShader::setSpriteMat(const float value[16])
 }
 
 
-SimpleMatrixShader::SimpleMatrixShader()
-{
-	INIT_SHADER(simpleMatrix, simpleAlpha);
-
-	ShaderBase::init();
-
-	GET_U(matrix);
-}
-
-void SimpleMatrixShader::setMatrix(const float value[16])
-{
-	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, value);
-}
-
-
 TransShader::TransShader()
 {
 	INIT_SHADER(simple, trans);
@@ -425,6 +413,23 @@ void HueShader::setInputTexture(TEX::ID tex)
 }
 
 
+#ifdef RGSS2
+
+SimpleMatrixShader::SimpleMatrixShader()
+{
+	INIT_SHADER(simpleMatrix, simpleAlpha);
+
+	ShaderBase::init();
+
+	GET_U(matrix);
+}
+
+void SimpleMatrixShader::setMatrix(const float value[16])
+{
+	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, value);
+}
+
+
 BlurShader::HPass::HPass()
 {
 	INIT_SHADER(blurH, blur);
@@ -439,6 +444,7 @@ BlurShader::VPass::VPass()
 	ShaderBase::init();
 }
 
+#endif
 
 
 BltShader::BltShader()

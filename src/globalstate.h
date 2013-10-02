@@ -88,15 +88,18 @@ struct GlobalState
 	SimpleColorShader &simpleColorShader();
 	SimpleAlphaShader &simpleAlphaShader();
 	SimpleSpriteShader &simpleSpriteShader();
-	SimpleMatrixShader &simpleMatrixShader();
 	SpriteShader &spriteShader();
 	PlaneShader &planeShader();
 	FlashMapShader &flashMapShader();
 	TransShader &transShader();
 	SimpleTransShader &sTransShader();
 	HueShader &hueShader();
-	BlurShader &blurShader();
 	BltShader &bltShader();
+
+#ifdef RGSS2
+	SimpleMatrixShader &simpleMatrixShader();
+	BlurShader &blurShader();
+#endif
 
 	TexPool &texPool();
 	FontPool &fontPool();

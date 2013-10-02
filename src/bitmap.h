@@ -61,7 +61,7 @@ public:
 	              const Vec4 &color);
 	void fillRect(const IntRect &rect, const Vec4 &color);
 
-	/* RGSS2 */
+#ifdef RGSS2
 	void gradientFillRect(int x, int y,
 	                      int width, int height,
 	                      const Vec4 &color1, const Vec4 &color2,
@@ -77,7 +77,7 @@ public:
 	void blur();
 
 	void radialBlur(int angle, int divisions);
-	/* ----- */
+#endif
 
 	void clear();
 

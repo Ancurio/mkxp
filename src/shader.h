@@ -118,17 +118,6 @@ private:
 	GLint u_spriteMat;
 };
 
-class SimpleMatrixShader : public ShaderBase
-{
-public:
-	SimpleMatrixShader();
-
-	void setMatrix(const float value[16]);
-
-private:
-	GLint u_matrix;
-};
-
 class TransShader : public ShaderBase
 {
 public:
@@ -210,6 +199,18 @@ private:
 	GLint u_hueAdjust, u_inputTexture;
 };
 
+#ifdef RGSS2
+class SimpleMatrixShader : public ShaderBase
+{
+public:
+	SimpleMatrixShader();
+
+	void setMatrix(const float value[16]);
+
+private:
+	GLint u_matrix;
+};
+
 /* Gaussian blur */
 struct BlurShader
 {
@@ -228,6 +229,7 @@ struct BlurShader
 	HPass pass1;
 	VPass pass2;
 };
+#endif
 
 /* Bitmap blit */
 class BltShader : public ShaderBase

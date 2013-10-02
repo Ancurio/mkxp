@@ -69,15 +69,18 @@ struct GlobalStatePrivate
 	SimpleColorShader simpleColorShader;
 	SimpleAlphaShader simpleAlphaShader;
 	SimpleSpriteShader simpleSpriteShader;
-	SimpleMatrixShader simpleMatrixShader;
 	SpriteShader spriteShader;
 	PlaneShader planeShader;
 	FlashMapShader flashMapShader;
 	TransShader transShader;
 	SimpleTransShader sTransShader;
 	HueShader hueShader;
-	BlurShader blurShader;
 	BltShader bltShader;
+
+#ifdef RGSS2
+	SimpleMatrixShader simpleMatrixShader;
+	BlurShader blurShader;
+#endif
 
 	TexPool texPool;
 	FontPool fontPool;
@@ -190,18 +193,21 @@ GSATT(SimpleShader&, simpleShader)
 GSATT(SimpleColorShader&, simpleColorShader)
 GSATT(SimpleAlphaShader&, simpleAlphaShader)
 GSATT(SimpleSpriteShader&, simpleSpriteShader)
-GSATT(SimpleMatrixShader&, simpleMatrixShader)
 GSATT(SpriteShader&, spriteShader)
 GSATT(PlaneShader&, planeShader)
 GSATT(FlashMapShader&, flashMapShader)
 GSATT(TransShader&, transShader)
 GSATT(SimpleTransShader&, sTransShader)
 GSATT(HueShader&, hueShader)
-GSATT(BlurShader&, blurShader)
 GSATT(BltShader&, bltShader)
 GSATT(TexPool&, texPool)
 GSATT(FontPool&, fontPool)
 GSATT(Quad&, gpQuad)
+
+#ifdef RGSS2
+GSATT(SimpleMatrixShader&, simpleMatrixShader)
+GSATT(BlurShader&, blurShader)
+#endif
 
 void GlobalState::setBindingData(void *data)
 {
