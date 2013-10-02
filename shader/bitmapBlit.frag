@@ -21,10 +21,10 @@ void main()
 	vec4 resFrag;
 
 	float ab = opacity;
-	const float as = srcFrag.a;
-	const float ad = dstFrag.a;
+	float as = srcFrag.a;
+	float ad = dstFrag.a;
 
-	const float at = ab*as;
+	float at = ab*as;
 	resFrag.a = at + ad - ad*at;
 
 	resFrag.rgb = mix(dstFrag.rgb, srcFrag.rgb, ab*as);
