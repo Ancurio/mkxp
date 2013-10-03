@@ -110,11 +110,11 @@ struct GlobalStatePrivate
 		{
 			int unused = chdir(config.gameFolder.constData());
 			(void) unused;
-			fileSystem.addPath(config.gameFolder.constData());
+			fileSystem.addPath(".");
 		}
 
 		// FIXME find out correct archive filename
-		QByteArray archPath = threadData->config.gameFolder + "/" GAME_ARCHIVE;
+		QByteArray archPath = GAME_ARCHIVE;
 
 		if (QFile::exists(archPath.constData()))
 			fileSystem.addPath(archPath.constData());
