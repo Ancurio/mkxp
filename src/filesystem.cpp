@@ -192,7 +192,10 @@ RGSS_ioSeek(PHYSFS_Io *self, PHYSFS_uint64 offset)
 	}
 
 	/* For each 4 bytes sought, advance magic */
-	uint64_t dwordsSought = (offset - entry->currentOffset) / 4;
+	uint64_t currentDword = entry->currentOffset / 4;
+	uint64_t soughtDword  = offset / 4;
+	uint64_t dwordsSought = soughtDword - currentDword;
+
 	for (uint64_t i = 0; i < dwordsSought; ++i)
 		advanceMagic(entry->currentMagic);
 
@@ -329,21 +332,17 @@ RGSS_enumerateFiles(void *opaque, const char *dirname,
 {
 	RGSS_archiveData *data = static_cast<RGSS_archiveData*>(opaque);
 
-	QString dirn(dirname);
-
 	char dirBuf[512];
-	char baseBuf[512];
 	QByteList keys = data->entryHash.keys();
 	keys += data->dirHash.keys();
 
 	Q_FOREACH (const QByteArray &filename, keys)
 	{
 		/* Get the filename directory part */
-		strcpy(dirBuf, filename.constData());
-		strcpy(baseBuf, filename.constData());
+		strncpy(dirBuf, filename.constData(), sizeof(dirBuf));
 
 		/* Extract path and basename */
-		const char *dirpath = "";
+		const char *dirpath = ".";
 		char *basename = dirBuf;
 
 		for (int i = filename.size(); i >= 0; i--)
@@ -608,8 +607,6 @@ struct FileSystemPrivate
 		PHYSFS_File *handle = PHYSFS_openRead(foundName);
 		if (!handle)
 			throw Exception(Exception::PHYSFSError, "PhysFS: %s", PHYSFS_getLastError());
-
-		PHYSFS_fileLength(handle);
 
 		return handle;
 	}
