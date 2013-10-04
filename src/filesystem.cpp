@@ -148,24 +148,90 @@ RGSS_ioRead(PHYSFS_Io *self, void *buffer, PHYSFS_uint64 len)
 {
 	RGSS_entryHandle *entry = static_cast<RGSS_entryHandle*>(self->opaque);
 
+	PHYSFS_Io *io = entry->io;
+
 	uint64_t toRead = min<uint64_t>(entry->data.size - entry->currentOffset, len);
 	uint64_t offs = entry->currentOffset;
 
-	entry->io->seek(entry->io, entry->data.offset + offs);
+	io->seek(io, entry->data.offset + offs);
 
-	uint64_t buffI = 0;
-	for (uint64_t o = offs; o < offs + toRead;)
+	/* We divide up the bytes to be read in 3 categories:
+	 *
+	 * preAlign: If the current read address is not dword
+	 *   aligned, this is the number of bytes to read til
+	 *   we reach alignment again (therefore can only be
+	 *   3 or less).
+	 *
+	 * align: The number of aligned dwords we can read
+	 *   times 4 (= number of bytes).
+	 *
+	 * postAlign: The number of bytes to read after the
+	 *   last aligned dword. Always 3 or less.
+	 *
+	 * Treating the pre- and post aligned reads specially,
+	 * we can read all aligned dwords in one syscall directly
+	 * into the write buffer and then run the xor chain on
+	 * it afterwards. */
+
+	uint8_t preAlign = 4 - (offs % 4);
+
+	if (preAlign == 4)
+		preAlign = 0;
+	else
+		preAlign = min<uint64_t>(preAlign, len);
+
+	uint8_t postAlign = (len > preAlign) ? (offs + len) % 4 : 0;
+
+	uint64_t align = len - (preAlign + postAlign);
+
+	/* Byte buffer pointer */
+	uint8_t *bBufferP = static_cast<uint8_t*>(buffer);
+
+	if (preAlign > 0)
 	{
-		uint8_t bitOffset = (0x8 * (o % 4));
-		uint8_t magicByte = (entry->currentMagic >> bitOffset) & 0xFF;
+		uint32_t dword;
+		io->read(io, &dword, preAlign);
 
-		uint8_t byte;
-		entry->io->read(entry->io, &byte, 1);
+		/* Need to align the bytes with the
+		 * magic before xoring */
+		dword <<= 8 * (offs % 4);
+		dword ^= entry->currentMagic;
 
-		((uint8_t*) buffer)[buffI++] = byte ^ magicByte;
+		/* Shift them back to normal */
+		dword >>= 8 * (offs % 4);
+		memcpy(bBufferP, &dword, preAlign);
 
-		if (++o % 4 == 0)
+		bBufferP += preAlign;
+
+		/* Only advance the magic if we actually
+		 * reached the next alignment */
+		if ((offs+preAlign) % 4 == 0)
 			advanceMagic(entry->currentMagic);
+	}
+
+	if (align > 0)
+	{
+		/* Double word buffer pointer */
+		uint32_t *dwBufferP = reinterpret_cast<uint32_t*>(bBufferP);
+
+		/* Read aligned dwords in one go */
+		io->read(io, bBufferP, align);
+
+		/* Then xor them */
+		for (uint64_t i = 0; i < (align / 4); ++i)
+			dwBufferP[i] ^= advanceMagic(entry->currentMagic);
+
+		bBufferP += align;
+	}
+
+	if (postAlign > 0)
+	{
+		uint32_t dword;
+		io->read(io, &dword, postAlign);
+
+		/* Bytes are already aligned with magic */
+		dword ^= entry->currentMagic;
+		memcpy(bBufferP, &dword, postAlign);
 	}
 
 	entry->currentOffset += toRead;
@@ -191,10 +257,10 @@ RGSS_ioSeek(PHYSFS_Io *self, PHYSFS_uint64 offset)
 		entry->currentMagic = entry->data.startMagic;
 	}
 
-	/* For each 4 bytes sought, advance magic */
+	/* For each overstepped alignment, advance magic */
 	uint64_t currentDword = entry->currentOffset / 4;
-	uint64_t soughtDword  = offset / 4;
-	uint64_t dwordsSought = soughtDword - currentDword;
+	uint64_t targetDword  = offset / 4;
+	uint64_t dwordsSought = targetDword - currentDword;
 
 	for (uint64_t i = 0; i < dwordsSought; ++i)
 		advanceMagic(entry->currentMagic);
