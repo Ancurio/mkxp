@@ -104,7 +104,7 @@ private:
 	} fps;
 };
 
-/* Used to asynchronously inform the rgss thread
+/* Used to asynchronously inform the RGSS thread
  * about window size changes */
 struct WindowSizeNotify
 {
@@ -157,9 +157,9 @@ struct WindowSizeNotify
 
 struct RGSSThreadData
 {
-	/* Main thread sets this to request rgss thread to terminate */
+	/* Main thread sets this to request RGSS thread to terminate */
 	volatile bool rqTerm;
-	/* In response, rgss thread sets this to confirm
+	/* In response, RGSS thread sets this to confirm
 	 * that it received the request and isn't stuck */
 	volatile bool rqTermAck;
 
