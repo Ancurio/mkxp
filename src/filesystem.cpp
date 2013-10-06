@@ -48,17 +48,18 @@ struct RGSS_entryHandle
 	uint64_t currentOffset;
 	PHYSFS_Io *io;
 
-	RGSS_entryHandle(const RGSS_entryData &data)
+	RGSS_entryHandle(const RGSS_entryData &data, PHYSFS_Io *archIo)
 	    : data(data),
 	      currentMagic(data.startMagic),
 	      currentOffset(0)
-	{}
+	{
+		io = archIo->duplicate(archIo);
+	}
 
-	RGSS_entryHandle(const RGSS_entryHandle &other)
-	    : data(other.data),
-	      currentMagic(other.currentMagic),
-	      currentOffset(other.currentOffset)
-	{}
+	~RGSS_entryHandle()
+	{
+		io->destroy(io);
+	}
 };
 
 typedef QList<QByteArray> QByteList;
@@ -436,8 +437,8 @@ RGSS_openRead(void *opaque, const char *filename)
 	if (!data->entryHash.contains(filename))
 		return 0;
 
-	RGSS_entryHandle *entry = new RGSS_entryHandle(data->entryHash[filename]);
-	entry->io = data->archiveIo->duplicate(data->archiveIo);
+	RGSS_entryHandle *entry =
+	        new RGSS_entryHandle(data->entryHash[filename], data->archiveIo);
 
 	PHYSFS_Io *io = PHYSFS_ALLOC(PHYSFS_Io);
 
