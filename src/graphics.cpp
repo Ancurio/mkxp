@@ -394,6 +394,8 @@ struct GraphicsPrivate
 		fpsLimiter.delay();
 
 		++frameCount;
+
+		threadData->ethread->notifyFrame();
 	}
 
 	void compositeToBuffer(FBO::ID fbo)
@@ -716,5 +718,7 @@ void Graphics::repaintWait(volatile bool *exitCond)
 		p->blitBufferFlippedScaled();
 		SDL_GL_SwapWindow(p->threadData->window);
 		p->fpsLimiter.delay();
+
+		p->threadData->ethread->notifyFrame();
 	}
 }

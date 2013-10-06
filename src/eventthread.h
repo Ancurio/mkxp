@@ -34,6 +34,8 @@
 #include <QByteArray>
 #include <QVector>
 
+#include <stdint.h>
+
 struct RGSSThreadData;
 struct SDL_Thread;
 struct SDL_Window;
@@ -66,7 +68,7 @@ public:
 	void process(RGSSThreadData &rtData);
 	void cleanup();
 
-	/* Called from rgss thread */
+	/* Called from RGSS thread */
 	void requestFullscreenMode(bool mode);
 	void requestWindowResize(int width, int height);
 	void requestShowCursor(bool mode);
@@ -78,13 +80,28 @@ public:
 
 	void showMessageBox(const char *body, int flags = 0);
 
+	/* RGSS thread calls this once per frame */
+	void notifyFrame();
+
 private:
 	void resetInputStates();
 	void setFullscreen(SDL_Window *, bool mode);
 	void updateCursorState(bool inWindow);
+
 	bool fullscreen;
 	bool showCursor;
 	volatile bool msgBoxDone;
+
+	struct
+	{
+		uint64_t lastFrame;
+		uint64_t displayCounter;
+		bool displaying;
+		bool immInitFlag;
+		bool immFiniFlag;
+		uint64_t acc;
+		uint32_t accDiv;
+	} fps;
 };
 
 /* Used to asynchronously inform the rgss thread

@@ -54,7 +54,9 @@ enum
 	REQUEST_SETFULLSCREEN,
 	REQUEST_WINRESIZE,
 	REQUEST_MESSAGEBOX,
-	REQUEST_SETCURSORVISIBLE
+	REQUEST_SETCURSORVISIBLE,
+
+	UPDATE_FPS
 };
 
 EventThread::EventThread()
@@ -70,6 +72,13 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	fullscreen = rtData.config.fullscreen;
 
+	fps.lastFrame = SDL_GetPerformanceCounter();
+	fps.displaying = false;
+	fps.immInitFlag = false;
+	fps.immFiniFlag = false;
+	fps.acc = 0;
+	fps.accDiv = 0;
+
 	bool cursorInWindow = false;
 	bool windowFocused = false;
 
@@ -78,6 +87,11 @@ void EventThread::process(RGSSThreadData &rtData)
 	SDL_Joystick *js = 0;
 	if (SDL_NumJoysticks() > 0)
 		js = SDL_JoystickOpen(0);
+
+	char buffer[128];
+
+	char pendingTitle[128];
+	bool havePendingTitle = false;
 
 	while (true)
 	{
@@ -135,6 +149,39 @@ void EventThread::process(RGSSThreadData &rtData)
 			    (event.key.keysym.mod & KMOD_LALT))
 			{
 				setFullscreen(win, !fullscreen);
+				if (!fullscreen && havePendingTitle)
+				{
+					SDL_SetWindowTitle(win, pendingTitle);
+					pendingTitle[0] = '\0';
+					havePendingTitle = false;
+				}
+
+				break;
+			}
+
+			if (event.key.keysym.scancode == SDL_SCANCODE_F2)
+			{
+				if (!fps.displaying)
+				{
+					fps.immInitFlag = true;
+					fps.displaying = true;
+				}
+				else
+				{
+					fps.displaying = false;
+
+					if (fullscreen)
+					{
+						/* Prevent fullscreen flicker */
+						strncpy(pendingTitle, rtData.config.game.title.constData(),
+						        sizeof(pendingTitle));
+						havePendingTitle = true;
+						break;
+					}
+
+					SDL_SetWindowTitle(win, rtData.config.game.title.constData());
+				}
+
 				break;
 			}
 
@@ -160,6 +207,25 @@ void EventThread::process(RGSSThreadData &rtData)
 		case REQUEST_SETCURSORVISIBLE :
 			showCursor = event.user.code;
 			updateCursorState(cursorInWindow);
+			break;
+
+		case UPDATE_FPS :
+			if (!fps.displaying)
+				break;
+
+			snprintf(buffer, sizeof(buffer), "%s - %d FPS",
+			         rtData.config.game.title.constData(), event.user.code);
+
+			/* Updating the window title in fullscreen
+			 * mode seems to cause flickering */
+			if (fullscreen)
+			{
+				strncpy(pendingTitle, buffer, sizeof(pendingTitle));
+				havePendingTitle = true;
+				break;
+			}
+
+			SDL_SetWindowTitle(win, buffer);
 			break;
 
 		case SDL_KEYUP :
@@ -308,4 +374,42 @@ bool EventThread::getFullscreen() const
 bool EventThread::getShowCursor() const
 {
 	return showCursor;
+}
+
+void EventThread::notifyFrame()
+{
+	if (!fps.displaying)
+		return;
+
+	uint64_t current = SDL_GetPerformanceCounter();
+	uint64_t diff = current - fps.lastFrame;
+	fps.lastFrame = current;
+
+	if (fps.immInitFlag)
+	{
+		fps.immInitFlag = false;
+		fps.immFiniFlag = true;
+		return;
+	}
+
+	static uint64_t freq = SDL_GetPerformanceFrequency();
+
+	int32_t currFPS = freq / diff;
+	fps.acc += currFPS;
+	++fps.accDiv;
+
+	fps.displayCounter += diff;
+	if (fps.displayCounter < freq && !fps.immFiniFlag)
+		return;
+
+	fps.displayCounter = 0;
+	fps.immFiniFlag = false;
+
+	int32_t avgFPS = fps.acc / fps.accDiv;
+	fps.acc = fps.accDiv = 0;
+
+	SDL_Event event;
+	event.user.code = avgFPS;
+	event.user.type = UPDATE_FPS;
+	SDL_PushEvent(&event);
 }
