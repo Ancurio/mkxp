@@ -53,7 +53,7 @@
 
 struct BitmapPrivate
 {
-	TEXFBO tex;
+	TEXFBO gl;
 
 	/* 'setPixel()' calls are cached and executed
 	 * in batches on 'flush()' */
@@ -127,18 +127,18 @@ struct BitmapPrivate
 
 	void bindTexture(ShaderBase &shader)
 	{
-		TEX::bind(tex.tex);
-		shader.setTexSize(Vec2i(tex.width, tex.height));
+		TEX::bind(gl.tex);
+		shader.setTexSize(Vec2i(gl.width, gl.height));
 	}
 
 	void bindFBO()
 	{
-		FBO::bind(tex.fbo, FBO::Draw);
+		FBO::bind(gl.fbo, FBO::Draw);
 	}
 
 	void pushSetViewport(ShaderBase &shader) const
 	{
-		glState.viewport.pushSet(IntRect(0, 0, tex.width, tex.height));
+		glState.viewport.pushSet(IntRect(0, 0, gl.width, gl.height));
 		shader.applyViewportProj();
 	}
 
@@ -237,10 +237,10 @@ Bitmap::Bitmap(const char *filename)
 		}
 
 		p = new BitmapPrivate;
-		p->tex = tex;
+		p->gl = tex;
 
-		TEX::bind(p->tex.tex);
-		TEX::uploadImage(p->tex.width, p->tex.height, imgSurf->pixels, GL_RGBA);
+		TEX::bind(p->gl.tex);
+		TEX::uploadImage(p->gl.width, p->gl.height, imgSurf->pixels, GL_RGBA);
 
 		SDL_FreeSurface(imgSurf);
 	}
@@ -256,7 +256,7 @@ Bitmap::Bitmap(int width, int height)
 	TEXFBO tex = gState->texPool().request(width, height);
 
 	p = new BitmapPrivate;
-	p->tex = tex;
+	p->gl = tex;
 
 	clear();
 }
@@ -265,7 +265,7 @@ Bitmap::Bitmap(const Bitmap &other)
 {
 	p = new BitmapPrivate;
 
-	p->tex = gState->texPool().request(other.width(), other.height());
+	p->gl = gState->texPool().request(other.width(), other.height());
 
 	other.flush();
 	blt(0, 0, other, rect());
@@ -283,7 +283,7 @@ int Bitmap::width() const
 	if (p->megaSurface)
 		return p->megaSurface->w;
 
-	return p->tex.width;
+	return p->gl.width;
 }
 
 int Bitmap::height() const
@@ -293,7 +293,7 @@ int Bitmap::height() const
 	if (p->megaSurface)
 		return p->megaSurface->h;
 
-	return p->tex.height;
+	return p->gl.height;
 }
 
 IntRect Bitmap::rect() const
@@ -352,7 +352,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		// makes the source surface unusable after BlitScaled() is called. Investigate!
 		SDL_BlitSurface(srcSurf, &srcRect, blitTemp, &dstRect);
 
-		TEX::bind(p->tex.tex);
+		TEX::bind(p->gl.tex);
 		TEX::uploadSubImage(destRect.x, destRect.y, destRect.w, destRect.h, blitTemp->pixels, GL_RGBA);
 
 		SDL_FreeSurface(blitTemp);
@@ -366,8 +366,8 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		/* Fast blit */
 		flush();
 
-		FBO::bind(source.p->tex.fbo, FBO::Read);
-		FBO::bind(p->tex.fbo, FBO::Draw);
+		FBO::bind(source.p->gl.fbo, FBO::Read);
+		FBO::bind(p->gl.fbo, FBO::Draw);
 
 		FBO::blit(sourceRect.x, sourceRect.y, sourceRect.w, sourceRect.h,
 		          destRect.x,   destRect.y,   destRect.w,   destRect.h);
@@ -382,7 +382,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		TEXFBO &gpTex = gState->gpTexFBO(destRect.w, destRect.h);
 
 		FBO::bind(gpTex.fbo, FBO::Draw);
-		FBO::bind(p->tex.fbo, FBO::Read);
+		FBO::bind(p->gl.fbo, FBO::Read);
 		FBO::blit(destRect.x, destRect.y, 0, 0, destRect.w, destRect.h);
 
 		FloatRect bltSubRect((float) sourceRect.x / source.width(),
@@ -750,8 +750,8 @@ void Bitmap::hueChange(int hue)
 
 	TEX::unbind();
 
-	gState->texPool().release(p->tex);
-	p->tex = newTex;
+	gState->texPool().release(p->gl);
+	p->gl = newTex;
 
 	modified();
 }
@@ -881,7 +881,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 					txtSurf = clip;
 				}
 
-				TEX::bind(p->tex.tex);
+				TEX::bind(p->gl.tex);
 				TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_BGRA_EXT);
 			}
 		}
@@ -908,7 +908,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		TEXFBO &gpTex2 = gState->gpTexFBO(posRect.w, posRect.h);
 
 		FBO::bind(gpTex2.fbo, FBO::Draw);
-		FBO::bind(p->tex.fbo, FBO::Read);
+		FBO::bind(p->gl.fbo, FBO::Read);
 		FBO::blit(posRect.x, posRect.y, 0, 0, posRect.w, posRect.h);
 
 		FloatRect bltRect(0, 0,
@@ -980,7 +980,7 @@ void Bitmap::flush() const
 
 TEXFBO &Bitmap::getGLTypes()
 {
-	return p->tex;
+	return p->gl;
 }
 
 SDL_Surface *Bitmap::megaSurface() const
@@ -1006,7 +1006,7 @@ void Bitmap::releaseResources()
 	if (p->megaSurface)
 		SDL_FreeSurface(p->megaSurface);
 	else
-		gState->texPool().release(p->tex);
+		gState->texPool().release(p->gl);
 
 	delete p;
 }
