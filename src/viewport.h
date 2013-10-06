@@ -69,7 +69,9 @@ public:
 
 	Viewport *getViewport() const;
 
+#ifdef RGSS2
 	void setViewport(Viewport *viewport = 0);
+#endif
 
 protected:
 	virtual void onViewportChange() {}

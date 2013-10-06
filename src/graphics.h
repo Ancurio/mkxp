@@ -40,22 +40,24 @@ public:
 	void transition(int duration = 8,
 	                const char *filename = 0,
 	                int vague = 40);
+	void frameReset();
 
+	DECL_ATTR( FrameRate,  int )
+	DECL_ATTR( FrameCount, int )
+
+#ifdef RGSS2
 	void wait(int duration);
 	void fadeout(int duration);
 	void fadein(int duration);
 
 	Bitmap *snapToBitmap();
 
-	void frameReset();
-
 	int width() const;
 	int height() const;
 	void resizeScreen(int width, int height);
 
-	DECL_ATTR( FrameRate,  int )
-	DECL_ATTR( FrameCount, int )
 	DECL_ATTR( Brightness, int )
+#endif
 
 	/* Non-standard extension */
 	DECL_ATTR( Fullscreen, bool )

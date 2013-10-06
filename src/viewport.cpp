@@ -240,6 +240,8 @@ Viewport *ViewportElement::getViewport() const
 	return m_viewport;
 }
 
+#ifdef RGSS2
+
 void ViewportElement::setViewport(Viewport *viewport)
 {
 	m_viewport = viewport;
@@ -247,3 +249,5 @@ void ViewportElement::setViewport(Viewport *viewport)
 	onViewportChange();
 	onGeometryChange(scene->getGeometry());
 }
+
+#endif

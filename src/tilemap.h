@@ -53,7 +53,11 @@ public:
 
 	Autotiles &getAutotiles() const;
 
+#ifndef RGSS2
+	Viewport *getViewport() const;
+#else
 	DECL_ATTR( Viewport,   Viewport* )
+#endif
 	DECL_ATTR( Tileset,    Bitmap*   )
 	DECL_ATTR( MapData,    Table*    )
 	DECL_ATTR( FlashData,  Table*    )

@@ -117,7 +117,17 @@ RB_METHOD(tilemapUpdate)
 
 #define DISP_CLASS_NAME "tilemap"
 
-DEF_PROP_OBJ(Tilemap, Viewport, Viewport,   "viewport")
+RB_METHOD(tilemapGetViewport)
+{
+	RB_UNUSED_PARAM;
+
+	Tilemap *t = getPrivateData<Tilemap>(self);
+
+	checkDisposed(t, DISP_CLASS_NAME);
+
+	return rb_iv_get(self, "viewport");
+}
+
 DEF_PROP_OBJ(Tilemap, Bitmap,   Tileset,    "tileset")
 DEF_PROP_OBJ(Tilemap, Table,    MapData,    "map_data")
 DEF_PROP_OBJ(Tilemap, Table,    FlashData,  "flash_data")
@@ -148,7 +158,8 @@ tilemapBindingInit()
 	_rb_define_method(klass, "autotiles", tilemapGetAutotiles);
 	_rb_define_method(klass, "update", tilemapUpdate);
 
-	INIT_PROP_BIND( Tilemap, Viewport,   "viewport"   );
+	_rb_define_method(klass, "viewport", tilemapGetViewport);
+
 	INIT_PROP_BIND( Tilemap, Tileset,    "tileset"    );
 	INIT_PROP_BIND( Tilemap, MapData,    "map_data"   );
 	INIT_PROP_BIND( Tilemap, FlashData,  "flash_data" );

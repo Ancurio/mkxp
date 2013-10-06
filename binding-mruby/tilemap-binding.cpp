@@ -120,7 +120,15 @@ MRB_METHOD(tilemapUpdate)
 
 #define DISP_CLASS_NAME "tilemap"
 
-DEF_PROP_OBJ(Tilemap, Viewport, Viewport,   CSviewport)
+MRB_METHOD(tilemapGetViewport)
+{
+	Tilemap *t = getPrivateData<Tilemap>(mrb, self);
+
+	checkDisposed(mrb, t, DISP_CLASS_NAME);
+
+	return getProperty(mrb, self, CSviewport);
+}
+
 DEF_PROP_OBJ(Tilemap, Bitmap,   Tileset,    CStileset)
 DEF_PROP_OBJ(Tilemap, Table,    MapData,    CSmap_data)
 DEF_PROP_OBJ(Tilemap, Table,    FlashData,  CSflash_data)
@@ -148,7 +156,8 @@ tilemapBindingInit(mrb_state *mrb)
 	mrb_define_method(mrb, klass, "autotiles", tilemapGetAutotiles, MRB_ARGS_NONE());
 	mrb_define_method(mrb, klass, "update", tilemapUpdate, MRB_ARGS_NONE());
 
-	INIT_PROP_BIND( Tilemap, Viewport,   "viewport"   );
+	mrb_define_method(mrb, klass, "viewport", tilemapGetViewport, MRB_ARGS_NONE());
+
 	INIT_PROP_BIND( Tilemap, Tileset,    "tileset"    );
 	INIT_PROP_BIND( Tilemap, MapData,    "map_data"   );
 	INIT_PROP_BIND( Tilemap, FlashData,  "flash_data" );

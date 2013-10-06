@@ -1265,6 +1265,8 @@ DEF_ATTR_RD_SIMPLE(Tilemap, Visible, bool, p->visible)
 DEF_ATTR_RD_SIMPLE(Tilemap, OX, int, p->offset.x)
 DEF_ATTR_RD_SIMPLE(Tilemap, OY, int, p->offset.y)
 
+#ifdef RGSS2
+
 void Tilemap::setViewport(Viewport *value)
 {
 	GUARD_DISPOSED
@@ -1282,6 +1284,8 @@ void Tilemap::setViewport(Viewport *value)
 	for (int i = 0; i < p->elem.scanrows.count(); ++i)
 		p->elem.scanrows[i]->setViewport(value);
 }
+
+#endif
 
 void Tilemap::setTileset(Bitmap *value)
 {

@@ -130,11 +130,14 @@ class ScreenScene : public Scene
 public:
 	ScreenScene(int width, int height)
 	    : pp(width, height),
-	      brightEffect(false),
 	      actW(width), actH(height)
 	{
 		updateReso(width, height);
+
+#ifdef RGSS2
+		brightEffect = false;
 		brightnessQuad.setColor(Vec4());
+#endif
 	}
 
 	void composite()
@@ -152,6 +155,7 @@ public:
 
 		Scene::composite();
 
+#ifdef RGSS2
 		if (brightEffect)
 		{
 			SimpleColorShader &shader = gState->simpleColorShader();
@@ -161,6 +165,7 @@ public:
 
 			brightnessQuad.draw();
 		}
+#endif
 
 		pp.finishRender();
 	}
@@ -186,12 +191,14 @@ public:
 		shader.unbind();
 	}
 
+#ifdef RGSS2
 	void setBrightness(float norm)
 	{
 		brightnessQuad.setColor(Vec4(0, 0, 0, 1.0 - norm));
 
 		brightEffect = norm < 1.0;
 	}
+#endif
 
 	void updateReso(int width, int height)
 	{
@@ -199,7 +206,10 @@ public:
 		geometry.rect.h = height;
 
 		screenQuad.setTexPosRect(geometry.rect, geometry.rect);
+
+#ifdef RGSS2
 		brightnessQuad.setTexPosRect(geometry.rect, geometry.rect);
+#endif
 
 		notifyGeometryChange();
 	}
@@ -224,9 +234,12 @@ public:
 private:
 	PingPong pp;
 	Quad screenQuad;
+	int actW, actH;
+
+#ifdef RGSS2
 	Quad brightnessQuad;
 	bool brightEffect;
-	int actW, actH;
+#endif
 };
 
 struct FPSLimiter
@@ -284,7 +297,10 @@ struct GraphicsPrivate
 
 	int frameRate;
 	int frameCount;
+
+#ifdef RGSS2
 	int brightness;
+#endif
 
 	FPSLimiter fpsLimiter;
 
@@ -304,7 +320,9 @@ struct GraphicsPrivate
 	      screen(scRes.x, scRes.y),
 	      frameRate(40),
 	      frameCount(0),
+#ifdef RGSS2
 	      brightness(255),
+#endif
 	      fpsLimiter(frameRate),
 	      frozen(false)
 	{
@@ -457,58 +475,6 @@ void Graphics::update()
 //	p->cpuTimer->startTiming();
 }
 
-void Graphics::wait(int duration)
-{
-	for (int i = 0; i < duration; ++i)
-	{
-		gState->checkShutdown();
-		p->checkResize();
-		p->redrawScreen();
-	}
-}
-
-void Graphics::fadeout(int duration)
-{
-	if (p->frozen)
-		FBO::bind(p->frozenScene.fbo, FBO::Read);
-
-	for (int i = duration-1; i > -1; --i)
-	{
-		setBrightness((255.0 / duration) * i);
-
-		if (p->frozen)
-		{
-			p->blitToScreen();
-			p->swapGLBuffer();
-		}
-		else
-		{
-			update();
-		}
-	}
-}
-
-void Graphics::fadein(int duration)
-{
-	if (p->frozen)
-		FBO::bind(p->frozenScene.fbo, FBO::Read);
-
-	for (int i = 0; i < duration; ++i)
-	{
-		setBrightness((255.0 / duration) * i);
-
-		if (p->frozen)
-		{
-			p->blitToScreen();
-			p->swapGLBuffer();
-		}
-		else
-		{
-			update();
-		}
-	}
-}
-
 void Graphics::freeze()
 {
 	p->frozen = true;
@@ -527,7 +493,9 @@ void Graphics::transition(int duration,
 	vague = clamp(vague, 0, 512);
 	Bitmap *transMap = filename ? new Bitmap(filename) : 0;
 
+#ifdef RGSS2
 	setBrightness(255);
+#endif
 
 	/* Capture new scene */
 	p->compositeToBuffer(p->currentScene.fbo);
@@ -594,6 +562,81 @@ void Graphics::transition(int duration,
 	p->frozen = false;
 }
 
+void Graphics::frameReset()
+{
+
+}
+
+#undef RET_IF_DISP
+#define RET_IF_DISP(x)
+
+#undef CHK_DISP
+#define CHK_DISP
+
+DEF_ATTR_RD_SIMPLE(Graphics, FrameRate, int, p->frameRate)
+
+DEF_ATTR_SIMPLE(Graphics, FrameCount, int, p->frameCount)
+
+void Graphics::setFrameRate(int value)
+{
+	p->frameRate = clamp(value, 10, 120);
+	p->fpsLimiter.setDesiredFPS(p->frameRate);
+}
+
+#ifdef RGSS2
+
+void Graphics::wait(int duration)
+{
+	for (int i = 0; i < duration; ++i)
+	{
+		gState->checkShutdown();
+		p->checkResize();
+		p->redrawScreen();
+	}
+}
+
+void Graphics::fadeout(int duration)
+{
+	if (p->frozen)
+		FBO::bind(p->frozenScene.fbo, FBO::Read);
+
+	for (int i = duration-1; i > -1; --i)
+	{
+		setBrightness((255.0 / duration) * i);
+
+		if (p->frozen)
+		{
+			p->blitToScreen();
+			p->swapGLBuffer();
+		}
+		else
+		{
+			update();
+		}
+	}
+}
+
+void Graphics::fadein(int duration)
+{
+	if (p->frozen)
+		FBO::bind(p->frozenScene.fbo, FBO::Read);
+
+	for (int i = 0; i < duration; ++i)
+	{
+		setBrightness((255.0 / duration) * i);
+
+		if (p->frozen)
+		{
+			p->blitToScreen();
+			p->swapGLBuffer();
+		}
+		else
+		{
+			update();
+		}
+	}
+}
+
 Bitmap *Graphics::snapToBitmap()
 {
 	Bitmap *bitmap = new Bitmap(width(), height());
@@ -601,11 +644,6 @@ Bitmap *Graphics::snapToBitmap()
 	p->compositeToBuffer(bitmap->getGLTypes().fbo);
 
 	return bitmap;
-}
-
-void Graphics::frameReset()
-{
-
 }
 
 int Graphics::width() const
@@ -648,22 +686,7 @@ void Graphics::resizeScreen(int width, int height)
 	p->updateScreenResoRatio();
 }
 
-#undef RET_IF_DISP
-#define RET_IF_DISP(x)
-
-#undef CHK_DISP
-#define CHK_DISP
-
-DEF_ATTR_RD_SIMPLE(Graphics, FrameRate, int, p->frameRate)
 DEF_ATTR_RD_SIMPLE(Graphics, Brightness, int, p->brightness)
-
-DEF_ATTR_SIMPLE(Graphics, FrameCount, int, p->frameCount)
-
-void Graphics::setFrameRate(int value)
-{
-	p->frameRate = clamp(value, 10, 120);
-	p->fpsLimiter.setDesiredFPS(p->frameRate);
-}
 
 void Graphics::setBrightness(int value)
 {
@@ -675,6 +698,8 @@ void Graphics::setBrightness(int value)
 	p->brightness = value;
 	p->screen.setBrightness(value / 255.0);
 }
+
+#endif
 
 bool Graphics::getFullscreen() const
 {
