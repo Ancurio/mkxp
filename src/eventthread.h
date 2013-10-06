@@ -99,7 +99,7 @@ private:
 		bool displaying;
 		bool immInitFlag;
 		bool immFiniFlag;
-		uint64_t acc;
+		double acc;
 		uint32_t accDiv;
 	} fps;
 };

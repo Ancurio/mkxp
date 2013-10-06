@@ -394,7 +394,7 @@ void EventThread::notifyFrame()
 
 	static uint64_t freq = SDL_GetPerformanceFrequency();
 
-	int32_t currFPS = freq / diff;
+	double currFPS = (double) freq / diff;
 	fps.acc += currFPS;
 	++fps.accDiv;
 

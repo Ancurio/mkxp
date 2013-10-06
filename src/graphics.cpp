@@ -38,6 +38,8 @@
 #include "SDL_video.h"
 #include "SDL_timer.h"
 
+#include <time.h>
+
 struct PingPong
 {
 	TEXFBO rt[2];
@@ -244,32 +246,105 @@ private:
 
 struct FPSLimiter
 {
-	unsigned lastTickCount;
-	unsigned mspf; /* ms per frame */
+	uint64_t lastTickCount;
 
-	FPSLimiter(unsigned desiredFPS)
-	    : lastTickCount(SDL_GetTicks())
+	/* ticks per frame */
+	int64_t tpf;
+
+	/* Ticks per second */
+	const uint64_t tickFreq;
+
+	/* Ticks per milisecond */
+	const uint64_t tickFreqMS;
+
+	/* Ticks per nanosecond */
+	const double tickFreqNS;
+
+	/* Data for frame timing adjustment */
+	struct
+	{
+		/* Last tick count */
+		uint64_t last;
+
+		/* How far behind/in front we are for ideal frame timing */
+		int64_t idealDiff;
+
+		bool resetFlag;
+	} adj;
+
+	FPSLimiter(uint16_t desiredFPS)
+	    : lastTickCount(SDL_GetPerformanceCounter()),
+	      tickFreq(SDL_GetPerformanceFrequency()),
+	      tickFreqMS(tickFreq / 1000),
+	      tickFreqNS(tickFreq / 1000000000)
 	{
 		setDesiredFPS(desiredFPS);
+
+		adj.last = SDL_GetPerformanceCounter();
+		adj.idealDiff = 0;
+		adj.resetFlag = false;
 	}
 
-	void setDesiredFPS(unsigned value)
+	void setDesiredFPS(uint16_t value)
 	{
-		mspf = 1000 / value;
+		tpf = tickFreq / value;
 	}
 
 	void delay()
 	{
-		unsigned tmpTicks = SDL_GetTicks();
-		unsigned tickDelta = tmpTicks - lastTickCount;
-		lastTickCount = tmpTicks;
+		int64_t tickDelta = SDL_GetPerformanceCounter() - lastTickCount;
+		int64_t toDelay = tpf - tickDelta;
 
-		int toDelay = mspf - tickDelta;
+		/* Compensate for the last delta
+		 * to the ideal timestep */
+		toDelay -= adj.idealDiff;
+
 		if (toDelay < 0)
 			toDelay = 0;
 
-		SDL_Delay(toDelay);
-		lastTickCount = SDL_GetTicks();
+		delayTicks(toDelay);
+
+		uint64_t now = lastTickCount = SDL_GetPerformanceCounter();
+		int64_t diff = now - adj.last;
+		adj.last = now;
+
+		/* Recalculate our temporal position
+		 * relative to the ideal timestep */
+		adj.idealDiff = diff - tpf + adj.idealDiff;
+
+		if (adj.resetFlag)
+		{
+			adj.idealDiff = 0;
+			adj.resetFlag = false;
+		}
+	}
+
+	void resetFrameAdjust()
+	{
+		adj.resetFlag = true;
+	}
+
+	/* If we're more than a full frame's worth
+	 * of ticks behind the ideal timestep,
+	 * there's no choice but to skip frame(s)
+	 * to catch up */
+	bool frameSkipRequired() const
+	{
+		return adj.idealDiff > tpf;
+	}
+
+private:
+	void delayTicks(uint64_t ticks)
+	{
+#ifdef HAVE_NANOSLEEP
+		struct timespec req;
+		req.tv_sec = 0;
+		req.tv_nsec = ticks / tickFreqNS;
+		while (nanosleep(&req, &req) == -1)
+			;
+#else
+		SDL_Delay(ticks / tickFreqMS);
+#endif
 	}
 };
 
@@ -408,8 +483,8 @@ struct GraphicsPrivate
 
 	void swapGLBuffer()
 	{
-		SDL_GL_SwapWindow(threadData->window);
 		fpsLimiter.delay();
+		SDL_GL_SwapWindow(threadData->window);
 
 		++frameCount;
 
@@ -470,6 +545,16 @@ void Graphics::update()
 
 	if (p->frozen)
 		return;
+
+	if (p->fpsLimiter.frameSkipRequired())
+	{
+		/* Skip frame */
+		p->fpsLimiter.delay();
+		++p->frameCount;
+		p->threadData->ethread->notifyFrame();
+
+		return;
+	}
 
 	p->checkResize();
 	p->redrawScreen();
@@ -567,7 +652,7 @@ void Graphics::transition(int duration,
 
 void Graphics::frameReset()
 {
-
+	p->fpsLimiter.resetFrameAdjust();
 }
 
 #undef RET_IF_DISP
