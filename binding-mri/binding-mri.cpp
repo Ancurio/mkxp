@@ -114,8 +114,6 @@ static void printP(int argc, VALUE *argv,
 	}
 
 	showMsg(RSTRING_PTR(dispString));
-
-	rb_str_free(dispString);
 }
 
 RB_METHOD(mriPrint)
