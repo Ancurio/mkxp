@@ -43,8 +43,8 @@ static void mriBindingTerminate();
 
 ScriptBinding scriptBindingImpl =
 {
-    mriBindingExecute,
-    mriBindingTerminate
+	mriBindingExecute,
+	mriBindingTerminate
 };
 
 ScriptBinding *scriptBinding = &scriptBindingImpl;
@@ -65,8 +65,8 @@ void graphicsBindingInit();
 
 void fileIntBindingInit();
 
-static VALUE mriPrint(int, VALUE*, VALUE);
-static VALUE mriP(int, VALUE*, VALUE);
+RB_METHOD(mriPrint);
+RB_METHOD(mriP);
 RB_METHOD(mriDataDirectory);
 
 static void mriBindingInit()
