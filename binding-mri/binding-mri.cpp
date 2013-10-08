@@ -29,6 +29,8 @@
 
 #include "zlib.h"
 
+#include "SDL2/SDL_filesystem.h"
+
 #include <QFile>
 #include <QByteArray>
 
@@ -65,6 +67,7 @@ void fileIntBindingInit();
 
 static VALUE mriPrint(int, VALUE*, VALUE);
 static VALUE mriP(int, VALUE*, VALUE);
+RB_METHOD(mriDataDirectory);
 
 static void mriBindingInit()
 {
@@ -88,6 +91,9 @@ static void mriBindingInit()
 	_rb_define_module_function(rb_mKernel, "p",     mriP);
 
 	rb_eval_string(module_rpg);
+
+	VALUE mod = rb_define_module("System");
+	_rb_define_module_function(mod, "data_directory", mriDataDirectory);
 
 	rb_define_global_const("MKXP", Qtrue);
 }
@@ -132,6 +138,23 @@ RB_METHOD(mriP)
 	printP(argc, argv, "inspect", "\n");
 
 	return Qnil;
+}
+
+RB_METHOD(mriDataDirectory)
+{
+	RB_UNUSED_PARAM;
+
+	const char *org, *app;
+
+	rb_get_args(argc, argv, "zz", &org, &app, RB_ARG_END);
+
+	char *path = SDL_GetPrefPath(org, app);
+
+	VALUE pathStr = rb_str_new_cstr(path);
+
+	SDL_free(path);
+
+	return pathStr;
 }
 
 static void runCustomScript(const char *filename)
