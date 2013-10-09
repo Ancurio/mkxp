@@ -27,7 +27,7 @@
 #include "SDL2/SDL_timer.h"
 #include "SDL2/SDL_thread.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "graphics.h"
 
 #include "string.h"
@@ -361,7 +361,7 @@ void EventThread::showMessageBox(const char *body, int flags)
 	SDL_PushEvent(&event);
 
 	/* Keep repainting screen while box is open */
-	gState->graphics().repaintWait(&msgBoxDone);
+	shState->graphics().repaintWait(&msgBoxDone);
 	/* Prevent endless loops */
 	resetInputStates();
 }

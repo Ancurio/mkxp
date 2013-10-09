@@ -25,7 +25,7 @@
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "eventthread.h"
 #include "debuglogger.h"
 
@@ -100,7 +100,7 @@ int rgssThreadFun(void *userdata)
 
 	DebugLogger dLogger;
 
-	GlobalState::initInstance(threadData);
+	SharedState::initInstance(threadData);
 
 	/* Start script execution */
 	scriptBinding->execute();
@@ -108,7 +108,7 @@ int rgssThreadFun(void *userdata)
 	threadData->rqTermAck = true;
 	threadData->ethread->requestTerminate();
 
-	GlobalState::finiInstance();
+	SharedState::finiInstance();
 
 	SDL_GL_DeleteContext(ctx);
 

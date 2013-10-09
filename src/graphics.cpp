@@ -23,7 +23,7 @@
 
 #include "util.h"
 #include "gl-util.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "glstate.h"
 #include "shader.h"
 #include "scene.h"
@@ -145,7 +145,7 @@ public:
 		const int w = geometry.rect.w;
 		const int h = geometry.rect.h;
 
-		gState->prepareDraw();
+		shState->prepareDraw();
 
 		pp.startRender();
 
@@ -158,7 +158,7 @@ public:
 #ifdef RGSS2
 		if (brightEffect)
 		{
-			SimpleColorShader &shader = gState->simpleColorShader();
+			SimpleColorShader &shader = shState->simpleColorShader();
 			shader.bind();
 			shader.applyViewportProj();
 			shader.setTranslation(Vec2i());
@@ -175,7 +175,7 @@ public:
 		pp.swapRender();
 		pp.blitFBOs();
 
-		PlaneShader &shader = gState->planeShader();
+		PlaneShader &shader = shState->planeShader();
 		shader.bind();
 		shader.setColor(c);
 		shader.setFlash(f);
@@ -358,11 +358,11 @@ struct GraphicsPrivate
 
 	void updateScreenResoRatio()
 	{
-		Vec2 &ratio = gState->rtData().sizeResoRatio;
+		Vec2 &ratio = shState->rtData().sizeResoRatio;
 		ratio.x = (float) scRes.x / scSize.x;
 		ratio.y = (float) scRes.y / scSize.y;
 
-		gState->rtData().screenOffset = scOffset;
+		shState->rtData().screenOffset = scOffset;
 	}
 
 	/* Enforces fixed aspect ratio, if desired */
@@ -401,7 +401,7 @@ struct GraphicsPrivate
 	void shutdown()
 	{
 		threadData->rqTermAck = true;
-		gState->texPool().disable();
+		shState->texPool().disable();
 
 		scriptBinding->terminate();
 	}
@@ -460,7 +460,7 @@ Graphics::~Graphics()
 
 void Graphics::update()
 {
-	gState->checkShutdown();
+	shState->checkShutdown();
 
 //	p->cpuTimer->endTiming();
 //	p->gpuTimer->startTiming();
@@ -479,7 +479,7 @@ void Graphics::freeze()
 {
 	p->frozen = true;
 
-	gState->checkShutdown();
+	shState->checkShutdown();
 	p->checkResize();
 
 	/* Capture scene into frozen buffer */
@@ -504,7 +504,7 @@ void Graphics::transition(int duration,
 	 * we can use a simplified shader */
 	if (transMap)
 	{
-		TransShader &shader = gState->transShader();
+		TransShader &shader = shState->transShader();
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
@@ -515,7 +515,7 @@ void Graphics::transition(int duration,
 	}
 	else
 	{
-		SimpleTransShader &shader = gState->sTransShader();
+		SimpleTransShader &shader = shState->sTransShader();
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
@@ -536,9 +536,9 @@ void Graphics::transition(int duration,
 		const float prog = i * (1.0 / duration);
 
 		if (transMap)
-			gState->transShader().setProg(prog);
+			shState->transShader().setProg(prog);
 		else
-			gState->sTransShader().setProg(prog);
+			shState->sTransShader().setProg(prog);
 
 		/* Draw the composed frame to a buffer first
 		 * (we need this because we're skipping PingPong) */
@@ -589,7 +589,7 @@ void Graphics::wait(int duration)
 {
 	for (int i = 0; i < duration; ++i)
 	{
-		gState->checkShutdown();
+		shState->checkShutdown();
 		p->checkResize();
 		p->redrawScreen();
 	}
@@ -666,7 +666,7 @@ void Graphics::resizeScreen(int width, int height)
 	if (p->scRes == size)
 		return;
 
-	gState->eThread().requestWindowResize(width, height);
+	shState->eThread().requestWindowResize(width, height);
 
 	p->scRes = size;
 
@@ -737,7 +737,7 @@ void Graphics::repaintWait(volatile bool *exitCond)
 
 	while (!*exitCond)
 	{
-		gState->checkShutdown();
+		shState->checkShutdown();
 
 		FBO::clear();
 		p->blitBufferFlippedScaled();

@@ -20,7 +20,7 @@
 */
 
 #include "input.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "eventthread.h"
 #include "exception.h"
 #include "util.h"
@@ -552,7 +552,7 @@ Input::Input()
 
 void Input::update()
 {
-	gState->checkShutdown();
+	shState->checkShutdown();
 
 	p->swapBuffers();
 	p->clearBuffer();
@@ -614,13 +614,13 @@ int Input::dir8Value()
 
 int Input::mouseX()
 {
-	RGSSThreadData &rtData = gState->rtData();
+	RGSSThreadData &rtData = shState->rtData();
 	return (EventThread::mouseState.x - rtData.screenOffset.x) * rtData.sizeResoRatio.x;
 }
 
 int Input::mouseY()
 {
-	RGSSThreadData &rtData = gState->rtData();
+	RGSSThreadData &rtData = shState->rtData();
 	return (EventThread::mouseState.y - rtData.screenOffset.y) * rtData.sizeResoRatio.y;
 }
 

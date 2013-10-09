@@ -21,7 +21,7 @@
 
 #include "audio.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "util.h"
 #include "intrulist.h"
 #include "filesystem.h"
@@ -123,7 +123,7 @@ struct MusicEntity
 		currentData.close();
 
 		currentData =
-		        gState->fileSystem().openRead(filename.constData(), FileSystem::Audio);
+		        shState->fileSystem().openRead(filename.constData(), FileSystem::Audio);
 
 		if (!this->music.openFromStream(currentData))
 			return;
@@ -319,7 +319,7 @@ private:
 //		{
 //			/* Buffer not in cashe, needs to be loaded */
 //			SDL_RWops ops;
-//			gState->fileSystem().openRead(ops, filename, FileSystem::Audio);
+//			shState->fileSystem().openRead(ops, filename, FileSystem::Audio);
 
 //			Mix_Chunk *sdlBuffer = Mix_LoadWAV_RW(&ops, 1);
 
@@ -435,7 +435,7 @@ private:
 			/* Buffer not in cashe, needs to be loaded */
 
 			FileStream data =
-				gState->fileSystem().openRead(filename, FileSystem::Audio);
+				shState->fileSystem().openRead(filename, FileSystem::Audio);
 
 			buffer = new SoundBuffer;
 			buffer->sfBuffer.loadFromStream(data);

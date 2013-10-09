@@ -24,7 +24,7 @@
 
 #include <QtGlobal>
 #include "gl-util.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "global-ibo.h"
 #include "shader.h"
 
@@ -48,7 +48,7 @@ struct ColorQuadArray
 
 		VAO::bind(vao);
 		VBO::bind(vbo);
-		gState->bindQuadIBO();
+		shState->bindQuadIBO();
 
 		glEnableVertexAttribArray(Shader::Color);
 		glEnableVertexAttribArray(Shader::Position);
@@ -83,7 +83,7 @@ struct ColorQuadArray
 		VBO::uploadData(vertices.size() * sizeof(Vertex), vertices.constData(), GL_DYNAMIC_DRAW);
 		VBO::unbind();
 
-		gState->ensureQuadIBO(quadCount);
+		shState->ensureQuadIBO(quadCount);
 	}
 
 	void draw(uint offset, uint count)

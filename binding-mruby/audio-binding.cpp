@@ -20,7 +20,7 @@
 */
 
 #include "audio.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "binding-util.h"
 #include "exception.h"
 
@@ -31,13 +31,13 @@
 		mrb_int volume = 100; \
 		mrb_int pitch = 100; \
 		mrb_get_args(mrb, "z|ii", &filename, &volume, &pitch); \
-		GUARD_EXC( gState->audio().entity##Play(filename, volume, pitch); ) \
+		GUARD_EXC( shState->audio().entity##Play(filename, volume, pitch); ) \
 		return mrb_nil_value(); \
 	} \
 	MRB_FUNCTION(audio_##entity##Stop) \
 	{ \
 		MRB_FUN_UNUSED_PARAM; \
-		gState->audio().entity##Stop(); \
+		shState->audio().entity##Stop(); \
 		return mrb_nil_value(); \
 	}
 
@@ -46,7 +46,7 @@ MRB_FUNCTION(audio_##entity##Fade) \
 { \
 	mrb_int time; \
 	mrb_get_args(mrb, "i", &time); \
-	gState->audio().entity##Fade(time); \
+	shState->audio().entity##Fade(time); \
 	return mrb_nil_value(); \
 }
 

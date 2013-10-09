@@ -21,7 +21,7 @@
 
 #include "binding-util.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "exception.h"
 #include "util.h"
 
@@ -44,7 +44,7 @@ void initType(rb_data_type_struct &type,
 
 RbData *getRbData()
 {
-	return static_cast<RbData*>(gState->bindingData());
+	return static_cast<RbData*>(shState->bindingData());
 }
 
 struct

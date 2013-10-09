@@ -20,7 +20,7 @@
 */
 
 #include "input.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "exception.h"
 #include "binding-util.h"
 
@@ -28,7 +28,7 @@ MRB_FUNCTION(inputUpdate)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	gState->input().update();
+	shState->input().update();
 
 	return mrb_nil_value();
 }
@@ -40,7 +40,7 @@ MRB_FUNCTION(inputPress)
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 
-	return mrb_bool_value(gState->input().isPressed(bc));
+	return mrb_bool_value(shState->input().isPressed(bc));
 }
 
 MRB_FUNCTION(inputTrigger)
@@ -50,7 +50,7 @@ MRB_FUNCTION(inputTrigger)
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 
-	return mrb_bool_value(gState->input().isTriggered(bc));
+	return mrb_bool_value(shState->input().isTriggered(bc));
 }
 
 MRB_FUNCTION(inputRepeat)
@@ -60,21 +60,21 @@ MRB_FUNCTION(inputRepeat)
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 
-	return mrb_bool_value(gState->input().isRepeated(bc));
+	return mrb_bool_value(shState->input().isRepeated(bc));
 }
 
 MRB_FUNCTION(inputDir4)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	return mrb_fixnum_value(gState->input().dir4Value());
+	return mrb_fixnum_value(shState->input().dir4Value());
 }
 
 MRB_FUNCTION(inputDir8)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	return mrb_fixnum_value(gState->input().dir8Value());
+	return mrb_fixnum_value(shState->input().dir8Value());
 }
 
 /* Non-standard extensions */
@@ -82,14 +82,14 @@ MRB_FUNCTION(inputMouseX)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	return mrb_fixnum_value(gState->input().mouseX());
+	return mrb_fixnum_value(shState->input().mouseX());
 }
 
 MRB_FUNCTION(inputMouseY)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	return mrb_fixnum_value(gState->input().mouseY());
+	return mrb_fixnum_value(shState->input().mouseY());
 }
 
 #define DEF_CONST_I(name, value) \

@@ -25,7 +25,7 @@
 #include "bitmap.h"
 #include "table.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "glstate.h"
 #include "gl-util.h"
 #include "etc-internal.h"
@@ -389,7 +389,7 @@ struct TilemapPrivate
 		glEnableVertexAttribArray(Shader::TexCoord);
 
 		VBO::bind(tiles.vbo);
-		gState->bindQuadIBO();
+		shState->bindQuadIBO();
 
 		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
 		glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
@@ -410,7 +410,7 @@ struct TilemapPrivate
 		glEnableVertexAttribArray(Shader::Position);
 
 		VBO::bind(flash.vbo);
-		gState->bindQuadIBO();
+		shState->bindQuadIBO();
 
 		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::colorOffset());
 		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::posOffset());
@@ -421,10 +421,10 @@ struct TilemapPrivate
 
 		elem.ground = 0;
 
-		elem.groundStamp = gState->genTimeStamp();
-		elem.scanrowStamp = gState->genTimeStamp();
+		elem.groundStamp = shState->genTimeStamp();
+		elem.scanrowStamp = shState->genTimeStamp();
 
-		prepareCon = gState->prepareDraw.connect
+		prepareCon = shState->prepareDraw.connect
 		        (sigc::mem_fun(this, &TilemapPrivate::prepare));
 	}
 
@@ -432,7 +432,7 @@ struct TilemapPrivate
 	{
 		destroyElements();
 
-		gState->texPool().release(atlas.gl);
+		shState->texPool().release(atlas.gl);
 		VAO::del(tiles.vao);
 		VBO::del(tiles.vbo);
 
@@ -596,8 +596,8 @@ struct TilemapPrivate
 		updateAtlasInfo();
 
 		/* Aquire atlas tex */
-		gState->texPool().release(atlas.gl);
-		atlas.gl = gState->texPool().request(atlas.size.x, atlas.size.y);
+		shState->texPool().release(atlas.gl);
+		atlas.gl = shState->texPool().request(atlas.size.x, atlas.size.y);
 
 		atlasDirty = true;
 	}
@@ -877,7 +877,7 @@ struct TilemapPrivate
 		VBO::unbind();
 
 		/* Ensure global IBO size */
-		gState->ensureQuadIBO(quadCount*bufferCount());
+		shState->ensureQuadIBO(quadCount*bufferCount());
 	}
 
 	void bindAtlas(SimpleShader &shader)
@@ -962,7 +962,7 @@ struct TilemapPrivate
 		VBO::unbind();
 
 		/* Ensure global IBO size */
-		gState->ensureQuadIBO(flash.quadCount);
+		shState->ensureQuadIBO(flash.quadCount);
 	}
 
 	void destroyElements()
@@ -1066,7 +1066,7 @@ GroundLayer::GroundLayer(TilemapPrivate *p, Viewport *viewport)
 
 void GroundLayer::draw()
 {
-	SimpleShader &shader = gState->simpleShader();
+	SimpleShader &shader = shState->simpleShader();
 	shader.bind();
 	shader.applyViewportProj();
 
@@ -1094,7 +1094,7 @@ void GroundLayer::draw()
 		glState.blendMode.pushSet(BlendAddition);
 		glState.texture2D.pushSet(false);
 
-		FlashMapShader &shader = gState->flashMapShader();
+		FlashMapShader &shader = shState->flashMapShader();
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setAlpha(flashAlpha[p->flash.alphaIdx] / 255.f);
@@ -1147,7 +1147,7 @@ ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport, int index)
 
 void ScanRow::draw()
 {
-	SimpleShader &shader = gState->simpleShader();
+	SimpleShader &shader = shState->simpleShader();
 	shader.bind();
 	shader.applyViewportProj();
 

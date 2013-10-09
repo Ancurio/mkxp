@@ -34,7 +34,6 @@ HEADERS += \
 	src/eventthread.h \
 	src/flashable.h \
 	src/font.h \
-	src/globalstate.h \
 	src/input.h \
 	src/plane.h \
 	src/scene.h \
@@ -62,7 +61,8 @@ HEADERS += \
 	src/util.h \
 	src/config.h \
 	src/tileatlas.h \
-	src/perftimer.h
+	src/perftimer.h \
+	src/sharedstate.h
 
 SOURCES += \
 	src/main.cpp \
@@ -71,7 +71,6 @@ SOURCES += \
 	src/eventthread.cpp \
 	src/filesystem.cpp \
 	src/font.cpp \
-	src/globalstate.cpp \
 	src/input.cpp \
 	src/plane.cpp \
 	src/scene.cpp \
@@ -90,7 +89,8 @@ SOURCES += \
 	src/etc.cpp \
 	src/config.cpp \
 	src/tileatlas.cpp \
-	src/perftimer.cpp
+	src/perftimer.cpp \
+	src/sharedstate.cpp
 
 EMBED = shader/transSimple.frag \
         shader/trans.frag \

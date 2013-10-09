@@ -20,7 +20,7 @@
 */
 
 #include "input.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "exception.h"
 #include "binding-util.h"
 
@@ -28,7 +28,7 @@ RB_METHOD(inputUpdate)
 {
 	RB_UNUSED_PARAM;
 
-	gState->input().update();
+	shState->input().update();
 
 	return Qnil;
 }
@@ -42,7 +42,7 @@ RB_METHOD(inputPress)
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 
-	return rb_bool_new(gState->input().isPressed(bc));
+	return rb_bool_new(shState->input().isPressed(bc));
 }
 
 RB_METHOD(inputTrigger)
@@ -54,7 +54,7 @@ RB_METHOD(inputTrigger)
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 
-	return rb_bool_new(gState->input().isTriggered(bc));
+	return rb_bool_new(shState->input().isTriggered(bc));
 }
 
 RB_METHOD(inputRepeat)
@@ -66,21 +66,21 @@ RB_METHOD(inputRepeat)
 
 	Input::ButtonCode bc = (Input::ButtonCode) num;
 
-	return rb_bool_new(gState->input().isRepeated(bc));
+	return rb_bool_new(shState->input().isRepeated(bc));
 }
 
 RB_METHOD(inputDir4)
 {
 	RB_UNUSED_PARAM;
 
-	return rb_fix_new(gState->input().dir4Value());
+	return rb_fix_new(shState->input().dir4Value());
 }
 
 RB_METHOD(inputDir8)
 {
 	RB_UNUSED_PARAM;
 
-	return rb_fix_new(gState->input().dir8Value());
+	return rb_fix_new(shState->input().dir8Value());
 }
 
 /* Non-standard extensions */
@@ -88,14 +88,14 @@ RB_METHOD(inputMouseX)
 {
 	RB_UNUSED_PARAM;
 
-	return rb_fix_new(gState->input().mouseX());
+	return rb_fix_new(shState->input().mouseX());
 }
 
 RB_METHOD(inputMouseY)
 {
 	RB_UNUSED_PARAM;
 
-	return rb_fix_new(gState->input().mouseY());
+	return rb_fix_new(shState->input().mouseY());
 }
 
 #define DEF_CONST_I(name, value) \

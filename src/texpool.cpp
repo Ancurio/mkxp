@@ -21,7 +21,7 @@
 
 #include "texpool.h"
 #include "exception.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "glstate.h"
 
 #include <QHash>

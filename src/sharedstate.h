@@ -1,5 +1,5 @@
 /*
-** globalstate.h
+** sharedstate.h
 **
 ** This file is part of mkxp.
 **
@@ -19,15 +19,15 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GLOBALSTATE_H
-#define GLOBALSTATE_H
+#ifndef SHAREDSTATE_H
+#define SHAREDSTATE_H
 
 #include "sigc++/signal.h"
 
-#define gState GlobalState::instance
-#define glState gState->_glState()
+#define shState SharedState::instance
+#define glState shState->_glState()
 
-struct GlobalStatePrivate;
+struct SharedStatePrivate;
 struct RGSSThreadData;
 struct GlobalIBO;
 struct mrb_state;
@@ -62,7 +62,7 @@ struct GlobalIBO;
 struct Config;
 struct Vec2i;
 
-struct GlobalState
+struct SharedState
 {
 	void *bindingData();
 	void setBindingData(void *data);
@@ -128,15 +128,15 @@ struct GlobalState
 	 * function will most likely not return */
 	void checkShutdown();
 
-	static GlobalState *instance;
+	static SharedState *instance;
 	static void initInstance(RGSSThreadData *threadData);
 	static void finiInstance();
 
 private:
-	GlobalState(RGSSThreadData *threadData);
-	~GlobalState();
+	SharedState(RGSSThreadData *threadData);
+	~SharedState();
 
-	GlobalStatePrivate *p;
+	SharedStatePrivate *p;
 };
 
-#endif // GLOBALSTATE_H
+#endif // SHAREDSTATE_H

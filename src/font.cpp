@@ -21,7 +21,7 @@
 
 #include "font.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "filesystem.h"
 #include "exception.h"
 
@@ -79,7 +79,7 @@ _TTF_Font *FontPool::request(const char *filename,
 
 	bool useBundled = false;
 	QByteArray path = QByteArray("Fonts/") + nameKey;
-	if (!gState->fileSystem().exists(path.constData(), FileSystem::Font))
+	if (!shState->fileSystem().exists(path.constData(), FileSystem::Font))
 	{
 		useBundled = true;
 		nameKey = " bundled";
@@ -107,7 +107,7 @@ _TTF_Font *FontPool::request(const char *filename,
 	else
 	{
 		ops = SDL_AllocRW();
-		gState->fileSystem().openRead(*ops, path.constData(), FileSystem::Font, true);
+		shState->fileSystem().openRead(*ops, path.constData(), FileSystem::Font, true);
 	}
 
 	// FIXME 0.9 is guesswork at this point
@@ -151,7 +151,7 @@ struct FontPrivate
 	      color(&colorTmp),
 	      colorTmp(*defaultColor)
 	{
-		sdlFont = gState->fontPool().request(this->name.constData(),
+		sdlFont = shState->fontPool().request(this->name.constData(),
 		                                     this->size);
 	}
 };
@@ -168,7 +168,7 @@ bool Font::doesExist(const char *name)
 {
 	QByteArray path = QByteArray("fonts/") + QByteArray(name);
 
-	return gState->fileSystem().exists(path.constData(), FileSystem::Font);
+	return shState->fileSystem().exists(path.constData(), FileSystem::Font);
 }
 
 Font::Font(const char *name,
@@ -198,7 +198,7 @@ void Font::setSize(int value)
 		return;
 
 	p->size = value;
-	p->sdlFont = gState->fontPool().request(p->name.constData(), value);
+	p->sdlFont = shState->fontPool().request(p->name.constData(), value);
 }
 
 #undef CHK_DISP

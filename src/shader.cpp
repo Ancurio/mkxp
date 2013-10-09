@@ -20,7 +20,7 @@
 */
 
 #include "shader.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "glstate.h"
 
 #include "GL/glew.h"

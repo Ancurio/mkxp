@@ -21,7 +21,7 @@
 
 #include "binding-util.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "filesystem.h"
 
 #include <QDebug>
@@ -32,7 +32,7 @@ static VALUE
 fileIntForPath(const char *path)
 {
 	SDL_RWops *ops = SDL_AllocRW();
-	gState->fileSystem().openRead(*ops, path);
+	shState->fileSystem().openRead(*ops, path);
 
 	VALUE klass = rb_const_get(rb_cObject, rb_intern("FileInt"));
 

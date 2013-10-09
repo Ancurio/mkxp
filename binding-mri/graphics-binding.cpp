@@ -20,7 +20,7 @@
 */
 
 #include "graphics.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "binding-util.h"
 #include "exception.h"
 
@@ -28,7 +28,7 @@ RB_METHOD(graphicsUpdate)
 {
 	RB_UNUSED_PARAM;
 
-	gState->graphics().update();
+	shState->graphics().update();
 
 	return Qnil;
 }
@@ -37,7 +37,7 @@ RB_METHOD(graphicsFreeze)
 {
 	RB_UNUSED_PARAM;
 
-	gState->graphics().freeze();
+	shState->graphics().freeze();
 
 	return Qnil;
 }
@@ -52,7 +52,7 @@ RB_METHOD(graphicsTransition)
 
 	rb_get_args(argc, argv, "|izi", &duration, &filename, &vague, RB_ARG_END);
 
-	GUARD_EXC( gState->graphics().transition(duration, filename, vague); )
+	GUARD_EXC( shState->graphics().transition(duration, filename, vague); )
 
 	return Qnil;
 }
@@ -61,7 +61,7 @@ RB_METHOD(graphicsFrameReset)
 {
 	RB_UNUSED_PARAM;
 
-	gState->graphics().frameReset();
+	shState->graphics().frameReset();
 
 	return Qnil;
 }
@@ -70,14 +70,14 @@ RB_METHOD(graphicsFrameReset)
 	RB_METHOD(graphics##Get##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
-		return rb_fix_new(gState->graphics().get##PropName()); \
+		return rb_fix_new(shState->graphics().get##PropName()); \
 	} \
 	RB_METHOD(graphics##Set##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
 		int value; \
 		rb_get_args(argc, argv, "i", &value, RB_ARG_END); \
-		gState->graphics().set##PropName(value); \
+		shState->graphics().set##PropName(value); \
 		return rb_fix_new(value); \
 	}
 
@@ -85,14 +85,14 @@ RB_METHOD(graphicsFrameReset)
 	RB_METHOD(graphics##Get##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
-		return rb_bool_new(gState->graphics().get##PropName()); \
+		return rb_bool_new(shState->graphics().get##PropName()); \
 	} \
 	RB_METHOD(graphics##Set##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
 		bool value; \
 		rb_get_args(argc, argv, "b", &value, RB_ARG_END); \
-		gState->graphics().set##PropName(value); \
+		shState->graphics().set##PropName(value); \
 		return rb_bool_new(value); \
 	}
 

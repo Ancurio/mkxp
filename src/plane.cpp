@@ -21,7 +21,7 @@
 
 #include "plane.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "bitmap.h"
 #include "etc.h"
 #include "util.h"
@@ -186,7 +186,7 @@ void Plane::draw()
 
 	if (p->color->hasEffect() || p->tone->hasEffect() || p->opacity != 255)
 	{
-		PlaneShader &shader = gState->planeShader();
+		PlaneShader &shader = shState->planeShader();
 
 		shader.bind();
 		shader.applyViewportProj();
@@ -199,7 +199,7 @@ void Plane::draw()
 	}
 	else
 	{
-		SimpleShader &shader = gState->simpleShader();
+		SimpleShader &shader = shState->simpleShader();
 
 		shader.bind();
 		shader.applyViewportProj();

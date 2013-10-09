@@ -39,7 +39,7 @@
 #include "SDL2/SDL_rwops.h"
 #include "SDL2/SDL_timer.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "texpool.h"
 #include "eventthread.h"
 #include "filesystem.h"
@@ -161,7 +161,7 @@ showExcMessageBox(mrb_state *mrb, mrb_value exc)
 	snprintf(msgBoxText, 512, "Script '%s' line %d: %s occured.\n\n%s",
 	         mrbValueString(file), mrb_fixnum(line), excClass, mrbValueString(mesg));
 
-	gState->eThread().showMessageBox(msgBoxText, SDL_MESSAGEBOX_ERROR);
+	shState->eThread().showMessageBox(msgBoxText, SDL_MESSAGEBOX_ERROR);
 }
 
 static void
@@ -182,7 +182,7 @@ checkException(mrb_state *mrb)
 static void
 showError(const QByteArray &msg)
 {
-	gState->eThread().showMessageBox(msg.constData());
+	shState->eThread().showMessageBox(msg.constData());
 }
 
 static void
@@ -244,7 +244,7 @@ runMrbFile(mrb_state *mrb, const char *filename)
 static void
 runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 {
-	const QByteArray &scriptPack = gState->rtData().config.game.scripts;
+	const QByteArray &scriptPack = shState->rtData().config.game.scripts;
 
 	if (scriptPack.isEmpty())
 	{
@@ -252,7 +252,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 		return;
 	}
 
-	if (!gState->fileSystem().exists(scriptPack.constData()))
+	if (!shState->fileSystem().exists(scriptPack.constData()))
 	{
 		showError("Unable to open '" + scriptPack + "'");
 		return;
@@ -262,7 +262,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 	mrb_state *scriptMrb = mrb_open();
 	SDL_RWops ops;
 
-	gState->fileSystem().openRead(ops, scriptPack.constData());
+	shState->fileSystem().openRead(ops, scriptPack.constData());
 
 	mrb_value scriptArray = mrb_nil_value();
 	QByteArray readError;
@@ -356,7 +356,7 @@ static void mrbBindingExecute()
 {
 	mrb_state *mrb = mrb_open();
 
-	gState->setBindingData(mrb);
+	shState->setBindingData(mrb);
 
 	MrbData mrbData(mrb);
 	mrb->ud = &mrbData;
@@ -369,7 +369,7 @@ static void mrbBindingExecute()
 	mrbc_context *ctx = mrbc_context_new(mrb);
 	ctx->capture_errors = 1;
 
-	Config &conf = gState->rtData().config;
+	Config &conf = shState->rtData().config;
 	QByteArray &customScript = conf.customScript;
 	QByteArray mrbFile = conf.bindingConf.value("mrbFile").toByteArray();
 
@@ -382,8 +382,8 @@ static void mrbBindingExecute()
 
 	checkException(mrb);
 
-	gState->rtData().rqTermAck = true;
-	gState->texPool().disable();
+	shState->rtData().rqTermAck = true;
+	shState->texPool().disable();
 
 	mrbc_context_free(mrb, ctx);
 	mrb_close(mrb);
@@ -391,7 +391,7 @@ static void mrbBindingExecute()
 
 static void mrbBindingTerminate()
 {
-	mrb_state *mrb = static_cast<mrb_state*>(gState->bindingData());
+	mrb_state *mrb = static_cast<mrb_state*>(shState->bindingData());
 	MrbData *data = static_cast<MrbData*>(mrb->ud);
 
 	mrb_raise(mrb, data->exc[Shutdown], "");

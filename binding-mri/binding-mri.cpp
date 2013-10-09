@@ -21,7 +21,7 @@
 
 #include "binding.h"
 #include "binding-util.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "eventthread.h"
 #include "filesystem.h"
 
@@ -101,7 +101,7 @@ static void mriBindingInit()
 static void
 showMsg(const QByteArray &msg)
 {
-	gState->eThread().showMessageBox(msg.constData());
+	shState->eThread().showMessageBox(msg.constData());
 }
 
 static void printP(int argc, VALUE *argv,
@@ -185,7 +185,7 @@ struct Script
 
 static void runRMXPScripts()
 {
-	const QByteArray &scriptPack = gState->rtData().config.game.scripts;
+	const QByteArray &scriptPack = shState->rtData().config.game.scripts;
 
 	if (scriptPack.isEmpty())
 	{
@@ -193,7 +193,7 @@ static void runRMXPScripts()
 		return;
 	}
 
-	if (!gState->fileSystem().exists(scriptPack.constData()))
+	if (!shState->fileSystem().exists(scriptPack.constData()))
 	{
 		showMsg("Unable to open '" + scriptPack + "'");
 		return;
@@ -290,11 +290,11 @@ static void mriBindingExecute()
 	ruby_setup();
 
 	RbData rbData;
-	gState->setBindingData(&rbData);
+	shState->setBindingData(&rbData);
 
 	mriBindingInit();
 
-	QByteArray &customScript = gState->rtData().config.customScript;
+	QByteArray &customScript = shState->rtData().config.customScript;
 	if (!customScript.isEmpty())
 		runCustomScript(customScript.constData());
 	else
@@ -315,7 +315,7 @@ static void mriBindingExecute()
 
 	ruby_cleanup(0);
 
-	gState->rtData().rqTermAck = true;
+	shState->rtData().rqTermAck = true;
 }
 
 static void mriBindingTerminate()

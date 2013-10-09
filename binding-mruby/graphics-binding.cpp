@@ -20,7 +20,7 @@
 */
 
 #include "graphics.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "mruby.h"
 #include "binding-util.h"
 #include "exception.h"
@@ -29,7 +29,7 @@ MRB_FUNCTION(graphicsUpdate)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	gState->graphics().update();
+	shState->graphics().update();
 
 	return mrb_nil_value();
 }
@@ -38,7 +38,7 @@ MRB_FUNCTION(graphicsFreeze)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	gState->graphics().freeze();
+	shState->graphics().freeze();
 
 	return mrb_nil_value();
 }
@@ -51,7 +51,7 @@ MRB_FUNCTION(graphicsTransition)
 
 	mrb_get_args(mrb, "|izi", &duration, &filename, &vague);
 
-	GUARD_EXC( gState->graphics().transition(duration, filename, vague); )
+	GUARD_EXC( shState->graphics().transition(duration, filename, vague); )
 
 	return mrb_nil_value();
 }
@@ -60,7 +60,7 @@ MRB_FUNCTION(graphicsFrameReset)
 {
 	MRB_FUN_UNUSED_PARAM;
 
-	gState->graphics().frameReset();
+	shState->graphics().frameReset();
 
 	return mrb_nil_value();
 }
@@ -69,13 +69,13 @@ MRB_FUNCTION(graphicsFrameReset)
 	MRB_FUNCTION(graphics##Get##PropName) \
 	{ \
 		MRB_FUN_UNUSED_PARAM; \
-		return mrb_fixnum_value(gState->graphics().get##PropName()); \
+		return mrb_fixnum_value(shState->graphics().get##PropName()); \
 	} \
 	MRB_FUNCTION(graphics##Set##PropName) \
 	{ \
 		mrb_int value; \
 		mrb_get_args(mrb, "i", &value); \
-		gState->graphics().set##PropName(value); \
+		shState->graphics().set##PropName(value); \
 		return mrb_fixnum_value(value); \
 	}
 
@@ -83,13 +83,13 @@ MRB_FUNCTION(graphicsFrameReset)
 	MRB_FUNCTION(graphics##Get##PropName) \
 	{ \
 		MRB_FUN_UNUSED_PARAM; \
-		return mrb_bool_value(gState->graphics().get##PropName()); \
+		return mrb_bool_value(shState->graphics().get##PropName()); \
 	} \
 	MRB_FUNCTION(graphics##Set##PropName) \
 	{ \
 		mrb_bool value; \
 		mrb_get_args(mrb, "b", &value); \
-		gState->graphics().set##PropName(value); \
+		shState->graphics().set##PropName(value); \
 		return mrb_bool_value(value); \
 	}
 

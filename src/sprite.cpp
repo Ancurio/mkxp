@@ -21,7 +21,7 @@
 
 #include "sprite.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "bitmap.h"
 #include "etc.h"
 #include "etc-internal.h"
@@ -325,7 +325,7 @@ void Sprite::draw()
 
 	if (renderEffect)
 	{
-		SpriteShader &shader = gState->spriteShader();
+		SpriteShader &shader = shState->spriteShader();
 
 		shader.bind();
 		shader.applyViewportProj();
@@ -347,7 +347,7 @@ void Sprite::draw()
 	}
 	else
 	{
-		SimpleSpriteShader &shader = gState->simpleSpriteShader();
+		SimpleSpriteShader &shader = shState->simpleSpriteShader();
 		shader.bind();
 
 		shader.setSpriteMat(p->trans.getMatrix());

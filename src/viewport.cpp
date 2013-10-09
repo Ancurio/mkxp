@@ -21,7 +21,7 @@
 
 #include "viewport.h"
 
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "etc.h"
 #include "util.h"
 #include "quad.h"
@@ -101,14 +101,14 @@ struct ViewportPrivate
 };
 
 Viewport::Viewport(int x, int y, int width, int height)
-    : SceneElement(*gState->screen()),
+    : SceneElement(*shState->screen()),
       sceneLink(this)
 {
 	initViewport(x, y, width, height);
 }
 
 Viewport::Viewport(Rect *rect)
-    : SceneElement(*gState->screen()),
+    : SceneElement(*shState->screen()),
       sceneLink(this)
 {
 	initViewport(rect->x, rect->y, rect->width, rect->height);
@@ -227,12 +227,12 @@ void Viewport::releaseResources()
 
 
 ViewportElement::ViewportElement(Viewport *viewport, int z)
-    : SceneElement(viewport ? *viewport : *gState->screen(), z),
+    : SceneElement(viewport ? *viewport : *shState->screen(), z),
       m_viewport(viewport)
 {}
 
 ViewportElement::ViewportElement(Viewport *viewport, int z, unsigned int cStamp)
-    : SceneElement(viewport ? *viewport : *gState->screen(), z, cStamp)
+    : SceneElement(viewport ? *viewport : *shState->screen(), z, cStamp)
 {}
 
 Viewport *ViewportElement::getViewport() const
@@ -245,7 +245,7 @@ Viewport *ViewportElement::getViewport() const
 void ViewportElement::setViewport(Viewport *viewport)
 {
 	m_viewport = viewport;
-	setScene(viewport ? *viewport : *gState->screen());
+	setScene(viewport ? *viewport : *shState->screen());
 	onViewportChange();
 	onGeometryChange(scene->getGeometry());
 }

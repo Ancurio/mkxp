@@ -1,5 +1,5 @@
 /*
-** globalstate.cpp
+** sharedstate.cpp
 **
 ** This file is part of mkxp.
 **
@@ -19,7 +19,7 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "globalstate.h"
+#include "sharedstate.h"
 
 #include "util.h"
 #include "filesystem.h"
@@ -42,12 +42,12 @@
 
 #include <QDebug>
 
-GlobalState *GlobalState::instance = 0;
+SharedState *SharedState::instance = 0;
 static GlobalIBO *globalIBO = 0;
 
 #define GAME_ARCHIVE "Game.rgssad"
 
-struct GlobalStatePrivate
+struct SharedStatePrivate
 {
 	void *bindingData;
 	SDL_Window *sdlWindow;
@@ -96,7 +96,7 @@ struct GlobalStatePrivate
 
 	unsigned int stampCounter;
 
-	GlobalStatePrivate(RGSSThreadData *threadData)
+	SharedStatePrivate(RGSSThreadData *threadData)
 	    : bindingData(0),
 	      sdlWindow(threadData->window),
 	      fileSystem(threadData->argv0),
@@ -139,41 +139,41 @@ struct GlobalStatePrivate
 		TEXFBO::linkFBO(gpTexFBO);
 	}
 
-	~GlobalStatePrivate()
+	~SharedStatePrivate()
 	{
 		TEX::del(globalTex);
 		TEXFBO::fini(gpTexFBO);
 	}
 };
 
-void GlobalState::initInstance(RGSSThreadData *threadData)
+void SharedState::initInstance(RGSSThreadData *threadData)
 {
 	globalIBO = new GlobalIBO();
 	globalIBO->ensureSize(1);
 
-	GlobalState *state = new GlobalState(threadData);
+	SharedState *state = new SharedState(threadData);
 
-	GlobalState::instance = state;
+	SharedState::instance = state;
 
 	state->p->defaultFont = new Font();
 }
 
-void GlobalState::finiInstance()
+void SharedState::finiInstance()
 {
-	delete GlobalState::instance->p->defaultFont;
+	delete SharedState::instance->p->defaultFont;
 
-	delete GlobalState::instance;
+	delete SharedState::instance;
 
 	delete globalIBO;
 }
 
-void GlobalState::setScreen(Scene &screen)
+void SharedState::setScreen(Scene &screen)
 {
 	p->screen = &screen;
 }
 
 #define GSATT(type, lower) \
-	type GlobalState :: lower() \
+	type SharedState :: lower() \
 	{ \
 		return p->lower; \
 	}
@@ -209,28 +209,28 @@ GSATT(SimpleMatrixShader&, simpleMatrixShader)
 GSATT(BlurShader&, blurShader)
 #endif
 
-void GlobalState::setBindingData(void *data)
+void SharedState::setBindingData(void *data)
 {
 	p->bindingData = data;
 }
 
-void GlobalState::ensureQuadIBO(int minSize)
+void SharedState::ensureQuadIBO(int minSize)
 {
 	globalIBO->ensureSize(minSize);
 }
 
-void GlobalState::bindQuadIBO()
+void SharedState::bindQuadIBO()
 {
 	IBO::bind(globalIBO->ibo);
 }
 
-void GlobalState::bindTex()
+void SharedState::bindTex()
 {
 	TEX::bind(p->globalTex);
 	TEX::allocEmpty(p->globalTexW, p->globalTexH);
 }
 
-void GlobalState::ensureTexSize(int minW, int minH, Vec2i &currentSizeOut)
+void SharedState::ensureTexSize(int minW, int minH, Vec2i &currentSizeOut)
 {
 	if (minW > p->globalTexW)
 		p->globalTexW = findNextPow2(minW);
@@ -241,7 +241,7 @@ void GlobalState::ensureTexSize(int minW, int minH, Vec2i &currentSizeOut)
 	currentSizeOut = Vec2i(p->globalTexW, p->globalTexH);
 }
 
-TEXFBO &GlobalState::gpTexFBO(int minW, int minH)
+TEXFBO &SharedState::gpTexFBO(int minW, int minH)
 {
 	bool needResize = false;
 
@@ -266,7 +266,7 @@ TEXFBO &GlobalState::gpTexFBO(int minW, int minH)
 	return p->gpTexFBO;
 }
 
-void GlobalState::checkShutdown()
+void SharedState::checkShutdown()
 {
 	if (!p->rtData.rqTerm)
 		return;
@@ -276,23 +276,23 @@ void GlobalState::checkShutdown()
 	scriptBinding->terminate();
 }
 
-Font &GlobalState::defaultFont()
+Font &SharedState::defaultFont()
 {
 	return *p->defaultFont;
 }
 
-unsigned int GlobalState::genTimeStamp()
+unsigned int SharedState::genTimeStamp()
 {
 	return p->stampCounter++;
 }
 
-GlobalState::GlobalState(RGSSThreadData *threadData)
+SharedState::SharedState(RGSSThreadData *threadData)
 {
-	p = new GlobalStatePrivate(threadData);
+	p = new SharedStatePrivate(threadData);
 	p->screen = p->graphics.getScreen();
 }
 
-GlobalState::~GlobalState()
+SharedState::~SharedState()
 {
 	delete p;
 }

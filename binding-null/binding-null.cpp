@@ -20,7 +20,7 @@
 */
 
 #include "binding.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "eventthread.h"
 
 #include <QDebug>
@@ -28,7 +28,7 @@
 static void nullBindingExecute()
 {
 	qDebug() << "The null binding doesn't do anything, so we're done!";
-	gState->rtData().rqTermAck = true;
+	shState->rtData().rqTermAck = true;
 }
 
 static void nullBindingTerminate()

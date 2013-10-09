@@ -22,7 +22,7 @@
 #include "window.h"
 
 #include "viewport.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "bitmap.h"
 #include "etc.h"
 #include "etc-internal.h"
@@ -271,13 +271,13 @@ struct WindowPrivate
 		cursorVert.count = 9;
 		pauseAniVert.count = 1;
 
-		prepareCon = gState->prepareDraw.connect
+		prepareCon = shState->prepareDraw.connect
 		        (sigc::mem_fun(this, &WindowPrivate::prepare));
 	}
 
 	~WindowPrivate()
 	{
-		gState->texPool().release(baseTex);
+		shState->texPool().release(baseTex);
 		cursorRectCon.disconnect();
 		prepareCon.disconnect();
 	}
@@ -405,8 +405,8 @@ struct WindowPrivate
 		if (!resizeNeeded)
 			return;
 
-		gState->texPool().release(baseTex);
-		baseTex = gState->texPool().request(newW, newH);
+		shState->texPool().release(baseTex);
+		baseTex = shState->texPool().request(newW, newH);
 
 		baseTexDirty = true;
 	}
@@ -422,7 +422,7 @@ struct WindowPrivate
 		glState.viewport.pushSet(IntRect(0, 0, baseTex.width, baseTex.height));
 		glState.clearColor.pushSet(Vec4());
 
-		SimpleAlphaShader &shader = gState->simpleAlphaShader();
+		SimpleAlphaShader &shader = shState->simpleAlphaShader();
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setTranslation(Vec2i());
@@ -560,7 +560,7 @@ struct WindowPrivate
 		Vec2i trans(position.x + sceneOffset.x,
 		            position.y + sceneOffset.y);
 
-		SimpleAlphaShader &shader = gState->simpleAlphaShader();
+		SimpleAlphaShader &shader = shState->simpleAlphaShader();
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setTranslation(trans);
@@ -609,7 +609,7 @@ struct WindowPrivate
 		glState.scissorBox.push();
 		glState.scissorBox.setIntersect(windowRect);
 
-		SimpleAlphaShader &shader = gState->simpleAlphaShader();
+		SimpleAlphaShader &shader = shState->simpleAlphaShader();
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setTranslation(Vec2i(effectX, effectY));

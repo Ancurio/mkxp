@@ -30,7 +30,7 @@
 
 #include "../binding-util.h"
 #include "marshal.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "eventthread.h"
 #include "exception.h"
 #include "filesystem.h"
@@ -70,7 +70,7 @@ static void printP(mrb_state *mrb,
 			mrb_str_buf_cat(mrb, buffer, sep, strlen(sep));
 	}
 
-	gState->eThread().showMessageBox(RSTRING_PTR(buffer), SDL_MESSAGEBOX_INFORMATION);
+	shState->eThread().showMessageBox(RSTRING_PTR(buffer), SDL_MESSAGEBOX_INFORMATION);
 }
 
 MRB_FUNCTION(kernelP)
@@ -174,7 +174,7 @@ MRB_FUNCTION(kernelLoadData)
 	mrb_get_args(mrb, "z", &filename);
 
 	SDL_RWops ops;
-	GUARD_EXC( gState->fileSystem().openRead(ops, filename); )
+	GUARD_EXC( shState->fileSystem().openRead(ops, filename); )
 
 	mrb_value obj;
 	try { obj = marshalLoadInt(mrb, &ops); }

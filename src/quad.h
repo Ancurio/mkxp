@@ -25,7 +25,7 @@
 #include "GL/glew.h"
 #include "etc-internal.h"
 #include "gl-util.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 #include "global-ibo.h"
 #include "shader.h"
 
@@ -110,7 +110,7 @@ struct Quad
 	{
 		VAO::bind(vao);
 		VBO::bind(vbo);
-		gState->bindQuadIBO();
+		shState->bindQuadIBO();
 
 		glEnableVertexAttribArray(Shader::Color);
 		glEnableVertexAttribArray(Shader::Position);

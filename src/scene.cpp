@@ -20,7 +20,7 @@
 */
 
 #include "scene.h"
-#include "globalstate.h"
+#include "sharedstate.h"
 
 #include <QDebug>
 
@@ -91,7 +91,7 @@ void Scene::composite()
 
 SceneElement::SceneElement(Scene &scene, int z)
     : link(this),
-      creationStamp(gState->genTimeStamp()),
+      creationStamp(shState->genTimeStamp()),
       z(z),
       visible(true),
       scene(&scene)
