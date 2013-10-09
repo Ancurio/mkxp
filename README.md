@@ -67,18 +67,20 @@ mkxp employs Qt's qmake build system, so you'll need to install that beforehand.
 
 mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. The "[General]" group may contain following entries:
 
-| Key          | Type        | Description                                                                     |
-| ------------ | ----------- | ------------------------------------------------------------------------------- |
-| debugMode    | bool        | Log OpenGL debug information to the console                                     |
-| winResizable | bool        | Game window is resizable                                                        |
-| fullscreen   | bool        | Start game in fullscreen (this can always be toggled with Alt-Enter at runtime) |
-| vsync        | bool        | Sync screen redraws to the monitor refresh rate                                 |
-| defScreenW   | int         | Width the game window starts in (this is **not** the game resolution)           |
-| defScreenH   | int         | Height the game window starts in                                                |
-| solidFonts   | bool        | Don't use alpha blending for fonts                                              |
-| gameFolder   | string      | mkxp will look for all game related files here                                  |
-| customScript | string      | Execute a raw ruby script file instead of an RPG Maker game.                    |
-| RTPs         | string list | A list of space separated paths to RTPs to be used (See next section)           |
+| Key              | Type        | Default | Description                                                                     |
+| ---------------- | ----------- | ------- | ------------------------------------------------------------------------------- |
+| debugMode        | bool        | false   | Log OpenGL debug information to the console                                     |
+| winResizable     | bool        | false   | Game window is resizable                                                        |
+| fullscreen       | bool        | false   | Start game in fullscreen (this can always be toggled with Alt-Enter at runtime) |
+| fixedAspectRatio | bool        | false   | Don't stretch the game screen to fit the window size                            |
+| smoothScaling    | bool        | false   | Apply linear interpolation when game screen is stretched                        |
+| vsync            | bool        | false   | Sync screen redraws to the monitor refresh rate                                 |
+| defScreenW       | int         | 640     | Width the game window starts in (this is **not** the game resolution)           |
+| defScreenH       | int         | 480     | Height the game window starts in                                                |
+| solidFonts       | bool        | false   | Don't use alpha blending for fonts                                              |
+| gameFolder       | string      | "."     | mkxp will look for all game related files here                                  |
+| customScript     | string      | ""      | Execute a raw ruby script file instead of an RPG Maker game.                    |
+| RTPs             | string list | ""      | A list of space separated paths to RTPs to be used (See next section)           |
 
 ## RTPs
 
