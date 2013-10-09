@@ -72,7 +72,7 @@ mkxp reads configuration data from the file "mkxp.conf" contained in the current
 | debugMode        | bool        | false   | Log OpenGL debug information to the console                                     |
 | winResizable     | bool        | false   | Game window is resizable                                                        |
 | fullscreen       | bool        | false   | Start game in fullscreen (this can always be toggled with Alt-Enter at runtime) |
-| fixedAspectRatio | bool        | false   | Don't stretch the game screen to fit the window size                            |
+| fixedAspectRatio | bool        | true    | Don't stretch the game screen to fit the window size                            |
 | smoothScaling    | bool        | false   | Apply linear interpolation when game screen is stretched                        |
 | vsync            | bool        | false   | Sync screen redraws to the monitor refresh rate                                 |
 | defScreenW       | int         | 640     | Width the game window starts in (this is **not** the game resolution)           |

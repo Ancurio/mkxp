@@ -32,7 +32,7 @@ Config::Config()
     : debugMode(false),
       winResizable(false),
       fullscreen(false),
-      fixedAspectRatio(false),
+      fixedAspectRatio(true),
       smoothScaling(false),
       vsync(false),
       defScreenW(640),

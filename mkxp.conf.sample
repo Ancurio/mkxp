@@ -1,10 +1,10 @@
 [General]
-debugMode=true
-winResizable=true
+debugMode=false
+winResizable=false
 fullscreen=false
-fixedAspectRatio=false
+fixedAspectRatio=true
 smoothScaling=false
-vsync=true
+vsync=false
 defScreenW=640
 defScreenH=480
 solidFonts=false
