@@ -179,6 +179,18 @@ static const Position positions[] =
 
 static elementsN(positions);
 
+/* Autotile animation */
+static const uint8_t atAnimation[16*4] =
+{
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
+};
+
+static elementsN(atAnimation);
+
+/* Flash tiles pulsing opacity */
 static const uint8_t flashAlpha[] =
 {
 	/* Fade in */
@@ -1219,16 +1231,6 @@ Tilemap::~Tilemap()
 {
 	dispose();
 }
-
-static const uchar atAnimation[16*4] =
-{
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
-};
-
-static elementsN(atAnimation);
 
 void Tilemap::update()
 {
