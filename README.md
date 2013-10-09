@@ -49,7 +49,7 @@ To select this backend, run `qmake BINDING=BINDING_NULL`
 * sfml-audio 2.0
 * zlib (only ruby backends)
 
-(If no version specified, assume latest)
+(If no version specified, assume latest *development version*, ie. freshest one from git/hg/svn)
 
 To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed.
  
