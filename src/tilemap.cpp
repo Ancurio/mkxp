@@ -491,6 +491,9 @@ struct TilemapPrivate
 			if (autotiles[i]->isDisposed())
 				continue;
 
+			if (autotiles[i]->megaSurface())
+				continue;
+
 			usableATs.append(i);
 
 			autotiles[i]->flush();
