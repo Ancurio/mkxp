@@ -50,7 +50,13 @@
 
 
 #define INIT_SHADER(vert, frag) \
-	Shader::init(shader_##vert##_vert, shader_##vert##_vert_len, shader_##frag##_frag, shader_##frag##_frag_len)
+{ \
+	Shader::init(shader_##vert##_vert, shader_##vert##_vert_len, shader_##frag##_frag, shader_##frag##_frag_len); \
+	qDebug() << "    From:" << #vert ".vert" << #frag ".frag"; \
+}
+
+#define COMP(shader) qDebug() << "--- Compiling " #shader
+
 #define GET_U(name) u_##name = glGetUniformLocation(program, #name)
 
 Shader::Shader()
@@ -189,6 +195,7 @@ void ShaderBase::setTranslation(const Vec2i &value)
 
 SimpleShader::SimpleShader()
 {
+	COMP(SimpleShader);
 	INIT_SHADER(simple, simple);
 
 	ShaderBase::init();
@@ -204,6 +211,7 @@ void SimpleShader::setTexOffsetX(int value)
 
 SimpleColorShader::SimpleColorShader()
 {
+	COMP(SimpleColorShader);
 	INIT_SHADER(simpleColor, simpleColor);
 
 	ShaderBase::init();
@@ -212,6 +220,7 @@ SimpleColorShader::SimpleColorShader()
 
 SimpleAlphaShader::SimpleAlphaShader()
 {
+	COMP(SimpleAlphaShader);
 	INIT_SHADER(simpleColor, simpleAlpha);
 
 	ShaderBase::init();
@@ -220,6 +229,7 @@ SimpleAlphaShader::SimpleAlphaShader()
 
 SimpleSpriteShader::SimpleSpriteShader()
 {
+	COMP(SimpleSpriteShader);
 	INIT_SHADER(sprite, simple);
 
 	ShaderBase::init();
@@ -235,6 +245,7 @@ void SimpleSpriteShader::setSpriteMat(const float value[16])
 
 TransShader::TransShader()
 {
+	COMP(TransShader);
 	INIT_SHADER(simple, trans);
 
 	ShaderBase::init();
@@ -274,6 +285,7 @@ void TransShader::setVague(float value)
 
 SimpleTransShader::SimpleTransShader()
 {
+	COMP(SimpleTransShader);
 	INIT_SHADER(simple, transSimple);
 
 	ShaderBase::init();
@@ -301,6 +313,7 @@ void SimpleTransShader::setProg(float value)
 
 SpriteShader::SpriteShader()
 {
+	COMP(SpriteShader);
 	INIT_SHADER(sprite, sprite);
 
 	ShaderBase::init();
@@ -346,6 +359,7 @@ void SpriteShader::setBushOpacity(float value)
 
 PlaneShader::PlaneShader()
 {
+	COMP(PlaneShader);
 	INIT_SHADER(simple, plane);
 
 	ShaderBase::init();
@@ -379,6 +393,7 @@ void PlaneShader::setOpacity(float value)
 
 FlashMapShader::FlashMapShader()
 {
+	COMP(FlashMapShader);
 	INIT_SHADER(simpleColor, flashMap);
 
 	ShaderBase::init();
@@ -394,6 +409,7 @@ void FlashMapShader::setAlpha(float value)
 
 HueShader::HueShader()
 {
+	COMP(HueShader);
 	INIT_SHADER(simple, hue);
 
 	ShaderBase::init();
@@ -449,6 +465,7 @@ BlurShader::VPass::VPass()
 
 BltShader::BltShader()
 {
+	COMP(BltShader);
 	INIT_SHADER(simple, bitmapBlit);
 
 	ShaderBase::init();
