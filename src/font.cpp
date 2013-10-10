@@ -25,7 +25,7 @@
 #include "filesystem.h"
 #include "exception.h"
 
-#include "../assets/liberation.ttf.xxd"
+#include "../liberation.ttf.xxd"
 
 #include "SDL2/SDL_ttf.h"
 
