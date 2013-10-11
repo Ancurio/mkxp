@@ -74,7 +74,7 @@ void Config::read()
 		if (value.type() == QVariant::String)
 			value = value.toString().toUtf8();
 
-		bindingConf.insert(key.toAscii(), value);
+		bindingConf.insert(key.toLatin1(), value);
 	}
 
 	confFile.endGroup();

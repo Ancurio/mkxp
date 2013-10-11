@@ -55,7 +55,7 @@ struct DebugLoggerPrivate
 	void writeTimestamp()
 	{
 		QTime time = QTime::currentTime();
-		*stream << "[" << time.toString().toAscii() << "] ";
+		*stream << "[" << time.toString().toLatin1() << "] ";
 	}
 
 	void writeLine(const char *line)
