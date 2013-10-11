@@ -31,7 +31,7 @@ Some extensions to the standard classes/modules are provided taking the RPG Make
 To select this backend, run `qmake BINDING=BINDING_MRUBY`
 
 ### null
-This backend only exists for testing purposes and does nothing (the engine quits immediately).
+This backend only exists for testing purposes and does nothing (the engine quits immediately). It can be used to eg. run a minimal RGSS game loop directly in C++.
 
 To select this backend, run `qmake BINDING=BINDING_NULL`
 
@@ -61,7 +61,7 @@ Place a recent version of mruby in the project folder and build it.
 
 ## Building
 
-mkxp employs Qt's qmake build system, so you'll need to install that beforehand. After cloning mkxp, run one of the above qmake calls, or simply `qmake` to select the default backend (currently MRI), then `make`.
+mkxp employs Qt's qmake build system, so you'll need to install that beforehand. After cloning mkxp, run one of the above qmake calls, or simply `qmake` to select the default binding (currently MRI), then `make`.
 
 ## Configuration
 
