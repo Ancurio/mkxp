@@ -172,8 +172,8 @@ BINDING_MRUBY {
 
 BINDING_MRI {
 	LIBS += ./ruby/libruby.so
-	INCLUDEPATH += ruby/include
-	DEPENDPATH += ruby/include
+	INCLUDEPATH += ruby/include ruby/.ext/include/x86_64-linux # need i386 paths here too!
+	DEPENDPATH += ruby/include ruby/.ext/include/x86_64-linux
 	DEFINES += BINDING_MRI
 
 #	EMBED2 = binding-mri/module_rpg.rb
