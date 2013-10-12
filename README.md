@@ -15,25 +15,25 @@ Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version 
 For a list of differences, see:
 http://stackoverflow.com/questions/21574/what-is-the-difference-between-ruby-1-8-and-ruby-1-9
 
-To select this backend, run `qmake BINDING=BINDING_MRI`
+To select this binding, run `qmake BINDING=BINDING_MRI`
 
 ### mruby (Lightweight Ruby)
 Website: https://github.com/mruby/mruby
 
 mruby is a new endeavor by Matz and others to create a more lightweight, spec-adhering, embeddable Ruby implementation. You can think of it as a Ruby version of Lua.
 
-Due to heavy differences between mruby and MRI as well as lacking modules, running RPG Maker games with this backend will most likely not work correctly. It is provided as experimental code. You can eg. write your own ruby scripts and run them with this backend.
+Due to heavy differences between mruby and MRI as well as lacking modules, running RPG Maker games with this binding will most likely not work correctly. It is provided as experimental code. You can eg. write your own ruby scripts and run them.
 
 Some extensions to the standard classes/modules are provided taking the RPG Maker XP helpfile as a quasi "standard". These include Marshal, File, FileTest and Time.
 
 **Important:** If you decide to use [mattn's oniguruma regexp gem](https://github.com/mattn/mruby-onig-regexp), don't forget to add `-lonig` to the linker flags to avoid ugly symbol overlaps with libc.
 
-To select this backend, run `qmake BINDING=BINDING_MRUBY`
+To select this binding, run `qmake BINDING=BINDING_MRUBY`
 
 ### null
-This backend only exists for testing purposes and does nothing (the engine quits immediately). It can be used to eg. run a minimal RGSS game loop directly in C++.
+This binding only exists for testing purposes and does nothing (the engine quits immediately). It can be used to eg. run a minimal RGSS game loop directly in C++.
 
-To select this backend, run `qmake BINDING=BINDING_NULL`
+To select this binding, run `qmake BINDING=BINDING_NULL`
 
 ## Dependencies
 
@@ -47,7 +47,7 @@ To select this backend, run `qmake BINDING=BINDING_NULL`
 * pixman
 * sfml-system 2.0
 * sfml-audio 2.0
-* zlib (only ruby backends)
+* zlib (only ruby bindings)
 
 (If no version specified, assume latest *development version*, ie. freshest one from git/hg/svn)
 
