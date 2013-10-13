@@ -51,6 +51,7 @@ public:
 
 protected:
 	void insert(SceneElement &element);
+	void insertAfter(SceneElement &element, SceneElement &after);
 	void reinsert(SceneElement &element);
 
 	/* Notify all elements that geometry has changed */

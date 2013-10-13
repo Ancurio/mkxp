@@ -230,7 +230,7 @@ struct ScanRow : public ViewportElement
 	void drawInt();
 
 	void initUpdateZ();
-	void finiUpdateZ();
+	void finiUpdateZ(ScanRow *prev);
 };
 
 struct TilemapPrivate
@@ -1005,11 +1005,21 @@ struct TilemapPrivate
 
 	void updateZOrder()
 	{
+		if (elem.scanrows.isEmpty())
+			return;
+
 		for (int i = 0; i < elem.scanrows.count(); ++i)
 			elem.scanrows[i]->initUpdateZ();
 
-		for (int i = 0; i < elem.scanrows.count(); ++i)
-			elem.scanrows[i]->finiUpdateZ();
+		ScanRow *prev = elem.scanrows.first();
+		prev->finiUpdateZ(0);
+
+		for (int i = 1; i < elem.scanrows.count(); ++i)
+		{
+			ScanRow *row = elem.scanrows[i];
+			row->finiUpdateZ(prev);
+			prev = row;
+		}
 	}
 
 	void prepare()
@@ -1186,11 +1196,14 @@ void ScanRow::initUpdateZ()
 	unlink();
 }
 
-void ScanRow::finiUpdateZ()
+void ScanRow::finiUpdateZ(ScanRow *prev)
 {
 	z = 32 * (index+1) - p->offset.y;
 
-	scene->insert(*this);
+	if (prev)
+		scene->insertAfter(*this, *prev);
+	else
+		scene->insert(*this);
 }
 
 void Tilemap::Autotiles::set(int i, Bitmap *bitmap)

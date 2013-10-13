@@ -59,6 +59,24 @@ void Scene::insert(SceneElement &element)
 	elements.append(element.link);
 }
 
+void Scene::insertAfter(SceneElement &element, SceneElement &after)
+{
+	IntruListLink<SceneElement> *iter;
+
+	for (iter = &after.link; iter != elements.end(); iter = iter->next)
+	{
+		SceneElement *e = iter->data;
+
+		if (element < *e)
+		{
+			elements.insertBefore(element.link, *iter);
+			return;
+		}
+	}
+
+	elements.append(element.link);
+}
+
 void Scene::reinsert(SceneElement &element)
 {
 	elements.remove(element.link);
