@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#include "SDL2/SDL_messagebox.h"
+#include "SDL_messagebox.h"
 
 #include "../binding-util.h"
 #include "marshal.h"

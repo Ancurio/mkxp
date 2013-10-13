@@ -36,9 +36,9 @@
 #include <QByteArray>
 #include <QHash>
 
-#include "SDL2/SDL_thread.h"
+#include "SDL_thread.h"
 
-//#include "SDL2/SDL_mixer.h"
+//#include "SDL_mixer.h"
 
 #include <QDebug>
 

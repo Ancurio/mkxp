@@ -26,7 +26,7 @@
 #include "mruby/array.h"
 #include "mruby/class.h"
 
-#include "SDL2/SDL_rwops.h"
+#include "SDL_rwops.h"
 
 #include <stdio.h>
 #include <errno.h>

@@ -23,7 +23,7 @@
 #define MARSHAL_H
 
 #include "mruby.h"
-#include "SDL2/SDL_rwops.h"
+#include "SDL_rwops.h"
 
 void marshalDumpInt(mrb_state *, SDL_RWops *, mrb_value);
 mrb_value marshalLoadInt(mrb_state *, SDL_RWops *);

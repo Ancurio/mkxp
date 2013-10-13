@@ -24,7 +24,7 @@
 
 #include "SFML/System/InputStream.hpp"
 
-#include "SDL2/SDL_rwops.h"
+#include "SDL_rwops.h"
 
 struct PHYSFS_File;
 

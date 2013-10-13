@@ -35,9 +35,9 @@
 #include "stdio.h"
 #include "zlib.h"
 
-#include "SDL2/SDL_messagebox.h"
-#include "SDL2/SDL_rwops.h"
-#include "SDL2/SDL_timer.h"
+#include "SDL_messagebox.h"
+#include "SDL_rwops.h"
+#include "SDL_timer.h"
 
 #include "sharedstate.h"
 #include "texpool.h"

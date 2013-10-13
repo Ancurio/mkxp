@@ -21,7 +21,7 @@
 
 #include "glstate.h"
 #include "GL/glew.h"
-#include "SDL2/SDL_rect.h"
+#include "SDL_rect.h"
 #include "etc.h"
 
 void GLClearColor::apply(const Vec4 &value)

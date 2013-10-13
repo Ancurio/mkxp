@@ -41,7 +41,7 @@
 
 #include <QVector>
 
-#include <SDL2/SDL_surface.h>
+#include "SDL_surface.h"
 
 extern const StaticRect autotileRects[];
 

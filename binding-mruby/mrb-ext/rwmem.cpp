@@ -21,7 +21,7 @@
 
 #include "rwmem.h"
 
-#include "SDL2/SDL_rwops.h"
+#include "SDL_rwops.h"
 #include <QVector>
 
 typedef QVector<char> ByteVec;

@@ -21,11 +21,11 @@
 
 #include "eventthread.h"
 
-#include "SDL2/SDL_events.h"
-#include "SDL2/SDL_joystick.h"
-#include "SDL2/SDL_messagebox.h"
-#include "SDL2/SDL_timer.h"
-#include "SDL2/SDL_thread.h"
+#include "SDL_events.h"
+#include "SDL_joystick.h"
+#include "SDL_messagebox.h"
+#include "SDL_timer.h"
+#include "SDL_thread.h"
 
 #include "sharedstate.h"
 #include "graphics.h"
