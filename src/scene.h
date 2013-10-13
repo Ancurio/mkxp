@@ -31,6 +31,7 @@ class SceneElement;
 class Viewport;
 class Window;
 class ScanRow;
+struct TilemapPrivate;
 
 class Scene
 {
@@ -99,6 +100,7 @@ protected:
 
 	friend class Scene;
 	friend class Viewport;
+	friend struct TilemapPrivate;
 };
 
 #endif // SCENE_H

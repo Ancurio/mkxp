@@ -224,6 +224,14 @@ struct ScanRow : public ViewportElement
 	GLsizei vboCount;
 	TilemapPrivate *p;
 
+	/* If this row is part of a batch and not
+	 * the head, it is 'muted' via this flag */
+	bool batchedFlag;
+
+	/* If this row is a batch head, this variable
+	 * holds the element count of the entire batch */
+	GLsizei vboBatchCount;
+
 	ScanRow(TilemapPrivate *p, Viewport *viewport, int index);
 
 	void draw();
@@ -1022,6 +1030,47 @@ struct TilemapPrivate
 		}
 	}
 
+	/* When there are two or more scanrows with no other
+	 * elements between them in the scene list, we can
+	 * render them in a batch (as the scanrow data itself
+	 * is ordered sequentially in VRAM). Every frame, we
+	 * scan the scene list for such sequential rows and
+	 * batch them up for drawing. The first row of the batch
+	 * (the "batch head") executes the draw call, all others
+	 * are muted via the 'batchedFlag'. For simplicity,
+	 * single sized batches are possible. */
+	void prepareScanrowBatches()
+	{
+		const QVector<ScanRow*> &scanrows = elem.scanrows;
+
+		for (int i = 0; i < scanrows.size(); ++i)
+		{
+			ScanRow *batchHead = scanrows[i];
+			batchHead->batchedFlag = false;
+
+			GLsizei vboBatchCount = batchHead->vboCount;
+			IntruListLink<SceneElement> *iter = &batchHead->link;
+
+			for (i = i+1; i < scanrows.size(); ++i)
+			{
+				iter = iter->next;
+				ScanRow *row = scanrows[i];
+
+				/* Check if the next SceneElement is also
+				 * the next scanrow in our list. If not,
+				 * the current batch is complete */
+				if (iter != &row->link)
+					break;
+
+				vboBatchCount += row->vboCount;
+				row->batchedFlag = true;
+			}
+
+			batchHead->vboBatchCount = vboBatchCount;
+			--i;
+		}
+	}
+
 	void prepare()
 	{
 		if (!verifyResources())
@@ -1063,6 +1112,8 @@ struct TilemapPrivate
 			updateZOrder();
 			zOrderDirty = false;
 		}
+
+		prepareScanrowBatches();
 
 		tilemapReady = true;
 	}
@@ -1152,7 +1203,8 @@ void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
 ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport, int index)
     : ViewportElement(viewport, 32 + index*32, p->elem.scanrowStamp),
       index(index),
-      p(p)
+      p(p),
+      vboBatchCount(0)
 {
 	vboOffset = p->scanrowBases[index] * sizeof(uint32_t) * 6;
 	vboCount = p->scanrowSize(index) * 6;
@@ -1160,6 +1212,9 @@ ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport, int index)
 
 void ScanRow::draw()
 {
+	if (batchedFlag)
+		return;
+
 	SimpleShader &shader = shState->simpleShader();
 	shader.bind();
 	shader.applyViewportProj();
@@ -1187,7 +1242,7 @@ void ScanRow::draw()
 
 void ScanRow::drawInt()
 {
-	glDrawElements(GL_TRIANGLES, vboCount,
+	glDrawElements(GL_TRIANGLES, vboBatchCount,
 	               GL_UNSIGNED_INT, (GLvoid*) (vboOffset + p->tiles.frameIdx * p->tiles.bufferFrameSize));
 }
 
