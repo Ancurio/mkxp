@@ -122,7 +122,7 @@ int main(int, char *argv[])
 	conf.read();
 	conf.readGameINI();
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
 		qDebug() << "Error initializing SDL:" << SDL_GetError();
 		return 0;
