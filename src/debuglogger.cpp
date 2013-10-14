@@ -21,7 +21,7 @@
 
 #include "debuglogger.h"
 
-#include "GL/glew.h"
+#include "glew.h"
 
 #include <QFile>
 #include <QTime>

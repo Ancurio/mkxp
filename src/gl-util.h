@@ -22,7 +22,7 @@
 #ifndef GLUTIL_H
 #define GLUTIL_H
 
-#include "GL/glew.h"
+#include "glew.h"
 
 #include "etc-internal.h"
 #include <QDebug>

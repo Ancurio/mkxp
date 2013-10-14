@@ -20,7 +20,7 @@
 */
 
 #include "glstate.h"
-#include "GL/glew.h"
+#include "glew.h"
 #include "SDL_rect.h"
 #include "etc.h"
 

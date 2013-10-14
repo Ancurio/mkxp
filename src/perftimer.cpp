@@ -1,7 +1,7 @@
 #include "perftimer.h"
 
 #include "SDL_timer.h"
-#include "GL/glew.h"
+#include "glew.h"
 
 #include <QDebug>
 

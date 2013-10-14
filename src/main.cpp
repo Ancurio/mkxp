@@ -19,7 +19,7 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GL/glew.h"
+#include "glew.h"
 
 #include "SDL.h"
 #include "SDL_image.h"

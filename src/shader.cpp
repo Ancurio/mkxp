@@ -23,7 +23,7 @@
 #include "sharedstate.h"
 #include "glstate.h"
 
-#include "GL/glew.h"
+#include "glew.h"
 
 #include <QFile>
 
