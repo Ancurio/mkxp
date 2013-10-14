@@ -23,13 +23,22 @@
 #define SERIALUTIL_H
 
 #include <stdint.h>
+#include <string.h>
+
+#include <SDL_endian.h>
 
 typedef unsigned uint;
+
+#if SDL_BYTEORDER != SDL_LIL_ENDIAN
+#error "Non little endian systems not supported"
+#endif
 
 static inline int16_t
 read_int16(const char *data, uint &i)
 {
-	int16_t result = (data[i] & 0x000000FF) | ((data[i+1] << 8) & 0x0000FF00);
+	int16_t result;
+
+	memcpy(&result, &data[i], 2);
 	i += 2;
 
 	return result;
@@ -38,11 +47,21 @@ read_int16(const char *data, uint &i)
 static inline int32_t
 read_int32(const char *data, uint &i)
 {
-	int32_t result = ((data[i+0] << 0x00) & 0x000000FF)
-	               | ((data[i+1] << 0x08) & 0x0000FF00)
-	               | ((data[i+2] << 0x10) & 0x00FF0000)
-	               | ((data[i+3] << 0x18) & 0xFF000000);
+	int32_t result;
+
+	memcpy(&result, &data[i], 4);
 	i += 4;
+
+	return result;
+}
+
+static inline double
+read_double(const char *data, uint &i)
+{
+	double result;
+
+	memcpy(&result, &data[i], 8);
+	i += 8;
 
 	return result;
 }
@@ -50,56 +69,25 @@ read_int32(const char *data, uint &i)
 static inline void
 write_int16(char **data, int16_t value)
 {
-	*(*data)++ = (value >> 0) & 0xFF;
-	*(*data)++ = (value >> 8) & 0xFF;
+	memcpy(*data, &value, 2);
+
+	data += 2;
 }
 
 static inline void
 write_int32(char **data, int32_t value)
 {
-	*(*data)++ = (value >> 0x00) & 0xFF;
-	*(*data)++ = (value >> 0x08) & 0xFF;
-	*(*data)++ = (value >> 0x10) & 0xFF;
-	*(*data)++ = (value >> 0x18) & 0xFF;
-}
+	memcpy(*data, &value, 4);
 
-union doubleInt
-{
-	double d;
-	int64_t i;
-};
+	data += 4;
+}
 
 static inline void
 write_double(char **data, double value)
 {
-	doubleInt di;
-	di.d = value;
+	memcpy(*data, &value, 8);
 
-	*(*data)++ = (di.i >> 0x00) & 0xFF;
-	*(*data)++ = (di.i >> 0x08) & 0xFF;
-	*(*data)++ = (di.i >> 0x10) & 0xFF;
-	*(*data)++ = (di.i >> 0x18) & 0xFF;
-	*(*data)++ = (di.i >> 0x20) & 0xFF;
-	*(*data)++ = (di.i >> 0x28) & 0xFF;
-	*(*data)++ = (di.i >> 0x30) & 0xFF;
-	*(*data)++ = (di.i >> 0x38) & 0xFF;
-}
-
-static inline double
-read_double(const char *data, uint &i)
-{
-	doubleInt di;
-	di.i = (((int64_t)data[i+0] << 0x00) & 0x00000000000000FF)
-	     | (((int64_t)data[i+1] << 0x08) & 0x000000000000FF00)
-	     | (((int64_t)data[i+2] << 0x10) & 0x0000000000FF0000)
-	     | (((int64_t)data[i+3] << 0x18) & 0x00000000FF000000)
-	     | (((int64_t)data[i+4] << 0x20) & 0x000000FF00000000)
-	     | (((int64_t)data[i+5] << 0x28) & 0x0000FF0000000000)
-	     | (((int64_t)data[i+6] << 0x30) & 0x00FF000000000000)
-	     | (((int64_t)data[i+7] << 0x38) & 0xFF00000000000000);
-	i += 8;
-
-	return di.d;
+	data += 8;
 }
 
 #endif // SERIALUTIL_H
