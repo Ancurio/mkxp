@@ -83,6 +83,10 @@ int rgssThreadFun(void *userdata)
 		return 0;
 	}
 
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	SDL_GL_SwapWindow(win);
+
 	/* Check for required GL extensions */
 	for (int i = 0; reqExt[i]; ++i)
 	{
