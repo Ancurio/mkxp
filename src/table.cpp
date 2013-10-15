@@ -26,10 +26,7 @@
 
 #include "serial-util.h"
 #include "exception.h"
-
-#include <QDebug>
-
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#include "util.h"
 
 /* Init normally */
 Table::Table(int x, int y /*= 1*/, int z /*= 1*/)
@@ -67,7 +64,7 @@ void Table::resize(int x, int y, int z)
 	if (x == m_x && y == m_y && z == m_z)
 		return;
 
-	// Fastpath: only z changed
+	/* Fastpath: only z changed */
 	if (x == m_x && y == m_y)
 	{
 		data = static_cast<int16_t*>(realloc(data, m_x * m_y * z * sizeof(int16_t)));
@@ -80,9 +77,9 @@ void Table::resize(int x, int y, int z)
 	{
 		int16_t *newData = static_cast<int16_t*>(calloc(x * y * z, sizeof(int16_t)));
 
-		for (int i = 0; i < MIN(x, m_x); ++i)
-			for (int j = 0; j < MIN(y, m_y); ++j)
-				for (int k = 0; k < MIN(z, m_z); k++)
+		for (int i = 0; i < min(x, m_x); ++i)
+			for (int j = 0; j < min(y, m_y); ++j)
+				for (int k = 0; k < min(z, m_z); k++)
 				{
 					int index = x*y*k + x*j + i;
 					newData[index] = at(i, j, k);
@@ -105,10 +102,10 @@ void Table::resize(int x, int y)
 	if (x == m_x && y == m_y)
 		return;
 
-	// Fastpath: treat table as two dimensional
+	/* Fastpath: treat table as two dimensional */
 	if (m_z == 1)
 	{
-		// Fastpath: only y changed
+		/* Fastpath: only y changed */
 		if (x == m_x)
 		{
 			data = static_cast<int16_t*>(realloc(data, m_x * y * sizeof(int16_t)));
@@ -121,8 +118,8 @@ void Table::resize(int x, int y)
 		{
 			int16_t *newData = static_cast<int16_t*>(calloc(x * y, sizeof(int16_t)));
 
-			for (int i = 0; i < MIN(x, m_x); ++i)
-				for (int j = 0; j < MIN(y, m_y); ++j)
+			for (int i = 0; i < min(x, m_x); ++i)
+				for (int j = 0; j < min(y, m_y); ++j)
 				{
 					int index = x*j + i;
 					newData[index] = at(i, j);
@@ -149,7 +146,7 @@ void Table::resize(int x)
 	if (x == m_x)
 		return;
 
-	// Fastpath: treat table as one dimensional
+	/* Fastpath: treat table as one dimensional */
 	if (m_y == 1 && m_z == 1)
 	{
 		data = static_cast<int16_t*>(realloc(data, x * sizeof(int16_t)));
