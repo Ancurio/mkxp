@@ -50,6 +50,14 @@ static const char *reqExt[] =
 	0
 };
 
+static void
+rgssThreadError(RGSSThreadData *rtData, const QByteArray &msg)
+{
+	rtData->rgssErrorMsg = msg;
+	rtData->ethread->requestTerminate();
+	rtData->rqTermAck = true;
+}
+
 int rgssThreadFun(void *userdata)
 {
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
@@ -67,19 +75,14 @@ int rgssThreadFun(void *userdata)
 
 	if (!ctx)
 	{
-		threadData->rgssErrorMsg =
-		        QByteArray("Error creating context: ") + SDL_GetError();
-		threadData->ethread->requestTerminate();
-		threadData->rqTermAck = true;
+		rgssThreadError(threadData, QByteArray("Error creating context: ") + SDL_GetError());
 		return 0;
 	}
 
 	if (glewInit() != GLEW_OK)
 	{
-		threadData->rgssErrorMsg = "Error initializing glew";
+		rgssThreadError(threadData, "Error initializing glew");
 		SDL_GL_DeleteContext(ctx);
-		threadData->ethread->requestTerminate();
-		threadData->rqTermAck = true;
 		return 0;
 	}
 
@@ -87,15 +90,22 @@ int rgssThreadFun(void *userdata)
 	glClear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapWindow(win);
 
+	/* Check for required GL version */
+	if (!GLEW_VERSION_2_0)
+	{
+		rgssThreadError(threadData, "At least OpenGL 2.0 is required");
+		SDL_GL_DeleteContext(ctx);
+		return 0;
+	}
+
 	/* Check for required GL extensions */
 	for (int i = 0; reqExt[i]; ++i)
 	{
 		if (!glewIsSupported(reqExt[i]))
 		{
-			threadData->rgssErrorMsg =
-			        QByteArray("Required GL extension \"") + reqExt[i] + "\" not present";
-			threadData->ethread->requestTerminate();
-			threadData->rqTermAck = true;
+			rgssThreadError(threadData, QByteArray("Required GL extension \"")
+			                            + reqExt[i] + "\" not present");
+			SDL_GL_DeleteContext(ctx);
 			return 0;
 		}
 	}
