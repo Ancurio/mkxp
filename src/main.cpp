@@ -58,6 +58,21 @@ rgssThreadError(RGSSThreadData *rtData, const QByteArray &msg)
 	rtData->rqTermAck = true;
 }
 
+static inline const char*
+glGetStringInt(GLenum name)
+{
+	return (const char*) glGetString(name);
+}
+
+static void
+printGLInfo()
+{
+	qDebug() << "GL Vendor    :" << glGetStringInt(GL_VENDOR);
+	qDebug() << "GL Renderer  :" << glGetStringInt(GL_RENDERER);
+	qDebug() << "GL Version   :" << glGetStringInt(GL_VERSION);
+	qDebug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
+}
+
 int rgssThreadFun(void *userdata)
 {
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
@@ -89,6 +104,8 @@ int rgssThreadFun(void *userdata)
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapWindow(win);
+
+	printGLInfo();
 
 	/* Check for required GL version */
 	if (!GLEW_VERSION_2_0)
