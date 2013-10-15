@@ -155,6 +155,9 @@ _rb_define_module_function(VALUE module, const char *name, RubyMethod func)
 	rb_define_module_function(module, name, RUBY_METHOD_FUNC(func), -1);
 }
 
+#define GUARD_EXC(exp) \
+{ try { exp } catch (const Exception &exc) { raiseRbExc(exc); } }
+
 template<class C>
 static inline VALUE
 objectLoad(int argc, VALUE *argv, VALUE self, rb_data_type_struct &type)
@@ -165,7 +168,9 @@ objectLoad(int argc, VALUE *argv, VALUE self, rb_data_type_struct &type)
 
 	VALUE obj = rb_obj_alloc(self);
 
-	C *c = C::deserialize(data, dataLen);
+	C *c;
+
+	GUARD_EXC( c = C::deserialize(data, dataLen); );
 
 	setPrivateData(obj, c, type);
 
@@ -293,9 +298,6 @@ rb_bool_new(bool value)
 	_rb_define_method(klass, prop_name_s, Klass##Get##PropName); \
 	_rb_define_method(klass, prop_name_s "=", Klass##Set##PropName); \
 }
-
-#define GUARD_EXC(exp) \
-{ try { exp } catch (const Exception &exc) { raiseRbExc(exc); } }
 
 
 #endif // BINDING_UTIL_H
