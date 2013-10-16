@@ -71,7 +71,7 @@ write_int16(char **data, int16_t value)
 {
 	memcpy(*data, &value, 2);
 
-	data += 2;
+	*data += 2;
 }
 
 static inline void
@@ -79,7 +79,7 @@ write_int32(char **data, int32_t value)
 {
 	memcpy(*data, &value, 4);
 
-	data += 4;
+	*data += 4;
 }
 
 static inline void
@@ -87,7 +87,7 @@ write_double(char **data, double value)
 {
 	memcpy(*data, &value, 8);
 
-	data += 8;
+	*data += 8;
 }
 
 #endif // SERIALUTIL_H
