@@ -48,7 +48,7 @@ RB_METHOD(audio_##entity##Fade) \
 	RB_UNUSED_PARAM; \
 	int time; \
 	rb_get_args(argc, argv, "i", &time, RB_ARG_END); \
-	shState->audio().bgmFade(time); \
+	shState->audio().entity##Fade(time); \
 	return Qnil; \
 }
 
