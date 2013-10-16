@@ -313,6 +313,24 @@ typedef struct GenericBO<GL_ELEMENT_ARRAY_BUFFER> IBO;
 
 #undef DEF_GL_ID
 
+namespace PixelStore
+{
+	/* Setup a 'glSubTexImage2D()' call where the uploaded image
+	 * itself is part of a bigger image in client memory */
+	inline void setupSubImage(GLint imgWidth, GLint subX, GLint subY)
+	{
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, imgWidth);
+		glPixelStorei(GL_UNPACK_SKIP_PIXELS, subX);
+		glPixelStorei(GL_UNPACK_SKIP_ROWS, subY);
+	}
+
+	/* Reset all states set with 'setupSubImage()' */
+	inline void reset()
+	{
+		setupSubImage(0, 0, 0);
+	}
+}
+
 /* Convenience struct wrapping a framebuffer
  * and a 2D texture as its target */
 struct TEXFBO

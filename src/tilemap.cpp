@@ -654,33 +654,16 @@ struct TilemapPrivate
 
 			SDL_Surface *tsSurf = tileset->megaSurface();
 
-			int bpp;
-			Uint32 rMask, gMask, bMask, aMask;
-			SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ABGR8888,
-			                           &bpp, &rMask, &gMask, &bMask, &aMask);
-
 			for (int i = 0; i < blits.count(); ++i)
 			{
 				TileAtlas::Blit &blitOp = blits[i];
 
-				SDL_Surface *blitTemp =
-				        SDL_CreateRGBSurface(0, tsLaneW, blitOp.h, bpp, rMask, gMask, bMask, aMask);
+				PixelStore::setupSubImage(tsSurf->w, blitOp.src.x, blitOp.src.y);
 
-				SDL_Rect tsRect;
-				tsRect.x = blitOp.src.x;
-				tsRect.y = blitOp.src.y;
-				tsRect.w = tsLaneW;
-				tsRect.h = blitOp.h;
-
-				SDL_Rect tmpRect = tsRect;
-				tmpRect.x = tmpRect.y = 0;
-
-				SDL_BlitSurface(tsSurf, &tsRect, blitTemp, &tmpRect);
-
-				TEX::uploadSubImage(blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, blitTemp->pixels, GL_RGBA);
-
-				SDL_FreeSurface(blitTemp);
+				TEX::uploadSubImage(blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, tsSurf->pixels, GL_RGBA);
 			}
+
+			PixelStore::reset();
 		}
 		else
 		{
