@@ -857,32 +857,22 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 				if (inters.w != txtRect.w || inters.h != txtRect.h)
 				{
 					/* Clip the text surface */
-					SDL_PixelFormat *form = txtSurf->format;
-					SDL_Surface *clip =
-					        SDL_CreateRGBSurface(0, inters.w, inters.h,
-					                             form->BitsPerPixel,
-					                             form->Rmask,
-					                             form->Gmask,
-					                             form->Bmask,
-					                             form->Amask);
-
 					SDL_Rect clipSrc = inters;
 					clipSrc.x -= txtRect.x;
 					clipSrc.y -= txtRect.y;
-
-					SDL_BlitSurface(txtSurf, &clipSrc, clip, 0);
 
 					posRect.x = inters.x;
 					posRect.y = inters.y;
 					posRect.w = inters.w;
 					posRect.h = inters.h;
 
-					SDL_FreeSurface(txtSurf);
-					txtSurf = clip;
+					PixelStore::setupSubImage(txtSurf->w, clipSrc.x, clipSrc.y);
 				}
 
 				TEX::bind(p->gl.tex);
 				TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_BGRA_EXT);
+
+				PixelStore::reset();
 			}
 		}
 		else
