@@ -37,6 +37,7 @@ Config::Config()
       vsync(false),
       defScreenW(640),
       defScreenH(480),
+      fixedFramerate(0),
       solidFonts(false),
       gameFolder(".")
 {}
@@ -55,6 +56,7 @@ void Config::read()
 	READ_VAL(vsync, Bool);
 	READ_VAL(defScreenW, Int);
 	READ_VAL(defScreenH, Int);
+	READ_VAL(fixedFramerate, Int);
 	READ_VAL(solidFonts,  Bool);
 	READ_VAL(gameFolder, ByteArray);
 	READ_VAL(customScript, ByteArray);

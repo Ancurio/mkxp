@@ -451,6 +451,9 @@ Graphics::Graphics(RGSSThreadData *data)
 {
 	p = new GraphicsPrivate;
 	p->threadData = data;
+
+	if (data->config.fixedFramerate > 0)
+		p->fpsLimiter.setDesiredFPS(data->config.fixedFramerate);
 }
 
 Graphics::~Graphics()
@@ -580,6 +583,10 @@ DEF_ATTR_SIMPLE(Graphics, FrameCount, int, p->frameCount)
 void Graphics::setFrameRate(int value)
 {
 	p->frameRate = clamp(value, 10, 120);
+
+	if (p->threadData->config.fixedFramerate > 0)
+		return;
+
 	p->fpsLimiter.setDesiredFPS(p->frameRate);
 }
 

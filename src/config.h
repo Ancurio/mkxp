@@ -40,6 +40,8 @@ struct Config
 	int defScreenW;
 	int defScreenH;
 
+	int fixedFramerate;
+
 	bool solidFonts;
 
 	QByteArray gameFolder;

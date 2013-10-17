@@ -77,6 +77,7 @@ mkxp reads configuration data from the file "mkxp.conf" contained in the current
 | vsync            | bool        | false   | Sync screen redraws to the monitor refresh rate                                 |
 | defScreenW       | int         | 640     | Width the game window starts in (this is **not** the game resolution)           |
 | defScreenH       | int         | 480     | Height the game window starts in                                                |
+| fixedFramerate   | int         | 0       | FPS will be fixed to this amount. Ignored if 0.                                 |
 | solidFonts       | bool        | false   | Don't use alpha blending for fonts                                              |
 | gameFolder       | string      | "."     | mkxp will look for all game related files here                                  |
 | customScript     | string      | ""      | Execute a raw ruby script file instead of an RPG Maker game.                    |
