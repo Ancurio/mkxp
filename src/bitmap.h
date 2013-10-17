@@ -105,6 +105,8 @@ public:
 	DECL_ATTR(Font, Font*)
 
 	/* <internal> */
+	/* Warning: Flushing might change the current
+	 * FBO binding (so don't call it during 'draw()' routines */
 	void flush() const;
 	TEXFBO &getGLTypes();
 	SDL_Surface *megaSurface() const;
