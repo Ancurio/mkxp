@@ -83,7 +83,27 @@ public:
 	virtual void aboutToAccess() const {}
 
 protected:
+	/* A bit about OpenGL state:
+	 *
+	 *   If we're not inside the draw cycle (ie. the 'draw()'
+	 * handle), you're free to change any GL state through
+	 * gl-util, except for those in GLState which you should
+	 * push/pop as needed.
+	 *
+	 *   If we're _drawing_, you should probably not touch most
+	 * things in GLState. For scissored rendering, use push with
+	 * setIntersect(), and then pop afterwards.
+	 * Blendmode you can push/pop as you like. Do NOT touch viewport.
+	 * Texture/Shader bindings you're free to modify without
+	 * cleanup (and therefore you should expect dirty state).
+	 * Do NOT touch the FBO::Draw binding. If you have to do work
+	 * immediately before drawing that touches this (such as flushing
+	 * Bitmaps), use the 'prepareDraw' signal in SharedState that
+	 * will fire immediately before each frame draw.
+	 */
 	virtual void draw() = 0;
+
+	// FIXME: This should be a signal
 	virtual void onGeometryChange(const Scene::Geometry &) {}
 
 	/* Compares to elements in terms of their display priority;
