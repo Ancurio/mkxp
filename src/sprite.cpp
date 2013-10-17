@@ -59,6 +59,8 @@ struct SpritePrivate
 
 	EtcTemps tmp;
 
+	sigc::connection prepareCon;
+
 	SpritePrivate()
 	    : bitmap(0),
 	      srcRect(&tmp.rect),
@@ -73,11 +75,15 @@ struct SpritePrivate
 
 	{
 		updateSrcRectCon();
+
+		prepareCon = shState->prepareDraw.connect
+		        (sigc::mem_fun(this, &SpritePrivate::prepare));
 	}
 
 	~SpritePrivate()
 	{
 		srcRectCon.disconnect();
+		prepareCon.disconnect();
 	}
 
 	void recomputeBushDepth()
@@ -111,6 +117,12 @@ struct SpritePrivate
 		/* Create new one */
 		srcRectCon = srcRect->valueChanged.connect
 				(sigc::mem_fun(this, &SpritePrivate::onSrcRectChange));
+	}
+
+	void prepare()
+	{
+		if (bitmap)
+			bitmap->flush();
 	}
 };
 
@@ -312,8 +324,6 @@ void Sprite::draw()
 
 	if (emptyFlashFlag)
 		return;
-
-	p->bitmap->flush();
 
 	ShaderBase *base;
 

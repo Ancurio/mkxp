@@ -33,6 +33,8 @@
 #include "shader.h"
 #include "glstate.h"
 
+#include <sigc++/connection.h>
+
 struct PlanePrivate
 {
 	Bitmap *bitmap;
@@ -52,6 +54,8 @@ struct PlanePrivate
 
 	EtcTemps tmp;
 
+	sigc::connection prepareCon;
+
 	PlanePrivate()
 	    : bitmap(0),
 	      opacity(255),
@@ -61,7 +65,15 @@ struct PlanePrivate
 	      ox(0), oy(0),
 	      zoomX(1), zoomY(1),
 	      quadSourceDirty(false)
-	{}
+	{
+		prepareCon = shState->prepareDraw.connect
+		        (sigc::mem_fun(this, &PlanePrivate::prepare));
+	}
+
+	~PlanePrivate()
+	{
+		prepareCon.disconnect();
+	}
 
 	void updateQuadSource()
 	{
@@ -72,6 +84,18 @@ struct PlanePrivate
 		srcRect.h = sceneGeo.rect.h / zoomY;
 
 		quad.setTexRect(srcRect);
+	}
+
+	void prepare()
+	{
+		if (quadSourceDirty)
+		{
+			updateQuadSource();
+			quadSourceDirty = false;
+		}
+
+		if (bitmap)
+			bitmap->flush();
 	}
 };
 
@@ -176,12 +200,6 @@ void Plane::draw()
 	if (!p->opacity)
 		return;
 
-	if (p->quadSourceDirty)
-	{
-		p->updateQuadSource();
-		p->quadSourceDirty = false;
-	}
-
 	ShaderBase *base;
 
 	if (p->color->hasEffect() || p->tone->hasEffect() || p->opacity != 255)
@@ -210,7 +228,6 @@ void Plane::draw()
 
 	glState.blendMode.pushSet(p->blendType);
 
-	p->bitmap->flush();
 	p->bitmap->bindTex(*base);
 	TEX::setRepeat(true);
 
