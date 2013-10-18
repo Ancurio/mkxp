@@ -224,8 +224,8 @@ Bitmap::Bitmap(const char *filename)
 	else
 	{
 		/* Regular surface */
-
 		TEXFBO tex;
+
 		try
 		{
 			tex = shState->texPool().request(imgSurf->w, imgSurf->h);
