@@ -1,0 +1,15 @@
+diff --git a/marshal.c b/marshal.c
+index 4cba05d..dfce6ee 100644
+--- a/marshal.c
++++ b/marshal.c
+@@ -1312,7 +1312,9 @@ r_unique(struct load_arg *arg)
+ static VALUE
+ r_string(struct load_arg *arg)
+ {
+-    return r_bytes(arg);
++    VALUE str = r_bytes(arg);
++    rb_enc_associate(str, rb_utf8_encoding());
++    return str;
+ }
+ 
+ static VALUE
