@@ -68,6 +68,7 @@ void fileIntBindingInit();
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
 RB_METHOD(mriDataDirectory);
+RB_METHOD(mkxpPuts);
 
 static void mriBindingInit()
 {
@@ -94,6 +95,7 @@ static void mriBindingInit()
 
 	VALUE mod = rb_define_module("System");
 	_rb_define_module_function(mod, "data_directory", mriDataDirectory);
+	_rb_define_module_function(mod, "puts", mkxpPuts);
 
 	rb_define_global_const("MKXP", Qtrue);
 }
@@ -102,6 +104,18 @@ static void
 showMsg(const QByteArray &msg)
 {
 	shState->eThread().showMessageBox(msg.constData());
+}
+
+RB_METHOD(mkxpPuts)
+{
+	RB_UNUSED_PARAM;
+
+	const char *str;
+	rb_get_args(argc, argv, "z", &str, RB_ARG_END);
+
+	qDebug() << str;
+
+	return Qnil;
 }
 
 static void printP(int argc, VALUE *argv,
