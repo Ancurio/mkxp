@@ -26,6 +26,7 @@
 #include "filesystem.h"
 
 #include "./ruby/include/ruby.h"
+#include "./ruby/include/ruby/encoding.h"
 
 #include "zlib.h"
 
@@ -183,6 +184,8 @@ static void runCustomScript(const char *filename)
 	QByteArray scriptData = scriptFile.readAll();
 	scriptFile.close();
 
+	scriptData.prepend("#encoding:utf-8\n");
+
 	rb_eval_string_protect(scriptData.constData(), 0);
 }
 
@@ -285,13 +288,14 @@ static void runRMXPScripts()
 		}
 
 		sc.decData = QByteArray(decodeBuffer.constData(), bufferLen);
+		sc.decData.prepend("#encoding:utf-8\n");
 
 		ruby_script(sc.name.constData());
 
 		rb_gc_start();
 
 		/* Execute code */
-		rb_eval_string_protect(decodeBuffer.constData(), 0);
+		rb_eval_string_protect(sc.decData.constData(), 0);
 
 		VALUE exc = rb_gv_get("$!");
 		if (rb_type(exc) != RUBY_T_NIL)
@@ -302,6 +306,7 @@ static void runRMXPScripts()
 static void mriBindingExecute()
 {
 	ruby_setup();
+	rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
 
 	RbData rbData;
 	shState->setBindingData(&rbData);
