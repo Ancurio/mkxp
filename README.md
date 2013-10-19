@@ -54,7 +54,7 @@ To select this binding, run `qmake BINDING=BINDING_NULL`
 To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed.
  
 ### MRI binding:
-Place a recent version of ruby in the project folder and build it.
+Place a recent version of ruby in the project folder, apply all patches from "patches/ruby" and build it.
 
 ### mruby binding:
 Place a recent version of mruby in the project folder and build it.
