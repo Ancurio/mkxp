@@ -39,7 +39,8 @@ Config::Config()
       defScreenH(480),
       fixedFramerate(0),
       solidFonts(false),
-      gameFolder(".")
+      gameFolder("."),
+      allowSymlinks(false)
 {}
 
 void Config::read()
@@ -59,6 +60,7 @@ void Config::read()
 	READ_VAL(fixedFramerate, Int);
 	READ_VAL(solidFonts,  Bool);
 	READ_VAL(gameFolder, ByteArray);
+	READ_VAL(allowSymlinks, Bool);
 	READ_VAL(customScript, ByteArray);
 
 	QStringList _rtps = confFile.value("RTPs").toStringList();

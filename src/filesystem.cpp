@@ -679,12 +679,16 @@ struct FileSystemPrivate
 	}
 };
 
-FileSystem::FileSystem(const char *argv0)
+FileSystem::FileSystem(const char *argv0,
+                       bool allowSymlinks)
 {
 	p = new FileSystemPrivate;
 
 	PHYSFS_init(argv0);
 	PHYSFS_registerArchiver(&RGSS_Archiver);
+
+	if (allowSymlinks)
+		PHYSFS_permitSymbolicLinks(1);
 }
 
 FileSystem::~FileSystem()

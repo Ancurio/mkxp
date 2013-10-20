@@ -99,7 +99,7 @@ struct SharedStatePrivate
 	SharedStatePrivate(RGSSThreadData *threadData)
 	    : bindingData(0),
 	      sdlWindow(threadData->window),
-	      fileSystem(threadData->argv0),
+	      fileSystem(threadData->argv0, threadData->config.allowSymlinks),
 	      eThread(*threadData->ethread),
 	      rtData(*threadData),
 	      config(threadData->config),

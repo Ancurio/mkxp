@@ -54,7 +54,8 @@ struct FileSystemPrivate;
 class FileSystem
 {
 public:
-	FileSystem(const char *argv0);
+	FileSystem(const char *argv0,
+	           bool allowSymlinks);
 	~FileSystem();
 
 	void addPath(const char *path);

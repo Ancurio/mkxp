@@ -45,6 +45,7 @@ struct Config
 	bool solidFonts;
 
 	QByteArray gameFolder;
+	bool allowSymlinks;
 
 	QByteArray customScript;
 	QVector<QByteArray> rtps;

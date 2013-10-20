@@ -80,6 +80,7 @@ mkxp reads configuration data from the file "mkxp.conf" contained in the current
 | fixedFramerate   | int         | 0       | FPS will be fixed to this amount. Ignored if 0.                                 |
 | solidFonts       | bool        | false   | Don't use alpha blending for fonts                                              |
 | gameFolder       | string      | "."     | mkxp will look for all game related files here                                  |
+| allowSymlinks    | bool        | false   | Allow symlinks to be followed in the game folder.                               |
 | customScript     | string      | ""      | Execute a raw ruby script file instead of an RPG Maker game.                    |
 | RTPs             | string list | ""      | A list of space separated paths to RTPs to be used (See next section)           |
 
