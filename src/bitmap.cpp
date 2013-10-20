@@ -949,6 +949,7 @@ IntRect Bitmap::textSize(const char *str)
 	int w, h;
 	TTF_SizeUTF8(font, str, &w, &h);
 
+	// FIXME: This doesn't detect multibyte glyphs correctly
 	if (p->font->getItalic() && strlen(str) == 1)
 		TTF_GlyphMetrics(font, *str, 0, 0, 0, 0, &w);
 
