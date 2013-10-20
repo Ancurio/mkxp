@@ -193,9 +193,6 @@ fileIntBindingInit()
 	VALUE klass = rb_define_class("FileInt", rb_cIO);
 
 	_rb_define_method(klass, "read", fileIntRead);
-//	_rb_define_method(klass, "eof?", fileIntIsEof);
-//	_rb_define_method(klass, "pos", fileIntGetPos);
-//	_rb_define_method(klass, "pos=", fileIntSetPos);
 	_rb_define_method(klass, "getbyte", fileIntGetByte);
 	_rb_define_method(klass, "binmode", fileIntBinmode);
 	_rb_define_method(klass, "close", fileIntClose);
