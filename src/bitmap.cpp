@@ -28,6 +28,9 @@
 
 #include "pixman.h"
 
+#include <QString>
+#include <QChar>
+
 #include "gl-util.h"
 #include "quad.h"
 #include "quadarray.h"
@@ -949,9 +952,10 @@ IntRect Bitmap::textSize(const char *str)
 	int w, h;
 	TTF_SizeUTF8(font, str, &w, &h);
 
-	// FIXME: This doesn't detect multibyte glyphs correctly
-	if (p->font->getItalic() && strlen(str) == 1)
-		TTF_GlyphMetrics(font, *str, 0, 0, 0, 0, &w);
+	QString qstr = QString::fromUtf8(str);
+
+	if (p->font->getItalic() && qstr.length() == 1)
+		TTF_GlyphMetrics(font, qstr.at(0).unicode(), 0, 0, 0, 0, &w);
 
 	return IntRect(0, 0, w, h);
 }
