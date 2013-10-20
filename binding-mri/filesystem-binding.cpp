@@ -24,6 +24,9 @@
 #include "sharedstate.h"
 #include "filesystem.h"
 
+#include "ruby/encoding.h"
+#include "ruby/intern.h"
+
 #include <QDebug>
 
 DEF_TYPE(FileInt);
@@ -154,6 +157,34 @@ RB_METHOD(kernelSaveData)
 	return Qnil;
 }
 
+static VALUE stringForceUTF8(VALUE arg)
+{
+	if (rb_type(arg) != RUBY_T_STRING)
+		return arg;
+
+	rb_enc_associate(arg, rb_utf8_encoding());
+
+	return arg;
+}
+
+RB_METHOD(_marshalLoad)
+{
+	RB_UNUSED_PARAM;
+
+	VALUE port, proc = Qnil;
+
+	rb_get_args(argc, argv, "o|o", &port, &proc, RB_ARG_END);
+
+	if (rb_type(proc) != RUBY_T_NIL)
+		rb_raise(rb_eNotImpError, "MKXP: Marshal with custom proc not (yet) implemented");
+
+	VALUE utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
+
+	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+
+	return rb_funcall(marsh, rb_intern("_mkxp_load_alias"), 2, port, utf8Proc);
+}
+
 void
 fileIntBindingInit()
 {
@@ -171,4 +202,11 @@ fileIntBindingInit()
 
 	_rb_define_module_function(rb_mKernel, "load_data", kernelLoadData);
 	_rb_define_module_function(rb_mKernel, "save_data", kernelSaveData);
+
+	/* We overload the built-in 'Marshal::load()' function to silently
+	 * insert our utf8proc that ensures all read strings will be
+	 * UTF-8 encoded */
+	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+	rb_define_alias(rb_singleton_class(marsh), "_mkxp_load_alias", "load");
+	_rb_define_module_function(marsh, "load", _marshalLoad);
 }
