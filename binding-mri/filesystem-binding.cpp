@@ -159,12 +159,17 @@ RB_METHOD(kernelSaveData)
 
 static VALUE stringForceUTF8(VALUE arg)
 {
-	if (rb_type(arg) != RUBY_T_STRING)
-		return arg;
-
-	rb_enc_associate(arg, rb_utf8_encoding());
+	if (rb_type(arg) == RUBY_T_STRING && ENCODING_IS_ASCII8BIT(arg))
+		rb_enc_associate_index(arg, rb_utf8_encindex());
 
 	return arg;
+}
+
+static VALUE marshal_load_custom_proc(VALUE arg, VALUE proc)
+{
+	VALUE obj = stringForceUTF8(arg);
+	obj = rb_funcall2(proc, rb_intern("call"), 1, &obj);
+	return obj;
 }
 
 RB_METHOD(_marshalLoad)
@@ -175,10 +180,11 @@ RB_METHOD(_marshalLoad)
 
 	rb_get_args(argc, argv, "o|o", &port, &proc, RB_ARG_END);
 
-	if (rb_type(proc) != RUBY_T_NIL)
-		rb_raise(rb_eNotImpError, "MKXP: Marshal with custom proc not (yet) implemented");
-
-	VALUE utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
+	VALUE utf8Proc;
+	if (NIL_P(proc))
+		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
+	else
+		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(marshal_load_custom_proc), proc);
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
