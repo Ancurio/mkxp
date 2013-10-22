@@ -165,10 +165,11 @@ static VALUE stringForceUTF8(VALUE arg)
 	return arg;
 }
 
-static VALUE marshal_load_custom_proc(VALUE arg, VALUE proc)
+static VALUE customProc(VALUE arg, VALUE proc)
 {
 	VALUE obj = stringForceUTF8(arg);
 	obj = rb_funcall2(proc, rb_intern("call"), 1, &obj);
+
 	return obj;
 }
 
@@ -184,7 +185,7 @@ RB_METHOD(_marshalLoad)
 	if (NIL_P(proc))
 		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
 	else
-		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(marshal_load_custom_proc), proc);
+		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(customProc), proc);
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
