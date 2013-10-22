@@ -440,7 +440,7 @@ struct TilemapPrivate
 	{
 		destroyElements();
 
-		shState->texPool().release(atlas.gl);
+		shState->releaseAtlasTex(atlas.gl);
 		VAO::del(tiles.vao);
 		VBO::del(tiles.vbo);
 
@@ -607,8 +607,8 @@ struct TilemapPrivate
 		updateAtlasInfo();
 
 		/* Aquire atlas tex */
-		shState->texPool().release(atlas.gl);
-		atlas.gl = shState->texPool().request(atlas.size.x, atlas.size.y);
+		shState->releaseAtlasTex(atlas.gl);
+		shState->requestAtlasTex(atlas.size.x, atlas.size.y, atlas.gl);
 
 		atlasDirty = true;
 	}

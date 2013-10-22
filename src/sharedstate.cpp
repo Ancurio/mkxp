@@ -92,6 +92,8 @@ struct SharedStatePrivate
 
 	TEXFBO gpTexFBO;
 
+	TEXFBO atlasTex;
+
 	Quad gpQuad;
 
 	unsigned int stampCounter;
@@ -143,6 +145,7 @@ struct SharedStatePrivate
 	{
 		TEX::del(globalTex);
 		TEXFBO::fini(gpTexFBO);
+		TEXFBO::fini(atlasTex);
 	}
 };
 
@@ -264,6 +267,36 @@ TEXFBO &SharedState::gpTexFBO(int minW, int minH)
 	}
 
 	return p->gpTexFBO;
+}
+
+void SharedState::requestAtlasTex(int w, int h, TEXFBO &out)
+{
+	TEXFBO tex;
+
+	if (w == p->atlasTex.width && h == p->atlasTex.height)
+	{
+		tex = p->atlasTex;
+		p->atlasTex = TEXFBO();
+	}
+	else
+	{
+		TEXFBO::init(tex);
+		TEXFBO::allocEmpty(tex, w, h);
+		TEXFBO::linkFBO(tex);
+	}
+
+	out = tex;
+}
+
+void SharedState::releaseAtlasTex(TEXFBO &tex)
+{
+	/* No point in caching an invalid object */
+	if (tex.tex == TEX::ID(0))
+		return;
+
+	TEXFBO::fini(p->atlasTex);
+
+	p->atlasTex = tex;
 }
 
 void SharedState::checkShutdown()

@@ -123,6 +123,11 @@ struct SharedState
 
 	Quad &gpQuad();
 
+	/* Basically just a simple "TexPool"
+	 * replacement for Tilemap atlas use */
+	void requestAtlasTex(int w, int h, TEXFBO &out);
+	void releaseAtlasTex(TEXFBO &tex);
+
 	/* Checks EventThread's shutdown request flag and if set,
 	 * requests the binding to terminate. In this case, this
 	 * function will most likely not return */
