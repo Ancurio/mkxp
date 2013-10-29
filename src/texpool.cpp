@@ -113,7 +113,6 @@ TEXFBO TexPool::request(int width, int height)
 		/* Found one! */
 		cobj = bucket.takeLast();
 
-		//p->priorityQueue.removeOne(obj);
 		p->priorityQueue.erase(cobj.prioIter);
 
 		p->memSize -= byteCount(size);
