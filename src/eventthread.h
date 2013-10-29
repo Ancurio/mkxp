@@ -58,7 +58,7 @@ public:
 	struct MouseState
 	{
 		int x, y;
-		bool buttons[SDL_BUTTON_X2+1];
+		bool buttons[32];
 	};
 
 	static MouseState mouseState;
