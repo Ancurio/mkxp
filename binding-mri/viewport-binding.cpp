@@ -54,7 +54,7 @@ RB_METHOD(viewportInitialize)
 		v = new Viewport(x, y, width, height);
 	}
 
-	setPrivateData(self, v, ViewportType);
+	setPrivateData(self, v);
 
 	/* Wrap property objects */
 	v->setRect(new Rect(*v->getRect()));
@@ -84,6 +84,7 @@ viewportBindingInit()
 	INIT_TYPE(Viewport);
 
 	VALUE klass = rb_define_class("Viewport", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&ViewportType>);
 
 	disposableBindingInit  <Viewport>(klass);
 	flashableBindingInit   <Viewport>(klass);

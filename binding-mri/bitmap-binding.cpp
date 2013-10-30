@@ -51,7 +51,7 @@ RB_METHOD(bitmapInitialize)
 		GUARD_EXC( b = new Bitmap(width, height); )
 	}
 
-	setPrivateData(self, b, BitmapType);
+	setPrivateData(self, b);
 
 	/* Wrap properties */
 	Font *font = new Font();
@@ -300,6 +300,7 @@ bitmapBindingInit()
 	INIT_TYPE(Bitmap);
 
 	VALUE klass = rb_define_class("Bitmap", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&BitmapType>);
 
 	disposableBindingInit<Bitmap>(klass);
 

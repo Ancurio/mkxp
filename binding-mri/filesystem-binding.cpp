@@ -41,7 +41,7 @@ fileIntForPath(const char *path)
 
 	VALUE obj = rb_obj_alloc(klass);
 
-	setPrivateData(obj, ops, FileIntType);
+	setPrivateData(obj, ops);
 
 	return obj;
 }
@@ -198,6 +198,7 @@ fileIntBindingInit()
 	initType(FileIntType, "FileInt", fileIntFreeInstance);
 
 	VALUE klass = rb_define_class("FileInt", rb_cIO);
+	rb_define_alloc_func(klass, classAllocate<&FileIntType>);
 
 	_rb_define_method(klass, "read", fileIntRead);
 	_rb_define_method(klass, "getbyte", fileIntGetByte);

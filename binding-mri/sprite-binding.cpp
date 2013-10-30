@@ -33,7 +33,7 @@ RB_METHOD(spriteInitialize)
 {
 	Sprite *s = viewportElementInitialize<Sprite>(argc, argv, self);
 
-	setPrivateData(self, s, SpriteType);
+	setPrivateData(self, s);
 
 	/* Wrap property objects */
 	s->setSrcRect(new Rect);
@@ -75,6 +75,7 @@ spriteBindingInit()
 	INIT_TYPE(Sprite);
 
 	VALUE klass = rb_define_class("Sprite", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&SpriteType>);
 
 	disposableBindingInit     <Sprite>(klass);
 	flashableBindingInit      <Sprite>(klass);

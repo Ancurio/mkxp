@@ -84,7 +84,7 @@ EQUAL_FUN(Rect)
 		param_type p1, p2, p3, p4 = last_param_def; \
 		rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4, RB_ARG_END); \
 		Klass *k = new Klass(p1, p2, p3, p4); \
-		setPrivateData(self, k, Klass##Type); \
+		setPrivateData(self, k); \
 		return self; \
 	}
 
@@ -156,6 +156,7 @@ CLONE_FUN(Rect)
 { \
 	INIT_TYPE(Klass); \
 	klass = rb_define_class(#Klass, rb_cObject); \
+	rb_define_alloc_func(klass, classAllocate<&Klass##Type>); \
 	rb_define_class_method(klass, "_load", Klass##Load); \
 	serializableBindingInit<Klass>(klass); \
 	_rb_define_method(klass, "initialize", Klass##Initialize); \

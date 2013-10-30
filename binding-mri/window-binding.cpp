@@ -30,7 +30,7 @@ RB_METHOD(windowInitialize)
 {
 	Window *w = viewportElementInitialize<Window>(argc, argv, self);
 
-	setPrivateData(self, w, WindowType);
+	setPrivateData(self, w);
 
 	w->setCursorRect(new Rect);
 	wrapNilProperty(self, "windowskin");
@@ -78,6 +78,7 @@ windowBindingInit()
 	INIT_TYPE(Window);
 
 	VALUE klass = rb_define_class("Window", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&WindowType>);
 
 	disposableBindingInit     <Window>(klass);
 	viewportElementBindingInit<Window>(klass);

@@ -34,7 +34,7 @@ RB_METHOD(tableInitialize)
 
 	Table *t = new Table(x, y, z);
 
-	setPrivateData(self, t, TableType);
+	setPrivateData(self, t);
 
 	return self;
 }
@@ -146,6 +146,7 @@ tableBindingInit()
 	INIT_TYPE(Table);
 
 	VALUE klass = rb_define_class("Table", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&TableType>);
 
 	serializableBindingInit<Table>(klass);
 

@@ -45,7 +45,7 @@ RB_METHOD(fontInitialize)
 
 	Font *f = new Font(name, size);
 
-	setPrivateData(self, f, FontType);
+	setPrivateData(self, f);
 
 	/* Wrap property objects */
 	f->setColor(new Color(*f->getColor()));
@@ -151,6 +151,7 @@ fontBindingInit()
 	INIT_TYPE(Font);
 
 	VALUE klass = rb_define_class("Font", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&FontType>);
 
 	Font::setDefaultColor(new Color(*Font::getDefaultColor()));
 	wrapProperty(klass, Font::getDefaultColor(), "default_color", ColorType);

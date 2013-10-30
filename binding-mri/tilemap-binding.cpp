@@ -28,7 +28,7 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
-static rb_data_type_struct TilemapAutotilesType;
+rb_data_type_struct TilemapAutotilesType;
 
 RB_METHOD(tilemapAutotilesSet)
 {
@@ -80,7 +80,7 @@ RB_METHOD(tilemapInitialize)
 	/* Construct object */
 	t = new Tilemap(viewport);
 
-	setPrivateData(self, t, TilemapType);
+	setPrivateData(self, t);
 
 	rb_iv_set(self, "viewport", viewportObj);
 
@@ -144,6 +144,7 @@ tilemapBindingInit()
 	initType(TilemapAutotilesType, "TilemapAutotiles", 0);
 
 	VALUE klass = rb_define_class("TilemapAutotiles", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&TilemapAutotilesType>);
 
 	_rb_define_method(klass, "[]=", tilemapAutotilesSet);
 	_rb_define_method(klass, "[]", tilemapAutotilesGet);
@@ -151,6 +152,7 @@ tilemapBindingInit()
 	INIT_TYPE(Tilemap);
 
 	klass = rb_define_class("Tilemap", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&TilemapType>);
 
 	disposableBindingInit<Tilemap>(klass);
 

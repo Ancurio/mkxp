@@ -24,8 +24,6 @@
 
 #include "./ruby/ruby.h"
 
-#define PRIV_IV "priv"
-
 enum RbException
 {
 	RGSS = 0,
@@ -68,6 +66,12 @@ void initType(rb_data_type_struct &type,
               const char *name,
               void (*freeInst)(void*));
 
+template<rb_data_type_t *rbType>
+static VALUE classAllocate(VALUE klass)
+{
+	return rb_data_typed_object_alloc(klass, 0, rbType);
+}
+
 template<class C>
 static void freeInstance(void *inst)
 {
@@ -80,24 +84,21 @@ template<class C>
 static inline C *
 getPrivateData(VALUE self)
 {
-	VALUE priv = rb_iv_get(self, PRIV_IV);
-	return static_cast<C*>(RTYPEDDATA_DATA(priv));
+	return static_cast<C*>(RTYPEDDATA_DATA(self));
 }
 
 template<class C>
 static inline C *
 getPrivateDataCheck(VALUE self, const rb_data_type_struct &type)
 {
-	VALUE priv = rb_iv_get(self, PRIV_IV);
-	void *obj = rb_check_typeddata(priv, &type);
+	void *obj = rb_check_typeddata(self, &type);
 	return static_cast<C*>(obj);
 }
 
 static inline void
-setPrivateData(VALUE self, void *p, const rb_data_type_struct &type)
+setPrivateData(VALUE self, void *p)
 {
-	VALUE priv = rb_data_typed_object_alloc(rb_cData, p, &type);
-	rb_iv_set(self, PRIV_IV, priv);
+	RTYPEDDATA_DATA(self) = p;
 }
 
 inline VALUE
@@ -106,7 +107,7 @@ wrapObject(void *p, const rb_data_type_struct &type)
 	VALUE klass = rb_const_get(rb_cObject, rb_intern(type.wrap_struct_name));
 	VALUE obj = rb_obj_alloc(klass);
 
-	setPrivateData(obj, p, type);
+	setPrivateData(obj, p);
 
 	return obj;
 }
@@ -160,7 +161,7 @@ _rb_define_module_function(VALUE module, const char *name, RubyMethod func)
 
 template<class C>
 static inline VALUE
-objectLoad(int argc, VALUE *argv, VALUE self, rb_data_type_struct &type)
+objectLoad(int argc, VALUE *argv, VALUE self)
 {
 	const char *data;
 	int dataLen;
@@ -172,7 +173,7 @@ objectLoad(int argc, VALUE *argv, VALUE self, rb_data_type_struct &type)
 
 	GUARD_EXC( c = C::deserialize(data, dataLen); );
 
-	setPrivateData(obj, c, type);
+	setPrivateData(obj, c);
 
 	return obj;
 }
@@ -192,7 +193,7 @@ rb_bool_new(bool value)
 #define MARSH_LOAD_FUN(Typ) \
 	RB_METHOD(Typ##Load) \
 	{ \
-		return objectLoad<Typ>(argc, argv, self, Typ##Type); \
+		return objectLoad<Typ>(argc, argv, self); \
 	}
 
 #define CLONE_FUNC(Klass) \
@@ -213,7 +214,7 @@ rb_bool_new(bool value)
 		Klass *k = getPrivateData<Klass>(self); \
 		VALUE dupObj = rb_obj_clone(self); \
 		Klass *dupK = new Klass(*k); \
-		setPrivateData(dupObj, dupK, Klass##Type); \
+		setPrivateData(dupObj, dupK); \
 		return dupObj; \
 	}
 

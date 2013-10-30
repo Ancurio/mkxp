@@ -31,7 +31,7 @@ RB_METHOD(planeInitialize)
 {
 	Plane *p = viewportElementInitialize<Plane>(argc, argv, self);
 
-	setPrivateData(self, p, PlaneType);
+	setPrivateData(self, p);
 
 	p->setColor(new Color);
 	p->setTone(new Tone);
@@ -64,6 +64,7 @@ planeBindingInit()
 	INIT_TYPE(Plane);
 
 	VALUE klass = rb_define_class("Plane", rb_cObject);
+	rb_define_alloc_func(klass, classAllocate<&PlaneType>);
 
 	disposableBindingInit<Plane>     (klass);
 	viewportElementBindingInit<Plane>(klass);
