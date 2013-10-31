@@ -291,7 +291,7 @@ RB_METHOD(bitmapTextSize)
 
 DEF_PROP_OBJ(Bitmap, Font, Font, "font")
 
-CLONE_FUN(Bitmap)
+INITCOPY_FUN(Bitmap)
 
 
 void
@@ -304,7 +304,8 @@ bitmapBindingInit()
 
 	disposableBindingInit<Bitmap>(klass);
 
-	_rb_define_method(klass, "initialize",  bitmapInitialize);
+	_rb_define_method(klass, "initialize",      bitmapInitialize);
+	_rb_define_method(klass, "initialize_copy", BitmapInitializeCopy);
 
 	_rb_define_method(klass, "width",       bitmapWidth);
 	_rb_define_method(klass, "height",      bitmapHeight);
@@ -320,6 +321,4 @@ bitmapBindingInit()
 	_rb_define_method(klass, "text_size",   bitmapTextSize);
 
 	INIT_PROP_BIND(Bitmap, Font, "font");
-
-	_rb_define_method(klass, "clone",       BitmapClone);
 }

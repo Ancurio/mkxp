@@ -54,6 +54,25 @@ RB_METHOD(fontInitialize)
 	return self;
 }
 
+RB_METHOD(fontInitializeCopy)
+{
+	VALUE orig;
+	rb_get_args(argc, argv, "o", &orig, RB_ARG_END);
+
+	if (!OBJ_INIT_COPY(self, orig))
+		return self;
+
+	Font *f = getPrivateData<Font>(orig);
+	Font *dup = new Font(*f);
+	setPrivateData(self, dup);
+
+	/* Wrap property objects */
+	f->setColor(new Color(*f->getColor()));
+	wrapProperty(self, f->getColor(), "color", ColorType);
+
+	return self;
+}
+
 RB_METHOD(FontGetName)
 {
 	RB_UNUSED_PARAM;
@@ -164,7 +183,8 @@ fontBindingInit()
 
 	rb_define_class_method(klass, "exist?", fontDoesExist);
 
-	_rb_define_method(klass, "initialize", fontInitialize);
+	_rb_define_method(klass, "initialize",      fontInitialize);
+	_rb_define_method(klass, "initialize_copy", fontInitializeCopy);
 
 	INIT_PROP_BIND(Font, Name, "name");
 	INIT_PROP_BIND(Font, Size, "size");

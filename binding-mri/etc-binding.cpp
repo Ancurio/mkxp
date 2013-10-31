@@ -148,9 +148,9 @@ MARSH_LOAD_FUN(Color)
 MARSH_LOAD_FUN(Tone)
 MARSH_LOAD_FUN(Rect)
 
-CLONE_FUN(Tone)
-CLONE_FUN(Color)
-CLONE_FUN(Rect)
+INITCOPY_FUN(Tone)
+INITCOPY_FUN(Color)
+INITCOPY_FUN(Rect)
 
 #define INIT_BIND(Klass) \
 { \
@@ -160,8 +160,8 @@ CLONE_FUN(Rect)
 	rb_define_class_method(klass, "_load", Klass##Load); \
 	serializableBindingInit<Klass>(klass); \
 	_rb_define_method(klass, "initialize", Klass##Initialize); \
+	_rb_define_method(klass, "initialize_copy", Klass##InitializeCopy); \
 	_rb_define_method(klass, "set", Klass##Set); \
-	_rb_define_method(klass, "clone", Klass##Clone); \
 	_rb_define_method(klass, "==", Klass##Equal); \
 	_rb_define_method(klass, "to_s", Klass##Stringify); \
 	_rb_define_method(klass, "inspect", Klass##Stringify); \

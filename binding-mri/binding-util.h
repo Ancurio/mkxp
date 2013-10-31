@@ -196,26 +196,16 @@ rb_bool_new(bool value)
 		return objectLoad<Typ>(argc, argv, self); \
 	}
 
-#define CLONE_FUNC(Klass) \
-	static mrb_value \
-	Klass##Clone(mrb_state *mrb, mrb_value self) \
+#define INITCOPY_FUN(Klass) \
+	RB_METHOD(Klass##InitializeCopy) \
 	{ \
-		Klass *k = getPrivateData<Klass>(mrb, self); \
-		mrb_value dupObj = mrb_obj_clone(mrb, self); \
-		Klass *dupK = new Klass(*k); \
-		setPrivateData(mrb, dupObj, dupK, Klass##Type); \
-		return dupObj; \
-	}
-
-#define CLONE_FUN(Klass) \
-	RB_METHOD(Klass##Clone) \
-	{ \
-		RB_UNUSED_PARAM \
-		Klass *k = getPrivateData<Klass>(self); \
-		VALUE dupObj = rb_obj_clone(self); \
-		Klass *dupK = new Klass(*k); \
-		setPrivateData(dupObj, dupK); \
-		return dupObj; \
+		VALUE orig; \
+		rb_get_args(argc, argv, "o", &orig, RB_ARG_END); \
+		if (!OBJ_INIT_COPY(self, orig)) /* When would this fail??*/\
+			return self; \
+		Klass *k = getPrivateData<Klass>(orig); \
+		setPrivateData(self, new Klass(*k)); \
+		return self; \
 	}
 
 /* If we're not binding a disposable class,
