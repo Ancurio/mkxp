@@ -50,6 +50,8 @@ public:
 
 	Font(const char *name = 0,
 	     int size = 0);
+	/* Clone constructor */
+	Font(const Font &other);
 	~Font();
 
 	const char *getName() const;

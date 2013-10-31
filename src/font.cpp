@@ -154,6 +154,16 @@ struct FontPrivate
 		sdlFont = shState->fontPool().request(this->name.constData(),
 		                                     this->size);
 	}
+
+	FontPrivate(const FontPrivate &other)
+	    : name(other.name),
+	      size(other.size),
+	      bold(other.bold),
+	      italic(other.italic),
+	      color(&colorTmp),
+	      colorTmp(*other.color),
+	      sdlFont(other.sdlFont)
+	{}
 };
 
 QByteArray FontPrivate::defaultName   = "Arial";
@@ -175,6 +185,11 @@ Font::Font(const char *name,
            int size)
 {
 	p = new FontPrivate(name, size);
+}
+
+Font::Font(const Font &other)
+{
+	p = new FontPrivate(*other.p);
 }
 
 Font::~Font()
