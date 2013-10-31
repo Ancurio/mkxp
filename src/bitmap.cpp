@@ -266,6 +266,8 @@ Bitmap::Bitmap(int width, int height)
 
 Bitmap::Bitmap(const Bitmap &other)
 {
+	other.ensureNonMega();
+
 	p = new BitmapPrivate;
 
 	p->gl = shState->texPool().request(other.width(), other.height());
