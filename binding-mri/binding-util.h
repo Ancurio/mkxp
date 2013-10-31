@@ -204,7 +204,9 @@ rb_bool_new(bool value)
 		if (!OBJ_INIT_COPY(self, orig)) /* When would this fail??*/\
 			return self; \
 		Klass *k = getPrivateData<Klass>(orig); \
-		setPrivateData(self, new Klass(*k)); \
+		Klass *dup; \
+		GUARD_EXC( dup = new Klass(*k); ) \
+		setPrivateData(self, dup); \
 		return self; \
 	}
 
