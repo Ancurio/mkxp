@@ -291,6 +291,11 @@ RB_METHOD(bitmapTextSize)
 
 DEF_PROP_OBJ(Bitmap, Font, Font, "font")
 
+// FIXME: This isn't entire correct as the cloned bitmap
+// does not get a cloned version of the original bitmap's 'font'
+// attribute (the internal font attrb is the default one, whereas
+// the stored iv visible to ruby would still be the same as the original)
+// Not sure if this needs fixing though
 INITCOPY_FUN(Bitmap)
 
 
