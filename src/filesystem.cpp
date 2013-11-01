@@ -27,6 +27,7 @@
 #include "physfs.h"
 
 #include <QHash>
+#include <QSet>
 #include <QByteArray>
 
 #include "stdio.h"
@@ -67,8 +68,14 @@ typedef QList<QByteArray> QByteList;
 struct RGSS_archiveData
 {
 	PHYSFS_Io *archiveIo;
+
+	/* Maps: file path
+	 * to:   entry data */
 	QHash<QByteArray, RGSS_entryData> entryHash;
-	QHash<QByteArray, bool> dirHash;
+
+	/* Maps: directory path,
+	 * to:   list of contained entries */
+	QHash<QByteArray, QSet<QByteArray> > dirHash;
 };
 
 static bool
@@ -344,6 +351,9 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 
 	uint32_t magic = RGSS_MAGIC;
 
+	/* Top level entry list */
+	QSet<QByteArray> &topLevel = data->dirHash["."];
+
 	while (true)
 	{
 		/* Read filename length,
@@ -377,13 +387,33 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 
 		data->entryHash.insert(nameBuf, entry);
 
-		/* Test for new folder */
+		/* Check for top level entries */
+		for (i = 0; i < nameLen; ++i)
+		{
+			bool slash = nameBuf[i] == '/';
+			if (!slash && i+1 < nameLen)
+				continue;
+
+			if (slash)
+				nameBuf[i] = '\0';
+
+			topLevel.insert(nameBuf);
+
+			if (slash)
+				nameBuf[i] = '/';
+		}
+
+		/* Check for more entries */
 		for (i = nameLen; i > 0; i--)
 			if (nameBuf[i] == '/')
 			{
 				nameBuf[i] = '\0';
-				if (!data->dirHash.contains(nameBuf))
-					data->dirHash.insert(nameBuf, true);
+
+				const char *dir = nameBuf;
+				const char *entry = &nameBuf[i+1];
+
+				QSet<QByteArray> &entryList = data->dirHash[dir];
+				entryList.insert(entry);
 			}
 
 		io->seek(io, entry.offset + entry.size);
@@ -399,34 +429,16 @@ RGSS_enumerateFiles(void *opaque, const char *dirname,
 {
 	RGSS_archiveData *data = static_cast<RGSS_archiveData*>(opaque);
 
-	char dirBuf[512];
-	QByteList keys = data->entryHash.keys();
-	keys += data->dirHash.keys();
+	QByteArray _dirname(dirname);
 
-	Q_FOREACH (const QByteArray &filename, keys)
-	{
-		/* Get the filename directory part */
-		strncpy(dirBuf, filename.constData(), sizeof(dirBuf));
+	if (!data->dirHash.contains(_dirname))
+		return;
 
-		/* Extract path and basename */
-		const char *dirpath = ".";
-		char *basename = dirBuf;
+	const QSet<QByteArray> &entries = data->dirHash.value(_dirname);
 
-		for (int i = filename.size(); i >= 0; i--)
-			if (dirBuf[i] == '/')
-			{
-				dirBuf[i] = '\0';
-				dirpath = dirBuf;
-
-				basename = &dirBuf[i+1];
-
-				break;
-			}
-
-		/* Compare to provided dirname */
-		if (strcmp(dirpath, dirname) == 0)
-			cb(callbackdata, origdir, basename);
-	}
+	QSet<QByteArray>::const_iterator iter;
+	for (iter = entries.begin(); iter != entries.end(); ++iter)
+		cb(callbackdata, origdir, iter->constData());
 }
 
 static PHYSFS_Io*
@@ -716,11 +728,12 @@ static void cacheEnumCB(void *d, const char *origdir,
 	else
 		strncpy(buf, fname, sizeof(buf));
 
-	QByteArray mixedCase = buf;
+	QByteArray mixedCase(buf);
 
-	QByteArray lowerCase = mixedCase;
-	for (char *p = lowerCase.data(); *p; ++p)
+	for (char *p = buf; *p; ++p)
 		*p = tolower(*p);
+
+	QByteArray lowerCase(buf);
 
 	p->pathCache.insert(lowerCase, mixedCase);
 
