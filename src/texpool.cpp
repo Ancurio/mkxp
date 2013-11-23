@@ -40,23 +40,23 @@ static uint32_t byteCount(Size &s)
 	return s.first * s.second * 4;
 }
 
-struct CacheObject
+struct CacheNode
 {
 	TEXFBO obj;
 	QLinkedList<TEXFBO>::iterator prioIter;
 
-	bool operator==(const CacheObject &o)
+	bool operator==(const CacheNode &o)
 	{
 		return obj == o.obj;
 	}
 };
 
-typedef QList<CacheObject> CObjList;
+typedef QList<CacheNode> CNodeList;
 
 struct TexPoolPrivate
 {
 	/* Contains all cached TexFBOs, grouped by size */
-	QHash<Size, CObjList> poolHash;
+	QHash<Size, CNodeList> poolHash;
 
 	/* Contains all cached TexFBOs, sorted by release time */
 	QLinkedList<TEXFBO> priorityQueue;
@@ -102,25 +102,25 @@ TexPool::~TexPool()
 
 TEXFBO TexPool::request(int width, int height)
 {
-	CacheObject cobj;
+	CacheNode cnode;
 	Size size(width, height);
 
 	/* See if we can statisfy request from cache */
-	CObjList &bucket = p->poolHash[size];
+	CNodeList &bucket = p->poolHash[size];
 
 	if (!bucket.isEmpty())
 	{
 		/* Found one! */
-		cobj = bucket.takeLast();
+		cnode = bucket.takeLast();
 
-		p->priorityQueue.erase(cobj.prioIter);
+		p->priorityQueue.erase(cnode.prioIter);
 
 		p->memSize -= byteCount(size);
 		--p->objCount;
 
 //		qDebug() << "TexPool: <?+> (" << width << height << ")";
 
-		return cobj.obj;
+		return cnode.obj;
 	}
 
 	int maxSize = glState.caps.maxTexSize;
@@ -130,13 +130,13 @@ TEXFBO TexPool::request(int width, int height)
 		                QByteArray::number(width), QByteArray::number(height));
 
 	/* Nope, create it instead */
-	TEXFBO::init(cobj.obj);
-	TEXFBO::allocEmpty(cobj.obj, width, height);
-	TEXFBO::linkFBO(cobj.obj);
+	TEXFBO::init(cnode.obj);
+	TEXFBO::allocEmpty(cnode.obj, width, height);
+	TEXFBO::linkFBO(cnode.obj);
 
 //	qDebug() << "TexPool: <?-> (" << width << height << ")";
 
-	return cobj.obj;
+	return cnode.obj;
 }
 
 void TexPool::release(TEXFBO &obj)
@@ -169,11 +169,11 @@ void TexPool::release(TEXFBO &obj)
 //		qDebug() << "TexPool: <!~> Size:" << p->memSize;
 
 		/* Retrieve object with lowest priority for deletion */
-		CacheObject last;
+		CacheNode last;
 		last.obj = p->priorityQueue.last();
 		Size removedSize(last.obj.width, last.obj.height);
 
-		CObjList &bucket = p->poolHash[removedSize];
+		CNodeList &bucket = p->poolHash[removedSize];
 		Q_ASSERT(bucket.contains(last));
 		bucket.removeOne(last);
 		p->priorityQueue.removeLast();
@@ -190,11 +190,11 @@ void TexPool::release(TEXFBO &obj)
 
 	/* Retain object */
 	p->priorityQueue.prepend(obj);
-	CacheObject cobj;
-	cobj.obj = obj;
-	cobj.prioIter = p->priorityQueue.begin();
-	CObjList &bucket = p->poolHash[size];
-	bucket.append(cobj);
+	CacheNode cnode;
+	cnode.obj = obj;
+	cnode.prioIter = p->priorityQueue.begin();
+	CNodeList &bucket = p->poolHash[size];
+	bucket.append(cnode);
 
 	p->memSize += byteCount(size);
 	++p->objCount;
