@@ -180,13 +180,13 @@ void TexPool::release(TEXFBO &obj)
 
 		TEXFBO::fini(last.obj);
 
-		uint32_t removedMem = byteCount(removedSize);
-		newMemSize -= removedMem;
-		p->memSize -= removedMem;
+		newMemSize -= byteCount(removedSize);;
 		--p->objCount;
 
 //		qDebug() << "TexPool: <!-> (" << last.obj.tex << last.obj.fbo << ")";
 	}
+
+	p->memSize = newMemSize;
 
 	/* Retain object */
 	p->priorityQueue.prepend(obj);
