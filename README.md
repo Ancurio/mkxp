@@ -2,7 +2,7 @@
 
 mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file.
 
-It is licensed under the GNU General Public License v2.
+It is licensed under the GNU General Public License v2+.
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. As of right now, they are compiled directly into the executable (however, the scripting language itself might not be). Currently there are three bindings:
