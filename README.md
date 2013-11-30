@@ -41,23 +41,26 @@ To select this binding, run `qmake BINDING=BINDING_NULL`
 * libsigc++
 * PhysFS
 * glew
+* OpenAL
 * SDL2
 * SDL2_image
 * SDL2_ttf
+* SDL_sound
 * pixman
-* sfml-system 2.0
-* sfml-audio 2.0
 * zlib (only ruby bindings)
 
 (If no version specified, assume latest *development version*, ie. freshest one from git/hg/svn)
 
-To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed.
+### Supported image/audio formats
+These depend on the auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
  
 ### MRI binding:
 Place a recent version of ruby in the project folder, apply all patches from "patches/ruby" and build it.
 
 ### mruby binding:
 Place a recent version of mruby in the project folder and build it.
+
+To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed.
 
 ## Building
 
@@ -94,10 +97,10 @@ In the RMXP version of RGSS, fonts are loaded directly from system specific sear
 
 If a requested font is not found, no error is generated. Instead, a built-in font is used (currently "Liberation Sans").
 
-## What doesn't work
+## What doesn't work (yet)
 
-* Audio formats other than ogg/wav (this might change in the future)
-* Audio "pitch" parameter
+* midi and wma audio files
+* Audio "pitch" parameter (OpenAL offers a cheap alternative by playing sound faster/slower)
 * The Win32API ruby class (for obvious reasons)
 * Restarting the game with F12
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)*
