@@ -169,7 +169,7 @@ objectLoad(int argc, VALUE *argv, VALUE self)
 
 	VALUE obj = rb_obj_alloc(self);
 
-	C *c;
+	C *c = 0;
 
 	GUARD_EXC( c = C::deserialize(data, dataLen); );
 
@@ -204,7 +204,7 @@ rb_bool_new(bool value)
 		if (!OBJ_INIT_COPY(self, orig)) /* When would this fail??*/\
 			return self; \
 		Klass *k = getPrivateData<Klass>(orig); \
-		Klass *dup; \
+		Klass *dup = 0; \
 		GUARD_EXC( dup = new Klass(*k); ) \
 		setPrivateData(self, dup); \
 		return self; \
