@@ -22,32 +22,7 @@
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
-#include "SFML/System/InputStream.hpp"
-
 #include "SDL_rwops.h"
-
-struct PHYSFS_File;
-
-class FileStream : public sf::InputStream
-{
-public:
-	FileStream(PHYSFS_File *);
-	~FileStream();
-
-	void operator=(const FileStream &o);
-
-	sf::Int64 read(void *data, sf::Int64 size);
-	sf::Int64 seek(sf::Int64 position);
-	sf::Int64 tell();
-	sf::Int64 getSize();
-
-	sf::Int64 write(const void *data, sf::Int64 size);
-
-	void close();
-
-private:
-	PHYSFS_File *p; /* NULL denotes invalid stream */
-};
 
 struct FileSystemPrivate;
 
@@ -72,13 +47,11 @@ public:
 		Undefined
 	};
 
-	FileStream openRead(const char *filename,
-	                    FileType type = Undefined);
-
 	void openRead(SDL_RWops &ops,
 	              const char *filename,
 	              FileType type = Undefined,
-	              bool freeOnClose = false);
+	              bool freeOnClose = false,
+	              const char **foundExt = 0);
 
 	bool exists(const char *filename,
 	            FileType type = Undefined);

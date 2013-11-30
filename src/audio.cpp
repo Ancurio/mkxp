@@ -26,583 +26,1445 @@
 #include "intrulist.h"
 #include "filesystem.h"
 #include "exception.h"
+#include "al-util.h"
 
-#include <SFML/Audio/Music.hpp>
-#include <SFML/Audio/Sound.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/System/Thread.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Sleep.hpp>
 #include <QByteArray>
 #include <QHash>
 
-#include "SDL_thread.h"
+#include <vector>
+#include <string>
 
-//#include "SDL_mixer.h"
+#include <SDL_audio.h>
+#include <SDL_thread.h>
+#include <SDL_endian.h>
+#include <SDL_timer.h>
+#include <SDL_sound.h>
+
+#include <alc.h>
 
 #include <QDebug>
 
-#define FADE_SLEEP 10
-#define SOUND_MAG_SIZE 10
-#define SOUND_MAX_MEM (50*1000*1000) // 5 MB
+#define AUDIO_SLEEP 10
+#define SE_SOURCES 6
+#define SE_CACHE_MEM (10*1024*1024) // 10 MB
 
-struct MusicEntity
+static void genFloatSamples(int sampleCount, int sdlFormat, const void *in, float *out)
 {
-	sf::Music music;
-	QByteArray filename;
-	FileStream currentData;
-	SDL_mutex *mutex;
+	(void) genFloatSamples;
 
-	int pitch;
+	int i = sampleCount;
 
-	volatile bool fading;
-	struct
+	/* Convert from the possible fixed point
+	 * formats to [-1;1] floats */
+	switch (sdlFormat)
 	{
-		unsigned int duration;
-		float msStep;
-		volatile bool terminate;
-		sf::Thread *thread;
-	} fadeData;
-
-	/* normalized */
-	float intVolume;
-	float extVolume;
-
-	bool extPaused;
-	bool noFadeInFlag;
-
-	MusicEntity()
-	    : currentData(0),
-	      pitch(100),
-	      fading(false),
-	      intVolume(1),
-	      extVolume(1),
-	      extPaused(false),
-	      noFadeInFlag(false)
+	case AUDIO_U8 :
 	{
-		music.setLoop(true);
-		fadeData.thread = 0;
-		mutex = SDL_CreateMutex();
+		const uint8_t *_in = static_cast<const uint8_t*>(in);
+
+		while (i--)
+			out[i] = (((float) _in[i] / 255.f) - 0.5) * 2;
+
+		break;
+	}
+	case AUDIO_S8 :
+	{
+		const int8_t *_in = static_cast<const int8_t*>(in);
+
+		while (i--)
+			out[i] = (float) _in[i] / 128.f; // ???
+
+		break;
+	}
+	case AUDIO_U16LSB :
+	{
+		const uint16_t *_in = static_cast<const uint16_t*>(in);
+
+		while (i--)
+			out[i] = (((float) _in[i] / 65536.f) - 0.5) * 2;
+
+		break;
+	}
+	case AUDIO_U16MSB :
+	{
+		const int16_t *_in = static_cast<const int16_t*>(in);
+
+		while (i--)
+		{
+			int16_t swp = SDL_Swap16(_in[i]);
+			out[i] = (((float) swp / 65536.f) - 0.5) * 2;
+		}
+
+		break;
+	}
+	case AUDIO_S16LSB :
+	{
+		const int16_t *_in = static_cast<const int16_t*>(in);
+
+		while (i--)
+			out[i] = (float) _in[i] / 32768.f; // ???
+
+		break;
+	}
+	case AUDIO_S16MSB :
+	{
+		const int16_t *_in = static_cast<const int16_t*>(in);
+
+		while (i--)
+		{
+			int16_t swp = SDL_Swap16(_in[i]);
+			out[i] = (float) swp / 32768.f;
+		}
+
+		break;
+	}
+	qDebug() << "Unhandled sample format";
+	default: Q_ASSERT(0); // XXX
+	}
+}
+
+static uint8_t formatSampleSize(int sdlFormat)
+{
+	switch (sdlFormat)
+	{
+	case AUDIO_U8 :
+	case AUDIO_S8 :
+		return 1;
+
+	case AUDIO_U16LSB :
+	case AUDIO_U16MSB :
+	case AUDIO_S16LSB :
+	case AUDIO_S16MSB :
+		return 2;
+
+	case AUDIO_F32 :
+		return 4;
+
+	default:
+		qDebug() << "Unhandled sample format";
+		Q_ASSERT(0);
 	}
 
-	~MusicEntity()
+	return 0;
+}
+
+static ALenum chooseALFormat(int sampleSize, int channelCount)
+{
+	switch (sampleSize)
 	{
-		SDL_DestroyMutex(mutex);
+	case 1 :
+		switch (channelCount)
+		{
+		case 1 : return AL_FORMAT_MONO8;
+		case 2 : return AL_FORMAT_STEREO8;
+		default: Q_ASSERT(0);
+		}
+	case 2 :
+		switch (channelCount)
+		{
+		case 1 : return AL_FORMAT_MONO16;
+		case 2 : return AL_FORMAT_STEREO16;
+		default : Q_ASSERT(0);
+		}
+	case 4 :
+		switch (channelCount)
+		{
+		case 1 : return AL_FORMAT_MONO_FLOAT32;
+		case 2 : return AL_FORMAT_STEREO_FLOAT32;
+		default : Q_ASSERT(0);
+		}
+	default : Q_ASSERT(0);
+	}
+
+	return 0;
+}
+
+static const int streamBufSize = 32768;
+
+struct SoundBuffer
+{
+	/* Filename, pitch.
+	 * Uniquely identifies this or equal buffer */
+	typedef QPair<QByteArray, int> Key;
+	Key key;
+
+	AL::Buffer::ID alBuffer;
+
+	/* Link into the buffer cache priority list */
+	IntruListLink<SoundBuffer> link;
+
+	/* Buffer byte count */
+	uint32_t bytes;
+
+	/* Reference count */
+	uint8_t refCount;
+
+	SoundBuffer()
+	    : link(this),
+	      refCount(1)
+
+	{
+		alBuffer = AL::Buffer::gen();
+	}
+
+	~SoundBuffer()
+	{
+		AL::Buffer::del(alBuffer);
+	}
+
+	static SoundBuffer *ref(SoundBuffer *buffer)
+	{
+		++buffer->refCount;
+
+		return buffer;
+	}
+
+	static void deref(SoundBuffer *buffer)
+	{
+		if (--buffer->refCount == 0)
+			delete buffer;
+	}
+};
+
+struct SoundEmitter
+{
+	IntruList<SoundBuffer> buffers;
+	QHash<SoundBuffer::Key, SoundBuffer*> bufferHash;
+
+	/* Byte count sum of all cached / playing buffers */
+	uint32_t bufferBytes;
+
+	AL::Source::ID alSrcs[SE_SOURCES];
+	SoundBuffer *atchBufs[SE_SOURCES];
+	/* Index of next source to be used */
+	int srcIndex;
+
+#ifdef RUBBERBAND
+	std::vector<float> floatBuf;
+#endif
+
+	SoundEmitter()
+	    : bufferBytes(0),
+	      srcIndex(0)
+	{
+		for (int i = 0; i < SE_SOURCES; ++i)
+		{
+			alSrcs[i] = AL::Source::gen();
+			atchBufs[i] = 0;
+		}
+#ifdef RUBBERBAND
+		floatBuf.resize(streamBufSize/4);
+#endif
+	}
+
+	~SoundEmitter()
+	{
+		for (int i = 0; i < SE_SOURCES; ++i)
+		{
+			AL::Source::stop(alSrcs[i]);
+			AL::Source::del(alSrcs[i]);
+
+			if (atchBufs[i])
+				SoundBuffer::deref(atchBufs[i]);
+		}
+
+		QHash<SoundBuffer::Key, SoundBuffer*>::iterator iter;
+		for (iter = bufferHash.begin(); iter != bufferHash.end(); ++iter)
+			delete iter.value();
 	}
 
 	void play(const QByteArray &filename,
 	          int volume,
 	          int pitch)
 	{
-		terminateFade();
+		float _volume = clamp<int>(volume, 0, 100) / 100.f;
 
-		volume = clamp<int>(volume, 0, 100);
-		pitch = clamp<int>(pitch, 50, 150);
+		SoundBuffer *buffer = allocateBuffer(filename, pitch);
 
-		if (filename == this->filename
-		&&  volume == (int)music.getVolume()
-//		&&  pitch == music.getPitch()
-		&&  music.getStatus() == sf::Music::Playing)
-			return;
+		int soundIndex = srcIndex++;
+		if (srcIndex > SE_SOURCES-1)
+			srcIndex = 0;
 
-		if (filename == this->filename
-		&&  music.getStatus() == sf::Music::Playing)
-//		&&  pitch == music.getPitch())
-		{
-			intVolume = (float) volume / 100;
-			updateVolumeSync();
-			return;
-		}
+		AL::Source::ID src = alSrcs[soundIndex];
+		AL::Source::stop(src);
+		AL::Source::detachBuffer(src);
 
-		SDL_LockMutex(mutex);
+		SoundBuffer *old = atchBufs[soundIndex];
 
-		this->music.stop();
+		if (old)
+			SoundBuffer::deref(old);
 
-		this->filename = filename;
+		atchBufs[soundIndex] = SoundBuffer::ref(buffer);
 
-		currentData.close();
+		AL::Source::attachBuffer(src, buffer->alBuffer);
+		AL::Source::setVolume(src, _volume);
 
-		currentData =
-		        shState->fileSystem().openRead(filename.constData(), FileSystem::Audio);
+#ifndef RUBBERBAND
+		AL::Source::setPitch(src, clamp<int>(pitch, 50, 150) / 100.f);
+#endif
 
-		if (!this->music.openFromStream(currentData))
-			return;
-
-		intVolume = (float) volume / 100;
-		updateVolume();
-//		this->music.setPitch((float) pitch / 100);
-
-		if (!extPaused)
-			this->music.play();
-		else
-			noFadeInFlag = true;
-
-		SDL_UnlockMutex(mutex);
+		AL::Source::play(src);
 	}
 
 	void stop()
 	{
-		terminateFade();
-
-		stopPriv();
-	}
-
-	void fade(unsigned int ms)
-	{
-		if (music.getStatus() != sf::Music::Playing)
-			return;
-
-		if (fading)
-			return;
-
-		delete fadeData.thread;
-		fadeData.thread = new sf::Thread(&MusicEntity::processFade, this);
-		fadeData.duration = ms;
-		fadeData.terminate = false;
-
-		fading = true;
-		fadeData.thread->launch();
-	}
-
-	void updateVolume()
-	{
-		music.setVolume(intVolume * extVolume * 100);
-	}
-
-	void updateVolumeSync()
-	{
-		SDL_LockMutex(mutex);
-		updateVolume();
-		SDL_UnlockMutex(mutex);
+		for (int i = 0; i < SE_SOURCES; i++)
+			AL::Source::stop(alSrcs[i]);
 	}
 
 private:
-	void terminateFade()
+#ifdef RUBBERBAND
+	void ensureFloatBufSize(uint32_t size)
 	{
-		if (!fading)
-		{
-			delete fadeData.thread;
-			fadeData.thread = 0;
+		if (size <= floatBuf.size())
 			return;
-		}
 
-		/* Tell our thread to wrap up and wait for it */
-		fadeData.terminate = true;
-		fadeData.thread->wait();
-
-		fading = false;
-
-		delete fadeData.thread;
-		fadeData.thread = 0;
+		floatBuf.resize(size);
 	}
+#endif
 
-	void stopPriv()
+	SoundBuffer *allocateBuffer(const QByteArray &filename,
+	                            int pitch)
 	{
-		SDL_LockMutex(mutex);
-		music.stop();
-		SDL_UnlockMutex(mutex);
+#ifndef RUBBERBAND
+		pitch = 100;
+#endif
 
-		filename = QByteArray();
-	}
+		SoundBuffer::Key soundKey(filename, pitch);
 
-	void processFade()
-	{
-		float msStep = music.getVolume() / fadeData.duration;
-		sf::Clock timer;
-		sf::Time sleepTime = sf::milliseconds(FADE_SLEEP);
-		unsigned int currentDur = 0;
-
-		while (true)
-		{
-			int elapsed = timer.getElapsedTime().asMilliseconds();
-			timer.restart();
-			currentDur += elapsed;
-
-			if (music.getStatus() != sf::Music::Playing)
-				break;
-
-			if (fadeData.terminate)
-				break;
-
-			if (currentDur >= fadeData.duration)
-				break;
-
-			intVolume = (float) (music.getVolume() - (elapsed * msStep)) / 100;
-			updateVolumeSync();
-
-			sf::sleep(sleepTime);
-		}
-
-		stopPriv();
-		fading = false;
-	}
-};
-
-//struct SoundBuffer
-//{
-//	Mix_Chunk *sdlBuffer;
-//	QByteArray filename;
-//	IntruListLink<SoundBuffer> link;
-
-//	SoundBuffer()
-//	    : link(this)
-//	{}
-//};
-
-//struct SoundEntity
-//{
-//	IntruList<SoundBuffer> buffers;
-//	QHash<QByteArray, SoundBuffer*> bufferHash;
-//	uint cacheSize; // in chunks, for now
-//	int channelIndex;
-
-//	SoundEntity()
-//	    : cacheSize(0),
-//	      channelIndex(0)
-//	{
-//		Mix_AllocateChannels(SOUND_MAG_SIZE);
-//	}
-
-//	~SoundEntity()
-//	{
-//		IntruListLink<SoundBuffer> *iter = buffers.iterStart();
-//		iter = iter->next;
-
-//		for (int i = 0; i < buffers.getSize(); ++i)
-//		{
-//			SoundBuffer *buffer = iter->data;
-//			iter = iter->next;
-//			delete buffer;
-//		}
-//	}
-
-//	void play(const char *filename,
-//	          int volume,
-//	          int pitch)
-//	{
-//		(void) pitch;
-
-//		volume = bound(volume, 0, 100);
-
-//		Mix_Chunk *buffer = requestBuffer(filename);
-
-//		int nextChIdx = channelIndex++;
-//		if (channelIndex > SOUND_MAG_SIZE-1)
-//			channelIndex = 0;
-
-//		Mix_HaltChannel(nextChIdx);
-//		Mix_Volume(nextChIdx, ((float) MIX_MAX_VOLUME / 100) * volume);
-//		Mix_PlayChannelTimed(nextChIdx, buffer, 0, -1);
-//	}
-
-//	void stop()
-//	{
-//		/* Stop all channels */
-//		Mix_HaltChannel(-1);
-//	}
-
-//private:
-//	Mix_Chunk *requestBuffer(const char *filename)
-//	{
-//		SoundBuffer *buffer = bufferHash.value(filename, 0);
-
-//		if (buffer)
-//		{
-//			/* Buffer still in cashe.
-//			 * Move to front of priority list */
-//			buffers.remove(buffer->link);
-//			buffers.append(buffer->link);
-
-//			return buffer->sdlBuffer;
-//		}
-//		else
-//		{
-//			/* Buffer not in cashe, needs to be loaded */
-//			SDL_RWops ops;
-//			shState->fileSystem().openRead(ops, filename, FileSystem::Audio);
-
-//			Mix_Chunk *sdlBuffer = Mix_LoadWAV_RW(&ops, 1);
-
-//			if (!sdlBuffer)
-//			{
-//				SDL_RWclose(&ops);
-//				throw Exception(Exception::RGSSError, "Unable to read sound file");
-//			}
-
-//			buffer = new SoundBuffer;
-//			buffer->sdlBuffer = sdlBuffer;
-//			buffer->filename = filename;
-
-//			++cacheSize;
-
-//			bufferHash.insert(filename, buffer);
-//			buffers.prepend(buffer->link);
-
-//			if (cacheSize > 20)
-//			{
-//				SoundBuffer *last = buffers.tail();
-//				bufferHash.remove(last->filename);
-//				buffers.remove(last->link);
-//				--cacheSize;
-
-//				qDebug() << "Deleted buffer" << last->filename;
-
-//				delete last;
-//			}
-
-//			return buffer->sdlBuffer;
-//		}
-//	}
-//};
-
-struct SoundBuffer
-{
-	sf::SoundBuffer sfBuffer;
-	QByteArray filename;
-	IntruListLink<SoundBuffer> link;
-
-	SoundBuffer()
-	    : link(this)
-	{}
-};
-
-struct SoundEntity
-{
-	IntruList<SoundBuffer> buffers;
-	QHash<QByteArray, SoundBuffer*> bufferHash;
-	unsigned int bufferSamples;
-
-	sf::Sound soundMag[SOUND_MAG_SIZE];
-	int magIndex;
-
-	SoundEntity()
-	    : bufferSamples(0),
-	      magIndex(0)
-	{}
-
-	~SoundEntity()
-	{
-		QHash<QByteArray, SoundBuffer*>::iterator iter;
-		for (iter = bufferHash.begin(); iter != bufferHash.end(); ++iter)
-			delete iter.value();
-	}
-
-	void play(const char *filename,
-	          int volume,
-	          int pitch)
-	{
-		(void) pitch;
-
-		volume = clamp<int>(volume, 0, 100);
-
-		sf::SoundBuffer &buffer = allocateBuffer(filename);
-
-		int soundIndex = magIndex++;
-		if (magIndex > SOUND_MAG_SIZE-1)
-			magIndex = 0;
-
-		sf::Sound &sound = soundMag[soundIndex];
-		sound.stop();
-		sound.setBuffer(buffer);
-		sound.setVolume(volume);
-
-		sound.play();
-	}
-
-	void stop()
-	{
-		for (int i = 0; i < SOUND_MAG_SIZE; i++)
-			soundMag[i].stop();
-	}
-
-private:
-	sf::SoundBuffer &allocateBuffer(const char *filename)
-	{
-		SoundBuffer *buffer = bufferHash.value(filename, 0);
+		SoundBuffer *buffer = bufferHash.value(soundKey, 0);
 
 		if (buffer)
 		{
 			/* Buffer still in cashe.
 			 * Move to front of priority list */
-
 			buffers.remove(buffer->link);
 			buffers.append(buffer->link);
 
-			return buffer->sfBuffer;
+			return buffer;
 		}
 		else
 		{
 			/* Buffer not in cashe, needs to be loaded */
+			SDL_RWops dataSource;
+			const char *extension;
 
-			FileStream data =
-				shState->fileSystem().openRead(filename, FileSystem::Audio);
+			shState->fileSystem().openRead(dataSource, filename.constData(),
+			                               FileSystem::Audio, false, &extension);
 
-			buffer = new SoundBuffer;
-			buffer->sfBuffer.loadFromStream(data);
-			bufferSamples += buffer->sfBuffer.getSampleCount();
+			Sound_Sample *sampleHandle = Sound_NewSample(&dataSource, extension, 0, streamBufSize);
 
-			data.close();
-
-//			qDebug() << "SoundCache: Current memory consumption:" << bufferSamples/2;
-
-			buffer->filename = filename;
-
-			bufferHash.insert(filename, buffer);
-			buffers.prepend(buffer->link);
-
-			// FIXME this part would look better if it actually looped until enough memory is freed
-			/* If memory limit is reached, delete lowest priority buffer.
-			 * Samples are 2 bytes big */
-			if ((bufferSamples/2) > SOUND_MAX_MEM && !buffers.isEmpty())
+			if (!sampleHandle)
 			{
-				SoundBuffer *last = buffers.tail();
-				bufferHash.remove(last->filename);
-				buffers.remove(last->link);
-				bufferSamples -= last->sfBuffer.getSampleCount();
-
-				qDebug() << "Deleted buffer" << last->filename;
-
-				delete last;
+				SDL_RWclose(&dataSource);
+				throw Exception(Exception::SDLError, "SDL_sound: %s", Sound_GetError());
 			}
 
-			return buffer->sfBuffer;
+			uint32_t decBytes = Sound_DecodeAll(sampleHandle);
+			uint8_t sampleSize = formatSampleSize(sampleHandle->actual.format);
+			uint32_t sampleCount = decBytes / sampleSize;
+
+			uint32_t actSampleSize;
+#ifdef RUBBERBAND
+			actSampleSize = sizeof(float);
+#else
+			actSampleSize = sampleSize;
+#endif
+
+			buffer = new SoundBuffer;
+			buffer->key = soundKey;
+			buffer->bytes = actSampleSize * sampleCount;
+
+			ALenum alFormat = chooseALFormat(actSampleSize, sampleHandle->actual.channels);
+
+#ifdef RUBBERBAND
+			/* Fill float buffer */
+			ensureFloatBufSize(sampleCount);
+			genFloatSamples(sampleCount, sampleHandle->actual.format,
+			                sampleHandle->buffer, floatBuf.data());
+
+			// XXX apply stretcher
+
+			/* Upload data to AL */
+			AL::Buffer::uploadData(buffer->alBuffer, alFormat, floatBuf.data(),
+			                       buffer->bytes, sampleHandle->actual.rate);
+#else
+			AL::Buffer::uploadData(buffer->alBuffer, alFormat, sampleHandle->buffer,
+			                       buffer->bytes, sampleHandle->actual.rate);
+#endif
+			Sound_FreeSample(sampleHandle);
+
+			uint32_t wouldBeBytes = bufferBytes + buffer->bytes;
+
+			/* If memory limit is reached, delete lowest priority buffer
+			 * until there is room or no buffers left */
+			while (wouldBeBytes > SE_CACHE_MEM && !buffers.isEmpty())
+			{
+				SoundBuffer *last = buffers.tail();
+				bufferHash.remove(last->key);
+				buffers.remove(last->link);
+
+				wouldBeBytes -= last->bytes;
+
+				SoundBuffer::deref(last);
+			}
+
+			bufferHash.insert(soundKey, buffer);
+			buffers.prepend(buffer->link);
+
+			bufferBytes = wouldBeBytes;
+
+			return buffer;
 		}
+	}
+};
+
+static const int streamBufs = 3;
+
+struct ALDataSource
+{
+	enum Status
+	{
+		NoError,
+		EndOfStream,
+		WrapAround,
+		Error
+	};
+
+	virtual ~ALDataSource() {}
+
+	/* Read/process next chunk of data, and attach it
+	 * to provided AL buffer */
+	virtual Status fillBuffer(AL::Buffer::ID alBuffer) = 0;
+
+	virtual float samplesToOffset(uint32_t samples) = 0;
+
+	virtual void seekToOffset(float offset) = 0;
+
+	/* Seek back to start */
+	virtual void reset() = 0;
+};
+
+struct SDLSoundSource : ALDataSource
+{
+	Sound_Sample *sample;
+	SDL_RWops ops;
+	uint8_t sampleSize;
+	bool looped;
+
+	ALenum alFormat;
+	ALsizei alFreq;
+
+	SDLSoundSource(const std::string &filename,
+	               uint32_t maxBufSize,
+	               bool looped,
+	               float pitch)
+	    : looped(looped)
+	{
+		(void) pitch;
+
+		const char *extension;
+		shState->fileSystem().openRead(ops,
+		                               filename.c_str(),
+		                               FileSystem::Audio,
+		                               false, &extension);
+
+		sample = Sound_NewSample(&ops, extension, 0, maxBufSize);
+
+		if (!sample)
+		{
+			SDL_RWclose(&ops);
+			throw Exception(Exception::SDLError, "SDL_sound: %s", Sound_GetError());
+		}
+
+		sampleSize = formatSampleSize(sample->actual.format);
+
+		alFormat = chooseALFormat(sampleSize, sample->actual.channels);
+		alFreq = sample->actual.rate;
+	}
+
+	~SDLSoundSource()
+	{
+		Sound_FreeSample(sample);
+	}
+
+	Status fillBuffer(AL::Buffer::ID alBuffer)
+	{
+		uint32_t decoded = Sound_Decode(sample);
+
+		if (sample->flags & SOUND_SAMPLEFLAG_EAGAIN)
+		{
+			/* Try to decode one more time on EAGAIN */
+			decoded = Sound_Decode(sample);
+
+			/* Give up */
+			if (sample->flags & SOUND_SAMPLEFLAG_EAGAIN)
+				return ALDataSource::Error;
+		}
+
+		if (sample->flags & SOUND_SAMPLEFLAG_ERROR)
+			return ALDataSource::Error;
+
+		// XXX apply stretcher here
+
+		AL::Buffer::uploadData(alBuffer, alFormat, sample->buffer, decoded, alFreq);
+
+		if (sample->flags & SOUND_SAMPLEFLAG_EOF)
+		{
+			if (looped)
+			{
+				Sound_Rewind(sample);
+				return ALDataSource::WrapAround;
+			}
+			else
+			{
+				return ALDataSource::EndOfStream;
+			}
+		}
+
+		return ALDataSource::NoError;
+	}
+
+	float samplesToOffset(uint32_t samples)
+	{
+		uint32_t frames = samples / sample->actual.channels;
+
+		return static_cast<float>(frames) / sample->actual.rate;
+	}
+
+	void seekToOffset(float offset)
+	{
+		Sound_Seek(sample, static_cast<uint32_t>(offset * 1000));
+	}
+
+	void reset()
+	{
+		Sound_Rewind(sample);
+	}
+};
+
+/* State-machine like audio playback stream.
+ * This class is NOT thread safe */
+struct ALStream
+{
+	enum State
+	{
+		Closed,
+		Stopped,
+		Playing,
+		Paused
+	};
+
+	bool looped;
+	State state;
+
+	ALDataSource *source;
+	SDL_Thread *thread;
+
+	SDL_mutex *pauseMut;
+	bool preemptPause;
+
+	/* When this flag isn't set and alSrc is
+	 * in 'STOPPED' state, stream isn't over
+	 * (it just hasn't started yet) */
+	bool streamInited;
+	bool sourceExhausted;
+
+	bool threadTermReq;
+
+	bool needsRewind;
+
+	AL::Source::ID alSrc;
+	AL::Buffer::ID alBuf[streamBufs];
+
+	uint64_t procSamples;
+	AL::Buffer::ID lastBuf;
+
+	struct
+	{
+		ALenum format;
+		ALsizei freq;
+	} stream;
+
+	enum LoopMode
+	{
+		Looped,
+		NotLooped
+	};
+
+	ALStream(LoopMode loopMode)
+	    : looped(loopMode == Looped),
+	      state(Closed),
+	      source(0),
+	      thread(0),
+	      preemptPause(false),
+	      streamInited(false),
+	      needsRewind(false)
+	{
+		alSrc = AL::Source::gen();
+
+		AL::Source::setVolume(alSrc, 1.0);
+		AL::Source::setPitch(alSrc, 1.0);
+		AL::Source::detachBuffer(alSrc);
+
+		for (int i = 0; i < streamBufs; ++i)
+			alBuf[i] = AL::Buffer::gen();
+
+		pauseMut = SDL_CreateMutex();
+	}
+
+	~ALStream()
+	{
+		close();
+
+		clearALQueue();
+
+		AL::Source::del(alSrc);
+
+		for (int i = 0; i < streamBufs; ++i)
+			AL::Buffer::del(alBuf[i]);
+
+		SDL_DestroyMutex(pauseMut);
+	}
+
+	void close()
+	{
+		checkStopped();
+
+		switch (state)
+		{
+		case Playing:
+		case Paused:
+			stopStream();
+		case Stopped:
+			closeSource();
+			state = Closed;
+		case Closed:
+			return;
+		}
+	}
+
+	void open(const std::string &filename,
+	          float pitch)
+	{
+		checkStopped();
+
+		switch (state)
+		{
+		case Playing:
+		case Paused:
+			stopStream();
+		case Stopped:
+			closeSource();
+		case Closed:
+			openSource(filename, pitch);
+		}
+
+		state = Stopped;
+	}
+
+	void stop()
+	{
+		checkStopped();
+
+		switch (state)
+		{
+		case Closed:
+		case Stopped:
+			return;
+		case Playing:
+		case Paused:
+			stopStream();
+		}
+
+		state = Stopped;
+	}
+
+	void play()
+	{
+		checkStopped();
+
+		switch (state)
+		{
+		case Closed:
+		case Playing:
+			return;
+		case Stopped:
+			startStream();
+			break;
+		case Paused :
+			resumeStream();
+		}
+
+		state = Playing;
+	}
+
+	void pause()
+	{
+		checkStopped();
+
+		switch (state)
+		{
+		case Closed:
+		case Stopped:
+		case Paused:
+			return;
+		case Playing:
+			pauseStream();
+		}
+
+		state = Paused;
+	}
+
+	void setOffset(float value)
+	{
+		if (state == Closed)
+			return;
+		// XXX needs more work. protect source with mutex
+		source->seekToOffset(value);
+		needsRewind = false;
+	}
+
+	void setVolume(float value)
+	{
+		AL::Source::setVolume(alSrc, value);
+	}
+
+	State queryState()
+	{
+		checkStopped();
+
+		return state;
+	}
+
+	float queryOffset()
+	{
+		if (state == Closed)
+			return 0;
+
+		uint32_t sampleSum =
+			procSamples + AL::Source::getSampleOffset(alSrc);
+
+		return source->samplesToOffset(sampleSum);
+	}
+
+private:
+	void closeSource()
+	{
+		delete source;
+	}
+
+	void openSource(const std::string &filename,
+	                float pitch)
+	{
+		source = new SDLSoundSource(filename, streamBufSize, looped, pitch);
+		needsRewind = false;
+
+#ifndef RUBBERBAND
+		AL::Source::setPitch(alSrc, pitch);
+#endif
+	}
+
+	void stopStream()
+	{
+		threadTermReq = true;
+
+		AL::Source::stop(alSrc);
+
+		if (thread)
+		{
+			SDL_WaitThread(thread, 0);
+			thread = 0;
+			needsRewind = true;
+		}
+
+		procSamples = 0;
+	}
+
+	void startStream()
+	{
+		clearALQueue();
+
+		procSamples = 0;
+
+		preemptPause = false;
+		streamInited = false;
+		sourceExhausted = false;
+		threadTermReq = false;
+		thread = SDL_CreateThread(streamDataFun, "al_stream", this);
+	}
+
+	void pauseStream()
+	{
+		SDL_LockMutex(pauseMut);
+
+		if (AL::Source::getState(alSrc) != AL_PLAYING)
+			preemptPause = true;
+		else
+			AL::Source::pause(alSrc);
+
+		SDL_UnlockMutex(pauseMut);
+	}
+
+	void resumeStream()
+	{
+		SDL_LockMutex(pauseMut);
+
+		if (preemptPause)
+			preemptPause = false;
+		else
+			AL::Source::play(alSrc);
+
+		SDL_UnlockMutex(pauseMut);
+	}
+
+	void checkStopped()
+	{
+		/* This only concerns the scenario where
+		 * state is still 'Playing', but the stream
+		 * has already ended on its own (EOF, Error) */
+		if (state != Playing)
+			return;
+
+		/* If streaming thread hasn't queued up
+		 * buffers yet there's not point in querying
+		 * the AL source */
+		if (!streamInited)
+			return;
+
+		/* If alSrc isn't playing, but we haven't
+		 * exhausted the data source yet, we're just
+		 * having a buffer underrun */
+		if (!sourceExhausted)
+			return;
+
+		if (AL::Source::getState(alSrc) == AL_PLAYING)
+			return;
+
+		stopStream();
+		state = Stopped;
+	}
+
+	void clearALQueue()
+	{
+		/* Unqueue all buffers */
+		ALint queuedBufs = AL::Source::getProcBufferCount(alSrc);
+
+		while (queuedBufs--)
+			AL::Source::unqueueBuffer(alSrc);
+	}
+
+	/* thread func */
+	void streamData()
+	{
+		/* Fill up queue */
+		bool firstBuffer = true;
+		ALDataSource::Status status;
+
+		if (needsRewind)
+			source->reset();
+
+		for (int i = 0; i < streamBufs; ++i)
+		{
+			AL::Buffer::ID buf = alBuf[i];
+
+			status = source->fillBuffer(buf);
+
+			if (status == ALDataSource::Error)
+				return;
+
+			AL::Source::queueBuffer(alSrc, buf);
+
+			if (firstBuffer)
+			{
+				resumeStream();
+
+				firstBuffer = false;
+				streamInited = true;
+			}
+
+			if (threadTermReq)
+				return;
+
+			if (status == ALDataSource::EndOfStream)
+			{
+				sourceExhausted = true;
+				break;
+			}
+		}
+
+		/* Wait for buffers to be consumed, then
+		 * refill and queue them up again */
+		while (true)
+		{
+			ALint procBufs = AL::Source::getProcBufferCount(alSrc);
+
+			while (procBufs--)
+			{
+				if (threadTermReq)
+					break;
+
+				AL::Buffer::ID buf = AL::Source::unqueueBuffer(alSrc);
+
+				if (buf == lastBuf)
+				{
+					/* Reset the processed sample count so
+					 * querying the playback offset returns 0.0 again */
+					procSamples = 0;
+					lastBuf = AL::Buffer::ID(0);
+				}
+				else
+				{
+					/* Add the sample count contained in this
+					 * buffer to the total count */
+					ALint bits = AL::Buffer::getBits(buf);
+					ALint size = AL::Buffer::getSize(buf);
+
+					procSamples += (size / (bits / 8));
+				}
+
+				if (sourceExhausted)
+					continue;
+
+				status = source->fillBuffer(buf);
+
+				if (status == ALDataSource::Error)
+				{
+					sourceExhausted = true;
+					return;
+				}
+
+				AL::Source::queueBuffer(alSrc, buf);
+
+				/* In case of buffer underrun,
+				 * start playing again */
+				if (AL::Source::getState(alSrc) == AL_STOPPED)
+					AL::Source::play(alSrc);
+
+				/* If this was the last buffer before the data
+				 * source loop wrapped around again, mark it as
+				 * such so we can catch it and reset the processed
+				 * sample count once it gets unqueued */
+				if (status == ALDataSource::WrapAround)
+					lastBuf = buf;
+
+				if (status == ALDataSource::EndOfStream)
+					sourceExhausted = true;
+			}
+
+			if (threadTermReq)
+				break;
+
+			SDL_Delay(AUDIO_SLEEP);
+		}
+	}
+
+	static int streamDataFun(void *_self)
+	{
+		ALStream &self = *static_cast<ALStream*>(_self);
+		self.streamData();
+		return 0;
+	}
+};
+
+struct AudioStream
+{
+	struct
+	{
+		std::string filename;
+		float volume;
+		float pitch;
+	} current;
+
+	/* Volume set with 'play()' */
+	float baseVolume;
+
+	/* Volume set by external threads,
+	 * such as for fade-in/out.
+	 * Multiplied with intVolume for final
+	 * playback volume */
+	float fadeVolume;
+	float extVolume;
+
+	bool extPaused;
+
+	ALStream stream;
+	SDL_mutex *streamMut;
+
+	struct
+	{
+		/* Fade is in progress */
+		bool active;
+
+		/* Request fade thread to finish and
+		 * cleanup (like it normally would) */
+		bool reqFini;
+
+		/* Request fade thread to terminate
+		 * immediately */
+		bool reqTerm;
+
+		SDL_Thread *thread;
+
+		/* Amount of reduced absolute volume
+		 * per ms of fade time */
+		float msStep;
+
+		/* Ticks at start of fade */
+		uint32_t startTicks;
+	} fade;
+
+	AudioStream(ALStream::LoopMode loopMode)
+	    : baseVolume(1.0),
+	      fadeVolume(1.0),
+	      extVolume(1.0),
+	      extPaused(false),
+	      stream(loopMode)
+	{
+		current.volume = 1.0;
+		current.pitch = 1.0;
+
+		fade.active = false;
+		fade.thread = 0;
+
+		streamMut = SDL_CreateMutex();
+	}
+
+	~AudioStream()
+	{
+		if (fade.thread)
+		{
+			fade.reqTerm = true;
+			SDL_WaitThread(fade.thread, 0);
+		}
+
+		lockStream();
+
+		stream.stop();
+		stream.close();
+
+		unlockStream();
+
+		SDL_DestroyMutex(streamMut);
+	}
+
+	void play(const std::string &filename,
+	          int volume,
+	          int pitch)
+	{
+		finiFadeInt();
+
+		lockStream();
+
+		float _volume = clamp<int>(volume, 0, 100) / 100.f;
+		float _pitch  = clamp<int>(pitch, 50, 150) / 100.f;
+
+		ALStream::State sState = stream.queryState();
+
+		/* If all parameters match the current ones and we're
+		 * still playing, there's nothing to do */
+		if (filename == current.filename
+		&&  _volume  == current.volume
+		&&  _pitch   == current.pitch
+		&&  (sState == ALStream::Playing || sState == ALStream::Paused))
+		{
+			unlockStream();
+			return;
+		}
+
+		/* If all parameters except volume match the current ones,
+		 * we update the volume and continue streaming */
+		if (filename == current.filename
+		&&  _pitch   == current.pitch
+		&&  (sState == ALStream::Playing || sState == ALStream::Paused))
+		{
+			setBaseVolume(_volume);
+			current.volume = _volume;
+			unlockStream();
+			return;
+		}
+
+		switch (sState)
+		{
+		case ALStream::Paused :
+		case ALStream::Playing :
+			stream.stop();
+		case ALStream::Stopped :
+			stream.close();
+		case ALStream::Closed :
+			break;
+		}
+
+		stream.open(filename, _pitch);
+		setBaseVolume(_volume);
+
+		current.filename = filename;
+		current.volume = _volume;
+		current.pitch = _pitch;
+
+		if (!extPaused)
+			stream.play();
+
+		unlockStream();
+	}
+
+	void stop()
+	{
+		finiFadeInt();
+
+		lockStream();
+
+		stream.stop();
+
+		unlockStream();
+	}
+
+	void fadeOut(int duration)
+	{
+		lockStream();
+
+		ALStream::State sState = stream.queryState();
+
+		if (fade.active)
+		{
+			unlockStream();
+
+			return;
+		}
+
+		if (sState == ALStream::Paused)
+		{
+			stream.stop();
+			unlockStream();
+
+			return;
+		}
+
+		if (sState != ALStream::Playing)
+		{
+			unlockStream();
+
+			return;
+		}
+
+		if (fade.thread)
+		{
+			fade.reqFini = true;
+			SDL_WaitThread(fade.thread, 0);
+			fade.thread = 0;
+		}
+
+		fade.active = true;
+		fade.msStep = (1.0) / duration;
+		fade.reqFini = false;
+		fade.reqTerm = false;
+		fade.startTicks = SDL_GetTicks();
+
+		fade.thread = SDL_CreateThread(fadeThreadFun, "audio_fade", this);
+
+		unlockStream();
+	}
+
+	/* Any access to this classes 'stream' member,
+	 * whether state query or modification, must be
+	 * protected by a 'lock'/'unlock' pair */
+	void lockStream()
+	{
+		SDL_LockMutex(streamMut);
+	}
+
+	void unlockStream()
+	{
+		SDL_UnlockMutex(streamMut);
+	}
+
+	void setFadeVolume(float value)
+	{
+		fadeVolume = value;
+		updateVolume();
+	}
+
+	void setExtVolume1(float value)
+	{
+		extVolume = value;
+		updateVolume();
+	}
+
+private:
+	void finiFadeInt()
+	{
+		if (!fade.thread)
+			return;
+
+		fade.reqFini = true;
+		SDL_WaitThread(fade.thread, 0);
+		fade.thread = 0;
+	}
+
+	void updateVolume()
+	{
+		stream.setVolume(baseVolume * fadeVolume * extVolume);
+	}
+
+	void setBaseVolume(float value)
+	{
+		baseVolume = value;
+		updateVolume();
+	}
+
+	void fadeThread()
+	{
+		while (true)
+		{
+			/* Just immediately terminate on request */
+			if (fade.reqTerm)
+				break;
+
+			lockStream();
+
+			uint32_t curDur = SDL_GetTicks() - fade.startTicks;
+			float resVol = 1.0 - (curDur*fade.msStep);
+
+			ALStream::State state = stream.queryState();
+
+			if (state != ALStream::Playing
+			||  resVol < 0
+			||  fade.reqFini)
+			{
+				if (state != ALStream::Paused)
+					stream.stop();
+
+				setFadeVolume(1.0);
+				unlockStream();
+
+				break;
+			}
+
+			setFadeVolume(resVol);
+
+			unlockStream();
+
+			SDL_Delay(AUDIO_SLEEP);
+		}
+
+		fade.active = false;
+	}
+
+	static int fadeThreadFun(void *self)
+	{
+		static_cast<AudioStream*>(self)->fadeThread();
+
+		return 0;
 	}
 };
 
 struct AudioPrivate
 {
-	MusicEntity bgm;
-	MusicEntity bgs;
-	MusicEntity me;
+	AudioStream bgm;
+	AudioStream bgs;
+	AudioStream me;
 
-	SoundEntity se;
+	SoundEmitter se;
 
-	sf::Thread *meWatchThread;
-	bool meWatchRunning;
-	bool meWatchThreadTerm;
+	/* The 'MeWatch' is responsible for detecting
+	 * a playing ME, quickly fading out the BGM and
+	 * keeping it paused/stopped while the ME plays,
+	 * and unpausing/fading the BGM back in again
+	 * afterwards */
+	enum MeWatchState
+	{
+		MeNotPlaying,
+		BgmFadingOut,
+		MePlaying,
+		BgmFadingIn
+	};
+
+	struct
+	{
+		SDL_Thread *thread;
+		bool active;
+		bool termReq;
+		MeWatchState state;
+	} meWatch;
 
 	AudioPrivate()
-	    : meWatchThread(0),
-	      meWatchRunning(false),
-	      meWatchThreadTerm(false)
+	    : bgm(ALStream::Looped),
+	      bgs(ALStream::Looped),
+	      me(ALStream::NotLooped)
 	{
-		me.music.setLoop(false);
+		meWatch.active = false;
+		meWatch.termReq = false;
+		meWatch.state = MeNotPlaying;
+		meWatch.thread = SDL_CreateThread(meWatchFun, "audio_mewatch", this);
 	}
 
 	~AudioPrivate()
 	{
-		if (meWatchThread)
-		{
-			meWatchThreadTerm = true;
-			meWatchThread->wait();
-			delete meWatchThread;
-		}
-
-		bgm.stop();
-		bgs.stop();
-		me.stop();
-		se.stop();
+		meWatch.termReq = true;
+		SDL_WaitThread(meWatch.thread, 0);
 	}
 
-	void scheduleMeWatch()
+	void meWatchFunInt()
 	{
-		if (meWatchRunning)
-			return;
+		const float fadeOutStep = 1.f / (200  / AUDIO_SLEEP);
+		const float fadeInStep  = 1.f / (1000 / AUDIO_SLEEP);
 
-		meWatchRunning = true;
-
-		if (meWatchThread)
-			meWatchThread->wait();
-
-		bgm.extPaused = true;
-
-		delete meWatchThread;
-		meWatchThread = new sf::Thread(&AudioPrivate::meWatchFunc, this);
-		meWatchThread->launch();
-	}
-
-	void meWatchFunc()
-	{
-		// FIXME Need to catch the case where an ME is started while
-		// the BGM is still being faded in from this function
-		sf::Time sleepTime = sf::milliseconds(FADE_SLEEP);
-		const int bgmFadeOutSteps = 20;
-		const int bgmFadeInSteps = 100;
-
-		/* Fade out BGM */
-		for (int i = bgmFadeOutSteps; i > 0; --i)
+		while (true)
 		{
-			if (meWatchThreadTerm)
+			if (meWatch.termReq)
 				return;
 
-			if (bgm.music.getStatus() != sf::Music::Playing)
+			switch (meWatch.state)
 			{
-				bgm.extVolume = 0;
-				bgm.updateVolumeSync();
+			case MeNotPlaying:
+			{
+				me.lockStream();
+
+				if (me.stream.queryState() == ALStream::Playing)
+				{
+					/* ME playing detected. -> FadeOutBGM */
+					bgm.extPaused = true;
+					meWatch.state = BgmFadingOut;
+				}
+
+				me.unlockStream();
+
 				break;
 			}
 
-			bgm.extVolume = (1.0 / bgmFadeOutSteps) * (i-1);
-			bgm.updateVolumeSync();
-			sf::sleep(sleepTime);
-		}
-
-		SDL_LockMutex(bgm.mutex);
-		if (bgm.music.getStatus() == sf::Music::Playing)
-			bgm.music.pause();
-		SDL_UnlockMutex(bgm.mutex);
-
-		/* Linger while ME plays */
-		while (me.music.getStatus() == sf::Music::Playing)
-		{
-			if (meWatchThreadTerm)
-				return;
-
-			sf::sleep(sleepTime);
-		}
-
-		SDL_LockMutex(bgm.mutex);
-		bgm.extPaused = false;
-
-		if (bgm.music.getStatus() == sf::Music::Paused)
-			bgm.music.play();
-		SDL_UnlockMutex(bgm.mutex);
-
-		/* Fade in BGM again */
-		for (int i = 0; i < bgmFadeInSteps; ++i)
-		{
-			if (meWatchThreadTerm)
-				return;
-
-			SDL_LockMutex(bgm.mutex);
-
-			if (bgm.music.getStatus() != sf::Music::Playing || bgm.noFadeInFlag)
+			case BgmFadingOut :
 			{
-				bgm.noFadeInFlag = false;
-				bgm.extVolume = 1;
-				bgm.updateVolume();
-				bgm.music.play();
-				SDL_UnlockMutex(bgm.mutex);
+				me.lockStream();
+
+				if (me.stream.queryState() != ALStream::Playing)
+				{
+					/* ME has ended while fading OUT BGM. -> FadeInBGM */
+					me.unlockStream();
+					meWatch.state = BgmFadingIn;
+
+					break;
+				}
+
+				bgm.lockStream();
+
+				float vol = bgm.extVolume;
+				vol -= fadeOutStep;
+
+				if (vol < 0 || bgm.stream.queryState() != ALStream::Playing)
+				{
+					/* Either BGM has fully faded out, or stopped midway. -> MePlaying */
+					bgm.setExtVolume1(0);
+					bgm.stream.pause();
+					meWatch.state = MePlaying;
+					bgm.unlockStream();
+					me.unlockStream();
+
+					break;
+				}
+
+				bgm.setExtVolume1(vol);
+				bgm.unlockStream();
+				me.unlockStream();
+
 				break;
 			}
 
-			bgm.extVolume = (1.0 / bgmFadeInSteps) * (i+1);
-			bgm.updateVolume();
+			case MePlaying :
+			{
+				me.lockStream();
 
-			SDL_UnlockMutex(bgm.mutex);
+				if (me.stream.queryState() != ALStream::Playing)
+				{
+					/* ME has ended */
+					bgm.lockStream();
 
-			sf::sleep(sleepTime);
+					bgm.extPaused = false;
+
+					ALStream::State sState = bgm.stream.queryState();
+
+					if (sState == ALStream::Paused)
+					{
+						/* BGM is paused. -> FadeInBGM */
+						bgm.stream.play();
+						meWatch.state = BgmFadingIn;
+					}
+					else
+					{
+						/* BGM is stopped. -> MeNotPlaying */
+						bgm.setExtVolume1(1.0);
+						bgm.stream.play();
+						meWatch.state = MeNotPlaying;
+					}
+
+					bgm.unlockStream();
+				}
+
+				me.unlockStream();
+
+				break;
+			}
+
+			case BgmFadingIn :
+			{
+				bgm.lockStream();
+
+				if (bgm.stream.queryState() == ALStream::Stopped)
+				{
+					/* BGM stopped midway fade in. -> MeNotPlaying */
+					bgm.setExtVolume1(1.0);
+					meWatch.state = MeNotPlaying;
+					bgm.unlockStream();
+
+					break;
+				}
+
+				me.lockStream();
+
+				if (me.stream.queryState() == ALStream::Playing)
+				{
+					/* ME started playing midway BGM fade in. -> FadeOutBGM */
+					bgm.extPaused = true;
+					meWatch.state = BgmFadingOut;
+					me.unlockStream();
+					bgm.unlockStream();
+
+					break;
+				}
+
+				float vol = bgm.extVolume;
+				vol += fadeInStep;
+
+				if (vol >= 1)
+				{
+					/* BGM fully faded in. -> MeNotPlaying */
+					vol = 1.0;
+					meWatch.state = MeNotPlaying;
+				}
+
+				bgm.setExtVolume1(vol);
+
+				me.unlockStream();
+				bgm.unlockStream();
+
+				break;
+			}
+			}
+
+			SDL_Delay(AUDIO_SLEEP);
 		}
+	}
 
-		meWatchRunning = false;
+	static int meWatchFun(void *self)
+	{
+		static_cast<AudioPrivate*>(self)->meWatchFunInt();
+
+		return 0;
 	}
 };
 
 Audio::Audio()
 	: p(new AudioPrivate)
-{
-}
+{}
 
 
 void Audio::bgmPlay(const char *filename,
@@ -619,7 +1481,7 @@ void Audio::bgmStop()
 
 void Audio::bgmFade(int time)
 {
-	p->bgm.fade(time);
+	p->bgm.fadeOut(time);
 }
 
 
@@ -637,7 +1499,7 @@ void Audio::bgsStop()
 
 void Audio::bgsFade(int time)
 {
-	p->bgs.fade(time);
+	p->bgs.fadeOut(time);
 }
 
 
@@ -646,7 +1508,6 @@ void Audio::mePlay(const char *filename,
                    int pitch)
 {
 	p->me.play(filename, volume, pitch);
-	p->scheduleMeWatch();
 }
 
 void Audio::meStop()
@@ -656,7 +1517,7 @@ void Audio::meStop()
 
 void Audio::meFade(int time)
 {
-	p->me.fade(time);
+	p->me.fadeOut(time);
 }
 
 

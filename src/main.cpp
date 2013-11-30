@@ -20,10 +20,12 @@
 */
 
 #include "glew.h"
+#include <alc.h>
 
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include <SDL_sound.h>
 
 #include "sharedstate.h"
 #include "eventthread.h"
@@ -77,7 +79,7 @@ int rgssThreadFun(void *userdata)
 {
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
 	SDL_Window *win = threadData->window;
-	SDL_GLContext ctx;
+	SDL_GLContext glCtx;
 
 	/* Setup GL context */
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -85,9 +87,9 @@ int rgssThreadFun(void *userdata)
 	if (threadData->config.debugMode)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
-	ctx = SDL_GL_CreateContext(win);
+	glCtx = SDL_GL_CreateContext(win);
 
-	if (!ctx)
+	if (!glCtx)
 	{
 		rgssThreadError(threadData, QByteArray("Error creating context: ") + SDL_GetError());
 		return 0;
@@ -96,7 +98,7 @@ int rgssThreadFun(void *userdata)
 	if (glewInit() != GLEW_OK)
 	{
 		rgssThreadError(threadData, "Error initializing glew");
-		SDL_GL_DeleteContext(ctx);
+		SDL_GL_DeleteContext(glCtx);
 		return 0;
 	}
 
@@ -110,7 +112,7 @@ int rgssThreadFun(void *userdata)
 	if (!GLEW_VERSION_2_0)
 	{
 		rgssThreadError(threadData, "At least OpenGL 2.0 is required");
-		SDL_GL_DeleteContext(ctx);
+		SDL_GL_DeleteContext(glCtx);
 		return 0;
 	}
 
@@ -121,7 +123,7 @@ int rgssThreadFun(void *userdata)
 		{
 			rgssThreadError(threadData, QByteArray("Required GL extension \"")
 			                            + reqExt[i] + "\" not present");
-			SDL_GL_DeleteContext(ctx);
+			SDL_GL_DeleteContext(glCtx);
 			return 0;
 		}
 	}
@@ -129,6 +131,28 @@ int rgssThreadFun(void *userdata)
 	SDL_GL_SetSwapInterval(threadData->config.vsync ? 1 : 0);
 
 	DebugLogger dLogger;
+
+	/* Setup AL context */
+	ALCdevice *alcDev = alcOpenDevice(0);
+
+	if (!alcDev)
+	{
+		rgssThreadError(threadData, "Error opening OpenAL device");
+		SDL_GL_DeleteContext(glCtx);
+		return 0;
+	}
+
+	ALCcontext *alcCtx = alcCreateContext(alcDev, 0);
+
+	if (!alcCtx)
+	{
+		rgssThreadError(threadData, "Error creating OpenAL context");
+		alcCloseDevice(alcDev);
+		SDL_GL_DeleteContext(glCtx);
+		return 0;
+	}
+
+	alcMakeContextCurrent(alcCtx);
 
 	SharedState::initInstance(threadData);
 
@@ -140,7 +164,10 @@ int rgssThreadFun(void *userdata)
 
 	SharedState::finiInstance();
 
-	SDL_GL_DeleteContext(ctx);
+	alcDestroyContext(alcCtx);
+	alcCloseDevice(alcDev);
+
+	SDL_GL_DeleteContext(glCtx);
 
 	return 0;
 }
@@ -155,6 +182,7 @@ int main(int, char *argv[])
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
 		qDebug() << "Error initializing SDL:" << SDL_GetError();
+
 		return 0;
 	}
 
@@ -163,6 +191,7 @@ int main(int, char *argv[])
 	{
 		qDebug() << "Error initializing SDL_image:" << SDL_GetError();
 		SDL_Quit();
+
 		return 0;
 	}
 
@@ -171,6 +200,17 @@ int main(int, char *argv[])
 		qDebug() << "Error initializing SDL_ttf:" << SDL_GetError();
 		IMG_Quit();
 		SDL_Quit();
+
+		return 0;
+	}
+
+	if (Sound_Init() == 0)
+	{
+		qDebug() << "Error initializing SDL_sound:" << Sound_GetError();
+		TTF_Quit();
+		IMG_Quit();
+		SDL_Quit();
+
 		return 0;
 	}
 
@@ -241,6 +281,7 @@ int main(int, char *argv[])
 
 	SDL_DestroyWindow(win);
 
+	Sound_Quit();
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();

@@ -26,6 +26,8 @@
 
 #include "physfs.h"
 
+#include <SDL_sound.h>
+
 #include <QHash>
 #include <QSet>
 #include <QByteArray>
@@ -536,112 +538,35 @@ static const PHYSFS_Archiver RGSS_Archiver =
     RGSS_closeArchive
 };
 
-FileStream::FileStream(PHYSFS_File *file)
-{
-	p = file;
-}
-
-FileStream::~FileStream()
-{
-//	if (p)
-//		PHYSFS_close(p);
-}
-
-void FileStream::operator=(const FileStream &o)
-{
-	p = o.p;
-}
-
-sf::Int64 FileStream::read(void *data, sf::Int64 size)
-{
-	if (!p)
-		return -1;
-
-	return PHYSFS_readBytes(p, data, size);
-}
-
-sf::Int64 FileStream::seek(sf::Int64 position)
-{
-	if (!p)
-		return -1;
-
-	int success = PHYSFS_seek(p, (PHYSFS_uint64) position);
-
-	return success ? position : -1;
-}
-
-sf::Int64 FileStream::tell()
-{
-	if (!p)
-		return -1;
-
-	return PHYSFS_tell(p);
-}
-
-sf::Int64 FileStream::getSize()
-{
-	if (!p)
-		return -1;
-
-	return PHYSFS_fileLength(p);
-}
-
-sf::Int64 FileStream::write(const void *data, sf::Int64 size)
-{
-	if (!p)
-		return -1;
-
-	return PHYSFS_writeBytes(p, data, size);
-}
-
-void FileStream::close()
-{
-	if (p)
-	{
-		PHYSFS_close(p);
-		p = 0;
-	}
-}
-
-static const char *imgExt[] =
-{
-	"jpg",
-	"png"
-};
-
-static const char *audExt[] =
-{
-//	"mid",
-//	"midi",
-//	"mp3",
-//	"wma",
-	"ogg",
-	"wav"
-};
-
-static const char *fonExt[] =
-{
-    "ttf"
-};
-
-struct FileExtensions
-{
-	const char **ext;
-	int count;
-} fileExtensions[] =
-{
-	{ imgExt, ARRAY_SIZE(imgExt) },
-	{ audExt, ARRAY_SIZE(audExt) },
-	{ fonExt, ARRAY_SIZE(fonExt) }
-};
-
 struct FileSystemPrivate
 {
 	/* All keys are lower case */
 	QHash<QByteArray, QByteArray> pathCache;
 
+	QList<QByteArray> extensions[FileSystem::Undefined];
+
+	/* Attempt to locate an extension string in a filename.
+	 * Either a pointer into the input string pointing at the
+	 * extension, or null is returned */
+	const char *findExt(const char *filename)
+	{
+		int len;
+
+		for (len = strlen(filename); len > 0; --len)
+		{
+			if (filename[len] == '/')
+				return 0;
+
+			if (filename[len] == '.')
+				return &filename[len+1];
+		}
+
+		return 0;
+	}
+
 	const char *completeFileName(const char *filename,
-	                             FileSystem::FileType type)
+	                             FileSystem::FileType type,
+	                             const char **foundExt)
 	{
 		char buff[512];
 		size_t i;
@@ -654,30 +579,48 @@ struct FileSystemPrivate
 		QByteArray key(buff);
 
 		if (pathCache.contains(key))
+		{
+			/* The extension might already be included here,
+			 * so try to find it */
+			if (foundExt)
+				*foundExt = findExt(filename);
+
 			return pathCache[key].constData();
+		}
 
 		char buff2[512];
 
 		if (type != FileSystem::Undefined)
 		{
-			FileExtensions *extTest = &fileExtensions[type];
-			for (int i = 0; i < extTest->count; ++i)
+			QList<QByteArray> &extList = extensions[type];
+			for (int i = 0; i < extList.count(); ++i)
 			{
-				snprintf(buff2, sizeof(buff2), "%s.%s", buff, extTest->ext[i]);
+				const char *ext = extList[i].constData();
 
+				snprintf(buff2, sizeof(buff2), "%s.%s", buff, ext);
 				key = buff2;
+
 				if (pathCache.contains(key))
+				{
+					if (foundExt)
+						*foundExt = ext;
+
 					return pathCache[key].constData();
+				}
 			}
 		}
+
+		if (foundExt)
+			*foundExt = 0;
 
 		return 0;
 	}
 
 	PHYSFS_File *openReadInt(const char *filename,
-	                         FileSystem::FileType type)
+	                         FileSystem::FileType type,
+	                         const char **foundExt)
 	{
-		const char *foundName = completeFileName(filename, type);
+		const char *foundName = completeFileName(filename, type, foundExt);
 
 		if (!foundName)
 			throw Exception(Exception::NoFileError,
@@ -695,6 +638,34 @@ FileSystem::FileSystem(const char *argv0,
                        bool allowSymlinks)
 {
 	p = new FileSystemPrivate;
+
+	/* Image extensions */
+	p->extensions[Image] << "jpg" << "png";
+
+	/* Audio extensions */
+	const Sound_DecoderInfo **di;
+	for (di = Sound_AvailableDecoders(); *di; ++di)
+	{
+		const char **ext;
+		for (ext = (*di)->extensions; *ext; ++ext)
+		{
+			/* All reported extension are uppercase,
+			 * so we need to hammer them down first */
+			char buf[16];
+			for (size_t i = 0; i < sizeof(buf); ++i)
+			{
+				buf[i] = tolower((*ext)[i]);
+
+				if (!buf[i])
+					break;
+			}
+
+			p->extensions[Audio] << buf;
+		}
+	}
+
+	/* Font extensions */
+	p->extensions[Font] << "ttf";
 
 	PHYSFS_init(argv0);
 	PHYSFS_registerArchiver(&RGSS_Archiver);
@@ -743,14 +714,6 @@ static void cacheEnumCB(void *d, const char *origdir,
 void FileSystem::createPathCache()
 {
 	PHYSFS_enumerateFilesCallback(".", cacheEnumCB, p);
-}
-
-FileStream FileSystem::openRead(const char *filename,
-                                FileType type)
-{
-	PHYSFS_File *handle = p->openReadInt(filename, type);
-
-	return FileStream(handle);
 }
 
 static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)
@@ -847,9 +810,10 @@ const Uint32 SDL_RWOPS_PHYSFS = SDL_RWOPS_UNKNOWN+10;
 void FileSystem::openRead(SDL_RWops &ops,
                           const char *filename,
                           FileType type,
-                          bool freeOnClose)
+                          bool freeOnClose,
+                          const char **foundExt)
 {
-	PHYSFS_File *handle = p->openReadInt(filename, type);
+	PHYSFS_File *handle = p->openReadInt(filename, type, foundExt);
 
 	ops.size  = SDL_RWopsSize;
 	ops.seek  = SDL_RWopsSeek;
@@ -867,7 +831,7 @@ void FileSystem::openRead(SDL_RWops &ops,
 
 bool FileSystem::exists(const char *filename, FileType type)
 {
-	const char *foundName = p->completeFileName(filename, type);
+	const char *foundName = p->completeFileName(filename, type, 0);
 
 	return (foundName != 0);
 }

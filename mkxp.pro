@@ -1,7 +1,7 @@
 
 
 TEMPLATE = app
-QT = core
+QT =
 TARGET = mkxp
 DEPENDPATH += src shader assets
 INCLUDEPATH += . src
@@ -14,9 +14,9 @@ isEmpty(BINDING) {
 CONFIG += $$BINDING
 
 unix {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += sigc++-2.0 glew pixman-1 zlib sdl2 SDL2_image SDL2_ttf sfml-audio
-	LIBS += -lphysfs
+	CONFIG += link_pkgconfig
+	PKGCONFIG += QtCore sigc++-2.0 glew pixman-1 zlib \
+	             physfs sdl2 SDL2_image SDL2_ttf SDL_sound openal
 }
 
 # 'slots' keyword fucks with libsigc++
@@ -62,7 +62,8 @@ HEADERS += \
 	src/config.h \
 	src/tileatlas.h \
 	src/perftimer.h \
-	src/sharedstate.h
+	src/sharedstate.h \
+	src/al-util.h
 
 SOURCES += \
 	src/main.cpp \
