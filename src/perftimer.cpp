@@ -86,9 +86,11 @@ struct TimerQuery
 
 bool TimerQuery::queryActive = false;
 
+#define GPU_QUERIES 2
+
 struct GPUTimerGLQuery : public PerfTimer
 {
-	TimerQuery queries[2];
+	TimerQuery queries[GPU_QUERIES];
 	const int iter;
 
 	uint8_t ind;
@@ -138,7 +140,8 @@ struct GPUTimerGLQuery : public PerfTimer
 
 	void swapInd()
 	{
-		ind = ind ? 0 : 1;
+		if (++ind > GPU_QUERIES)
+			ind = 0;
 	}
 };
 
