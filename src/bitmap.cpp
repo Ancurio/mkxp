@@ -210,8 +210,9 @@ struct BitmapPrivate
 Bitmap::Bitmap(const char *filename)
 {
 	SDL_RWops ops;
-	shState->fileSystem().openRead(ops, filename, FileSystem::Image);
-	SDL_Surface *imgSurf = IMG_Load_RW(&ops, 1);
+	const char *extension;
+	shState->fileSystem().openRead(ops, filename, FileSystem::Image, false, &extension);
+	SDL_Surface *imgSurf = IMG_LoadTyped_RW(&ops, 1, extension);
 
 	if (!imgSurf)
 		throw Exception(Exception::SDLError, "SDL: %s", SDL_GetError());
