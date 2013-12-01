@@ -26,6 +26,7 @@
 #include "intrulist.h"
 #include "filesystem.h"
 #include "exception.h"
+#include "config.h"
 #include "al-util.h"
 
 #include <QByteArray>
@@ -300,7 +301,8 @@ struct SoundEmitter
 		AL::Source::setVolume(src, _volume);
 
 #ifndef RUBBERBAND
-		AL::Source::setPitch(src, clamp<int>(pitch, 50, 150) / 100.f);
+		if (shState->config().fastSoundPitch)
+			AL::Source::setPitch(src, clamp<int>(pitch, 50, 150) / 100.f);
 #endif
 
 		AL::Source::play(src);
@@ -761,7 +763,8 @@ private:
 		needsRewind = false;
 
 #ifndef RUBBERBAND
-		AL::Source::setPitch(alSrc, pitch);
+		if (shState->config().fastMusicPitch)
+			AL::Source::setPitch(alSrc, pitch);
 #endif
 	}
 

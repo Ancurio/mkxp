@@ -39,6 +39,8 @@ Config::Config()
       defScreenH(480),
       fixedFramerate(0),
       solidFonts(false),
+      fastSoundPitch(true),
+      fastMusicPitch(false),
       gameFolder("."),
       allowSymlinks(false)
 {}
@@ -59,6 +61,8 @@ void Config::read()
 	READ_VAL(defScreenH, Int);
 	READ_VAL(fixedFramerate, Int);
 	READ_VAL(solidFonts,  Bool);
+	READ_VAL(fastSoundPitch, Bool);
+	READ_VAL(fastMusicPitch, Bool);
 	READ_VAL(gameFolder, ByteArray);
 	READ_VAL(allowSymlinks, Bool);
 	READ_VAL(customScript, ByteArray);
