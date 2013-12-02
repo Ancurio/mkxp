@@ -13,10 +13,19 @@ isEmpty(BINDING) {
 
 CONFIG += $$BINDING
 
+RGSS2 {
+	DEFINES += RGSS2
+}
+
 unix {
 	CONFIG += link_pkgconfig
 	PKGCONFIG += QtCore sigc++-2.0 glew pixman-1 zlib \
-	             physfs sdl2 SDL2_image SDL2_ttf SDL_sound openal
+	             physfs sdl2 SDL2_image SDL2_ttf SDL_sound \
+	             openal
+
+	RGSS2 {
+		PKGCONFIG += vorbisfile
+	}
 }
 
 # 'slots' keyword fucks with libsigc++

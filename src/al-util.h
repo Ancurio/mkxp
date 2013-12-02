@@ -85,6 +85,11 @@ namespace Buffer
 	{
 		return getInteger(id, AL_BITS);
 	}
+
+	inline ALint getChannels(Buffer::ID id)
+	{
+		return getInteger(id, AL_CHANNELS);
+	}
 }
 
 namespace Source
@@ -145,9 +150,12 @@ namespace Source
 		return getInteger(id, AL_SOURCE_STATE);
 	}
 
-	inline ALint getSampleOffset(Source::ID id)
+	inline ALfloat getSecOffset(Source::ID id)
 	{
-		return getInteger(id, AL_SAMPLE_OFFSET);
+		ALfloat value;
+		alGetSourcef(id.al, AL_SEC_OFFSET, &value);
+
+		return value;
 	}
 
 	inline void setVolume(Source::ID id, float value)

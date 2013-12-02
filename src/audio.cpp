@@ -40,6 +40,10 @@
 #include <SDL_timer.h>
 #include <SDL_sound.h>
 
+#ifdef RGSS2
+#include <vorbis/vorbisfile.h>
+#endif
+
 #include <alc.h>
 
 #include <QDebug>
@@ -316,36 +320,35 @@ struct ALDataSource
 	 * to provided AL buffer */
 	virtual Status fillBuffer(AL::Buffer::ID alBuffer) = 0;
 
-	virtual float samplesToOffset(uint32_t samples) = 0;
+	virtual int sampleRate() = 0;
 
-	virtual void seekToOffset(float offset) = 0;
+	virtual void seekToOffset(float seconds) = 0;
 
 	/* Seek back to start */
 	virtual void reset() = 0;
+
+	/* The frame count right after wrap around */
+	virtual uint32_t loopStartFrames() = 0;
 };
 
 struct SDLSoundSource : ALDataSource
 {
 	Sound_Sample *sample;
-	SDL_RWops ops;
+	SDL_RWops &srcOps;
 	uint8_t sampleSize;
 	bool looped;
 
 	ALenum alFormat;
 	ALsizei alFreq;
 
-	SDLSoundSource(const std::string &filename,
+	SDLSoundSource(SDL_RWops &ops,
+	               const char *extension,
 	               uint32_t maxBufSize,
 	               bool looped)
-	    : looped(looped)
+	    : srcOps(ops),
+	      looped(looped)
 	{
-		const char *extension;
-		shState->fileSystem().openRead(ops,
-		                               filename.c_str(),
-		                               FileSystem::Audio,
-		                               false, &extension);
-
-		sample = Sound_NewSample(&ops, extension, 0, maxBufSize);
+		sample = Sound_NewSample(&srcOps, extension, 0, maxBufSize);
 
 		if (!sample)
 		{
@@ -399,23 +402,255 @@ struct SDLSoundSource : ALDataSource
 		return ALDataSource::NoError;
 	}
 
-	float samplesToOffset(uint32_t samples)
+	int sampleRate()
 	{
-		uint32_t frames = samples / sample->actual.channels;
-
-		return static_cast<float>(frames) / sample->actual.rate;
+		return sample->actual.rate;
 	}
 
-	void seekToOffset(float offset)
+	void seekToOffset(float seconds)
 	{
-		Sound_Seek(sample, static_cast<uint32_t>(offset * 1000));
+		Sound_Seek(sample, static_cast<uint32_t>(seconds * 1000));
 	}
 
 	void reset()
 	{
 		Sound_Rewind(sample);
 	}
+
+	uint32_t loopStartFrames()
+	{
+		/* Loops from the beginning of the file */
+		return 0;
+	}
 };
+
+#ifdef RGSS2
+static size_t vfRead(void *ptr, size_t size, size_t nmemb, void *ops)
+{
+	return SDL_RWread(static_cast<SDL_RWops*>(ops), ptr, size, nmemb);
+}
+
+static int vfSeek(void *ops, ogg_int64_t offset, int whence)
+{
+	return SDL_RWseek(static_cast<SDL_RWops*>(ops), offset, whence);
+}
+
+static long vfTell(void *ops)
+{
+	return SDL_RWtell(static_cast<SDL_RWops*>(ops));
+}
+
+static ov_callbacks OvCallbacks =
+{
+    vfRead,
+    vfSeek,
+    0,
+    vfTell
+};
+
+
+struct VorbisSource : ALDataSource
+{
+	SDL_RWops &src;
+
+	OggVorbis_File vf;
+
+	uint32_t currentFrame;
+
+	struct
+	{
+		uint32_t start;
+		uint32_t length;
+		uint32_t end;
+		bool valid;
+		bool requested;
+	} loop;
+
+	struct
+	{
+		int channels;
+		int rate;
+		int frameSize;
+		ALenum alFormat;
+	} info;
+
+	std::vector<int16_t> sampleBuf;
+
+	VorbisSource(SDL_RWops &ops,
+	             bool looped)
+	    : src(ops),
+	      currentFrame(0)
+	{
+		int error = ov_open_callbacks(&src, &vf, 0, 0, OvCallbacks);
+
+		if (error)
+		{
+			SDL_RWclose(&src);
+			throw Exception(Exception::MKXPError,
+			                "Vorbisfile: Cannot read ogg file");
+		}
+
+		/* Extract bitstream info */
+		info.channels = vf.vi->channels;
+		info.rate = vf.vi->rate;
+
+		if (info.channels > 2)
+		{
+			ov_clear(&vf);
+			SDL_RWclose(&src);
+			throw Exception(Exception::MKXPError,
+			                "Cannot handle audio with more than 2 channels");
+		}
+
+		info.alFormat = chooseALFormat(sizeof(int16_t), info.channels);
+		info.frameSize = sizeof(int16_t) * info.channels;
+
+		sampleBuf.resize(streamBufSize);
+
+		loop.requested = looped;
+		loop.valid = false;
+		loop.start = loop.length = 0;
+
+		if (!loop.requested)
+			return;
+
+		/* Try to extract loop info */
+		for (int i = 0; i < vf.vc->comments; ++i)
+		{
+			char *comment = vf.vc->user_comments[i];
+			char *sep = strstr(comment, "=");
+
+			/* No '=' found */
+			if (!sep)
+				continue;
+
+			/* Empty value */
+			if (!*(sep+1))
+				continue;
+
+			*sep = '\0';
+
+			if (!strcmp(comment, "LOOPSTART"))
+				loop.start = strtol(sep+1, 0, 10);
+
+			if (!strcmp(comment, "LOOPLENGTH"))
+				loop.length = strtol(sep+1, 0, 10);
+
+			*sep = '=';
+		}
+
+		loop.end = loop.start + loop.length;
+		loop.valid = (loop.start && loop.length);
+	}
+
+	~VorbisSource()
+	{
+		ov_clear(&vf);
+		SDL_RWclose(&src);
+	}
+
+	int sampleRate()
+	{
+		return info.rate;
+	}
+
+	void seekToOffset(float seconds)
+	{
+		ov_time_seek(&vf, seconds);
+	}
+
+	Status fillBuffer(AL::Buffer::ID alBuffer)
+	{
+		void *bufPtr = sampleBuf.data();
+		int availBuf = sampleBuf.size();
+		int bufUsed  = 0;
+
+		int canRead = availBuf;
+
+		Status retStatus = ALDataSource::NoError;
+
+		if (loop.valid)
+		{
+			int tilLoopEnd = loop.end * info.frameSize;
+
+			canRead = std::min(availBuf, tilLoopEnd);
+		}
+
+		while (canRead > 16)
+		{
+			long res = ov_read(&vf, static_cast<char*>(bufPtr),
+			                   canRead, 0, sizeof(int16_t), 1, 0);
+
+			if (res < 0)
+			{
+				/* Read error */
+				retStatus = ALDataSource::Error;
+
+				break;
+			}
+
+			if (res == 0)
+			{
+				/* EOF */
+				if (loop.requested)
+				{
+					retStatus = ALDataSource::WrapAround;
+					reset();
+				}
+				else
+				{
+					retStatus = ALDataSource::EndOfStream;
+				}
+
+				break;
+			}
+
+			bufUsed += (res / sizeof(int16_t));
+			bufPtr = &sampleBuf[bufUsed];
+			currentFrame += (res / info.frameSize);
+
+			if (loop.valid && currentFrame >= loop.end)
+			{
+				/* Determine how many frames we're
+				 * over the loop end */
+				int discardFrames = currentFrame - loop.end;
+				bufUsed -= discardFrames * info.channels;
+
+				retStatus = ALDataSource::WrapAround;
+
+				/* Seek to loop start */
+				currentFrame = loop.start;
+				if (ov_pcm_seek(&vf, currentFrame) != 0)
+					retStatus = ALDataSource::Error;
+
+				break;
+			}
+
+			canRead -= res;
+		}
+
+		if (retStatus != ALDataSource::Error)
+			AL::Buffer::uploadData(alBuffer, info.alFormat, sampleBuf.data(),
+			                       bufUsed*sizeof(int16_t), info.rate);
+
+		return retStatus;
+	}
+
+	void reset()
+	{
+		ov_raw_seek(&vf, 0);
+		currentFrame = 0;
+	}
+
+	uint32_t loopStartFrames()
+	{
+		if (loop.valid)
+			return loop.start;
+		else
+			return 0;
+	}
+};
+#endif
 
 /* State-machine like audio playback stream.
  * This class is NOT thread safe */
@@ -451,8 +686,10 @@ struct ALStream
 	AL::Source::ID alSrc;
 	AL::Buffer::ID alBuf[streamBufs];
 
-	uint64_t procSamples;
+	uint64_t procFrames;
 	AL::Buffer::ID lastBuf;
+
+	SDL_RWops srcOps;
 
 	struct
 	{
@@ -620,10 +857,9 @@ struct ALStream
 		if (state == Closed)
 			return 0;
 
-		uint32_t sampleSum =
-			procSamples + AL::Source::getSampleOffset(alSrc);
+		float procOffset = static_cast<float>(procFrames) / source->sampleRate();
 
-		return source->samplesToOffset(sampleSum);
+		return procOffset + AL::Source::getSecOffset(alSrc);
 	}
 
 private:
@@ -634,7 +870,24 @@ private:
 
 	void openSource(const std::string &filename)
 	{
-		source = new SDLSoundSource(filename, streamBufSize, looped);
+		const char *ext;
+		shState->fileSystem().openRead(srcOps, filename.c_str(), FileSystem::Audio, false, &ext);
+
+#ifdef RGSS2
+		/* Try to read ogg file signature */
+		char sig[5];
+		memset(sig, '\0', sizeof(sig));
+		SDL_RWread(&srcOps, sig, 1, 4);
+		SDL_RWseek(&srcOps, 0, RW_SEEK_SET);
+
+		if (!strcmp(sig, "OggS"))
+			source = new VorbisSource(srcOps, looped);
+		else
+			source = new SDLSoundSource(srcOps, ext, streamBufSize, looped);
+#else
+		source = new SDLSoundSource(srcOps, ext, streamBufSize, looped);
+#endif
+
 		needsRewind = false;
 	}
 
@@ -651,14 +904,14 @@ private:
 			needsRewind = true;
 		}
 
-		procSamples = 0;
+		procFrames = 0;
 	}
 
 	void startStream()
 	{
 		clearALQueue();
 
-		procSamples = 0;
+		procFrames = 0;
 
 		preemptPause = false;
 		streamInited = false;
@@ -783,17 +1036,18 @@ private:
 				{
 					/* Reset the processed sample count so
 					 * querying the playback offset returns 0.0 again */
-					procSamples = 0;
+					procFrames = source->loopStartFrames();
 					lastBuf = AL::Buffer::ID(0);
 				}
 				else
 				{
-					/* Add the sample count contained in this
+					/* Add the frame count contained in this
 					 * buffer to the total count */
 					ALint bits = AL::Buffer::getBits(buf);
 					ALint size = AL::Buffer::getSize(buf);
+					ALint chan = AL::Buffer::getChannels(buf);
 
-					procSamples += (size / (bits / 8));
+					procFrames += ((size / (bits / 8)) / chan);
 				}
 
 				if (sourceExhausted)
