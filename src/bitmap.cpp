@@ -537,7 +537,7 @@ void Bitmap::blur()
 	glState.blendMode.pushSet(BlendNone);
 	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 
-	TEX::bind(p->tex.tex);
+	TEX::bind(p->gl.tex);
 	FBO::bind(auxTex.fbo, FBO::Draw);
 
 	pass1.bind();
@@ -547,7 +547,7 @@ void Bitmap::blur()
 	quad.draw();
 
 	TEX::bind(auxTex.tex);
-	FBO::bind(p->tex.fbo, FBO::Draw);
+	FBO::bind(p->gl.fbo, FBO::Draw);
 
 	pass2.bind();
 	pass2.setTexSize(Vec2i(width(), height()));
@@ -654,8 +654,8 @@ void Bitmap::radialBlur(int angle, int divisions)
 	glState.blendMode.pop();
 	glState.clearColor.pop();
 
-	shState->texPool().release(p->tex);
-	p->tex = newTex;
+	shState->texPool().release(p->gl);
+	p->gl = newTex;
 
 	modified();
 }
