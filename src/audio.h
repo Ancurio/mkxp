@@ -37,9 +37,6 @@ struct AudioPrivate;
 class Audio
 {
 public:
-	Audio();
-	~Audio();
-
 	void bgmPlay(const char *filename,
 	             int volume = 100,
 	             int pitch = 100
@@ -78,6 +75,11 @@ public:
 #endif
 
 private:
+	Audio();
+	~Audio();
+
+	friend struct SharedStatePrivate;
+
 	AudioPrivate *p;
 };
 

@@ -32,9 +32,6 @@ struct GraphicsPrivate;
 class Graphics
 {
 public:
-	Graphics(RGSSThreadData *data);
-	~Graphics();
-
 	void update();
 	void freeze();
 	void transition(int duration = 8,
@@ -70,6 +67,11 @@ public:
 	void repaintWait(volatile bool *exitCond);
 
 private:
+	Graphics(RGSSThreadData *data);
+	~Graphics();
+
+	friend struct SharedStatePrivate;
+
 	GraphicsPrivate *p;
 };
 

@@ -47,9 +47,6 @@ public:
 
 	static const int buttonCodeSize;
 
-	Input();
-	~Input();
-
 	void update();
 
 	bool isPressed(int button);
@@ -64,6 +61,11 @@ public:
 	int mouseY();
 
 private:
+	Input();
+	~Input();
+
+	friend struct SharedStatePrivate;
+
 	InputPrivate *p;
 };
 
