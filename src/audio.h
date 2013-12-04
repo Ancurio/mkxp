@@ -22,6 +22,16 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+/* Concerning the 'pos' parameter:
+ *   RGSS3 actually doesn't specify a format for this,
+ *   it's only implied that it is a numerical value
+ *   (must be 0 on invalid cases), and it's not used for
+ *   anything outside passing it back into bgm/bgs_play.
+ *   We use this freedom to define pos to be a float,
+ *   in seconds of playback. (RGSS3 seems to use large
+ *   integers that _look_ like sample offsets but I can't
+ *   quite make out their meaning yet) */
+
 struct AudioPrivate;
 
 class Audio
@@ -30,20 +40,42 @@ public:
 	Audio();
 	~Audio();
 
-	void bgmPlay(const char *filename, int volume = 100, int pitch = 100);
+	void bgmPlay(const char *filename,
+	             int volume = 100,
+	             int pitch = 100
+#ifdef RGSS3
+	             ,float pos = 0
+#endif
+	             );
 	void bgmStop();
 	void bgmFade(int time);
 
-	void bgsPlay(const char *filename, int volume = 100, int pitch = 100);
+	void bgsPlay(const char *filename,
+	             int volume = 100,
+	             int pitch = 100
+#ifdef RGSS3
+	             ,float pos = 0
+#endif
+	             );
 	void bgsStop();
 	void bgsFade(int time);
 
-	void mePlay(const char *filename, int volume = 100, int pitch = 100);
+	void mePlay(const char *filename,
+	            int volume = 100,
+	            int pitch = 100);
 	void meStop();
 	void meFade(int time);
 
-	void sePlay(const char *filename, int volume = 100, int pitch = 100);
+	void sePlay(const char *filename,
+	            int volume = 100,
+	            int pitch = 100);
 	void seStop();
+
+#ifdef RGSS3
+	void setupMidi();
+	float bgmPos();
+	float bgsPos();
+#endif
 
 private:
 	AudioPrivate *p;

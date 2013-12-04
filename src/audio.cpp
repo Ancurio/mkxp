@@ -556,7 +556,14 @@ struct VorbisSource : ALDataSource
 
 	void seekToOffset(float seconds)
 	{
-		ov_time_seek(&vf, seconds);
+		currentFrame = seconds * info.rate;
+
+		if (loop.valid && currentFrame > loop.end)
+			currentFrame = loop.start;
+
+		/* If seeking fails, just seek back to start */
+		if (ov_pcm_seek(&vf, currentFrame) != 0)
+			ov_raw_seek(&vf, 0);
 	}
 
 	Status fillBuffer(AL::Buffer::ID alBuffer)
@@ -568,6 +575,8 @@ struct VorbisSource : ALDataSource
 		int canRead = availBuf;
 
 		Status retStatus = ALDataSource::NoError;
+
+		bool readAgain = false;
 
 		if (loop.valid)
 		{
@@ -602,7 +611,22 @@ struct VorbisSource : ALDataSource
 					retStatus = ALDataSource::EndOfStream;
 				}
 
-				break;
+				/* If we sought right to the end of the file,
+				 * we might be EOF without actually having read
+				 * any data at all yet (which mustn't happen),
+				 * so we try to continue reading some data. */
+				if (bufUsed > 0)
+					break;
+
+				if (readAgain)
+				{
+					/* We're still not getting data though.
+					 * Just error out to prevent an endless loop */
+					retStatus = ALDataSource::Error;
+					break;
+				}
+
+				readAgain = true;
 			}
 
 			bufUsed += (res / sizeof(int16_t));
@@ -682,6 +706,7 @@ struct ALStream
 	bool threadTermReq;
 
 	bool needsRewind;
+	float startOffset;
 
 	AL::Source::ID alSrc;
 	AL::Buffer::ID alBuf[streamBufs];
@@ -790,7 +815,7 @@ struct ALStream
 		state = Stopped;
 	}
 
-	void play()
+	void play(float offset = 0)
 	{
 		checkStopped();
 
@@ -800,7 +825,7 @@ struct ALStream
 		case Playing:
 			return;
 		case Stopped:
-			startStream();
+			startStream(offset);
 			break;
 		case Paused :
 			resumeStream();
@@ -824,15 +849,6 @@ struct ALStream
 		}
 
 		state = Paused;
-	}
-
-	void setOffset(float value)
-	{
-		if (state == Closed)
-			return;
-		// XXX needs more work. protect source with mutex
-		source->seekToOffset(value);
-		needsRewind = false;
 	}
 
 	void setVolume(float value)
@@ -907,16 +923,18 @@ private:
 		procFrames = 0;
 	}
 
-	void startStream()
+	void startStream(float offset)
 	{
 		clearALQueue();
-
-		procFrames = 0;
 
 		preemptPause = false;
 		streamInited = false;
 		sourceExhausted = false;
 		threadTermReq = false;
+
+		startOffset = offset;
+		procFrames = offset * source->sampleRate();
+
 		thread = SDL_CreateThread(streamDataFun, "al_stream", this);
 	}
 
@@ -988,7 +1006,12 @@ private:
 		ALDataSource::Status status;
 
 		if (needsRewind)
-			source->reset();
+		{
+			if (startOffset > 0)
+				source->seekToOffset(startOffset);
+			else
+				source->reset();
+		}
 
 		for (int i = 0; i < streamBufs; ++i)
 		{
@@ -1177,7 +1200,8 @@ struct AudioStream
 
 	void play(const std::string &filename,
 	          int volume,
-	          int pitch)
+	          int pitch,
+	          float offset = 0)
 	{
 		finiFadeInt();
 
@@ -1236,7 +1260,7 @@ struct AudioStream
 		current.pitch = _pitch;
 
 		if (!extPaused)
-			stream.play();
+			stream.play(offset);
 
 		unlockStream();
 	}
@@ -1321,6 +1345,11 @@ struct AudioStream
 	{
 		extVolume = value;
 		updateVolume();
+	}
+
+	float playingOffset()
+	{
+		return stream.queryOffset();
 	}
 
 private:
@@ -1600,10 +1629,18 @@ Audio::Audio()
 
 
 void Audio::bgmPlay(const char *filename,
-					int volume,
-                    int pitch)
+                    int volume,
+                    int pitch
+                    #ifdef RGSS3
+                    ,float pos
+                    #endif
+                    )
 {
+#ifdef RGSS3
+	p->bgm.play(filename, volume, pitch, pos);
+#else
 	p->bgm.play(filename, volume, pitch);
+#endif
 }
 
 void Audio::bgmStop()
@@ -1618,10 +1655,18 @@ void Audio::bgmFade(int time)
 
 
 void Audio::bgsPlay(const char *filename,
-					int volume,
-                    int pitch)
+                    int volume,
+                    int pitch
+                    #ifdef RGSS3
+                    ,float pos
+                    #endif
+                    )
 {
+#ifdef RGSS3
+	p->bgs.play(filename, volume, pitch, pos);
+#else
 	p->bgs.play(filename, volume, pitch);
+#endif
 }
 
 void Audio::bgsStop()
@@ -1664,5 +1709,24 @@ void Audio::seStop()
 {
 	p->se.stop();
 }
+
+#ifdef RGSS3
+
+void Audio::setupMidi()
+{
+
+}
+
+float Audio::bgmPos()
+{
+	return p->bgm.playingOffset();
+}
+
+float Audio::bgsPos()
+{
+	return p->bgs.playingOffset();
+}
+
+#endif
 
 Audio::~Audio() { delete p; }
