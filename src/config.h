@@ -44,9 +44,6 @@ struct Config
 
 	bool solidFonts;
 
-	bool fastSoundPitch;
-	bool fastMusicPitch;
-
 	QByteArray gameFolder;
 	bool allowSymlinks;
 
