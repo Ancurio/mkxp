@@ -112,14 +112,18 @@ EMBED = shader/transSimple.frag \
         shader/simpleColor.frag \
         shader/simpleAlpha.frag \
         shader/flashMap.frag \
-        shader/blur.frag \
         shader/simple.vert \
         shader/simpleColor.vert \
         shader/sprite.vert \
-        shader/simpleMatrix.vert \
-        shader/blurH.vert \
-        shader/blurV.vert \
         assets/liberation.ttf
+
+RGSS2 {
+	EMBED += \
+	shader/blur.frag \
+	shader/blurH.vert \
+	shader/blurV.vert \
+	shader/simpleMatrix.vert
+}
 
 defineReplace(xxdOutput) {
 	return($$basename(1).xxd)
