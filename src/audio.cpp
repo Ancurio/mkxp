@@ -48,81 +48,6 @@
 #define SE_SOURCES 6
 #define SE_CACHE_MEM (10*1024*1024) // 10 MB
 
-static void genFloatSamples(int sampleCount, int sdlFormat, const void *in, float *out)
-{
-	(void) genFloatSamples;
-
-	int i = sampleCount;
-
-	/* Convert from the possible fixed point
-	 * formats to [-1;1] floats */
-	switch (sdlFormat)
-	{
-	case AUDIO_U8 :
-	{
-		const uint8_t *_in = static_cast<const uint8_t*>(in);
-
-		while (i--)
-			out[i] = (((float) _in[i] / 255.f) - 0.5) * 2;
-
-		break;
-	}
-	case AUDIO_S8 :
-	{
-		const int8_t *_in = static_cast<const int8_t*>(in);
-
-		while (i--)
-			out[i] = (float) _in[i] / 128.f; // ???
-
-		break;
-	}
-	case AUDIO_U16LSB :
-	{
-		const uint16_t *_in = static_cast<const uint16_t*>(in);
-
-		while (i--)
-			out[i] = (((float) _in[i] / 65536.f) - 0.5) * 2;
-
-		break;
-	}
-	case AUDIO_U16MSB :
-	{
-		const int16_t *_in = static_cast<const int16_t*>(in);
-
-		while (i--)
-		{
-			int16_t swp = SDL_Swap16(_in[i]);
-			out[i] = (((float) swp / 65536.f) - 0.5) * 2;
-		}
-
-		break;
-	}
-	case AUDIO_S16LSB :
-	{
-		const int16_t *_in = static_cast<const int16_t*>(in);
-
-		while (i--)
-			out[i] = (float) _in[i] / 32768.f; // ???
-
-		break;
-	}
-	case AUDIO_S16MSB :
-	{
-		const int16_t *_in = static_cast<const int16_t*>(in);
-
-		while (i--)
-		{
-			int16_t swp = SDL_Swap16(_in[i]);
-			out[i] = (float) swp / 32768.f;
-		}
-
-		break;
-	}
-	qDebug() << "Unhandled sample format";
-	default: Q_ASSERT(0); // XXX
-	}
-}
-
 static uint8_t formatSampleSize(int sdlFormat)
 {
 	switch (sdlFormat)
@@ -183,10 +108,8 @@ static const int streamBufSize = 32768;
 
 struct SoundBuffer
 {
-	/* Filename, pitch.
-	 * Uniquely identifies this or equal buffer */
-	typedef QPair<QByteArray, int> Key;
-	Key key;
+	/* Uniquely identifies this or equal buffer */
+	QByteArray key;
 
 	AL::Buffer::ID alBuffer;
 
@@ -229,7 +152,7 @@ struct SoundBuffer
 struct SoundEmitter
 {
 	IntruList<SoundBuffer> buffers;
-	QHash<SoundBuffer::Key, SoundBuffer*> bufferHash;
+	QHash<QByteArray, SoundBuffer*> bufferHash;
 
 	/* Byte count sum of all cached / playing buffers */
 	uint32_t bufferBytes;
@@ -238,10 +161,6 @@ struct SoundEmitter
 	SoundBuffer *atchBufs[SE_SOURCES];
 	/* Index of next source to be used */
 	int srcIndex;
-
-#ifdef RUBBERBAND
-	std::vector<float> floatBuf;
-#endif
 
 	SoundEmitter()
 	    : bufferBytes(0),
@@ -252,9 +171,6 @@ struct SoundEmitter
 			alSrcs[i] = AL::Source::gen();
 			atchBufs[i] = 0;
 		}
-#ifdef RUBBERBAND
-		floatBuf.resize(streamBufSize/4);
-#endif
 	}
 
 	~SoundEmitter()
@@ -268,7 +184,7 @@ struct SoundEmitter
 				SoundBuffer::deref(atchBufs[i]);
 		}
 
-		QHash<SoundBuffer::Key, SoundBuffer*>::iterator iter;
+		QHash<QByteArray, SoundBuffer*>::iterator iter;
 		for (iter = bufferHash.begin(); iter != bufferHash.end(); ++iter)
 			delete iter.value();
 	}
@@ -278,8 +194,9 @@ struct SoundEmitter
 	          int pitch)
 	{
 		float _volume = clamp<int>(volume, 0, 100) / 100.f;
+		float _pitch  = clamp<int>(pitch, 50, 150) / 100.f;
 
-		SoundBuffer *buffer = allocateBuffer(filename, pitch);
+		SoundBuffer *buffer = allocateBuffer(filename);
 
 		int soundIndex = srcIndex++;
 		if (srcIndex > SE_SOURCES-1)
@@ -297,11 +214,9 @@ struct SoundEmitter
 		atchBufs[soundIndex] = SoundBuffer::ref(buffer);
 
 		AL::Source::attachBuffer(src, buffer->alBuffer);
-		AL::Source::setVolume(src, _volume);
 
-#ifndef RUBBERBAND
-		AL::Source::setPitch(src, clamp<int>(pitch, 50, 150) / 100.f);
-#endif
+		AL::Source::setVolume(src, _volume);
+		AL::Source::setPitch(src, _pitch);
 
 		AL::Source::play(src);
 	}
@@ -313,26 +228,9 @@ struct SoundEmitter
 	}
 
 private:
-#ifdef RUBBERBAND
-	void ensureFloatBufSize(uint32_t size)
+	SoundBuffer *allocateBuffer(const QByteArray &filename)
 	{
-		if (size <= floatBuf.size())
-			return;
-
-		floatBuf.resize(size);
-	}
-#endif
-
-	SoundBuffer *allocateBuffer(const QByteArray &filename,
-	                            int pitch)
-	{
-#ifndef RUBBERBAND
-		pitch = 100;
-#endif
-
-		SoundBuffer::Key soundKey(filename, pitch);
-
-		SoundBuffer *buffer = bufferHash.value(soundKey, 0);
+		SoundBuffer *buffer = bufferHash.value(filename, 0);
 
 		if (buffer)
 		{
@@ -364,34 +262,15 @@ private:
 			uint8_t sampleSize = formatSampleSize(sampleHandle->actual.format);
 			uint32_t sampleCount = decBytes / sampleSize;
 
-			uint32_t actSampleSize;
-#ifdef RUBBERBAND
-			actSampleSize = sizeof(float);
-#else
-			actSampleSize = sampleSize;
-#endif
-
 			buffer = new SoundBuffer;
-			buffer->key = soundKey;
-			buffer->bytes = actSampleSize * sampleCount;
+			buffer->key = filename;
+			buffer->bytes = sampleSize * sampleCount;
 
-			ALenum alFormat = chooseALFormat(actSampleSize, sampleHandle->actual.channels);
+			ALenum alFormat = chooseALFormat(sampleSize, sampleHandle->actual.channels);
 
-#ifdef RUBBERBAND
-			/* Fill float buffer */
-			ensureFloatBufSize(sampleCount);
-			genFloatSamples(sampleCount, sampleHandle->actual.format,
-			                sampleHandle->buffer, floatBuf.data());
-
-			// XXX apply stretcher
-
-			/* Upload data to AL */
-			AL::Buffer::uploadData(buffer->alBuffer, alFormat, floatBuf.data(),
-			                       buffer->bytes, sampleHandle->actual.rate);
-#else
 			AL::Buffer::uploadData(buffer->alBuffer, alFormat, sampleHandle->buffer,
 			                       buffer->bytes, sampleHandle->actual.rate);
-#endif
+
 			Sound_FreeSample(sampleHandle);
 
 			uint32_t wouldBeBytes = bufferBytes + buffer->bytes;
@@ -409,7 +288,7 @@ private:
 				SoundBuffer::deref(last);
 			}
 
-			bufferHash.insert(soundKey, buffer);
+			bufferHash.insert(filename, buffer);
 			buffers.prepend(buffer->link);
 
 			bufferBytes = wouldBeBytes;
@@ -457,12 +336,9 @@ struct SDLSoundSource : ALDataSource
 
 	SDLSoundSource(const std::string &filename,
 	               uint32_t maxBufSize,
-	               bool looped,
-	               float pitch)
+	               bool looped)
 	    : looped(looped)
 	{
-		(void) pitch;
-
 		const char *extension;
 		shState->fileSystem().openRead(ops,
 		                               filename.c_str(),
@@ -504,8 +380,6 @@ struct SDLSoundSource : ALDataSource
 
 		if (sample->flags & SOUND_SAMPLEFLAG_ERROR)
 			return ALDataSource::Error;
-
-		// XXX apply stretcher here
 
 		AL::Buffer::uploadData(alBuffer, alFormat, sample->buffer, decoded, alFreq);
 
@@ -644,8 +518,7 @@ struct ALStream
 		}
 	}
 
-	void open(const std::string &filename,
-	          float pitch)
+	void open(const std::string &filename)
 	{
 		checkStopped();
 
@@ -657,7 +530,7 @@ struct ALStream
 		case Stopped:
 			closeSource();
 		case Closed:
-			openSource(filename, pitch);
+			openSource(filename);
 		}
 
 		state = Stopped;
@@ -730,6 +603,11 @@ struct ALStream
 		AL::Source::setVolume(alSrc, value);
 	}
 
+	void setPitch(float value)
+	{
+		AL::Source::setPitch(alSrc, value);
+	}
+
 	State queryState()
 	{
 		checkStopped();
@@ -754,15 +632,10 @@ private:
 		delete source;
 	}
 
-	void openSource(const std::string &filename,
-	                float pitch)
+	void openSource(const std::string &filename)
 	{
-		source = new SDLSoundSource(filename, streamBufSize, looped, pitch);
+		source = new SDLSoundSource(filename, streamBufSize, looped);
 		needsRewind = false;
-
-#ifndef RUBBERBAND
-		AL::Source::setPitch(alSrc, pitch);
-#endif
 	}
 
 	void stopStream()
@@ -1084,19 +957,25 @@ struct AudioStream
 			return;
 		}
 
+		/* Requested audio file is different from current one */
+		bool diffFile = (filename != current.filename);
+
 		switch (sState)
 		{
 		case ALStream::Paused :
 		case ALStream::Playing :
 			stream.stop();
 		case ALStream::Stopped :
-			stream.close();
+			if (diffFile)
+				stream.close();
 		case ALStream::Closed :
+			if (diffFile)
+				stream.open(filename);
 			break;
 		}
 
-		stream.open(filename, _pitch);
 		setBaseVolume(_volume);
+		stream.setPitch(_pitch);
 
 		current.filename = filename;
 		current.volume = _volume;
