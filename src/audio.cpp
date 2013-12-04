@@ -1525,7 +1525,6 @@ struct AudioPrivate
 					{
 						/* BGM is stopped. -> MeNotPlaying */
 						bgm.setExtVolume1(1.0);
-						bgm.stream.play();
 						meWatch.state = MeNotPlaying;
 					}
 
