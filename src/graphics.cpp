@@ -35,8 +35,8 @@
 #include "binding.h"
 #include "perftimer.h"
 
-#include "SDL_video.h"
-#include "SDL_timer.h"
+#include <SDL_video.h>
+#include <SDL_timer.h>
 
 #include <time.h>
 

@@ -21,12 +21,12 @@
 
 #include "bitmap.h"
 
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-#include "SDL_rect.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_rect.h>
 
-#include "pixman.h"
+#include <pixman.h>
 
 #include <QString>
 #include <QChar>

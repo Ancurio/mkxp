@@ -48,8 +48,9 @@
 #define TRANSFORM_H
 
 #include "etc-internal.h"
-#include "math.h"
-#include "string.h"
+
+#include <math.h>
+#include <string.h>
 
 class Transform
 {

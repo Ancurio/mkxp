@@ -21,12 +21,12 @@
 
 #include "marshal.h"
 
-#include "mruby/array.h"
-#include "mruby/hash.h"
-#include "mruby/khash.h"
-#include "mruby/string.h"
-#include "mruby/variable.h"
-#include "mruby/class.h"
+#include <mruby/array.h>
+#include <mruby/hash.h>
+#include <mruby/khash.h>
+#include <mruby/string.h>
+#include <mruby/variable.h>
+#include <mruby/class.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +38,7 @@
 #include "rwmem.h"
 #include "exception.h"
 
-#include "SDL_timer.h"
+#include <SDL_timer.h>
 
 #include <QVector>
 #include <QHash>

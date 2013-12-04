@@ -34,14 +34,14 @@
 #include "quad.h"
 #include "tileatlas.h"
 
-#include "sigc++/connection.h"
+#include <sigc++/connection.h>
 
 #include <string.h>
 #include <stdint.h>
 
 #include <QVector>
 
-#include "SDL_surface.h"
+#include <SDL_surface.h>
 
 extern const StaticRect autotileRects[];
 

@@ -27,8 +27,6 @@
 #include "disposable.h"
 #include "util.h"
 
-#include "SFML/Graphics/Rect.hpp"
-
 struct ViewportPrivate;
 
 class Viewport : public Scene, public SceneElement, public Flashable, public Disposable

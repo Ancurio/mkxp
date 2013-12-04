@@ -20,9 +20,10 @@
 */
 
 #include "../binding-util.h"
-#include "mruby/string.h"
-#include "mruby/array.h"
-#include "mruby/class.h"
+
+#include <mruby/string.h>
+#include <mruby/array.h>
+#include <mruby/class.h>
 
 #include "time.h"
 #include <sys/time.h>

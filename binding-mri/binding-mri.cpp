@@ -28,9 +28,9 @@
 #include "./ruby/include/ruby.h"
 #include "./ruby/include/ruby/encoding.h"
 
-#include "zlib.h"
+#include <zlib.h>
 
-#include "SDL_filesystem.h"
+#include <SDL_filesystem.h>
 
 #include <QFile>
 #include <QByteArray>

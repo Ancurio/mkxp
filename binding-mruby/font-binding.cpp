@@ -24,7 +24,7 @@
 #include "binding-types.h"
 #include "exception.h"
 
-#include "mruby/string.h"
+#include <mruby/string.h>
 
 DEF_TYPE(Font);
 

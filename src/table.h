@@ -25,7 +25,7 @@
 #include "serializable.h"
 
 #include <stdint.h>
-#include "sigc++/signal.h"
+#include <sigc++/signal.h>
 
 class Table : public Serializable
 {

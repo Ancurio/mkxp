@@ -33,7 +33,7 @@
 #include "shader.h"
 #include "glstate.h"
 
-#include "sigc++/connection.h"
+#include <sigc++/connection.h>
 
 #include <QDebug>
 

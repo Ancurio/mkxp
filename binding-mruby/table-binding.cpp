@@ -24,8 +24,6 @@
 #include "binding-types.h"
 #include "serializable-binding.h"
 
-#include "mruby.h"
-
 #include <QDebug>
 
 DEF_TYPE(Table);

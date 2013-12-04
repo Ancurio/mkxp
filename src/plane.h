@@ -25,9 +25,6 @@
 #include "disposable.h"
 #include "viewport.h"
 
-#include "SFML/Graphics/Sprite.hpp"
-#include "SFML/Graphics/RectangleShape.hpp"
-
 class Bitmap;
 struct Color;
 struct Tone;

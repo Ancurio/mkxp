@@ -24,7 +24,7 @@
 #include "util.h"
 #include "exception.h"
 
-#include "physfs.h"
+#include <physfs.h>
 
 #include <SDL_sound.h>
 
@@ -32,8 +32,8 @@
 #include <QSet>
 #include <QByteArray>
 
-#include "stdio.h"
-#include "string.h"
+#include <stdio.h>
+#include <string.h>
 
 #include <QDebug>
 

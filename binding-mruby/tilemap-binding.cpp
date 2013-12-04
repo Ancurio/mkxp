@@ -28,7 +28,7 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
-#include "mruby/array.h"
+#include <mruby/array.h>
 
 static const mrb_data_type TilemapAutotilesType =
 {

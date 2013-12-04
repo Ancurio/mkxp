@@ -23,7 +23,6 @@
 #include "binding-util.h"
 #include "binding-types.h"
 #include "serializable-binding.h"
-#include "mruby/class.h"
 
 #include <QDebug>
 

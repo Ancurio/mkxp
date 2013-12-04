@@ -20,9 +20,11 @@
 */
 
 #include "glstate.h"
-#include "glew.h"
-#include "SDL_rect.h"
 #include "etc.h"
+
+#include <glew.h>
+
+#include <SDL_rect.h>
 
 void GLClearColor::apply(const Vec4 &value)
 {

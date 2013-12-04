@@ -22,11 +22,11 @@
 #include "file.h"
 
 #include "../binding-util.h"
-#include "mruby/string.h"
-#include "mruby/array.h"
-#include "mruby/class.h"
+#include <mruby/string.h>
+#include <mruby/array.h>
+#include <mruby/class.h>
 
-#include "SDL_rwops.h"
+#include <SDL_rwops.h>
 
 #include <stdio.h>
 #include <errno.h>

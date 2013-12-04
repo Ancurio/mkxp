@@ -22,11 +22,12 @@
 #ifndef QUADARRAY_H
 #define QUADARRAY_H
 
-#include <QtGlobal>
 #include "gl-util.h"
 #include "sharedstate.h"
 #include "global-ibo.h"
 #include "shader.h"
+
+#include <stdint.h>
 
 typedef uint32_t index_t;
 #define _GL_INDEX_TYPE GL_UNSIGNED_INT

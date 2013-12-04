@@ -27,9 +27,9 @@
 #include "quad.h"
 #include "glstate.h"
 
-#include "SDL_rect.h"
+#include <SDL_rect.h>
 
-#include "sigc++/connection.h"
+#include <sigc++/connection.h>
 
 #include <QDebug>
 

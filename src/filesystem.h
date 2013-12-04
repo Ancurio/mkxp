@@ -22,7 +22,7 @@
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
-#include "SDL_rwops.h"
+#include <SDL_rwops.h>
 
 struct FileSystemPrivate;
 

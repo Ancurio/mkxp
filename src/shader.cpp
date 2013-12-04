@@ -23,7 +23,7 @@
 #include "sharedstate.h"
 #include "glstate.h"
 
-#include "glew.h"
+#include <glew.h>
 
 #include <QFile>
 
@@ -47,6 +47,8 @@
 #include "../blurH.vert.xxd"
 #include "../blurV.vert.xxd"
 #endif
+
+#include <QDebug>
 
 
 #define INIT_SHADER(vert, frag) \

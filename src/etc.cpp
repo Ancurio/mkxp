@@ -24,8 +24,8 @@
 #include "serial-util.h"
 #include "exception.h"
 
-#include "SDL_types.h"
-#include "SDL_pixels.h"
+#include <SDL_types.h>
+#include <SDL_pixels.h>
 
 Color::Color(double red, double green, double blue, double alpha)
 	: red(red), green(green), blue(blue), alpha(alpha)

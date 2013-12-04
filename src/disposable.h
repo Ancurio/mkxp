@@ -24,7 +24,7 @@
 
 #include "exception.h"
 
-#include "sigc++/signal.h"
+#include <sigc++/signal.h>
 
 class Disposable
 {

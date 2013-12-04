@@ -19,14 +19,14 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "mruby.h"
-#include "mruby/string.h"
-#include "mruby/compile.h"
+#include <mruby.h>
+#include <mruby/string.h>
+#include <mruby/compile.h>
 
 #include <stdlib.h>
 #include <sys/time.h>
 
-#include "SDL_messagebox.h"
+#include <SDL_messagebox.h>
 
 #include "../binding-util.h"
 #include "marshal.h"

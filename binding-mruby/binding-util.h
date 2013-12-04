@@ -22,10 +22,10 @@
 #ifndef BINDINGUTIL_H
 #define BINDINGUTIL_H
 
-#include "mruby.h"
-#include "mruby/data.h"
-#include "mruby/variable.h"
-#include "mruby/class.h"
+#include <mruby.h>
+#include <mruby/data.h>
+#include <mruby/variable.h>
+#include <mruby/class.h>
 
 #include <stdio.h>
 

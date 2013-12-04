@@ -21,7 +21,6 @@
 
 #include "graphics.h"
 #include "sharedstate.h"
-#include "mruby.h"
 #include "binding-util.h"
 #include "exception.h"
 

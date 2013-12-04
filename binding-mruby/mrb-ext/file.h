@@ -24,7 +24,7 @@
 
 #include "../binding-util.h"
 
-#include "SDL_rwops.h"
+#include <SDL_rwops.h>
 
 struct FileImpl
 {

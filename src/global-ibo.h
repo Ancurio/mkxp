@@ -22,7 +22,7 @@
 #ifndef GLOBALIBO_H
 #define GLOBALIBO_H
 
-#include <gl-util.h>
+#include "gl-util.h"
 #include <QVector>
 
 struct GlobalIBO

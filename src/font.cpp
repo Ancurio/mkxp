@@ -27,7 +27,7 @@
 
 #include "../liberation.ttf.xxd"
 
-#include "SDL_ttf.h"
+#include <SDL_ttf.h>
 
 #include <QHash>
 #include <QByteArray>

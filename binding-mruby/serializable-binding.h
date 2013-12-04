@@ -25,7 +25,7 @@
 #include "serializable.h"
 #include "binding-util.h"
 
-#include "mruby/string.h"
+#include <mruby/string.h>
 
 template<class C>
 MRB_METHOD(serializableDump)
