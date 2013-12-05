@@ -322,6 +322,9 @@ void Sprite::draw()
 	if (p->bitmap->isDisposed())
 		return;
 
+	if (!p->opacity)
+		return;
+
 	if (emptyFlashFlag)
 		return;
 
