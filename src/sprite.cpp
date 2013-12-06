@@ -33,6 +33,8 @@
 #include "shader.h"
 #include "glstate.h"
 
+#include <SDL_rect.h>
+
 #include <sigc++/connection.h>
 
 #include <QDebug>
@@ -54,6 +56,12 @@ struct SpritePrivate
 	NormValue opacity;
 	BlendType blendType;
 
+	SDL_Rect sceneRect;
+
+	/* Would this sprite be visible on
+	 * the screen if drawn? */
+	bool isVisible;
+
 	Color *color;
 	Tone *tone;
 
@@ -70,10 +78,13 @@ struct SpritePrivate
 	      bushOpacity(128),
 	      opacity(255),
 	      blendType(BlendNormal),
+	      isVisible(false),
 	      color(&tmp.color),
 	      tone(&tmp.tone)
 
 	{
+		sceneRect.x = sceneRect.y = 0;
+
 		updateSrcRectCon();
 
 		prepareCon = shState->prepareDraw.connect
@@ -119,10 +130,45 @@ struct SpritePrivate
 				(sigc::mem_fun(this, &SpritePrivate::onSrcRectChange));
 	}
 
+	void updateVisibility()
+	{
+		isVisible = false;
+
+		if (!bitmap)
+			return;
+
+		if (bitmap->isDisposed())
+			return;
+
+		if (!opacity)
+			return;
+
+		/* Compare sprite bounding box against the scene */
+
+		/* If sprite is zoomed/rotated, just opt out for now
+		 * for simplicity's sake */
+		const Vec2 &scale = trans.getScale();
+		if (scale.x != 1 || scale.y != 1 || trans.getRotation() != 0)
+		{
+			isVisible = true;
+			return;
+		}
+
+		SDL_Rect self;
+		self.x = trans.getPosition().x - trans.getOrigin().x;
+		self.y = trans.getPosition().y - trans.getOrigin().y;
+		self.w = bitmap->width();
+		self.h = bitmap->height();
+
+		isVisible = SDL_HasIntersection(&self, &sceneRect);
+	}
+
 	void prepare()
 	{
 		if (bitmap)
 			bitmap->flush();
+
+		updateVisibility();
 	}
 };
 
@@ -316,13 +362,7 @@ void Sprite::releaseResources()
 /* SceneElement */
 void Sprite::draw()
 {
-	if (!p->bitmap)
-		return;
-
-	if (p->bitmap->isDisposed())
-		return;
-
-	if (!p->opacity)
+	if (!p->isVisible)
 		return;
 
 	if (emptyFlashFlag)
@@ -385,4 +425,7 @@ void Sprite::onGeometryChange(const Scene::Geometry &geo)
 	int yOffset = geo.rect.y - geo.yOrigin;
 
 	p->trans.setGlobalOffset(xOffset, yOffset);
+
+	p->sceneRect.w = geo.rect.w;
+	p->sceneRect.h = geo.rect.h;
 }
