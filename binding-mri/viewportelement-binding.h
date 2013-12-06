@@ -40,6 +40,32 @@ RB_METHOD(viewportElementGetViewport)
 	return rb_iv_get(self, "viewport");
 }
 
+#ifdef RGSS2
+
+template<class C>
+RB_METHOD(viewportElementSetViewport)
+{
+	RB_UNUSED_PARAM;
+
+	ViewportElement *ve = getPrivateData<C>(self);
+
+	VALUE viewportObj = Qnil;
+	Viewport *viewport = 0;
+
+	rb_get_args(argc, argv, "o", &viewportObj, RB_ARG_END);
+
+	if (rb_type(viewportObj) != RUBY_T_NIL)
+		viewport = getPrivateDataCheck<Viewport>(viewportObj, ViewportType);
+
+	GUARD_EXC( ve->setViewport(viewport); );
+
+	rb_iv_set(self, "viewport", viewportObj);
+
+	return viewportObj;
+}
+
+#endif
+
 template<class C>
 static C *
 viewportElementInitialize(int argc, VALUE *argv, VALUE self)
@@ -69,6 +95,10 @@ viewportElementBindingInit(VALUE klass)
 	sceneElementBindingInit<C>(klass);
 
 	_rb_define_method(klass, "viewport", viewportElementGetViewport<C>);
+
+#ifdef RGSS2
+	_rb_define_method(klass, "viewport=", viewportElementSetViewport<C>);
+#endif
 }
 
 #endif // VIEWPORTELEMENTBINDING_H
