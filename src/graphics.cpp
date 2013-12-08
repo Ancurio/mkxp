@@ -175,7 +175,13 @@ public:
 	void requestViewportRender(Vec4 &c, Vec4 &f, Vec4 &t)
 	{
 		pp.swapRender();
+
+		/* Scissor test _does_ affect FBO blit operations,
+		 * and since we're inside the draw cycle, it will
+		 * be turned on, so turn it off temporarily */
+		glState.scissorTest.pushSet(false);
 		pp.blitFBOs();
+		glState.scissorTest.pop();
 
 		PlaneShader &shader = shState->planeShader();
 		shader.bind();
