@@ -38,6 +38,7 @@
 
 #include <string.h>
 #include <stdint.h>
+#include <algorithm>
 
 #include <QVector>
 
@@ -638,8 +639,8 @@ struct TilemapPrivate
 		/* Blit autotiles */
 		Q_FOREACH (uint8_t i, atlas.usableATs)
 		{
-			int blitW = min(autotiles[i]->width(), atAreaW);
-			int blitH = min(autotiles[i]->height(), atAreaH);
+			int blitW = std::min(autotiles[i]->width(), atAreaW);
+			int blitH = std::min(autotiles[i]->height(), atAreaH);
 
 			FBO::bind(autotiles[i]->getGLTypes().fbo, FBO::Read);
 			FBO::blit(0, 0, 0, i*autotileH, blitW, blitH);

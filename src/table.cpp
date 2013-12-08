@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <algorithm>
 
 #include "serial-util.h"
 #include "exception.h"
@@ -77,9 +78,9 @@ void Table::resize(int x, int y, int z)
 	{
 		int16_t *newData = static_cast<int16_t*>(calloc(x * y * z, sizeof(int16_t)));
 
-		for (int i = 0; i < min(x, m_x); ++i)
-			for (int j = 0; j < min(y, m_y); ++j)
-				for (int k = 0; k < min(z, m_z); k++)
+		for (int i = 0; i < std::min(x, m_x); ++i)
+			for (int j = 0; j < std::min(y, m_y); ++j)
+				for (int k = 0; k < std::min(z, m_z); k++)
 				{
 					int index = x*y*k + x*j + i;
 					newData[index] = at(i, j, k);
@@ -118,8 +119,8 @@ void Table::resize(int x, int y)
 		{
 			int16_t *newData = static_cast<int16_t*>(calloc(x * y, sizeof(int16_t)));
 
-			for (int i = 0; i < min(x, m_x); ++i)
-				for (int j = 0; j < min(y, m_y); ++j)
+			for (int i = 0; i < std::min(x, m_x); ++i)
+				for (int j = 0; j < std::min(y, m_y); ++j)
 				{
 					int index = x*j + i;
 					newData[index] = at(i, j);

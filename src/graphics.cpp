@@ -39,11 +39,12 @@
 #include <SDL_timer.h>
 
 #include <time.h>
+#include <algorithm>
 
 struct PingPong
 {
 	TEXFBO rt[2];
-	unsigned srcInd, dstInd;
+	uint8_t srcInd, dstInd;
 	int screenW, screenH;
 
 	PingPong(int screenW, int screenH)
@@ -91,7 +92,7 @@ struct PingPong
 
 	void swapRender()
 	{
-		swapIndices();
+		std::swap(srcInd, dstInd);
 
 		/* Discard dest buffer */
 		TEX::bind(rt[dstInd].tex);
@@ -117,13 +118,6 @@ private:
 		TEX::bind(rt[srcInd].tex);
 		FBO::bind(rt[srcInd].fbo, FBO::Read);
 		FBO::bind(rt[dstInd].fbo, FBO::Draw);
-	}
-
-	void swapIndices()
-	{
-		unsigned tmp = srcInd;
-		srcInd = dstInd;
-		dstInd = tmp;
 	}
 };
 

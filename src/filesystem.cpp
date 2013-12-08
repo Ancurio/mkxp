@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <algorithm>
 
 #include <QDebug>
 
@@ -160,7 +161,7 @@ RGSS_ioRead(PHYSFS_Io *self, void *buffer, PHYSFS_uint64 len)
 
 	PHYSFS_Io *io = entry->io;
 
-	uint64_t toRead = min<uint64_t>(entry->data.size - entry->currentOffset, len);
+	uint64_t toRead = std::min<uint64_t>(entry->data.size - entry->currentOffset, len);
 	uint64_t offs = entry->currentOffset;
 
 	io->seek(io, entry->data.offset + offs);
@@ -188,7 +189,7 @@ RGSS_ioRead(PHYSFS_Io *self, void *buffer, PHYSFS_uint64 len)
 	if (preAlign == 4)
 		preAlign = 0;
 	else
-		preAlign = min<uint64_t>(preAlign, len);
+		preAlign = std::min<uint64_t>(preAlign, len);
 
 	uint8_t postAlign = (len > preAlign) ? (offs + len) % 4 : 0;
 

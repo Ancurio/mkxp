@@ -46,18 +46,6 @@ static inline T clamp(T value, T min, T max)
 	return value;
 }
 
-template<typename T>
-static inline T min(T value1, T value2)
-{
-	return (value1 < value2) ? value1 : value2;
-}
-
-template<typename T>
-static inline T max(T value1, T value2)
-{
-	return (value1 > value2) ? value1 : value2;
-}
-
 static inline int
 findNextPow2(int start)
 {
