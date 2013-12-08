@@ -184,11 +184,6 @@ void Viewport::composite()
 	if (elements.getSize() == 0 && !renderEffect)
 		return;
 
-	// What to do here:
-	// 1. Setup scissor box
-	// 2. Geometry offsets for elements should be taken care off by Scene
-	// 3. Call Scene::composite, or manually iterate and draw??
-
 	/* Setup scissor */
 	glState.scissorTest.pushSet(true);
 	glState.scissorBox.pushSet(p->rect->toIntRect());
