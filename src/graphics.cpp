@@ -511,18 +511,11 @@ struct GraphicsPrivate
 		          threadData->config.smoothScaling ? FBO::Linear : FBO::Nearest);
 	}
 
-	/* Blits currently bound read FBO to screen (upside-down) */
-	void blitToScreen()
-	{
-		FBO::unbind(FBO::Draw);
-		FBO::clear();
-		blitBufferFlippedScaled();
-	}
-
 	void redrawScreen()
 	{
 		screen.composite();
-		blitToScreen();
+		FBO::clear();
+		blitBufferFlippedScaled();
 
 		swapGLBuffer();
 	}
@@ -644,7 +637,9 @@ void Graphics::transition(int duration,
 
 		/* Then blit it flipped and scaled to the screen */
 		FBO::bind(p->transBuffer.fbo, FBO::Read);
-		p->blitToScreen();
+		FBO::unbind(FBO::Draw);
+		FBO::clear();
+		p->blitBufferFlippedScaled();
 
 		p->swapGLBuffer();
 	}
