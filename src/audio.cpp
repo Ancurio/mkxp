@@ -1132,11 +1132,33 @@ struct AudioStream
 	/* Volume set by external threads,
 	 * such as for fade-in/out.
 	 * Multiplied with intVolume for final
-	 * playback volume */
+	 * playback volume.
+	 * fadeVolume: used by fade-out thread.
+	 * extVolume: used by MeWatch. */
 	float fadeVolume;
 	float extVolume;
 
+	/* Note that 'extPaused' and 'noResumeStop' are
+	 * effectively only used with the AudioStream
+	 * instance representing the BGM */
+
+	/* Flag indicating that the MeWatch paused this
+	 * (BGM) stream because a ME started playing.
+	 * While this flag is set, calls to 'play()'
+	 * might open another file, but will not start
+	 * the playback stream (the MeWatch will start
+	 * it as soon as the ME finished playing). */
 	bool extPaused;
+
+	/* Flag indicating that this stream shouldn't be
+	 * started by the MeWatch when it is in stopped
+	 * state (eg. because the BGM stream was explicitly
+	 * stopped by the user script while the ME was playing.
+	 * When a new BGM is started (via 'play()') while an ME
+	 * is playing, the file will be loaded without starting
+	 * the stream, but we want the MeWatch to start it as
+	 * soon as the ME ends, so we unset this flag. */
+	bool noResumeStop;
 
 	ALStream stream;
 	SDL_mutex *streamMut;
@@ -1169,6 +1191,7 @@ struct AudioStream
 	      fadeVolume(1.0),
 	      extVolume(1.0),
 	      extPaused(false),
+	      noResumeStop(false),
 	      stream(loopMode)
 	{
 		current.volume = 1.0;
@@ -1261,6 +1284,8 @@ struct AudioStream
 
 		if (!extPaused)
 			stream.play(offset);
+		else
+			noResumeStop = false;
 
 		unlockStream();
 	}
@@ -1270,6 +1295,8 @@ struct AudioStream
 		finiFadeInt();
 
 		lockStream();
+
+		noResumeStop = true;
 
 		stream.stop();
 
@@ -1554,6 +1581,10 @@ struct AudioPrivate
 					{
 						/* BGM is stopped. -> MeNotPlaying */
 						bgm.setExtVolume1(1.0);
+
+						if (!bgm.noResumeStop)
+							bgm.stream.play();
+
 						meWatch.state = MeNotPlaying;
 					}
 
