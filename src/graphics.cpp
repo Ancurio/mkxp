@@ -687,13 +687,16 @@ void Graphics::fadeout(int duration)
 	if (p->frozen)
 		FBO::bind(p->frozenScene.fbo, FBO::Read);
 
+	FBO::unbind(FBO::Draw);
+
 	for (int i = duration-1; i > -1; --i)
 	{
 		setBrightness((255.0 / duration) * i);
 
 		if (p->frozen)
 		{
-			p->blitToScreen();
+			FBO::clear();
+			p->blitBufferFlippedScaled();
 			p->swapGLBuffer();
 		}
 		else
@@ -708,13 +711,16 @@ void Graphics::fadein(int duration)
 	if (p->frozen)
 		FBO::bind(p->frozenScene.fbo, FBO::Read);
 
+	FBO::unbind(FBO::Draw);
+
 	for (int i = 0; i < duration; ++i)
 	{
 		setBrightness((255.0 / duration) * i);
 
 		if (p->frozen)
 		{
-			p->blitToScreen();
+			FBO::clear();
+			p->blitBufferFlippedScaled();
 			p->swapGLBuffer();
 		}
 		else
