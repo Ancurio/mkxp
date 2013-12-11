@@ -41,6 +41,7 @@
 #include <SDL_sound.h>
 
 #ifdef RGSS2
+#define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
 #endif
 
