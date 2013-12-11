@@ -24,8 +24,6 @@
 
 #include "etc-internal.h"
 
-#include <QVector>
-
 /* Tiled Quads
  *
  * These functions enable drawing a tiled subrectangle
