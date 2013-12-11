@@ -378,7 +378,7 @@ void Sprite::draw()
 
 	if (renderEffect)
 	{
-		SpriteShader &shader = shState->spriteShader();
+		SpriteShader &shader = shState->shaders().sprite;
 
 		shader.bind();
 		shader.applyViewportProj();
@@ -400,7 +400,7 @@ void Sprite::draw()
 	}
 	else
 	{
-		SimpleSpriteShader &shader = shState->simpleSpriteShader();
+		SimpleSpriteShader &shader = shState->shaders().simpleSprite;
 		shader.bind();
 
 		shader.setSpriteMat(p->trans.getMatrix());

@@ -247,4 +247,25 @@ private:
 	GLint u_source, u_destination, u_subRect, u_opacity;
 };
 
+/* Global object containing all available shaders */
+struct ShaderSet
+{
+	SimpleShader simple;
+	SimpleColorShader simpleColor;
+	SimpleAlphaShader simpleAlpha;
+	SimpleSpriteShader simpleSprite;
+	SpriteShader sprite;
+	PlaneShader plane;
+	FlashMapShader flashMap;
+	TransShader trans;
+	SimpleTransShader simpleTrans;
+	HueShader hue;
+	BltShader blt;
+
+#ifdef RGSS2
+	SimpleMatrixShader simpleMatrix;
+	BlurShader blur;
+#endif
+};
+
 #endif // SHADER_H

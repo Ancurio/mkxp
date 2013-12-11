@@ -65,22 +65,7 @@ struct SharedStatePrivate
 
 	GLState _glState;
 
-	SimpleShader simpleShader;
-	SimpleColorShader simpleColorShader;
-	SimpleAlphaShader simpleAlphaShader;
-	SimpleSpriteShader simpleSpriteShader;
-	SpriteShader spriteShader;
-	PlaneShader planeShader;
-	FlashMapShader flashMapShader;
-	TransShader transShader;
-	SimpleTransShader sTransShader;
-	HueShader hueShader;
-	BltShader bltShader;
-
-#ifdef RGSS2
-	SimpleMatrixShader simpleMatrixShader;
-	BlurShader blurShader;
-#endif
+	ShaderSet shaders;
 
 	TexPool texPool;
 	FontPool fontPool;
@@ -192,25 +177,10 @@ GSATT(Graphics&, graphics)
 GSATT(Input&, input)
 GSATT(Audio&, audio)
 GSATT(GLState&, _glState)
-GSATT(SimpleShader&, simpleShader)
-GSATT(SimpleColorShader&, simpleColorShader)
-GSATT(SimpleAlphaShader&, simpleAlphaShader)
-GSATT(SimpleSpriteShader&, simpleSpriteShader)
-GSATT(SpriteShader&, spriteShader)
-GSATT(PlaneShader&, planeShader)
-GSATT(FlashMapShader&, flashMapShader)
-GSATT(TransShader&, transShader)
-GSATT(SimpleTransShader&, sTransShader)
-GSATT(HueShader&, hueShader)
-GSATT(BltShader&, bltShader)
+GSATT(ShaderSet&, shaders)
 GSATT(TexPool&, texPool)
 GSATT(FontPool&, fontPool)
 GSATT(Quad&, gpQuad)
-
-#ifdef RGSS2
-GSATT(SimpleMatrixShader&, simpleMatrixShader)
-GSATT(BlurShader&, blurShader)
-#endif
 
 void SharedState::setBindingData(void *data)
 {

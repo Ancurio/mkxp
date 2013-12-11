@@ -204,7 +204,7 @@ void Plane::draw()
 
 	if (p->color->hasEffect() || p->tone->hasEffect() || p->opacity != 255)
 	{
-		PlaneShader &shader = shState->planeShader();
+		PlaneShader &shader = shState->shaders().plane;
 
 		shader.bind();
 		shader.applyViewportProj();
@@ -217,7 +217,7 @@ void Plane::draw()
 	}
 	else
 	{
-		SimpleShader &shader = shState->simpleShader();
+		SimpleShader &shader = shState->shaders().simple;
 
 		shader.bind();
 		shader.applyViewportProj();

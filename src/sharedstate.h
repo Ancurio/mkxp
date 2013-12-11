@@ -34,6 +34,7 @@ struct mrb_state;
 struct SDL_Window;
 struct TEXFBO;
 struct Quad;
+struct ShaderSet;
 
 class Scene;
 class FileSystem;
@@ -42,18 +43,6 @@ class Graphics;
 class Input;
 class Audio;
 class GLState;
-class SimpleShader;
-class SimpleColorShader;
-class SimpleAlphaShader;
-class SimpleSpriteShader;
-class SimpleMatrixShader;
-class SpriteShader;
-class PlaneShader;
-class FlashMapShader;
-class TransShader;
-class SimpleTransShader;
-class HueShader;
-class BltShader;
 class TexPool;
 class FontPool;
 class Font;
@@ -84,22 +73,7 @@ struct SharedState
 
 	GLState &_glState();
 
-	SimpleShader &simpleShader();
-	SimpleColorShader &simpleColorShader();
-	SimpleAlphaShader &simpleAlphaShader();
-	SimpleSpriteShader &simpleSpriteShader();
-	SpriteShader &spriteShader();
-	PlaneShader &planeShader();
-	FlashMapShader &flashMapShader();
-	TransShader &transShader();
-	SimpleTransShader &sTransShader();
-	HueShader &hueShader();
-	BltShader &bltShader();
-
-#ifdef RGSS2
-	SimpleMatrixShader &simpleMatrixShader();
-	BlurShader &blurShader();
-#endif
+	ShaderSet &shaders();
 
 	TexPool &texPool();
 	FontPool &fontPool();

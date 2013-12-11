@@ -154,7 +154,7 @@ public:
 #ifdef RGSS2
 		if (brightEffect)
 		{
-			SimpleColorShader &shader = shState->simpleColorShader();
+			SimpleColorShader &shader = shState->shaders().simpleColor;
 			shader.bind();
 			shader.applyViewportProj();
 			shader.setTranslation(Vec2i());
@@ -177,7 +177,7 @@ public:
 		pp.blitFBOs();
 		glState.scissorTest.pop();
 
-		PlaneShader &shader = shState->planeShader();
+		PlaneShader &shader = shState->shaders().plane;
 		shader.bind();
 		shader.setColor(c);
 		shader.setFlash(f);
@@ -585,7 +585,7 @@ void Graphics::transition(int duration,
 	 * we can use a simplified shader */
 	if (transMap)
 	{
-		TransShader &shader = shState->transShader();
+		TransShader &shader = shState->shaders().trans;
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
@@ -596,7 +596,7 @@ void Graphics::transition(int duration,
 	}
 	else
 	{
-		SimpleTransShader &shader = shState->sTransShader();
+		SimpleTransShader &shader = shState->shaders().simpleTrans;
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
@@ -617,9 +617,9 @@ void Graphics::transition(int duration,
 		const float prog = i * (1.0 / duration);
 
 		if (transMap)
-			shState->transShader().setProg(prog);
+			shState->shaders().trans.setProg(prog);
 		else
-			shState->sTransShader().setProg(prog);
+			shState->shaders().simpleTrans.setProg(prog);
 
 		/* Draw the composed frame to a buffer first
 		 * (we need this because we're skipping PingPong) */

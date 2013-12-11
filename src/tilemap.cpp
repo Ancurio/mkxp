@@ -1114,7 +1114,7 @@ GroundLayer::GroundLayer(TilemapPrivate *p, Viewport *viewport)
 
 void GroundLayer::draw()
 {
-	SimpleShader &shader = shState->simpleShader();
+	SimpleShader &shader = shState->shaders().simple;
 	shader.bind();
 	shader.applyViewportProj();
 
@@ -1142,7 +1142,7 @@ void GroundLayer::draw()
 		glState.blendMode.pushSet(BlendAddition);
 		glState.texture2D.pushSet(false);
 
-		FlashMapShader &shader = shState->flashMapShader();
+		FlashMapShader &shader = shState->shaders().flashMap;
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setAlpha(flashAlpha[p->flash.alphaIdx] / 255.f);
@@ -1199,7 +1199,7 @@ void ScanRow::draw()
 	if (batchedFlag)
 		return;
 
-	SimpleShader &shader = shState->simpleShader();
+	SimpleShader &shader = shState->shaders().simple;
 	shader.bind();
 	shader.applyViewportProj();
 

@@ -162,7 +162,7 @@ struct BitmapPrivate
 		if (pointArray.count() == 0)
 			return;
 
-		SimpleColorShader &shader = shState->simpleColorShader();
+		SimpleColorShader &shader = shState->shaders().simpleColor;
 		shader.bind();
 		shader.setTranslation(Vec2i());
 
@@ -396,7 +396,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		                     ((float) source.width() / sourceRect.w) * ((float) destRect.w / gpTex.width),
 		                     ((float) source.height() / sourceRect.h) * ((float) destRect.h / gpTex.height));
 
-		BltShader &shader = shState->bltShader();
+		BltShader &shader = shState->shaders().blt;
 		shader.bind();
 		shader.setDestination(gpTex.tex);
 		shader.setSubRect(bltSubRect);
@@ -465,7 +465,7 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	flush();
 
-	SimpleColorShader &shader = shState->simpleColorShader();
+	SimpleColorShader &shader = shState->shaders().simpleColor;
 	shader.bind();
 	shader.setTranslation(Vec2i());
 
@@ -530,7 +530,7 @@ void Bitmap::blur()
 
 	TEXFBO auxTex = shState->texPool().request(width(), height());
 
-	BlurShader &shader = shState->blurShader();
+	BlurShader &shader = shState->shaders().blur;
 	BlurShader::HPass &pass1 = shader.pass1;
 	BlurShader::VPass &pass2 = shader.pass2;
 
@@ -632,7 +632,7 @@ void Bitmap::radialBlur(int angle, int divisions)
 
 	glState.blendMode.pushSet(BlendAddition);
 
-	SimpleMatrixShader &shader = shState->simpleMatrixShader();
+	SimpleMatrixShader &shader = shState->shaders().simpleMatrix;
 	shader.bind();
 
 	p->bindTexture(shader);
@@ -740,7 +740,7 @@ void Bitmap::hueChange(int hue)
 	hue = wrapRange(hue, 0, 359);
 	float hueAdj = -((M_PI * 2) / 360) * hue;
 
-	HueShader &shader = shState->hueShader();
+	HueShader &shader = shState->shaders().hue;
 	shader.bind();
 	shader.setHueAdjust(hueAdj);
 
@@ -911,7 +911,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		                  (float) gpTexSize.x / gpTex2.width,
 		                  (float) gpTexSize.y / gpTex2.height);
 
-		BltShader &shader = shState->bltShader();
+		BltShader &shader = shState->shaders().blt;
 		shader.bind();
 		shader.setTexSize(gpTexSize);
 		shader.setSource();

@@ -422,7 +422,7 @@ struct WindowPrivate
 		glState.viewport.pushSet(IntRect(0, 0, baseTex.width, baseTex.height));
 		glState.clearColor.pushSet(Vec4());
 
-		SimpleAlphaShader &shader = shState->simpleAlphaShader();
+		SimpleAlphaShader &shader = shState->shaders().simpleAlpha;
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setTranslation(Vec2i());
@@ -560,7 +560,7 @@ struct WindowPrivate
 		Vec2i trans(position.x + sceneOffset.x,
 		            position.y + sceneOffset.y);
 
-		SimpleAlphaShader &shader = shState->simpleAlphaShader();
+		SimpleAlphaShader &shader = shState->shaders().simpleAlpha;
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setTranslation(trans);
@@ -609,7 +609,7 @@ struct WindowPrivate
 		glState.scissorBox.push();
 		glState.scissorBox.setIntersect(windowRect);
 
-		SimpleAlphaShader &shader = shState->simpleAlphaShader();
+		SimpleAlphaShader &shader = shState->shaders().simpleAlpha;
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setTranslation(Vec2i(effectX, effectY));
