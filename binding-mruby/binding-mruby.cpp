@@ -30,10 +30,10 @@
 #include <mruby/proc.h>
 #include <mruby/dump.h>
 
-#include "binding-util.h"
-
 #include <stdio.h>
 #include <zlib.h>
+
+#include <string>
 
 #include <SDL_messagebox.h>
 #include <SDL_rwops.h>
@@ -45,6 +45,7 @@
 #include "filesystem.h"
 #include "exception.h"
 
+#include "binding-util.h"
 #include "binding-types.h"
 #include "mrb-ext/marshal.h"
 
@@ -180,9 +181,9 @@ checkException(mrb_state *mrb)
 
 
 static void
-showError(const QByteArray &msg)
+showError(const std::string &msg)
 {
-	shState->eThread().showMessageBox(msg.constData());
+	shState->eThread().showMessageBox(msg.c_str());
 }
 
 static void
@@ -245,17 +246,17 @@ runMrbFile(mrb_state *mrb, const char *filename)
 static void
 runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 {
-	const QByteArray &scriptPack = shState->rtData().config.game.scripts;
+	const std::string &scriptPack = shState->rtData().config.game.scripts;
 
-	if (scriptPack.isEmpty())
+	if (scriptPack.empty())
 	{
 		showError("No game scripts specified (missing Game.ini?)");
 		return;
 	}
 
-	if (!shState->fileSystem().exists(scriptPack.constData()))
+	if (!shState->fileSystem().exists(scriptPack.c_str()))
 	{
-		showError("Unable to open '" + scriptPack + "'");
+		showError(std::string("Unable to open '") + scriptPack + "'");
 		return;
 	}
 
@@ -263,10 +264,10 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 	mrb_state *scriptMrb = mrb_open();
 	SDL_RWops ops;
 
-	shState->fileSystem().openRead(ops, scriptPack.constData());
+	shState->fileSystem().openRead(ops, scriptPack.c_str());
 
 	mrb_value scriptArray = mrb_nil_value();
-	QByteArray readError;
+	std::string readError;
 
 	try
 	{
@@ -275,22 +276,22 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 	catch (const Exception &e)
 	{
 		char buffer[512];
-		snprintf(buffer, sizeof(buffer), e.fmt.constData(), e.arg1.constData(), e.arg2.constData());
-		readError = QByteArray(": ") + QByteArray(buffer);
+		snprintf(buffer, sizeof(buffer), e.fmt.c_str(), e.arg1.c_str(), e.arg2.c_str());
+		readError = std::string(": ") + std::string(buffer);
 	}
 
 	SDL_RWclose(&ops);
 
 	if (!mrb_array_p(scriptArray))
 	{
-		showError(QByteArray("Failed to read script data") + readError);
+		showError(std::string("Failed to read script data") + readError);
 		mrb_close(scriptMrb);
 		return;
 	}
 
 	int scriptCount = mrb_ary_len(scriptMrb, scriptArray);
 
-	QByteArray decodeBuffer;
+	std::string decodeBuffer;
 	decodeBuffer.resize(0x1000);
 
 	for (int i = 0; i < scriptCount; ++i)
@@ -309,7 +310,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 		while (true)
 		{
 			unsigned char *bufferPtr =
-			        reinterpret_cast<unsigned char*>(const_cast<char*>(decodeBuffer.constData()));
+			        reinterpret_cast<unsigned char*>(const_cast<char*>(decodeBuffer.c_str()));
 			unsigned char *sourcePtr =
 			        reinterpret_cast<unsigned char*>(RSTRING_PTR(scriptString));
 
@@ -342,7 +343,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 		int ai = mrb_gc_arena_save(mrb);
 
 		/* Execute code */
-		mrb_load_nstring_cxt(mrb, decodeBuffer.constData(), bufferLen, ctx);
+		mrb_load_nstring_cxt(mrb, decodeBuffer.c_str(), bufferLen, ctx);
 
 		mrb_gc_arena_restore(mrb, ai);
 
@@ -370,14 +371,15 @@ static void mrbBindingExecute()
 	mrbc_context *ctx = mrbc_context_new(mrb);
 	ctx->capture_errors = 1;
 
-	Config &conf = shState->rtData().config;
-	QByteArray &customScript = conf.customScript;
-	QByteArray mrbFile = conf.bindingConf.value("mrbFile").toByteArray();
+	const Config &conf = shState->rtData().config;
+	const std::string &customScript = conf.customScript;
+//	const std::string &mrbFile = conf.mrbFile;
+	(void) runMrbFile; // FIXME mrbFile support on ice for now
 
-	if (!customScript.isEmpty())
-		runCustomScript(mrb, ctx, customScript.constData());
-	else if (!mrbFile.isEmpty())
-		runMrbFile(mrb, mrbFile.constData());
+	if (!customScript.empty())
+		runCustomScript(mrb, ctx, customScript.c_str());
+//	else if (!mrbFile.empty())
+//		runMrbFile(mrb, mrbFile.c_str());
 	else
 		runRMXPScripts(mrb, ctx);
 

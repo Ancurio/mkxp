@@ -22,10 +22,11 @@
 #include "shader.h"
 #include "sharedstate.h"
 #include "glstate.h"
+#include "debugwriter.h"
 
 #include <glew.h>
 
-#include <QFile>
+#include <assert.h>
 
 #include "../sprite.frag.xxd"
 #include "../hue.frag.xxd"
@@ -48,16 +49,14 @@
 #include "../blurV.vert.xxd"
 #endif
 
-#include <QDebug>
-
 
 #define INIT_SHADER(vert, frag) \
 { \
 	Shader::init(shader_##vert##_vert, shader_##vert##_vert_len, shader_##frag##_frag, shader_##frag##_frag_len); \
-	qDebug() << "    From:" << #vert ".vert" << #frag ".frag"; \
+	Debug() << "    From:" << #vert ".vert" << #frag ".frag"; \
 }
 
-#define COMP(shader) qDebug() << "--- Compiling " #shader
+#define COMP(shader) Debug() << "--- Compiling " #shader
 
 #define GET_U(name) u_##name = glGetUniformLocation(program, #name)
 
@@ -98,14 +97,14 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	glCompileShader(vertShader);
 
 	glGetObjectParameterivARB(vertShader, GL_COMPILE_STATUS, &success);
-	Q_ASSERT(success);
+	assert(success); // FIXME should really throw here instead
 
 	/* Compile fragment shader */
 	glShaderSource(fragShader, 1, (const GLchar**) &frag, (const GLint*) &fragSize);
 	glCompileShader(fragShader);
 
 	glGetObjectParameterivARB(fragShader, GL_COMPILE_STATUS, &success);
-	Q_ASSERT(success);
+	assert(success);
 
 	/* Link shader program */
 	glAttachShader(program, vertShader);
@@ -118,23 +117,17 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	glLinkProgram(program);
 
 	glGetObjectParameterivARB(program, GL_LINK_STATUS, &success);
-	Q_ASSERT(success);
+	assert(success);
 }
 
 void Shader::initFromFile(const char *_vertFile, const char *_fragFile)
 {
-	QFile vertFile(_vertFile);
-	vertFile.open(QFile::ReadOnly);
-	QByteArray vertContents = vertFile.readAll();
-	vertFile.close();
+	std::string vertContents, fragContents;
+	readFile(_vertFile, vertContents);
+	readFile(_fragFile, fragContents);
 
-	QFile fragFile(_fragFile);
-	fragFile.open(QFile::ReadOnly);
-	QByteArray fragContents = fragFile.readAll();
-	fragFile.close();
-
-	init((const unsigned char*) vertContents.constData(), vertContents.size(),
-	     (const unsigned char*) fragContents.constData(), fragContents.size());
+	init((const unsigned char*) vertContents.c_str(), vertContents.size(),
+	     (const unsigned char*) fragContents.c_str(), fragContents.size());
 }
 
 void Shader::setVec4Uniform(GLint location, const Vec4 &vec)

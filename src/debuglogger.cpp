@@ -20,42 +20,30 @@
 */
 
 #include "debuglogger.h"
+#include "debugwriter.h"
 
 #include <glew.h>
-
-#include <QFile>
-#include <QTime>
-#include <QTextStream>
-#include <QDebug>
+#include <iostream>
 
 struct DebugLoggerPrivate
 {
-	QFile logFile;
-	QTextStream *stream;
+	std::ostream *stream;
 
 	DebugLoggerPrivate(const char *logFilename)
 	{
-		if (logFilename)
-		{
-			logFile.setFileName(logFilename);
-			logFile.open(QFile::WriteOnly);
-			stream = new QTextStream(&logFile);
-		}
-		else
-		{
-			stream = new QTextStream(stderr, QIODevice::WriteOnly);
-		}
+		(void) logFilename;
+
+		stream = &std::clog;
 	}
 
 	~DebugLoggerPrivate()
 	{
-		delete stream;
 	}
 
 	void writeTimestamp()
 	{
-		QTime time = QTime::currentTime();
-		*stream << "[" << time.toString().toLatin1() << "] ";
+		// FIXME reintroduce proper time stamps (is this even necessary??)
+		*stream << "[GLDEBUG] ";
 	}
 
 	void writeLine(const char *line)
@@ -114,7 +102,7 @@ DebugLogger::DebugLogger(const char *filename)
 	else if (GLEW_AMD_debug_output)
 		glDebugMessageCallbackAMD(amdDebugFunc, p);
 	else
-		qDebug() << "DebugLogger: no debug extensions found";
+		Debug() << "DebugLogger: no debug extensions found";
 }
 
 DebugLogger::~DebugLogger()

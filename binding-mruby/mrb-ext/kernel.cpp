@@ -36,8 +36,6 @@
 #include "filesystem.h"
 #include "binding.h"
 
-#include <QDebug>
-
 void mrbBindingTerminate();
 
 MRB_FUNCTION(kernelEval)

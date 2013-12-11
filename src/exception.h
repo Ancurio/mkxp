@@ -22,7 +22,7 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
-#include <QByteArray>
+#include <string>
 #include <stdio.h>
 
 struct Exception
@@ -44,19 +44,19 @@ struct Exception
 	};
 
 	Type type;
-	QByteArray fmt;
-	QByteArray arg1;
-	QByteArray arg2;
+	std::string fmt;
+	std::string arg1;
+	std::string arg2;
 
-	Exception(Type type, QByteArray fmt,
-	          QByteArray arg1 = QByteArray(),
-	          QByteArray arg2 = QByteArray())
+	Exception(Type type, std::string fmt,
+	          std::string arg1 = std::string(),
+	          std::string arg2 = std::string())
 	    : type(type), fmt(fmt), arg1(arg1), arg2(arg2)
 	{}
 
 	void snprintf(char *buffer, size_t bufSize) const
 	{
-		::snprintf(buffer, bufSize, fmt.constData(), arg1.constData(), arg2.constData());
+		::snprintf(buffer, bufSize, fmt.c_str(), arg1.c_str(), arg2.c_str());
 	}
 };
 

@@ -22,7 +22,7 @@
 #ifndef BINDING_UTIL_H
 #define BINDING_UTIL_H
 
-#include "./ruby/ruby.h"
+#include <ruby.h>
 
 enum RbException
 {
@@ -134,7 +134,7 @@ int
 rb_get_args(int argc, VALUE *argv, const char *format, ...);
 
 /* Always terminate 'rb_get_args' with this */
-#ifndef QT_NO_DEBUG
+#ifndef NDEBUG
 #  define RB_ARG_END_VAL ((void*) -1)
 #  define RB_ARG_END ,RB_ARG_END_VAL
 #else

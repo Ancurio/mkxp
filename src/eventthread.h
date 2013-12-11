@@ -30,7 +30,7 @@
 #include <SDL_mouse.h>
 #include <SDL_mutex.h>
 
-#include <QByteArray>
+#include <string>
 
 #include <stdint.h>
 
@@ -173,7 +173,7 @@ struct RGSSThreadData
 
 	Config config;
 
-	QByteArray rgssErrorMsg;
+	std::string rgssErrorMsg;
 
 	volatile bool rqScreenshot;
 

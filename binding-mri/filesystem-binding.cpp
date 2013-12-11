@@ -27,8 +27,6 @@
 #include "ruby/encoding.h"
 #include "ruby/intern.h"
 
-#include <QDebug>
-
 DEF_TYPE(FileInt);
 
 static VALUE

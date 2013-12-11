@@ -26,8 +26,7 @@
 #include "util.h"
 
 #include <stdarg.h>
-
-#include <QDebug>
+#include <assert.h>
 
 void initType(rb_data_type_struct &type,
               const char *name,
@@ -244,7 +243,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 		}
 	}
 
-#ifndef QT_NO_DEBUG
+#ifndef NDEBUG
 
 	/* Pop remaining arg pointers off
 	 * the stack to check for RB_ARG_END */
@@ -288,8 +287,8 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 
 	/* Verify correct termination */
 	void *argEnd = va_arg(ap, void*);
-	Q_UNUSED(argEnd);
-	Q_ASSERT(argEnd == RB_ARG_END_VAL);
+	(void) argEnd;
+	assert(argEnd == RB_ARG_END_VAL);
 
 #endif
 

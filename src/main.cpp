@@ -27,13 +27,14 @@
 #include <SDL_ttf.h>
 #include <SDL_sound.h>
 
+#include <string>
+
 #include "sharedstate.h"
 #include "eventthread.h"
 #include "debuglogger.h"
+#include "debugwriter.h"
 
 #include "binding.h"
-
-#include <QDebug>
 
 static const char *reqExt[] =
 {
@@ -53,7 +54,7 @@ static const char *reqExt[] =
 };
 
 static void
-rgssThreadError(RGSSThreadData *rtData, const QByteArray &msg)
+rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
 {
 	rtData->rgssErrorMsg = msg;
 	rtData->ethread->requestTerminate();
@@ -69,10 +70,10 @@ glGetStringInt(GLenum name)
 static void
 printGLInfo()
 {
-	qDebug() << "GL Vendor    :" << glGetStringInt(GL_VENDOR);
-	qDebug() << "GL Renderer  :" << glGetStringInt(GL_RENDERER);
-	qDebug() << "GL Version   :" << glGetStringInt(GL_VERSION);
-	qDebug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
+	Debug() << "GL Vendor    :" << glGetStringInt(GL_VENDOR);
+	Debug() << "GL Renderer  :" << glGetStringInt(GL_RENDERER);
+	Debug() << "GL Version   :" << glGetStringInt(GL_VERSION);
+	Debug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
 }
 
 int rgssThreadFun(void *userdata)
@@ -91,7 +92,7 @@ int rgssThreadFun(void *userdata)
 
 	if (!glCtx)
 	{
-		rgssThreadError(threadData, QByteArray("Error creating context: ") + SDL_GetError());
+		rgssThreadError(threadData, std::string("Error creating context: ") + SDL_GetError());
 		return 0;
 	}
 
@@ -121,7 +122,7 @@ int rgssThreadFun(void *userdata)
 	{
 		if (!glewIsSupported(reqExt[i]))
 		{
-			rgssThreadError(threadData, QByteArray("Required GL extension \"")
+			rgssThreadError(threadData, std::string("Required GL extension \"")
 			                            + reqExt[i] + "\" not present");
 			SDL_GL_DeleteContext(glCtx);
 			return 0;
@@ -181,7 +182,7 @@ int main(int, char *argv[])
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
-		qDebug() << "Error initializing SDL:" << SDL_GetError();
+		Debug() << "Error initializing SDL:" << SDL_GetError();
 
 		return 0;
 	}
@@ -189,7 +190,7 @@ int main(int, char *argv[])
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 	if (IMG_Init(imgFlags) != imgFlags)
 	{
-		qDebug() << "Error initializing SDL_image:" << SDL_GetError();
+		Debug() << "Error initializing SDL_image:" << SDL_GetError();
 		SDL_Quit();
 
 		return 0;
@@ -197,7 +198,7 @@ int main(int, char *argv[])
 
 	if (TTF_Init() < 0)
 	{
-		qDebug() << "Error initializing SDL_ttf:" << SDL_GetError();
+		Debug() << "Error initializing SDL_ttf:" << SDL_GetError();
 		IMG_Quit();
 		SDL_Quit();
 
@@ -206,7 +207,7 @@ int main(int, char *argv[])
 
 	if (Sound_Init() == 0)
 	{
-		qDebug() << "Error initializing SDL_sound:" << Sound_GetError();
+		Debug() << "Error initializing SDL_sound:" << Sound_GetError();
 		TTF_Quit();
 		IMG_Quit();
 		SDL_Quit();
@@ -224,13 +225,13 @@ int main(int, char *argv[])
 	if (conf.fullscreen)
 		winFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-	win = SDL_CreateWindow(conf.game.title.constData(),
+	win = SDL_CreateWindow(conf.game.title.c_str(),
 	                       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 	                       conf.defScreenW, conf.defScreenH, winFlags);
 
 	if (!win)
 	{
-		qDebug() << "Error creating window";
+		Debug() << "Error creating window";
 		return 0;
 	}
 
@@ -254,7 +255,7 @@ int main(int, char *argv[])
 		/* We can stop waiting when the request was ack'd */
 		if (rtData.rqTermAck)
 		{
-			qDebug() << "RGSS thread ack'd request after" << i*10 << "ms";
+			Debug() << "RGSS thread ack'd request after" << i*10 << "ms";
 			break;
 		}
 
@@ -267,17 +268,17 @@ int main(int, char *argv[])
 	if (rtData.rqTermAck)
 		SDL_WaitThread(rgssThread, 0);
 	else
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, conf.game.title.constData(),
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, conf.game.title.c_str(),
 		                         "The RGSS script seems to be stuck and mkxp will now force quit", win);
 
-	if (!rtData.rgssErrorMsg.isEmpty())
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, conf.game.title.constData(),
-		                         rtData.rgssErrorMsg.constData(), win);
+	if (!rtData.rgssErrorMsg.empty())
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, conf.game.title.c_str(),
+		                         rtData.rgssErrorMsg.c_str(), win);
 
 	/* Clean up any remainin events */
 	eventThread.cleanup();
 
-	qDebug() << "Shutting down.";
+	Debug() << "Shutting down.";
 
 	SDL_DestroyWindow(win);
 

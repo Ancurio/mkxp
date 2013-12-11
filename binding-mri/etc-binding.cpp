@@ -23,8 +23,6 @@
 #include "binding-util.h"
 #include "serializable-binding.h"
 
-#include <QDebug>
-
 DEF_TYPE(Color);
 DEF_TYPE(Tone);
 DEF_TYPE(Rect);

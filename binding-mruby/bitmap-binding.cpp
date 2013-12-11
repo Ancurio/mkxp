@@ -26,8 +26,6 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
-#include <QDebug>
-
 #define DISP_CLASS_NAME "bitmap"
 
 DEF_TYPE(Bitmap);

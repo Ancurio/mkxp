@@ -25,6 +25,8 @@
 #include "disposable.h"
 #include "binding-util.h"
 
+#include <string.h>
+
 template<class C>
 MRB_METHOD(disposableDispose)
 {

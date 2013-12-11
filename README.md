@@ -5,7 +5,7 @@ mkxp is a project that seeks to provide a fully open source implementation of th
 It is licensed under the GNU General Public License v2+.
 
 ## Bindings
-Bindings provide the glue code for an interpreted language environment to run game scripts in. As of right now, they are compiled directly into the executable (however, the scripting language itself might not be). Currently there are three bindings:
+Bindings provide the glue code for an interpreted language environment to run game scripts in. Currently there are three bindings:
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
@@ -15,8 +15,6 @@ Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version 
 For a list of differences, see:
 http://stackoverflow.com/questions/21574/what-is-the-difference-between-ruby-1-8-and-ruby-1-9
 
-To select this binding, run `qmake BINDING=BINDING_MRI`
-
 ### mruby (Lightweight Ruby)
 Website: https://github.com/mruby/mruby
 
@@ -24,23 +22,20 @@ mruby is a new endeavor by Matz and others to create a more lightweight, spec-ad
 
 Due to heavy differences between mruby and MRI as well as lacking modules, running RPG Maker games with this binding will most likely not work correctly. It is provided as experimental code. You can eg. write your own ruby scripts and run them.
 
-Some extensions to the standard classes/modules are provided taking the RPG Maker XP helpfile as a quasi "standard". These include Marshal, File, FileTest and Time.
+Some extensions to the standard classes/modules are provided, taking the RPG Maker XP helpfile as a quasi "reference". These include Marshal, File, FileTest and Time.
 
 **Important:** If you decide to use [mattn's oniguruma regexp gem](https://github.com/mattn/mruby-onig-regexp), don't forget to add `-lonig` to the linker flags to avoid ugly symbol overlaps with libc.
-
-To select this binding, run `qmake BINDING=BINDING_MRUBY`
 
 ### null
 This binding only exists for testing purposes and does nothing (the engine quits immediately). It can be used to eg. run a minimal RGSS game loop directly in C++.
 
-To select this binding, run `qmake BINDING=BINDING_NULL`
+## Dependencies / Building
 
-## Dependencies
-
-* QtCore 4.8
-* libsigc++
-* PhysFS
-* glew
+* Boost.Unordered (headers only)
+* Boost.Program_options
+* libsigc++ 2.0
+* PhysFS (latest hg)
+* GLEW >= 1.7
 * OpenAL
 * SDL2
 * SDL2_image
@@ -49,44 +44,44 @@ To select this binding, run `qmake BINDING=BINDING_NULL`
 * pixman
 * zlib (only ruby bindings)
 
-(If no version specified, assume latest *development version*, ie. freshest one from git/hg/svn)
+mkxp employs Qt's qmake build system, so you'll need to install that beforehand.
+
+qmake will use pkg-config to locate the respective include/library paths. If you installed any dependencies into non-standard prefixes, make sure to adjust your `PKG_CONFIG_PATH` variable accordingly.
+
+The exception is boost, which is weird in that it still hasn't managed to pull off pkg-config support (seriously?). *If you installed boost in a non-standard prefix*, you will need to pass its include path via `BOOST_I` and library path via `BOOST_L`, either as direct arguments to qmake (`qmake BOOST_I="/usr/include" ...`) or via environment variables.
+
+**MRI-Binding**: pkg-config will look for `ruby-2.1.pc`, but you can modify mkxp.pro to use 2.0 instead. This is the default binding, so no arguments to qmake needed (`BINDING=BINDING_MRI` to be explicit).
+
+**MRuby-Binding**: place the "mruby" folder into the project folder and build it first. Add `BINDING=BINDING_MRUBY` to qmake's arguments.
+
+**Null-Binding**: Add `BINDING=BINDING_NULL` to qmake's arguments.
 
 ### Supported image/audio formats
-These depend on the auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
- 
-### MRI binding:
-Place a recent version of ruby in the project folder, apply all patches from "patches/ruby" and build it.
-
-### mruby binding:
-Place a recent version of mruby in the project folder and build it.
+These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
 
 To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed.
 
-## Building
-
-mkxp employs Qt's qmake build system, so you'll need to install that beforehand. After cloning mkxp, run one of the above qmake calls, or simply `qmake` to select the default binding (currently MRI), then `make`.
-
 ## Configuration
 
-mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. The "[General]" group may contain following entries:
+mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Following entries are interpreted:
 
-| Key              | Type        | Default | Description                                                                     |
-| ---------------- | ----------- | ------- | ------------------------------------------------------------------------------- |
-| debugMode        | bool        | false   | Log OpenGL debug information to the console                                     |
-| winResizable     | bool        | false   | Game window is resizable                                                        |
-| fullscreen       | bool        | false   | Start game in fullscreen (this can always be toggled with Alt-Enter at runtime) |
-| fixedAspectRatio | bool        | true    | Don't stretch the game screen to fit the window size                            |
-| smoothScaling    | bool        | false   | Apply linear interpolation when game screen is stretched                        |
-| vsync            | bool        | false   | Sync screen redraws to the monitor refresh rate                                 |
-| defScreenW       | int         | 640     | Width the game window starts in (this is **not** the game resolution)           |
-| defScreenH       | int         | 480     | Height the game window starts in                                                |
-| fixedFramerate   | int         | 0       | FPS will be fixed to this amount. Ignored if 0.                                 |
-| frameSkip        | bool        | true    | Skip frames to catch up (useful to disable eg. with Valgrind)                   |
-| solidFonts       | bool        | false   | Don't use alpha blending for fonts                                              |
-| gameFolder       | string      | "."     | mkxp will look for all game related files here                                  |
-| allowSymlinks    | bool        | false   | Allow symlinks to be followed in the game folder.                               |
-| customScript     | string      | ""      | Execute a raw ruby script file instead of an RPG Maker game.                    |
-| RTPs             | string list | ""      | A list of space separated paths to RTPs to be used (See next section)           |
+| Key              | Type   | Default | Description                                                                     |
+| ---------------- | ------ | ------- | ------------------------------------------------------------------------------- |
+| debugMode        | bool   | false   | Log OpenGL debug information to the console                                     |
+| winResizable     | bool   | false   | Game window is resizable                                                        |
+| fullscreen       | bool   | false   | Start game in fullscreen (this can always be toggled with Alt-Enter at runtime) |
+| fixedAspectRatio | bool   | true    | Don't stretch the game screen to fit the window size                            |
+| smoothScaling    | bool   | false   | Apply linear interpolation when game screen is stretched                        |
+| vsync            | bool   | false   | Sync screen redraws to the monitor refresh rate                                 |
+| defScreenW       | int    | 640     | Width the game window starts in (this is **not** the game resolution)           |
+| defScreenH       | int    | 480     | Height the game window starts in                                                |
+| fixedFramerate   | int    | 0       | FPS will be fixed to this amount. Ignored if 0.                                 |
+| frameSkip        | bool   | true    | Skip frames to catch up (useful to disable eg. with Valgrind)                   |
+| solidFonts       | bool   | false   | Don't use alpha blending for fonts                                              |
+| gameFolder       | string | "."     | mkxp will look for all game related files here                                  |
+| allowSymlinks    | bool   | false   | Allow symlinks to be followed in the game folder.                               |
+| customScript     | string | ""      | Execute a raw ruby script file instead of an RPG Maker game.                    |
+| RTP              | string | ""      | Path to a Run Time Package to be used. Can be specified multiple times.         |
 
 ## RTPs
 

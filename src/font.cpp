@@ -24,16 +24,15 @@
 #include "sharedstate.h"
 #include "filesystem.h"
 #include "exception.h"
+#include "boost-hash.h"
+#include "util.h"
+
+#include <string>
+#include <utility>
 
 #include "../liberation.ttf.xxd"
 
 #include <SDL_ttf.h>
-
-#include <QHash>
-#include <QByteArray>
-#include <QPair>
-
-#include <QDebug>
 
 #define BUNDLED_FONT liberation
 
@@ -44,11 +43,17 @@
 #define BNDL_F_D(f) BUNDLED_FONT_D(f)
 #define BNDL_F_L(f) BUNDLED_FONT_L(f)
 
-typedef QPair<QByteArray, int> FontKey;
+typedef std::pair<std::string, int> FontKey;
+
+static void strToLower(std::string &str)
+{
+	for (size_t i = 0; i < str.size(); ++i)
+		str[i] = tolower(str[i]);
+}
 
 struct FontPoolPrivate
 {
-	QHash<FontKey, TTF_Font*> hash;
+	BoostHash<FontKey, TTF_Font*> hash;
 };
 
 FontPool::FontPool()
@@ -58,9 +63,9 @@ FontPool::FontPool()
 
 FontPool::~FontPool()
 {
-	QHash<FontKey, TTF_Font*>::const_iterator iter;
-	for (iter = p->hash.begin(); iter != p->hash.end(); ++iter)
-		TTF_CloseFont(iter.value());
+	BoostHash<FontKey, TTF_Font*>::const_iterator iter;
+	for (iter = p->hash.cbegin(); iter != p->hash.cend(); ++iter)
+		TTF_CloseFont(iter->second);
 
 	delete p;
 }
@@ -71,16 +76,22 @@ static SDL_RWops *openBundledFont()
 }
 
 _TTF_Font *FontPool::request(const char *filename,
-                            int size)
+                             int size)
 {
 	// FIXME Find out how font path resolution is done in VX/Ace
-	QByteArray nameKey = QByteArray(filename).toLower();
-	nameKey.replace(' ', '_');
+	std::string nameKey(filename);
+	strToLower(nameKey);
+	strReplace(nameKey, ' ', '_');
 
 	bool useBundled = false;
-	QByteArray path = QByteArray("Fonts/") + nameKey;
-	if (!shState->fileSystem().exists(path.constData(), FileSystem::Font))
+	std::string path = std::string("Fonts/") + nameKey;
+	if (!shState->fileSystem().exists(path.c_str(), FileSystem::Font))
 	{
+		/* Use the same name key for the bundled font
+		 * even when it resulted from multiple different
+		 * font name requests. The space at the front is
+		 * to prevent collisions (spaces are normally
+		 * replaced with '_' */
 		useBundled = true;
 		nameKey = " bundled";
 	}
@@ -90,14 +101,9 @@ _TTF_Font *FontPool::request(const char *filename,
 	TTF_Font *font = p->hash.value(key, 0);
 
 	if (font)
-	{
-//		static int i=0;qDebug() << "FontPool: <?+>" << i++;
 		return font;
-	}
 
-//	qDebug() << "FontPool: <?->";
-
-	/* Not in hash, create */
+	/* Not in hash, open */
 	SDL_RWops *ops;
 
 	if (useBundled)
@@ -107,7 +113,7 @@ _TTF_Font *FontPool::request(const char *filename,
 	else
 	{
 		ops = SDL_AllocRW();
-		shState->fileSystem().openRead(*ops, path.constData(), FileSystem::Font, true);
+		shState->fileSystem().openRead(*ops, path.c_str(), FileSystem::Font, true);
 	}
 
 	// FIXME 0.9 is guesswork at this point
@@ -124,7 +130,7 @@ _TTF_Font *FontPool::request(const char *filename,
 
 struct FontPrivate
 {
-	QByteArray name;
+	std::string name;
 	int size;
 	bool bold;
 	bool italic;
@@ -132,7 +138,7 @@ struct FontPrivate
 
 	Color colorTmp;
 
-	static QByteArray defaultName;
+	static std::string defaultName;
 	static int defaultSize;
 	static bool defaultBold;
 	static bool defaultItalic;
@@ -144,15 +150,15 @@ struct FontPrivate
 
 	FontPrivate(const char *name = 0,
 	            int size = 0)
-	    : name(name ? QByteArray(name) : defaultName),
+	    : name(name ? std::string(name) : defaultName),
 	      size(size ? size : defaultSize),
 	      bold(defaultBold),
 	      italic(defaultItalic),
 	      color(&colorTmp),
 	      colorTmp(*defaultColor)
 	{
-		sdlFont = shState->fontPool().request(this->name.constData(),
-		                                     this->size);
+		sdlFont = shState->fontPool().request(this->name.c_str(),
+		                                      this->size);
 	}
 
 	FontPrivate(const FontPrivate &other)
@@ -166,19 +172,19 @@ struct FontPrivate
 	{}
 };
 
-QByteArray FontPrivate::defaultName   = "Arial";
-int        FontPrivate::defaultSize   = 22;
-bool       FontPrivate::defaultBold   = false;
-bool       FontPrivate::defaultItalic = false;
-Color     *FontPrivate::defaultColor  = &FontPrivate::defaultColorTmp;
+std::string FontPrivate::defaultName   = "Arial";
+int         FontPrivate::defaultSize   = 22;
+bool        FontPrivate::defaultBold   = false;
+bool        FontPrivate::defaultItalic = false;
+Color      *FontPrivate::defaultColor  = &FontPrivate::defaultColorTmp;
 
 Color FontPrivate::defaultColorTmp(255, 255, 255, 255);
 
 bool Font::doesExist(const char *name)
 {
-	QByteArray path = QByteArray("fonts/") + QByteArray(name);
+	std::string path = std::string("fonts/") + std::string(name);
 
-	return shState->fileSystem().exists(path.constData(), FileSystem::Font);
+	return shState->fileSystem().exists(path.c_str(), FileSystem::Font);
 }
 
 Font::Font(const char *name,
@@ -199,7 +205,7 @@ Font::~Font()
 
 const char *Font::getName() const
 {
-	return p->name.constData();
+	return p->name.c_str();
 }
 
 void Font::setName(const char *value)
@@ -213,7 +219,7 @@ void Font::setSize(int value)
 		return;
 
 	p->size = value;
-	p->sdlFont = shState->fontPool().request(p->name.constData(), value);
+	p->sdlFont = shState->fontPool().request(p->name.c_str(), value);
 }
 
 #undef CHK_DISP
@@ -231,7 +237,7 @@ DEF_ATTR_SIMPLE_STATIC(Font, DefaultColor, Color*, FontPrivate::defaultColor)
 
 const char *Font::getDefaultName()
 {
-	return FontPrivate::defaultName.constData();
+	return FontPrivate::defaultName.c_str();
 }
 
 void Font::setDefaultName(const char *value)

@@ -28,9 +28,6 @@
 
 #include <pixman.h>
 
-#include <QString>
-#include <QChar>
-
 #include "gl-util.h"
 #include "quad.h"
 #include "quadarray.h"
@@ -944,6 +941,50 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	modified();
 }
 
+/* http://www.lemoda.net/c/utf8-to-ucs2/index.html */
+static uint16_t utf8_to_ucs2(const char *_input,
+                             const char **end_ptr)
+{
+	const unsigned char *input =
+	        reinterpret_cast<const unsigned char*>(_input);
+	*end_ptr = _input;
+
+	if (input[0] == 0)
+		return -1;
+
+	if (input[0] < 0x80)
+	{
+		*end_ptr = _input + 1;
+
+		return input[0];
+	}
+
+	if ((input[0] & 0xE0) == 0xE0)
+	{
+		if (input[1] == 0 || input[2] == 0)
+			return -1;
+
+		*end_ptr = _input + 3;
+
+		return (input[0] & 0x0F)<<12 |
+		       (input[1] & 0x3F)<<6  |
+		       (input[2] & 0x3F);
+	}
+
+	if ((input[0] & 0xC0) == 0xC0)
+	{
+		if (input[1] == 0)
+			return -1;
+
+		*end_ptr = _input + 2;
+
+		return (input[0] & 0x1F)<<6  |
+		       (input[1] & 0x3F);
+	}
+
+	return -1;
+}
+
 IntRect Bitmap::textSize(const char *str)
 {
 	GUARD_DISPOSED;
@@ -955,10 +996,14 @@ IntRect Bitmap::textSize(const char *str)
 	int w, h;
 	TTF_SizeUTF8(font, str, &w, &h);
 
-	QString qstr = QString::fromUtf8(str);
+	/* If str is one character long, *endPtr == 0 */
+	const char *endPtr;
+	uint16_t ucs2 = utf8_to_ucs2(str, &endPtr);
 
-	if (p->font->getItalic() && qstr.length() == 1)
-		TTF_GlyphMetrics(font, qstr.at(0).unicode(), 0, 0, 0, 0, &w);
+	/* For cursive characters, returning the advance
+	 * as width yields better results */
+	if (p->font->getItalic() && *endPtr == '\0')
+		TTF_GlyphMetrics(font, ucs2, 0, 0, 0, 0, &w);
 
 	return IntRect(0, 0, w, h);
 }

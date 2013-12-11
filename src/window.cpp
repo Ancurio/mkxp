@@ -36,8 +36,6 @@
 
 #include <sigc++/connection.h>
 
-#include <QDebug>
-
 template<typename T>
 struct Sides
 {

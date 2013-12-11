@@ -5,7 +5,29 @@ QT =
 TARGET = mkxp
 DEPENDPATH += src shader assets
 INCLUDEPATH += . src
-QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
+LIBS += -lGL
+
+# Deal with boost paths...
+isEmpty(BOOST_I) {
+	BOOST_I = $$(BOOST_I)
+}
+isEmpty(BOOST_I) {}
+else {
+	INCLUDEPATH += $$BOOST_I
+}
+
+isEmpty(BOOST_L) {
+	BOOST_L = $$(BOOST_L)
+}
+isEmpty(BOOST_L) {}
+else {
+	LIBS += -L$$BOOST_L
+}
+
+LIBS += -lboost_program_options
+
+
+CONFIG(release, debug|release): DEFINES += NDEBUG
 
 isEmpty(BINDING) {
 	BINDING = BINDING_MRI
@@ -19,17 +41,13 @@ RGSS2 {
 
 unix {
 	CONFIG += link_pkgconfig
-	PKGCONFIG += QtCore sigc++-2.0 glew pixman-1 zlib \
-	             physfs sdl2 SDL2_image SDL2_ttf SDL_sound \
-	             openal
+	PKGCONFIG += sigc++-2.0 glew pixman-1 zlib physfs \
+	             sdl2 SDL2_image SDL2_ttf SDL_sound openal
 
 	RGSS2 {
 		PKGCONFIG += vorbisfile
 	}
 }
-
-# 'slots' keyword fucks with libsigc++
-DEFINES += QT_NO_KEYWORDS
 
 # Input
 HEADERS += \
@@ -72,7 +90,9 @@ HEADERS += \
 	src/tileatlas.h \
 	src/perftimer.h \
 	src/sharedstate.h \
-	src/al-util.h
+	src/al-util.h \
+	src/boost-hash.h \
+	src/debugwriter.h
 
 SOURCES += \
 	src/main.cpp \
@@ -185,9 +205,7 @@ BINDING_MRUBY {
 }
 
 BINDING_MRI {
-	LIBS += ./ruby/libruby.so
-	INCLUDEPATH += ruby/include ruby/.ext/include/x86_64-linux # need i386 paths here too!
-	DEPENDPATH += ruby/include ruby/.ext/include/x86_64-linux
+	PKGCONFIG += ruby-2.1
 	DEFINES += BINDING_MRI
 
 #	EMBED2 = binding-mri/module_rpg.rb

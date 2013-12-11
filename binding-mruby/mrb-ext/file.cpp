@@ -21,6 +21,8 @@
 
 #include "file.h"
 
+#include "debugwriter.h"
+
 #include "../binding-util.h"
 #include <mruby/string.h>
 #include <mruby/array.h>
@@ -35,8 +37,6 @@
 #include <sys/stat.h>
 
 #include <vector>
-
-#include <QDebug>
 
 extern mrb_value timeFromSecondsInt(mrb_state *mrb, time_t seconds);
 
@@ -87,7 +87,7 @@ getOpenMode(const char *mode)
 	STR_CASE("a", Write)
 	STR_CASE("a+", ReadWrite)
 
-	qDebug() << "getOpenMode failed for:" << mode;
+	Debug() << "getOpenMode failed for:" << mode;
 	return 0;
 }
 
@@ -225,7 +225,7 @@ MRB_FUNCTION(fileExpandPath)
 
 	// FIXME No idea how to integrate 'default_dir' right now
 	if (defDir)
-		qDebug() << "FIXME: File.expand_path: default_dir not implemented";
+		Debug() << "FIXME: File.expand_path: default_dir not implemented";
 
 	char buffer[512];
 	char *unused = realpath(path, buffer);
@@ -457,7 +457,7 @@ MRB_METHOD(fileReadLines)
 	const char *rs = "\n"; (void) rs;
 	if (mrb->c->ci->argc > 0)
 	{
-		qDebug() << "FIXME: File.readlines: rs not implemented";
+		Debug() << "FIXME: File.readlines: rs not implemented";
 
 		if (mrb_string_p(arg))
 			rs = RSTRING_PTR(arg);

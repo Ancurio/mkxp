@@ -29,10 +29,9 @@
 
 #include "sharedstate.h"
 #include "graphics.h"
+#include "debugwriter.h"
 
 #include <string.h>
-
-#include <QDebug>
 
 bool EventThread::keyStates[] = { false };
 
@@ -97,7 +96,7 @@ void EventThread::process(RGSSThreadData &rtData)
 	{
 		if (!SDL_WaitEvent(&event))
 		{
-			qDebug() << "EventThread: Event error";
+			Debug() << "EventThread: Event error";
 			break;
 		}
 
@@ -141,7 +140,7 @@ void EventThread::process(RGSSThreadData &rtData)
 		case SDL_QUIT :
 		case REQUEST_TERMINATION :
 			terminate = true;
-			qDebug() << "EventThread termination requested";
+			Debug() << "EventThread termination requested";
 			break;
 
 		case SDL_KEYDOWN :
@@ -173,13 +172,13 @@ void EventThread::process(RGSSThreadData &rtData)
 					if (fullscreen)
 					{
 						/* Prevent fullscreen flicker */
-						strncpy(pendingTitle, rtData.config.game.title.constData(),
+						strncpy(pendingTitle, rtData.config.game.title.c_str(),
 						        sizeof(pendingTitle));
 						havePendingTitle = true;
 						break;
 					}
 
-					SDL_SetWindowTitle(win, rtData.config.game.title.constData());
+					SDL_SetWindowTitle(win, rtData.config.game.title.c_str());
 				}
 
 				break;
@@ -201,7 +200,7 @@ void EventThread::process(RGSSThreadData &rtData)
 
 		case REQUEST_MESSAGEBOX :
 			SDL_ShowSimpleMessageBox(event.user.code,
-			                         rtData.config.game.title.constData(),
+			                         rtData.config.game.title.c_str(),
 			                         (const char*) event.user.data1, win);
 			free(event.user.data1);
 			msgBoxDone = true;
@@ -217,7 +216,7 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
 
 			snprintf(buffer, sizeof(buffer), "%s - %d FPS",
-			         rtData.config.game.title.constData(), event.user.code);
+			         rtData.config.game.title.c_str(), event.user.code);
 
 			/* Updating the window title in fullscreen
 			 * mode seems to cause flickering */

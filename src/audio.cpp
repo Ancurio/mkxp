@@ -27,12 +27,12 @@
 #include "filesystem.h"
 #include "exception.h"
 #include "al-util.h"
-
-#include <QByteArray>
-#include <QHash>
+#include "boost-hash.h"
+#include "debugwriter.h"
 
 #include <vector>
 #include <string>
+#include <assert.h>
 
 #include <SDL_audio.h>
 #include <SDL_thread.h>
@@ -46,8 +46,6 @@
 #endif
 
 #include <alc.h>
-
-#include <QDebug>
 
 #define AUDIO_SLEEP 10
 #define SE_SOURCES 6
@@ -71,8 +69,8 @@ static uint8_t formatSampleSize(int sdlFormat)
 		return 4;
 
 	default:
-		qDebug() << "Unhandled sample format";
-		Q_ASSERT(0);
+		Debug() << "Unhandled sample format";
+		abort();
 	}
 
 	return 0;
@@ -87,23 +85,23 @@ static ALenum chooseALFormat(int sampleSize, int channelCount)
 		{
 		case 1 : return AL_FORMAT_MONO8;
 		case 2 : return AL_FORMAT_STEREO8;
-		default: Q_ASSERT(0);
+		default: abort();
 		}
 	case 2 :
 		switch (channelCount)
 		{
 		case 1 : return AL_FORMAT_MONO16;
 		case 2 : return AL_FORMAT_STEREO16;
-		default : Q_ASSERT(0);
+		default : abort();
 		}
 	case 4 :
 		switch (channelCount)
 		{
 		case 1 : return AL_FORMAT_MONO_FLOAT32;
 		case 2 : return AL_FORMAT_STEREO_FLOAT32;
-		default : Q_ASSERT(0);
+		default : abort();
 		}
-	default : Q_ASSERT(0);
+	default : abort();
 	}
 
 	return 0;
@@ -114,7 +112,7 @@ static const int streamBufSize = 32768;
 struct SoundBuffer
 {
 	/* Uniquely identifies this or equal buffer */
-	QByteArray key;
+	std::string key;
 
 	AL::Buffer::ID alBuffer;
 
@@ -135,11 +133,6 @@ struct SoundBuffer
 		alBuffer = AL::Buffer::gen();
 	}
 
-	~SoundBuffer()
-	{
-		AL::Buffer::del(alBuffer);
-	}
-
 	static SoundBuffer *ref(SoundBuffer *buffer)
 	{
 		++buffer->refCount;
@@ -152,12 +145,20 @@ struct SoundBuffer
 		if (--buffer->refCount == 0)
 			delete buffer;
 	}
+
+private:
+	~SoundBuffer()
+	{
+		AL::Buffer::del(alBuffer);
+	}
 };
 
 struct SoundEmitter
 {
+	typedef BoostHash<std::string, SoundBuffer*> BufferHash;
+
 	IntruList<SoundBuffer> buffers;
-	QHash<QByteArray, SoundBuffer*> bufferHash;
+	BufferHash bufferHash;
 
 	/* Byte count sum of all cached / playing buffers */
 	uint32_t bufferBytes;
@@ -189,12 +190,12 @@ struct SoundEmitter
 				SoundBuffer::deref(atchBufs[i]);
 		}
 
-		QHash<QByteArray, SoundBuffer*>::iterator iter;
-		for (iter = bufferHash.begin(); iter != bufferHash.end(); ++iter)
-			delete iter.value();
+		BufferHash::const_iterator iter;
+		for (iter = bufferHash.cbegin(); iter != bufferHash.cend(); ++iter)
+			SoundBuffer::deref(iter->second);
 	}
 
-	void play(const QByteArray &filename,
+	void play(const std::string &filename,
 	          int volume,
 	          int pitch)
 	{
@@ -233,7 +234,7 @@ struct SoundEmitter
 	}
 
 private:
-	SoundBuffer *allocateBuffer(const QByteArray &filename)
+	SoundBuffer *allocateBuffer(const std::string &filename)
 	{
 		SoundBuffer *buffer = bufferHash.value(filename, 0);
 
@@ -252,7 +253,7 @@ private:
 			SDL_RWops dataSource;
 			const char *extension;
 
-			shState->fileSystem().openRead(dataSource, filename.constData(),
+			shState->fileSystem().openRead(dataSource, filename.c_str(),
 			                               FileSystem::Audio, false, &extension);
 
 			Sound_Sample *sampleHandle = Sound_NewSample(&dataSource, extension, 0, streamBufSize);
@@ -285,7 +286,7 @@ private:
 			while (wouldBeBytes > SE_CACHE_MEM && !buffers.isEmpty())
 			{
 				SoundBuffer *last = buffers.tail();
-				bufferHash.remove(last->key);
+				bufferHash.erase(last->key);
 				buffers.remove(last->link);
 
 				wouldBeBytes -= last->bytes;

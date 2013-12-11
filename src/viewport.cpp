@@ -31,8 +31,6 @@
 
 #include <sigc++/connection.h>
 
-#include <QDebug>
-
 struct ViewportPrivate
 {
 	/* Needed for geometry changes */

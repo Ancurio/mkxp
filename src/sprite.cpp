@@ -37,8 +37,6 @@
 
 #include <sigc++/connection.h>
 
-#include <QDebug>
-
 struct SpritePrivate
 {
 	Bitmap *bitmap;

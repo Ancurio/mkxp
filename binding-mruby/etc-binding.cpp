@@ -24,8 +24,6 @@
 #include "binding-types.h"
 #include "serializable-binding.h"
 
-#include <QDebug>
-
 #define ATTR_RW(Type, attr, arg_type, mrb_val, arg_t_s) \
 	MRB_METHOD(Type##Get_##attr) \
 	{ \

@@ -3,7 +3,7 @@
 #include <SDL_timer.h>
 #include <glew.h>
 
-#include <QDebug>
+#include "debugwriter.h"
 
 struct TimerQuery
 {
@@ -132,7 +132,7 @@ struct GPUTimerGLQuery : public PerfTimer
 		if (++counter < iter)
 			return;
 
-		qDebug() << "                                  "
+		Debug() << "                                  "
 		            "Avg. GPU time:" << ((double) acc / (iter * 1000 * 1000)) << "ms";
 
 		acc = counter = 0;
@@ -181,7 +181,7 @@ struct CPUTimer : public PerfTimer
 		if (++counter < iter)
 			return;
 
-		qDebug() << "Avg. CPU time:" << ((double) acc / (iter * (perfFreq / 1000))) << "ms";
+		Debug() << "Avg. CPU time:" << ((double) acc / (iter * (perfFreq / 1000))) << "ms";
 		acc = counter = 0;
 	}
 };
@@ -199,7 +199,7 @@ PerfTimer *createGPUTimer(int iter)
 	}
 	else
 	{
-		qDebug() << "GL_EXT_timer_query not present: cannot measure GPU performance";
+		Debug() << "GL_EXT_timer_query not present: cannot measure GPU performance";
 		return new GPUTimerDummy();
 	}
 }

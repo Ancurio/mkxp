@@ -1,5 +1,5 @@
 /*
-** binding-null.cpp
+** debugwriter.h
 **
 ** This file is part of mkxp.
 **
@@ -19,26 +19,38 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "binding.h"
-#include "sharedstate.h"
-#include "eventthread.h"
-#include "debugwriter.h"
+#ifndef DEBUGWRITER_H
+#define DEBUGWRITER_H
 
-static void nullBindingExecute()
+#include <iostream>
+#include <sstream>
+
+/* A cheap replacement for Debug() */
+
+class Debug
 {
-	Debug() << "The null binding doesn't do anything, so we're done!";
-	shState->rtData().rqTermAck = true;
-}
+public:
+	Debug()
+	{
+		buf << std::boolalpha;
+	}
 
-static void nullBindingTerminate()
-{
+	template<typename T>
+	Debug &operator<<(const T &t)
+	{
+		buf << t;
+		buf << " ";
 
-}
+		return *this;
+	}
 
-ScriptBinding scriptBindingImpl =
-{
-    nullBindingExecute,
-    nullBindingTerminate
+	~Debug()
+	{
+		std::clog << buf.str() << "\n";
+	}
+
+private:
+	std::stringstream buf;
 };
 
-ScriptBinding *scriptBinding = &scriptBindingImpl;
+#endif // DEBUGWRITER_H

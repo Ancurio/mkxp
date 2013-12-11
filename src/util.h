@@ -22,6 +22,9 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <stdio.h>
+#include <string>
+
 static inline int
 wrapRange(int value, int min, int max)
 {
@@ -54,6 +57,40 @@ findNextPow2(int start)
 		i <<= 1;
 
 	return i;
+}
+
+/* Reads the contents of the file at 'path' and
+ * appends them to 'out'. Returns false on failure */
+inline bool readFile(const char *path,
+                     std::string &out)
+{
+	FILE *f = fopen(path, "r");
+
+	if (!f)
+		return false;
+
+	fseek(f, 0, SEEK_END);
+	long size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	size_t back = out.size();
+
+	out.resize(back+size);
+	size_t read = fread(&out[back], 1, size, f);
+	fclose(f);
+
+	if (read != (size_t) size)
+		out.resize(back+read);
+
+	return true;
+}
+
+inline void strReplace(std::string &str,
+                       char before, char after)
+{
+	for (size_t i = 0; i < str.size(); ++i)
+		if (str[i] == before)
+			str[i] = after;
 }
 
 #define ARRAY_SIZE(obj) (sizeof(obj) / sizeof((obj)[0]))

@@ -22,10 +22,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <QByteArray>
-#include <QHash>
-#include <QVariant>
-
+#include <string>
 #include <vector>
 
 struct Config
@@ -46,20 +43,16 @@ struct Config
 
 	bool solidFonts;
 
-	QByteArray gameFolder;
+	std::string gameFolder;
 	bool allowSymlinks;
 
-	QByteArray customScript;
-	std::vector<QByteArray> rtps;
-
-	/* Any values in the [Binding]
-	 * group are collected here */
-	QHash<QByteArray, QVariant> bindingConf;
+	std::string customScript;
+	std::vector<std::string> rtps;
 
 	/* Game INI contents */
 	struct {
-		QByteArray scripts;
-		QByteArray title;
+		std::string scripts;
+		std::string title;
 	} game;
 
 	Config();

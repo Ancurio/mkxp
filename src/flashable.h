@@ -25,8 +25,6 @@
 #include "etc.h"
 #include "etc-internal.h"
 
-#include <QDebug>
-
 class Flashable
 {
 public:

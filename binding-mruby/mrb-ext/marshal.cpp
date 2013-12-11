@@ -38,13 +38,10 @@
 #include "file.h"
 #include "rwmem.h"
 #include "exception.h"
+#include "boost-hash.h"
+#include "debugwriter.h"
 
 #include <SDL_timer.h>
-
-#include <QHash>
-#include <QByteArray>
-
-#include <QDebug>
 
 
 #define MARSHAL_MAJOR 4
@@ -76,9 +73,9 @@
 // FIXME make these dynamically allocatd, per MarshalContext
 static char gpbuffer[512];
 
-inline uint qHash(mrb_value key)
+inline size_t hash_value(mrb_value key)
 {
-	return qHash(key.value.p);
+	return boost::hash_value(key.value.p);
 }
 
 inline bool operator==(mrb_value v1, mrb_value v2)
@@ -109,7 +106,7 @@ template<typename T>
 struct LinkBuffer
 {
 	/* Key: val, Value: idx in vec */
-	QHash<T, int> hash;
+	BoostHash<T, int> hash;
 	std::vector<T> vec;
 
 	bool contains(T value)
@@ -551,9 +548,8 @@ read_value(MarshalContext *ctx)
 		break;
 
 	default :
-		qDebug() << "Value type" << (char)type << "not supported!";
 		throw Exception(Exception::MKXPError, "Marshal.load: unsupported value type '%s'",
-		                QByteArray(1, (char)type));
+		                std::string(1, (char)type));
 	}
 
 	mrb_gc_arena_restore(mrb, arena);
@@ -973,7 +969,7 @@ MRB_FUNCTION(marshalLoad)
 	}
 	else
 	{
-		qDebug() << "FIXME: Marshal.load: generic IO port not implemented";
+		Debug() << "FIXME: Marshal.load: generic IO port not implemented";
 		return mrb_nil_value();
 	}
 

@@ -21,12 +21,16 @@
 
 #include "config.h"
 
-#include <QSettings>
-#include <QFileInfo>
-#include <QString>
-#include <QStringList>
-#include <QFile>
-#include <QRegExp>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/parsers.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <fstream>
+
+#include "debugwriter.h"
+#include "util.h"
+
+typedef std::vector<std::string> StringVec;
+namespace po = boost::program_options;
 
 Config::Config()
     : debugMode(false),
@@ -46,68 +50,84 @@ Config::Config()
 
 void Config::read()
 {
-	QSettings confFile("mkxp.conf", QSettings::IniFormat);
+#define PO_DESC_ALL \
+	PO_DESC(debugMode, bool) \
+    PO_DESC(winResizable, bool) \
+    PO_DESC(fullscreen, bool) \
+    PO_DESC(fixedAspectRatio, bool) \
+    PO_DESC(smoothScaling, bool) \
+    PO_DESC(vsync, bool) \
+    PO_DESC(defScreenW, int) \
+    PO_DESC(defScreenH, int) \
+    PO_DESC(fixedFramerate, int) \
+    PO_DESC(frameSkip, bool) \
+    PO_DESC(solidFonts, bool) \
+    PO_DESC(gameFolder, std::string) \
+    PO_DESC(allowSymlinks, bool) \
+    PO_DESC(customScript, std::string)
 
-#define READ_VAL(key, Type) key = confFile.value(#key, key).to##Type()
+#define PO_DESC(key, type) (#key, po::value< type >()->default_value(key))
 
-	READ_VAL(debugMode, Bool);
-	READ_VAL(winResizable, Bool);
-	READ_VAL(fullscreen, Bool);
-	READ_VAL(fixedAspectRatio, Bool);
-	READ_VAL(smoothScaling, Bool);
-	READ_VAL(vsync, Bool);
-	READ_VAL(defScreenW, Int);
-	READ_VAL(defScreenH, Int);
-	READ_VAL(fixedFramerate, Int);
-	READ_VAL(frameSkip, Bool);
-	READ_VAL(solidFonts,  Bool);
-	READ_VAL(gameFolder, ByteArray);
-	READ_VAL(allowSymlinks, Bool);
-	READ_VAL(customScript, ByteArray);
+	po::options_description podesc;
+	podesc.add_options()
+	        PO_DESC_ALL
+	        ("RTP", po::value<StringVec>())
+	        ;
 
-	QStringList _rtps = confFile.value("RTPs").toStringList();
-	Q_FOREACH(const QString &s, _rtps)
-		rtps.push_back(s.toUtf8());
+	std::ifstream confFile;
+	confFile.open("mkxp.conf");
 
-	confFile.beginGroup("Binding");
+	po::variables_map vm;
+	po::store(po::parse_config_file(confFile, podesc, true), vm);
+	po::notify(vm);
 
-	QStringList bindingKeys = confFile.childKeys();
-	Q_FOREACH (const QString &key, bindingKeys)
-	{
-		QVariant value = confFile.value(key);
+	confFile.close();
 
-		/* Convert QString to QByteArray */
-		if (value.type() == QVariant::String)
-			value = value.toString().toUtf8();
+// Not gonna take your shit boost
+#define GUARD_ALL( exp ) try { exp } catch(...) {}
 
-		bindingConf.insert(key.toLatin1(), value);
-	}
+#undef PO_DESC
+#define PO_DESC(key, type) GUARD_ALL( key = vm[#key].as< type >(); )
 
-	confFile.endGroup();
+	PO_DESC_ALL;
+
+	GUARD_ALL( rtps = vm["RTP"].as<StringVec>(); );
+
+#undef PO_DESC
+#undef PO_DESC_ALL
 }
 
 void Config::readGameINI()
 {
-	if (!customScript.isEmpty())
+	if (!customScript.empty())
 	{
-		game.title = basename(customScript.constData());
+		game.title = basename(customScript.c_str());
+
 		return;
 	}
 
-	QSettings gameINI(gameFolder + "/Game.ini", QSettings::IniFormat);
-	QFileInfo finfo(gameFolder.constData());
-	game.title = gameINI.value("Game/Title", finfo.baseName()).toByteArray();
+	po::options_description podesc;
+	podesc.add_options()
+	        ("Game.Title", po::value<std::string>())
+	        ("Game.Scripts", po::value<std::string>())
+	        ;
 
-	/* Gotta read the "Scripts" entry manually because Qt can't handle '\' */
-	QFile gameINIFile(gameFolder + "/Game.ini");
-	if (gameINIFile.open(QFile::ReadOnly))
-	{
-		QString gameINIContents = gameINIFile.readAll();
-		QRegExp scriptsRE(".*Scripts=(.*)\r\nTitle=.*");
-		if (scriptsRE.exactMatch(gameINIContents))
-		{
-			game.scripts = scriptsRE.cap(1).toUtf8();
-			game.scripts.replace('\\', '/');
-		}
-	}
+	std::string iniPath = gameFolder + "/Game.ini";
+
+	std::ifstream iniFile;
+	iniFile.open((iniPath).c_str());
+
+	po::variables_map vm;
+	po::store(po::parse_config_file(iniFile, podesc, true), vm);
+	po::notify(vm);
+
+	iniFile.close();
+
+	GUARD_ALL( game.title = vm["Game.Title"].as<std::string>(); );
+	GUARD_ALL( game.scripts = vm["Game.Scripts"].as<std::string>(); );
+
+	strReplace(game.scripts, '\\', '/');
+
+	if (game.title.empty())
+		game.title = basename(gameFolder.c_str());
 }

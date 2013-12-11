@@ -36,11 +36,9 @@
 #include "quad.h"
 #include "binding.h"
 
-#include <QFile>
-
 #include <unistd.h>
-
-#include <QDebug>
+#include <stdio.h>
+#include <string>
 
 SharedState *SharedState::instance = 0;
 static GlobalIBO *globalIBO = 0;
@@ -93,21 +91,26 @@ struct SharedStatePrivate
 	      graphics(threadData),
 	      stampCounter(0)
 	{
-		if (!config.gameFolder.isEmpty())
+		if (!config.gameFolder.empty())
 		{
-			int unused = chdir(config.gameFolder.constData());
+			int unused = chdir(config.gameFolder.c_str());
 			(void) unused;
 			fileSystem.addPath(".");
 		}
 
 		// FIXME find out correct archive filename
-		QByteArray archPath = GAME_ARCHIVE;
+		std::string archPath = GAME_ARCHIVE;
 
-		if (QFile::exists(archPath.constData()))
-			fileSystem.addPath(archPath.constData());
+		/* Check if a game archive exists */
+		FILE *tmp = fopen(archPath.c_str(), "r");
+		if (tmp)
+		{
+			fileSystem.addPath(archPath.c_str());
+			fclose(tmp);
+		}
 
 		for (size_t i = 0; i < config.rtps.size(); ++i)
-			fileSystem.addPath(config.rtps[i].constData());
+			fileSystem.addPath(config.rtps[i].c_str());
 
 		fileSystem.createPathCache();
 

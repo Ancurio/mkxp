@@ -22,8 +22,6 @@
 #include "scene.h"
 #include "sharedstate.h"
 
-#include <QDebug>
-
 Scene::Scene()
 {
 	geometry.xOrigin = geometry.yOrigin = 0;

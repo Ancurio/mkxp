@@ -23,21 +23,17 @@
 
 #include "util.h"
 #include "exception.h"
+#include "boost-hash.h"
+#include "debugwriter.h"
 
 #include <physfs.h>
 
 #include <SDL_sound.h>
 
-#include <QHash>
-#include <QSet>
-#include <QByteArray>
-
 #include <stdio.h>
 #include <string.h>
 #include <algorithm>
 #include <vector>
-
-#include <QDebug>
 
 struct RGSS_entryData
 {
@@ -73,11 +69,11 @@ struct RGSS_archiveData
 
 	/* Maps: file path
 	 * to:   entry data */
-	QHash<QByteArray, RGSS_entryData> entryHash;
+	BoostHash<std::string, RGSS_entryData> entryHash;
 
 	/* Maps: directory path,
 	 * to:   list of contained entries */
-	QHash<QByteArray, QSet<QByteArray> > dirHash;
+	BoostHash<std::string, BoostSet<std::string> > dirHash;
 };
 
 static bool
@@ -313,7 +309,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 	uint32_t magic = RGSS_MAGIC;
 
 	/* Top level entry list */
-	QSet<QByteArray> &topLevel = data->dirHash["."];
+	BoostSet<std::string> &topLevel = data->dirHash["."];
 
 	while (true)
 	{
@@ -373,7 +369,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 				const char *dir = nameBuf;
 				const char *entry = &nameBuf[i+1];
 
-				QSet<QByteArray> &entryList = data->dirHash[dir];
+				BoostSet<std::string> &entryList = data->dirHash[dir];
 				entryList.insert(entry);
 			}
 
@@ -390,16 +386,16 @@ RGSS_enumerateFiles(void *opaque, const char *dirname,
 {
 	RGSS_archiveData *data = static_cast<RGSS_archiveData*>(opaque);
 
-	QByteArray _dirname(dirname);
+	std::string _dirname(dirname);
 
 	if (!data->dirHash.contains(_dirname))
 		return;
 
-	const QSet<QByteArray> &entries = data->dirHash.value(_dirname);
+	const BoostSet<std::string> &entries = data->dirHash[_dirname];
 
-	QSet<QByteArray>::const_iterator iter;
-	for (iter = entries.begin(); iter != entries.end(); ++iter)
-		cb(callbackdata, origdir, iter->constData());
+	BoostSet<std::string>::const_iterator iter;
+	for (iter = entries.cbegin(); iter != entries.cend(); ++iter)
+		cb(callbackdata, origdir, iter->c_str());
 }
 
 static PHYSFS_Io*
@@ -500,9 +496,9 @@ static const PHYSFS_Archiver RGSS_Archiver =
 struct FileSystemPrivate
 {
 	/* All keys are lower case */
-	QHash<QByteArray, QByteArray> pathCache;
+	BoostHash<std::string, std::string> pathCache;
 
-	std::vector<QByteArray> extensions[FileSystem::Undefined];
+	std::vector<std::string> extensions[FileSystem::Undefined];
 
 	/* Attempt to locate an extension string in a filename.
 	 * Either a pointer into the input string pointing at the
@@ -535,7 +531,7 @@ struct FileSystemPrivate
 
 		buff[i] = '\0';
 
-		QByteArray key(buff);
+		std::string key(buff);
 
 		if (pathCache.contains(key))
 		{
@@ -544,17 +540,17 @@ struct FileSystemPrivate
 			if (foundExt)
 				*foundExt = findExt(filename);
 
-			return pathCache[key].constData();
+			return pathCache[key].c_str();
 		}
 
 		char buff2[512];
 
 		if (type != FileSystem::Undefined)
 		{
-			std::vector<QByteArray> &extList = extensions[type];
+			std::vector<std::string> &extList = extensions[type];
 			for (size_t i = 0; i < extList.size(); ++i)
 			{
-				const char *ext = extList[i].constData();
+				const char *ext = extList[i].c_str();
 
 				snprintf(buff2, sizeof(buff2), "%s.%s", buff, ext);
 				key = buff2;
@@ -564,7 +560,7 @@ struct FileSystemPrivate
 					if (foundExt)
 						*foundExt = ext;
 
-					return pathCache[key].constData();
+					return pathCache[key].c_str();
 				}
 			}
 		}
@@ -640,7 +636,7 @@ FileSystem::~FileSystem()
 	delete p;
 
 	if (PHYSFS_deinit() == 0)
-		qDebug() << "PhyFS failed to deinit.";
+		Debug() << "PhyFS failed to deinit.";
 }
 
 void FileSystem::addPath(const char *path)
@@ -660,16 +656,16 @@ static void cacheEnumCB(void *d, const char *origdir,
 	else
 		strncpy(buf, fname, sizeof(buf));
 
-	QByteArray mixedCase(buf);
+	std::string mixedCase(buf);
 
 	for (char *p = buf; *p; ++p)
 		*p = tolower(*p);
 
-	QByteArray lowerCase(buf);
+	std::string lowerCase(buf);
 
 	p->pathCache.insert(lowerCase, mixedCase);
 
-	PHYSFS_enumerateFilesCallback(mixedCase.constData(), cacheEnumCB, p);
+	PHYSFS_enumerateFilesCallback(mixedCase.c_str(), cacheEnumCB, p);
 }
 
 void FileSystem::createPathCache()
