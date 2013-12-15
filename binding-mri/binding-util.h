@@ -199,14 +199,14 @@ rb_bool_new(bool value)
 #define INITCOPY_FUN(Klass) \
 	RB_METHOD(Klass##InitializeCopy) \
 	{ \
-		VALUE orig; \
-		rb_get_args(argc, argv, "o", &orig, RB_ARG_END); \
-		if (!OBJ_INIT_COPY(self, orig)) /* When would this fail??*/\
+		VALUE origObj; \
+		rb_get_args(argc, argv, "o", &origObj, RB_ARG_END); \
+		if (!OBJ_INIT_COPY(self, origObj)) /* When would this fail??*/\
 			return self; \
-		Klass *k = getPrivateData<Klass>(orig); \
-		Klass *dup = 0; \
-		GUARD_EXC( dup = new Klass(*k); ) \
-		setPrivateData(self, dup); \
+		Klass *orig = getPrivateData<Klass>(origObj); \
+		Klass *k = 0; \
+		GUARD_EXC( k = new Klass(*orig); ) \
+		setPrivateData(self, k); \
 		return self; \
 	}
 

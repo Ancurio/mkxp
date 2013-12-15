@@ -56,15 +56,15 @@ RB_METHOD(fontInitialize)
 
 RB_METHOD(fontInitializeCopy)
 {
-	VALUE orig;
-	rb_get_args(argc, argv, "o", &orig, RB_ARG_END);
+	VALUE origObj;
+	rb_get_args(argc, argv, "o", &origObj, RB_ARG_END);
 
-	if (!OBJ_INIT_COPY(self, orig))
+	if (!OBJ_INIT_COPY(self, origObj))
 		return self;
 
-	Font *f = getPrivateData<Font>(orig);
-	Font *dup = new Font(*f);
-	setPrivateData(self, dup);
+	Font *orig = getPrivateData<Font>(origObj);
+	Font *f = new Font(*orig);
+	setPrivateData(self, f);
 
 	/* Wrap property objects */
 	f->setColor(new Color(*f->getColor()));
