@@ -1071,7 +1071,8 @@ private:
 					ALint size = AL::Buffer::getSize(buf);
 					ALint chan = AL::Buffer::getChannels(buf);
 
-					procFrames += ((size / (bits / 8)) / chan);
+					if (bits != 0 && chan != 0)
+						procFrames += ((size / (bits / 8)) / chan);
 				}
 
 				if (sourceExhausted)
