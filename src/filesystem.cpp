@@ -650,7 +650,7 @@ FileSystem::FileSystem(const char *argv0,
 		const char **ext;
 		for (ext = (*di)->extensions; *ext; ++ext)
 		{
-			/* All reported extension are uppercase,
+			/* All reported extensions are uppercase,
 			 * so we need to hammer them down first */
 			char buf[16];
 			for (size_t i = 0; i < sizeof(buf); ++i)
@@ -666,7 +666,7 @@ FileSystem::FileSystem(const char *argv0,
 	}
 
 	/* Font extensions */
-	p->extensions[Font] << "ttf";
+	p->extensions[Font] << "ttf" << "otf";
 
 	PHYSFS_init(argv0);
 	PHYSFS_registerArchiver(&RGSS_Archiver);
