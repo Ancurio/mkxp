@@ -184,6 +184,70 @@ rb_bool_new(bool value)
 	return value ? Qtrue : Qfalse;
 }
 
+inline void
+rb_float_arg(VALUE arg, double *out, int argPos = 0)
+{
+	switch (rb_type(arg))
+	{
+	case RUBY_T_FLOAT :
+		*out = rb_float_value(arg);
+		break;
+
+	case RUBY_T_FIXNUM :
+		*out = rb_fix2int(arg);
+		break;
+
+	default:
+		rb_raise(rb_eTypeError, "Argument %d: Expected float", argPos);
+	}
+}
+
+inline void
+rb_int_arg(VALUE arg, int *out, int argPos = 0)
+{
+	switch (rb_type(arg))
+	{
+	case RUBY_T_FLOAT :
+		// FIXME check int range?
+		*out = rb_num2long(arg);
+		break;
+
+	case RUBY_T_FIXNUM :
+		*out = rb_fix2int(arg);
+		break;
+
+	default:
+		rb_raise(rb_eTypeError, "Argument %d: Expected fixnum", argPos);
+	}
+}
+
+inline void
+rb_bool_arg(VALUE arg, bool *out, int argPos = 0)
+{
+	switch (rb_type(arg))
+	{
+	case RUBY_T_TRUE :
+		*out = true;
+		break;
+
+	case RUBY_T_FALSE :
+	case RUBY_T_NIL :
+		*out = false;
+		break;
+
+	default:
+		rb_raise(rb_eTypeError, "Argument %d: Expected bool", argPos);
+	}
+}
+
+inline void
+rb_check_argc(int actual, int expected)
+{
+	if (actual != expected)
+		rb_raise(rb_eArgError, "wrong number of arguments (%d for %d)",
+		         actual, expected);
+}
+
 #define RB_METHOD(name) \
 	static VALUE name(int argc, VALUE *argv, VALUE self)
 
@@ -225,10 +289,10 @@ rb_bool_new(bool value)
 	} \
 	RB_METHOD(Klass##Set##PropName) \
 	{ \
+		rb_check_argc(argc, 1); \
 		Klass *k = getPrivateData<Klass>(self); \
-		VALUE propObj; \
+		VALUE propObj = *argv; \
 		PropKlass *prop; \
-		rb_get_args(argc, argv, "o", &propObj, RB_ARG_END); \
 		prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type); \
 		GUARD_EXC( k->set##PropName(prop); ) \
 		rb_iv_set(self, prop_iv, propObj); \
@@ -247,10 +311,10 @@ rb_bool_new(bool value)
 	RB_METHOD(Klass##Set##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
+		rb_check_argc(argc, 1); \
 		Klass *k = getPrivateData<Klass>(self); \
-		VALUE propObj; \
+		VALUE propObj = *argv; \
 		PropKlass *prop; \
-		rb_get_args(argc, argv, "o", &propObj, RB_ARG_END); \
 		if (rb_type(propObj) == RUBY_T_NIL) \
 			prop = 0; \
 		else \
@@ -260,7 +324,7 @@ rb_bool_new(bool value)
 		return propObj; \
 	}
 
-#define DEF_PROP(Klass, type, PropName, param_t_s, value_fun) \
+#define DEF_PROP(Klass, type, PropName, arg_fun, value_fun) \
 	RB_METHOD(Klass##Get##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
@@ -270,21 +334,22 @@ rb_bool_new(bool value)
 	} \
 	RB_METHOD(Klass##Set##PropName) \
 	{ \
+		rb_check_argc(argc, 1); \
 		Klass *k = getPrivateData<Klass>(self); \
 		type value; \
-		rb_get_args(argc, argv, param_t_s, &value, RB_ARG_END); \
+		rb_##arg_fun##_arg(*argv, &value); \
 		GUARD_EXC( k->set##PropName(value); ) \
-		return value_fun(value); \
+		return *argv; \
 	}
 
 #define DEF_PROP_I(Klass, PropName) \
-	DEF_PROP(Klass, int, PropName, "i", rb_fix_new)
+	DEF_PROP(Klass, int, PropName, int, rb_fix_new)
 
 #define DEF_PROP_F(Klass, PropName) \
-	DEF_PROP(Klass, double, PropName, "f", rb_float_new)
+	DEF_PROP(Klass, double, PropName, float, rb_float_new)
 
 #define DEF_PROP_B(Klass, PropName) \
-	DEF_PROP(Klass, bool, PropName, "b", rb_bool_new)
+	DEF_PROP(Klass, bool, PropName, bool, rb_bool_new)
 
 #define INIT_PROP_BIND(Klass, PropName, prop_name_s) \
 { \
