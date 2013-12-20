@@ -176,6 +176,8 @@ struct RGSSThreadData
 
 	QByteArray rgssErrorMsg;
 
+	volatile bool rqScreenshot;
+
 	RGSSThreadData(EventThread *ethread,
 	                 const char *argv0,
 	                 SDL_Window *window)
@@ -184,7 +186,8 @@ struct RGSSThreadData
 	      ethread(ethread),
 	      argv0(argv0),
 	      window(window),
-	      sizeResoRatio(1, 1)
+	      sizeResoRatio(1, 1),
+	      rqScreenshot(false)
 	{}
 };
 
