@@ -27,7 +27,11 @@ void main()
 	float at = ab*as;
 	resFrag.a = at + ad - ad*at;
 
-	resFrag.rgb = as*srcFrag.rgb + (1.0-at) * ad * dstFrag.rgb;
+	// Sigh...
+	if (ad == 0.0)
+		resFrag.rgb = srcFrag.rgb;
+	else
+		resFrag.rgb = as*srcFrag.rgb + (1.0-at) * ad * dstFrag.rgb;
 
 	gl_FragColor = resFrag;
 }
