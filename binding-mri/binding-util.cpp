@@ -201,19 +201,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 			double *f = va_arg(ap, double*);
 			VALUE fVal = *arg++;
 
-			switch (rb_type(fVal))
-			{
-			case RUBY_T_FLOAT :
-				*f = rb_float_value(fVal);
-				break;
-
-			case RUBY_T_FIXNUM :
-				*f = rb_fix2int(fVal);
-				break;
-
-			default:
-				rb_raise(rb_eTypeError, "Argument %d: Expected float", argI);
-			}
+			rb_float_arg(fVal, f, argI);
 
 			++argI;
 			break;
@@ -227,20 +215,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 			int *i = va_arg(ap, int*);
 			VALUE iVal = *arg++;
 
-			switch (rb_type(iVal))
-			{
-			case RUBY_T_FLOAT :
-				// FIXME check int range?
-				*i = rb_num2long(iVal);
-				break;
-
-			case RUBY_T_FIXNUM :
-				*i = rb_fix2int(iVal);
-				break;
-
-			default:
-				rb_raise(rb_eTypeError, "Argument %d: Expected fixnum", argI);
-			}
+			rb_int_arg(iVal, i, argI);
 
 			++argI;
 			break;
@@ -254,20 +229,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 			bool *b = va_arg(ap, bool*);
 			VALUE bVal = *arg++;
 
-			switch (rb_type(bVal))
-			{
-			case RUBY_T_TRUE :
-				*b = true;
-				break;
-
-			case RUBY_T_FALSE :
-			case RUBY_T_NIL :
-				*b = false;
-				break;
-
-			default:
-				rb_raise(rb_eTypeError, "Argument %d: Expected bool", argI);
-			}
+			rb_bool_arg(bVal, b, argI);
 
 			++argI;
 			break;
