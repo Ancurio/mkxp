@@ -244,6 +244,8 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 		}
 	}
 
+#ifndef QT_NO_DEBUG
+
 	/* Pop remaining arg pointers off
 	 * the stack to check for RB_ARG_END */
 	format--;
@@ -287,7 +289,9 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 	/* Verify correct termination */
 	void *argEnd = va_arg(ap, void*);
 	Q_UNUSED(argEnd);
-	Q_ASSERT(argEnd == RB_ARG_END);
+	Q_ASSERT(argEnd == RB_ARG_END_VAL);
+
+#endif
 
 	va_end(ap);
 

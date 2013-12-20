@@ -39,14 +39,14 @@ RB_METHOD(bitmapInitialize)
 	if (argc == 1)
 	{
 		char *filename;
-		rb_get_args(argc, argv, "z", &filename, RB_ARG_END);
+		rb_get_args(argc, argv, "z", &filename RB_ARG_END);
 
 		GUARD_EXC( b = new Bitmap(filename); )
 	}
 	else
 	{
 		int width, height;
-		rb_get_args(argc, argv, "ii", &width, &height, RB_ARG_END);
+		rb_get_args(argc, argv, "ii", &width, &height RB_ARG_END);
 
 		GUARD_EXC( b = new Bitmap(width, height); )
 	}
@@ -114,7 +114,7 @@ RB_METHOD(bitmapBlt)
 	Bitmap *src;
 	Rect *srcRect;
 
-	rb_get_args(argc, argv, "iioo|i", &x, &y, &srcObj, &srcRectObj, &opacity, RB_ARG_END);
+	rb_get_args(argc, argv, "iioo|i", &x, &y, &srcObj, &srcRectObj, &opacity RB_ARG_END);
 
 	src = getPrivateDataCheck<Bitmap>(srcObj, BitmapType);
 	srcRect = getPrivateDataCheck<Rect>(srcRectObj, RectType);
@@ -136,7 +136,7 @@ RB_METHOD(bitmapStretchBlt)
 	Bitmap *src;
 	Rect *destRect, *srcRect;
 
-	rb_get_args(argc, argv, "ooo|i", &destRectObj, &srcObj, &srcRectObj, &opacity, RB_ARG_END);
+	rb_get_args(argc, argv, "ooo|i", &destRectObj, &srcObj, &srcRectObj, &opacity RB_ARG_END);
 
 	src = getPrivateDataCheck<Bitmap>(srcObj, BitmapType);
 	destRect = getPrivateDataCheck<Rect>(destRectObj, RectType);
@@ -159,7 +159,7 @@ RB_METHOD(bitmapFillRect)
 		VALUE rectObj;
 		Rect *rect;
 
-		rb_get_args(argc, argv, "oo", &rectObj, &colorObj, RB_ARG_END);
+		rb_get_args(argc, argv, "oo", &rectObj, &colorObj RB_ARG_END);
 
 		rect = getPrivateDataCheck<Rect>(rectObj, RectType);
 		color = getPrivateDataCheck<Color>(colorObj, ColorType);
@@ -170,7 +170,7 @@ RB_METHOD(bitmapFillRect)
 	{
 		int x, y, width, height;
 
-		rb_get_args(argc, argv, "iiiio", &x, &y, &width, &height, &colorObj, RB_ARG_END);
+		rb_get_args(argc, argv, "iiiio", &x, &y, &width, &height, &colorObj RB_ARG_END);
 
 		color = getPrivateDataCheck<Color>(colorObj, ColorType);
 
@@ -197,7 +197,7 @@ RB_METHOD(bitmapGetPixel)
 
 	int x, y;
 
-	rb_get_args(argc, argv, "ii", &x, &y, RB_ARG_END);
+	rb_get_args(argc, argv, "ii", &x, &y RB_ARG_END);
 
 	GUARD_EXC(
 		if (x < 0 || y < 0 || x >= b->width() || y >= b->height())
@@ -221,7 +221,7 @@ RB_METHOD(bitmapSetPixel)
 
 	Color *color;
 
-	rb_get_args(argc, argv, "iio", &x, &y, &colorObj, RB_ARG_END);
+	rb_get_args(argc, argv, "iio", &x, &y, &colorObj RB_ARG_END);
 
 	color = getPrivateDataCheck<Color>(colorObj, ColorType);
 
@@ -236,7 +236,7 @@ RB_METHOD(bitmapHueChange)
 
 	int hue;
 
-	rb_get_args(argc, argv, "i", &hue, RB_ARG_END);
+	rb_get_args(argc, argv, "i", &hue RB_ARG_END);
 
 	GUARD_EXC( b->hueChange(hue); );
 
@@ -255,7 +255,7 @@ RB_METHOD(bitmapDrawText)
 		VALUE rectObj;
 		Rect *rect;
 
-		rb_get_args(argc, argv, "oz|i", &rectObj, &str, &align, RB_ARG_END);
+		rb_get_args(argc, argv, "oz|i", &rectObj, &str, &align RB_ARG_END);
 
 		rect = getPrivateDataCheck<Rect>(rectObj, RectType);
 
@@ -265,7 +265,7 @@ RB_METHOD(bitmapDrawText)
 	{
 		int x, y, width, height;
 
-		rb_get_args(argc, argv, "iiiiz|i", &x, &y, &width, &height, &str, &align, RB_ARG_END);
+		rb_get_args(argc, argv, "iiiiz|i", &x, &y, &width, &height, &str, &align RB_ARG_END);
 
 		GUARD_EXC( b->drawText(x, y, width, height, str, align); );
 	}
@@ -279,7 +279,7 @@ RB_METHOD(bitmapTextSize)
 
 	const char *str;
 
-	rb_get_args(argc, argv, "z", &str, RB_ARG_END);
+	rb_get_args(argc, argv, "z", &str RB_ARG_END);
 
 	IntRect value;
 	GUARD_EXC( value = b->textSize(str); );

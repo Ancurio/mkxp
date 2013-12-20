@@ -44,7 +44,7 @@ RB_METHOD(sceneElementSetZ)
 	SceneElement *se = getPrivateData<C>(self);
 
 	int z;
-	rb_get_args(argc, argv, "i", &z, RB_ARG_END);
+	rb_get_args(argc, argv, "i", &z RB_ARG_END);
 
 	GUARD_EXC( se->setZ(z); );
 
@@ -70,7 +70,7 @@ RB_METHOD(sceneElementSetVisible)
 	SceneElement *se = getPrivateData<C>(self);
 
 	bool visible;
-	rb_get_args(argc, argv, "b", &visible, RB_ARG_END);
+	rb_get_args(argc, argv, "b", &visible RB_ARG_END);
 
 	GUARD_EXC( se->setVisible(visible); );
 

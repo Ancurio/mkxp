@@ -52,7 +52,7 @@ RB_METHOD(viewportElementSetViewport)
 	VALUE viewportObj = Qnil;
 	Viewport *viewport = 0;
 
-	rb_get_args(argc, argv, "o", &viewportObj, RB_ARG_END);
+	rb_get_args(argc, argv, "o", &viewportObj RB_ARG_END);
 
 	if (rb_type(viewportObj) != RUBY_T_NIL)
 		viewport = getPrivateDataCheck<Viewport>(viewportObj, ViewportType);
@@ -74,7 +74,7 @@ viewportElementInitialize(int argc, VALUE *argv, VALUE self)
 	VALUE viewportObj = Qnil;
 	Viewport *viewport = 0;
 
-	rb_get_args(argc, argv, "|o", &viewportObj, RB_ARG_END);
+	rb_get_args(argc, argv, "|o", &viewportObj RB_ARG_END);
 
 	if (rb_type(viewportObj) != RUBY_T_NIL)
 		viewport = getPrivateDataCheck<Viewport>(viewportObj, ViewportType);

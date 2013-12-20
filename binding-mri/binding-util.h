@@ -134,7 +134,12 @@ int
 rb_get_args(int argc, VALUE *argv, const char *format, ...);
 
 /* Always terminate 'rb_get_args' with this */
-#define RB_ARG_END ((void*) -1)
+#ifndef QT_NO_DEBUG
+#  define RB_ARG_END_VAL ((void*) -1)
+#  define RB_ARG_END ,RB_ARG_END_VAL
+#else
+#  define RB_ARG_END
+#endif
 
 typedef VALUE (*RubyMethod)(int argc, VALUE *argv, VALUE self);
 
@@ -165,7 +170,7 @@ objectLoad(int argc, VALUE *argv, VALUE self)
 {
 	const char *data;
 	int dataLen;
-	rb_get_args(argc, argv, "s", &data, &dataLen, RB_ARG_END);
+	rb_get_args(argc, argv, "s", &data, &dataLen RB_ARG_END);
 
 	VALUE obj = rb_obj_alloc(self);
 
@@ -264,7 +269,7 @@ rb_check_argc(int actual, int expected)
 	RB_METHOD(Klass##InitializeCopy) \
 	{ \
 		VALUE origObj; \
-		rb_get_args(argc, argv, "o", &origObj, RB_ARG_END); \
+		rb_get_args(argc, argv, "o", &origObj RB_ARG_END); \
 		if (!OBJ_INIT_COPY(self, origObj)) /* When would this fail??*/\
 			return self; \
 		Klass *orig = getPrivateData<Klass>(origObj); \

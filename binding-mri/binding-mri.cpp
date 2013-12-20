@@ -112,7 +112,7 @@ RB_METHOD(mkxpPuts)
 	RB_UNUSED_PARAM;
 
 	const char *str;
-	rb_get_args(argc, argv, "z", &str, RB_ARG_END);
+	rb_get_args(argc, argv, "z", &str RB_ARG_END);
 
 	qDebug() << str;
 
@@ -161,7 +161,7 @@ RB_METHOD(mriDataDirectory)
 
 	const char *org, *app;
 
-	rb_get_args(argc, argv, "zz", &org, &app, RB_ARG_END);
+	rb_get_args(argc, argv, "zz", &org, &app RB_ARG_END);
 
 	char *path = SDL_GetPrefPath(org, app);
 

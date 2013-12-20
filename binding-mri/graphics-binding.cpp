@@ -50,7 +50,7 @@ RB_METHOD(graphicsTransition)
 	const char *filename = 0;
 	int vague = 40;
 
-	rb_get_args(argc, argv, "|izi", &duration, &filename, &vague, RB_ARG_END);
+	rb_get_args(argc, argv, "|izi", &duration, &filename, &vague RB_ARG_END);
 
 	GUARD_EXC( shState->graphics().transition(duration, filename, vague); )
 
@@ -76,7 +76,7 @@ RB_METHOD(graphicsFrameReset)
 	{ \
 		RB_UNUSED_PARAM; \
 		int value; \
-		rb_get_args(argc, argv, "i", &value, RB_ARG_END); \
+		rb_get_args(argc, argv, "i", &value RB_ARG_END); \
 		shState->graphics().set##PropName(value); \
 		return rb_fix_new(value); \
 	}
@@ -91,7 +91,7 @@ RB_METHOD(graphicsFrameReset)
 	{ \
 		RB_UNUSED_PARAM; \
 		bool value; \
-		rb_get_args(argc, argv, "b", &value, RB_ARG_END); \
+		rb_get_args(argc, argv, "b", &value RB_ARG_END); \
 		shState->graphics().set##PropName(value); \
 		return rb_bool_new(value); \
 	}
