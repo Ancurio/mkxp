@@ -113,47 +113,6 @@ advanceMagic(uint32_t &magic)
 	return old;
 }
 
-struct MagicState
-{
-	uint32_t magic;
-	uint64_t offset;
-
-	MagicState(uint64_t offset = 0)
-	    : offset(offset)
-	{
-		magic = RGSS_MAGIC;
-
-		for (uint i = 0; i < (offset/4); ++i)
-			advanceBlock();
-	}
-
-	uint8_t advancePath()
-	{
-		uint8_t ret = magic & 0xFF;
-
-		offset++;
-		advanceBlock();
-
-		return ret;
-	}
-
-	uint8_t advanceData()
-	{
-		uint8_t ret = magic & 0xFF;
-
-		if (offset++ % 4 == 0)
-			advanceBlock();
-
-		return ret;
-	}
-
-private:
-	void advanceBlock()
-	{
-		magic = magic * 7 + 3;
-	}
-};
-
 static PHYSFS_sint64
 RGSS_ioRead(PHYSFS_Io *self, void *buffer, PHYSFS_uint64 len)
 {
