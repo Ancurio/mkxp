@@ -81,6 +81,7 @@ mkxp reads configuration data from the file "mkxp.conf" contained in the current
 | defScreenW       | int         | 640     | Width the game window starts in (this is **not** the game resolution)           |
 | defScreenH       | int         | 480     | Height the game window starts in                                                |
 | fixedFramerate   | int         | 0       | FPS will be fixed to this amount. Ignored if 0.                                 |
+| frameSkip        | bool        | true    | Don't skip frames to catch up (useful eg. with Valgrind)                        |
 | solidFonts       | bool        | false   | Don't use alpha blending for fonts                                              |
 | gameFolder       | string      | "."     | mkxp will look for all game related files here                                  |
 | allowSymlinks    | bool        | false   | Allow symlinks to be followed in the game folder.                               |

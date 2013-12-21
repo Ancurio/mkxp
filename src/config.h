@@ -41,6 +41,7 @@ struct Config
 	int defScreenH;
 
 	int fixedFramerate;
+	bool frameSkip;
 
 	bool solidFonts;
 

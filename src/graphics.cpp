@@ -583,12 +583,20 @@ void Graphics::update()
 
 	if (p->fpsLimiter.frameSkipRequired())
 	{
-		/* Skip frame */
-		p->fpsLimiter.delay();
-		++p->frameCount;
-		p->threadData->ethread->notifyFrame();
+		if (p->threadData->config.frameSkip)
+		{
+			/* Skip frame */
+			p->fpsLimiter.delay();
+			++p->frameCount;
+			p->threadData->ethread->notifyFrame();
 
-		return;
+			return;
+		}
+		else
+		{
+			/* Just reset frame adjust counter */
+			p->fpsLimiter.resetFrameAdjust();
+		}
 	}
 
 	p->checkResize();
