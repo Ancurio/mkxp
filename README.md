@@ -45,7 +45,7 @@ To select this binding, run `qmake BINDING=BINDING_NULL`
 * SDL2
 * SDL2_image
 * SDL2_ttf
-* SDL_sound
+* SDL_sound (apply provided patches!)
 * pixman
 * zlib (only ruby bindings)
 
