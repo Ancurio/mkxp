@@ -101,7 +101,6 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 ## What doesn't work (yet)
 
 * midi and wma audio files
-* Audio "pitch" parameter (OpenAL offers a cheap alternative by playing sound faster/slower)
 * The Win32API ruby class (for obvious reasons)
 * Restarting the game with F12
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)*
