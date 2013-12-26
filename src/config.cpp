@@ -67,7 +67,7 @@ void Config::read()
 
 	QStringList _rtps = confFile.value("RTPs").toStringList();
 	Q_FOREACH(const QString &s, _rtps)
-		rtps << s.toUtf8();
+		rtps.push_back(s.toUtf8());
 
 	confFile.beginGroup("Binding");
 

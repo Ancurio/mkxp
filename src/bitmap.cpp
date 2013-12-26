@@ -584,7 +584,7 @@ void Bitmap::radialBlur(int angle, int divisions)
 	ColorQuadArray qArray;
 	qArray.resize(5);
 
-	QVector<Vertex> &vert = qArray.vertices;
+	std::vector<Vertex> &vert = qArray.vertices;
 
 	int i = 0;
 

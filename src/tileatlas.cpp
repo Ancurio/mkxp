@@ -21,6 +21,8 @@
 
 #include "tileatlas.h"
 
+#include <list>
+
 namespace TileAtlas
 {
 
@@ -35,7 +37,8 @@ struct Column
 	{}
 };
 
-typedef QList<Column> ColumnList;
+// FIXME: this can be optimized to a vector
+typedef std::list<Column> ColumnList;
 
 /* Autotile area width */
 static const int atAreaW = 96*4;
@@ -80,8 +83,8 @@ static ColumnList calcSrcCols(int tilesetH)
 {
 	ColumnList cols;
 
-	cols << Column(0, 0, tilesetH);
-	cols << Column(tsLaneW, 0, tilesetH);
+	cols.push_back(Column(0, 0, tilesetH));
+	cols.push_back(Column(tsLaneW, 0, tilesetH));
 
 	return cols;
 }
@@ -94,7 +97,7 @@ static ColumnList calcDstCols(int atlasW, int atlasH)
 	const int underAt = atlasH - atAreaH;
 
 	for (int i = 0; i < 3; ++i)
-		cols << Column(i*tsLaneW, atAreaH, underAt);
+		cols.push_back(Column(i*tsLaneW, atAreaH, underAt));
 
 	if (atlasW <= atAreaW)
 		return cols;
@@ -102,7 +105,7 @@ static ColumnList calcDstCols(int atlasW, int atlasH)
 	const int remCols = (atlasW - atAreaW) / tsLaneW;
 
 	for (int i = 0; i < remCols; ++i)
-		cols << Column(i*tsLaneW + atAreaW, 0, atlasH);
+		cols.push_back(Column(i*tsLaneW + atAreaW, 0, atlasH));
 
 	return cols;
 }
@@ -113,18 +116,19 @@ static BlitList calcBlitsInt(ColumnList &srcCols, ColumnList &dstCols)
 
 	while (!srcCols.empty())
 	{
-		Column srcCol = srcCols.takeFirst();
-		Q_ASSERT(srcCol.h > 0);
+		Column srcCol = srcCols.front();
+		srcCols.pop_front();
 
 		while (!dstCols.empty() && srcCol.h > 0)
 		{
-			Column dstCol = dstCols.takeFirst();
+			Column dstCol = dstCols.front();
+			dstCols.pop_front();
 
 			if (srcCol.h > dstCol.h)
 			{
 				/* srcCol doesn't fully fit into dstCol */
-				blits << Blit(srcCol.x, srcCol.y,
-				              dstCol.x, dstCol.y, dstCol.h);
+				blits.push_back(Blit(srcCol.x, srcCol.y,
+				                     dstCol.x, dstCol.y, dstCol.h));
 
 				srcCol.y += dstCol.h;
 				srcCol.h -= dstCol.h;
@@ -132,19 +136,19 @@ static BlitList calcBlitsInt(ColumnList &srcCols, ColumnList &dstCols)
 			else if (srcCol.h < dstCol.h)
 			{
 				/* srcCol fits into dstCol with space remaining */
-				blits << Blit(srcCol.x, srcCol.y,
-				              dstCol.x, dstCol.y, srcCol.h);
+				blits.push_back(Blit(srcCol.x, srcCol.y,
+				                     dstCol.x, dstCol.y, srcCol.h));
 
 				dstCol.y += srcCol.h;
 				dstCol.h -= srcCol.h;
-				dstCols.prepend(dstCol);
+				dstCols.push_front(dstCol);
 				srcCol.h = 0;
 			}
 			else
 			{
 				/* srcCol fits perfectly into dstCol */
-				blits << Blit(srcCol.x, srcCol.y,
-				              dstCol.x, dstCol.y, dstCol.h);
+				blits.push_back(Blit(srcCol.x, srcCol.y,
+				                     dstCol.x, dstCol.y, dstCol.h));
 			}
 		}
 	}

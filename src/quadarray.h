@@ -27,6 +27,8 @@
 #include "global-ibo.h"
 #include "shader.h"
 
+#include <vector>
+
 #include <stdint.h>
 
 typedef uint32_t index_t;
@@ -34,7 +36,7 @@ typedef uint32_t index_t;
 
 struct ColorQuadArray
 {
-	QVector<Vertex> vertices;
+	std::vector<Vertex> vertices;
 
 	VBO::ID vbo;
 	VAO::ID vao;
@@ -81,7 +83,7 @@ struct ColorQuadArray
 	void commit()
 	{
 		VBO::bind(vbo);
-		VBO::uploadData(vertices.size() * sizeof(Vertex), vertices.constData(), GL_DYNAMIC_DRAW);
+		VBO::uploadData(vertices.size() * sizeof(Vertex), &vertices[0], GL_DYNAMIC_DRAW);
 		VBO::unbind();
 
 		shState->ensureQuadIBO(quadCount);
@@ -110,7 +112,7 @@ struct ColorQuadArray
 
 struct PointArray
 {
-	QVector<Vertex> vertices;
+	std::vector<Vertex> vertices;
 	VBO::ID vbo;
 	VAO::ID vao;
 
@@ -143,13 +145,13 @@ struct PointArray
 		Vertex vert;
 		vert.pos = pos;
 		vert.color = color;
-		vertices.append(vert);
+		vertices.push_back(vert);
 	}
 
 	void commit()
 	{
 		VBO::bind(vbo);
-		VBO::uploadData(vertices.size() * sizeof(Vertex), vertices.constData());
+		VBO::uploadData(vertices.size() * sizeof(Vertex), &vertices[0]);
 		VBO::unbind();
 	}
 
@@ -167,7 +169,7 @@ struct PointArray
 
 	int count()
 	{
-		return vertices.count();
+		return vertices.size();
 	}
 };
 

@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <vector>
 
 #include "../binding-util.h"
 #include "file.h"
@@ -40,7 +41,6 @@
 
 #include <SDL_timer.h>
 
-#include <QVector>
 #include <QHash>
 #include <QByteArray>
 
@@ -110,19 +110,27 @@ struct LinkBuffer
 {
 	/* Key: val, Value: idx in vec */
 	QHash<T, int> hash;
-	QVector<T> vec;
+	std::vector<T> vec;
 
 	bool contains(T value)
 	{
 		return hash.contains(value);
 	}
 
+	bool containsIdx(int idx)
+	{
+		if (vec.empty())
+			return false;
+
+		return (idx < vec.size());
+	}
+
 	int add(T value)
 	{
-		int idx = vec.count();
+		int idx = vec.size();
 
 		hash.insert(value, idx);
-		vec.append(value);
+		vec.push_back(value);
 
 		return idx;
 	}
@@ -331,7 +339,7 @@ read_symlink(MarshalContext *ctx)
 {
 	int idx = read_fixnum(ctx);
 
-	if (idx > ctx->symbols.vec.size()-1)
+	if (!ctx->symbols.containsIdx(idx))
 		throw Exception(Exception::ArgumentError, "bad symlink");
 
 	return ctx->symbols.lookup(idx);
@@ -342,7 +350,7 @@ read_link(MarshalContext *ctx)
 {
 	int idx = read_fixnum(ctx);
 
-	if (idx > ctx->objects.vec.size()-1)
+	if (!ctx->objects.containsIdx(idx))
 		throw Exception(Exception::ArgumentError, "dump format error (unlinked)");
 
 	return ctx->objects.lookup(idx);

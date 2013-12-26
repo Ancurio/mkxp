@@ -23,12 +23,13 @@
 #define GLOBALIBO_H
 
 #include "gl-util.h"
-#include <QVector>
+
+#include <vector>
 
 struct GlobalIBO
 {
 	IBO::ID ibo;
-	QVector<uint32_t> buffer;
+	std::vector<uint32_t> buffer;
 
 	GlobalIBO()
 	{
@@ -40,25 +41,24 @@ struct GlobalIBO
 		IBO::del(ibo);
 	}
 
-	void ensureSize(int quadCount)
+	void ensureSize(size_t quadCount)
 	{
 		if (buffer.size() >= quadCount*6)
 			return;
 
-		int startInd = buffer.size() / 6;
+		size_t startInd = buffer.size() / 6;
 		buffer.reserve(quadCount*6);
 
-		for (int i = startInd; i < quadCount; ++i)
+		for (size_t i = startInd; i < quadCount; ++i)
 		{
-			static const int indTemp[] = { 0, 1, 2, 2, 3, 0 };
+			static const uint32_t indTemp[] = { 0, 1, 2, 2, 3, 0 };
 
-			for (int j = 0; j < 6; ++j)
-				buffer.append(i * 4 + indTemp[j]);
+			for (size_t j = 0; j < 6; ++j)
+				buffer.push_back(i * 4 + indTemp[j]);
 		}
 
 		IBO::bind(ibo);
-		IBO::uploadData(buffer.count() * sizeof(int),
-		                buffer.constData());
+		IBO::uploadData(buffer.size() * sizeof(uint32_t), &buffer[0]);
 		IBO::unbind();
 	}
 };

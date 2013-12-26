@@ -24,7 +24,7 @@
 
 #include "etc-internal.h"
 
-#include <QList>
+#include <vector>
 
 namespace TileAtlas
 {
@@ -46,7 +46,7 @@ struct Blit
 	{}
 };
 
-typedef QList<Blit> BlitList;
+typedef std::vector<Blit> BlitList;
 
 /* Calculates the minimum atlas size required to hold
  * a tileset of height 'tilesetH'. If the required dimensions

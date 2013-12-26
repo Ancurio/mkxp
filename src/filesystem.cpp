@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <algorithm>
+#include <vector>
 
 #include <QDebug>
 
@@ -65,8 +66,6 @@ struct RGSS_entryHandle
 		io->destroy(io);
 	}
 };
-
-typedef QList<QByteArray> QByteList;
 
 struct RGSS_archiveData
 {
@@ -503,7 +502,7 @@ struct FileSystemPrivate
 	/* All keys are lower case */
 	QHash<QByteArray, QByteArray> pathCache;
 
-	QList<QByteArray> extensions[FileSystem::Undefined];
+	std::vector<QByteArray> extensions[FileSystem::Undefined];
 
 	/* Attempt to locate an extension string in a filename.
 	 * Either a pointer into the input string pointing at the
@@ -552,8 +551,8 @@ struct FileSystemPrivate
 
 		if (type != FileSystem::Undefined)
 		{
-			QList<QByteArray> &extList = extensions[type];
-			for (int i = 0; i < extList.count(); ++i)
+			std::vector<QByteArray> &extList = extensions[type];
+			for (size_t i = 0; i < extList.size(); ++i)
 			{
 				const char *ext = extList[i].constData();
 
@@ -600,7 +599,8 @@ FileSystem::FileSystem(const char *argv0,
 	p = new FileSystemPrivate;
 
 	/* Image extensions */
-	p->extensions[Image] << "jpg" << "png";
+	p->extensions[Image].push_back("jpg");
+	p->extensions[Image].push_back("png");
 
 	/* Audio extensions */
 	const Sound_DecoderInfo **di;
@@ -620,12 +620,13 @@ FileSystem::FileSystem(const char *argv0,
 					break;
 			}
 
-			p->extensions[Audio] << buf;
+			p->extensions[Audio].push_back(buf);
 		}
 	}
 
 	/* Font extensions */
-	p->extensions[Font] << "ttf" << "otf";
+	p->extensions[Font].push_back("ttf");
+	p->extensions[Font].push_back("otf");
 
 	PHYSFS_init(argv0);
 	PHYSFS_registerArchiver(&RGSS_Archiver);

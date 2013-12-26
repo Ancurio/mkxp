@@ -28,10 +28,8 @@
 #include <SDL_scancode.h>
 #include <SDL_mouse.h>
 
-#include <QVector>
+#include <vector>
 #include <string.h>
-
-#include <QDebug>
 
 const int Input::buttonCodeSize = 24;
 
@@ -279,13 +277,13 @@ static const Input::ButtonCode otherDirs[4][3] =
 
 struct InputPrivate
 {
-	QVector<KbBinding> kbBindings;
-	QVector<JsAxisBinding> jsABindings;
-	QVector<JsButtonBinding> jsBBindings;
-	QVector<MsBinding> msBindings;
+	std::vector<KbBinding> kbBindings;
+	std::vector<JsAxisBinding> jsABindings;
+	std::vector<JsButtonBinding> jsBBindings;
+	std::vector<MsBinding> msBindings;
 
 	/* Collective binding array */
-	QVector<Binding*> bindings;
+	std::vector<Binding*> bindings;
 
 	ButtonState stateArray[Input::buttonCodeSize*2];
 
@@ -369,16 +367,17 @@ struct InputPrivate
 	{
 		kbBindings.resize(staticKbBindingsN+defaultKbBindingsN);
 
-		int n = 0;
-		for (int i = 0; i < staticKbBindingsN; ++i)
+		size_t n = 0;
+
+		for (size_t i = 0; i < staticKbBindingsN; ++i)
 			kbBindings[n++] = KbBinding(staticKbBindings[i]);
 
-		for (int i = 0; i < defaultKbBindingsN; ++i)
+		for (size_t i = 0; i < defaultKbBindingsN; ++i)
 			kbBindings[n++] = KbBinding(defaultKbBindings[i]);
 
 		/* Add to binging array */
-		for (int i = 0; i < kbBindings.count(); ++i)
-			bindings.append(&kbBindings[i]);
+		for (size_t i = 0; i < kbBindings.size(); ++i)
+			bindings.push_back(&kbBindings[i]);
 	}
 
 	void initJsBindings()
@@ -386,7 +385,7 @@ struct InputPrivate
 		/* Create axis bindings */
 		jsABindings.resize(4);
 
-		int i = 0;
+		size_t i = 0;
 		jsABindings[i++] = JsAxisBinding(&EventThread::joyState.xAxis,  0x7FFF, Input::Right);
 		jsABindings[i++] = JsAxisBinding(&EventThread::joyState.xAxis, -0x8000, Input::Left);
 		jsABindings[i++] = JsAxisBinding(&EventThread::joyState.yAxis,  0x7FFF, Input::Down);
@@ -395,34 +394,34 @@ struct InputPrivate
 		/* Create button bindings */
 		jsBBindings.resize(defaultJsBindingsN);
 
-		for (int i = 0; i < defaultJsBindingsN; ++i)
+		for (size_t i = 0; i < defaultJsBindingsN; ++i)
 			jsBBindings[i] = JsButtonBinding(defaultJsBindings[i]);
 
 		/* Add to binging array */
-		for (int i = 0; i < jsABindings.count(); ++i)
-			bindings.append(&jsABindings[i]);
+		for (size_t i = 0; i < jsABindings.size(); ++i)
+			bindings.push_back(&jsABindings[i]);
 
-		for (int i = 0; i < jsBBindings.count(); ++i)
-			bindings.append(&jsBBindings[i]);
+		for (size_t i = 0; i < jsBBindings.size(); ++i)
+			bindings.push_back(&jsBBindings[i]);
 	}
 
 	void initMsBindings()
 	{
 		msBindings.resize(3);
 
-		int i = 0;
+		size_t i = 0;
 		msBindings[i++] = MsBinding(SDL_BUTTON_LEFT,   Input::MouseLeft);
 		msBindings[i++] = MsBinding(SDL_BUTTON_MIDDLE, Input::MouseMiddle);
 		msBindings[i++] = MsBinding(SDL_BUTTON_RIGHT,  Input::MouseRight);
 
 		/* Add to binding array */
-		for (int i = 0; i < msBindings.count(); ++i)
-			bindings.append(&msBindings[i]);
+		for (size_t i = 0; i < msBindings.size(); ++i)
+			bindings.push_back(&msBindings[i]);
 	}
 
 	void pollBindings(Input::ButtonCode &repeatCand)
 	{
-		for (int i = 0; i < bindings.count(); ++i)
+		for (size_t i = 0; i < bindings.size(); ++i)
 			pollBindingPriv(*bindings[i], repeatCand);
 
 		updateDir4();
@@ -466,7 +465,7 @@ struct InputPrivate
 	{
 		int dirFlag = 0;
 
-		for (int i = 0; i < 4; ++i)
+		for (size_t i = 0; i < 4; ++i)
 			dirFlag |= (getState(dirs[i]).pressed ? dirFlags[i] : 0);
 
 		if (dirFlag == deadDirFlags[0] || dirFlag == deadDirFlags[1])
@@ -480,7 +479,7 @@ struct InputPrivate
 			/* Check if prev still pressed */
 			if (getState(dir4Data.previous).pressed)
 			{
-				for (int i = 0; i < 3; ++i)
+				for (size_t i = 0; i < 3; ++i)
 				{
 					Input::ButtonCode other =
 							otherDirs[(dir4Data.previous/2)-1][i];
@@ -494,7 +493,7 @@ struct InputPrivate
 			}
 		}
 
-		for (int i = 0; i < 4; ++i)
+		for (size_t i = 0; i < 4; ++i)
 		{
 			if (!getState(dirs[i]).pressed)
 				continue;
@@ -520,7 +519,7 @@ struct InputPrivate
 
 		dir8Data.active = 0;
 
-		for (int i = 0; i < 4; ++i)
+		for (size_t i = 0; i < 4; ++i)
 		{
 			Input::ButtonCode one = dirs[i];
 

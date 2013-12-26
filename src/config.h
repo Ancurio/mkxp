@@ -23,9 +23,10 @@
 #define CONFIG_H
 
 #include <QByteArray>
-#include <QVector>
 #include <QHash>
 #include <QVariant>
+
+#include <vector>
 
 struct Config
 {
@@ -49,7 +50,7 @@ struct Config
 	bool allowSymlinks;
 
 	QByteArray customScript;
-	QVector<QByteArray> rtps;
+	std::vector<QByteArray> rtps;
 
 	/* Any values in the [Binding]
 	 * group are collected here */

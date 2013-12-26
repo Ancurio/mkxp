@@ -31,7 +31,6 @@
 #include <SDL_mutex.h>
 
 #include <QByteArray>
-#include <QVector>
 
 #include <stdint.h>
 

@@ -22,9 +22,10 @@
 #include "rwmem.h"
 
 #include <SDL_rwops.h>
-#include <QVector>
 
-typedef QVector<char> ByteVec;
+#include <vector>
+
+typedef std::vector<char> ByteVec;
 
 static inline ByteVec *
 getRWPrivate(SDL_RWops *ops)
@@ -62,7 +63,7 @@ static size_t SDL_RWopsWrite(SDL_RWops *ops, const void *buffer, size_t size, si
 	if (writeBytes == 1)
 	{
 		char byte = *static_cast<const char*>(buffer);
-		v->append(byte);
+		v->push_back(byte);
 		return 1;
 	}
 
@@ -100,7 +101,7 @@ int RWMemGetData(SDL_RWops *ops, void *buffer)
 	ByteVec *v = getRWPrivate(ops);
 
 	if (buffer)
-		memcpy(buffer, v->constData(), v->size());
+		memcpy(buffer, &(*v)[0], v->size());
 
 	return v->size();
 }

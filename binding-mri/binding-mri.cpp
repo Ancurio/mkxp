@@ -224,14 +224,14 @@ static void runRMXPScripts()
 		return;
 	}
 
-	int scriptCount = RARRAY_LEN(scriptArray);
+	size_t scriptCount = RARRAY_LEN(scriptArray);
 
 	QByteArray decodeBuffer;
 	decodeBuffer.resize(0x1000);
 
-	QVector<Script> encScripts(scriptCount);
+	std::vector<Script> encScripts(scriptCount);
 
-	for (int i = 0; i < scriptCount; ++i)
+	for (size_t i = 0; i < scriptCount; ++i)
 	{
 		VALUE script = rb_ary_entry(scriptArray, i);
 
@@ -250,7 +250,7 @@ static void runRMXPScripts()
 		sc.unknown = FIX2UINT(scriptUnknown);
 	}
 
-	for (int i = 0; i < scriptCount; ++i)
+	for (size_t i = 0; i < scriptCount; ++i)
 	{
 		Script &sc = encScripts[i];
 
@@ -280,7 +280,8 @@ static void runRMXPScripts()
 		if (result != Z_OK)
 		{
 			static char buffer[256];
-			snprintf(buffer, sizeof(buffer), "Error decoding script %d: '%s'",
+			/* FIXME: '%zu' apparently gcc only? */
+			snprintf(buffer, sizeof(buffer), "Error decoding script %zu: '%s'",
 			         i, sc.name.constData());
 
 			showMsg(buffer);

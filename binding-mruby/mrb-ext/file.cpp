@@ -34,7 +34,7 @@
 #include <libgen.h>
 #include <sys/stat.h>
 
-#include <QVector>
+#include <vector>
 
 #include <QDebug>
 
@@ -312,7 +312,7 @@ MRB_METHOD(fileClose)
 }
 
 static void
-readLine(FILE *f, QVector<char> &buffer)
+readLine(FILE *f, std::vector<char> &buffer)
 {
 	buffer.clear();
 
@@ -326,7 +326,7 @@ readLine(FILE *f, QVector<char> &buffer)
 		if (c == '\n' || c == EOF)
 			break;
 
-		buffer.append(c);
+		buffer.push_back(c);
 	}
 }
 
@@ -340,19 +340,19 @@ MRB_METHOD(fileEachLine)
 	mrb_get_args(mrb, "&", &block);
 
 	(void) f;
-	QVector<char> buffer;
+	std::vector<char> buffer;
 
 	mrb_value str = mrb_str_buf_new(mrb, 0);
 
 	while (feof(f) == 0)
 	{
 		GUARD_ERRNO( readLine(f, buffer); )
-		if (buffer.isEmpty() && feof(f) != 0)
+		if (buffer.empty() && feof(f) != 0)
 			break;
 
-		size_t lineLen = buffer.count();
+		size_t lineLen = buffer.size();
 		mrb_str_resize(mrb, str, lineLen);
-		memcpy(RSTRING_PTR(str), buffer.constData(), lineLen);
+		memcpy(RSTRING_PTR(str), &buffer[0], lineLen);
 
 		mrb_yield(mrb, block, str);
 	}
@@ -468,15 +468,15 @@ MRB_METHOD(fileReadLines)
 	}
 
 	mrb_value ary = mrb_ary_new(mrb);
-	QVector<char> buffer;
+	std::vector<char> buffer;
 
 	while (feof(f) == 0)
 	{
 		GUARD_ERRNO( readLine(f, buffer); )
-		if (buffer.isEmpty() && feof(f) != 0)
+		if (buffer.empty() && feof(f) != 0)
 			break;
 
-		mrb_value str = mrb_str_new(mrb, buffer.constData(), buffer.size());
+		mrb_value str = mrb_str_new(mrb, &buffer[0], buffer.size());
 		mrb_ary_push(mrb, ary, str);
 	}
 
