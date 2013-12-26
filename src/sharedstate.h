@@ -30,7 +30,6 @@
 struct SharedStatePrivate;
 struct RGSSThreadData;
 struct GlobalIBO;
-struct mrb_state;
 struct SDL_Window;
 struct TEXFBO;
 struct Quad;
@@ -46,7 +45,6 @@ class GLState;
 class TexPool;
 class FontPool;
 class Font;
-struct BlurShader;
 struct GlobalIBO;
 struct Config;
 struct Vec2i;
