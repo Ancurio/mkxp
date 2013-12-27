@@ -663,7 +663,7 @@ struct TilemapPrivate
 
 			for (size_t i = 0; i < blits.size(); ++i)
 			{
-				TileAtlas::Blit &blitOp = blits[i];
+				const TileAtlas::Blit &blitOp = blits[i];
 
 				PixelStore::setupSubImage(tsSurf->w, blitOp.src.x, blitOp.src.y);
 
@@ -679,7 +679,7 @@ struct TilemapPrivate
 
 			for (size_t i = 0; i < blits.size(); ++i)
 			{
-				TileAtlas::Blit &blitOp = blits[i];
+				const TileAtlas::Blit &blitOp = blits[i];
 
 				FBO::blit(blitOp.src.x, blitOp.src.y, blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h);
 			}
