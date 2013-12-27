@@ -93,7 +93,7 @@ MRB_FUNCTION(inputMouseY)
 }
 
 #define DEF_CONST_I(name, value) \
-	mrb_const_set(mrb, mrb_obj_value(module), mrb_intern(mrb, name), mrb_fixnum_value(value))
+	mrb_const_set(mrb, mrb_obj_value(module), mrb_intern_lit(mrb, name), mrb_fixnum_value(value))
 
 void
 inputBindingInit(mrb_state *mrb)

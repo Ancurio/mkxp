@@ -113,7 +113,7 @@ MrbData::MrbData(mrb_state *mrb)
 	exc[ArgumentError] = mrb_class_get(mrb, "ArgumentError");
 
 	for (int i = 0; i < symDataN; ++i)
-		symbols[symData[i].ind] = mrb_intern(mrb, symData[i].str);
+		symbols[symData[i].ind] = mrb_intern_cstr(mrb, symData[i].str);
 
 	mrb_gc_arena_restore(mrb, arena);
 }

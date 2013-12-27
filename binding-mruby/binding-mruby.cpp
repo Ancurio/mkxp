@@ -153,8 +153,8 @@ showExcMessageBox(mrb_state *mrb, mrb_value exc)
 {
 	/* Display actual exception in a message box */
 	mrb_value mesg = mrb_funcall(mrb, exc, "message", 0);
-	mrb_value line = mrb_attr_get(mrb, exc, mrb_intern2(mrb, "line", 4));
-	mrb_value file = mrb_attr_get(mrb, exc, mrb_intern2(mrb, "file", 4));
+	mrb_value line = mrb_attr_get(mrb, exc, mrb_intern_lit(mrb, "line"));
+	mrb_value file = mrb_attr_get(mrb, exc, mrb_intern_lit(mrb, "file"));
 	const char *excClass = mrb_class_name(mrb, mrb_class(mrb, exc));
 
 	char msgBoxText[512];
@@ -225,9 +225,9 @@ runMrbFile(mrb_state *mrb, const char *filename)
 		return;
 	}
 
-	int n = mrb_read_irep_file(mrb, f);
+	mrb_irep *irep = mrb_read_irep_file(mrb, f);
 
-	if (n < 0)
+	if (!irep)
 	{
 		static char buffer[256];
 		snprintf(buffer, sizeof(buffer), "Unable to read compiled script '%s'", filename);
@@ -236,7 +236,8 @@ runMrbFile(mrb_state *mrb, const char *filename)
 		return;
 	}
 
-	mrb_run(mrb, mrb_proc_new(mrb, mrb->irep[n]), mrb_top_self(mrb));
+	RProc *proc = mrb_proc_new(mrb, irep);
+	mrb_run(mrb, proc, mrb_top_self(mrb));
 
 	fclose(f);
 }

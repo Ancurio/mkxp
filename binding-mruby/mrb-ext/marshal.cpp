@@ -328,7 +328,7 @@ read_symbol(MarshalContext *ctx)
 {
 	mrb_state *mrb = ctx->mrb;
 
-	mrb_sym symbol = mrb_intern(mrb, read_string(ctx));
+	mrb_sym symbol = mrb_intern_cstr(mrb, read_string(ctx));
 	ctx->symbols.add(symbol);
 
 	return symbol;
@@ -412,7 +412,7 @@ mrb_class_from_path(mrb_state *mrb, mrb_value path)
 	{
 		while (*p && *p != ':' && *p != '\"') p++;
 
-		mrb_sym sym = mrb_intern2(mrb, pbgn, p-pbgn);
+		mrb_sym sym = mrb_intern(mrb, pbgn, p-pbgn);
 		klass = mrb_const_get(mrb, klass, sym);
 
 		if (p[0] == ':')
@@ -465,7 +465,7 @@ read_userdef(MarshalContext *ctx)
 		mrb_class_from_path(mrb, class_path);
 
 	/* Should check here if klass implements '_load()' */
-	if (!mrb_obj_respond_to(mrb_class(mrb, mrb_obj_value(klass)), mrb_intern_cstr(mrb, "_load")))
+	if (!mrb_obj_respond_to(mrb, mrb_class(mrb, mrb_obj_value(klass)), mrb_intern_cstr(mrb, "_load")))
 		throw Exception(Exception::TypeError,
 	                    "class %s needs to have method '_load'",
 		                 RSTRING_PTR(class_path));
@@ -850,8 +850,8 @@ write_value(MarshalContext *ctx, mrb_value value)
 	case MRB_TT_OBJECT :
 		ctx->objects.add(value);
 
-		if (mrb_obj_respond_to(mrb_obj_ptr(value)->c,
-							   mrb_intern(mrb, "_dump")))
+		if (mrb_obj_respond_to(mrb, mrb_obj_ptr(value)->c,
+		                       mrb_intern_lit(mrb, "_dump")))
 		{
 			ctx->writeByte(TYPE_USERDEF);
 			write_userdef(ctx, value);
