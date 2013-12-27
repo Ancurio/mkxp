@@ -627,8 +627,8 @@ struct TilemapPrivate
 
 		updateAutotileInfo();
 
-		Q_FOREACH (uint8_t i, atlas.usableATs)
-			autotiles[i]->flush();
+		for (size_t i = 0; i < atlas.usableATs.size(); ++i)
+			autotiles[atlas.usableATs[i]]->flush();
 
 		TileAtlas::BlitList blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
 
@@ -643,13 +643,16 @@ struct TilemapPrivate
 		glState.clearColor.pop();
 
 		/* Blit autotiles */
-		Q_FOREACH (uint8_t i, atlas.usableATs)
+		for (size_t i = 0; i < atlas.usableATs.size(); ++i)
 		{
-			int blitW = std::min(autotiles[i]->width(), atAreaW);
-			int blitH = std::min(autotiles[i]->height(), atAreaH);
+			const uint8_t atInd = atlas.usableATs[i];
+			Bitmap *autotile = autotiles[atInd];
 
-			FBO::bind(autotiles[i]->getGLTypes().fbo, FBO::Read);
-			FBO::blit(0, 0, 0, i*autotileH, blitW, blitH);
+			int blitW = std::min(autotile->width(), atAreaW);
+			int blitH = std::min(autotile->height(), atAreaH);
+
+			FBO::bind(autotile->getGLTypes().fbo, FBO::Read);
+			FBO::blit(0, 0, 0, atInd*autotileH, blitW, blitH);
 		}
 
 		/* Blit tileset */
