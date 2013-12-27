@@ -23,7 +23,8 @@
 #define GLSTATE_H
 
 #include "etc.h"
-#include <QStack>
+
+#include <stack>
 
 template<typename T>
 struct GLProperty
@@ -35,7 +36,7 @@ struct GLProperty
 	}
 
 	void push() { stack.push(current); }
-	void pop()  { set(stack.pop()); }
+	void pop()  { set(stack.top()); stack.pop(); }
 	T &get()    { return current; }
 	void set(const T &value)
 	{
@@ -55,7 +56,7 @@ private:
 	virtual void apply(const T &value) = 0;
 
 	T current;
-	QStack<T> stack;
+	std::stack<T> stack;
 };
 
 // Not needed

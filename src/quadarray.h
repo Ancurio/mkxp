@@ -89,7 +89,7 @@ struct ColorQuadArray
 		shState->ensureQuadIBO(quadCount);
 	}
 
-	void draw(uint offset, uint count)
+	void draw(size_t offset, size_t count)
 	{
 		VAO::bind(vao);
 
