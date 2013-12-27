@@ -196,7 +196,6 @@ void TexPool::release(TEXFBO &obj)
 	CNodeList &bucket = p->poolHash[size];
 	bucket.append(cnode);
 
-	p->memSize += byteCount(size);
 	++p->objCount;
 
 //	qDebug() << "TexPool: <!+> (" << obj.width << obj.height << ") Current size:" << p->memSize;
