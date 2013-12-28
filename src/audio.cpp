@@ -1273,7 +1273,19 @@ struct AudioStream
 				stream.close();
 		case ALStream::Closed :
 			if (diffFile)
-				stream.open(filename);
+			{
+				try
+				{
+					/* This will throw on errors while
+					 * opening the data source */
+					stream.open(filename);
+				}
+				catch (const Exception &e)
+				{
+					unlockStream();
+					throw e;
+				}
+			}
 			break;
 		}
 
