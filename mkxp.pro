@@ -7,33 +7,38 @@ DEPENDPATH += src shader assets
 INCLUDEPATH += . src
 LIBS += -lGL
 
-# Deal with boost paths...
-isEmpty(BOOST_I) {
-	BOOST_I = $$(BOOST_I)
-}
-isEmpty(BOOST_I) {}
-else {
-	INCLUDEPATH += $$BOOST_I
-}
-
-isEmpty(BOOST_L) {
-	BOOST_L = $$(BOOST_L)
-}
-isEmpty(BOOST_L) {}
-else {
-	LIBS += -L$$BOOST_L
-}
-
-LIBS += -lboost_program_options
-
-
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
 isEmpty(BINDING) {
-	BINDING = BINDING_MRI
+	BINDING = MRI
 }
 
-CONFIG += $$BINDING
+contains(BINDING, MRI) {
+	contains(_HAVE_BINDING, YES) {
+		error("Only one binding may be selected")
+	}
+	_HAVE_BINDING = YES
+
+	CONFIG += BINDING_MRI
+}
+
+contains(BINDING, MRUBY) {
+	contains(_HAVE_BINDING, YES) {
+		error("Only one binding may be selected")
+	}
+	_HAVE_BINDING = YES
+
+	CONFIG += BINDING_MRUBY
+}
+
+contains(BINDING, NULL) {
+	contains(_HAVE_BINDING, YES) {
+		error("Only one binding may be selected")
+	}
+	_HAVE_BINDING = YES
+
+	CONFIG += BINDING_NULL
+}
 
 RGSS2 {
 	DEFINES += RGSS2
@@ -47,6 +52,25 @@ unix {
 	RGSS2 {
 		PKGCONFIG += vorbisfile
 	}
+
+	# Deal with boost paths...
+	isEmpty(BOOST_I) {
+		BOOST_I = $$(BOOST_I)
+	}
+	isEmpty(BOOST_I) {}
+	else {
+		INCLUDEPATH += $$BOOST_I
+	}
+
+	isEmpty(BOOST_L) {
+		BOOST_L = $$(BOOST_L)
+	}
+	isEmpty(BOOST_L) {}
+	else {
+		LIBS += -L$$BOOST_L
+	}
+
+	LIBS += -lboost_program_options
 }
 
 # Input

@@ -50,11 +50,11 @@ qmake will use pkg-config to locate the respective include/library paths. If you
 
 The exception is boost, which is weird in that it still hasn't managed to pull off pkg-config support (seriously?). *If you installed boost in a non-standard prefix*, you will need to pass its include path via `BOOST_I` and library path via `BOOST_L`, either as direct arguments to qmake (`qmake BOOST_I="/usr/include" ...`) or via environment variables.
 
-**MRI-Binding**: pkg-config will look for `ruby-2.1.pc`, but you can modify mkxp.pro to use 2.0 instead. This is the default binding, so no arguments to qmake needed (`BINDING=BINDING_MRI` to be explicit).
+**MRI-Binding**: pkg-config will look for `ruby-2.1.pc`, but you can modify mkxp.pro to use 2.0 instead. This is the default binding, so no arguments to qmake needed (`BINDING=MRI` to be explicit).
 
-**MRuby-Binding**: place the "mruby" folder into the project folder and build it first. Add `BINDING=BINDING_MRUBY` to qmake's arguments.
+**MRuby-Binding**: place the "mruby" folder into the project folder and build it first. Add `BINDING=MRUBY` to qmake's arguments.
 
-**Null-Binding**: Add `BINDING=BINDING_NULL` to qmake's arguments.
+**Null-Binding**: Add `BINDING=NULL` to qmake's arguments.
 
 ### Supported image/audio formats
 These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
