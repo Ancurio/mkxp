@@ -59,25 +59,6 @@ private:
 	std::stack<T> stack;
 };
 
-// Not needed
-template<typename T>
-struct GLPropSaver
-{
-	GLPropSaver(GLProperty<T> &p)
-	    : p(p)
-	{
-		p.push();
-	}
-
-	~GLPropSaver()
-	{
-		p.pop();
-	}
-
-private:
-	GLProperty<T> &p;
-};
-
 
 class GLClearColor : public GLProperty<Vec4>
 {
