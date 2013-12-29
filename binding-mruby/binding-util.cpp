@@ -138,9 +138,7 @@ void raiseMrbExc(mrb_state *mrb, const Exception &exc)
 	MrbData *data = getMrbData(mrb);
 	RClass *excClass = data->exc[excToMrbExc[exc.type]];
 
-	static char buffer[512];
-	exc.snprintf(buffer, sizeof(buffer));
-	mrb_raise(mrb, excClass, buffer);
+	mrb_raise(mrb, excClass, exc.msg.c_str());
 }
 
 MRB_METHOD_PUB(inspectObject)

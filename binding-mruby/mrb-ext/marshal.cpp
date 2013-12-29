@@ -548,8 +548,8 @@ read_value(MarshalContext *ctx)
 		break;
 
 	default :
-		throw Exception(Exception::MKXPError, "Marshal.load: unsupported value type '%s'",
-		                std::string(1, (char)type));
+		throw Exception(Exception::MKXPError, "Marshal.load: unsupported value type '%c'",
+		                (char) type);
 	}
 
 	mrb_gc_arena_restore(mrb, arena);

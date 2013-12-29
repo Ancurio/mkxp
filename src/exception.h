@@ -24,6 +24,7 @@
 
 #include <string>
 #include <stdio.h>
+#include <stdarg.h>
 
 struct Exception
 {
@@ -44,19 +45,19 @@ struct Exception
 	};
 
 	Type type;
-	std::string fmt;
-	std::string arg1;
-	std::string arg2;
+	std::string msg;
 
-	Exception(Type type, std::string fmt,
-	          std::string arg1 = std::string(),
-	          std::string arg2 = std::string())
-	    : type(type), fmt(fmt), arg1(arg1), arg2(arg2)
-	{}
 
-	void snprintf(char *buffer, size_t bufSize) const
+	Exception(Type type, const char *format, ...)
+	    : type(type)
 	{
-		::snprintf(buffer, bufSize, fmt.c_str(), arg1.c_str(), arg2.c_str());
+		va_list ap;
+		va_start(ap, format);
+
+		msg.resize(512);
+		vsnprintf(&msg[0], msg.size(), format, ap);
+
+		va_end(ap);
 	}
 };
 

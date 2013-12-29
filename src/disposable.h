@@ -58,6 +58,6 @@ private:
 
 /* Every cpp needs to define DISP_CLASS_NAME for itself (lowercase) */
 #define GUARD_DISPOSED \
-{ if (isDisposed()) throw Exception(Exception::RGSSError, "disposed %S", DISP_CLASS_NAME); }
+{ if (isDisposed()) throw Exception(Exception::RGSSError, "disposed %s", DISP_CLASS_NAME); }
 
 #endif // DISPOSABLE_H

@@ -128,14 +128,9 @@ TEXFBO TexPool::request(int width, int height)
 
 	int maxSize = glState.caps.maxTexSize;
 	if (width > maxSize || height > maxSize)
-	{
-		char buffer[128];
-		snprintf(buffer, sizeof(buffer),
-		         "Texture dimensions [%d, %d] exceed hardware capabilities",
-		         width, height);
-
-		throw Exception(Exception::MKXPError, buffer);
-	}
+		throw Exception(Exception::MKXPError,
+		                "Texture dimensions [%d, %d] exceed hardware capabilities",
+		                width, height);
 
 	/* Nope, create it instead */
 	TEXFBO::init(cnode.obj);

@@ -275,9 +275,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 	}
 	catch (const Exception &e)
 	{
-		char buffer[512];
-		snprintf(buffer, sizeof(buffer), e.fmt.c_str(), e.arg1.c_str(), e.arg2.c_str());
-		readError = std::string(": ") + std::string(buffer);
+		readError = std::string(": ") + e.msg;
 	}
 
 	SDL_RWclose(&ops);

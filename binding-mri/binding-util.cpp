@@ -94,9 +94,7 @@ void raiseRbExc(const Exception &exc)
 	RbData *data = getRbData();
 	VALUE excClass = data->exc[excToRbExc[exc.type]];
 
-	static char buffer[512];
-	exc.snprintf(buffer, sizeof(buffer));
-	rb_raise(excClass, buffer);
+	rb_raise(excClass, exc.msg.c_str());
 }
 
 int
