@@ -33,6 +33,7 @@
 #include "eventthread.h"
 #include "debuglogger.h"
 #include "debugwriter.h"
+#include "exception.h"
 
 #include "binding.h"
 
@@ -100,6 +101,7 @@ int rgssThreadFun(void *userdata)
 	{
 		rgssThreadError(threadData, "Error initializing glew");
 		SDL_GL_DeleteContext(glCtx);
+
 		return 0;
 	}
 
@@ -114,6 +116,7 @@ int rgssThreadFun(void *userdata)
 	{
 		rgssThreadError(threadData, "At least OpenGL 2.0 is required");
 		SDL_GL_DeleteContext(glCtx);
+
 		return 0;
 	}
 
@@ -125,6 +128,7 @@ int rgssThreadFun(void *userdata)
 			rgssThreadError(threadData, std::string("Required GL extension \"")
 			                            + reqExt[i] + "\" not present");
 			SDL_GL_DeleteContext(glCtx);
+
 			return 0;
 		}
 	}
@@ -140,6 +144,7 @@ int rgssThreadFun(void *userdata)
 	{
 		rgssThreadError(threadData, "Error opening OpenAL device");
 		SDL_GL_DeleteContext(glCtx);
+
 		return 0;
 	}
 
@@ -150,12 +155,25 @@ int rgssThreadFun(void *userdata)
 		rgssThreadError(threadData, "Error creating OpenAL context");
 		alcCloseDevice(alcDev);
 		SDL_GL_DeleteContext(glCtx);
+
 		return 0;
 	}
 
 	alcMakeContextCurrent(alcCtx);
 
-	SharedState::initInstance(threadData);
+	try
+	{
+		SharedState::initInstance(threadData);
+	}
+	catch (const Exception &exc)
+	{
+		rgssThreadError(threadData, exc.msg);
+		alcDestroyContext(alcCtx);
+		alcCloseDevice(alcDev);
+		SDL_GL_DeleteContext(glCtx);
+
+		return 0;
+	}
 
 	/* Start script execution */
 	scriptBinding->execute();

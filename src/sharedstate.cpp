@@ -35,6 +35,7 @@
 #include "global-ibo.h"
 #include "quad.h"
 #include "binding.h"
+#include "exception.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -93,8 +94,13 @@ struct SharedStatePrivate
 	{
 		if (!config.gameFolder.empty())
 		{
-			int unused = chdir(config.gameFolder.c_str());
-			(void) unused;
+			int result = chdir(config.gameFolder.c_str());
+
+			if (result != 0)
+				throw Exception(Exception::MKXPError,
+			                    "Unable to switch into gameFolder '%s'",
+			                    config.gameFolder.c_str());
+
 			fileSystem.addPath(".");
 		}
 
@@ -139,14 +145,31 @@ struct SharedStatePrivate
 
 void SharedState::initInstance(RGSSThreadData *threadData)
 {
+	/* This section is tricky because of dependencies:
+	 * SharedState depends on GlobalIBO existing,
+	 * Font depends on SharedState existing */
+
 	globalIBO = new GlobalIBO();
 	globalIBO->ensureSize(1);
 
-	SharedState *state = new SharedState(threadData);
+	SharedState::instance = 0;
+	Font *defaultFont = 0;
 
-	SharedState::instance = state;
+	try
+	{
+		SharedState::instance = new SharedState(threadData);
+		defaultFont = new Font();
+	}
+	catch (const Exception &exc)
+	{
+		delete globalIBO;
+		delete SharedState::instance;
+		delete defaultFont;
 
-	state->p->defaultFont = new Font();
+		throw exc;
+	}
+
+	SharedState::instance->p->defaultFont = defaultFont;
 }
 
 void SharedState::finiInstance()

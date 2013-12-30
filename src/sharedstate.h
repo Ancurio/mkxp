@@ -106,6 +106,9 @@ struct SharedState
 	void checkShutdown();
 
 	static SharedState *instance;
+
+	/* This function will throw an Exception instance
+	 * on initialization error */
 	static void initInstance(RGSSThreadData *threadData);
 	static void finiInstance();
 
