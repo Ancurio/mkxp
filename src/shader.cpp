@@ -22,11 +22,12 @@
 #include "shader.h"
 #include "sharedstate.h"
 #include "glstate.h"
-#include "debugwriter.h"
+#include "exception.h"
 
 #include <glew.h>
 
 #include <assert.h>
+#include <iostream>
 
 #include "../sprite.frag.xxd"
 #include "../hue.frag.xxd"
@@ -50,15 +51,35 @@
 #endif
 
 
-#define INIT_SHADER(vert, frag) \
+#define INIT_SHADER(vert, frag, name) \
 { \
-	Shader::init(shader_##vert##_vert, shader_##vert##_vert_len, shader_##frag##_frag, shader_##frag##_frag_len); \
-	Debug() << "    From:" << #vert ".vert" << #frag ".frag"; \
+	Shader::init(shader_##vert##_vert, shader_##vert##_vert_len, shader_##frag##_frag, shader_##frag##_frag_len, \
+	#vert, #frag, #name); \
 }
 
-#define COMP(shader) Debug() << "--- Compiling " #shader
-
 #define GET_U(name) u_##name = glGetUniformLocation(program, #name)
+
+static void printShaderLog(GLuint shader)
+{
+	GLint logLength;
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+
+	std::string log(logLength, '\0');
+	glGetShaderInfoLog(shader, log.size(), 0, &log[0]);
+
+	std::clog << "Shader log:\n" << log;
+}
+
+static void printProgramLog(GLuint program)
+{
+	GLint logLength;
+	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+
+	std::string log(logLength, '\0');
+	glGetProgramInfoLog(program, log.size(), 0, &log[0]);
+
+	std::clog << "Program log:\n" << log;
+}
 
 Shader::Shader()
 {
@@ -88,7 +109,9 @@ void Shader::unbind()
 }
 
 void Shader::init(const unsigned char *vert, int vertSize,
-                  const unsigned char *frag, int fragSize)
+                  const unsigned char *frag, int fragSize,
+                  const char *vertName, const char *fragName,
+                  const char *programName)
 {
 	GLint success;
 
@@ -97,14 +120,28 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	glCompileShader(vertShader);
 
 	glGetObjectParameterivARB(vertShader, GL_COMPILE_STATUS, &success);
-	assert(success); // FIXME should really throw here instead
+
+	if (!success)
+	{
+		printShaderLog(vertShader);
+		throw Exception(Exception::MKXPError,
+	                    "GLSL: An error occured while compiling vertex shader '%s' in program '%s'",
+	                    vertName, programName);
+	}
 
 	/* Compile fragment shader */
 	glShaderSource(fragShader, 1, (const GLchar**) &frag, (const GLint*) &fragSize);
 	glCompileShader(fragShader);
 
 	glGetObjectParameterivARB(fragShader, GL_COMPILE_STATUS, &success);
-	assert(success);
+
+	if (!success)
+	{
+		printShaderLog(fragShader);
+		throw Exception(Exception::MKXPError,
+	                    "GLSL: An error occured while compiling fragment shader '%s' in program '%s'",
+	                    fragName, programName);
+	}
 
 	/* Link shader program */
 	glAttachShader(program, vertShader);
@@ -117,17 +154,26 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	glLinkProgram(program);
 
 	glGetObjectParameterivARB(program, GL_LINK_STATUS, &success);
-	assert(success);
+
+	if (!success)
+	{
+		printProgramLog(program);
+		throw Exception(Exception::MKXPError,
+	                    "GLSL: An error occured while linking program '%s' (vertex '%s', fragment '%s')",
+	                    programName, vertName, fragName);
+	}
 }
 
-void Shader::initFromFile(const char *_vertFile, const char *_fragFile)
+void Shader::initFromFile(const char *_vertFile, const char *_fragFile,
+                          const char *programName)
 {
 	std::string vertContents, fragContents;
 	readFile(_vertFile, vertContents);
 	readFile(_fragFile, fragContents);
 
 	init((const unsigned char*) vertContents.c_str(), vertContents.size(),
-	     (const unsigned char*) fragContents.c_str(), fragContents.size());
+	     (const unsigned char*) fragContents.c_str(), fragContents.size(),
+	     _vertFile, _fragFile, programName);
 }
 
 void Shader::setVec4Uniform(GLint location, const Vec4 &vec)
@@ -190,8 +236,7 @@ void ShaderBase::setTranslation(const Vec2i &value)
 
 SimpleShader::SimpleShader()
 {
-	COMP(SimpleShader);
-	INIT_SHADER(simple, simple);
+	INIT_SHADER(simple, simple, SimpleShader);
 
 	ShaderBase::init();
 
@@ -206,8 +251,7 @@ void SimpleShader::setTexOffsetX(int value)
 
 SimpleColorShader::SimpleColorShader()
 {
-	COMP(SimpleColorShader);
-	INIT_SHADER(simpleColor, simpleColor);
+	INIT_SHADER(simpleColor, simpleColor, SimpleColorShader);
 
 	ShaderBase::init();
 }
@@ -215,8 +259,7 @@ SimpleColorShader::SimpleColorShader()
 
 SimpleAlphaShader::SimpleAlphaShader()
 {
-	COMP(SimpleAlphaShader);
-	INIT_SHADER(simpleColor, simpleAlpha);
+	INIT_SHADER(simpleColor, simpleAlpha, SimpleAlphaShader);
 
 	ShaderBase::init();
 }
@@ -224,8 +267,7 @@ SimpleAlphaShader::SimpleAlphaShader()
 
 SimpleSpriteShader::SimpleSpriteShader()
 {
-	COMP(SimpleSpriteShader);
-	INIT_SHADER(sprite, simple);
+	INIT_SHADER(sprite, simple, SimpleSpriteShader);
 
 	ShaderBase::init();
 
@@ -240,8 +282,7 @@ void SimpleSpriteShader::setSpriteMat(const float value[16])
 
 TransShader::TransShader()
 {
-	COMP(TransShader);
-	INIT_SHADER(simple, trans);
+	INIT_SHADER(simple, trans, TransShader);
 
 	ShaderBase::init();
 
@@ -280,8 +321,7 @@ void TransShader::setVague(float value)
 
 SimpleTransShader::SimpleTransShader()
 {
-	COMP(SimpleTransShader);
-	INIT_SHADER(simple, transSimple);
+	INIT_SHADER(simple, transSimple, SimpleTransShader);
 
 	ShaderBase::init();
 
@@ -308,8 +348,7 @@ void SimpleTransShader::setProg(float value)
 
 SpriteShader::SpriteShader()
 {
-	COMP(SpriteShader);
-	INIT_SHADER(sprite, sprite);
+	INIT_SHADER(sprite, sprite, SpriteShader);
 
 	ShaderBase::init();
 
@@ -354,8 +393,7 @@ void SpriteShader::setBushOpacity(float value)
 
 PlaneShader::PlaneShader()
 {
-	COMP(PlaneShader);
-	INIT_SHADER(simple, plane);
+	INIT_SHADER(simple, plane, PlaneShader);
 
 	ShaderBase::init();
 
@@ -388,8 +426,7 @@ void PlaneShader::setOpacity(float value)
 
 FlashMapShader::FlashMapShader()
 {
-	COMP(FlashMapShader);
-	INIT_SHADER(simpleColor, flashMap);
+	INIT_SHADER(simpleColor, flashMap, FlashMapShader);
 
 	ShaderBase::init();
 
@@ -404,8 +441,7 @@ void FlashMapShader::setAlpha(float value)
 
 HueShader::HueShader()
 {
-	COMP(HueShader);
-	INIT_SHADER(simple, hue);
+	INIT_SHADER(simple, hue, HueShader);
 
 	ShaderBase::init();
 
@@ -428,7 +464,7 @@ void HueShader::setInputTexture(TEX::ID tex)
 
 SimpleMatrixShader::SimpleMatrixShader()
 {
-	INIT_SHADER(simpleMatrix, simpleAlpha);
+	INIT_SHADER(simpleMatrix, simpleAlpha, SimpleMatrixShader);
 
 	ShaderBase::init();
 
@@ -443,14 +479,14 @@ void SimpleMatrixShader::setMatrix(const float value[16])
 
 BlurShader::HPass::HPass()
 {
-	INIT_SHADER(blurH, blur);
+	INIT_SHADER(blurH, blur, BlurShader::HPass);
 
 	ShaderBase::init();
 }
 
 BlurShader::VPass::VPass()
 {
-	INIT_SHADER(blurV, blur);
+	INIT_SHADER(blurV, blur, BlurShader::VPass);
 
 	ShaderBase::init();
 }
@@ -460,8 +496,7 @@ BlurShader::VPass::VPass()
 
 BltShader::BltShader()
 {
-	COMP(BltShader);
-	INIT_SHADER(simple, bitmapBlit);
+	INIT_SHADER(simple, bitmapBlit, BltShader);
 
 	ShaderBase::init();
 

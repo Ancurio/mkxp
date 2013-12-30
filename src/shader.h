@@ -44,8 +44,11 @@ protected:
 	~Shader();
 
 	void init(const unsigned char *vert, int vertSize,
-	          const unsigned char *frag, int fragSize);
-	void initFromFile(const char *vertFile, const char *fragFile);
+	          const unsigned char *frag, int fragSize,
+	          const char *vertName, const char *fragName,
+	          const char *programName);
+	void initFromFile(const char *vertFile, const char *fragFile,
+	                  const char *programName);
 
 	static void setVec4Uniform(GLint location, const Vec4 &vec);
 	static void setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture);
