@@ -21,6 +21,8 @@
 
 #include "config.h"
 
+#include <SDL2/SDL_filesystem.h>
+
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -46,7 +48,13 @@ Config::Config()
       solidFonts(false),
       gameFolder("."),
       allowSymlinks(false)
-{}
+{
+    char *dataDir = SDL_GetBasePath();
+    if (dataDir) {
+        gameFolder = dataDir;
+        SDL_free(dataDir);
+    }
+}
 
 void Config::read()
 {
@@ -101,9 +109,9 @@ void Config::readGameINI()
 {
 	if (!customScript.empty())
 	{
-        size_t pos = customScript.find_last_of("/\\");
-        if (pos == customScript.npos) pos = 0;
-        game.title = customScript.substr(pos);
+		size_t pos = customScript.find_last_of("/\\");
+		if (pos == customScript.npos) pos = 0;
+		game.title = customScript.substr(pos);
 
 		return;
 	}
@@ -131,8 +139,8 @@ void Config::readGameINI()
 	strReplace(game.scripts, '\\', '/');
 
 	if (game.title.empty()) {
-        size_t pos = gameFolder.find_last_of("/\\");
-        if (pos == gameFolder.npos) pos = 0;
-        game.title = gameFolder.substr(pos);
-    }
+		size_t pos = gameFolder.find_last_of("/\\");
+		if (pos == gameFolder.npos) pos = 0;
+		game.title = gameFolder.substr(pos);
+	}
 }
