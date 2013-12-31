@@ -101,7 +101,9 @@ void Config::readGameINI()
 {
 	if (!customScript.empty())
 	{
-		game.title = basename(customScript.c_str());
+        size_t pos = customScript.find_last_of("/\\");
+        if (pos == customScript.npos) pos = 0;
+        game.title = customScript.substr(pos);
 
 		return;
 	}
@@ -128,6 +130,9 @@ void Config::readGameINI()
 
 	strReplace(game.scripts, '\\', '/');
 
-	if (game.title.empty())
-		game.title = basename(gameFolder.c_str());
+	if (game.title.empty()) {
+        size_t pos = gameFolder.find_last_of("/\\");
+        if (pos == gameFolder.npos) pos = 0;
+        game.title = gameFolder.substr(pos);
+    }
 }
