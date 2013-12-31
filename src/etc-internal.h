@@ -125,7 +125,7 @@ struct CVertex
 
 	static const void *colorOffset()
 	{
-		return (const void*) sizeof(pos);
+		return (const void*) sizeof(Vec2);
 	}
 };
 
