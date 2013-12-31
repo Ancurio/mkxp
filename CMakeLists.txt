@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 2.8.11)
 Project(mkxp)
 
+## Setup options ##
+
+option(RGSS2 "Enable RGSS2" ON)
+option(FORCE32 "Force 32bit compile on 64bit OS" OFF)
+set(BINDING "MRI" CACHE STRING "The Binding Type (MRI, MRUBY, NULL)")
+set(EXTERNAL_LIB_PATH "" CACHE PATH "External precompiled lib prefix")
+
 ## Misc setup ##
 
 include(cmake/PrepUtils.cmake)
@@ -41,12 +48,6 @@ set(CMAKE_SKIP_BUILD_RPATH TRUE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH ${BIN_RPATH})
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
-
-## Setup options ##
-
-option(RGSS2 "Enable RGSS2" ON)
-set(BINDING "MRI" CACHE STRING "The Binding Type (MRI, MRUBY, NULL)")
-set(EXTERNAL_LIB_PATH "" CACHE PATH "External precompiled lib prefix")
 
 ## Locate core libs ##
 
