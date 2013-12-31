@@ -340,7 +340,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${PHYSFS_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIRS} # Blindly assume other SDL bits are in same directory
     ${Boost_INCLUDE_DIR}
-    ${GLEW_INCLUDE_DIR}
+    ${GLEW_INCLUDE_DIR}/GL
     ${MRI_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIR}
 )
