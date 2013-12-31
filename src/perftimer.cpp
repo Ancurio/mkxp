@@ -193,7 +193,7 @@ PerfTimer *createCPUTimer(int iter)
 
 PerfTimer *createGPUTimer(int iter)
 {
-	if (GLEW_EXT_timer_query)
+	if (GLEW_ARB_timer_query || GLEW_EXT_timer_query)
 	{
 		return new GPUTimerGLQuery(iter);
 	}
