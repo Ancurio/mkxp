@@ -293,8 +293,7 @@ int main(int, char *argv[])
 	}
 
 	EventThread eventThread;
-	RGSSThreadData rtData(&eventThread, argv[0], win);
-	rtData.config = conf;
+	RGSSThreadData rtData(&eventThread, argv[0], win, conf);
 
 	/* Start RGSS thread */
 	SDL_Thread *rgssThread =
