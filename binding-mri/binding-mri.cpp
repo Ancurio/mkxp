@@ -226,7 +226,7 @@ static void runRMXPScripts()
 		VALUE scriptString = rb_ary_entry(script, 2);
 
 		int result = Z_OK;
-		ulong bufferLen;
+		unsigned long bufferLen;
 
 		while (true)
 		{
