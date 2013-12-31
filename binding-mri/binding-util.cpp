@@ -146,7 +146,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 			VALUE *str = va_arg(ap, VALUE*);
 			VALUE tmp = *arg;
 
-			if (!rb_type(tmp) == RUBY_T_STRING)
+			if (!(rb_type(tmp) == RUBY_T_STRING))
 				rb_raise(rb_eTypeError, "Argument %d: Expected string", argI);
 
 			*str = tmp;
@@ -164,7 +164,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 
 			VALUE tmp = *arg;
 
-			if (!rb_type(tmp) == RUBY_T_STRING)
+			if (!(rb_type(tmp) == RUBY_T_STRING))
 				rb_raise(rb_eTypeError, "Argument %d: Expected string", argI);
 
 			*s = RSTRING_PTR(tmp);
@@ -182,7 +182,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 
 			VALUE tmp = *arg++;
 
-			if (!rb_type(tmp) == RUBY_T_STRING)
+			if (!(rb_type(tmp) == RUBY_T_STRING))
 				rb_raise(rb_eTypeError, "Argument %d: Expected string", argI);
 
 			*s = RSTRING_PTR(tmp);
