@@ -498,7 +498,11 @@ struct FileSystemPrivate
 	/* All keys are lower case */
 	BoostHash<std::string, std::string> pathCache;
 
-	std::vector<std::string> extensions[FileSystem::Undefined];
+	std::vector<std::string> extensions[FileSystem::Undefined+1];
+
+	// FIXME Need to find a better way to do this..
+	char pathBuffer[512];
+	bool havePathCache;
 
 	/* Attempt to locate an extension string in a filename.
 	 * Either a pointer into the input string pointing at the
@@ -523,6 +527,39 @@ struct FileSystemPrivate
 	                             FileSystem::FileType type,
 	                             const char **foundExt)
 	{
+		if (!havePathCache)
+		{
+			if (PHYSFS_exists(filename))
+			{
+				if (foundExt)
+					*foundExt = findExt(filename);
+
+				return filename;
+			}
+
+			const std::vector<std::string> &extList = extensions[type];
+			for (size_t i = 0; i < extList.size(); ++i)
+			{
+				const char *ext = extList[i].c_str();
+
+				snprintf(pathBuffer, sizeof(pathBuffer), "%s.%s", filename, ext);
+
+				if (PHYSFS_exists(pathBuffer))
+				{
+					if (foundExt)
+						*foundExt = ext;
+
+					return pathBuffer;
+				}
+			}
+
+			// Is this even necessary?
+			if (foundExt)
+				*foundExt = 0;
+
+			return 0;
+		}
+
 		char buff[512];
 		size_t i;
 
@@ -533,6 +570,8 @@ struct FileSystemPrivate
 
 		std::string key(buff);
 
+		/* If the path was already complete,
+		 * we are done at this point */
 		if (pathCache.contains(key))
 		{
 			/* The extension might already be included here,
@@ -545,6 +584,8 @@ struct FileSystemPrivate
 
 		char buff2[512];
 
+		/* Try supplementing extensions
+		 * to find an existing path */
 		if (type != FileSystem::Undefined)
 		{
 			std::vector<std::string> &extList = extensions[type];
@@ -593,6 +634,8 @@ FileSystem::FileSystem(const char *argv0,
                        bool allowSymlinks)
 {
 	p = new FileSystemPrivate;
+
+	p->havePathCache = false;
 
 	/* Image extensions */
 	p->extensions[Image].push_back("jpg");
@@ -671,6 +714,8 @@ static void cacheEnumCB(void *d, const char *origdir,
 void FileSystem::createPathCache()
 {
 	PHYSFS_enumerateFilesCallback(".", cacheEnumCB, p);
+
+	p->havePathCache = true;
 }
 
 static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)

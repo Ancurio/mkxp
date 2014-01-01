@@ -80,6 +80,7 @@ mkxp reads configuration data from the file "mkxp.conf" contained in the current
 | solidFonts       | bool   | false   | Don't use alpha blending for fonts                                              |
 | gameFolder       | string | "."     | mkxp will look for all game related files here                                  |
 | allowSymlinks    | bool   | false   | Allow symlinks to be followed in the game folder.                               |
+| pathCache        | bool   | true    | Scan and cache asset paths at startup. Allows for case insensitive paths.       |
 | customScript     | string | ""      | Execute a raw ruby script file instead of an RPG Maker game.                    |
 | RTP              | string | ""      | Path to a Run Time Package to be used. Can be specified multiple times.         |
 

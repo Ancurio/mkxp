@@ -45,26 +45,28 @@ Config::Config()
       frameSkip(true),
       solidFonts(false),
       gameFolder("."),
-      allowSymlinks(false)
+      allowSymlinks(false),
+      pathCache(true)
 {}
 
 void Config::read()
 {
 #define PO_DESC_ALL \
 	PO_DESC(debugMode, bool) \
-    PO_DESC(winResizable, bool) \
-    PO_DESC(fullscreen, bool) \
-    PO_DESC(fixedAspectRatio, bool) \
-    PO_DESC(smoothScaling, bool) \
-    PO_DESC(vsync, bool) \
-    PO_DESC(defScreenW, int) \
-    PO_DESC(defScreenH, int) \
-    PO_DESC(fixedFramerate, int) \
-    PO_DESC(frameSkip, bool) \
-    PO_DESC(solidFonts, bool) \
-    PO_DESC(gameFolder, std::string) \
-    PO_DESC(allowSymlinks, bool) \
-    PO_DESC(customScript, std::string)
+	PO_DESC(winResizable, bool) \
+	PO_DESC(fullscreen, bool) \
+	PO_DESC(fixedAspectRatio, bool) \
+	PO_DESC(smoothScaling, bool) \
+	PO_DESC(vsync, bool) \
+	PO_DESC(defScreenW, int) \
+	PO_DESC(defScreenH, int) \
+	PO_DESC(fixedFramerate, int) \
+	PO_DESC(frameSkip, bool) \
+	PO_DESC(solidFonts, bool) \
+	PO_DESC(gameFolder, std::string) \
+	PO_DESC(allowSymlinks, bool) \
+	PO_DESC(customScript, std::string) \
+	PO_DESC(pathCache, bool)
 
 #define PO_DESC(key, type) (#key, po::value< type >()->default_value(key))
 

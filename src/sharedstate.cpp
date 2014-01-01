@@ -118,7 +118,8 @@ struct SharedStatePrivate
 		for (size_t i = 0; i < config.rtps.size(); ++i)
 			fileSystem.addPath(config.rtps[i].c_str());
 
-		fileSystem.createPathCache();
+		if (config.pathCache)
+			fileSystem.createPathCache();
 
 		globalTexW = 128;
 		globalTexH = 64;

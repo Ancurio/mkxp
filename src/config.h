@@ -45,6 +45,7 @@ struct Config
 
 	std::string gameFolder;
 	bool allowSymlinks;
+	bool pathCache;
 
 	std::string customScript;
 	std::vector<std::string> rtps;
