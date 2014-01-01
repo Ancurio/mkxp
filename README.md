@@ -63,7 +63,7 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** 
 
 ## Configuration
 
-mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Following entries are interpreted:
+mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. Following entries are interpreted:
 
 | Key              | Type   | Default | Description                                                                     |
 | ---------------- | ------ | ------- | ------------------------------------------------------------------------------- |

@@ -1,4 +1,4 @@
-[General]
+# This is a comment
 debugMode=false
 winResizable=false
 fullscreen=false
