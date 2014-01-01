@@ -52,6 +52,10 @@ struct GLProperty
 		set(value);
 	}
 
+	void refresh()
+	{
+		apply(current);
+	}
 private:
 	virtual void apply(const T &value) = 0;
 

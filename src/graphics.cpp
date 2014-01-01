@@ -469,7 +469,8 @@ struct GraphicsPrivate
 	{
 		if (threadData->windowSizeMsg.pollChange(&winSize.x, &winSize.y))
 		{
-			glState.viewport.init(IntRect(0, 0, winSize.x, winSize.y));
+			// some GL drivers change the viewport on window resize
+			glState.viewport.refresh();
 			recalculateScreenSize();
 			screen.setScreenSize(winSize.x, winSize.y);
 			updateScreenResoRatio();
