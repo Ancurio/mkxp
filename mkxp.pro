@@ -146,20 +146,21 @@ SOURCES += \
 	src/perftimer.cpp \
 	src/sharedstate.cpp
 
-EMBED = shader/transSimple.frag \
-        shader/trans.frag \
-        shader/hue.frag \
-        shader/sprite.frag \
-        shader/plane.frag \
-        shader/bitmapBlit.frag \
-        shader/simple.frag \
-        shader/simpleColor.frag \
-        shader/simpleAlpha.frag \
-        shader/flashMap.frag \
-        shader/simple.vert \
-        shader/simpleColor.vert \
-        shader/sprite.vert \
-        assets/liberation.ttf
+EMBED = \
+	shader/transSimple.frag \
+	shader/trans.frag \
+	shader/hue.frag \
+	shader/sprite.frag \
+	shader/plane.frag \
+	shader/bitmapBlit.frag \
+	shader/simple.frag \
+	shader/simpleColor.frag \
+	shader/simpleAlpha.frag \
+	shader/flashMap.frag \
+	shader/simple.vert \
+	shader/simpleColor.vert \
+	shader/sprite.vert \
+	assets/liberation.ttf
 
 RGSS2 {
 	EMBED += \
