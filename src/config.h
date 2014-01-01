@@ -44,8 +44,11 @@ struct Config
 	bool solidFonts;
 
 	std::string gameFolder;
+	bool anyAltToggleFS;
 	bool allowSymlinks;
 	bool pathCache;
+
+	std::string iconPath;
 
 	std::string customScript;
 	std::vector<std::string> rtps;

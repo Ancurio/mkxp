@@ -47,18 +47,18 @@ RB_METHOD(tableResize)
 	{
 	default:
 	case 1:
-		t->resize(rb_fix2int(argv[0]));
+		t->resize(FIX2INT(argv[0]));
 		return Qnil;
 
 	case 2:
-		t->resize(rb_fix2int(argv[0]),
-		          rb_fix2int(argv[1]));
+		t->resize(FIX2INT(argv[0]),
+		          FIX2INT(argv[1]));
 		return Qnil;
 
 	case 3:
-		t->resize(rb_fix2int(argv[0]),
-		          rb_fix2int(argv[1]),
-		          rb_fix2int(argv[2]));
+		t->resize(FIX2INT(argv[0]),
+		          FIX2INT(argv[1]),
+		          FIX2INT(argv[2]));
 		return Qnil;
 	}
 }
@@ -82,11 +82,11 @@ RB_METHOD(tableGetAt)
 	int x, y, z;
 	x = y = z = 0;
 
-	x = rb_num2int(argv[0]);
+	x = NUM2INT(argv[0]);
 	if (argc > 1)
-		y = rb_num2int(argv[1]);
+		y = NUM2INT(argv[1]);
 	if (argc > 2)
-		z = rb_num2int(argv[2]);
+		z = NUM2INT(argv[2]);
 
 	if (argc > 3)
 		rb_raise(rb_eArgError, "wrong number of arguments");
@@ -117,21 +117,21 @@ RB_METHOD(tableSetAt)
 	{
 	default:
 	case 2 :
-		x = rb_fix2int(argv[0]);
-		value = rb_fix2int(argv[1]);
+		x = FIX2INT(argv[0]);
+		value = FIX2INT(argv[1]);
 
 		break;
 	case 3 :
-		x = rb_fix2int(argv[0]);
-		y = rb_fix2int(argv[1]);
-		value = rb_fix2int(argv[2]);
+		x = FIX2INT(argv[0]);
+		y = FIX2INT(argv[1]);
+		value = FIX2INT(argv[2]);
 
 		break;
 	case 4 :
-		x = rb_fix2int(argv[0]);
-		y = rb_fix2int(argv[1]);
-		z = rb_fix2int(argv[2]);
-		value = rb_fix2int(argv[3]);
+		x = FIX2INT(argv[0]);
+		y = FIX2INT(argv[1]);
+		z = FIX2INT(argv[2]);
+		value = FIX2INT(argv[3]);
 
 		break;
 	}

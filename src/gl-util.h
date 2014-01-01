@@ -109,19 +109,19 @@ namespace RBO
 	inline ID gen()
 	{
 		ID id;
-		glGenRenderbuffersEXT(1, &id.gl);
+		glGenRenderbuffers(1, &id.gl);
 
 		return id;
 	}
 
 	inline void del(ID id)
 	{
-		glDeleteRenderbuffersEXT(1, &id.gl);
+		glDeleteRenderbuffers(1, &id.gl);
 	}
 
 	inline void bind(ID id)
 	{
-		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, id.gl);
+		glBindRenderbuffer(GL_RENDERBUFFER, id.gl);
 	}
 
 	inline void unbind()
@@ -131,7 +131,7 @@ namespace RBO
 
 	inline void allocEmpty(GLsizei width, GLsizei height)
 	{
-		glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, width, height);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
 	}
 }
 
@@ -155,25 +155,25 @@ namespace FBO
 	inline ID gen()
 	{
 		ID id;
-		glGenFramebuffersEXT(1, &id.gl);
+		glGenFramebuffers(1, &id.gl);
 
 		return id;
 	}
 
 	inline void del(ID id)
 	{
-		glDeleteFramebuffersEXT(1, &id.gl);
+		glDeleteFramebuffers(1, &id.gl);
 	}
 
 	inline void bind(ID id, Mode mode)
 	{
 		static const GLenum modes[] =
 		{
-			GL_DRAW_FRAMEBUFFER_EXT,
-			GL_READ_FRAMEBUFFER_EXT
+			GL_DRAW_FRAMEBUFFER,
+			GL_READ_FRAMEBUFFER
 		};
 
-		glBindFramebufferEXT(modes[mode], id.gl);
+		glBindFramebuffer(modes[mode], id.gl);
 	}
 
 	inline void unbind(Mode mode)
@@ -183,12 +183,12 @@ namespace FBO
 
 	inline void setTarget(TEX::ID target, unsigned colorAttach = 0)
 	{
-		glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
 	}
 
 	inline void setTarget(RBO::ID target, unsigned colorAttach = 0)
 	{
-		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, target.gl);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, target.gl);
 	}
 
 	inline void blit(int srcX, int srcY,
@@ -203,9 +203,9 @@ namespace FBO
 			GL_LINEAR
 		};
 
-		glBlitFramebufferEXT(srcX, srcY, srcX+srcW, srcY+srcH,
-		                     dstX, dstY, dstX+dstW, dstY+dstH,
-		                     GL_COLOR_BUFFER_BIT, modes[mode]);
+		glBlitFramebuffer(srcX, srcY, srcX+srcW, srcY+srcH,
+		                  dstX, dstY, dstX+dstW, dstY+dstH,
+		                  GL_COLOR_BUFFER_BIT, modes[mode]);
 	}
 
 	inline void blit(int srcX, int srcY,

@@ -179,13 +179,15 @@ struct RGSSThreadData
 
 	RGSSThreadData(EventThread *ethread,
 	                 const char *argv0,
-	                 SDL_Window *window)
+	                 SDL_Window *window,
+				     const Config& newconf)
 	    : rqTerm(false),
 	      rqTermAck(false),
 	      ethread(ethread),
 	      argv0(argv0),
 	      window(window),
 	      sizeResoRatio(1, 1),
+	      config(newconf),
 	      rqScreenshot(false)
 	{}
 };

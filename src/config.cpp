@@ -24,6 +24,7 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
+
 #include <fstream>
 
 #include "debugwriter.h"
@@ -45,6 +46,7 @@ Config::Config()
       frameSkip(true),
       solidFonts(false),
       gameFolder("."),
+      anyAltToggleFS(false),
       allowSymlinks(false),
       pathCache(true)
 {}
@@ -64,9 +66,14 @@ void Config::read()
 	PO_DESC(frameSkip, bool) \
 	PO_DESC(solidFonts, bool) \
 	PO_DESC(gameFolder, std::string) \
+	PO_DESC(anyAltToggleFS, bool) \
 	PO_DESC(allowSymlinks, bool) \
+	PO_DESC(iconPath, std::string) \
 	PO_DESC(customScript, std::string) \
 	PO_DESC(pathCache, bool)
+
+// Not gonna take your shit boost
+#define GUARD_ALL( exp ) try { exp } catch(...) {}
 
 #define PO_DESC(key, type) (#key, po::value< type >()->default_value(key))
 
@@ -80,13 +87,15 @@ void Config::read()
 	confFile.open("mkxp.conf");
 
 	po::variables_map vm;
-	po::store(po::parse_config_file(confFile, podesc, true), vm);
-	po::notify(vm);
+
+	if (confFile)
+	{
+		GUARD_ALL( po::store(po::parse_config_file(confFile, podesc, true), vm); )
+		po::notify(vm);
+	}
 
 	confFile.close();
 
-// Not gonna take your shit boost
-#define GUARD_ALL( exp ) try { exp } catch(...) {}
 
 #undef PO_DESC
 #define PO_DESC(key, type) GUARD_ALL( key = vm[#key].as< type >(); )
@@ -103,7 +112,10 @@ void Config::readGameINI()
 {
 	if (!customScript.empty())
 	{
-		game.title = basename(customScript.c_str());
+		size_t pos = customScript.find_last_of("/\\");
+		if (pos == customScript.npos)
+			pos = 0;
+		game.title = customScript.substr(pos);
 
 		return;
 	}
@@ -120,7 +132,7 @@ void Config::readGameINI()
 	iniFile.open((iniPath).c_str());
 
 	po::variables_map vm;
-	po::store(po::parse_config_file(iniFile, podesc, true), vm);
+	GUARD_ALL( po::store(po::parse_config_file(iniFile, podesc, true), vm); )
 	po::notify(vm);
 
 	iniFile.close();
@@ -131,5 +143,10 @@ void Config::readGameINI()
 	strReplace(game.scripts, '\\', '/');
 
 	if (game.title.empty())
-		game.title = basename(gameFolder.c_str());
+	{
+		size_t pos = gameFolder.find_last_of("/\\");
+		if (pos == gameFolder.npos)
+			pos = 0;
+		game.title = gameFolder.substr(pos);
+	}
 }
