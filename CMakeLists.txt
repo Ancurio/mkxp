@@ -163,6 +163,8 @@ set(MAIN_SOURCE
 	src/sharedstate.cpp
 )
 
+source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
+
 ## Setup embedded source ##
 
 set(EMBEDDED_INPUT
@@ -221,6 +223,8 @@ include_directories(
 foreach(item ${EMBEDDED_INPUT})
 	ProcessWithXXD(EMBEDDED_SOURCE ${item} ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
+
+source_group("Embedded Source" FILES ${EMBEDDED_INPUT} ${EMBEDDED_SOURCE})
 
 ## Setup binding source ##
 
@@ -304,6 +308,8 @@ else()
 	message(FATAL_ERROR "Must choose a valid binding type.  MRI, MRUBY, or NULL")
 endif()
 
+source_group("Binding Source" FILES ${BINDING_SOURCE} ${BINDING_HEADERS})
+
 ## Setup main executable ##
 
 if(APPLE)
@@ -328,6 +334,7 @@ link_directories(
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE
 	${MAIN_HEADERS}
 	${MAIN_SOURCE}
+	${BINDING_HEADERS}
 	${BINDING_SOURCE}
 	${EMBEDDED_SOURCE}
 )
