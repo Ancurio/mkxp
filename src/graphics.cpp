@@ -127,8 +127,7 @@ class ScreenScene : public Scene
 {
 public:
 	ScreenScene(int width, int height)
-	    : pp(width, height),
-	      actW(width), actH(height)
+	    : pp(width, height)
 	{
 		updateReso(width, height);
 
@@ -224,12 +223,6 @@ public:
 		updateReso(width, height);
 	}
 
-	void setScreenSize(int width, int height)
-	{
-		actW = width;
-		actH = height;
-	}
-
 	PingPong &getPP()
 	{
 		return pp;
@@ -238,7 +231,6 @@ public:
 private:
 	PingPong pp;
 	Quad screenQuad;
-	int actW, actH;
 
 #ifdef RGSS2
 	Quad brightnessQuad;
@@ -470,7 +462,6 @@ struct GraphicsPrivate
 		if (threadData->windowSizeMsg.pollChange(&winSize.x, &winSize.y))
 		{
 			recalculateScreenSize();
-			screen.setScreenSize(scSize.x, scSize.y);
 			updateScreenResoRatio();
 		}
 	}
