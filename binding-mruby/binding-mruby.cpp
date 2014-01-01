@@ -303,7 +303,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 		(void) scriptChksum;
 
 		int result = Z_OK;
-		ulong bufferLen;
+		unsigned long bufferLen;
 
 		while (true)
 		{

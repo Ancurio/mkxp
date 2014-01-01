@@ -39,20 +39,10 @@
 
 static const char *reqExt[] =
 {
-	"GL_ARB_fragment_shader",
-	"GL_ARB_shader_objects",
-	"GL_ARB_vertex_shader",
-	"GL_ARB_shading_language_100",
-	"GL_ARB_texture_non_power_of_two",
-	"GL_ARB_vertex_array_object",
-	"GL_ARB_vertex_buffer_object",
-	"GL_EXT_bgra",
-	"GL_EXT_blend_func_separate",
-	"GL_EXT_blend_subtract",
-	"GL_EXT_framebuffer_object",
-	"GL_EXT_framebuffer_blit",
+	// Everything we are using is CORE in OpenGL 2.0 except FBOs and VAOs which we'll handle in a special function
 	0
 };
+
 
 static void
 rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
@@ -75,6 +65,50 @@ printGLInfo()
 	Debug() << "GL Renderer  :" << glGetStringInt(GL_RENDERER);
 	Debug() << "GL Version   :" << glGetStringInt(GL_VERSION);
 	Debug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
+}
+
+static bool
+setupOptionalGLExtensions(RGSSThreadData* threadData)
+{
+	if (!GLEW_ARB_framebuffer_object) {
+		if (!GLEW_EXT_framebuffer_object && !GLEW_EXT_framebuffer_blit) {
+			rgssThreadError(threadData, "GL extensions \"GL_ARB_framebuffer_object\" or compatible extensiosns GL_EXT_framebuffer_object and GL_EXT_framebuffer_blit are not present");
+			return false;
+		} else {
+			// setup compat
+			// From EXT_framebuffer_object
+			glGenRenderbuffers      = glGenRenderbuffersEXT;
+			glDeleteRenderbuffers   = glDeleteRenderbuffersEXT;
+			glBindRenderbuffer      = glBindRenderbufferEXT;
+			glRenderbufferStorage   = glRenderbufferStorageEXT;
+
+			glGenFramebuffers       = glGenFramebuffersEXT;
+			glDeleteFramebuffers    = glDeleteFramebuffersEXT;
+			glBindFramebuffer       = glBindFramebufferEXT;
+			glFramebufferTexture2D  = glFramebufferTexture2DEXT;
+			glFramebufferRenderbuffer = glFramebufferRenderbufferEXT;
+
+			// From EXT_framebuffer_blit
+			glBlitFramebuffer       = glBlitFramebufferEXT;
+		}
+	}
+	if (!GLEW_ARB_timer_query && GLEW_EXT_timer_query) {
+		glGetQueryObjecti64v = glGetQueryObjecti64vEXT;
+		glGetQueryObjectui64v = glGetQueryObjectui64vEXT;
+	}
+	if (!GLEW_ARB_vertex_array_object ) {
+		if (!GLEW_APPLE_vertex_array_object) {
+			rgssThreadError(threadData, "GL extensions \"GL_ARB_vertex_array_object\" or compatible extensiosn GL_APPLE_vertex_array_object are not present");
+			return false;
+		} else {
+			// setup compat
+			glBindVertexArray = glBindVertexArrayAPPLE;
+			// the cast is because apple's uses const GLuint* and ARB doesn't
+			glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)glGenVertexArraysAPPLE;
+			glDeleteVertexArrays = glDeleteVertexArraysAPPLE;
+		}
+	}
+	return true;
 }
 
 int rgssThreadFun(void *userdata)
@@ -131,6 +165,11 @@ int rgssThreadFun(void *userdata)
 
 			return 0;
 		}
+	}
+	/* Setup optional GL extensions */
+	if (!setupOptionalGLExtensions(threadData)) {
+		SDL_GL_DeleteContext(glCtx);
+		return 0;
 	}
 
 	SDL_GL_SetSwapInterval(threadData->config.vsync ? 1 : 0);
@@ -193,17 +232,26 @@ int rgssThreadFun(void *userdata)
 
 int main(int, char *argv[])
 {
+	// initialize SDL first
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
+	{
+		Debug() << "Error initializing SDL:" << SDL_GetError();
+		
+		return 0;
+	}
+
+	// set working directory
+	char *dataDir = SDL_GetBasePath();
+	if (dataDir) {
+		chdir(dataDir);
+		SDL_free(dataDir);
+	}
+
+	// now we load the config
 	Config conf;
 
 	conf.read();
 	conf.readGameINI();
-
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
-	{
-		Debug() << "Error initializing SDL:" << SDL_GetError();
-
-		return 0;
-	}
 
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 	if (IMG_Init(imgFlags) != imgFlags)
@@ -254,8 +302,7 @@ int main(int, char *argv[])
 	}
 
 	EventThread eventThread;
-	RGSSThreadData rtData(&eventThread, argv[0], win);
-	rtData.config = conf;
+	RGSSThreadData rtData(&eventThread, argv[0], win, conf);
 
 	/* Start RGSS thread */
 	SDL_Thread *rgssThread =

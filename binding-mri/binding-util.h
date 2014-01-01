@@ -24,6 +24,8 @@
 
 #include <ruby.h>
 
+#include "exception.h"
+
 enum RbException
 {
 	RGSS = 0,

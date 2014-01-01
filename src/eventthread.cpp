@@ -145,7 +145,7 @@ void EventThread::process(RGSSThreadData &rtData)
 
 		case SDL_KEYDOWN :
 			if (event.key.keysym.scancode == SDL_SCANCODE_RETURN &&
-			    (event.key.keysym.mod & KMOD_LALT))
+			    (event.key.keysym.mod & KMOD_ALT))
 			{
 				setFullscreen(win, !fullscreen);
 				if (!fullscreen && havePendingTitle)

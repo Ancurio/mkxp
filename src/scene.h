@@ -30,7 +30,7 @@
 class SceneElement;
 class Viewport;
 class Window;
-class ScanRow;
+struct ScanRow;
 struct TilemapPrivate;
 
 class Scene
@@ -63,7 +63,7 @@ protected:
 
 	friend class SceneElement;
 	friend class Window;
-	friend class ScanRow;
+	friend struct ScanRow;
 };
 
 class SceneElement

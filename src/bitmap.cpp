@@ -873,7 +873,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 				}
 
 				TEX::bind(p->gl.tex);
-				TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_BGRA_EXT);
+				TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_BGRA);
 
 				PixelStore::reset();
 			}
@@ -884,7 +884,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 			TEXFBO &gpTF = shState->gpTexFBO(txtSurf->w, txtSurf->h);
 
 			TEX::bind(gpTF.tex);
-			TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA_EXT);
+			TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
 
 			FBO::bind(gpTF.fbo, FBO::Read);
 			p->bindFBO();
@@ -917,7 +917,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		shader.setOpacity(txtAlpha);
 
 		shState->bindTex();
-		TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA_EXT);
+		TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
 		TEX::setSmooth(true);
 
 		Quad &quad = shState->gpQuad();

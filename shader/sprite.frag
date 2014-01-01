@@ -33,7 +33,7 @@ void main()
 
 	/* Apply bush alpha by mathematical if */
 	float underBush = float(v_texCoord.y < bushDepth);
-	frag.a *= clamp(bushOpacity + underBush, 0, 1);
+	frag.a *= clamp(bushOpacity + underBush, 0.0, 1.0);
 	
 	gl_FragColor = frag;
 }
