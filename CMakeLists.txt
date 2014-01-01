@@ -16,7 +16,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
 	SET(LINUX ON)
-	SET(LINUX ON PARENT_SCOPE)
 ENDIF()
 
 IF(FORCE32)
@@ -34,14 +33,17 @@ IF(LINUX)
 	if(CMAKE_SIZEOF_VOID_P MATCHES "8" AND NOT(FORCE32) )
 		set(CMAKE_EXECUTABLE_SUFFIX ".bin.x86_64")
 		set(BIN_RPATH "\$ORIGIN/lib64")
+		set(LIB_PATH "lib64")
 	else()
 		set(CMAKE_EXECUTABLE_SUFFIX ".bin.x86")
 		set(BIN_RPATH "\$ORIGIN/lib")
+		set(LIB_PATH "lib")
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FILE_OFFSET_BITS=64")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FILE_OFFSET_BITS=64")
 	endif()
 elseif(APPLE)
 	SET(BIN_RPATH "@executable_path/../Frameworks")
+	set(LIB_PATH "lib")
 endif()
 
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
@@ -55,8 +57,9 @@ find_package(PkgConfig REQUIRED)
 
 if (EXTERNAL_LIB_PATH)
 	set(CMAKE_PREFIX_PATH ${EXTERNAL_LIB_PATH})
-	if(EXISTS "${EXTERNAL_LIB_PATH}/lib/pkgconfig/")
-		SET(ENV{PKG_CONFIG_PATH} "${EXTERNAL_LIB_PATH}/lib/pkgconfig/")
+	
+	if(EXISTS "${EXTERNAL_LIB_PATH}/${LIB_PATH}/pkgconfig/")
+		SET(ENV{PKG_CONFIG_PATH} "${EXTERNAL_LIB_PATH}/${LIB_PATH}/pkgconfig/")
 	endif()
 	if(APPLE)
 		set(PLATFORM_SHARED_LIBS 
@@ -85,7 +88,7 @@ find_package(GLEW 1.9.0 REQUIRED)
 find_package(Boost 1.49 COMPONENTS program_options REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(zlib REQUIRED)
+find_package(ZLIB REQUIRED)
 
 ## Setup main source ##
 
