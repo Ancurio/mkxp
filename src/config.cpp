@@ -83,7 +83,8 @@ void Config::read()
 
 	po::variables_map vm;
 
-	if (confFile) {
+	if (confFile)
+	{
 		GUARD_ALL( po::store(po::parse_config_file(confFile, podesc, true), vm); )
 		po::notify(vm);
 	}
@@ -107,7 +108,8 @@ void Config::readGameINI()
 	if (!customScript.empty())
 	{
 		size_t pos = customScript.find_last_of("/\\");
-		if (pos == customScript.npos) pos = 0;
+		if (pos == customScript.npos)
+			pos = 0;
 		game.title = customScript.substr(pos);
 
 		return;
@@ -135,9 +137,11 @@ void Config::readGameINI()
 
 	strReplace(game.scripts, '\\', '/');
 
-	if (game.title.empty()) {
+	if (game.title.empty())
+	{
 		size_t pos = gameFolder.find_last_of("/\\");
-		if (pos == gameFolder.npos) pos = 0;
+		if (pos == gameFolder.npos)
+			pos = 0;
 		game.title = gameFolder.substr(pos);
 	}
 }

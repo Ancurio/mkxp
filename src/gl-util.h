@@ -204,8 +204,8 @@ namespace FBO
 		};
 
 		glBlitFramebuffer(srcX, srcY, srcX+srcW, srcY+srcH,
-						  dstX, dstY, dstX+dstW, dstY+dstH,
-						  GL_COLOR_BUFFER_BIT, modes[mode]);
+		                  dstX, dstY, dstX+dstW, dstY+dstH,
+		                  GL_COLOR_BUFFER_BIT, modes[mode]);
 	}
 
 	inline void blit(int srcX, int srcY,

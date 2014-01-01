@@ -37,12 +37,7 @@
 
 #include "binding.h"
 
-static const char *reqExt[] =
-{
-	// Everything we are using is CORE in OpenGL 2.0 except FBOs and VAOs which we'll handle in a special function
-	0
-};
-
+#include <unistd.h>
 
 static void
 rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
@@ -70,44 +65,54 @@ printGLInfo()
 static bool
 setupOptionalGLExtensions(RGSSThreadData* threadData)
 {
-	if (!GLEW_ARB_framebuffer_object) {
-		if (!GLEW_EXT_framebuffer_object && !GLEW_EXT_framebuffer_blit) {
+	if (!GLEW_ARB_framebuffer_object)
+	{
+		if (!GLEW_EXT_framebuffer_object && !GLEW_EXT_framebuffer_blit)
+		{
 			rgssThreadError(threadData, "GL extensions \"GL_ARB_framebuffer_object\" or compatible extensiosns GL_EXT_framebuffer_object and GL_EXT_framebuffer_blit are not present");
 			return false;
-		} else {
-			// setup compat
-			// From EXT_framebuffer_object
-			glGenRenderbuffers      = glGenRenderbuffersEXT;
-			glDeleteRenderbuffers   = glDeleteRenderbuffersEXT;
-			glBindRenderbuffer      = glBindRenderbufferEXT;
-			glRenderbufferStorage   = glRenderbufferStorageEXT;
+		}
+		else
+		{
+			/* setup compat */
+			/* From EXT_framebuffer_object */
+			glGenRenderbuffers        = glGenRenderbuffersEXT;
+			glDeleteRenderbuffers     = glDeleteRenderbuffersEXT;
+			glBindRenderbuffer        = glBindRenderbufferEXT;
+			glRenderbufferStorage     = glRenderbufferStorageEXT;
 
-			glGenFramebuffers       = glGenFramebuffersEXT;
-			glDeleteFramebuffers    = glDeleteFramebuffersEXT;
-			glBindFramebuffer       = glBindFramebufferEXT;
-			glFramebufferTexture2D  = glFramebufferTexture2DEXT;
+			glGenFramebuffers         = glGenFramebuffersEXT;
+			glDeleteFramebuffers      = glDeleteFramebuffersEXT;
+			glBindFramebuffer         = glBindFramebufferEXT;
+			glFramebufferTexture2D    = glFramebufferTexture2DEXT;
 			glFramebufferRenderbuffer = glFramebufferRenderbufferEXT;
 
-			// From EXT_framebuffer_blit
-			glBlitFramebuffer       = glBlitFramebufferEXT;
+			/* From EXT_framebuffer_blit */
+			glBlitFramebuffer         = glBlitFramebufferEXT;
 		}
 	}
-	if (!GLEW_ARB_timer_query && GLEW_EXT_timer_query) {
-		glGetQueryObjecti64v = glGetQueryObjecti64vEXT;
+	if (!GLEW_ARB_timer_query && GLEW_EXT_timer_query)
+	{
+		glGetQueryObjecti64v  = glGetQueryObjecti64vEXT;
 		glGetQueryObjectui64v = glGetQueryObjectui64vEXT;
 	}
-	if (!GLEW_ARB_vertex_array_object ) {
-		if (!GLEW_APPLE_vertex_array_object) {
+	if (!GLEW_ARB_vertex_array_object )
+	{
+		if (!GLEW_APPLE_vertex_array_object)
+		{
 			rgssThreadError(threadData, "GL extensions \"GL_ARB_vertex_array_object\" or compatible extensiosn GL_APPLE_vertex_array_object are not present");
 			return false;
-		} else {
-			// setup compat
-			glBindVertexArray = glBindVertexArrayAPPLE;
-			// the cast is because apple's uses const GLuint* and ARB doesn't
-			glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)glGenVertexArraysAPPLE;
+		}
+		else
+		{
+			/* setup compat */
+			glBindVertexArray    = glBindVertexArrayAPPLE;
+			/* the cast is because apple's uses const GLuint* and ARB doesn't */
+			glGenVertexArrays    = (PFNGLGENVERTEXARRAYSPROC)glGenVertexArraysAPPLE;
 			glDeleteVertexArrays = glDeleteVertexArraysAPPLE;
 		}
 	}
+
 	return true;
 }
 
@@ -154,20 +159,9 @@ int rgssThreadFun(void *userdata)
 		return 0;
 	}
 
-	/* Check for required GL extensions */
-	for (int i = 0; reqExt[i]; ++i)
-	{
-		if (!glewIsSupported(reqExt[i]))
-		{
-			rgssThreadError(threadData, std::string("Required GL extension \"")
-			                            + reqExt[i] + "\" not present");
-			SDL_GL_DeleteContext(glCtx);
-
-			return 0;
-		}
-	}
 	/* Setup optional GL extensions */
-	if (!setupOptionalGLExtensions(threadData)) {
+	if (!setupOptionalGLExtensions(threadData))
+	{
 		SDL_GL_DeleteContext(glCtx);
 		return 0;
 	}
@@ -232,22 +226,24 @@ int rgssThreadFun(void *userdata)
 
 int main(int, char *argv[])
 {
-	// initialize SDL first
+	/* initialize SDL first */
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
 		Debug() << "Error initializing SDL:" << SDL_GetError();
-		
+
 		return 0;
 	}
 
-	// set working directory
+	/* set working directory */
 	char *dataDir = SDL_GetBasePath();
-	if (dataDir) {
-		chdir(dataDir);
+	if (dataDir)
+	{
+		int result = chdir(dataDir);
+		(void)result;
 		SDL_free(dataDir);
 	}
 
-	// now we load the config
+	/* now we load the config */
 	Config conf;
 
 	conf.read();
