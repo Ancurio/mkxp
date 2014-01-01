@@ -297,6 +297,16 @@ int main(int, char *argv[])
 		return 0;
 	}
 
+	if (!conf.iconPath.empty())
+	{
+		SDL_Surface *iconImg = IMG_Load(conf.iconPath.c_str());
+		if (iconImg)
+		{
+			SDL_SetWindowIcon(win, iconImg);
+			SDL_FreeSurface(iconImg);
+		}
+	}
+
 	EventThread eventThread;
 	RGSSThreadData rtData(&eventThread, argv[0], win, conf);
 

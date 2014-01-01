@@ -67,6 +67,7 @@ void Config::read()
     PO_DESC(gameFolder, std::string) \
     PO_DESC(anyAltToggleFS, bool) \
     PO_DESC(allowSymlinks, bool) \
+    PO_DESC(iconPath, std::string) \
     PO_DESC(customScript, std::string)
 
 // Not gonna take your shit boost

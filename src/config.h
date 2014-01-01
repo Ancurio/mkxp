@@ -47,6 +47,8 @@ struct Config
 	bool anyAltToggleFS;
 	bool allowSymlinks;
 
+	std::string iconPath;
+
 	std::string customScript;
 	std::vector<std::string> rtps;
 
