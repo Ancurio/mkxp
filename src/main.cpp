@@ -232,17 +232,26 @@ int rgssThreadFun(void *userdata)
 
 int main(int, char *argv[])
 {
+	// initialize SDL first
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
+	{
+		Debug() << "Error initializing SDL:" << SDL_GetError();
+		
+		return 0;
+	}
+
+	// set working directory
+	char *dataDir = SDL_GetBasePath();
+	if (dataDir) {
+		chdir(dataDir);
+		SDL_free(dataDir);
+	}
+
+	// now we load the config
 	Config conf;
 
 	conf.read();
 	conf.readGameINI();
-
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
-	{
-		Debug() << "Error initializing SDL:" << SDL_GetError();
-
-		return 0;
-	}
 
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 	if (IMG_Init(imgFlags) != imgFlags)
