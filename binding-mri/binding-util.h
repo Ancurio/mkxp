@@ -93,7 +93,7 @@ template<class C>
 static inline C *
 getPrivateDataCheck(VALUE self, const rb_data_type_struct &type)
 {
-	void *obj = rb_check_typeddata(self, &type);
+	void *obj = Check_TypedStruct(self, &type);
 	return static_cast<C*>(obj);
 }
 
@@ -197,11 +197,11 @@ rb_float_arg(VALUE arg, double *out, int argPos = 0)
 	switch (rb_type(arg))
 	{
 	case RUBY_T_FLOAT :
-		*out = rb_float_value(arg);
+		*out = RFLOAT_VALUE(arg);
 		break;
 
 	case RUBY_T_FIXNUM :
-		*out = rb_fix2int(arg);
+		*out = FIX2INT(arg);
 		break;
 
 	default:
@@ -216,11 +216,11 @@ rb_int_arg(VALUE arg, int *out, int argPos = 0)
 	{
 	case RUBY_T_FLOAT :
 		// FIXME check int range?
-		*out = rb_num2long(arg);
+		*out = NUM2LONG(arg);
 		break;
 
 	case RUBY_T_FIXNUM :
-		*out = rb_fix2int(arg);
+		*out = FIX2INT(arg);
 		break;
 
 	default:
