@@ -118,17 +118,20 @@ MRB_METHOD(tableSetAt)
 	case 2 :
 		x = fix(argv[0]);
 		value = fix(argv[1]);
+
 		break;
 	case 3 :
 		x = fix(argv[0]);
 		y = fix(argv[1]);
 		value = fix(argv[2]);
+
 		break;
 	case 4 :
 		x = fix(argv[0]);
 		y = fix(argv[1]);
 		z = fix(argv[2]);
 		value = fix(argv[3]);
+
 		break;
 	}
 

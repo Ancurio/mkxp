@@ -874,7 +874,7 @@ struct TilemapPrivate
 					continue;
 
 				VBO::uploadSubData(k*quadDataSize(bufferFrameQuadCount) + quadDataSize(scanrowBases[i]),
-								   quadDataSize(scanrowSize(i)), &scanrowVert[i].v[k][0]);
+				                   quadDataSize(scanrowSize(i)), &scanrowVert[i].v[k][0]);
 			}
 		}
 

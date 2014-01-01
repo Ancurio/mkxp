@@ -316,6 +316,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 		/* Read filename length,
          * if nothing was read, no files remain */
 		uint32_t nameLen;
+
 		if (!readUint32(io, nameLen))
 			break;
 

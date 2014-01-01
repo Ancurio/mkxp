@@ -119,17 +119,20 @@ RB_METHOD(tableSetAt)
 	case 2 :
 		x = rb_fix2int(argv[0]);
 		value = rb_fix2int(argv[1]);
+
 		break;
 	case 3 :
 		x = rb_fix2int(argv[0]);
 		y = rb_fix2int(argv[1]);
 		value = rb_fix2int(argv[2]);
+
 		break;
 	case 4 :
 		x = rb_fix2int(argv[0]);
 		y = rb_fix2int(argv[1]);
 		z = rb_fix2int(argv[2]);
 		value = rb_fix2int(argv[3]);
+
 		break;
 	}
 

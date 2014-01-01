@@ -793,23 +793,27 @@ write_value(MarshalContext *ctx, mrb_value value)
 			ctx->writeByte(TYPE_FALSE);
 		else
 			ctx->writeByte(TYPE_NIL);
+
 		break;
 
 	case MRB_TT_FIXNUM :
 		ctx->writeByte(TYPE_FIXNUM);
 		write_fixnum(ctx, mrb_fixnum(value));
+
 		break;
 
 	case MRB_TT_FLOAT :
 		ctx->writeByte(TYPE_FLOAT);
 		write_float(ctx, mrb_float(value));
 		ctx->objects.add(value);
+
 		break;
 
 	case MRB_TT_STRING :
 		ctx->objects.add(value);
 		ctx->writeByte(TYPE_STRING);
 		write_string_value(ctx, value);
+
 		break;
 
 	case MRB_TT_ARRAY :

@@ -118,6 +118,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 		// FIXME print num of needed args vs provided
 			if (argc <= argI && !opt)
 				rb_raise(rb_eArgError, "wrong number of arguments");
+
 			break;
 	    }
 
@@ -135,6 +136,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 
 			*obj = *arg++;
 			++argI;
+
 			break;
 		}
 
@@ -151,6 +153,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 
 			*str = tmp;
 			++argI;
+
 			break;
 		}
 
@@ -170,6 +173,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 			*s = RSTRING_PTR(tmp);
 			*len = RSTRING_LEN(tmp);
 			++argI;
+
 			break;
 		}
 
@@ -187,6 +191,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 
 			*s = RSTRING_PTR(tmp);
 			++argI;
+
 			break;
 		}
 

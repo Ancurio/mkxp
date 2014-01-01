@@ -256,6 +256,7 @@ static void runRMXPScripts()
 			         i, RSTRING_PTR(scriptName));
 
 			showMsg(buffer);
+
 			break;
 		}
 

@@ -1287,6 +1287,7 @@ struct AudioStream
 					throw e;
 				}
 			}
+
 			break;
 		}
 

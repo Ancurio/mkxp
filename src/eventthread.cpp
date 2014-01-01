@@ -113,26 +113,31 @@ void EventThread::process(RGSSThreadData &rtData)
 			case SDL_WINDOWEVENT_ENTER :
 				cursorInWindow = true;
 				updateCursorState(cursorInWindow && windowFocused);
+
 				break;
 
 			case SDL_WINDOWEVENT_LEAVE :
 				cursorInWindow = false;
 				updateCursorState(cursorInWindow && windowFocused);
+
 				break;
 
 			case SDL_WINDOWEVENT_CLOSE :
 				terminate = true;
+
 				break;
 
 			case SDL_WINDOWEVENT_FOCUS_GAINED :
 				windowFocused = true;
 				updateCursorState(cursorInWindow && windowFocused);
+
 				break;
 
 			case SDL_WINDOWEVENT_FOCUS_LOST :
 				windowFocused = false;
 				updateCursorState(cursorInWindow && windowFocused);
 				resetInputStates();
+
 				break;
 			}
 			break;
@@ -141,6 +146,7 @@ void EventThread::process(RGSSThreadData &rtData)
 		case REQUEST_TERMINATION :
 			terminate = true;
 			Debug() << "EventThread termination requested";
+
 			break;
 
 		case SDL_KEYDOWN :
@@ -175,6 +181,7 @@ void EventThread::process(RGSSThreadData &rtData)
 						strncpy(pendingTitle, rtData.config.game.title.c_str(),
 						        sizeof(pendingTitle));
 						havePendingTitle = true;
+
 						break;
 					}
 
@@ -204,11 +211,13 @@ void EventThread::process(RGSSThreadData &rtData)
 			                         (const char*) event.user.data1, win);
 			free(event.user.data1);
 			msgBoxDone = true;
+
 			break;
 
 		case REQUEST_SETCURSORVISIBLE :
 			showCursor = event.user.code;
 			updateCursorState(cursorInWindow);
+
 			break;
 
 		case UPDATE_FPS :
@@ -224,6 +233,7 @@ void EventThread::process(RGSSThreadData &rtData)
 			{
 				strncpy(pendingTitle, buffer, sizeof(pendingTitle));
 				havePendingTitle = true;
+
 				break;
 			}
 
@@ -272,6 +282,7 @@ void EventThread::process(RGSSThreadData &rtData)
 		case SDL_MOUSEMOTION :
 			mouseState.x = event.motion.x;
 			mouseState.y = event.motion.y;
+
 			break;
 		}
 

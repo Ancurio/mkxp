@@ -332,6 +332,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 			         i, RSTRING_PTR(scriptName));
 
 			showError(buffer);
+
 			break;
 		}
 

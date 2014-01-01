@@ -347,6 +347,7 @@ MRB_METHOD(fileEachLine)
 	while (feof(f) == 0)
 	{
 		GUARD_ERRNO( readLine(f, buffer); )
+
 		if (buffer.empty() && feof(f) != 0)
 			break;
 
@@ -373,6 +374,7 @@ MRB_METHOD(fileEachByte)
 	while (feof(f) == 0)
 	{
 		mrb_int byte = fgetc(f);
+
 		if (byte == -1)
 			break;
 
@@ -473,6 +475,7 @@ MRB_METHOD(fileReadLines)
 	while (feof(f) == 0)
 	{
 		GUARD_ERRNO( readLine(f, buffer); )
+
 		if (buffer.empty() && feof(f) != 0)
 			break;
 
