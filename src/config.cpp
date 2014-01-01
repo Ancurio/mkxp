@@ -46,6 +46,7 @@ Config::Config()
       frameSkip(true),
       solidFonts(false),
       gameFolder("."),
+      anyAltToggleFS(false),
       allowSymlinks(false)
 { }
 
@@ -64,6 +65,7 @@ void Config::read()
     PO_DESC(frameSkip, bool) \
     PO_DESC(solidFonts, bool) \
     PO_DESC(gameFolder, std::string) \
+    PO_DESC(anyAltToggleFS, bool) \
     PO_DESC(allowSymlinks, bool) \
     PO_DESC(customScript, std::string)
 

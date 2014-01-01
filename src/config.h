@@ -44,6 +44,7 @@ struct Config
 	bool solidFonts;
 
 	std::string gameFolder;
+	bool anyAltToggleFS;
 	bool allowSymlinks;
 
 	std::string customScript;

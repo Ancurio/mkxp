@@ -70,6 +70,7 @@ void EventThread::process(RGSSThreadData &rtData)
 	WindowSizeNotify &windowSizeMsg = rtData.windowSizeMsg;
 
 	fullscreen = rtData.config.fullscreen;
+	int toggleFSMod = rtData.config.anyAltToggleFS ? KMOD_ALT : KMOD_LALT;
 
 	fps.lastFrame = SDL_GetPerformanceCounter();
 	fps.displaying = false;
@@ -145,7 +146,7 @@ void EventThread::process(RGSSThreadData &rtData)
 
 		case SDL_KEYDOWN :
 			if (event.key.keysym.scancode == SDL_SCANCODE_RETURN &&
-			    (event.key.keysym.mod & KMOD_ALT))
+			    (event.key.keysym.mod & toggleFSMod))
 			{
 				setFullscreen(win, !fullscreen);
 				if (!fullscreen && havePendingTitle)
