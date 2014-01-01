@@ -469,8 +469,9 @@ struct GraphicsPrivate
 	{
 		if (threadData->windowSizeMsg.pollChange(&winSize.x, &winSize.y))
 		{
+			glState.viewport.init(IntRect(0, 0, winSize.x, winSize.y));
 			recalculateScreenSize();
-			screen.setScreenSize(scSize.x, scSize.y);
+			screen.setScreenSize(winSize.x, winSize.y);
 			updateScreenResoRatio();
 		}
 	}
