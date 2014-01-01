@@ -178,9 +178,9 @@ struct RGSSThreadData
 	volatile bool rqScreenshot;
 
 	RGSSThreadData(EventThread *ethread,
-	                 const char *argv0,
-	                 SDL_Window *window,
-				     const Config& newconf)
+	               const char *argv0,
+	               SDL_Window *window,
+	               const Config& newconf)
 	    : rqTerm(false),
 	      rqTermAck(false),
 	      ethread(ethread),
