@@ -61,6 +61,8 @@ public:
 
 	static MouseState mouseState;
 
+	static bool allocUserEvents();
+
 	EventThread();
 
 	void process(RGSSThreadData &rtData);

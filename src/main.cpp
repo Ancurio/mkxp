@@ -234,6 +234,13 @@ int main(int, char *argv[])
 		return 0;
 	}
 
+	if (!EventThread::allocUserEvents())
+	{
+		Debug() << "Error allocating SDL user events";
+
+		return 0;
+	}
+
 	/* set working directory */
 	char *dataDir = SDL_GetBasePath();
 	if (dataDir)
