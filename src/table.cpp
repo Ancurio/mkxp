@@ -173,7 +173,17 @@ void Table::serialize(char *buffer) const
 {
 	char *buff_p = buffer;
 
-	write_int32(&buff_p, 3);
+	/* Table dimensions: we don't care
+	 * about them but RMXP needs them */
+	int dim = 1;
+
+	if (m_y > 1)
+		dim = 2;
+
+	if (m_z > 1)
+		dim = 3;
+
+	write_int32(&buff_p, dim);
 	write_int32(&buff_p, m_x);
 	write_int32(&buff_p, m_y);
 	write_int32(&buff_p, m_z);
