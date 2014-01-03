@@ -521,7 +521,7 @@ struct GraphicsPrivate
 
 		screen.getPP().bindLastBuffer();
 
-		glReadPixels(0, 0, scSize.x, scSize.y, GL_RGBA, GL_UNSIGNED_BYTE, screenshot->pixels);
+		glReadPixels(0, 0, scRes.x, scRes.y, GL_RGBA, GL_UNSIGNED_BYTE, screenshot->pixels);
 
 		IMG_SavePNG(screenshot, filename);
 
