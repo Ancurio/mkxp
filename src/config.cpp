@@ -81,6 +81,7 @@ void Config::read()
 	podesc.add_options()
 	        PO_DESC_ALL
 	        ("RTP", po::value<StringVec>())
+	        ("plugin", po::value<StringVec>())
 	        ;
 
 	std::ifstream confFile;
@@ -103,6 +104,7 @@ void Config::read()
 	PO_DESC_ALL;
 
 	GUARD_ALL( rtps = vm["RTP"].as<StringVec>(); );
+	GUARD_ALL( plugins = vm["plugin"].as<StringVec>(); );
 
 #undef PO_DESC
 #undef PO_DESC_ALL

@@ -6,6 +6,7 @@ TARGET = mkxp
 DEPENDPATH += src shader assets
 INCLUDEPATH += . src
 LIBS += -lGL
+QMAKE_LFLAGS += -rdynamic
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
@@ -116,7 +117,8 @@ HEADERS += \
 	src/sharedstate.h \
 	src/al-util.h \
 	src/boost-hash.h \
-	src/debugwriter.h
+	src/debugwriter.h \
+	src/plugin.h
 
 SOURCES += \
 	src/main.cpp \
@@ -144,7 +146,8 @@ SOURCES += \
 	src/config.cpp \
 	src/tileatlas.cpp \
 	src/perftimer.cpp \
-	src/sharedstate.cpp
+	src/sharedstate.cpp \
+	src/plugin.cpp
 
 EMBED = \
 	shader/transSimple.frag \

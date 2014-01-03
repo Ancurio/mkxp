@@ -26,6 +26,7 @@
 #include "filesystem.h"
 #include "util.h"
 #include "debugwriter.h"
+#include "plugin.h"
 
 #include <ruby.h>
 #include <ruby/encoding.h>
@@ -290,6 +291,21 @@ static void mriBindingExecute()
 
 	mriBindingInit();
 
+	PluginLoader *pluginLoader;
+
+	try
+	{
+		pluginLoader = new PluginLoader(PLUGIN_MRI);
+	}
+	catch (const Exception &exc)
+	{
+		showMsg(exc.msg);
+		ruby_cleanup(0);
+		shState->rtData().rqTermAck = true;
+
+		return;
+	}
+
 	std::string &customScript = shState->rtData().config.customScript;
 	if (!customScript.empty())
 		runCustomScript(customScript.c_str());
@@ -310,7 +326,7 @@ static void mriBindingExecute()
 	}
 
 	ruby_cleanup(0);
-
+	delete pluginLoader;
 	shState->rtData().rqTermAck = true;
 }
 

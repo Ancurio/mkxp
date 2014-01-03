@@ -53,6 +53,8 @@ struct Config
 	std::string customScript;
 	std::vector<std::string> rtps;
 
+	std::vector<std::string> plugins;
+
 	/* Game INI contents */
 	struct {
 		std::string scripts;
