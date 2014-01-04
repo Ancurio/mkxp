@@ -319,13 +319,10 @@ void EventThread::process(RGSSThreadData &rtData)
 void EventThread::cleanup()
 {
 	SDL_Event event;
+
 	while (SDL_PollEvent(&event))
-	{
 		if (event.type == usrId[REQUEST_MESSAGEBOX])
-		{
 			free(event.user.data1);
-		}
-	}
 }
 
 void EventThread::resetInputStates()
@@ -424,6 +421,7 @@ void EventThread::notifyFrame()
 	{
 		fps.immInitFlag = false;
 		fps.immFiniFlag = true;
+
 		return;
 	}
 
