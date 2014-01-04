@@ -146,6 +146,9 @@ struct FontPrivate
 
 	static Color defaultColorTmp;
 
+	/* The actual font is opened as late as possible
+	 * (when it is queried by a Bitmap), prior it is
+	 * set to null */
 	TTF_Font *sdlFont;
 
 	FontPrivate(const char *name = 0,
@@ -155,11 +158,9 @@ struct FontPrivate
 	      bold(defaultBold),
 	      italic(defaultItalic),
 	      color(&colorTmp),
-	      colorTmp(*defaultColor)
-	{
-		sdlFont = shState->fontPool().request(this->name.c_str(),
-		                                      this->size);
-	}
+	      colorTmp(*defaultColor),
+	      sdlFont(0)
+	{}
 
 	FontPrivate(const FontPrivate &other)
 	    : name(other.name),
@@ -214,7 +215,7 @@ void Font::setName(const char *value)
 		return;
 
 	p->name = value;
-	p->sdlFont = shState->fontPool().request(value, p->size);
+	p->sdlFont = 0;
 }
 
 void Font::setSize(int value)
@@ -223,7 +224,7 @@ void Font::setSize(int value)
 		return;
 
 	p->size = value;
-	p->sdlFont = shState->fontPool().request(p->name.c_str(), value);
+	p->sdlFont = 0;
 }
 
 #undef CHK_DISP
@@ -251,6 +252,10 @@ void Font::setDefaultName(const char *value)
 
 _TTF_Font *Font::getSdlFont()
 {
+	if (!p->sdlFont)
+		p->sdlFont = shState->fontPool().request(p->name.c_str(),
+		                                         p->size);
+
 	int style = TTF_STYLE_NORMAL;
 
 	if (p->bold)
