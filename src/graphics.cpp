@@ -544,7 +544,8 @@ struct GraphicsPrivate
 		snprintf(filename, sizeof(filename), "%d%02d%02d-%02d%02d%02d.png",
 		         tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 
-		writeScreenshot(filename);
+		std::string path = threadData->config.desktopPath + filename;
+		writeScreenshot(path.c_str());
 	}
 };
 
