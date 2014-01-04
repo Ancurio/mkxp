@@ -1057,6 +1057,10 @@ private:
 
 				AL::Buffer::ID buf = AL::Source::unqueueBuffer(alSrc);
 
+				/* If something went wrong, try again later */
+				if (buf == AL::Buffer::ID(0))
+					break;
+
 				if (buf == lastBuf)
 				{
 					/* Reset the processed sample count so
