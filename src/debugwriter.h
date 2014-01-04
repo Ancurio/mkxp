@@ -25,7 +25,7 @@
 #include <iostream>
 #include <sstream>
 
-/* A cheap replacement for Debug() */
+/* A cheap replacement for qDebug() */
 
 class Debug
 {
