@@ -210,7 +210,11 @@ const char *Font::getName() const
 
 void Font::setName(const char *value)
 {
+	if (p->name == value)
+		return;
+
 	p->name = value;
+	p->sdlFont = shState->fontPool().request(value, p->size);
 }
 
 void Font::setSize(int value)
