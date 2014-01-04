@@ -35,7 +35,7 @@ public:
 	~FontPool();
 
 	_TTF_Font *request(const char *filename,
-	                  int size);
+	                   int size);
 
 private:
 	FontPoolPrivate *p;
