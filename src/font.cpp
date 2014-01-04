@@ -182,7 +182,7 @@ Color FontPrivate::defaultColorTmp(255, 255, 255, 255);
 
 bool Font::doesExist(const char *name)
 {
-	std::string path = std::string("fonts/") + std::string(name);
+	std::string path = std::string("Fonts/") + std::string(name);
 
 	return shState->fileSystem().exists(path.c_str(), FileSystem::Font);
 }
