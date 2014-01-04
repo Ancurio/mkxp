@@ -172,7 +172,7 @@ struct FontPrivate
 	{}
 };
 
-std::string FontPrivate::defaultName   = "Arial";
+std::string FontPrivate::defaultName   = "MS PGothic";
 int         FontPrivate::defaultSize   = 22;
 bool        FontPrivate::defaultBold   = false;
 bool        FontPrivate::defaultItalic = false;
