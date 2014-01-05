@@ -108,15 +108,21 @@ void Config::read()
 #undef PO_DESC_ALL
 }
 
+static std::string baseName(const std::string &path)
+{
+	size_t pos = path.find_last_of("/\\") + 1;
+
+	if (pos == path.npos)
+		pos = 0;
+
+	return path.substr(pos);
+}
+
 void Config::readGameINI()
 {
 	if (!customScript.empty())
 	{
-		size_t pos = customScript.find_last_of("/\\");
-		if (pos == customScript.npos)
-			pos = 0;
-		game.title = customScript.substr(pos);
-
+		game.title = baseName(customScript);
 		return;
 	}
 
@@ -143,10 +149,5 @@ void Config::readGameINI()
 	strReplace(game.scripts, '\\', '/');
 
 	if (game.title.empty())
-	{
-		size_t pos = gameFolder.find_last_of("/\\");
-		if (pos == gameFolder.npos)
-			pos = 0;
-		game.title = gameFolder.substr(pos);
-	}
+		game.title = baseName(gameFolder);
 }
