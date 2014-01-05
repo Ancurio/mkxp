@@ -212,7 +212,8 @@ Bitmap::Bitmap(const char *filename)
 	SDL_Surface *imgSurf = IMG_LoadTyped_RW(&ops, 1, extension);
 
 	if (!imgSurf)
-		throw Exception(Exception::SDLError, "SDL: %s", SDL_GetError());
+		throw Exception(Exception::SDLError, "Error loading image '%s': %s",
+		                filename, SDL_GetError());
 
 	p->ensureFormat(imgSurf, SDL_PIXELFORMAT_ABGR8888);
 
