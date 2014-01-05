@@ -614,12 +614,20 @@ int Input::dir8Value()
 int Input::mouseX()
 {
 	RGSSThreadData &rtData = shState->rtData();
+
+	if (!EventThread::mouseState.inWindow)
+		return -20;
+
 	return (EventThread::mouseState.x - rtData.screenOffset.x) * rtData.sizeResoRatio.x;
 }
 
 int Input::mouseY()
 {
 	RGSSThreadData &rtData = shState->rtData();
+
+	if (!EventThread::mouseState.inWindow)
+		return -20;
+
 	return (EventThread::mouseState.y - rtData.screenOffset.y) * rtData.sizeResoRatio.y;
 }
 

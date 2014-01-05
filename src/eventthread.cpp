@@ -42,7 +42,7 @@ EventThread::JoyState EventThread::joyState =
 
 EventThread::MouseState EventThread::mouseState =
 {
-	0, 0, { false }
+	0, 0, false, { false }
 };
 
 /* User event codes */
@@ -129,12 +129,14 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			case SDL_WINDOWEVENT_ENTER :
 				cursorInWindow = true;
+				mouseState.inWindow = true;
 				updateCursorState(cursorInWindow && windowFocused);
 
 				break;
 
 			case SDL_WINDOWEVENT_LEAVE :
 				cursorInWindow = false;
+				mouseState.inWindow = false;
 				updateCursorState(cursorInWindow && windowFocused);
 
 				break;

@@ -56,6 +56,7 @@ public:
 	struct MouseState
 	{
 		int x, y;
+		bool inWindow;
 		bool buttons[32];
 	};
 
