@@ -87,12 +87,12 @@ static Sides<IntRect> scrollArrowSrc =
 /* Cycling */
 static unsigned char cursorAniAlpha[] =
 {
-    /* Fade out */
+	/* Fade out */
 	0xFF, 0xF7, 0xEF, 0xE7, 0xDF, 0xD7, 0xCF, 0xC7,
 	0xBF, 0xB7, 0xAF, 0xA7, 0x9F, 0x97, 0x8F, 0x87,
 	/* Fade in */
 	0x7F, 0x87, 0x8F, 0x97, 0x9F, 0xA7, 0xAF, 0xB7,
-    0xBF, 0xC7, 0xCF, 0xD7, 0xDF, 0xE7, 0xEF, 0xF7
+	0xBF, 0xC7, 0xCF, 0xD7, 0xDF, 0xE7, 0xEF, 0xF7
 };
 
 static elementsN(cursorAniAlpha);
@@ -100,10 +100,10 @@ static elementsN(cursorAniAlpha);
 /* Cycling */
 static unsigned char pauseAniQuad[] =
 {
-    0, 0, 0, 0, 0, 0, 0, 0,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2,
-    3, 3, 3, 3, 3, 3, 3, 3
+	0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	2, 2, 2, 2, 2, 2, 2, 2,
+	3, 3, 3, 3, 3, 3, 3, 3
 };
 
 static elementsN(pauseAniQuad);
@@ -111,9 +111,9 @@ static elementsN(pauseAniQuad);
 /* No cycle */
 static unsigned char pauseAniAlpha[] =
 {
-    0x00, 0x20, 0x40, 0x60,
-    0x80, 0xA0, 0xC0, 0xE0,
-    0xFF
+	0x00, 0x20, 0x40, 0x60,
+	0x80, 0xA0, 0xC0, 0xE0,
+	0xFF
 };
 
 static elementsN(pauseAniAlpha);
@@ -497,7 +497,7 @@ struct WindowPrivate
 		{
 			pauseAniVert.vert = &vert[i*4];
 			i += Quad::setTexPosRect(&vert[i*4], pauseAniSrc[pauseAniQuad[pauseAniQuadIdx]],
-			                             FloatRect((size.x - 16) / 2, size.y - 16, 16, 16));
+			                         FloatRect((size.x - 16) / 2, size.y - 16, 16, 16));
 		}
 
 		controlsQuadArray.commit();
