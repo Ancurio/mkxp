@@ -209,7 +209,7 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
 			}
 
-			if (event.key.keysym.scancode == SDL_SCANCODE_F3)
+			if (event.key.keysym.scancode == SDL_SCANCODE_F3 && rtData.config.screenshots)
 				rtData.rqScreenshot = true;
 
 			keyStates[event.key.keysym.scancode] = true;
