@@ -110,12 +110,12 @@ void Config::read()
 
 static std::string baseName(const std::string &path)
 {
-	size_t pos = path.find_last_of("/\\") + 1;
+	size_t pos = path.find_last_of("/\\");
 
 	if (pos == path.npos)
-		pos = 0;
+		return path;
 
-	return path.substr(pos);
+	return path.substr(pos + 1);
 }
 
 void Config::readGameINI()
