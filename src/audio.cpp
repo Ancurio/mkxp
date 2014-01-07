@@ -696,6 +696,8 @@ struct ALStream
 	ALDataSource *source;
 	SDL_Thread *thread;
 
+	std::string threadName;
+
 	SDL_mutex *pauseMut;
 	bool preemptPause;
 
@@ -730,7 +732,8 @@ struct ALStream
 		NotLooped
 	};
 
-	ALStream(LoopMode loopMode)
+	ALStream(LoopMode loopMode,
+	         const std::string &threadId)
 	    : looped(loopMode == Looped),
 	      state(Closed),
 	      source(0),
@@ -749,6 +752,8 @@ struct ALStream
 			alBuf[i] = AL::Buffer::gen();
 
 		pauseMut = SDL_CreateMutex();
+
+		threadName = std::string("al_stream (") + threadId + ")";
 	}
 
 	~ALStream()
@@ -937,7 +942,7 @@ private:
 		startOffset = offset;
 		procFrames = offset * source->sampleRate();
 
-		thread = SDL_CreateThread(streamDataFun, "al_stream", this);
+		thread = SDL_CreateThread(streamDataFun, threadName.c_str(), this);
 	}
 
 	void pauseStream()
@@ -1184,6 +1189,7 @@ struct AudioStream
 		bool reqTerm;
 
 		SDL_Thread *thread;
+		std::string threadName;
 
 		/* Amount of reduced absolute volume
 		 * per ms of fade time */
@@ -1193,19 +1199,21 @@ struct AudioStream
 		uint32_t startTicks;
 	} fade;
 
-	AudioStream(ALStream::LoopMode loopMode)
+	AudioStream(ALStream::LoopMode loopMode,
+	            const std::string &threadId)
 	    : baseVolume(1.0),
 	      fadeVolume(1.0),
 	      extVolume(1.0),
 	      extPaused(false),
 	      noResumeStop(false),
-	      stream(loopMode)
+	      stream(loopMode, threadId)
 	{
 		current.volume = 1.0;
 		current.pitch = 1.0;
 
 		fade.active = false;
 		fade.thread = 0;
+		fade.threadName = std::string("audio_fade (") + threadId + ")";
 
 		streamMut = SDL_CreateMutex();
 	}
@@ -1364,7 +1372,7 @@ struct AudioStream
 		fade.reqTerm = false;
 		fade.startTicks = SDL_GetTicks();
 
-		fade.thread = SDL_CreateThread(fadeThreadFun, "audio_fade", this);
+		fade.thread = SDL_CreateThread(fadeThreadFun, fade.threadName.c_str(), this);
 
 		unlockStream();
 	}
@@ -1497,9 +1505,9 @@ struct AudioPrivate
 	} meWatch;
 
 	AudioPrivate()
-	    : bgm(ALStream::Looped),
-	      bgs(ALStream::Looped),
-	      me(ALStream::NotLooped)
+	    : bgm(ALStream::Looped, "bgm"),
+	      bgs(ALStream::Looped, "bgs"),
+	      me(ALStream::NotLooped, "me")
 	{
 		meWatch.active = false;
 		meWatch.termReq = false;
