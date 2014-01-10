@@ -52,7 +52,7 @@ Config::Config()
       pathCache(true)
 {}
 
-void Config::read()
+void Config::read(int argc, char *argv[])
 {
 #define PO_DESC_ALL \
 	PO_DESC(debugMode, bool) \
@@ -82,22 +82,31 @@ void Config::read()
 	po::options_description podesc;
 	podesc.add_options()
 	        PO_DESC_ALL
-	        ("RTP", po::value<StringVec>())
+	        ("RTP", po::value<StringVec>()->composing())
 	        ;
 
+	po::variables_map vm;
+
+	/* Parse command line options */
+	po::parsed_options cmdPo =
+	    po::command_line_parser(argc, argv).options(podesc)
+	                                       .allow_unregistered()
+	                                       .run();
+
+	GUARD_ALL( po::store(cmdPo, vm); )
+
+	/* Parse configuration file (mkxp.conf) */
 	std::ifstream confFile;
 	confFile.open("mkxp.conf");
-
-	po::variables_map vm;
 
 	if (confFile)
 	{
 		GUARD_ALL( po::store(po::parse_config_file(confFile, podesc, true), vm); )
-		po::notify(vm);
 	}
 
 	confFile.close();
 
+	po::notify(vm);
 
 #undef PO_DESC
 #define PO_DESC(key, type) GUARD_ALL( key = vm[#key].as< type >(); )

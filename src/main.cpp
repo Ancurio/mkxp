@@ -224,7 +224,7 @@ int rgssThreadFun(void *userdata)
 	return 0;
 }
 
-int main(int, char *argv[])
+int main(int argc, char *argv[])
 {
 	/* initialize SDL first */
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
@@ -253,7 +253,7 @@ int main(int, char *argv[])
 	/* now we load the config */
 	Config conf;
 
-	conf.read();
+	conf.read(argc, argv);
 	conf.readGameINI();
 
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;

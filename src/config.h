@@ -62,7 +62,7 @@ struct Config
 
 	Config();
 
-	void read();
+	void read(int argc, char *argv[]);
 	void readGameINI();
 };
 
