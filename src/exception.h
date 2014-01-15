@@ -47,7 +47,6 @@ struct Exception
 	Type type;
 	std::string msg;
 
-
 	Exception(Type type, const char *format, ...)
 	    : type(type)
 	{
