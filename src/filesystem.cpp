@@ -734,14 +734,15 @@ static Sint64 SDL_RWopsSize(SDL_RWops *ops)
 	return PHYSFS_fileLength(f);
 }
 
-static Sint64 SDL_RWopsSeek(SDL_RWops *ops, Sint64 offset, int whence)
+static Sint64 SDL_RWopsSeek(SDL_RWops *ops, int64_t offset, int whence)
 {
 	PHYSFS_File *f = sdlPHYS(ops);
 
 	if (!f)
 		return -1;
 
-	Sint64 base;
+	int64_t base;
+
 	switch (whence)
 	{
 	default:
