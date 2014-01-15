@@ -620,8 +620,7 @@ struct FileSystemPrivate
 		const char *foundName = completeFileName(filename, type, foundExt);
 
 		if (!foundName)
-			throw Exception(Exception::NoFileError,
-		                "No such file or directory - %s", filename);
+			throw Exception(Exception::NoFileError, "%s", filename);
 
 		PHYSFS_File *handle = PHYSFS_openRead(foundName);
 		if (!handle)
