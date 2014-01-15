@@ -309,7 +309,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 	uint32_t magic = RGSS_MAGIC;
 
 	/* Top level entry list */
-	BoostSet<std::string> &topLevel = data->dirHash["."];
+	BoostSet<std::string> &topLevel = data->dirHash[""];
 
 	while (true)
 	{
@@ -694,17 +694,23 @@ static void cacheEnumCB(void *d, const char *origdir,
 
 	char buf[512];
 
-	if (*origdir != '.')
-		snprintf(buf, sizeof(buf), "%s/%s", origdir, fname);
-	else
+	if (*origdir == '\0')
 		strncpy(buf, fname, sizeof(buf));
+	else
+		snprintf(buf, sizeof(buf), "%s/%s", origdir, fname);
 
-	std::string mixedCase(buf);
+	char *ptr = buf;
+
+	/* Trim leading slash */
+	if (*ptr == '/')
+		++ptr;
+
+	std::string mixedCase(ptr);
 
 	for (char *p = buf; *p; ++p)
 		*p = tolower(*p);
 
-	std::string lowerCase(buf);
+	std::string lowerCase(ptr);
 
 	p->pathCache.insert(lowerCase, mixedCase);
 
@@ -713,7 +719,7 @@ static void cacheEnumCB(void *d, const char *origdir,
 
 void FileSystem::createPathCache()
 {
-	PHYSFS_enumerateFilesCallback(".", cacheEnumCB, p);
+	PHYSFS_enumerateFilesCallback("", cacheEnumCB, p);
 
 	p->havePathCache = true;
 }
