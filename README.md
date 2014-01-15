@@ -63,26 +63,7 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** 
 
 ## Configuration
 
-mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. Following entries are interpreted:
-
-| Key              | Type   | Default | Description                                                                     |
-| ---------------- | ------ | ------- | ------------------------------------------------------------------------------- |
-| debugMode        | bool   | false   | Log OpenGL debug information to the console                                     |
-| winResizable     | bool   | false   | Game window is resizable                                                        |
-| fullscreen       | bool   | false   | Start game in fullscreen (this can always be toggled with Alt-Enter at runtime) |
-| fixedAspectRatio | bool   | true    | Don't stretch the game screen to fit the window size                            |
-| smoothScaling    | bool   | false   | Apply linear interpolation when game screen is stretched                        |
-| vsync            | bool   | false   | Sync screen redraws to the monitor refresh rate                                 |
-| defScreenW       | int    | 640     | Width the game window starts in (this is **not** the game resolution)           |
-| defScreenH       | int    | 480     | Height the game window starts in                                                |
-| fixedFramerate   | int    | 0       | FPS will be fixed to this amount. Ignored if 0.                                 |
-| frameSkip        | bool   | true    | Skip frames to catch up (useful to disable eg. with Valgrind)                   |
-| solidFonts       | bool   | false   | Don't use alpha blending for fonts                                              |
-| gameFolder       | string | "."     | mkxp will look for all game related files here                                  |
-| allowSymlinks    | bool   | false   | Allow symlinks to be followed in the game folder.                               |
-| pathCache        | bool   | true    | Scan and cache asset paths at startup. Allows for case insensitive paths.       |
-| customScript     | string | ""      | Execute a raw ruby script file instead of an RPG Maker game.                    |
-| RTP              | string | ""      | Path to a Run Time Package to be used. Can be specified multiple times.         |
+mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. See 'mkxp.conf.sample' for a list of accepted entries.
 
 ## RTPs
 

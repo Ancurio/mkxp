@@ -1,13 +1,115 @@
-# This is a comment
-debugMode=false
-winResizable=false
-fullscreen=false
-fixedAspectRatio=true
-smoothScaling=false
-vsync=false
-defScreenW=640
-defScreenH=480
-solidFonts=false
-gameFolder=.
-customScript=
-RTPs=
+# Lines starting with '#' are comments
+
+# Create a debug context and log
+# OpenGL debug information to the console
+# (default: disabled)
+#
+# debugMode=false
+
+
+# Game window is resizable
+# (default: disabled)
+#
+# winResizable=false
+
+
+# Start game in fullscreen (this can
+# always be toggled with Alt-Enter at runtime)
+# (default: disabled)
+#
+# fullscreen=false
+
+
+# Preserve game screen aspect ratio,
+# as opposed to stretch-to-fill
+# (default: enabled)
+#
+# fixedAspectRatio=true
+
+
+# Apply linear interpolation when game screen
+# is upscaled
+# (default: disabled)
+#
+# smoothScaling=false
+
+
+# Sync screen redraws to the monitor refresh rate
+# (default: disabled)
+#
+# vsync=false
+
+
+# Create the window with 640 in width at startup
+#
+# defScreenW=640
+
+
+# Create the window with 480 in height at startup
+#
+# defScreenH=480
+
+
+# Enforce a static frame rate
+# (0 = disabled)
+#
+# fixedFramerate=0
+
+
+# Skip (don't draw) frames when behind
+# (default: enabled)
+#
+# frameSkip=true
+
+
+# Don't use alpha blending when rendering text
+# (default: disabled)
+#
+# solidFonts=false
+
+
+# Set the base path of the game to '/path/to/game'
+# (default: executable directory)
+#
+# gameFolder=/path/to/game
+
+
+# Use either right or left Alt + Enter to toggle
+# fullscreen
+# (default: disabled)
+# 
+# anyAltToggleFS=false
+
+
+# Allow symlinks for game assets to be followed
+# (default: disabled)
+#
+# allowSymlinks=false
+
+
+# Set the game window icon to 'path/to/icon.png'
+# (default: none)
+#
+# iconPath=/path/to/icon.png
+
+
+# Instead of playing an RPG Maker game,
+# execute a single plain text script instead
+# (default: none)
+#
+# customScript=/path/to/script.rb
+
+
+# Index all accesible assets via their lower case path
+# (emulates windows case insensitivity)
+# (default: enabled)
+#
+# pathCache=true
+
+# Add 'rtp1', 'rtp2.zip' and 'game.rgssad' to the
+# asset search path (multiple allowed)
+# (default: none)
+#
+# RTP=/path/to/rtp1
+# RTP=/path/to/rtp2.zip
+# RTP=/path/to/game.rgssad
