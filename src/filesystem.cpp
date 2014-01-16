@@ -297,8 +297,12 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 
 	/* Check header */
 	uint32_t header1, header2;
-	readUint32(io, header1);
-	readUint32(io, header2);
+
+	if (!readUint32(io, header1))
+		return 0;
+
+	if (!readUint32(io, header2))
+		return 0;
 
 	if (header1 != RGSS_HEADER_1 || header2 != RGSS_HEADER_2)
 		return 0;
