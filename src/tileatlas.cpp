@@ -21,8 +21,6 @@
 
 #include "tileatlas.h"
 
-#include <list>
-
 namespace TileAtlas
 {
 
@@ -37,8 +35,7 @@ struct Column
 	{}
 };
 
-// FIXME: this can be optimized to a vector
-typedef std::list<Column> ColumnList;
+typedef std::vector<Column> ColumnVec;
 
 /* Autotile area width */
 static const int atAreaW = 96*4;
@@ -79,9 +76,10 @@ Vec2i minSize(int tilesetH, int maxAtlasSize)
 	return Vec2i(-1, -1);
 }
 
-static ColumnList calcSrcCols(int tilesetH)
+static ColumnVec calcSrcCols(int tilesetH)
 {
-	ColumnList cols;
+	ColumnVec cols;
+	cols.reserve(2);
 
 	cols.push_back(Column(0, 0, tilesetH));
 	cols.push_back(Column(tsLaneW, 0, tilesetH));
@@ -89,9 +87,10 @@ static ColumnList calcSrcCols(int tilesetH)
 	return cols;
 }
 
-static ColumnList calcDstCols(int atlasW, int atlasH)
+static ColumnVec calcDstCols(int atlasW, int atlasH)
 {
-	ColumnList cols;
+	ColumnVec cols;
+	cols.reserve(3);
 
 	/* Columns below the autotile area */
 	const int underAt = atlasH - atAreaH;
@@ -110,19 +109,21 @@ static ColumnList calcDstCols(int atlasW, int atlasH)
 	return cols;
 }
 
-static BlitList calcBlitsInt(ColumnList &srcCols, ColumnList &dstCols)
+static BlitVec calcBlitsInt(ColumnVec &srcCols, ColumnVec &dstCols)
 {
-	BlitList blits;
+	BlitVec blits;
 
-	while (!srcCols.empty())
+	/* Using signed indices here is safer, as we
+	 * might decrement dstI while it is zero. */
+	int dstI = 0;
+
+	for (size_t srcI = 0; srcI < srcCols.size(); ++srcI)
 	{
-		Column srcCol = srcCols.front();
-		srcCols.pop_front();
+		Column &srcCol = srcCols[srcI];
 
-		while (!dstCols.empty() && srcCol.h > 0)
+		for (; dstI < (int) dstCols.size() && srcCol.h > 0; ++dstI)
 		{
-			Column dstCol = dstCols.front();
-			dstCols.pop_front();
+			Column &dstCol = dstCols[dstI];
 
 			if (srcCol.h > dstCol.h)
 			{
@@ -141,7 +142,10 @@ static BlitList calcBlitsInt(ColumnList &srcCols, ColumnList &dstCols)
 
 				dstCol.y += srcCol.h;
 				dstCol.h -= srcCol.h;
-				dstCols.push_front(dstCol);
+
+				/* Queue this column up again for processing */
+				--dstI;
+
 				srcCol.h = 0;
 			}
 			else
@@ -156,10 +160,10 @@ static BlitList calcBlitsInt(ColumnList &srcCols, ColumnList &dstCols)
 	return blits;
 }
 
-BlitList calcBlits(int tilesetH, const Vec2i &atlasSize)
+BlitVec calcBlits(int tilesetH, const Vec2i &atlasSize)
 {
-	ColumnList srcCols = calcSrcCols(tilesetH);
-	ColumnList dstCols = calcDstCols(atlasSize.x, atlasSize.y);
+	ColumnVec srcCols = calcSrcCols(tilesetH);
+	ColumnVec dstCols = calcDstCols(atlasSize.x, atlasSize.y);
 
 	return calcBlitsInt(srcCols, dstCols);
 }
