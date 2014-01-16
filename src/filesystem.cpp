@@ -500,21 +500,20 @@ static const PHYSFS_Archiver RGSS_Archiver =
 
 struct FileSystemPrivate
 {
-	/* All keys are lower case */
+	/* Maps: lower case filename, To: actual (mixed case) filename.
+	 * This is for compatibility with games that take Windows'
+	 * case insensitivity for granted */
 	BoostHash<std::string, std::string> pathCache;
+	bool havePathCache;
 
 	std::vector<std::string> extensions[FileSystem::Undefined+1];
-
-	// FIXME Need to find a better way to do this..
-	char pathBuffer[512];
-	bool havePathCache;
 
 	/* Attempt to locate an extension string in a filename.
 	 * Either a pointer into the input string pointing at the
 	 * extension, or null is returned */
 	const char *findExt(const char *filename)
 	{
-		int len;
+		size_t len;
 
 		for (len = strlen(filename); len > 0; --len)
 		{
@@ -528,105 +527,124 @@ struct FileSystemPrivate
 		return 0;
 	}
 
-	const char *completeFileName(const char *filename,
-	                             FileSystem::FileType type,
-	                             const char **foundExt)
+	/* Complete filename via regular physfs lookup */
+	bool completeFilenameReg(const char *filename,
+	                         FileSystem::FileType type,
+	                         char *outBuffer,
+	                         size_t outN,
+	                         const char **foundExt)
 	{
-		if (!havePathCache)
+		/* Try supplementing extensions to find an existing path */
+		const std::vector<std::string> &extList = extensions[type];
+
+		for (size_t i = 0; i < extList.size(); ++i)
 		{
-			if (PHYSFS_exists(filename))
+			const char *ext = extList[i].c_str();
+
+			snprintf(outBuffer, outN, "%s.%s", filename, ext);
+
+			if (PHYSFS_exists(outBuffer))
 			{
 				if (foundExt)
-					*foundExt = findExt(filename);
+					*foundExt = ext;
 
-				return filename;
+				return true;
 			}
-
-			const std::vector<std::string> &extList = extensions[type];
-			for (size_t i = 0; i < extList.size(); ++i)
-			{
-				const char *ext = extList[i].c_str();
-
-				snprintf(pathBuffer, sizeof(pathBuffer), "%s.%s", filename, ext);
-
-				if (PHYSFS_exists(pathBuffer))
-				{
-					if (foundExt)
-						*foundExt = ext;
-
-					return pathBuffer;
-				}
-			}
-
-			// Is this even necessary?
-			if (foundExt)
-				*foundExt = 0;
-
-			return 0;
 		}
 
-		char buff[512];
-		size_t i;
-
-		for (i = 0; i < sizeof(buff) && filename[i]; ++i)
-			buff[i] = tolower(filename[i]);
-
-		buff[i] = '\0';
-
-		std::string key(buff);
-
-		/* If the path was already complete,
-		 * we are done at this point */
-		if (pathCache.contains(key))
+		/* Doing the check without supplemented extension
+		 * fits the usage pattern of RMXP games */
+		if (PHYSFS_exists(filename))
 		{
-			/* The extension might already be included here,
-			 * so try to find it */
+			strncpy(outBuffer, filename, outN);
+
 			if (foundExt)
 				*foundExt = findExt(filename);
 
-			return pathCache[key].c_str();
+			return true;
 		}
 
-		char buff2[512];
+		return false;
+	}
 
-		/* Try supplementing extensions
-		 * to find an existing path */
-		if (type != FileSystem::Undefined)
+	/* Complete filename via path cache */
+	bool completeFilenamePC(const char *filename,
+	                        FileSystem::FileType type,
+                            char *outBuffer,
+                            size_t outN,
+                            const char **foundExt)
+	{
+		size_t i;
+		char lowCase[512];
+
+		for (i = 0; i < sizeof(lowCase)-1 && filename[i]; ++i)
+			lowCase[i] = tolower(filename[i]);
+
+		lowCase[i] = '\0';
+
+		std::string key;
+
+		const std::vector<std::string> &extList = extensions[type];
+
+		for (size_t i = 0; i < extList.size(); ++i)
 		{
-			std::vector<std::string> &extList = extensions[type];
-			for (size_t i = 0; i < extList.size(); ++i)
+			const char *ext = extList[i].c_str();
+
+			snprintf(outBuffer, outN, "%s.%s", lowCase, ext);
+			key = outBuffer;
+
+			if (pathCache.contains(key))
 			{
-				const char *ext = extList[i].c_str();
+				strncpy(outBuffer, pathCache[key].c_str(), outN);
 
-				snprintf(buff2, sizeof(buff2), "%s.%s", buff, ext);
-				key = buff2;
+				if (foundExt)
+					*foundExt = ext;
 
-				if (pathCache.contains(key))
-				{
-					if (foundExt)
-						*foundExt = ext;
-
-					return pathCache[key].c_str();
-				}
+				return true;
 			}
 		}
 
-		if (foundExt)
-			*foundExt = 0;
+		key = lowCase;
 
-		return 0;
+		if (pathCache.contains(key))
+		{
+			strncpy(outBuffer, pathCache[key].c_str(), outN);
+
+			if (foundExt)
+				*foundExt = findExt(filename);
+
+			return true;
+		}
+
+		return false;
 	}
 
-	PHYSFS_File *openReadInt(const char *filename,
-	                         FileSystem::FileType type,
-	                         const char **foundExt)
+	/* Try to complete 'filename' with file extensions
+	 * based on 'type'. If no combination could be found,
+	 * returns false, and 'foundExt' is untouched */
+	bool completeFileName(const char *filename,
+	                      FileSystem::FileType type,
+                          char *outBuffer,
+                          size_t outN,
+                          const char **foundExt)
 	{
-		const char *foundName = completeFileName(filename, type, foundExt);
+		if (havePathCache)
+			return completeFilenamePC(filename, type, outBuffer, outN, foundExt);
+		else
+			return completeFilenameReg(filename, type, outBuffer, outN, foundExt);
+	}
 
-		if (!foundName)
+	PHYSFS_File *openReadHandle(const char *filename,
+	                            FileSystem::FileType type,
+	                            const char **foundExt)
+	{
+		char found[512];
+
+		if (!completeFileName(filename, type, found, sizeof(found), foundExt))
 			throw Exception(Exception::NoFileError, "%s", filename);
 
-		PHYSFS_File *handle = PHYSFS_openRead(foundName);
+		PHYSFS_File *handle = PHYSFS_openRead(found);
+
 		if (!handle)
 			throw Exception(Exception::PHYSFSError, "PhysFS: %s", PHYSFS_getLastError());
 
@@ -826,7 +844,7 @@ void FileSystem::openRead(SDL_RWops &ops,
                           bool freeOnClose,
                           const char **foundExt)
 {
-	PHYSFS_File *handle = p->openReadInt(filename, type, foundExt);
+	PHYSFS_File *handle = p->openReadHandle(filename, type, foundExt);
 
 	ops.size  = SDL_RWopsSize;
 	ops.seek  = SDL_RWopsSeek;
@@ -844,7 +862,7 @@ void FileSystem::openRead(SDL_RWops &ops,
 
 bool FileSystem::exists(const char *filename, FileType type)
 {
-	const char *foundName = p->completeFileName(filename, type, 0);
+	char found[512];
 
-	return (foundName != 0);
+	return p->completeFileName(filename, type, found, sizeof(found), 0);
 }
