@@ -630,7 +630,7 @@ struct TilemapPrivate
 		for (size_t i = 0; i < atlas.usableATs.size(); ++i)
 			autotiles[atlas.usableATs[i]]->flush();
 
-		TileAtlas::BlitList blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
+		TileAtlas::BlitVec blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
 
 		/* Clear atlas */
 		FBO::bind(atlas.gl.fbo, FBO::Draw);

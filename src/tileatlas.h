@@ -46,16 +46,17 @@ struct Blit
 	{}
 };
 
-typedef std::vector<Blit> BlitList;
+typedef std::vector<Blit> BlitVec;
 
 /* Calculates the minimum atlas size required to hold
  * a tileset of height 'tilesetH'. If the required dimensions
  * exceed 'maxAtlasSize', Vec2i(-1, -1) is returned. */
 Vec2i minSize(int tilesetH, int maxAtlasSize);
 
-/* Calculates a series of blits necessary to fill dstRows
- * with srcRows without wasting any space */
-BlitList calcBlits(int tilesetH, const Vec2i &atlasSize);
+/* Calculates a series of blits necessary to fill an atlas
+ * of size 'atlasSize' with a tileset of height 'tilesetH'.
+ * Usually fed results from 'minSize()'. */
+BlitVec calcBlits(int tilesetH, const Vec2i &atlasSize);
 
 /* Translates a tile coordinate (not pixel!) to a physical
  * pixel coordinate in the atlas */
