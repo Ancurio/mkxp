@@ -99,13 +99,13 @@ Shader::~Shader()
 
 void Shader::bind()
 {
-	glUseProgram(program);
+	glState.program.set(program);
 }
 
 void Shader::unbind()
 {
 	glActiveTexture(GL_TEXTURE0);
-	glUseProgram(0);
+	glState.program.set(0);
 }
 
 void Shader::init(const unsigned char *vert, int vertSize,

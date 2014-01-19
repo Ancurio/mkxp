@@ -20,6 +20,7 @@
 */
 
 #include "glstate.h"
+#include "shader.h"
 #include "etc.h"
 
 #include <glew.h>
@@ -95,6 +96,11 @@ void GLViewport::apply(const IntRect &value)
 	glViewport(value.x, value.y, value.w, value.h);
 }
 
+void GLProgram::apply(const unsigned int &value)
+{
+	glUseProgram(value);
+}
+
 GLState::Caps::Caps()
 {
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
@@ -110,4 +116,5 @@ GLState::GLState()
 	scissorTest.init(false);
 	scissorBox.init(IntRect(0, 0, 640, 480));
 	texture2D.init(true);
+	program.init(0);
 }

@@ -99,6 +99,11 @@ class GLViewport : public GLProperty<IntRect>
 	void apply(const IntRect &value);
 };
 
+class GLProgram : public GLProperty<unsigned int> /* GLuint */
+{
+	void apply(const unsigned int &value);
+};
+
 
 class GLState
 {
@@ -109,6 +114,7 @@ public:
 	GLTexture2D texture2D;
 	GLBlendMode blendMode;
 	GLViewport viewport;
+	GLProgram program;
 
 	struct Caps
 	{
