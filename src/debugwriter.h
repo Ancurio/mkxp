@@ -46,7 +46,7 @@ public:
 
 	~Debug()
 	{
-		std::clog << buf.str() << "\n";
+		std::clog << buf.str() << std::endl;
 	}
 
 private:
