@@ -191,7 +191,6 @@ public:
 		screenQuad.draw();
 
 		glState.blendMode.pop();
-		shader.unbind();
 	}
 
 #ifdef RGSS2
