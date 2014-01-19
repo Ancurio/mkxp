@@ -748,8 +748,6 @@ void Bitmap::hueChange(int hue)
 
 	p->blitQuad(quad);
 
-	shader.unbind();
-
 	p->popViewport();
 
 	TEX::unbind();
