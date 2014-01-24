@@ -126,7 +126,7 @@ static void printP(int argc, VALUE *argv,
 
 	for (int i = 0; i < argc; ++i)
 	{
-		VALUE str = rb_funcall(argv[i], conv, 0);
+		VALUE str = rb_funcall2(argv[i], conv, 0, NULL);
 		rb_str_buf_append(dispString, str);
 
 		if (i < argc)
@@ -210,12 +210,12 @@ static void runRMXPScripts()
 		return;
 	}
 
-	size_t scriptCount = RARRAY_LEN(scriptArray);
+	long scriptCount = RARRAY_LEN(scriptArray);
 
 	std::string decodeBuffer;
 	decodeBuffer.resize(0x1000);
 
-	for (size_t i = 0; i < scriptCount; ++i)
+	for (long i = 0; i < scriptCount; ++i)
 	{
 		VALUE script = rb_ary_entry(scriptArray, i);
 
@@ -251,8 +251,7 @@ static void runRMXPScripts()
 		if (result != Z_OK)
 		{
 			static char buffer[256];
-			/* FIXME: '%zu' apparently gcc only? */
-			snprintf(buffer, sizeof(buffer), "Error decoding script %zu: '%s'",
+			snprintf(buffer, sizeof(buffer), "Error decoding script %ld: '%s'",
 			         i, RSTRING_PTR(scriptName));
 
 			showMsg(buffer);
@@ -274,8 +273,8 @@ static void runRMXPScripts()
 		/* Execute code */
 		rb_eval_string_protect(decData.c_str(), 0);
 
-		VALUE exc = rb_gv_get("$!");
-		if (rb_type(exc) != RUBY_T_NIL)
+		VALUE exc = rb_errinfo();
+		if (!NIL_P(exc))
 			break;
 	}
 }
@@ -296,13 +295,13 @@ static void mriBindingExecute()
 	else
 		runRMXPScripts();
 
-	VALUE exc = rb_gv_get("$!");
-	if (rb_type(exc) != RUBY_T_NIL && !rb_eql(rb_obj_class(exc), rb_eSystemExit))
+	VALUE exc = rb_errinfo();
+	if (!NIL_P(exc) && !rb_obj_is_kind_of(exc, rb_eSystemExit))
 	{
 		Debug() << "Had exception:" << rb_class2name(rb_obj_class(exc));
-		VALUE bt = rb_funcall(exc, rb_intern("backtrace"), 0);
+		VALUE bt = rb_funcall2(exc, rb_intern("backtrace"), 0, NULL);
 		rb_p(bt);
-		VALUE msg = rb_funcall(exc, rb_intern("message"), 0);
+		VALUE msg = rb_funcall2(exc, rb_intern("message"), 0, NULL);
 		if (RSTRING_LEN(msg) < 256)
 			showMsg(RSTRING_PTR(msg));
 		else
