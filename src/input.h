@@ -23,6 +23,7 @@
 #define INPUT_H
 
 struct InputPrivate;
+struct RGSSThreadData;
 
 class Input
 {
@@ -59,7 +60,7 @@ public:
 	int mouseY();
 
 private:
-	Input();
+	Input(const RGSSThreadData &rtData);
 	~Input();
 
 	friend struct SharedStatePrivate;

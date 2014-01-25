@@ -22,6 +22,7 @@
 #include "input.h"
 #include "sharedstate.h"
 #include "eventthread.h"
+#include "keybindings.h"
 #include "exception.h"
 #include "util.h"
 
@@ -30,6 +31,7 @@
 
 #include <vector>
 #include <string.h>
+#include <assert.h>
 
 #define BUTTON_CODE_COUNT 24
 
@@ -49,12 +51,6 @@ struct ButtonState
 struct KbBindingData
 {
 	SDL_Scancode source;
-	Input::ButtonCode target;
-};
-
-struct JsBindingData
-{
-	int source;
 	Input::ButtonCode target;
 };
 
@@ -82,6 +78,15 @@ struct KbBinding : public Binding
 
 	bool sourceActive() const
 	{
+		/* Special case aliases */
+		if (source == SDL_SCANCODE_LSHIFT)
+			return EventThread::keyStates[source]
+			    || EventThread::keyStates[SDL_SCANCODE_RSHIFT];
+
+		if (source == SDL_SCANCODE_RETURN)
+			return EventThread::keyStates[source]
+			    || EventThread::keyStates[SDL_SCANCODE_KP_ENTER];
+
 		return EventThread::keyStates[source];
 	}
 
@@ -100,11 +105,6 @@ struct JsButtonBinding : public Binding
 {
 	JsButtonBinding() {}
 
-	JsButtonBinding(const JsBindingData &data)
-		: Binding(data.target),
-		  source(data.source)
-	{}
-
 	bool sourceActive() const
 	{
 		return EventThread::joyState.buttons[source];
@@ -115,7 +115,7 @@ struct JsButtonBinding : public Binding
 		return true;
 	}
 
-	int source;
+	uint8_t source;
 };
 
 /* Joystick axis binding */
@@ -123,17 +123,22 @@ struct JsAxisBinding : public Binding
 {
 	JsAxisBinding() {}
 
-	JsAxisBinding(int *source,
-	              int compareValue,
+	JsAxisBinding(uint8_t source,
+	              AxisDir dir,
 	              Input::ButtonCode target)
 	    : Binding(target),
 	      source(source),
-	      compareValue(compareValue)
+	      dir(dir)
 	{}
 
 	bool sourceActive() const
 	{
-		return (*source == compareValue);
+		int val = EventThread::joyState.axis[source];
+
+		if (dir == Negative)
+			return val < -JAXIS_THRESHOLD;
+		else /* dir == Positive */
+			return val > JAXIS_THRESHOLD;
 	}
 
 	bool sourceRepeatable() const
@@ -141,8 +146,8 @@ struct JsAxisBinding : public Binding
 		return true;
 	}
 
-	int *source;
-	int compareValue;
+	uint8_t source;
+	AxisDir dir;
 };
 
 /* Mouse button binding */
@@ -172,10 +177,6 @@ struct MsBinding : public Binding
 /* Not rebindable */
 static const KbBindingData staticKbBindings[] =
 {
-	{ SDL_SCANCODE_LEFT,   Input::Left  },
-	{ SDL_SCANCODE_RIGHT,  Input::Right },
-	{ SDL_SCANCODE_UP,     Input::Up    },
-	{ SDL_SCANCODE_DOWN,   Input::Down  },
 	{ SDL_SCANCODE_LSHIFT, Input::Shift },
 	{ SDL_SCANCODE_RSHIFT, Input::Shift },
 	{ SDL_SCANCODE_LCTRL,  Input::Ctrl  },
@@ -190,61 +191,6 @@ static const KbBindingData staticKbBindings[] =
 };
 
 static elementsN(staticKbBindings);
-
-/* Rebindable */
-static const KbBindingData defaultKbBindings[] =
-{
-	{ SDL_SCANCODE_SPACE,    Input::C    },
-	{ SDL_SCANCODE_RETURN,   Input::C    },
-    { SDL_SCANCODE_KP_ENTER, Input::C    }, /* Treated as alias of RETURN */
-	{ SDL_SCANCODE_ESCAPE,   Input::B    },
-	{ SDL_SCANCODE_KP_0,     Input::B    },
-	{ SDL_SCANCODE_LSHIFT,   Input::A    },
-	{ SDL_SCANCODE_RSHIFT,   Input::A    },
-	{ SDL_SCANCODE_X,        Input::B    },
-	{ SDL_SCANCODE_B,        Input::None },
-	{ SDL_SCANCODE_D,        Input::Z    },
-	{ SDL_SCANCODE_Q,        Input::L    },
-	{ SDL_SCANCODE_W,        Input::R    },
-    { SDL_SCANCODE_V,        Input::None },
-	{ SDL_SCANCODE_A,        Input::X    },
-	{ SDL_SCANCODE_S,        Input::Y    }
-};
-
-/* RGSS1 */
-static const KbBindingData defaultKbBindings1[] =
-{
-	{ SDL_SCANCODE_Z,        Input::A    },
-	{ SDL_SCANCODE_C,        Input::C    },
-};
-
-/* RGSS2 and higher */
-static const KbBindingData defaultKbBindings2[] =
-{
-	{ SDL_SCANCODE_Z,        Input::C    },
-	{ SDL_SCANCODE_C,        Input::None },
-};
-
-static elementsN(defaultKbBindings);
-static elementsN(defaultKbBindings1);
-static elementsN(defaultKbBindings2);
-
-/* Rebindable */
-static const JsBindingData defaultJsBindings[] =
-{
-	{ 0, Input::A    },
-	{ 1, Input::B    },
-	{ 2, Input::C    },
-	{ 3, Input::X    },
-	{ 4, Input::Y    },
-	{ 5, Input::Z    },
-	{ 6, Input::L    },
-	{ 7, Input::R    },
-	{ 8, Input::None },
-	{ 9, Input::None }
-};
-
-static elementsN(defaultJsBindings);
 
 /* Maps ButtonCode enum values to indices
  * in the button state array */
@@ -292,6 +238,7 @@ static const Input::ButtonCode otherDirs[4][3] =
 
 struct InputPrivate
 {
+	std::vector<KbBinding> kbStatBindings;
 	std::vector<KbBinding> kbBindings;
 	std::vector<JsAxisBinding> jsABindings;
 	std::vector<JsButtonBinding> jsBBindings;
@@ -320,11 +267,13 @@ struct InputPrivate
 	} dir8Data;
 
 
-	InputPrivate()
+	InputPrivate(const RGSSThreadData &rtData)
 	{
-		initKbBindings();
-		initJsBindings();
+		initStaticKbBindings();
 		initMsBindings();
+
+		/* Main thread should have these posted by now */
+		checkBindingChange(rtData);
 
 		states    = stateArray;
 		statesOld = stateArray + BUTTON_CODE_COUNT;
@@ -378,51 +327,90 @@ struct InputPrivate
 		memset(states, 0, size);
 	}
 
-	void initKbBindings()
+	void checkBindingChange(const RGSSThreadData &rtData)
 	{
-		kbBindings.clear();
+		BDescVec d;
 
-		for (size_t i = 0; i < staticKbBindingsN; ++i)
-			kbBindings.push_back(KbBinding(staticKbBindings[i]));
+		if (!rtData.bindingUpdateMsg.poll(d))
+			return;
 
-		for (size_t i = 0; i < defaultKbBindingsN; ++i)
-			kbBindings.push_back(KbBinding(defaultKbBindings[i]));
-
-		if (rgssVer == 1)
-			for (size_t i = 0; i < defaultKbBindings1N; ++i)
-				kbBindings.push_back(KbBinding(defaultKbBindings1[i]));
-		else
-			for (size_t i = 0; i < defaultKbBindings2N; ++i)
-				kbBindings.push_back(KbBinding(defaultKbBindings2[i]));
-
-		/* Add to binging array */
-		for (size_t i = 0; i < kbBindings.size(); ++i)
-			bindings.push_back(&kbBindings[i]);
+		applyBindingDesc(d);
 	}
 
-	void initJsBindings()
+	template<class B>
+	void appendBindings(std::vector<B> &bind)
 	{
-		/* Create axis bindings */
-		jsABindings.resize(4);
+		for (size_t i = 0; i < bind.size(); ++i)
+			bindings.push_back(&bind[i]);
+	}
 
-		size_t i = 0;
-		jsABindings[i++] = JsAxisBinding(&EventThread::joyState.xAxis,  0x7FFF, Input::Right);
-		jsABindings[i++] = JsAxisBinding(&EventThread::joyState.xAxis, -0x8000, Input::Left);
-		jsABindings[i++] = JsAxisBinding(&EventThread::joyState.yAxis,  0x7FFF, Input::Down);
-		jsABindings[i++] = JsAxisBinding(&EventThread::joyState.yAxis, -0x8000, Input::Up);
+	void applyBindingDesc(const BDescVec &d)
+	{
+		kbBindings.clear();
+		jsABindings.clear();
+		jsBBindings.clear();
 
-		/* Create button bindings */
-		jsBBindings.resize(defaultJsBindingsN);
+		for (size_t i = 0; i < d.size(); ++i)
+		{
+			const BindingDesc &desc = d[i];
+			const SourceDesc &src = desc.src;
 
-		for (size_t i = 0; i < defaultJsBindingsN; ++i)
-			jsBBindings[i] = JsButtonBinding(defaultJsBindings[i]);
+			if (desc.target == Input::None)
+				continue;
 
-		/* Add to binging array */
-		for (size_t i = 0; i < jsABindings.size(); ++i)
-			bindings.push_back(&jsABindings[i]);
+			switch (desc.src.type)
+			{
+			case Invalid :
+				break;
+			case Key :
+			{
+				KbBinding bind;
+				bind.source = src.d.scan;
+				bind.target = desc.target;
+				kbBindings.push_back(bind);
 
-		for (size_t i = 0; i < jsBBindings.size(); ++i)
-			bindings.push_back(&jsBBindings[i]);
+				break;
+			}
+			case JAxis :
+			{
+				JsAxisBinding bind;
+				bind.source = src.d.ja.axis;
+				bind.dir = src.d.ja.dir;
+				bind.target = desc.target;
+				jsABindings.push_back(bind);
+
+				break;
+			}
+			case JButton :
+			{
+				JsButtonBinding bind;
+				bind.source = src.d.jb;
+				bind.target = desc.target;
+				jsBBindings.push_back(bind);
+
+				break;
+			}
+			default :
+				assert(!"unreachable");
+			}
+		}
+
+		bindings.clear();
+
+		appendBindings(kbStatBindings);
+		appendBindings(msBindings);
+
+		appendBindings(kbBindings);
+		appendBindings(jsABindings);
+		appendBindings(jsBBindings);
+	}
+
+	void initStaticKbBindings()
+	{
+		kbStatBindings.clear();
+
+		for (size_t i = 0; i < staticKbBindingsN; ++i)
+			kbStatBindings.push_back(KbBinding(staticKbBindings[i]));
 	}
 
 	void initMsBindings()
@@ -433,10 +421,6 @@ struct InputPrivate
 		msBindings[i++] = MsBinding(SDL_BUTTON_LEFT,   Input::MouseLeft);
 		msBindings[i++] = MsBinding(SDL_BUTTON_MIDDLE, Input::MouseMiddle);
 		msBindings[i++] = MsBinding(SDL_BUTTON_RIGHT,  Input::MouseRight);
-
-		/* Add to binding array */
-		for (size_t i = 0; i < msBindings.size(); ++i)
-			bindings.push_back(&msBindings[i]);
 	}
 
 	void pollBindings(Input::ButtonCode &repeatCand)
@@ -564,14 +548,15 @@ struct InputPrivate
 };
 
 
-Input::Input()
+Input::Input(const RGSSThreadData &rtData)
 {
-	p = new InputPrivate;
+	p = new InputPrivate(rtData);
 }
 
 void Input::update()
 {
 	shState->checkShutdown();
+	p->checkBindingChange(shState->rtData());
 
 	p->swapBuffers();
 	p->clearBuffer();

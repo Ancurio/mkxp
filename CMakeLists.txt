@@ -135,6 +135,8 @@ set(MAIN_HEADERS
 	src/gl-util.h
 	src/util.h
 	src/config.h
+	src/settingsmenu.h
+	src/keybindings.h
 	src/tileatlas.h
 	src/sharedstate.h
 	src/al-util.h
@@ -180,6 +182,8 @@ set(MAIN_SOURCE
 	src/debuglogger.cpp
 	src/etc.cpp
 	src/config.cpp
+	src/settingsmenu.cpp
+	src/keybindings.cpp
 	src/tileatlas.cpp
 	src/sharedstate.cpp
 	src/gl-fun.cpp

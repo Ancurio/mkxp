@@ -29,6 +29,7 @@
 
 #include "sharedstate.h"
 #include "graphics.h"
+#include "settingsmenu.h"
 #include "debugwriter.h"
 
 #include <string.h>
@@ -37,7 +38,7 @@ bool EventThread::keyStates[] = { false };
 
 EventThread::JoyState EventThread::joyState =
 {
-	0, 0, { false }
+	{ 0 }, { false }
 };
 
 EventThread::MouseState EventThread::mouseState =
@@ -108,12 +109,27 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	bool resetting = false;
 
+	SettingsMenu *sMenu = 0;
+
 	while (true)
 	{
 		if (!SDL_WaitEvent(&event))
 		{
 			Debug() << "EventThread: Event error";
 			break;
+		}
+
+		if (sMenu && sMenu->onEvent(event))
+		{
+			if (sMenu->destroyReq())
+			{
+				delete sMenu;
+				sMenu = 0;
+
+				updateCursorState(cursorInWindow && windowFocused);
+			}
+
+			continue;
 		}
 
 		switch (event.type)
@@ -129,14 +145,14 @@ void EventThread::process(RGSSThreadData &rtData)
 			case SDL_WINDOWEVENT_ENTER :
 				cursorInWindow = true;
 				mouseState.inWindow = true;
-				updateCursorState(cursorInWindow && windowFocused);
+				updateCursorState(cursorInWindow && windowFocused && !sMenu);
 
 				break;
 
 			case SDL_WINDOWEVENT_LEAVE :
 				cursorInWindow = false;
 				mouseState.inWindow = false;
-				updateCursorState(cursorInWindow && windowFocused);
+				updateCursorState(cursorInWindow && windowFocused && !sMenu);
 
 				break;
 
@@ -147,13 +163,13 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			case SDL_WINDOWEVENT_FOCUS_GAINED :
 				windowFocused = true;
-				updateCursorState(cursorInWindow && windowFocused);
+				updateCursorState(cursorInWindow && windowFocused && !sMenu);
 
 				break;
 
 			case SDL_WINDOWEVENT_FOCUS_LOST :
 				windowFocused = false;
-				updateCursorState(cursorInWindow && windowFocused);
+				updateCursorState(cursorInWindow && windowFocused && !sMenu);
 				resetInputStates();
 
 				break;
@@ -179,6 +195,17 @@ void EventThread::process(RGSSThreadData &rtData)
 				}
 
 				break;
+			}
+
+			if (event.key.keysym.scancode == SDL_SCANCODE_F1)
+			{
+				if (!sMenu)
+				{
+					sMenu = new SettingsMenu(rtData);
+					updateCursorState(false);
+				}
+
+				sMenu->raise();
 			}
 
 			if (event.key.keysym.scancode == SDL_SCANCODE_F2)
@@ -248,11 +275,7 @@ void EventThread::process(RGSSThreadData &rtData)
 			break;
 
 		case SDL_JOYAXISMOTION :
-			if (event.jaxis.axis == 0)
-				joyState.xAxis = event.jaxis.value;
-			else
-				joyState.yAxis = event.jaxis.value;
-
+			joyState.axis[event.jaxis.axis] = event.jaxis.value;
 			break;
 
 		case SDL_JOYDEVICEADDED :
@@ -333,6 +356,8 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	if (SDL_JoystickGetAttached(js))
 		SDL_JoystickClose(js);
+
+	delete sMenu;
 }
 
 void EventThread::cleanup()

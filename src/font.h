@@ -49,6 +49,8 @@ public:
 
 	bool fontPresent(std::string family);
 
+	static _TTF_Font *openBundled(int size);
+
 private:
 	SharedFontStatePrivate *p;
 };

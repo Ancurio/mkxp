@@ -106,6 +106,7 @@ struct SharedStatePrivate
 	      config(threadData->config),
 	      midiState(threadData->config),
 	      graphics(threadData),
+	      input(*threadData),
 	      audio(threadData->config),
 	      fontState(threadData->config),
 	      stampCounter(0)

@@ -25,6 +25,8 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
 
+#include <SDL_filesystem.h>
+
 #include <fstream>
 #include <stdint.h>
 
@@ -118,6 +120,15 @@ static bool validUtf8(const char *string)
 	return true;
 }
 
+static std::string prefPath(const char *org, const char *app)
+{
+	char *path = SDL_GetPrefPath(org, app);
+	std::string str(path);
+	SDL_free(path);
+
+	return str;
+}
+
 typedef std::vector<std::string> StringVec;
 namespace po = boost::program_options;
 
@@ -167,6 +178,8 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(anyAltToggleFS, bool) \
 	PO_DESC(enableReset, bool) \
 	PO_DESC(allowSymlinks, bool) \
+	PO_DESC(dataPathOrg, std::string) \
+	PO_DESC(dataPathApp, std::string) \
 	PO_DESC(iconPath, std::string) \
 	PO_DESC(titleLanguage, std::string) \
 	PO_DESC(midi.soundFont, std::string) \
@@ -243,6 +256,11 @@ void Config::read(int argc, char *argv[])
 	rgssVersion = clamp(rgssVersion, 0, 3);
 
 	SE.sourceCount = clamp(SE.sourceCount, 1, 64);
+
+	if (!dataPathOrg.empty() && !dataPathApp.empty())
+		customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
+
+	commonDataPath = prefPath(".", "mkxp");
 }
 
 static std::string baseName(const std::string &path)

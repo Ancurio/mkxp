@@ -51,6 +51,9 @@ struct Config
 	bool allowSymlinks;
 	bool pathCache;
 
+	std::string dataPathOrg;
+	std::string dataPathApp;
+
 	std::string iconPath;
 	std::string titleLanguage;
 
@@ -81,6 +84,10 @@ struct Config
 		std::string scripts;
 		std::string title;
 	} game;
+
+	/* Internal */
+	std::string customDataPath;
+	std::string commonDataPath;
 
 	Config();
 

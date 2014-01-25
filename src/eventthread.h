@@ -25,6 +25,7 @@
 #include "config.h"
 #include "etc-internal.h"
 #include "sdl-util.h"
+#include "keybindings.h"
 
 #include <SDL_scancode.h>
 #include <SDL_joystick.h>
@@ -45,10 +46,8 @@ public:
 
 	struct JoyState
 	{
-		int xAxis;
-		int yAxis;
-
-		bool buttons[16];
+		int axis[256];
+		bool buttons[256];
 	};
 
 	static JoyState joyState;
@@ -155,6 +154,55 @@ struct WindowSizeNotify
 	}
 };
 
+struct BindingNotify
+{
+	BindingNotify()
+	{
+		mut = SDL_CreateMutex();
+	}
+	~BindingNotify()
+	{
+		SDL_DestroyMutex(mut);
+	}
+
+	bool poll(BDescVec &out) const
+	{
+		if (!changed)
+			return false;
+
+		SDL_LockMutex(mut);
+
+		out = data;
+		changed.clear();
+
+		SDL_UnlockMutex(mut);
+
+		return true;
+	}
+
+	void get(BDescVec &out) const
+	{
+		SDL_LockMutex(mut);
+		out = data;
+		SDL_UnlockMutex(mut);
+	}
+
+	void post(const BDescVec &d)
+	{
+		SDL_LockMutex(mut);
+
+		changed.set();
+		data = d;
+
+		SDL_UnlockMutex(mut);
+	}
+
+private:
+	SDL_mutex *mut;
+	BDescVec data;
+	mutable AtomicFlag changed;
+};
+
 struct RGSSThreadData
 {
 	/* Main thread sets this to request RGSS thread to terminate */
@@ -171,6 +219,7 @@ struct RGSSThreadData
 
 	EventThread *ethread;
 	WindowSizeNotify windowSizeMsg;
+	BindingNotify bindingUpdateMsg;
 
 	const char *argv0;
 

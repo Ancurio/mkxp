@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
 	SDL_SetHint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0");
 
 	SDL_Window *win;
-	Uint32 winFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+	Uint32 winFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS;
 
 	if (conf.winResizable)
 		winFlags |= SDL_WINDOW_RESIZABLE;
@@ -267,6 +267,9 @@ int main(int argc, char *argv[])
 
 	EventThread eventThread;
 	RGSSThreadData rtData(&eventThread, argv[0], win, conf);
+
+	/* Load and post key bindings */
+	rtData.bindingUpdateMsg.post(loadBindings(conf));
 
 	/* Start RGSS thread */
 	SDL_Thread *rgssThread =
@@ -309,6 +312,11 @@ int main(int argc, char *argv[])
 
 	/* Clean up any remainin events */
 	eventThread.cleanup();
+
+	/* Store key bindings */
+	BDescVec keyBinds;
+	rtData.bindingUpdateMsg.get(keyBinds);
+	storeBindings(keyBinds, rtData.config);
 
 	Debug() << "Shutting down.";
 

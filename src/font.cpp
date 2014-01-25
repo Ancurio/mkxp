@@ -195,6 +195,13 @@ bool SharedFontState::fontPresent(std::string family)
 	return !(set.regular.empty() && set.other.empty());
 }
 
+_TTF_Font *SharedFontState::openBundled(int size)
+{
+	SDL_RWops *ops = openBundledFont();
+
+	return TTF_OpenFontRW(ops, 1, size);
+}
+
 
 struct FontPrivate
 {
