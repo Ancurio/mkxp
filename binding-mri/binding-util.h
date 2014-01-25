@@ -322,7 +322,7 @@ rb_check_argc(int actual, int expected)
 		Klass *k = getPrivateData<Klass>(self); \
 		VALUE propObj = *argv; \
 		PropKlass *prop; \
-		if (rb_type(propObj) == RUBY_T_NIL) \
+		if (NIL_P(propObj)) \
 			prop = 0; \
 		else \
 			prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type); \

@@ -23,6 +23,7 @@
 
 #include "sharedstate.h"
 #include "filesystem.h"
+#include "util.h"
 
 #include "ruby/encoding.h"
 #include "ruby/intern.h"
@@ -118,9 +119,9 @@ kernelLoadDataInt(const char *filename)
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
 	// FIXME need to catch exceptions here with begin rescue
-	VALUE result = rb_funcall(marsh, rb_intern("load"), 1, port);
+	VALUE result = rb_funcall2(marsh, rb_intern("load"), 1, &port);
 
-	rb_funcall(port, rb_intern("close"), 0);
+	rb_funcall2(port, rb_intern("close"), 0, NULL);
 
 	return result;
 }
@@ -144,13 +145,14 @@ RB_METHOD(kernelSaveData)
 
 	rb_get_args(argc, argv, "oS", &obj, &filename RB_ARG_END);
 
-	VALUE file = rb_funcall(rb_cFile, rb_intern("open"), 2, filename, rb_str_new_cstr("w"));
+	VALUE file = rb_file_open_str(filename, "wb");
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
-	rb_funcall(marsh, rb_intern("dump"), 2, obj, file);
+	VALUE v[] = { obj, file };
+	rb_funcall2(marsh, rb_intern("dump"), ARRAY_SIZE(v), v);
 
-	rb_funcall(file, rb_intern("close"), 0);
+	rb_io_close(file);
 
 	return Qnil;
 }
@@ -187,7 +189,8 @@ RB_METHOD(_marshalLoad)
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
-	return rb_funcall(marsh, rb_intern("_mkxp_load_alias"), 2, port, utf8Proc);
+	VALUE v[] = { port, utf8Proc };
+	return rb_funcall2(marsh, rb_intern("_mkxp_load_alias"), ARRAY_SIZE(v), v);
 }
 
 void

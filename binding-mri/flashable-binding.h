@@ -38,7 +38,7 @@ RB_METHOD(flashableFlash)
 
 	rb_get_args(argc, argv, "oi", &colorObj, &duration RB_ARG_END);
 
-	if (rb_type(colorObj) == RUBY_T_NIL)
+	if (NIL_P(rb_type(colorObj)))
 	{
 		f->flash(0, duration);
 		return Qnil;

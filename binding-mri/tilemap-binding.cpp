@@ -74,7 +74,7 @@ RB_METHOD(tilemapInitialize)
 
 	rb_get_args(argc, argv, "|o", &viewportObj RB_ARG_END);
 
-	if (rb_type(viewportObj) != RUBY_T_NIL)
+	if (!NIL_P(viewportObj))
 		viewport = getPrivateDataCheck<Viewport>(viewportObj, ViewportType);
 
 	/* Construct object */
