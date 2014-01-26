@@ -832,6 +832,11 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 
 	bool fastBlit = !p->touchesTaintedArea(posRect) && txtAlpha == 1.0;
 
+	// Hack for broken fglrx on SI cards: always use
+	// render pipeline to blit text
+	if (shState->config().forceBitmapBlit)
+		fastBlit = false;
+
 	if (fastBlit)
 	{
 		if (squeeze == 1.0)

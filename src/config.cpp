@@ -46,6 +46,7 @@ Config::Config()
       fixedFramerate(0),
       frameSkip(true),
       solidFonts(false),
+      forceBitmapBlit(false),
       gameFolder("."),
       anyAltToggleFS(false),
       allowSymlinks(false),
@@ -67,6 +68,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(fixedFramerate, int) \
 	PO_DESC(frameSkip, bool) \
 	PO_DESC(solidFonts, bool) \
+	PO_DESC(forceBitmapBlit, bool) \
 	PO_DESC(gameFolder, std::string) \
 	PO_DESC(anyAltToggleFS, bool) \
 	PO_DESC(allowSymlinks, bool) \

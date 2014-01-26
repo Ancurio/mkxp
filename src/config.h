@@ -43,6 +43,7 @@ struct Config
 	bool frameSkip;
 
 	bool solidFonts;
+	bool forceBitmapBlit;
 
 	std::string gameFolder;
 	bool anyAltToggleFS;
