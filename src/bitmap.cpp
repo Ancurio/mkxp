@@ -693,7 +693,7 @@ Vec4 Bitmap::getPixel(int x, int y) const
 
 	flush();
 
-	p->bindFBO();
+	FBO::bind(p->gl.fbo, FBO::Read);
 
 	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 	Vec4 pixel = FBO::getPixel(x, y);
