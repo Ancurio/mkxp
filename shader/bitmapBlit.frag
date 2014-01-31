@@ -20,18 +20,14 @@ void main()
 
 	vec4 resFrag;
 
-	float ab = opacity;
-	float as = srcFrag.a;
-	float ad = dstFrag.a;
+	float co1 = srcFrag.a * opacity;
+	float co2 = dstFrag.a * (1.0 - co1);
+	resFrag.a = co1 + co2;
 
-	float at = ab*as;
-	resFrag.a = at + ad - ad*at;
-
-	// Sigh...
-	if (ad == 0.0)
+	if (resFrag.a == 0.0)
 		resFrag.rgb = srcFrag.rgb;
 	else
-		resFrag.rgb = as*srcFrag.rgb + (1.0-at) * ad * dstFrag.rgb;
+		resFrag.rgb = (co1*srcFrag.rgb + co2*dstFrag.rgb) / resFrag.a;
 
 	gl_FragColor = resFrag;
 }
