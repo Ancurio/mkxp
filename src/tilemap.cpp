@@ -511,8 +511,6 @@ struct TilemapPrivate
 
 			usableATs.push_back(i);
 
-			autotiles[i]->flush();
-
 			if (autotiles[i]->width() > autotileW)
 				animatedATs.push_back(i);
 		}
@@ -623,12 +621,7 @@ struct TilemapPrivate
 	/* Assembles atlas from tileset and autotile bitmaps */
 	void buildAtlas()
 	{
-		tileset->flush();
-
 		updateAutotileInfo();
-
-		for (size_t i = 0; i < atlas.usableATs.size(); ++i)
-			autotiles[atlas.usableATs[i]]->flush();
 
 		TileAtlas::BlitVec blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
 

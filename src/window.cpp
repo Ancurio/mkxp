@@ -508,12 +508,6 @@ struct WindowPrivate
 	{
 		bool updateBaseQuadArray = false;
 
-		if (windowskin)
-			windowskin->flush();
-
-		if (contents)
-			contents->flush();
-
 		if (baseVertDirty)
 		{
 			buildBaseVert();

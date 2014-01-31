@@ -202,7 +202,7 @@ RB_METHOD(bitmapGetPixel)
 	            return Qnil;
 	         )
 
-	Vec4 value;
+	Color value;
 	GUARD_EXC( value = b->getPixel(x, y); );
 
 	Color *color = new Color(value);
@@ -223,7 +223,7 @@ RB_METHOD(bitmapSetPixel)
 
 	color = getPrivateDataCheck<Color>(colorObj, ColorType);
 
-	GUARD_EXC( b->setPixel(x, y, color->norm); );
+	GUARD_EXC( b->setPixel(x, y, *color); );
 
 	return self;
 }

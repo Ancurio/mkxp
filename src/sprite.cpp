@@ -163,9 +163,6 @@ struct SpritePrivate
 
 	void prepare()
 	{
-		if (bitmap)
-			bitmap->flush();
-
 		updateVisibility();
 	}
 };

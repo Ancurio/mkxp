@@ -216,15 +216,6 @@ namespace FBO
 		blit(srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH, mode);
 	}
 
-	inline Vec4 getPixel(int x, int y)
-	{
-		Vec4 pixel;
-
-		glReadPixels(x, y, 1, 1, GL_RGBA, GL_FLOAT, &pixel.x);
-
-		return pixel;
-	}
-
 	inline void clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
