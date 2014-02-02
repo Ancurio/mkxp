@@ -429,8 +429,6 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	GUARD_MEGA;
 
-	flush();
-
 	SimpleColorShader &shader = shState->shaders().simpleColor;
 	shader.bind();
 	shader.setTranslation(Vec2i());
@@ -488,8 +486,6 @@ void Bitmap::blur()
 
 	GUARD_MEGA;
 
-	flush();
-
 	Quad &quad = shState->gpQuad();
 	FloatRect rect(0, 0, width(), height());
 	quad.setTexPosRect(rect, rect);
@@ -534,8 +530,6 @@ void Bitmap::radialBlur(int angle, int divisions)
 	GUARD_DISPOSED;
 
 	GUARD_MEGA;
-
-	flush();
 
 	angle     = clamp<int>(angle, 0, 359);
 	divisions = clamp<int>(divisions, 2, 100);
