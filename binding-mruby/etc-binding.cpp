@@ -24,22 +24,22 @@
 #include "binding-types.h"
 #include "serializable-binding.h"
 
-#define ATTR_RW(Type, attr, arg_type, mrb_val, arg_t_s) \
-	MRB_METHOD(Type##Get_##attr) \
+#define ATTR_RW(Type, Attr, arg_type, mrb_val, arg_t_s) \
+	MRB_METHOD(Type##Get##Attr) \
 	{ \
 		Type *p = getPrivateData<Type>(mrb, self); \
 	 \
-		return mrb_##mrb_val##_value(p->attr); \
+		return mrb_##mrb_val##_value(p->get##Attr()); \
 	} \
 \
-	MRB_METHOD(Type##Set_##attr) \
+	MRB_METHOD(Type##Set##Attr) \
 	{ \
 		Type *p = getPrivateData<Type>(mrb, self); \
 	 \
 		arg_type arg; \
 		mrb_get_args(mrb, arg_t_s, &arg); \
 	 \
-		p->attr = arg; \
+		p->set##Attr(arg); \
 		UPDATE_F \
 	 \
 		return mrb_##mrb_val##_value(arg); \
@@ -64,22 +64,22 @@
 #define ATTR_INT_RW(Type, attr)   ATTR_RW(Type, attr, mrb_int, fixnum, "i")
 
 #define UPDATE_F p->updateInternal();
-ATTR_FLOAT_RW(Color, red)
-ATTR_FLOAT_RW(Color, green)
-ATTR_FLOAT_RW(Color, blue)
-ATTR_FLOAT_RW(Color, alpha)
+ATTR_FLOAT_RW(Color, Red)
+ATTR_FLOAT_RW(Color, Green)
+ATTR_FLOAT_RW(Color, Blue)
+ATTR_FLOAT_RW(Color, Alpha)
 
-ATTR_FLOAT_RW(Tone, red)
-ATTR_FLOAT_RW(Tone, green)
-ATTR_FLOAT_RW(Tone, blue)
-ATTR_FLOAT_RW(Tone, gray)
+ATTR_FLOAT_RW(Tone, Red)
+ATTR_FLOAT_RW(Tone, Green)
+ATTR_FLOAT_RW(Tone, Blue)
+ATTR_FLOAT_RW(Tone, Gray)
 
 #undef UPDATE_F
 #define UPDATE_F
-ATTR_INT_RW(Rect, x)
-ATTR_INT_RW(Rect, y)
-ATTR_INT_RW(Rect, width)
-ATTR_INT_RW(Rect, height)
+ATTR_INT_RW(Rect, X)
+ATTR_INT_RW(Rect, Y)
+ATTR_INT_RW(Rect, Width)
+ATTR_INT_RW(Rect, Height)
 
 EQUAL_FUN(Color)
 EQUAL_FUN(Tone)
@@ -163,15 +163,9 @@ CLONE_FUN(Tone)
 CLONE_FUN(Color)
 CLONE_FUN(Rect)
 
-#define MRB_ATTR_R(Class, attr) mrb_define_method(mrb, klass, #attr, Class##Get_##attr, MRB_ARGS_NONE())
-#define MRB_ATTR_W(Class, attr) mrb_define_method(mrb, klass, #attr "=", Class##Set_##attr, MRB_ARGS_REQ(1))
-#define MRB_ATTR_RW(Class, attr) { MRB_ATTR_R(Class, attr); MRB_ATTR_W(Class, attr); }
-
-#define MRB_ATTR_RW_A(Class, attr, alias) \
-{ \
-	mrb_define_method(mrb, klass, #alias, Class##Get_##attr, MRB_ARGS_NONE()); \
-	mrb_define_method(mrb, klass, #alias "=", Class##Set_##attr, MRB_ARGS_REQ(1)); \
-}
+#define MRB_ATTR_R(Class, Attr, sym) mrb_define_method(mrb, klass, sym, Class##Get##Attr, MRB_ARGS_NONE())
+#define MRB_ATTR_W(Class, Attr, sym) mrb_define_method(mrb, klass, sym "=", Class##Set##Attr, MRB_ARGS_REQ(1))
+#define MRB_ATTR_RW(Class, Attr, sym) { MRB_ATTR_R(Class, Attr, sym); MRB_ATTR_W(Class, Attr, sym); }
 
 #define INIT_BIND(Klass) \
 { \
@@ -191,21 +185,21 @@ void etcBindingInit(mrb_state *mrb)
 	RClass *klass;
 
 	INIT_BIND(Color);
-	MRB_ATTR_RW(Color, red);
-	MRB_ATTR_RW(Color, green);
-	MRB_ATTR_RW(Color, blue);
-	MRB_ATTR_RW(Color, alpha);
+	MRB_ATTR_RW(Color, Red,   "red"  );
+	MRB_ATTR_RW(Color, Green, "green");
+	MRB_ATTR_RW(Color, Blue,  "blue" );
+	MRB_ATTR_RW(Color, Alpha, "alpha");
 
 	INIT_BIND(Tone);
-	MRB_ATTR_RW(Tone, red);
-	MRB_ATTR_RW(Tone, green);
-	MRB_ATTR_RW(Tone, blue);
-	MRB_ATTR_RW(Tone, gray);
+	MRB_ATTR_RW(Tone, Red,   "red"  );
+	MRB_ATTR_RW(Tone, Green, "green");
+	MRB_ATTR_RW(Tone, Blue,  "blue" );
+	MRB_ATTR_RW(Tone, Gray,  "gray" );
 
 	INIT_BIND(Rect);
-	MRB_ATTR_RW(Rect, x);
-	MRB_ATTR_RW(Rect, y);
-	MRB_ATTR_RW(Rect, width);
-	MRB_ATTR_RW(Rect, height);
+	MRB_ATTR_RW(Rect, X,      "x"     );
+	MRB_ATTR_RW(Rect, Y,      "y"     );
+	MRB_ATTR_RW(Rect, Width,  "width" );
+	MRB_ATTR_RW(Rect, Height, "height");
 	mrb_define_method(mrb, klass, "empty", RectEmpty, MRB_ARGS_NONE());
 }
