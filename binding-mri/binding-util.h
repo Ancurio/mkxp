@@ -131,7 +131,7 @@ wrapNilProperty(VALUE self, const char *iv)
 	rb_iv_set(self, iv, Qnil);
 }
 
-/* Implemented: oSszfib| */
+/* Implemented: oSszfibn| */
 int
 rb_get_args(int argc, VALUE *argv, const char *format, ...);
 
