@@ -41,9 +41,6 @@ public:
 	Sprite(Viewport *viewport = 0);
 	~Sprite();
 
-	int getWidth()  const;
-	int getHeight() const;
-
 	DECL_ATTR( Bitmap,      Bitmap* )
 	DECL_ATTR( SrcRect,     Rect*   )
 	DECL_ATTR( X,           int     )
@@ -60,6 +57,18 @@ public:
 	DECL_ATTR( BlendType,   int     )
 	DECL_ATTR( Color,       Color*  )
 	DECL_ATTR( Tone,        Tone*   )
+
+#ifdef RGSS2
+	int getWidth()  const;
+	int getHeight() const;
+
+	DECL_ATTR( WaveAmp,    int   )
+	DECL_ATTR( WaveLength, int   )
+	DECL_ATTR( WaveSpeed,  int   )
+	DECL_ATTR( WavePhase,  float )
+
+	void update();
+#endif
 
 private:
 	SpritePrivate *p;
