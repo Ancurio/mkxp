@@ -50,6 +50,8 @@ struct Config
 	bool pathCache;
 
 	std::string iconPath;
+	
+	std::string desktopPath;
 
 	std::string customScript;
 	std::vector<std::string> rtps;
@@ -64,6 +66,8 @@ struct Config
 
 	void read(int argc, char *argv[]);
 	void readGameINI();
+private:
+	void setupPaths();
 };
 
 #endif // CONFIG_H

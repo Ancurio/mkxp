@@ -168,6 +168,20 @@ set(MAIN_SOURCE
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
 
+## Platform source ##
+
+if(LINUX)
+	set(PLATFORM_SOURCE
+		src/platform_linux.cpp
+	)
+elseif(APPLE)
+	set(PLATFORM_SOURCE
+		src/platform_osx.mm
+	)
+else()
+	message(FATAL_ERROR "No platform source for this platform")
+endif()
+
 ## Setup embedded source ##
 
 set(EMBEDDED_INPUT
@@ -340,6 +354,7 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE
 	${BINDING_HEADERS}
 	${BINDING_SOURCE}
 	${EMBEDDED_SOURCE}
+	${PLATFORM_SOURCE}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

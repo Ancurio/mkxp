@@ -50,7 +50,9 @@ Config::Config()
       anyAltToggleFS(false),
       allowSymlinks(false),
       pathCache(true)
-{}
+{
+	setupPaths();
+}
 
 void Config::read(int argc, char *argv[])
 {
