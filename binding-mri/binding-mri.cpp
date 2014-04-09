@@ -210,6 +210,8 @@ static void runRMXPScripts()
 		return;
 	}
 
+	rb_gv_set("$RGSS_SCRIPTS", scriptArray);
+
 	long scriptCount = RARRAY_LEN(scriptArray);
 
 	std::string decodeBuffer;
@@ -259,14 +261,25 @@ static void runRMXPScripts()
 			break;
 		}
 
+		rb_ary_store(script, 3, rb_str_new_cstr(decodeBuffer.c_str()));
+	}
+
+	for (long i = 0; i < scriptCount; ++i)
+	{
+		VALUE script = rb_ary_entry(scriptArray, i);
+		VALUE scriptDecoded = rb_ary_entry(script, 3);
+
 		/* Store encoding header + the decoded script
 		 * in 'sc.decData' */
 		std::string decData = "#encoding:utf-8\n";
 		size_t hdSize = decData.size();
-		decData.resize(hdSize + bufferLen);
-		memcpy(&decData[hdSize], decodeBuffer.c_str(), bufferLen);
+		const char *scriptDecPtr;
+		long scriptDecLen;
+		RSTRING_GETMEM(scriptDecoded, scriptDecPtr, scriptDecLen);
+		decData.resize(hdSize + scriptDecLen);
+		memcpy(&decData[hdSize], scriptDecPtr, scriptDecLen);
 
-		ruby_script(RSTRING_PTR(scriptName));
+		ruby_script(RSTRING_PTR(rb_ary_entry(script, 1)));
 
 		rb_gc_start();
 
@@ -278,6 +291,7 @@ static void runRMXPScripts()
 			break;
 	}
 }
+
 
 static void mriBindingExecute()
 {
