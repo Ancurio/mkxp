@@ -281,8 +281,6 @@ static void runRMXPScripts()
 
 		ruby_script(RSTRING_PTR(rb_ary_entry(script, 1)));
 
-		rb_gc_start();
-
 		/* Execute code */
 		rb_eval_string_protect(decData.c_str(), 0);
 
