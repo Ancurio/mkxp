@@ -210,6 +210,8 @@ static void runRMXPScripts()
 		return;
 	}
 
+	rb_gv_set("$RGSS_SCRIPTS", scriptArray);
+
 	long scriptCount = RARRAY_LEN(scriptArray);
 
 	std::string decodeBuffer;
@@ -258,6 +260,8 @@ static void runRMXPScripts()
 
 			break;
 		}
+
+		rb_ary_store(script, 3, rb_str_new_cstr(decodeBuffer.c_str()));
 
 		/* Store encoding header + the decoded script
 		 * in 'sc.decData' */
