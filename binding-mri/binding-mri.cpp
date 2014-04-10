@@ -279,8 +279,6 @@ static void runRMXPScripts()
 		decData.resize(hdSize + scriptDecLen);
 		memcpy(&decData[hdSize], scriptDecPtr, scriptDecLen);
 
-		ruby_script(RSTRING_PTR(rb_ary_entry(script, 1)));
-
 		/* Execute code */
 		rb_eval_string_protect(decData.c_str(), 0);
 
@@ -289,7 +287,6 @@ static void runRMXPScripts()
 			break;
 	}
 }
-
 
 static void mriBindingExecute()
 {
