@@ -171,9 +171,36 @@ RB_METHOD(mriDataDirectory)
 	return pathStr;
 }
 
+static VALUE newStringUTF8(const char *string)
+{
+	return rb_enc_str_new(string, strlen(string), rb_utf8_encoding());
+}
+
+struct evalArg {
+	VALUE string;
+	VALUE filename;
+};
+
+static VALUE evalHelper(evalArg *arg)
+{
+	VALUE argv[] = { arg->string, Qnil, arg->filename };
+	return rb_funcall2(Qnil, rb_intern("eval"), ARRAY_SIZE(argv), argv);
+}
+
+static VALUE evalString(VALUE string, VALUE filename, int *state)
+{
+	evalArg arg = { string, filename };
+	return rb_protect((VALUE (*)(VALUE))evalHelper, (VALUE)&arg, state);
+}
+
+static VALUE evalCString(const char *string, const char *filename, int *state)
+{
+	return evalString(newStringUTF8(string), newStringUTF8(filename), state);
+}
+
 static void runCustomScript(const char *filename)
 {
-	std::string scriptData("#encoding:utf-8\n");
+	std::string scriptData;
 
 	if (!readFile(filename, scriptData))
 	{
@@ -181,7 +208,7 @@ static void runCustomScript(const char *filename)
 		return;
 	}
 
-	rb_eval_string_protect(scriptData.c_str(), 0);
+	evalCString(scriptData.c_str(), "Section000", NULL);
 }
 
 VALUE kernelLoadDataInt(const char *filename);
@@ -268,22 +295,14 @@ static void runRMXPScripts()
 	{
 		VALUE script = rb_ary_entry(scriptArray, i);
 		VALUE scriptDecoded = rb_ary_entry(script, 3);
+		const char *string = StringValueCStr(scriptDecoded);
 
-		/* Store encoding header + the decoded script
-		 * in 'sc.decData' */
-		std::string decData = "#encoding:utf-8\n";
-		size_t hdSize = decData.size();
-		const char *scriptDecPtr;
-		long scriptDecLen;
-		RSTRING_GETMEM(scriptDecoded, scriptDecPtr, scriptDecLen);
-		decData.resize(hdSize + scriptDecLen);
-		memcpy(&decData[hdSize], scriptDecPtr, scriptDecLen);
+		char fname[32];
+		snprintf(fname, sizeof(fname), "Section%03ld", i);
 
-		/* Execute code */
-		rb_eval_string_protect(decData.c_str(), 0);
-
-		VALUE exc = rb_errinfo();
-		if (!NIL_P(exc))
+		int state;
+		evalCString(string, fname, &state);
+		if (state)
 			break;
 	}
 }
