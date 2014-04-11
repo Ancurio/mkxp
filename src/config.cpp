@@ -49,7 +49,8 @@ Config::Config()
       gameFolder("."),
       anyAltToggleFS(false),
       allowSymlinks(false),
-      pathCache(true)
+      pathCache(true),
+      useScriptNames(false)
 {}
 
 void Config::read(int argc, char *argv[])
@@ -72,7 +73,8 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(allowSymlinks, bool) \
 	PO_DESC(iconPath, std::string) \
 	PO_DESC(customScript, std::string) \
-	PO_DESC(pathCache, bool)
+	PO_DESC(pathCache, bool) \
+	PO_DESC(useScriptNames, bool)
 
 // Not gonna take your shit boost
 #define GUARD_ALL( exp ) try { exp } catch(...) {}

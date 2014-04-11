@@ -113,3 +113,9 @@
 # RTP=/path/to/rtp1
 # RTP=/path/to/rtp2.zip
 # RTP=/path/to/game.rgssad
+
+
+# Use the script's name as filename in warnings and error messages
+# (default: disabled)
+#
+# useScriptNames=false

@@ -295,11 +295,20 @@ static void runRMXPScripts()
 		VALUE string = newStringUTF8(RSTRING_PTR(scriptDecoded),
 		                             RSTRING_LEN(scriptDecoded));
 
-		char fname[32];
-		int len = snprintf(fname, sizeof(fname), "Section%03ld", i);
+		VALUE fname;
+		if (shState->rtData().config.useScriptNames)
+		{
+			fname = rb_ary_entry(script, 1);
+		}
+		else
+		{
+			char buf[32];
+			int len = snprintf(buf, sizeof(buf), "Section%03ld", i);
+			fname = newStringUTF8(buf, len);
+		}
 
 		int state;
-		evalString(string, newStringUTF8(fname, len), &state);
+		evalString(string, fname, &state);
 		if (state)
 			break;
 	}

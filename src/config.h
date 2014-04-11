@@ -51,6 +51,8 @@ struct Config
 
 	std::string iconPath;
 
+	bool useScriptNames;
+
 	std::string customScript;
 	std::vector<std::string> rtps;
 
