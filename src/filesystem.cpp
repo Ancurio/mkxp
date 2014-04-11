@@ -21,6 +21,7 @@
 
 #include "filesystem.h"
 
+#include "font.h"
 #include "util.h"
 #include "exception.h"
 #include "boost-hash.h"
@@ -498,6 +499,99 @@ static const PHYSFS_Archiver RGSS_Archiver =
 	RGSS_closeArchive
 };
 
+
+static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)
+{
+	return static_cast<PHYSFS_File*>(ops->hidden.unknown.data1);
+}
+
+static Sint64 SDL_RWopsSize(SDL_RWops *ops)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return -1;
+
+	return PHYSFS_fileLength(f);
+}
+
+static Sint64 SDL_RWopsSeek(SDL_RWops *ops, int64_t offset, int whence)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return -1;
+
+	int64_t base;
+
+	switch (whence)
+	{
+	default:
+	case RW_SEEK_SET :
+		base = 0;
+		break;
+	case RW_SEEK_CUR :
+		base = PHYSFS_tell(f);
+		break;
+	case RW_SEEK_END :
+		base = PHYSFS_fileLength(f);
+		break;
+	}
+
+	int result = PHYSFS_seek(f, base + offset);
+
+	return (result != 0) ? PHYSFS_tell(f) : -1;
+}
+
+static size_t SDL_RWopsRead(SDL_RWops *ops, void *buffer, size_t size, size_t maxnum)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return 0;
+
+	PHYSFS_sint64 result = PHYSFS_readBytes(f, buffer, size*maxnum);
+
+	return (result != -1) ? (result / size) : 0;
+}
+
+static size_t SDL_RWopsWrite(SDL_RWops *ops, const void *buffer, size_t size, size_t num)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return 0;
+
+	PHYSFS_sint64 result = PHYSFS_writeBytes(f, buffer, size*num);
+
+	return (result != -1) ? (result / size) : 0;
+}
+
+static int SDL_RWopsClose(SDL_RWops *ops)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return -1;
+
+	int result = PHYSFS_close(f);
+
+	f = 0;
+
+	return (result != 0) ? 0 : -1;
+}
+
+static int SDL_RWopsCloseFree(SDL_RWops *ops)
+{
+	int result = SDL_RWopsClose(ops);
+
+	SDL_FreeRW(ops);
+
+	return result;
+}
+
+const Uint32 SDL_RWOPS_PHYSFS = SDL_RWOPS_UNKNOWN+10;
+
 struct FileSystemPrivate
 {
 	/* Maps: lower case filename, To: actual (mixed case) filename.
@@ -650,6 +744,24 @@ struct FileSystemPrivate
 
 		return handle;
 	}
+
+	void initReadOps(PHYSFS_File *handle,
+	                 SDL_RWops &ops,
+	                 bool freeOnClose)
+	{
+		ops.size  = SDL_RWopsSize;
+		ops.seek  = SDL_RWopsSeek;
+		ops.read  = SDL_RWopsRead;
+		ops.write = SDL_RWopsWrite;
+
+		if (freeOnClose)
+			ops.close = SDL_RWopsCloseFree;
+		else
+			ops.close = SDL_RWopsClose;
+
+		ops.type = SDL_RWOPS_PHYSFS;
+		ops.hidden.unknown.data1 = handle;
+	}
 };
 
 FileSystem::FileSystem(const char *argv0,
@@ -746,97 +858,58 @@ void FileSystem::createPathCache()
 	p->havePathCache = true;
 }
 
-static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)
+static void strToLower(std::string &str)
 {
-	return static_cast<PHYSFS_File*>(ops->hidden.unknown.data1);
+	for (size_t i = 0; i < str.size(); ++i)
+		str[i] = tolower(str[i]);
 }
 
-static Sint64 SDL_RWopsSize(SDL_RWops *ops)
+struct FontSetsCBData
 {
-	PHYSFS_File *f = sdlPHYS(ops);
+	FileSystemPrivate *p;
+	SharedFontState *sfs;
+};
 
-	if (!f)
-		return -1;
+static void fontSetEnumCB(void *data, const char *,
+                          const char *fname)
+{
+	FontSetsCBData *d = static_cast<FontSetsCBData*>(data);
+	FileSystemPrivate *p = d->p;
 
-	return PHYSFS_fileLength(f);
+	/* Only consider filenames with font extensions */
+	const char *ext = p->findExt(fname);
+
+	if (!ext)
+		return;
+
+	std::string lower(ext);
+	strToLower(lower);
+
+	if (!contains(p->extensions[FileSystem::Font], lower))
+		return;
+
+	std::string filename("Fonts/");
+	filename += fname;
+
+	PHYSFS_File *handle = PHYSFS_openRead(filename.c_str());
+
+	if (!handle)
+		return;
+
+	SDL_RWops ops;
+	p->initReadOps(handle, ops, false);
+
+	d->sfs->initFontSetCB(ops, filename);
+
+	SDL_RWclose(&ops);
 }
 
-static Sint64 SDL_RWopsSeek(SDL_RWops *ops, int64_t offset, int whence)
+void FileSystem::initFontSets(SharedFontState &sfs)
 {
-	PHYSFS_File *f = sdlPHYS(ops);
+	FontSetsCBData d = { p, &sfs };
 
-	if (!f)
-		return -1;
-
-	int64_t base;
-
-	switch (whence)
-	{
-	default:
-	case RW_SEEK_SET :
-		base = 0;
-		break;
-	case RW_SEEK_CUR :
-		base = PHYSFS_tell(f);
-		break;
-	case RW_SEEK_END :
-		base = PHYSFS_fileLength(f);
-		break;
-	}
-
-	int result = PHYSFS_seek(f, base + offset);
-
-	return (result != 0) ? PHYSFS_tell(f) : -1;
+	PHYSFS_enumerateFilesCallback("Fonts", fontSetEnumCB, &d);
 }
-
-static size_t SDL_RWopsRead(SDL_RWops *ops, void *buffer, size_t size, size_t maxnum)
-{
-	PHYSFS_File *f = sdlPHYS(ops);
-
-	if (!f)
-		return 0;
-
-	PHYSFS_sint64 result = PHYSFS_readBytes(f, buffer, size*maxnum);
-
-	return (result != -1) ? (result / size) : 0;
-}
-
-static size_t SDL_RWopsWrite(SDL_RWops *ops, const void *buffer, size_t size, size_t num)
-{
-	PHYSFS_File *f = sdlPHYS(ops);
-
-	if (!f)
-		return 0;
-
-	PHYSFS_sint64 result = PHYSFS_writeBytes(f, buffer, size*num);
-
-	return (result != -1) ? (result / size) : 0;
-}
-
-static int SDL_RWopsClose(SDL_RWops *ops)
-{
-	PHYSFS_File *f = sdlPHYS(ops);
-
-	if (!f)
-		return -1;
-
-	int result = PHYSFS_close(f);
-
-	f = 0;
-
-	return (result != 0) ? 0 : -1;
-}
-
-static int SDL_RWopsCloseFree(SDL_RWops *ops)
-{
-	int result = SDL_RWopsClose(ops);
-
-	SDL_FreeRW(ops);
-
-	return result;
-}
-
-const Uint32 SDL_RWOPS_PHYSFS = SDL_RWOPS_UNKNOWN+10;
 
 void FileSystem::openRead(SDL_RWops &ops,
                           const char *filename,
@@ -846,18 +919,17 @@ void FileSystem::openRead(SDL_RWops &ops,
 {
 	PHYSFS_File *handle = p->openReadHandle(filename, type, foundExt);
 
-	ops.size  = SDL_RWopsSize;
-	ops.seek  = SDL_RWopsSeek;
-	ops.read  = SDL_RWopsRead;
-	ops.write = SDL_RWopsWrite;
+	p->initReadOps(handle, ops, freeOnClose);
+}
 
-	if (freeOnClose)
-		ops.close = SDL_RWopsCloseFree;
-	else
-		ops.close = SDL_RWopsClose;
+void FileSystem::openReadRaw(SDL_RWops &ops,
+                             const char *filename,
+                             bool freeOnClose)
+{
+	PHYSFS_File *handle = PHYSFS_openRead(filename);
+	assert(handle);
 
-	ops.type = SDL_RWOPS_PHYSFS;
-	ops.hidden.unknown.data1 = handle;
+	p->initReadOps(handle, ops, freeOnClose);
 }
 
 bool FileSystem::exists(const char *filename, FileType type)

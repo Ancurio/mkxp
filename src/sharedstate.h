@@ -43,8 +43,8 @@ class Input;
 class Audio;
 class GLState;
 class TexPool;
-class FontPool;
 class Font;
+class SharedFontState;
 struct GlobalIBO;
 struct Config;
 struct Vec2i;
@@ -74,8 +74,8 @@ struct SharedState
 	ShaderSet &shaders();
 
 	TexPool &texPool();
-	FontPool &fontPool();
 
+	SharedFontState &fontState();
 	Font &defaultFont();
 
 	sigc::signal<void> prepareDraw;

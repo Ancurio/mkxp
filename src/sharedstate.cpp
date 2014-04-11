@@ -67,8 +67,8 @@ struct SharedStatePrivate
 	ShaderSet shaders;
 
 	TexPool texPool;
-	FontPool fontPool;
 
+	SharedFontState fontState;
 	Font *defaultFont;
 
 	TEX::ID globalTex;
@@ -90,6 +90,7 @@ struct SharedStatePrivate
 	      rtData(*threadData),
 	      config(threadData->config),
 	      graphics(threadData),
+	      fontState(threadData->config),
 	      stampCounter(0)
 	{
 		if (!config.gameFolder.empty())
@@ -120,6 +121,8 @@ struct SharedStatePrivate
 
 		if (config.pathCache)
 			fileSystem.createPathCache();
+
+		fileSystem.initFontSets(fontState);
 
 		globalTexW = 128;
 		globalTexH = 64;
@@ -206,8 +209,8 @@ GSATT(Audio&, audio)
 GSATT(GLState&, _glState)
 GSATT(ShaderSet&, shaders)
 GSATT(TexPool&, texPool)
-GSATT(FontPool&, fontPool)
 GSATT(Quad&, gpQuad)
+GSATT(SharedFontState&, fontState)
 
 void SharedState::setBindingData(void *data)
 {

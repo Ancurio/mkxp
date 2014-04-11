@@ -52,12 +52,14 @@ RB_METHOD(bitmapInitialize)
 	setPrivateData(self, b);
 
 	/* Wrap properties */
-	Font *font = new Font();
-	b->setFont(font);
-	font->setColor(new Color(*font->getColor()));
+	VALUE fontKlass = rb_const_get(rb_cObject, rb_intern("Font"));
+	VALUE fontObj = rb_obj_alloc(fontKlass);
+	rb_obj_call_init(fontObj, 0, 0);
 
-	VALUE fontProp = wrapProperty(self, font, "font", FontType);
-	wrapProperty(fontProp, font->getColor(), "color", ColorType);
+	Font *font = getPrivateData<Font>(fontObj);
+	b->setFont(font);
+
+	rb_iv_set(self, "font", fontObj);
 
 	return self;
 }

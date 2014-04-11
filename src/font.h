@@ -25,21 +25,49 @@
 #include "etc.h"
 #include "util.h"
 
+struct SDL_RWops;
 struct _TTF_Font;
-struct FontPoolPrivate;
+struct Config;
 
-class FontPool
+struct SharedFontStatePrivate;
+
+class SharedFontState
 {
 public:
-	FontPool();
-	~FontPool();
+	SharedFontState(const Config &conf);
+	~SharedFontState();
 
-	_TTF_Font *request(const char *filename,
+	/* Called from FileSystem during font cache initialization
+	 * (when "Fonts/" is scanned for available assets).
+	 * 'ops' is an opened handle to a possible font file,
+	 * 'filename' is the corresponding path */
+	void initFontSetCB(SDL_RWops &ops,
+	                   const std::string &filename);
+
+	_TTF_Font *getFont(std::string family,
 	                   int size);
 
+	bool fontPresent(std::string family);
+
 private:
-	FontPoolPrivate *p;
+	SharedFontStatePrivate *p;
 };
+
+/* Concerning Font::name/defaultName :
+ * In RGSS, this is not actually a string; any type of
+ * object is accepted, however anything but strings and
+ * arrays is ignored (and text drawing turns blank).
+ * Single strings are interpreted as font family names,
+ * and directly passed to the underlying C++ object;
+ * arrays however are searched for the first string
+ * object corresponding to a valid font family name,
+ * and rendering is done with that. In mkxp, we pass
+ * this first valid font family as the 'name' attribute
+ * back to the C++ object on assignment and object
+ * creation (in case Font.default_name is also an array).
+ * Invalid parameters (things other than strings or
+ * arrays not containing any valid family name) are
+ * passed back as "". */
 
 struct FontPrivate;
 
@@ -57,9 +85,9 @@ public:
 	const char *getName() const;
 	void setName(const char *value);
 
-	DECL_ATTR( Size,   int )
-	DECL_ATTR( Bold,   bool )
-	DECL_ATTR( Italic, bool )
+	DECL_ATTR( Size,   int    )
+	DECL_ATTR( Bold,   bool   )
+	DECL_ATTR( Italic, bool   )
 	DECL_ATTR( Color,  Color* )
 
 	DECL_ATTR_STATIC( DefaultName,   const char* )

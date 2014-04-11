@@ -48,13 +48,6 @@ extern const StaticRect autotileRects[];
 typedef std::vector<SVertex> SVVector;
 typedef struct { SVVector v[4]; } TileVBuffer;
 
-/* Check if [C]ontainer contains [V]alue */
-template<typename C, typename V>
-inline bool contains(const C &c, const V &v)
-{
-	return std::find(c.begin(), c.end(), v) != c.end();
-}
-
 static const int tilesetW  = 8 * 32;
 static const int autotileW = 3 * 32;
 static const int autotileH = 4 * 32;
