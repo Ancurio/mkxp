@@ -171,12 +171,13 @@ RB_METHOD(mriDataDirectory)
 	return pathStr;
 }
 
-static VALUE newStringUTF8(const char *string)
+static VALUE newStringUTF8(const char *string, long length)
 {
-	return rb_enc_str_new(string, strlen(string), rb_utf8_encoding());
+	return rb_enc_str_new(string, length, rb_utf8_encoding());
 }
 
-struct evalArg {
+struct evalArg
+{
 	VALUE string;
 	VALUE filename;
 };
@@ -193,22 +194,18 @@ static VALUE evalString(VALUE string, VALUE filename, int *state)
 	return rb_protect((VALUE (*)(VALUE))evalHelper, (VALUE)&arg, state);
 }
 
-static VALUE evalCString(const char *string, const char *filename, int *state)
-{
-	return evalString(newStringUTF8(string), newStringUTF8(filename), state);
-}
-
-static void runCustomScript(const char *filename)
+static void runCustomScript(const std::string &filename)
 {
 	std::string scriptData;
 
-	if (!readFile(filename, scriptData))
+	if (!readFile(filename.c_str(), scriptData))
 	{
 		showMsg(std::string("Unable to open '") + filename + "'");
 		return;
 	}
 
-	evalCString(scriptData.c_str(), "Section000", NULL);
+	evalString(newStringUTF8(scriptData.c_str(), scriptData.size()),
+	           newStringUTF8(filename.c_str(), filename.size()), NULL);
 }
 
 VALUE kernelLoadDataInt(const char *filename);
@@ -295,13 +292,14 @@ static void runRMXPScripts()
 	{
 		VALUE script = rb_ary_entry(scriptArray, i);
 		VALUE scriptDecoded = rb_ary_entry(script, 3);
-		const char *string = StringValueCStr(scriptDecoded);
+		VALUE string = newStringUTF8(RSTRING_PTR(scriptDecoded),
+		                             RSTRING_LEN(scriptDecoded));
 
 		char fname[32];
-		snprintf(fname, sizeof(fname), "Section%03ld", i);
+		int len = snprintf(fname, sizeof(fname), "Section%03ld", i);
 
 		int state;
-		evalCString(string, fname, &state);
+		evalString(string, newStringUTF8(fname, len), &state);
 		if (state)
 			break;
 	}
@@ -319,7 +317,7 @@ static void mriBindingExecute()
 
 	std::string &customScript = shState->rtData().config.customScript;
 	if (!customScript.empty())
-		runCustomScript(customScript.c_str());
+		runCustomScript(customScript);
 	else
 		runRMXPScripts();
 
