@@ -171,17 +171,41 @@ RB_METHOD(mriDataDirectory)
 	return pathStr;
 }
 
-static void runCustomScript(const char *filename)
+static VALUE newStringUTF8(const char *string, long length)
 {
-	std::string scriptData("#encoding:utf-8\n");
+	return rb_enc_str_new(string, length, rb_utf8_encoding());
+}
 
-	if (!readFile(filename, scriptData))
+struct evalArg
+{
+	VALUE string;
+	VALUE filename;
+};
+
+static VALUE evalHelper(evalArg *arg)
+{
+	VALUE argv[] = { arg->string, Qnil, arg->filename };
+	return rb_funcall2(Qnil, rb_intern("eval"), ARRAY_SIZE(argv), argv);
+}
+
+static VALUE evalString(VALUE string, VALUE filename, int *state)
+{
+	evalArg arg = { string, filename };
+	return rb_protect((VALUE (*)(VALUE))evalHelper, (VALUE)&arg, state);
+}
+
+static void runCustomScript(const std::string &filename)
+{
+	std::string scriptData;
+
+	if (!readFile(filename.c_str(), scriptData))
 	{
 		showMsg(std::string("Unable to open '") + filename + "'");
 		return;
 	}
 
-	rb_eval_string_protect(scriptData.c_str(), 0);
+	evalString(newStringUTF8(scriptData.c_str(), scriptData.size()),
+	           newStringUTF8(filename.c_str(), filename.size()), NULL);
 }
 
 VALUE kernelLoadDataInt(const char *filename);
@@ -209,6 +233,8 @@ static void runRMXPScripts()
 		showMsg("Failed to read script data");
 		return;
 	}
+
+	rb_gv_set("$RGSS_SCRIPTS", scriptArray);
 
 	long scriptCount = RARRAY_LEN(scriptArray);
 
@@ -259,22 +285,31 @@ static void runRMXPScripts()
 			break;
 		}
 
-		/* Store encoding header + the decoded script
-		 * in 'sc.decData' */
-		std::string decData = "#encoding:utf-8\n";
-		size_t hdSize = decData.size();
-		decData.resize(hdSize + bufferLen);
-		memcpy(&decData[hdSize], decodeBuffer.c_str(), bufferLen);
+		rb_ary_store(script, 3, rb_str_new_cstr(decodeBuffer.c_str()));
+	}
 
-		ruby_script(RSTRING_PTR(scriptName));
+	for (long i = 0; i < scriptCount; ++i)
+	{
+		VALUE script = rb_ary_entry(scriptArray, i);
+		VALUE scriptDecoded = rb_ary_entry(script, 3);
+		VALUE string = newStringUTF8(RSTRING_PTR(scriptDecoded),
+		                             RSTRING_LEN(scriptDecoded));
 
-		rb_gc_start();
+		VALUE fname;
+		if (shState->rtData().config.useScriptNames)
+		{
+			fname = rb_ary_entry(script, 1);
+		}
+		else
+		{
+			char buf[32];
+			int len = snprintf(buf, sizeof(buf), "Section%03ld", i);
+			fname = newStringUTF8(buf, len);
+		}
 
-		/* Execute code */
-		rb_eval_string_protect(decData.c_str(), 0);
-
-		VALUE exc = rb_errinfo();
-		if (!NIL_P(exc))
+		int state;
+		evalString(string, fname, &state);
+		if (state)
 			break;
 	}
 }
@@ -291,7 +326,7 @@ static void mriBindingExecute()
 
 	std::string &customScript = shState->rtData().config.customScript;
 	if (!customScript.empty())
-		runCustomScript(customScript.c_str());
+		runCustomScript(customScript);
 	else
 		runRMXPScripts();
 
