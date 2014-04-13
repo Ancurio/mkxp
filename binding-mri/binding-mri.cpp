@@ -314,6 +314,34 @@ static void runRMXPScripts()
 	}
 }
 
+static void showExc(VALUE exc)
+{
+	VALUE bt = rb_funcall2(exc, rb_intern("backtrace"), 0, NULL);
+	VALUE bt0 = rb_ary_entry(bt, 0);
+	VALUE name = rb_class_path(rb_obj_class(exc));
+
+	VALUE ds = rb_sprintf("%" PRIsVALUE ": %" PRIsVALUE " (%" PRIsVALUE ")",
+	                      bt0, exc, name);
+	// omit "useless" last entry (from ruby:1:in `eval')
+	for (long i = 1, btlen = RARRAY_LEN(bt) - 1; i < btlen; ++i)
+		rb_str_catf(ds, "\n\tfrom %" PRIsVALUE, rb_ary_entry(bt, i));
+	Debug() << StringValueCStr(ds);
+
+	ID id_index = rb_intern("index");
+	// an "offset" argument is not needed for the first time
+	VALUE argv[2] = { rb_str_new_cstr(":") };
+	long filelen = NUM2LONG(rb_funcall2(bt0, id_index, 1, argv));
+	argv[1] = LONG2NUM(filelen + 1);
+	VALUE tmp = rb_funcall2(bt0, id_index, ARRAY_SIZE(argv), argv);
+	long linelen = NUM2LONG(tmp) - filelen - 1;
+	VALUE file = rb_str_subseq(bt0, 0, filelen);
+	VALUE line = rb_str_subseq(bt0, filelen + 1, linelen);
+	VALUE ms = rb_sprintf("Script '%" PRIsVALUE "' line %" PRIsVALUE
+	                      ": %" PRIsVALUE " occured.\n\n%" PRIsVALUE,
+	                      file, line, name, exc);
+	showMsg(StringValueCStr(ms));
+}
+
 static void mriBindingExecute()
 {
 	ruby_setup();
@@ -332,16 +360,7 @@ static void mriBindingExecute()
 
 	VALUE exc = rb_errinfo();
 	if (!NIL_P(exc) && !rb_obj_is_kind_of(exc, rb_eSystemExit))
-	{
-		Debug() << "Had exception:" << rb_class2name(rb_obj_class(exc));
-		VALUE bt = rb_funcall2(exc, rb_intern("backtrace"), 0, NULL);
-		rb_p(bt);
-		VALUE msg = rb_funcall2(exc, rb_intern("message"), 0, NULL);
-		if (RSTRING_LEN(msg) < 256)
-			showMsg(RSTRING_PTR(msg));
-		else
-			Debug() << (RSTRING_PTR(msg));
-	}
+		showExc(exc);
 
 	ruby_cleanup(0);
 
