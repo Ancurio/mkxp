@@ -235,10 +235,10 @@ getMrbData(mrb_state *mrb)
 static inline mrb_value
 mrb__float_value(mrb_float f)
 {
-  mrb_value v;
+	mrb_value v;
 
-  MRB_SET_VALUE(v, MRB_TT_FLOAT, value.f, f);
-  return v;
+	MRB_SET_VALUE(v, MRB_TT_FLOAT, value.f, f);
+	return v;
 }
 
 inline mrb_sym
@@ -252,7 +252,7 @@ inline T *
 getPrivateData(mrb_state *mrb, mrb_value self)
 {
 	mrb_value priv = mrb_obj_iv_get(mrb,
-									mrb_obj_ptr(self),
+	                                mrb_obj_ptr(self),
 	                                getSym(mrb, CSpriv_iv));
 
 	return static_cast<T*>(DATA_PTR(priv));
@@ -287,15 +287,15 @@ inline void
 setPrivateData(mrb_state *mrb, mrb_value self, void *p, const mrb_data_type &type)
 {
 	RData *data =
-			mrb_data_object_alloc(mrb,
-								  mrb_obj_class(mrb, self),
-								  p,
-								  &type);
+		mrb_data_object_alloc(mrb,
+		                      mrb_obj_class(mrb, self),
+		                      p,
+		                      &type);
 
 	mrb_obj_iv_set(mrb,
-				   mrb_obj_ptr(self),
+	               mrb_obj_ptr(self),
 	               getSym(mrb, CSpriv_iv),
-				   mrb_obj_value(data));
+	               mrb_obj_value(data));
 }
 
 
@@ -320,7 +320,7 @@ wrapProperty(mrb_state *mrb, mrb_value self,
 	mrb_obj_iv_set(mrb,
 	               mrb_obj_ptr(self),
 	               getSym(mrb, iv),
-		           propObj);
+	               propObj);
 }
 
 inline void

@@ -159,7 +159,7 @@ showExcMessageBox(mrb_state *mrb, mrb_value exc)
 	const char *excClass = mrb_class_name(mrb, mrb_class(mrb, exc));
 
 	char msgBoxText[512];
-	snprintf(msgBoxText, 512, "Script '%s' line %d: %s occured.\n\n%s",
+	snprintf(msgBoxText, sizeof(msgBoxText), "Script '%s' line %d: %s occured.\n\n%s",
 	         mrbValueString(file), mrb_fixnum(line), excClass, mrbValueString(mesg));
 
 	shState->eThread().showMessageBox(msgBoxText, SDL_MESSAGEBOX_ERROR);
