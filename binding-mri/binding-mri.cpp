@@ -210,6 +210,12 @@ static void runCustomScript(const std::string &filename)
 
 VALUE kernelLoadDataInt(const char *filename);
 
+#ifdef RGSS3
+#define RGSS_SECTION_STR "{%04ld}"
+#else
+#define RGSS_SECTION_STR "Section%03ld"
+#endif
+
 static void runRMXPScripts()
 {
 	const std::string &scriptPack = shState->rtData().config.game.scripts;
@@ -303,7 +309,7 @@ static void runRMXPScripts()
 		else
 		{
 			char buf[32];
-			int len = snprintf(buf, sizeof(buf), "Section%03ld", i);
+			int len = snprintf(buf, sizeof(buf), RGSS_SECTION_STR, i);
 			fname = newStringUTF8(buf, len);
 		}
 
