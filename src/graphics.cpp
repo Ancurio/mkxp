@@ -779,6 +779,9 @@ Bitmap *Graphics::snapToBitmap()
 
 	p->compositeToBuffer(bitmap->getGLTypes().fbo);
 
+	/* Taint entire bitmap */
+	bitmap->taintArea(IntRect(0, 0, width(), height()));
+
 	return bitmap;
 }
 

@@ -1045,6 +1045,11 @@ void Bitmap::bindTex(ShaderBase &shader)
 	p->bindTexture(shader);
 }
 
+void Bitmap::taintArea(const IntRect &rect)
+{
+	p->addTaintedArea(rect);
+}
+
 void Bitmap::releaseResources()
 {
 	if (p->megaSurface)

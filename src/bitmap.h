@@ -116,6 +116,9 @@ public:
 	 * texture size uniform in shader */
 	void bindTex(ShaderBase &shader);
 
+	/* Adds 'rect' to tainted area */
+	void taintArea(const IntRect &rect);
+
 	sigc::signal<void> modified;
 
 private:
