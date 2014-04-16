@@ -480,22 +480,22 @@ RGSS_noop2(void*, const char*)
 static const PHYSFS_Archiver RGSS_Archiver =
 {
 	0,
-    {
-        "RGSSAD",
-        "RGSS encrypted archive format",
-        "Jonas Kulla <Nyocurio@gmail.com>",
-        "http://k-du.de/rgss/rgss.html",
-        0 /* symlinks not supported */
-    },
-    RGSS_openArchive,
-    RGSS_enumerateFiles,
-    RGSS_openRead,
-    RGSS_noop1, /* openWrite */
-    RGSS_noop1, /* openAppend */
-    RGSS_noop2, /* remove */
-    RGSS_noop2, /* mkdir */
-    RGSS_stat,
-    RGSS_closeArchive
+	{
+		"RGSSAD",
+		"RGSS encrypted archive format",
+		"Jonas Kulla <Nyocurio@gmail.com>",
+		"http://k-du.de/rgss/rgss.html",
+		0 /* symlinks not supported */
+	},
+	RGSS_openArchive,
+	RGSS_enumerateFiles,
+	RGSS_openRead,
+	RGSS_noop1, /* openWrite */
+	RGSS_noop1, /* openAppend */
+	RGSS_noop2, /* remove */
+	RGSS_noop2, /* mkdir */
+	RGSS_stat,
+	RGSS_closeArchive
 };
 
 struct FileSystemPrivate
