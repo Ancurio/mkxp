@@ -507,44 +507,6 @@ struct GraphicsPrivate
 
 		swapGLBuffer();
 	}
-
-	void writeScreenshot(const char *filename)
-	{
-		int bpp;
-		uint32_t rm, gm, bm, am;
-		SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ABGR8888, &bpp, &rm, &gm, &bm, &am);
-
-		/* Discard alpha channel because it might have bogus values */
-		SDL_Surface *screenshot =
-		        SDL_CreateRGBSurface(0, scRes.x, scRes.y, bpp, rm, gm, bm, 0);
-
-		screen.getPP().bindLastBuffer();
-
-		glReadPixels(0, 0, scRes.x, scRes.y, GL_RGBA, GL_UNSIGNED_BYTE, screenshot->pixels);
-
-		IMG_SavePNG(screenshot, filename);
-
-		SDL_FreeSurface(screenshot);
-	}
-
-	void checkScreenshotRq()
-	{
-		if (!threadData->rqScreenshot)
-			return;
-
-		threadData->rqScreenshot = false;
-
-		struct timeval tv;
-		gettimeofday(&tv, 0);
-		struct tm tm = *localtime(&tv.tv_sec);
-
-		char filename[32];
-
-		snprintf(filename, sizeof(filename), "%d%02d%02d-%02d%02d%02d.png",
-		         tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-
-		writeScreenshot(filename);
-	}
 };
 
 Graphics::Graphics(RGSSThreadData *data)
@@ -567,8 +529,6 @@ void Graphics::update()
 
 //	p->cpuTimer->endTiming();
 //	p->gpuTimer->startTiming();
-
-	p->checkScreenshotRq();
 
 	if (p->frozen)
 		return;

@@ -35,7 +35,6 @@ namespace po = boost::program_options;
 
 Config::Config()
     : debugMode(false),
-      screenshots(false),
       winResizable(false),
       fullscreen(false),
       fixedAspectRatio(true),
@@ -56,7 +55,6 @@ void Config::read(int argc, char *argv[])
 {
 #define PO_DESC_ALL \
 	PO_DESC(debugMode, bool) \
-	PO_DESC(screenshots, bool) \
 	PO_DESC(winResizable, bool) \
 	PO_DESC(fullscreen, bool) \
 	PO_DESC(fixedAspectRatio, bool) \

@@ -178,8 +178,6 @@ struct RGSSThreadData
 
 	std::string rgssErrorMsg;
 
-	volatile bool rqScreenshot;
-
 	RGSSThreadData(EventThread *ethread,
 	               const char *argv0,
 	               SDL_Window *window,
@@ -190,8 +188,7 @@ struct RGSSThreadData
 	      argv0(argv0),
 	      window(window),
 	      sizeResoRatio(1, 1),
-	      config(newconf),
-	      rqScreenshot(false)
+	      config(newconf)
 	{}
 };
 

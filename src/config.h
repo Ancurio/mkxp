@@ -28,7 +28,6 @@
 struct Config
 {
 	bool debugMode;
-	bool screenshots;
 
 	bool winResizable;
 	bool fullscreen;
