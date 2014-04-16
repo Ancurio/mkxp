@@ -322,13 +322,13 @@ static void showExc(VALUE exc)
 
 	VALUE ds = rb_sprintf("%" PRIsVALUE ": %" PRIsVALUE " (%" PRIsVALUE ")",
 	                      bt0, exc, name);
-	// omit "useless" last entry (from ruby:1:in `eval')
+	/* omit "useless" last entry (from ruby:1:in `eval') */
 	for (long i = 1, btlen = RARRAY_LEN(bt) - 1; i < btlen; ++i)
 		rb_str_catf(ds, "\n\tfrom %" PRIsVALUE, rb_ary_entry(bt, i));
 	Debug() << StringValueCStr(ds);
 
 	ID id_index = rb_intern("index");
-	// an "offset" argument is not needed for the first time
+	/* an "offset" argument is not needed for the first time */
 	VALUE argv[2] = { rb_str_new_cstr(":") };
 	long filelen = NUM2LONG(rb_funcall2(bt0, id_index, 1, argv));
 	argv[1] = LONG2NUM(filelen + 1);
