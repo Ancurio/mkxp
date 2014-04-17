@@ -25,6 +25,7 @@
 #include <SDL_rwops.h>
 
 struct FileSystemPrivate;
+class SharedFontState;
 
 class FileSystem
 {
@@ -35,8 +36,12 @@ public:
 
 	void addPath(const char *path);
 
-	/* Call this after the last 'addPath()' */
+	/* Call these after the last 'addPath()' */
 	void createPathCache();
+
+	/* Scans "Fonts/" and creates inventory of
+	 * available font assets */
+	void initFontSets(SharedFontState &sfs);
 
 	/* For extension supplementing */
 	enum FileType
@@ -52,6 +57,11 @@ public:
 	              FileType type = Undefined,
 	              bool freeOnClose = false,
 	              const char **foundExt = 0);
+
+	/* Circumvents extension supplementing */
+	void openReadRaw(SDL_RWops &ops,
+	                 const char *filename,
+	                 bool freeOnClose = false);
 
 	bool exists(const char *filename,
 	            FileType type = Undefined);

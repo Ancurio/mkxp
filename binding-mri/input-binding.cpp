@@ -33,40 +33,45 @@ RB_METHOD(inputUpdate)
 	return Qnil;
 }
 
+static int getButtonArg(VALUE self, int argc, VALUE *argv)
+{
+	int num;
+
+#ifdef RGSS3
+	ID sym;
+	rb_get_args(argc, argv, "n", &sym RB_ARG_END);
+
+	if (rb_const_defined(self, sym))
+		num = FIX2INT(rb_const_get(self, sym));
+	else
+		num = 0;
+#else
+	(void) self;
+	rb_get_args(argc, argv, "i", &num RB_ARG_END);
+#endif
+
+	return num;
+}
+
 RB_METHOD(inputPress)
 {
-	RB_UNUSED_PARAM;
+	int num = getButtonArg(self, argc, argv);
 
-	int num;
-	rb_get_args(argc, argv, "i", &num RB_ARG_END);
-
-	Input::ButtonCode bc = (Input::ButtonCode) num;
-
-	return rb_bool_new(shState->input().isPressed(bc));
+	return rb_bool_new(shState->input().isPressed(num));
 }
 
 RB_METHOD(inputTrigger)
 {
-	RB_UNUSED_PARAM;
+	int num = getButtonArg(self, argc, argv);
 
-	int num;
-	rb_get_args(argc, argv, "i", &num RB_ARG_END);
-
-	Input::ButtonCode bc = (Input::ButtonCode) num;
-
-	return rb_bool_new(shState->input().isTriggered(bc));
+	return rb_bool_new(shState->input().isTriggered(num));
 }
 
 RB_METHOD(inputRepeat)
 {
-	RB_UNUSED_PARAM;
+	int num = getButtonArg(self, argc, argv);
 
-	int num;
-	rb_get_args(argc, argv, "i", &num RB_ARG_END);
-
-	Input::ButtonCode bc = (Input::ButtonCode) num;
-
-	return rb_bool_new(shState->input().isRepeated(bc));
+	return rb_bool_new(shState->input().isRepeated(num));
 }
 
 RB_METHOD(inputDir4)

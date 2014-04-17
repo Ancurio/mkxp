@@ -32,6 +32,9 @@
 #include "transform.h"
 #include "shader.h"
 #include "glstate.h"
+#include "quadarray.h"
+
+#include <math.h>
 
 #include <SDL_rect.h>
 
@@ -63,6 +66,22 @@ struct SpritePrivate
 	Color *color;
 	Tone *tone;
 
+#ifdef RGSS2
+	struct
+	{
+		int amp;
+		int length;
+		int speed;
+		float phase;
+
+		/* Wave effect is active (amp != 0) */
+		bool active;
+		/* qArray needs updating */
+		bool dirty;
+		SimpleQuadArray qArray;
+	} wave;
+#endif
+
 	EtcTemps tmp;
 
 	sigc::connection prepareCon;
@@ -87,6 +106,13 @@ struct SpritePrivate
 
 		prepareCon = shState->prepareDraw.connect
 		        (sigc::mem_fun(this, &SpritePrivate::prepare));
+
+#ifdef RGSS2
+		wave.amp = 0;
+		wave.length = 180;
+		wave.speed = 360;
+		wave.phase = 0.0;
+#endif
 	}
 
 	~SpritePrivate()
@@ -117,6 +143,10 @@ struct SpritePrivate
 
 		quad.setPosRect(IntRect(0, 0, srcRect->width, srcRect->height));
 		recomputeBushDepth();
+
+#ifdef RGSS2
+		wave.dirty = true;
+#endif
 	}
 
 	void updateSrcRectCon()
@@ -141,6 +171,16 @@ struct SpritePrivate
 		if (!opacity)
 			return;
 
+#ifdef RGSS2
+		if (wave.active)
+		{
+			/* Don't do expensive wave bounding box
+			 * calculations */
+			isVisible = true;
+			return;
+		}
+#endif
+
 		/* Compare sprite bounding box against the scene */
 
 		/* If sprite is zoomed/rotated, just opt out for now
@@ -161,10 +201,101 @@ struct SpritePrivate
 		isVisible = SDL_HasIntersection(&self, &sceneRect);
 	}
 
+#ifdef RGSS2
+	void emitWaveChunk(SVertex *&vert, float phase, int width,
+	                   float zoomY, int chunkY, int chunkLength)
+	{
+		float wavePos = phase + (chunkY / (float) wave.length) * M_PI * 2;
+		float chunkX = sin(wavePos) * wave.amp;
+
+		FloatRect tex(0, chunkY / zoomY, width, chunkLength / zoomY);
+		FloatRect pos = tex;
+		pos.x = chunkX;
+
+		Quad::setTexPosRect(vert, tex, pos);
+		vert += 4;
+	}
+
+	void updateWave()
+	{
+		if (!bitmap)
+			return;
+
+		if (wave.amp == 0)
+		{
+			wave.active = false;
+			return;
+		}
+
+		wave.active = true;
+
+		int width = srcRect->width;
+		int height = srcRect->height;
+		float zoomY = trans.getScale().y;
+
+		if (wave.amp < -(width / 2))
+		{
+			wave.qArray.resize(0);
+			wave.qArray.commit();
+
+			return;
+		}
+
+		/* RMVX does this, and I have no fucking clue why */
+		if (wave.amp < 0)
+		{
+			wave.qArray.resize(1);
+
+			int x = -wave.amp;
+			int w = width - x * 2;
+
+			FloatRect tex(x, srcRect->y, w, srcRect->height);
+
+			Quad::setTexPosRect(&wave.qArray.vertices[0], tex, tex);
+			wave.qArray.commit();
+
+			return;
+		}
+
+		/* The length of the sprite as it appears on screen */
+		int visibleLength = height * zoomY;
+
+		/* First chunk length (aligned to 8 pixel boundary */
+		int firstLength = ((int) trans.getPosition().y) % 8;
+
+		/* Amount of full 8 pixel chunks in the middle */
+		int chunks = (visibleLength - firstLength) / 8;
+
+		/* Final chunk length */
+		int lastLength = (visibleLength - firstLength) % 8;
+
+		wave.qArray.resize(!!firstLength + chunks + !!lastLength);
+		SVertex *vert = &wave.qArray.vertices[0];
+
+		float phase = (wave.phase * M_PI) / 180.f;
+
+		if (firstLength > 0)
+			emitWaveChunk(vert, phase, width, zoomY, 0, firstLength);
+
+		for (int i = 0; i < chunks; ++i)
+			emitWaveChunk(vert, phase, width, zoomY, firstLength + i * 8, 8);
+
+		if (lastLength > 0)
+			emitWaveChunk(vert, phase, width, zoomY, firstLength + chunks * 8, lastLength);
+
+		wave.qArray.commit();
+	}
+#endif
+
 	void prepare()
 	{
-		if (bitmap)
-			bitmap->flush();
+#ifdef RGSS2
+		if (wave.dirty)
+		{
+			updateWave();
+			wave.dirty = false;
+		}
+#endif
 
 		updateVisibility();
 	}
@@ -196,13 +327,20 @@ DEF_ATTR_RD_SIMPLE(Sprite, Angle,     float,   p->trans.getRotation())
 DEF_ATTR_RD_SIMPLE(Sprite, Mirror,    bool,    p->mirrored)
 DEF_ATTR_RD_SIMPLE(Sprite, BushDepth, int,     p->bushDepth)
 DEF_ATTR_RD_SIMPLE(Sprite, BlendType, int,     p->blendType)
-DEF_ATTR_RD_SIMPLE(Sprite, Width,     int,     p->srcRect->width)
-DEF_ATTR_RD_SIMPLE(Sprite, Height,    int,     p->srcRect->height)
 
 DEF_ATTR_SIMPLE(Sprite, BushOpacity, int,    p->bushOpacity)
 DEF_ATTR_SIMPLE(Sprite, Opacity,     int,    p->opacity)
 DEF_ATTR_SIMPLE(Sprite, Color,       Color*, p->color)
 DEF_ATTR_SIMPLE(Sprite, Tone,        Tone*,  p->tone)
+
+#ifdef RGSS2
+DEF_ATTR_RD_SIMPLE(Sprite, Width,      int,   p->srcRect->width)
+DEF_ATTR_RD_SIMPLE(Sprite, Height,     int,   p->srcRect->height)
+DEF_ATTR_RD_SIMPLE(Sprite, WaveAmp,    int,   p->wave.amp)
+DEF_ATTR_RD_SIMPLE(Sprite, WaveLength, int,   p->wave.length)
+DEF_ATTR_RD_SIMPLE(Sprite, WaveSpeed,  int,   p->wave.speed)
+DEF_ATTR_RD_SIMPLE(Sprite, WavePhase,  float, p->wave.phase)
+#endif
 
 void Sprite::setBitmap(Bitmap *bitmap)
 {
@@ -221,6 +359,10 @@ void Sprite::setBitmap(Bitmap *bitmap)
 	*p->srcRect = bitmap->rect();
 	p->onSrcRectChange();
 	p->quad.setPosRect(p->srcRect->toFloatRect());
+
+#ifdef RGSS2
+	p->wave.dirty = true;
+#endif
 }
 
 void Sprite::setSrcRect(Rect *rect)
@@ -255,6 +397,10 @@ void Sprite::setY(int value)
 		return;
 
 	p->trans.setPosition(Vec2(getX(), value));
+
+#ifdef RGSS2
+	p->wave.dirty = true;
+#endif
 }
 
 void Sprite::setOX(int value)
@@ -296,6 +442,10 @@ void Sprite::setZoomY(float value)
 
 	p->trans.setScale(Vec2(getZoomX(), value));
 	p->recomputeBushDepth();
+
+#ifdef RGSS2
+	p->wave.dirty = true;
+#endif
 }
 
 void Sprite::setAngle(float value)
@@ -348,6 +498,36 @@ void Sprite::setBlendType(int type)
 		return;
 	}
 }
+
+#ifdef RGSS2
+
+#define DEF_WAVE_SETTER(Name, name, type) \
+	void Sprite::setWave##Name(type value) \
+	{ \
+		GUARD_DISPOSED; \
+		if (p->wave.name == value) \
+			return; \
+		p->wave.name = value; \
+		p->wave.dirty = true; \
+	}
+
+DEF_WAVE_SETTER(Amp,    amp,    int)
+DEF_WAVE_SETTER(Length, length, int)
+DEF_WAVE_SETTER(Speed,  speed,  int)
+DEF_WAVE_SETTER(Phase,  phase,  float)
+
+#undef DEF_WAVE_SETTER
+
+/* Flashable */
+void Sprite::update()
+{
+	Flashable::update();
+
+	p->wave.phase += p->wave.speed / 180;
+	p->wave.dirty = true;
+}
+
+#endif
 
 /* Disposable */
 void Sprite::releaseResources()
@@ -410,7 +590,14 @@ void Sprite::draw()
 
 	p->bitmap->bindTex(*base);
 
+#ifdef RGSS2
+	if (p->wave.active)
+		p->wave.qArray.draw();
+	else
+		p->quad.draw();
+#else
 	p->quad.draw();
+#endif
 
 	glState.blendMode.pop();
 }

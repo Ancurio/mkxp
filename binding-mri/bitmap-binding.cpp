@@ -52,12 +52,14 @@ RB_METHOD(bitmapInitialize)
 	setPrivateData(self, b);
 
 	/* Wrap properties */
-	Font *font = new Font();
-	b->setFont(font);
-	font->setColor(new Color(*font->getColor()));
+	VALUE fontKlass = rb_const_get(rb_cObject, rb_intern("Font"));
+	VALUE fontObj = rb_obj_alloc(fontKlass);
+	rb_obj_call_init(fontObj, 0, 0);
 
-	VALUE fontProp = wrapProperty(self, font, "font", FontType);
-	wrapProperty(fontProp, font->getColor(), "color", ColorType);
+	Font *font = getPrivateData<Font>(fontObj);
+	b->setFont(font);
+
+	rb_iv_set(self, "font", fontObj);
 
 	return self;
 }
@@ -202,7 +204,7 @@ RB_METHOD(bitmapGetPixel)
 	            return Qnil;
 	         )
 
-	Vec4 value;
+	Color value;
 	GUARD_EXC( value = b->getPixel(x, y); );
 
 	Color *color = new Color(value);
@@ -223,7 +225,7 @@ RB_METHOD(bitmapSetPixel)
 
 	color = getPrivateDataCheck<Color>(colorObj, ColorType);
 
-	GUARD_EXC( b->setPixel(x, y, color->norm); );
+	GUARD_EXC( b->setPixel(x, y, *color); );
 
 	return self;
 }

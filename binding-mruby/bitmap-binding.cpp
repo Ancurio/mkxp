@@ -194,7 +194,7 @@ MRB_METHOD(bitmapGetPixel)
 	            return mrb_nil_value();
 	         )
 
-	Vec4 value;
+	Color value;
 	GUARD_EXC( value = b->getPixel(x, y); )
 
 	Color *color = new Color(value);
@@ -215,7 +215,7 @@ MRB_METHOD(bitmapSetPixel)
 
 	color = getPrivateDataCheck<Color>(mrb, colorObj, ColorType);
 
-	GUARD_EXC( b->setPixel(x, y, color->norm); )
+	GUARD_EXC( b->setPixel(x, y, *color); )
 
 	return mrb_nil_value();
 }

@@ -26,6 +26,7 @@
 #include "exception.h"
 #include "boost-hash.h"
 #include "util.h"
+#include "config.h"
 
 #include <string>
 #include <utility>
@@ -45,86 +46,149 @@
 
 typedef std::pair<std::string, int> FontKey;
 
-static void strToLower(std::string &str)
-{
-	for (size_t i = 0; i < str.size(); ++i)
-		str[i] = tolower(str[i]);
-}
-
-struct FontPoolPrivate
-{
-	BoostHash<FontKey, TTF_Font*> hash;
-};
-
-FontPool::FontPool()
-{
-	p = new FontPoolPrivate;
-}
-
-FontPool::~FontPool()
-{
-	BoostHash<FontKey, TTF_Font*>::const_iterator iter;
-	for (iter = p->hash.cbegin(); iter != p->hash.cend(); ++iter)
-		TTF_CloseFont(iter->second);
-
-	delete p;
-}
-
 static SDL_RWops *openBundledFont()
 {
 	return SDL_RWFromConstMem(BNDL_F_D(BUNDLED_FONT), BNDL_F_L(BUNDLED_FONT));
 }
 
-_TTF_Font *FontPool::request(const char *filename,
-                             int size)
+struct FontSet
 {
-	// FIXME Find out how font path resolution is done in VX/Ace
-	std::string nameKey(filename);
-	strToLower(nameKey);
-	strReplace(nameKey, ' ', '_');
+	/* 'Regular' style */
+	std::string regular;
 
-	bool useBundled = false;
-	std::string path = std::string("Fonts/") + nameKey;
-	if (!shState->fileSystem().exists(path.c_str(), FileSystem::Font))
+	/* Any other styles (used in case no 'Regular' exists) */
+	std::string other;
+};
+
+struct SharedFontStatePrivate
+{
+	/* Maps: font family name, To: substituted family name,
+	 * as specified via configuration file / arguments */
+	BoostHash<std::string, std::string> subs;
+
+	/* Maps: font family name, To: set of physical
+	 * font filenames located in "Fonts/" */
+	BoostHash<std::string, FontSet> sets;
+
+	/* Pool of already opened fonts; once opened, they are reused
+	 * and never closed until the termination of the program */
+	BoostHash<FontKey, TTF_Font*> pool;
+};
+
+SharedFontState::SharedFontState(const Config &conf)
+{
+	p = new SharedFontStatePrivate;
+
+	/* Parse font substitutions */
+	for (size_t i = 0; i < conf.fontSubs.size(); ++i)
 	{
-		/* Use the same name key for the bundled font
-		 * even when it resulted from multiple different
-		 * font name requests. The space at the front is
-		 * to prevent collisions (spaces are normally
-		 * replaced with '_' */
-		useBundled = true;
-		nameKey = " bundled";
+		const std::string &raw = conf.fontSubs[i];
+		size_t sepPos = raw.find_first_of('>');
+
+		if (sepPos == std::string::npos)
+			continue;
+
+		std::string from = raw.substr(0, sepPos);
+		std::string to   = raw.substr(sepPos+1);
+
+		p->subs.insert(from, to);
+	}
+}
+
+SharedFontState::~SharedFontState()
+{
+	BoostHash<FontKey, TTF_Font*>::const_iterator iter;
+	for (iter = p->pool.cbegin(); iter != p->pool.cend(); ++iter)
+		TTF_CloseFont(iter->second);
+
+	delete p;
+}
+
+void SharedFontState::initFontSetCB(SDL_RWops &ops,
+                                    const std::string &filename)
+{
+	TTF_Font *font = TTF_OpenFontRW(&ops, 0, 0);
+
+	if (!font)
+		return;
+
+	std::string family = TTF_FontFaceFamilyName(font);
+	std::string style = TTF_FontFaceStyleName(font);
+
+	TTF_CloseFont(font);
+
+	FontSet &set = p->sets[family];
+
+	if (style == "Regular")
+		set.regular = filename;
+	else
+		set.other = filename;
+}
+
+_TTF_Font *SharedFontState::getFont(std::string family,
+                                    int size)
+{
+	/* Check for substitutions */
+	if (p->subs.contains(family))
+		family = p->subs[family];
+
+	/* Find out if the font asset exists */
+	const FontSet &req = p->sets[family];
+
+	if (req.regular.empty() && req.other.empty())
+	{
+		/* Doesn't exist; use built-in font */
+		family = "";
 	}
 
-	FontKey key(nameKey, size);
+	FontKey key(family, size);
 
-	TTF_Font *font = p->hash.value(key, 0);
+	TTF_Font *font = p->pool.value(key);
 
 	if (font)
 		return font;
 
-	/* Not in hash, open */
+	/* Not in pool; open new handle */
 	SDL_RWops *ops;
 
-	if (useBundled)
+	if (family.empty())
 	{
+		/* Built-in font */
 		ops = openBundledFont();
 	}
 	else
 	{
+		/* Use 'other' path as alternative in case
+		 * we have no 'regular' styled font asset */
+		const char *path = !req.regular.empty()
+		                 ? req.regular.c_str() : req.other.c_str();
+
 		ops = SDL_AllocRW();
-		shState->fileSystem().openRead(*ops, path.c_str(), FileSystem::Font, true);
+		shState->fileSystem().openReadRaw(*ops, path, true);
 	}
 
 	// FIXME 0.9 is guesswork at this point
-	font = TTF_OpenFontRW(ops, 1, (float) size * .90);
+//	float gamma = (96.0/45.0)*(5.0/14.0)*(size-5);
+//	font = TTF_OpenFontRW(ops, 1, gamma /** .90*/);
+	font = TTF_OpenFontRW(ops, 1, size* .90);
 
 	if (!font)
-		throw Exception(Exception::SDLError, "SDL: %s", SDL_GetError());
+		throw Exception(Exception::SDLError, "%s", SDL_GetError());
 
-	p->hash.insert(key, font);
+	p->pool.insert(key, font);
 
 	return font;
+}
+
+bool SharedFontState::fontPresent(std::string family)
+{
+	/* Check for substitutions */
+	if (p->subs.contains(family))
+		family = p->subs[family];
+
+	const FontSet &set = p->sets[family];
+
+	return !(set.regular.empty() && set.other.empty());
 }
 
 
@@ -173,7 +237,7 @@ struct FontPrivate
 	{}
 };
 
-std::string FontPrivate::defaultName   = "MS PGothic";
+std::string FontPrivate::defaultName   = "Arial";
 int         FontPrivate::defaultSize   = 22;
 bool        FontPrivate::defaultBold   = false;
 bool        FontPrivate::defaultItalic = false;
@@ -183,9 +247,7 @@ Color FontPrivate::defaultColorTmp(255, 255, 255, 255);
 
 bool Font::doesExist(const char *name)
 {
-	std::string path = std::string("Fonts/") + std::string(name);
-
-	return shState->fileSystem().exists(path.c_str(), FileSystem::Font);
+	return shState->fontState().fontPresent(name);
 }
 
 Font::Font(const char *name,
@@ -223,6 +285,10 @@ void Font::setSize(int value)
 	if (p->size == value)
 		return;
 
+	/* Catch illegal values (according to RMXP) */
+	if (value < 6 || value > 96)
+		throw Exception(Exception::ArgumentError, "%s", "bad value for size");
+
 	p->size = value;
 	p->sdlFont = 0;
 }
@@ -253,8 +319,8 @@ void Font::setDefaultName(const char *value)
 _TTF_Font *Font::getSdlFont()
 {
 	if (!p->sdlFont)
-		p->sdlFont = shState->fontPool().request(p->name.c_str(),
-		                                         p->size);
+		p->sdlFont = shState->fontState().getFont(p->name.c_str(),
+		                                          p->size);
 
 	int style = TTF_STYLE_NORMAL;
 

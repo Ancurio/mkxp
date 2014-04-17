@@ -366,6 +366,7 @@ struct SDLSoundSource : ALDataSource
 
 	~SDLSoundSource()
 	{
+		/* This also closes 'srcOps' */
 		Sound_FreeSample(sample);
 	}
 

@@ -48,13 +48,6 @@ extern const StaticRect autotileRects[];
 typedef std::vector<SVertex> SVVector;
 typedef struct { SVVector v[4]; } TileVBuffer;
 
-/* Check if [C]ontainer contains [V]alue */
-template<typename C, typename V>
-inline bool contains(const C &c, const V &v)
-{
-	return std::find(c.begin(), c.end(), v) != c.end();
-}
-
 static const int tilesetW  = 8 * 32;
 static const int autotileW = 3 * 32;
 static const int autotileH = 4 * 32;
@@ -511,8 +504,6 @@ struct TilemapPrivate
 
 			usableATs.push_back(i);
 
-			autotiles[i]->flush();
-
 			if (autotiles[i]->width() > autotileW)
 				animatedATs.push_back(i);
 		}
@@ -623,14 +614,9 @@ struct TilemapPrivate
 	/* Assembles atlas from tileset and autotile bitmaps */
 	void buildAtlas()
 	{
-		tileset->flush();
-
 		updateAutotileInfo();
 
-		for (size_t i = 0; i < atlas.usableATs.size(); ++i)
-			autotiles[atlas.usableATs[i]]->flush();
-
-		TileAtlas::BlitList blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
+		TileAtlas::BlitVec blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
 
 		/* Clear atlas */
 		FBO::bind(atlas.gl.fbo, FBO::Draw);

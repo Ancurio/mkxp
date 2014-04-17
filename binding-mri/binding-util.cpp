@@ -237,6 +237,24 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 			break;
 		}
 
+		case 'n' :
+		{
+			if (argI >= argc)
+				break;
+
+			ID *sym = va_arg(ap, ID*);
+
+			VALUE symVal = *arg++;
+
+			if (!SYMBOL_P(symVal))
+				rb_raise(rb_eTypeError, "Argument %d: Expected symbol", argI);
+
+			*sym = SYM2ID(symVal);
+			++argI;
+
+			break;
+		}
+
 		case '|' :
 			opt = true;
 			break;

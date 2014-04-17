@@ -119,3 +119,18 @@
 # (default: disabled)
 #
 # useScriptNames=false
+
+
+# Font substitutions allow drop-in replacements of fonts
+# to be used without changing the RGSS scripts,
+# eg. providing 'Open Sans' when the game thinkgs it's
+# using 'Arial'. Font family to be substituted and
+# replacement family are separated by one sole '>'.
+# Be careful not to include any spaces.
+# This is not connected to the built-in font, which is
+# always used when a non-existing font family is
+# requested by RGSS.
+# (default: none)
+#
+# fontSub=Arial>Open Sans
+# fontSub=Times New Roman>Liberation Serif

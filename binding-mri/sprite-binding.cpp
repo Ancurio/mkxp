@@ -69,6 +69,39 @@ DEF_PROP_F(Sprite, Angle)
 
 DEF_PROP_B(Sprite, Mirror)
 
+#ifdef RGSS2
+
+RB_METHOD(spriteWidth)
+{
+	RB_UNUSED_PARAM;
+
+	Sprite *s = getPrivateData<Sprite>(self);
+
+	int value;
+	GUARD_EXC( value = s->getWidth(); )
+
+	return rb_fix_new(value);
+}
+
+RB_METHOD(spriteHeight)
+{
+	RB_UNUSED_PARAM;
+
+	Sprite *s = getPrivateData<Sprite>(self);
+
+	int value;
+	GUARD_EXC( value = s->getHeight(); )
+
+	return rb_fix_new(value);
+}
+
+DEF_PROP_I(Sprite, WaveAmp)
+DEF_PROP_I(Sprite, WaveLength)
+DEF_PROP_I(Sprite, WaveSpeed)
+DEF_PROP_F(Sprite, WavePhase)
+
+#endif
+
 void
 spriteBindingInit()
 {
@@ -98,4 +131,14 @@ spriteBindingInit()
 	INIT_PROP_BIND( Sprite, BlendType, "blend_type" );
 	INIT_PROP_BIND( Sprite, Color,     "color"      );
 	INIT_PROP_BIND( Sprite, Tone,      "tone"       );
+
+#ifdef RGSS2
+	_rb_define_method(klass, "width", spriteWidth);
+	_rb_define_method(klass, "height", spriteHeight);
+
+	INIT_PROP_BIND( Sprite, WaveAmp,    "wave_amp"    );
+	INIT_PROP_BIND( Sprite, WaveLength, "wave_length" );
+	INIT_PROP_BIND( Sprite, WaveSpeed,  "wave_speed"  );
+	INIT_PROP_BIND( Sprite, WavePhase,  "wave_phase"  );
+#endif
 }

@@ -55,10 +55,6 @@ struct BitmapPrivate
 {
 	TEXFBO gl;
 
-	/* 'setPixel()' calls are cached and executed
-	 * in batches on 'flush()' */
-	PointArray pointArray;
-
 	Font *font;
 
 	/* "Mega surfaces" are a hack to allow Tilesets to be used
@@ -154,32 +150,9 @@ struct BitmapPrivate
 		glState.blendMode.pop();
 	}
 
-	void flushPoints()
-	{
-		if (pointArray.count() == 0)
-			return;
-
-		SimpleColorShader &shader = shState->shaders().simpleColor;
-		shader.bind();
-		shader.setTranslation(Vec2i());
-
-		bindFBO();
-		pushSetViewport(shader);
-		glState.blendMode.pushSet(BlendNone);
-
-		pointArray.commit();
-		pointArray.draw();
-		pointArray.reset();
-
-		glState.blendMode.pop();
-		popViewport();
-	}
-
 	void fillRect(const IntRect &rect,
 	              const Vec4 &color)
 	{
-		flushPoints();
-
 		bindFBO();
 
 		glState.scissorTest.pushSet(true);
@@ -271,7 +244,6 @@ Bitmap::Bitmap(const Bitmap &other)
 
 	p->gl = shState->texPool().request(other.width(), other.height());
 
-	other.flush();
 	blt(0, 0, other, rect());
 }
 
@@ -368,8 +340,6 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	if (opacity == 255 && !p->touchesTaintedArea(destRect))
 	{
 		/* Fast blit */
-		flush();
-
 		FBO::bind(source.p->gl.fbo, FBO::Read);
 		FBO::bind(p->gl.fbo, FBO::Draw);
 
@@ -379,8 +349,6 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	else
 	{
 		/* Fragment pipeline */
-		flush();
-
 		float normOpacity = (float) opacity / 255.0f;
 
 		TEXFBO &gpTex = shState->gpTexFBO(destRect.w, destRect.h);
@@ -461,8 +429,6 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	GUARD_MEGA;
 
-	flush();
-
 	SimpleColorShader &shader = shState->shaders().simpleColor;
 	shader.bind();
 	shader.setTranslation(Vec2i());
@@ -520,8 +486,6 @@ void Bitmap::blur()
 
 	GUARD_MEGA;
 
-	flush();
-
 	Quad &quad = shState->gpQuad();
 	FloatRect rect(0, 0, width(), height());
 	quad.setTexPosRect(rect, rect);
@@ -566,8 +530,6 @@ void Bitmap::radialBlur(int angle, int divisions)
 	GUARD_DISPOSED;
 
 	GUARD_MEGA;
-
-	flush();
 
 	angle     = clamp<int>(angle, 0, 359);
 	divisions = clamp<int>(divisions, 2, 100);
@@ -666,9 +628,6 @@ void Bitmap::clear()
 
 	GUARD_MEGA;
 
-	/* Any queued points won't be visible after this anyway */
-	p->pointArray.reset();
-
 	p->bindFBO();
 
 	glState.clearColor.pushSet(Vec4());
@@ -682,7 +641,7 @@ void Bitmap::clear()
 	modified();
 }
 
-Vec4 Bitmap::getPixel(int x, int y) const
+Color Bitmap::getPixel(int x, int y) const
 {
 	GUARD_DISPOSED;
 
@@ -691,24 +650,34 @@ Vec4 Bitmap::getPixel(int x, int y) const
 	if (x < 0 || y < 0 || x >= width() || y >= height())
 		return Vec4();
 
-	flush();
-
 	FBO::bind(p->gl.fbo, FBO::Read);
 
 	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
-	Vec4 pixel = FBO::getPixel(x, y);
+
+	uint8_t pixel[4];
+	glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+
 	glState.viewport.pop();
 
-	return pixel;
+	return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
-void Bitmap::setPixel(int x, int y, const Vec4 &color)
+void Bitmap::setPixel(int x, int y, const Color &color)
 {
 	GUARD_DISPOSED;
 
 	GUARD_MEGA;
 
-	p->pointArray.append(Vec2(x+.5, y+.5), color);
+	uint8_t pixel[] =
+	{
+		(uint8_t) clamp<double>(color.red,   0, 255),
+		(uint8_t) clamp<double>(color.green, 0, 255),
+		(uint8_t) clamp<double>(color.blue,  0, 255),
+		(uint8_t) clamp<double>(color.alpha, 0, 255)
+	};
+
+	TEX::bind(p->gl.tex);
+	TEX::uploadSubImage(x, y, 1, 1, &pixel, GL_RGBA);
 
 	p->addTaintedArea(IntRect(x, y, 1, 1));
 
@@ -723,8 +692,6 @@ void Bitmap::hueChange(int hue)
 
 	if ((hue % 360) == 0)
 		return;
-
-	flush();
 
 	TEXFBO newTex = shState->texPool().request(width(), height());
 
@@ -747,8 +714,6 @@ void Bitmap::hueChange(int hue)
 	p->bindTexture(shader);
 
 	p->blitQuad(quad);
-
-	shader.unbind();
 
 	p->popViewport();
 
@@ -778,8 +743,6 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 
 	if (str[0] == ' ' && str[1] == '\0')
 		return;
-
-	flush();
 
 	TTF_Font *font = p->font->getSdlFont();
 	Color *fontColor = p->font->getColor();
@@ -1010,17 +973,6 @@ IntRect Bitmap::textSize(const char *str)
 }
 
 DEF_ATTR_SIMPLE(Bitmap, Font, Font*, p->font)
-
-void Bitmap::flush() const
-{
-	if (isDisposed())
-		return;
-
-	if (p->megaSurface)
-		return;
-
-	p->flushPoints();
-}
 
 TEXFBO &Bitmap::getGLTypes()
 {

@@ -33,34 +33,44 @@ MRB_FUNCTION(inputUpdate)
 	return mrb_nil_value();
 }
 
-MRB_FUNCTION(inputPress)
+static mrb_int getButtonArg(mrb_state *mrb, mrb_value self)
 {
 	mrb_int num;
+
+#ifdef RGSS3
+	mrb_sym sym;
+	mrb_get_args(mrb, "n", &sym);
+
+	if (mrb_const_defined(mrb, self, sym))
+		num = mrb_fixnum(mrb_const_get(mrb, self, sym));
+	else
+		num = 0;
+#else
 	mrb_get_args(mrb, "i", &num);
+#endif
 
-	Input::ButtonCode bc = (Input::ButtonCode) num;
-
-	return mrb_bool_value(shState->input().isPressed(bc));
+	return num;
 }
 
-MRB_FUNCTION(inputTrigger)
+MRB_METHOD(inputPress)
 {
-	mrb_int num;
-	mrb_get_args(mrb, "i", &num);
+	mrb_int num = getButtonArg(mrb, self);
 
-	Input::ButtonCode bc = (Input::ButtonCode) num;
-
-	return mrb_bool_value(shState->input().isTriggered(bc));
+	return mrb_bool_value(shState->input().isPressed(num));
 }
 
-MRB_FUNCTION(inputRepeat)
+MRB_METHOD(inputTrigger)
 {
-	mrb_int num;
-	mrb_get_args(mrb, "i", &num);
+	mrb_int num = getButtonArg(mrb, self);
 
-	Input::ButtonCode bc = (Input::ButtonCode) num;
+	return mrb_bool_value(shState->input().isTriggered(num));
+}
 
-	return mrb_bool_value(shState->input().isRepeated(bc));
+MRB_METHOD(inputRepeat)
+{
+	mrb_int num = getButtonArg(mrb, self);
+
+	return mrb_bool_value(shState->input().isRepeated(num));
 }
 
 MRB_FUNCTION(inputDir4)

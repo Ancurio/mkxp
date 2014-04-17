@@ -35,7 +35,6 @@ namespace po = boost::program_options;
 
 Config::Config()
     : debugMode(false),
-      screenshots(false),
       winResizable(false),
       fullscreen(false),
       fixedAspectRatio(true),
@@ -57,7 +56,6 @@ void Config::read(int argc, char *argv[])
 {
 #define PO_DESC_ALL \
 	PO_DESC(debugMode, bool) \
-	PO_DESC(screenshots, bool) \
 	PO_DESC(winResizable, bool) \
 	PO_DESC(fullscreen, bool) \
 	PO_DESC(fixedAspectRatio, bool) \
@@ -85,6 +83,7 @@ void Config::read(int argc, char *argv[])
 	podesc.add_options()
 	        PO_DESC_ALL
 	        ("RTP", po::value<StringVec>()->composing())
+	        ("fontSub", po::value<StringVec>()->composing())
 	        ;
 
 	po::variables_map vm;
@@ -116,6 +115,8 @@ void Config::read(int argc, char *argv[])
 	PO_DESC_ALL;
 
 	GUARD_ALL( rtps = vm["RTP"].as<StringVec>(); );
+
+	GUARD_ALL( fontSubs = vm["fontSub"].as<StringVec>(); );
 
 #undef PO_DESC
 #undef PO_DESC_ALL

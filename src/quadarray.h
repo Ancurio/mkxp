@@ -34,17 +34,41 @@
 typedef uint32_t index_t;
 #define _GL_INDEX_TYPE GL_UNSIGNED_INT
 
-struct ColorQuadArray
+/* A small hack to get mutable QuadArray constructors */
+inline void initBufferBindings(Vertex *)
 {
-	std::vector<Vertex> vertices;
+	glEnableVertexAttribArray(Shader::Color);
+	glEnableVertexAttribArray(Shader::Position);
+	glEnableVertexAttribArray(Shader::TexCoord);
+
+	glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
+	glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
+	glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
+}
+
+inline void initBufferBindings(SVertex *)
+{
+	glEnableVertexAttribArray(Shader::Position);
+	glEnableVertexAttribArray(Shader::TexCoord);
+
+	glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
+	glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
+}
+
+template<class VertexType>
+struct QuadArray
+{
+	std::vector<VertexType> vertices;
 
 	VBO::ID vbo;
 	VAO::ID vao;
 
 	int quadCount;
+	GLsizeiptr vboSize;
 
-	ColorQuadArray()
-	    : quadCount(0)
+	QuadArray()
+	    : quadCount(0),
+	      vboSize(-1)
 	{
 		vbo = VBO::gen();
 		vao = VAO::gen();
@@ -53,20 +77,16 @@ struct ColorQuadArray
 		VBO::bind(vbo);
 		shState->bindQuadIBO();
 
-		glEnableVertexAttribArray(Shader::Color);
-		glEnableVertexAttribArray(Shader::Position);
-		glEnableVertexAttribArray(Shader::TexCoord);
-
-		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
-		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
-		glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
+		/* Call correct implementation here via overloading */
+		VertexType *dummy = 0;
+		initBufferBindings(dummy);
 
 		VAO::unbind();
 		IBO::unbind();
 		VBO::unbind();
 	}
 
-	~ColorQuadArray()
+	~QuadArray()
 	{
 		VBO::del(vbo);
 		VAO::del(vao);
@@ -78,15 +98,36 @@ struct ColorQuadArray
 		quadCount = size;
 	}
 
+	void clear()
+	{
+		vertices.clear();
+		quadCount = 0;
+	}
+
 	/* This needs to be called after the final 'append()' call
 	 * and previous to the first 'draw()' call. */
 	void commit()
 	{
 		VBO::bind(vbo);
-		VBO::uploadData(vertices.size() * sizeof(Vertex), &vertices[0], GL_DYNAMIC_DRAW);
-		VBO::unbind();
 
-		shState->ensureQuadIBO(quadCount);
+		GLsizeiptr size = vertices.size() * sizeof(VertexType);
+
+		if (size > vboSize)
+		{
+			/* New data exceeds already allocated size.
+			 * Reallocate VBO. */
+			VBO::uploadData(size, &vertices[0], GL_DYNAMIC_DRAW);
+			vboSize = size;
+
+			shState->ensureQuadIBO(quadCount);
+		}
+		else
+		{
+			/* New data fits in allocated size */
+			VBO::uploadSubData(0, size, &vertices[0]);
+		}
+
+		VBO::unbind();
 	}
 
 	void draw(size_t offset, size_t count)
@@ -110,67 +151,7 @@ struct ColorQuadArray
 	}
 };
 
-struct PointArray
-{
-	std::vector<Vertex> vertices;
-	VBO::ID vbo;
-	VAO::ID vao;
-
-	PointArray()
-	{
-		vbo = VBO::gen();
-		vao = VAO::gen();
-
-		VAO::bind(vao);
-		VBO::bind(vbo);
-
-		glEnableVertexAttribArray(Shader::Color);
-		glEnableVertexAttribArray(Shader::Position);
-
-		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
-		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
-
-		VAO::unbind();
-		VBO::unbind();
-	}
-
-	~PointArray()
-	{
-		VBO::del(vbo);
-		VAO::del(vao);
-	}
-
-	void append(const Vec2 &pos, const Vec4 &color)
-	{
-		Vertex vert;
-		vert.pos = pos;
-		vert.color = color;
-		vertices.push_back(vert);
-	}
-
-	void commit()
-	{
-		VBO::bind(vbo);
-		VBO::uploadData(vertices.size() * sizeof(Vertex), &vertices[0]);
-		VBO::unbind();
-	}
-
-	void reset()
-	{
-		vertices.clear();
-	}
-
-	void draw()
-	{
-		VAO::bind(vao);
-		glDrawArrays(GL_POINTS, 0, count());
-		VAO::unbind();
-	}
-
-	int count()
-	{
-		return vertices.size();
-	}
-};
+typedef QuadArray<Vertex> ColorQuadArray;
+typedef QuadArray<SVertex> SimpleQuadArray;
 
 #endif // QUADARRAY_H

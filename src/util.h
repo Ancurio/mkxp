@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <string>
+#include <algorithm>
 
 static inline int
 wrapRange(int value, int min, int max)
@@ -91,6 +92,13 @@ inline void strReplace(std::string &str,
 	for (size_t i = 0; i < str.size(); ++i)
 		if (str[i] == before)
 			str[i] = after;
+}
+
+/* Check if [C]ontainer contains [V]alue */
+template<typename C, typename V>
+inline bool contains(const C &c, const V &v)
+{
+	return std::find(c.begin(), c.end(), v) != c.end();
 }
 
 #define ARRAY_SIZE(obj) (sizeof(obj) / sizeof((obj)[0]))

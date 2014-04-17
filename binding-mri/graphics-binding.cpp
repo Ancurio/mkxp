@@ -99,6 +99,24 @@ RB_METHOD(graphicsFrameReset)
 DEF_GRA_PROP_I(FrameRate)
 DEF_GRA_PROP_I(FrameCount)
 
+#ifdef RGSS2
+
+RB_METHOD(graphicsWidth)
+{
+	RB_UNUSED_PARAM;
+
+	return rb_fix_new(shState->graphics().width());
+}
+
+RB_METHOD(graphicsHeight)
+{
+	RB_UNUSED_PARAM;
+
+	return rb_fix_new(shState->graphics().height());
+}
+
+#endif
+
 DEF_GRA_PROP_B(Fullscreen)
 DEF_GRA_PROP_B(ShowCursor)
 
@@ -119,6 +137,11 @@ void graphicsBindingInit()
 
 	INIT_GRA_PROP_BIND( FrameRate,  "frame_rate"  );
 	INIT_GRA_PROP_BIND( FrameCount, "frame_count" );
+
+#ifdef RGSS2
+	_rb_define_module_function(module, "width",  graphicsWidth);
+	_rb_define_module_function(module, "height", graphicsHeight);
+#endif
 
 	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
 	INIT_GRA_PROP_BIND( ShowCursor, "show_cursor" );

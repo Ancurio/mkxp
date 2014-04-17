@@ -21,6 +21,7 @@
 
 #include "filesystem.h"
 
+#include "font.h"
 #include "util.h"
 #include "exception.h"
 #include "boost-hash.h"
@@ -297,8 +298,12 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 
 	/* Check header */
 	uint32_t header1, header2;
-	readUint32(io, header1);
-	readUint32(io, header2);
+
+	if (!readUint32(io, header1))
+		return 0;
+
+	if (!readUint32(io, header2))
+		return 0;
 
 	if (header1 != RGSS_HEADER_1 || header2 != RGSS_HEADER_2)
 		return 0;
@@ -476,41 +481,133 @@ RGSS_noop2(void*, const char*)
 static const PHYSFS_Archiver RGSS_Archiver =
 {
 	0,
-    {
-        "RGSSAD",
-        "RGSS encrypted archive format",
-        "Jonas Kulla <Nyocurio@gmail.com>",
-        "http://k-du.de/rgss/rgss.html",
-        0 /* symlinks not supported */
-    },
-    RGSS_openArchive,
-    RGSS_enumerateFiles,
-    RGSS_openRead,
-    RGSS_noop1, /* openWrite */
-    RGSS_noop1, /* openAppend */
-    RGSS_noop2, /* remove */
-    RGSS_noop2, /* mkdir */
-    RGSS_stat,
-    RGSS_closeArchive
+	{
+		"RGSSAD",
+		"RGSS encrypted archive format",
+		"Jonas Kulla <Nyocurio@gmail.com>",
+		"http://k-du.de/rgss/rgss.html",
+		0 /* symlinks not supported */
+	},
+	RGSS_openArchive,
+	RGSS_enumerateFiles,
+	RGSS_openRead,
+	RGSS_noop1, /* openWrite */
+	RGSS_noop1, /* openAppend */
+	RGSS_noop2, /* remove */
+	RGSS_noop2, /* mkdir */
+	RGSS_stat,
+	RGSS_closeArchive
 };
+
+
+static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)
+{
+	return static_cast<PHYSFS_File*>(ops->hidden.unknown.data1);
+}
+
+static Sint64 SDL_RWopsSize(SDL_RWops *ops)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return -1;
+
+	return PHYSFS_fileLength(f);
+}
+
+static Sint64 SDL_RWopsSeek(SDL_RWops *ops, int64_t offset, int whence)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return -1;
+
+	int64_t base;
+
+	switch (whence)
+	{
+	default:
+	case RW_SEEK_SET :
+		base = 0;
+		break;
+	case RW_SEEK_CUR :
+		base = PHYSFS_tell(f);
+		break;
+	case RW_SEEK_END :
+		base = PHYSFS_fileLength(f);
+		break;
+	}
+
+	int result = PHYSFS_seek(f, base + offset);
+
+	return (result != 0) ? PHYSFS_tell(f) : -1;
+}
+
+static size_t SDL_RWopsRead(SDL_RWops *ops, void *buffer, size_t size, size_t maxnum)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return 0;
+
+	PHYSFS_sint64 result = PHYSFS_readBytes(f, buffer, size*maxnum);
+
+	return (result != -1) ? (result / size) : 0;
+}
+
+static size_t SDL_RWopsWrite(SDL_RWops *ops, const void *buffer, size_t size, size_t num)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return 0;
+
+	PHYSFS_sint64 result = PHYSFS_writeBytes(f, buffer, size*num);
+
+	return (result != -1) ? (result / size) : 0;
+}
+
+static int SDL_RWopsClose(SDL_RWops *ops)
+{
+	PHYSFS_File *f = sdlPHYS(ops);
+
+	if (!f)
+		return -1;
+
+	int result = PHYSFS_close(f);
+
+	f = 0;
+
+	return (result != 0) ? 0 : -1;
+}
+
+static int SDL_RWopsCloseFree(SDL_RWops *ops)
+{
+	int result = SDL_RWopsClose(ops);
+
+	SDL_FreeRW(ops);
+
+	return result;
+}
+
+const Uint32 SDL_RWOPS_PHYSFS = SDL_RWOPS_UNKNOWN+10;
 
 struct FileSystemPrivate
 {
-	/* All keys are lower case */
+	/* Maps: lower case filename, To: actual (mixed case) filename.
+	 * This is for compatibility with games that take Windows'
+	 * case insensitivity for granted */
 	BoostHash<std::string, std::string> pathCache;
+	bool havePathCache;
 
 	std::vector<std::string> extensions[FileSystem::Undefined+1];
-
-	// FIXME Need to find a better way to do this..
-	char pathBuffer[512];
-	bool havePathCache;
 
 	/* Attempt to locate an extension string in a filename.
 	 * Either a pointer into the input string pointing at the
 	 * extension, or null is returned */
 	const char *findExt(const char *filename)
 	{
-		int len;
+		size_t len;
 
 		for (len = strlen(filename); len > 0; --len)
 		{
@@ -524,109 +621,146 @@ struct FileSystemPrivate
 		return 0;
 	}
 
-	const char *completeFileName(const char *filename,
-	                             FileSystem::FileType type,
-	                             const char **foundExt)
+	/* Complete filename via regular physfs lookup */
+	bool completeFilenameReg(const char *filename,
+	                         FileSystem::FileType type,
+	                         char *outBuffer,
+	                         size_t outN,
+	                         const char **foundExt)
 	{
-		if (!havePathCache)
+		/* Try supplementing extensions to find an existing path */
+		const std::vector<std::string> &extList = extensions[type];
+
+		for (size_t i = 0; i < extList.size(); ++i)
 		{
-			if (PHYSFS_exists(filename))
+			const char *ext = extList[i].c_str();
+
+			snprintf(outBuffer, outN, "%s.%s", filename, ext);
+
+			if (PHYSFS_exists(outBuffer))
 			{
 				if (foundExt)
-					*foundExt = findExt(filename);
+					*foundExt = ext;
 
-				return filename;
+				return true;
 			}
-
-			const std::vector<std::string> &extList = extensions[type];
-			for (size_t i = 0; i < extList.size(); ++i)
-			{
-				const char *ext = extList[i].c_str();
-
-				snprintf(pathBuffer, sizeof(pathBuffer), "%s.%s", filename, ext);
-
-				if (PHYSFS_exists(pathBuffer))
-				{
-					if (foundExt)
-						*foundExt = ext;
-
-					return pathBuffer;
-				}
-			}
-
-			// Is this even necessary?
-			if (foundExt)
-				*foundExt = 0;
-
-			return 0;
 		}
 
-		char buff[512];
-		size_t i;
-
-		for (i = 0; i < sizeof(buff) && filename[i]; ++i)
-			buff[i] = tolower(filename[i]);
-
-		buff[i] = '\0';
-
-		std::string key(buff);
-
-		/* If the path was already complete,
-		 * we are done at this point */
-		if (pathCache.contains(key))
+		/* Doing the check without supplemented extension
+		 * fits the usage pattern of RMXP games */
+		if (PHYSFS_exists(filename))
 		{
-			/* The extension might already be included here,
-			 * so try to find it */
+			strncpy(outBuffer, filename, outN);
+
 			if (foundExt)
 				*foundExt = findExt(filename);
 
-			return pathCache[key].c_str();
+			return true;
 		}
 
-		char buff2[512];
+		return false;
+	}
 
-		/* Try supplementing extensions
-		 * to find an existing path */
-		if (type != FileSystem::Undefined)
+	/* Complete filename via path cache */
+	bool completeFilenamePC(const char *filename,
+	                        FileSystem::FileType type,
+                            char *outBuffer,
+                            size_t outN,
+                            const char **foundExt)
+	{
+		size_t i;
+		char lowCase[512];
+
+		for (i = 0; i < sizeof(lowCase)-1 && filename[i]; ++i)
+			lowCase[i] = tolower(filename[i]);
+
+		lowCase[i] = '\0';
+
+		std::string key;
+
+		const std::vector<std::string> &extList = extensions[type];
+
+		for (size_t i = 0; i < extList.size(); ++i)
 		{
-			std::vector<std::string> &extList = extensions[type];
-			for (size_t i = 0; i < extList.size(); ++i)
+			const char *ext = extList[i].c_str();
+
+			snprintf(outBuffer, outN, "%s.%s", lowCase, ext);
+			key = outBuffer;
+
+			if (pathCache.contains(key))
 			{
-				const char *ext = extList[i].c_str();
+				strncpy(outBuffer, pathCache[key].c_str(), outN);
 
-				snprintf(buff2, sizeof(buff2), "%s.%s", buff, ext);
-				key = buff2;
+				if (foundExt)
+					*foundExt = ext;
 
-				if (pathCache.contains(key))
-				{
-					if (foundExt)
-						*foundExt = ext;
-
-					return pathCache[key].c_str();
-				}
+				return true;
 			}
 		}
 
-		if (foundExt)
-			*foundExt = 0;
+		key = lowCase;
 
-		return 0;
+		if (pathCache.contains(key))
+		{
+			strncpy(outBuffer, pathCache[key].c_str(), outN);
+
+			if (foundExt)
+				*foundExt = findExt(filename);
+
+			return true;
+		}
+
+		return false;
 	}
 
-	PHYSFS_File *openReadInt(const char *filename,
-	                         FileSystem::FileType type,
-	                         const char **foundExt)
+	/* Try to complete 'filename' with file extensions
+	 * based on 'type'. If no combination could be found,
+	 * returns false, and 'foundExt' is untouched */
+	bool completeFileName(const char *filename,
+	                      FileSystem::FileType type,
+                          char *outBuffer,
+                          size_t outN,
+                          const char **foundExt)
 	{
-		const char *foundName = completeFileName(filename, type, foundExt);
+		if (havePathCache)
+			return completeFilenamePC(filename, type, outBuffer, outN, foundExt);
+		else
+			return completeFilenameReg(filename, type, outBuffer, outN, foundExt);
+	}
 
-		if (!foundName)
+	PHYSFS_File *openReadHandle(const char *filename,
+	                            FileSystem::FileType type,
+	                            const char **foundExt)
+	{
+		char found[512];
+
+		if (!completeFileName(filename, type, found, sizeof(found), foundExt))
 			throw Exception(Exception::NoFileError, "%s", filename);
 
-		PHYSFS_File *handle = PHYSFS_openRead(foundName);
+		PHYSFS_File *handle = PHYSFS_openRead(found);
+
 		if (!handle)
 			throw Exception(Exception::PHYSFSError, "PhysFS: %s", PHYSFS_getLastError());
 
 		return handle;
+	}
+
+	void initReadOps(PHYSFS_File *handle,
+	                 SDL_RWops &ops,
+	                 bool freeOnClose)
+	{
+		ops.size  = SDL_RWopsSize;
+		ops.seek  = SDL_RWopsSeek;
+		ops.read  = SDL_RWopsRead;
+		ops.write = SDL_RWopsWrite;
+
+		if (freeOnClose)
+			ops.close = SDL_RWopsCloseFree;
+		else
+			ops.close = SDL_RWopsClose;
+
+		ops.type = SDL_RWOPS_PHYSFS;
+		ops.hidden.unknown.data1 = handle;
 	}
 };
 
@@ -724,97 +858,58 @@ void FileSystem::createPathCache()
 	p->havePathCache = true;
 }
 
-static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)
+static void strToLower(std::string &str)
 {
-	return static_cast<PHYSFS_File*>(ops->hidden.unknown.data1);
+	for (size_t i = 0; i < str.size(); ++i)
+		str[i] = tolower(str[i]);
 }
 
-static Sint64 SDL_RWopsSize(SDL_RWops *ops)
+struct FontSetsCBData
 {
-	PHYSFS_File *f = sdlPHYS(ops);
+	FileSystemPrivate *p;
+	SharedFontState *sfs;
+};
 
-	if (!f)
-		return -1;
+static void fontSetEnumCB(void *data, const char *,
+                          const char *fname)
+{
+	FontSetsCBData *d = static_cast<FontSetsCBData*>(data);
+	FileSystemPrivate *p = d->p;
 
-	return PHYSFS_fileLength(f);
+	/* Only consider filenames with font extensions */
+	const char *ext = p->findExt(fname);
+
+	if (!ext)
+		return;
+
+	std::string lower(ext);
+	strToLower(lower);
+
+	if (!contains(p->extensions[FileSystem::Font], lower))
+		return;
+
+	std::string filename("Fonts/");
+	filename += fname;
+
+	PHYSFS_File *handle = PHYSFS_openRead(filename.c_str());
+
+	if (!handle)
+		return;
+
+	SDL_RWops ops;
+	p->initReadOps(handle, ops, false);
+
+	d->sfs->initFontSetCB(ops, filename);
+
+	SDL_RWclose(&ops);
 }
 
-static Sint64 SDL_RWopsSeek(SDL_RWops *ops, int64_t offset, int whence)
+void FileSystem::initFontSets(SharedFontState &sfs)
 {
-	PHYSFS_File *f = sdlPHYS(ops);
+	FontSetsCBData d = { p, &sfs };
 
-	if (!f)
-		return -1;
-
-	int64_t base;
-
-	switch (whence)
-	{
-	default:
-	case RW_SEEK_SET :
-		base = 0;
-		break;
-	case RW_SEEK_CUR :
-		base = PHYSFS_tell(f);
-		break;
-	case RW_SEEK_END :
-		base = PHYSFS_fileLength(f);
-		break;
-	}
-
-	int result = PHYSFS_seek(f, base + offset);
-
-	return (result != 0) ? PHYSFS_tell(f) : -1;
+	PHYSFS_enumerateFilesCallback("Fonts", fontSetEnumCB, &d);
 }
-
-static size_t SDL_RWopsRead(SDL_RWops *ops, void *buffer, size_t size, size_t maxnum)
-{
-	PHYSFS_File *f = sdlPHYS(ops);
-
-	if (!f)
-		return 0;
-
-	PHYSFS_sint64 result = PHYSFS_readBytes(f, buffer, size*maxnum);
-
-	return (result != -1) ? (result / size) : 0;
-}
-
-static size_t SDL_RWopsWrite(SDL_RWops *ops, const void *buffer, size_t size, size_t num)
-{
-	PHYSFS_File *f = sdlPHYS(ops);
-
-	if (!f)
-		return 0;
-
-	PHYSFS_sint64 result = PHYSFS_writeBytes(f, buffer, size*num);
-
-	return (result != -1) ? (result / size) : 0;
-}
-
-static int SDL_RWopsClose(SDL_RWops *ops)
-{
-	PHYSFS_File *f = sdlPHYS(ops);
-
-	if (!f)
-		return -1;
-
-	int result = PHYSFS_close(f);
-
-	f = 0;
-
-	return (result != 0) ? 0 : -1;
-}
-
-static int SDL_RWopsCloseFree(SDL_RWops *ops)
-{
-	int result = SDL_RWopsClose(ops);
-
-	SDL_FreeRW(ops);
-
-	return result;
-}
-
-const Uint32 SDL_RWOPS_PHYSFS = SDL_RWOPS_UNKNOWN+10;
 
 void FileSystem::openRead(SDL_RWops &ops,
                           const char *filename,
@@ -822,25 +917,24 @@ void FileSystem::openRead(SDL_RWops &ops,
                           bool freeOnClose,
                           const char **foundExt)
 {
-	PHYSFS_File *handle = p->openReadInt(filename, type, foundExt);
+	PHYSFS_File *handle = p->openReadHandle(filename, type, foundExt);
 
-	ops.size  = SDL_RWopsSize;
-	ops.seek  = SDL_RWopsSeek;
-	ops.read  = SDL_RWopsRead;
-	ops.write = SDL_RWopsWrite;
+	p->initReadOps(handle, ops, freeOnClose);
+}
 
-	if (freeOnClose)
-		ops.close = SDL_RWopsCloseFree;
-	else
-		ops.close = SDL_RWopsClose;
+void FileSystem::openReadRaw(SDL_RWops &ops,
+                             const char *filename,
+                             bool freeOnClose)
+{
+	PHYSFS_File *handle = PHYSFS_openRead(filename);
+	assert(handle);
 
-	ops.type = SDL_RWOPS_PHYSFS;
-	ops.hidden.unknown.data1 = handle;
+	p->initReadOps(handle, ops, freeOnClose);
 }
 
 bool FileSystem::exists(const char *filename, FileType type)
 {
-	const char *foundName = p->completeFileName(filename, type, 0);
+	char found[512];
 
-	return (foundName != 0);
+	return p->completeFileName(filename, type, found, sizeof(found), 0);
 }

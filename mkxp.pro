@@ -44,6 +44,11 @@ RGSS2 {
 	DEFINES += RGSS2
 }
 
+# Requires RGSS2
+RGSS3 {
+	DEFINES += RGSS3
+}
+
 unix {
 	CONFIG += link_pkgconfig
 	PKGCONFIG += sigc++-2.0 glew pixman-1 zlib physfs \

@@ -88,8 +88,13 @@ static void mriBindingInit()
 
 	fileIntBindingInit();
 
+#ifdef RGSS3
+	_rb_define_module_function(rb_mKernel, "msgbox",   mriPrint);
+	_rb_define_module_function(rb_mKernel, "msgbox_p", mriP);
+#else
 	_rb_define_module_function(rb_mKernel, "print", mriPrint);
 	_rb_define_module_function(rb_mKernel, "p",     mriP);
+#endif
 
 	rb_eval_string(module_rpg);
 

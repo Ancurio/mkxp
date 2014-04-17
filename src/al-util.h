@@ -23,6 +23,7 @@
 #define ALUTIL_H
 
 #include <al.h>
+#include <alc.h>
 #include <alext.h>
 
 namespace AL

@@ -81,8 +81,8 @@ public:
 
 	void clear();
 
-	Vec4 getPixel(int x, int y) const;
-	void setPixel(int x, int y, const Vec4 &color);
+	Color getPixel(int x, int y) const;
+	void setPixel(int x, int y, const Color &color);
 
 	void hueChange(int hue);
 
@@ -105,9 +105,6 @@ public:
 	DECL_ATTR(Font, Font*)
 
 	/* <internal> */
-	/* Warning: Flushing might change the current
-	 * FBO binding (so don't call it during 'draw()' routines */
-	void flush() const;
 	TEXFBO &getGLTypes();
 	SDL_Surface *megaSurface() const;
 	void ensureNonMega() const;

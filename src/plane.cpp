@@ -93,9 +93,6 @@ struct PlanePrivate
 			updateQuadSource();
 			quadSourceDirty = false;
 		}
-
-		if (bitmap)
-			bitmap->flush();
 	}
 };
 

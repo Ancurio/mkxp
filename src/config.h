@@ -28,7 +28,6 @@
 struct Config
 {
 	bool debugMode;
-	bool screenshots;
 
 	bool winResizable;
 	bool fullscreen;
@@ -55,6 +54,8 @@ struct Config
 
 	std::string customScript;
 	std::vector<std::string> rtps;
+
+	std::vector<std::string> fontSubs;
 
 	/* Game INI contents */
 	struct {
