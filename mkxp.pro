@@ -273,3 +273,5 @@ BINDING_MRI {
 	binding-mri/module_rpg.cpp \
 	binding-mri/filesystem-binding.cpp
 }
+
+OTHER_FILES += $$EMBED
