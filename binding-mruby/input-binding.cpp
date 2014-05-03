@@ -46,6 +46,7 @@ static mrb_int getButtonArg(mrb_state *mrb, mrb_value self)
 	else
 		num = 0;
 #else
+	(void) self;
 	mrb_get_args(mrb, "i", &num);
 #endif
 
