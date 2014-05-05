@@ -253,6 +253,8 @@ struct FPSLimiter
 	/* Ticks per nanosecond */
 	const double tickFreqNS;
 
+	bool disabled;
+
 	/* Data for frame timing adjustment */
 	struct
 	{
@@ -269,7 +271,8 @@ struct FPSLimiter
 	    : lastTickCount(SDL_GetPerformanceCounter()),
 	      tickFreq(SDL_GetPerformanceFrequency()),
 	      tickFreqMS(tickFreq / 1000),
-	      tickFreqNS(tickFreq / 1000000000)
+	      tickFreqNS(tickFreq / 1000000000),
+	      disabled(false)
 	{
 		setDesiredFPS(desiredFPS);
 
@@ -285,6 +288,9 @@ struct FPSLimiter
 
 	void delay()
 	{
+		if (disabled)
+			return;
+
 		int64_t tickDelta = SDL_GetPerformanceCounter() - lastTickCount;
 		int64_t toDelay = tpf - tickDelta;
 
@@ -323,6 +329,9 @@ struct FPSLimiter
 	 * to catch up */
 	bool frameSkipRequired() const
 	{
+		if (disabled)
+			return false;
+
 		return adj.idealDiff > tpf;
 	}
 
@@ -516,6 +525,8 @@ Graphics::Graphics(RGSSThreadData *data)
 
 	if (data->config.fixedFramerate > 0)
 		p->fpsLimiter.setDesiredFPS(data->config.fixedFramerate);
+	else if (data->config.fixedFramerate < 0)
+		p->fpsLimiter.disabled = true;
 }
 
 Graphics::~Graphics()
