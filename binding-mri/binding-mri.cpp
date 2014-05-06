@@ -70,6 +70,8 @@ RB_METHOD(mriP);
 RB_METHOD(mriDataDirectory);
 RB_METHOD(mkxpPuts);
 
+RB_METHOD(_kernelCaller);
+
 static void mriBindingInit()
 {
 	tableBindingInit();
@@ -101,6 +103,9 @@ static void mriBindingInit()
 	VALUE mod = rb_define_module("System");
 	_rb_define_module_function(mod, "data_directory", mriDataDirectory);
 	_rb_define_module_function(mod, "puts", mkxpPuts);
+
+	rb_define_alias(rb_singleton_class(rb_mKernel), "_mkxp_kernel_caller_alias", "caller");
+	_rb_define_module_function(rb_mKernel, "caller", _kernelCaller);
 
 	rb_define_global_const("MKXP", Qtrue);
 }
@@ -174,6 +179,38 @@ RB_METHOD(mriDataDirectory)
 	SDL_free(path);
 
 	return pathStr;
+}
+
+RB_METHOD(_kernelCaller)
+{
+	RB_UNUSED_PARAM;
+
+	VALUE trace = rb_funcall2(rb_mKernel, rb_intern("_mkxp_kernel_caller_alias"), 0, 0);
+
+	if (rb_type(trace) != RUBY_T_ARRAY)
+		return trace;
+
+	long len = RARRAY_LEN(trace);
+
+	if (len < 2)
+		return trace;
+
+	/* Remove useless "ruby:1:in 'eval'" */
+	rb_ary_pop(trace);
+
+	/* Also remove trace of this helper function */
+	rb_ary_shift(trace);
+
+	len -= 2;
+
+	if (len == 0)
+		return trace;
+
+	/* RMXP does this, not sure if specific or 1.8 related */
+	VALUE args[] = { rb_str_new_cstr(":in `<main>'"), rb_str_new_cstr("") };
+	rb_funcallv(rb_ary_entry(trace, len-1), rb_intern("gsub!"), 2, args);
+
+	return trace;
 }
 
 static VALUE newStringUTF8(const char *string, long length)
