@@ -104,8 +104,10 @@ static void mriBindingInit()
 	_rb_define_module_function(mod, "data_directory", mriDataDirectory);
 	_rb_define_module_function(mod, "puts", mkxpPuts);
 
+#ifndef RGSS3
 	rb_define_alias(rb_singleton_class(rb_mKernel), "_mkxp_kernel_caller_alias", "caller");
 	_rb_define_module_function(rb_mKernel, "caller", _kernelCaller);
+#endif
 
 	rb_define_global_const("MKXP", Qtrue);
 }
@@ -181,6 +183,8 @@ RB_METHOD(mriDataDirectory)
 	return pathStr;
 }
 
+#ifndef RGSS3
+
 RB_METHOD(_kernelCaller)
 {
 	RB_UNUSED_PARAM;
@@ -212,6 +216,8 @@ RB_METHOD(_kernelCaller)
 
 	return trace;
 }
+
+#endif
 
 static VALUE newStringUTF8(const char *string, long length)
 {
