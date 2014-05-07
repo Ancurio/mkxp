@@ -106,7 +106,7 @@ protected:
 	// FIXME: This should be a signal
 	virtual void onGeometryChange(const Scene::Geometry &) {}
 
-	/* Compares to elements in terms of their display priority;
+	/* Compares two elements in terms of their display priority;
 	 * elements with lower priority are drawn earlier */
 	bool operator<(const SceneElement &o) const;
 

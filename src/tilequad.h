@@ -37,26 +37,26 @@ namespace TileQuads
 {
 	/* Calculate needed quad counts */
 	int oneDimCount(int tileDimension,
-					int destDimension);
+	                int destDimension);
 	int twoDimCount(int tileW, int tileH,
-					int destW, int destH);
+	                int destW, int destH);
 
 	/* Build tiling quads */
 	int buildH(const IntRect &sourceRect,
-				int width, int x, int y,
-				Vertex *verts);
+	           int width, int x, int y,
+	           Vertex *verts);
 
 	int buildV(const IntRect &sourceRect,
-			   int height, int ox, int oy,
-			   Vertex *verts);
+	           int height, int ox, int oy,
+	           Vertex *verts);
 
 	int build(const IntRect &sourceRect,
-			  const IntRect &destRect,
-			  Vertex *verts);
+	          const IntRect &destRect,
+	          Vertex *verts);
 
 	/* Build a quad "frame" (see Window cursor_rect) */
 	int buildFrame(const IntRect &rect,
-				   Vertex vert[36]);
+	               Vertex vert[36]);
 
 	int buildFrameSource(const IntRect &rect,
 	                     Vertex vert[36]);
