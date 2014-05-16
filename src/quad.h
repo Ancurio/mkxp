@@ -112,6 +112,8 @@ struct Quad
 		VBO::bind(vbo);
 		shState->bindQuadIBO();
 
+		VBO::allocEmpty(sizeof(Vertex[4]), GL_DYNAMIC_DRAW);
+
 		glEnableVertexAttribArray(Shader::Color);
 		glEnableVertexAttribArray(Shader::Position);
 		glEnableVertexAttribArray(Shader::TexCoord);
@@ -136,8 +138,8 @@ struct Quad
 	void updateBuffer()
 	{
 		VBO::bind(vbo);
-		VBO::allocEmpty(sizeof(Vertex) * 4, GL_DYNAMIC_DRAW);
-		VBO::uploadData(sizeof(Vertex) * 4, vert, GL_DYNAMIC_DRAW);
+		VBO::uploadSubData(0, sizeof(Vertex[4]), vert);
+		VBO::unbind();
 	}
 
 	void setPosRect(const FloatRect &r)
