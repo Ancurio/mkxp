@@ -664,9 +664,9 @@ struct FileSystemPrivate
 	/* Complete filename via path cache */
 	bool completeFilenamePC(const char *filename,
 	                        FileSystem::FileType type,
-                            char *outBuffer,
-                            size_t outN,
-                            const char **foundExt)
+	                        char *outBuffer,
+	                        size_t outN,
+	                        const char **foundExt)
 	{
 		size_t i;
 		char lowCase[512];
@@ -718,9 +718,9 @@ struct FileSystemPrivate
 	 * returns false, and 'foundExt' is untouched */
 	bool completeFileName(const char *filename,
 	                      FileSystem::FileType type,
-                          char *outBuffer,
-                          size_t outN,
-                          const char **foundExt)
+	                      char *outBuffer,
+	                      size_t outN,
+	                      const char **foundExt)
 	{
 		if (havePathCache)
 			return completeFilenamePC(filename, type, outBuffer, outN, foundExt);

@@ -106,6 +106,7 @@
 #
 # pathCache=true
 
+
 # Add 'rtp1', 'rtp2.zip' and 'game.rgssad' to the
 # asset search path (multiple allowed)
 # (default: none)
