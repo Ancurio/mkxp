@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 /* A cheap replacement for qDebug() */
 
@@ -40,6 +41,15 @@ public:
 	{
 		buf << t;
 		buf << " ";
+
+		return *this;
+	}
+
+	template<typename T>
+	Debug &operator<<(const std::vector<T> &v)
+	{
+		for (size_t i = 0; i < v.size(); ++i)
+			buf << v[i] << " ";
 
 		return *this;
 	}
