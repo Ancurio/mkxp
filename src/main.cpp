@@ -100,7 +100,7 @@ setupOptionalGLExtensions(RGSSThreadData* threadData)
 	{
 		if (!GLEW_APPLE_vertex_array_object)
 		{
-			rgssThreadError(threadData, "GL extensions \"GL_ARB_vertex_array_object\" or compatible extensiosn GL_APPLE_vertex_array_object are not present");
+			rgssThreadError(threadData, "GL extensions \"GL_ARB_vertex_array_object\" or compatible extensions GL_APPLE_vertex_array_object are not present");
 			return false;
 		}
 		else
