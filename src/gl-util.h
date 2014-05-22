@@ -209,8 +209,8 @@ namespace FBO
 	}
 
 	inline void blit(int srcX, int srcY,
-					 int dstX, int dstY,
-					 int srcW, int srcH,
+	                 int dstX, int dstY,
+	                 int srcW, int srcH,
 	                 BlitMode mode = Nearest)
 	{
 		blit(srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH, mode);
