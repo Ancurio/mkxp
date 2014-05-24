@@ -125,7 +125,7 @@ struct JsAxisBinding : public Binding
 
 	JsAxisBinding(int *source,
 	              int compareValue,
-                  Input::ButtonCode target)
+	              Input::ButtonCode target)
 	    : Binding(target),
 	      source(source),
 	      compareValue(compareValue)
