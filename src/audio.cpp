@@ -65,9 +65,6 @@ static uint8_t formatSampleSize(int sdlFormat)
 	case AUDIO_S16MSB :
 		return 2;
 
-	case AUDIO_F32 :
-		return 4;
-
 	default:
 		Debug() << "Unhandled sample format";
 		abort();
@@ -92,13 +89,6 @@ static ALenum chooseALFormat(int sampleSize, int channelCount)
 		{
 		case 1 : return AL_FORMAT_MONO16;
 		case 2 : return AL_FORMAT_STEREO16;
-		default : abort();
-		}
-	case 4 :
-		switch (channelCount)
-		{
-		case 1 : return AL_FORMAT_MONO_FLOAT32;
-		case 2 : return AL_FORMAT_STEREO_FLOAT32;
 		default : abort();
 		}
 	default : abort();
