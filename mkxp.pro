@@ -5,7 +5,6 @@ QT =
 TARGET = mkxp
 DEPENDPATH += src shader assets
 INCLUDEPATH += . src
-LIBS += -lGL
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
