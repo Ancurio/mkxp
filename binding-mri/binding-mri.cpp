@@ -212,7 +212,7 @@ RB_METHOD(_kernelCaller)
 
 	/* RMXP does this, not sure if specific or 1.8 related */
 	VALUE args[] = { rb_str_new_cstr(":in `<main>'"), rb_str_new_cstr("") };
-	rb_funcallv(rb_ary_entry(trace, len-1), rb_intern("gsub!"), 2, args);
+	rb_funcall2(rb_ary_entry(trace, len-1), rb_intern("gsub!"), 2, args);
 
 	return trace;
 }
