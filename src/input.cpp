@@ -31,7 +31,7 @@
 #include <vector>
 #include <string.h>
 
-const int Input::buttonCodeSize = 24;
+#define BUTTON_CODE_COUNT 24
 
 struct ButtonState
 {
@@ -285,7 +285,7 @@ struct InputPrivate
 	/* Collective binding array */
 	std::vector<Binding*> bindings;
 
-	ButtonState stateArray[Input::buttonCodeSize*2];
+	ButtonState stateArray[BUTTON_CODE_COUNT*2];
 
 	ButtonState *states;
 	ButtonState *statesOld;
@@ -312,7 +312,7 @@ struct InputPrivate
 		initMsBindings();
 
 		states    = stateArray;
-		statesOld = stateArray + Input::buttonCodeSize;
+		statesOld = stateArray + BUTTON_CODE_COUNT;
 
 		/* Clear buffers */
 		clearBuffer();
@@ -359,7 +359,7 @@ struct InputPrivate
 
 	void clearBuffer()
 	{
-		const size_t size = sizeof(ButtonState) * Input::buttonCodeSize;
+		const size_t size = sizeof(ButtonState) * BUTTON_CODE_COUNT;
 		memset(states, 0, size);
 	}
 
