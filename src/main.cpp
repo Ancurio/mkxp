@@ -19,7 +19,6 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <glew.h>
 #include <alc.h>
 
 #include <SDL.h>
@@ -34,6 +33,7 @@
 #include "debuglogger.h"
 #include "debugwriter.h"
 #include "exception.h"
+#include "gl-fun.h"
 
 #include "binding.h"
 
@@ -50,7 +50,7 @@ rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
 static inline const char*
 glGetStringInt(GLenum name)
 {
-	return (const char*) glGetString(name);
+	return (const char*) gl.GetString(name);
 }
 
 static void
@@ -60,60 +60,6 @@ printGLInfo()
 	Debug() << "GL Renderer  :" << glGetStringInt(GL_RENDERER);
 	Debug() << "GL Version   :" << glGetStringInt(GL_VERSION);
 	Debug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
-}
-
-static bool
-setupOptionalGLExtensions(RGSSThreadData* threadData)
-{
-	if (!GLEW_ARB_framebuffer_object)
-	{
-		if (!GLEW_EXT_framebuffer_object && !GLEW_EXT_framebuffer_blit)
-		{
-			rgssThreadError(threadData, "GL extensions \"GL_ARB_framebuffer_object\" or compatible extensiosns GL_EXT_framebuffer_object and GL_EXT_framebuffer_blit are not present");
-			return false;
-		}
-		else
-		{
-			/* setup compat */
-			/* From EXT_framebuffer_object */
-			glGenRenderbuffers        = glGenRenderbuffersEXT;
-			glDeleteRenderbuffers     = glDeleteRenderbuffersEXT;
-			glBindRenderbuffer        = glBindRenderbufferEXT;
-			glRenderbufferStorage     = glRenderbufferStorageEXT;
-
-			glGenFramebuffers         = glGenFramebuffersEXT;
-			glDeleteFramebuffers      = glDeleteFramebuffersEXT;
-			glBindFramebuffer         = glBindFramebufferEXT;
-			glFramebufferTexture2D    = glFramebufferTexture2DEXT;
-			glFramebufferRenderbuffer = glFramebufferRenderbufferEXT;
-
-			/* From EXT_framebuffer_blit */
-			glBlitFramebuffer         = glBlitFramebufferEXT;
-		}
-	}
-	if (!GLEW_ARB_timer_query && GLEW_EXT_timer_query)
-	{
-		glGetQueryObjecti64v  = glGetQueryObjecti64vEXT;
-		glGetQueryObjectui64v = glGetQueryObjectui64vEXT;
-	}
-	if (!GLEW_ARB_vertex_array_object )
-	{
-		if (!GLEW_APPLE_vertex_array_object)
-		{
-			rgssThreadError(threadData, "GL extensions \"GL_ARB_vertex_array_object\" or compatible extensions GL_APPLE_vertex_array_object are not present");
-			return false;
-		}
-		else
-		{
-			/* setup compat */
-			glBindVertexArray    = glBindVertexArrayAPPLE;
-			/* the cast is because apple's uses const GLuint* and ARB doesn't */
-			glGenVertexArrays    = (PFNGLGENVERTEXARRAYSPROC)glGenVertexArraysAPPLE;
-			glDeleteVertexArrays = glDeleteVertexArraysAPPLE;
-		}
-	}
-
-	return true;
 }
 
 int rgssThreadFun(void *userdata)
@@ -136,35 +82,23 @@ int rgssThreadFun(void *userdata)
 		return 0;
 	}
 
-	if (glewInit() != GLEW_OK)
+	try
 	{
-		rgssThreadError(threadData, "Error initializing glew");
+		initGLFunctions();
+	}
+	catch (const Exception &exc)
+	{
+		rgssThreadError(threadData, exc.msg);
 		SDL_GL_DeleteContext(glCtx);
 
 		return 0;
 	}
 
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
+	gl.ClearColor(0, 0, 0, 1);
+	gl.Clear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapWindow(win);
 
 	printGLInfo();
-
-	/* Check for required GL version */
-	if (!GLEW_VERSION_2_0)
-	{
-		rgssThreadError(threadData, "At least OpenGL 2.0 is required");
-		SDL_GL_DeleteContext(glCtx);
-
-		return 0;
-	}
-
-	/* Setup optional GL extensions */
-	if (!setupOptionalGLExtensions(threadData))
-	{
-		SDL_GL_DeleteContext(glCtx);
-		return 0;
-	}
 
 	SDL_GL_SetSwapInterval(threadData->config.vsync ? 1 : 0);
 

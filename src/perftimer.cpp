@@ -1,8 +1,8 @@
 #include "perftimer.h"
 
 #include <SDL_timer.h>
-#include <glew.h>
 
+#include "gl-fun.h"
 #include "debugwriter.h"
 
 struct TimerQuery
@@ -14,7 +14,7 @@ struct TimerQuery
 	TimerQuery()
 	    : thisQueryActive(false)
 	{
-		glGenQueries(1, &query);
+		gl.GenQueries(1, &query);
 	}
 
 	void begin()
@@ -25,7 +25,7 @@ struct TimerQuery
 		if (thisQueryActive)
 			return;
 
-		glBeginQuery(GL_TIME_ELAPSED, query);
+		gl.BeginQuery(GL_TIME_ELAPSED, query);
 		queryActive = true;
 		thisQueryActive = true;
 	}
@@ -35,7 +35,7 @@ struct TimerQuery
 		if (!thisQueryActive)
 			return;
 
-		glEndQuery(GL_TIME_ELAPSED);
+		gl.EndQuery(GL_TIME_ELAPSED);
 		queryActive = false;
 		thisQueryActive = false;
 	}
@@ -46,14 +46,14 @@ struct TimerQuery
 			return false;
 
 		GLint isReady = GL_FALSE;
-		glGetQueryObjectiv(query, GL_QUERY_RESULT_AVAILABLE, &isReady);
+		gl.GetQueryObjectiv(query, GL_QUERY_RESULT_AVAILABLE, &isReady);
 
 		if (isReady != GL_TRUE)
 			return false;
 
-		glGetQueryObjectui64v(query, GL_QUERY_RESULT, result);
+		gl.GetQueryObjectui64v(query, GL_QUERY_RESULT, result);
 
-		if (glGetError() == GL_INVALID_OPERATION)
+		if (gl.GetError() == GL_INVALID_OPERATION)
 			return false;
 
 		return true;
@@ -68,9 +68,9 @@ struct TimerQuery
 		GLint isReady = GL_FALSE;
 
 		while (isReady == GL_FALSE)
-			glGetQueryObjectiv(query, GL_QUERY_RESULT_AVAILABLE, &isReady);
+			gl.GetQueryObjectiv(query, GL_QUERY_RESULT_AVAILABLE, &isReady);
 
-		glGetQueryObjectui64v(query, GL_QUERY_RESULT, &result);
+		gl.GetQueryObjectui64v(query, GL_QUERY_RESULT, &result);
 
 		return result;
 	}
@@ -80,7 +80,7 @@ struct TimerQuery
 		if (thisQueryActive)
 			end();
 
-		glDeleteQueries(1, &query);
+		gl.DeleteQueries(1, &query);
 	}
 };
 
@@ -193,7 +193,7 @@ PerfTimer *createCPUTimer(int iter)
 
 PerfTimer *createGPUTimer(int iter)
 {
-	if (GLEW_ARB_timer_query || GLEW_EXT_timer_query)
+	if (gl.timerQuery)
 	{
 		return new GPUTimerGLQuery(iter);
 	}

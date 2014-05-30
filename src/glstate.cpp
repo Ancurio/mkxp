@@ -22,19 +22,18 @@
 #include "glstate.h"
 #include "shader.h"
 #include "etc.h"
-
-#include <glew.h>
+#include "gl-fun.h"
 
 #include <SDL_rect.h>
 
 void GLClearColor::apply(const Vec4 &value)
 {
-	glClearColor(value.x, value.y, value.z, value.w);
+	gl.ClearColor(value.x, value.y, value.z, value.w);
 }
 
 void GLScissorBox::apply(const IntRect &value)
 {
-	glScissor(value.x, value.y, value.w, value.h);
+	gl.Scissor(value.x, value.y, value.w, value.h);
 }
 
 void GLScissorBox::setIntersect(const IntRect &value)
@@ -53,7 +52,7 @@ void GLScissorBox::setIntersect(const IntRect &value)
 
 void GLScissorTest::apply(const bool &value)
 {
-	value ? glEnable(GL_SCISSOR_TEST) : glDisable(GL_SCISSOR_TEST);
+	value ? gl.Enable(GL_SCISSOR_TEST) : gl.Disable(GL_SCISSOR_TEST);
 }
 
 void GLBlendMode::apply(const BlendType &value)
@@ -61,50 +60,50 @@ void GLBlendMode::apply(const BlendType &value)
 	switch (value)
 	{
 	case BlendNone :
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ZERO);
+		gl.BlendEquation(GL_FUNC_ADD);
+		gl.BlendFunc(GL_ONE, GL_ZERO);
 		break;
 
 	case BlendNormal :
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
-		                    GL_ONE,       GL_ONE_MINUS_SRC_ALPHA);
+		gl.BlendEquation(GL_FUNC_ADD);
+		gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+		                     GL_ONE,       GL_ONE_MINUS_SRC_ALPHA);
 		break;
 
 	case BlendAddition :
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE,
-		                    GL_ONE,       GL_ONE);
+		gl.BlendEquation(GL_FUNC_ADD);
+		gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE,
+		                     GL_ONE,       GL_ONE);
 		break;
 
 	case BlendSubstraction :
 		// FIXME Alpha calculation is untested
-		glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE,
-		                    GL_ONE,       GL_ONE);
+		gl.BlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+		gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE,
+		                     GL_ONE,       GL_ONE);
 		break;
 	}
 }
 
 void GLViewport::apply(const IntRect &value)
 {
-	glViewport(value.x, value.y, value.w, value.h);
+	gl.Viewport(value.x, value.y, value.w, value.h);
 }
 
 void GLProgram::apply(const unsigned int &value)
 {
-	glUseProgram(value);
+	gl.UseProgram(value);
 }
 
 GLState::Caps::Caps()
 {
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+	gl.GetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
 }
 
 GLState::GLState()
 {
-	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
+	gl.Enable(GL_BLEND);
+	gl.Disable(GL_DEPTH_TEST);
 
 	clearColor.init(Vec4(0, 0, 0, 1));
 	blendMode.init(BlendNormal);

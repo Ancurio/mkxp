@@ -24,8 +24,6 @@
 #include "glstate.h"
 #include "exception.h"
 
-#include <glew.h>
-
 #include <assert.h>
 #include <iostream>
 
@@ -57,15 +55,15 @@
 	#vert, #frag, #name); \
 }
 
-#define GET_U(name) u_##name = glGetUniformLocation(program, #name)
+#define GET_U(name) u_##name = gl.GetUniformLocation(program, #name)
 
 static void printShaderLog(GLuint shader)
 {
 	GLint logLength;
-	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+	gl.GetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
 
 	std::string log(logLength, '\0');
-	glGetShaderInfoLog(shader, log.size(), 0, &log[0]);
+	gl.GetShaderInfoLog(shader, log.size(), 0, &log[0]);
 
 	std::clog << "Shader log:\n" << log;
 }
@@ -73,28 +71,28 @@ static void printShaderLog(GLuint shader)
 static void printProgramLog(GLuint program)
 {
 	GLint logLength;
-	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+	gl.GetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
 
 	std::string log(logLength, '\0');
-	glGetProgramInfoLog(program, log.size(), 0, &log[0]);
+	gl.GetProgramInfoLog(program, log.size(), 0, &log[0]);
 
 	std::clog << "Program log:\n" << log;
 }
 
 Shader::Shader()
 {
-	vertShader = glCreateShader(GL_VERTEX_SHADER);
-	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+	vertShader = gl.CreateShader(GL_VERTEX_SHADER);
+	fragShader = gl.CreateShader(GL_FRAGMENT_SHADER);
 
-	program = glCreateProgram();
+	program = gl.CreateProgram();
 }
 
 Shader::~Shader()
 {
-	glUseProgram(0);
-	glDeleteProgram(program);
-	glDeleteShader(vertShader);
-	glDeleteShader(fragShader);
+	gl.UseProgram(0);
+	gl.DeleteProgram(program);
+	gl.DeleteShader(vertShader);
+	gl.DeleteShader(fragShader);
 }
 
 void Shader::bind()
@@ -104,7 +102,7 @@ void Shader::bind()
 
 void Shader::unbind()
 {
-	glActiveTexture(GL_TEXTURE0);
+	gl.ActiveTexture(GL_TEXTURE0);
 	glState.program.set(0);
 }
 
@@ -116,10 +114,10 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	GLint success;
 
 	/* Compile vertex shader */
-	glShaderSource(vertShader, 1, (const GLchar**) &vert, (const GLint*) &vertSize);
-	glCompileShader(vertShader);
+	gl.ShaderSource(vertShader, 1, (const GLchar**) &vert, (const GLint*) &vertSize);
+	gl.CompileShader(vertShader);
 
-	glGetObjectParameterivARB(vertShader, GL_COMPILE_STATUS, &success);
+	gl.GetObjectParameterivARB(vertShader, GL_COMPILE_STATUS, &success);
 
 	if (!success)
 	{
@@ -130,10 +128,10 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	}
 
 	/* Compile fragment shader */
-	glShaderSource(fragShader, 1, (const GLchar**) &frag, (const GLint*) &fragSize);
-	glCompileShader(fragShader);
+	gl.ShaderSource(fragShader, 1, (const GLchar**) &frag, (const GLint*) &fragSize);
+	gl.CompileShader(fragShader);
 
-	glGetObjectParameterivARB(fragShader, GL_COMPILE_STATUS, &success);
+	gl.GetObjectParameterivARB(fragShader, GL_COMPILE_STATUS, &success);
 
 	if (!success)
 	{
@@ -144,16 +142,16 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	}
 
 	/* Link shader program */
-	glAttachShader(program, vertShader);
-	glAttachShader(program, fragShader);
+	gl.AttachShader(program, vertShader);
+	gl.AttachShader(program, fragShader);
 
-	glBindAttribLocation(program, Position, "position");
-	glBindAttribLocation(program, TexCoord, "texCoord");
-	glBindAttribLocation(program, Color, "color");
+	gl.BindAttribLocation(program, Position, "position");
+	gl.BindAttribLocation(program, TexCoord, "texCoord");
+	gl.BindAttribLocation(program, Color, "color");
 
-	glLinkProgram(program);
+	gl.LinkProgram(program);
 
-	glGetObjectParameterivARB(program, GL_LINK_STATUS, &success);
+	gl.GetObjectParameterivARB(program, GL_LINK_STATUS, &success);
 
 	if (!success)
 	{
@@ -178,17 +176,17 @@ void Shader::initFromFile(const char *_vertFile, const char *_fragFile,
 
 void Shader::setVec4Uniform(GLint location, const Vec4 &vec)
 {
-	glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
+	gl.Uniform4f(location, vec.x, vec.y, vec.z, vec.w);
 }
 
 void Shader::setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture)
 {
 	GLenum texUnit = GL_TEXTURE0 + unitIndex;
 
-	glActiveTexture(texUnit);
-	glBindTexture(GL_TEXTURE_2D, texture.gl);
-	glUniform1i(location, unitIndex);
-	glActiveTexture(GL_TEXTURE0);
+	gl.ActiveTexture(texUnit);
+	gl.BindTexture(GL_TEXTURE_2D, texture.gl);
+	gl.Uniform1i(location, unitIndex);
+	gl.ActiveTexture(GL_TEXTURE0);
 }
 
 void ShaderBase::GLProjMat::apply(const Vec2i &value)
@@ -206,7 +204,7 @@ void ShaderBase::GLProjMat::apply(const Vec2i &value)
 		-1, -1, -1,  1
 	};
 
-	glUniformMatrix4fv(u_mat, 1, GL_FALSE, mat);
+	gl.UniformMatrix4fv(u_mat, 1, GL_FALSE, mat);
 }
 
 void ShaderBase::init()
@@ -214,7 +212,7 @@ void ShaderBase::init()
 	GET_U(texSizeInv);
 	GET_U(translation);
 
-	projMat.u_mat = glGetUniformLocation(program, "projMat");
+	projMat.u_mat = gl.GetUniformLocation(program, "projMat");
 }
 
 void ShaderBase::applyViewportProj()
@@ -225,12 +223,12 @@ void ShaderBase::applyViewportProj()
 
 void ShaderBase::setTexSize(const Vec2i &value)
 {
-	glUniform2f(u_texSizeInv, 1.f / value.x, 1.f / value.y);
+	gl.Uniform2f(u_texSizeInv, 1.f / value.x, 1.f / value.y);
 }
 
 void ShaderBase::setTranslation(const Vec2i &value)
 {
-	glUniform2f(u_translation, value.x, value.y);
+	gl.Uniform2f(u_translation, value.x, value.y);
 }
 
 
@@ -245,7 +243,7 @@ SimpleShader::SimpleShader()
 
 void SimpleShader::setTexOffsetX(int value)
 {
-	glUniform1f(u_texOffsetX, value);
+	gl.Uniform1f(u_texOffsetX, value);
 }
 
 
@@ -276,7 +274,7 @@ SimpleSpriteShader::SimpleSpriteShader()
 
 void SimpleSpriteShader::setSpriteMat(const float value[16])
 {
-	glUniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
+	gl.UniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
 }
 
 
@@ -310,12 +308,12 @@ void TransShader::setTransMap(TEX::ID tex)
 
 void TransShader::setProg(float value)
 {
-	glUniform1f(u_prog, value);
+	gl.Uniform1f(u_prog, value);
 }
 
 void TransShader::setVague(float value)
 {
-	glUniform1f(u_vague, value);
+	gl.Uniform1f(u_vague, value);
 }
 
 
@@ -342,7 +340,7 @@ void SimpleTransShader::setFrozenScene(TEX::ID tex)
 
 void SimpleTransShader::setProg(float value)
 {
-	glUniform1f(u_prog, value);
+	gl.Uniform1f(u_prog, value);
 }
 
 
@@ -362,7 +360,7 @@ SpriteShader::SpriteShader()
 
 void SpriteShader::setSpriteMat(const float value[16])
 {
-	glUniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
+	gl.UniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
 }
 
 void SpriteShader::setTone(const Vec4 &tone)
@@ -377,17 +375,17 @@ void SpriteShader::setColor(const Vec4 &color)
 
 void SpriteShader::setOpacity(float value)
 {
-	glUniform1f(u_opacity, value);
+	gl.Uniform1f(u_opacity, value);
 }
 
 void SpriteShader::setBushDepth(float value)
 {
-	glUniform1f(u_bushDepth, value);
+	gl.Uniform1f(u_bushDepth, value);
 }
 
 void SpriteShader::setBushOpacity(float value)
 {
-	glUniform1f(u_bushOpacity, value);
+	gl.Uniform1f(u_bushOpacity, value);
 }
 
 
@@ -420,7 +418,7 @@ void PlaneShader::setFlash(const Vec4 &flash)
 
 void PlaneShader::setOpacity(float value)
 {
-	glUniform1f(u_opacity, value);
+	gl.Uniform1f(u_opacity, value);
 }
 
 
@@ -435,7 +433,7 @@ FlashMapShader::FlashMapShader()
 
 void FlashMapShader::setAlpha(float value)
 {
-	glUniform1f(u_alpha, value);
+	gl.Uniform1f(u_alpha, value);
 }
 
 
@@ -451,7 +449,7 @@ HueShader::HueShader()
 
 void HueShader::setHueAdjust(float value)
 {
-	glUniform1f(u_hueAdjust, value);
+	gl.Uniform1f(u_hueAdjust, value);
 }
 
 void HueShader::setInputTexture(TEX::ID tex)
@@ -473,7 +471,7 @@ SimpleMatrixShader::SimpleMatrixShader()
 
 void SimpleMatrixShader::setMatrix(const float value[16])
 {
-	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, value);
+	gl.UniformMatrix4fv(u_matrix, 1, GL_FALSE, value);
 }
 
 
@@ -508,7 +506,7 @@ BltShader::BltShader()
 
 void BltShader::setSource()
 {
-	glUniform1i(u_source, 0);
+	gl.Uniform1i(u_source, 0);
 }
 
 void BltShader::setDestination(const TEX::ID value)
@@ -518,10 +516,10 @@ void BltShader::setDestination(const TEX::ID value)
 
 void BltShader::setSubRect(const FloatRect &value)
 {
-	glUniform4f(u_subRect, value.x, value.y, value.w, value.h);
+	gl.Uniform4f(u_subRect, value.x, value.y, value.w, value.h);
 }
 
 void BltShader::setOpacity(float value)
 {
-	glUniform1f(u_opacity, value);
+	gl.Uniform1f(u_opacity, value);
 }

@@ -22,8 +22,7 @@
 #ifndef GLUTIL_H
 #define GLUTIL_H
 
-#include <glew.h>
-
+#include "gl-fun.h"
 #include "etc-internal.h"
 
 /* Struct wrapping GLuint for some light type safety */
@@ -53,19 +52,19 @@ namespace TEX
 	inline ID gen()
 	{
 		ID id;
-		glGenTextures(1, &id.gl);
+		gl.GenTextures(1, &id.gl);
 
 		return id;
 	}
 
 	inline void del(ID id)
 	{
-		glDeleteTextures(1, &id.gl);
+		gl.DeleteTextures(1, &id.gl);
 	}
 
 	inline void bind(ID id)
 	{
-		glBindTexture(GL_TEXTURE_2D, id.gl);
+		gl.BindTexture(GL_TEXTURE_2D, id.gl);
 	}
 
 	inline void unbind()
@@ -75,29 +74,29 @@ namespace TEX
 
 	inline void uploadImage(GLsizei width, GLsizei height, const void *data, GLenum format)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		gl.TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 	}
 
 	inline void uploadSubImage(GLint x, GLint y, GLsizei width, GLsizei height, const void *data, GLenum format)
 	{
-		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, format, GL_UNSIGNED_BYTE, data);
+		gl.TexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, format, GL_UNSIGNED_BYTE, data);
 	}
 
 	inline void allocEmpty(GLsizei width, GLsizei height)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		gl.TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	}
 
 	inline void setRepeat(bool mode)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+		gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+		gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 	}
 
 	inline void setSmooth(bool mode)
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode ? GL_LINEAR : GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode ? GL_LINEAR : GL_NEAREST);
+		gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode ? GL_LINEAR : GL_NEAREST);
+		gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode ? GL_LINEAR : GL_NEAREST);
 	}
 }
 
@@ -109,19 +108,19 @@ namespace RBO
 	inline ID gen()
 	{
 		ID id;
-		glGenRenderbuffers(1, &id.gl);
+		gl.GenRenderbuffers(1, &id.gl);
 
 		return id;
 	}
 
 	inline void del(ID id)
 	{
-		glDeleteRenderbuffers(1, &id.gl);
+		gl.DeleteRenderbuffers(1, &id.gl);
 	}
 
 	inline void bind(ID id)
 	{
-		glBindRenderbuffer(GL_RENDERBUFFER, id.gl);
+		gl.BindRenderbuffer(GL_RENDERBUFFER, id.gl);
 	}
 
 	inline void unbind()
@@ -131,7 +130,7 @@ namespace RBO
 
 	inline void allocEmpty(GLsizei width, GLsizei height)
 	{
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+		gl.RenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
 	}
 }
 
@@ -155,14 +154,14 @@ namespace FBO
 	inline ID gen()
 	{
 		ID id;
-		glGenFramebuffers(1, &id.gl);
+		gl.GenFramebuffers(1, &id.gl);
 
 		return id;
 	}
 
 	inline void del(ID id)
 	{
-		glDeleteFramebuffers(1, &id.gl);
+		gl.DeleteFramebuffers(1, &id.gl);
 	}
 
 	inline void bind(ID id, Mode mode)
@@ -173,7 +172,7 @@ namespace FBO
 			GL_READ_FRAMEBUFFER
 		};
 
-		glBindFramebuffer(modes[mode], id.gl);
+		gl.BindFramebuffer(modes[mode], id.gl);
 	}
 
 	inline void unbind(Mode mode)
@@ -183,12 +182,12 @@ namespace FBO
 
 	inline void setTarget(TEX::ID target, unsigned colorAttach = 0)
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
+		gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
 	}
 
 	inline void setTarget(RBO::ID target, unsigned colorAttach = 0)
 	{
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, target.gl);
+		gl.FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, target.gl);
 	}
 
 	inline void blit(int srcX, int srcY,
@@ -203,9 +202,9 @@ namespace FBO
 			GL_LINEAR
 		};
 
-		glBlitFramebuffer(srcX, srcY, srcX+srcW, srcY+srcH,
-		                  dstX, dstY, dstX+dstW, dstY+dstH,
-		                  GL_COLOR_BUFFER_BIT, modes[mode]);
+		gl.BlitFramebuffer(srcX, srcY, srcX+srcW, srcY+srcH,
+		                   dstX, dstY, dstX+dstW, dstY+dstH,
+		                   GL_COLOR_BUFFER_BIT, modes[mode]);
 	}
 
 	inline void blit(int srcX, int srcY,
@@ -218,7 +217,7 @@ namespace FBO
 
 	inline void clear()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		gl.Clear(GL_COLOR_BUFFER_BIT);
 	}
 }
 
@@ -230,19 +229,19 @@ namespace VAO
 	inline ID gen()
 	{
 		ID id;
-		glGenVertexArrays(1, &id.gl);
+		gl.GenVertexArrays(1, &id.gl);
 
 		return id;
 	}
 
 	inline void del(ID id)
 	{
-		glDeleteVertexArrays(1, &id.gl);
+		gl.DeleteVertexArrays(1, &id.gl);
 	}
 
 	inline void bind(ID id)
 	{
-		glBindVertexArray(id.gl);
+		gl.BindVertexArray(id.gl);
 	}
 
 	inline void unbind()
@@ -259,19 +258,19 @@ struct GenericBO
 	inline static ID gen()
 	{
 		ID id;
-		glGenBuffers(1, &id.gl);
+		gl.GenBuffers(1, &id.gl);
 
 		return id;
 	}
 
 	inline static void del(ID id)
 	{
-		glDeleteBuffers(1, &id.gl);
+		gl.DeleteBuffers(1, &id.gl);
 	}
 
 	inline static void bind(ID id)
 	{
-		glBindBuffer(target, id.gl);
+		gl.BindBuffer(target, id.gl);
 	}
 
 	inline static void unbind()
@@ -281,12 +280,12 @@ struct GenericBO
 
 	inline static void uploadData(GLsizeiptr size, const GLvoid *data, GLenum usage = GL_STATIC_DRAW)
 	{
-		glBufferData(target, size, data, usage);
+		gl.BufferData(target, size, data, usage);
 	}
 
 	inline static void uploadSubData(GLintptr offset, GLsizeiptr size, const GLvoid *data)
 	{
-		glBufferSubData(target, offset, size, data);
+		gl.BufferSubData(target, offset, size, data);
 	}
 
 	inline static void allocEmpty(GLsizeiptr size, GLenum usage = GL_STATIC_DRAW)
@@ -309,9 +308,9 @@ namespace PixelStore
 	 * itself is part of a bigger image in client memory */
 	inline void setupSubImage(GLint imgWidth, GLint subX, GLint subY)
 	{
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, imgWidth);
-		glPixelStorei(GL_UNPACK_SKIP_PIXELS, subX);
-		glPixelStorei(GL_UNPACK_SKIP_ROWS, subY);
+		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, imgWidth);
+		gl.PixelStorei(GL_UNPACK_SKIP_PIXELS, subX);
+		gl.PixelStorei(GL_UNPACK_SKIP_ROWS, subY);
 	}
 
 	/* Reset all states set with 'setupSubImage()' */

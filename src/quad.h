@@ -22,7 +22,6 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-#include "glew.h"
 #include "etc-internal.h"
 #include "gl-util.h"
 #include "sharedstate.h"
@@ -114,13 +113,13 @@ struct Quad
 
 		VBO::allocEmpty(sizeof(Vertex[4]), GL_DYNAMIC_DRAW);
 
-		glEnableVertexAttribArray(Shader::Color);
-		glEnableVertexAttribArray(Shader::Position);
-		glEnableVertexAttribArray(Shader::TexCoord);
+		gl.EnableVertexAttribArray(Shader::Color);
+		gl.EnableVertexAttribArray(Shader::Position);
+		gl.EnableVertexAttribArray(Shader::TexCoord);
 
-		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
-		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
-		glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
+		gl.VertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
+		gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
+		gl.VertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
 
 		VAO::unbind();
 		VBO::unbind();
@@ -177,7 +176,7 @@ struct Quad
 		}
 
 		VAO::bind(vao);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		gl.DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		VAO::unbind();
 	}
 };

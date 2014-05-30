@@ -35,7 +35,6 @@ This binding only exists for testing purposes and does nothing (the engine quits
 * Boost.Program_options
 * libsigc++ 2.0
 * PhysFS (latest hg)
-* GLEW >= 1.7
 * OpenAL
 * SDL2
 * SDL2_image

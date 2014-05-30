@@ -60,7 +60,7 @@ struct PingPong
 			TEXFBO::init(rt[i]);
 			TEXFBO::allocEmpty(rt[i], screenW, screenH);
 			TEXFBO::linkFBO(rt[i]);
-			glClearColor(0, 0, 0, 1);
+			gl.ClearColor(0, 0, 0, 1);
 			FBO::clear();
 		}
 	}

@@ -84,10 +84,8 @@ pkg_check_modules(SDL2_TTF      REQUIRED SDL2_ttf)
 pkg_check_modules(SDL2_IMAGE    REQUIRED SDL2_image)
 pkg_check_modules(SDL_SOUND     REQUIRED SDL_sound)
 
-find_package(GLEW 1.9.0 REQUIRED)
 find_package(Boost 1.49 COMPONENTS program_options REQUIRED)
 find_package(OpenAL REQUIRED)
-find_package(OpenGL REQUIRED)
 find_package(ZLIB REQUIRED)
 
 ## Setup main source ##
@@ -135,6 +133,7 @@ set(MAIN_HEADERS
 	src/al-util.h
 	src/boost-hash.h
 	src/debugwriter.h
+	src/gl-fun.h
 )
 
 set(MAIN_SOURCE
@@ -164,6 +163,7 @@ set(MAIN_SOURCE
 	src/tileatlas.cpp
 	src/perftimer.cpp
 	src/sharedstate.cpp
+	src/gl-fun.cpp
 )
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
@@ -352,7 +352,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	${PHYSFS_INCLUDE_DIRS}
 	${SDL2_INCLUDE_DIRS} # Blindly assume other SDL bits are in same directory
 	${Boost_INCLUDE_DIR}
-	${GLEW_INCLUDE_DIR}/GL
 	${MRI_INCLUDE_DIRS}
 	${OPENAL_INCLUDE_DIR}
 )
@@ -368,8 +367,6 @@ target_link_libraries(${PROJECT_NAME}
 	${Boost_LIBRARIES}
 	${MRI_LIBRARIES}
 	${OPENAL_LIBRARY}
-	${OPENGL_gl_LIBRARY}
-	${GLEW_LIBRARY}
 	${ZLIB_LIBRARY}
 
 	${PLATFORM_LIBRARIES}

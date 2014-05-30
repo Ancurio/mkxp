@@ -22,8 +22,9 @@
 #include "debuglogger.h"
 #include "debugwriter.h"
 
-#include <glew.h>
 #include <iostream>
+
+#include "gl-fun.h"
 
 struct DebugLoggerPrivate
 {
@@ -53,31 +54,13 @@ struct DebugLoggerPrivate
 	}
 };
 
-static void amdDebugFunc(GLuint id,
-                         GLenum category,
-	                     GLenum severity,
-	                     GLsizei length,
-	                     const GLchar* message,
-	                     GLvoid* userParam)
-{
-	DebugLoggerPrivate *p = static_cast<DebugLoggerPrivate*>(userParam);
-
-	(void) id;
-	(void) category;
-	(void) severity;
-	(void) length;
-
-	p->writeTimestamp();
-	p->writeLine(message);
-}
-
-static void arbDebugFunc(GLenum source,
-                         GLenum type,
-                         GLuint id,
-                         GLenum severity,
-                         GLsizei length,
-                         const GLchar* message,
-                         GLvoid* userParam)
+static void APIENTRY arbDebugFunc(GLenum source,
+                                  GLenum type,
+                                  GLuint id,
+                                  GLenum severity,
+                                  GLsizei length,
+                                  const GLchar* message,
+                                  GLvoid* userParam)
 {
 	DebugLoggerPrivate *p = static_cast<DebugLoggerPrivate*>(userParam);
 
@@ -95,12 +78,8 @@ DebugLogger::DebugLogger(const char *filename)
 {
 	p = new DebugLoggerPrivate(filename);
 
-	if (GLEW_KHR_debug)
-		glDebugMessageCallback(arbDebugFunc, p);
-	else if (GLEW_ARB_debug_output)
-		glDebugMessageCallbackARB(arbDebugFunc, p);
-	else if (GLEW_AMD_debug_output)
-		glDebugMessageCallbackAMD(amdDebugFunc, p);
+	if (gl.DebugMessageCallback)
+		gl.DebugMessageCallback(arbDebugFunc, p);
 	else
 		Debug() << "DebugLogger: no debug extensions found";
 }

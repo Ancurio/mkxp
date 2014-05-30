@@ -393,14 +393,14 @@ struct TilemapPrivate
 		tiles.vao = VAO::gen();
 		VAO::bind(tiles.vao);
 
-		glEnableVertexAttribArray(Shader::Position);
-		glEnableVertexAttribArray(Shader::TexCoord);
+		gl.EnableVertexAttribArray(Shader::Position);
+		gl.EnableVertexAttribArray(Shader::TexCoord);
 
 		VBO::bind(tiles.vbo);
 		shState->bindQuadIBO();
 
-		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
-		glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
+		gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
+		gl.VertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
 
 		VAO::unbind();
 		VBO::unbind();
@@ -414,14 +414,14 @@ struct TilemapPrivate
 
 		VAO::bind(flash.vao);
 
-		glEnableVertexAttribArray(Shader::Color);
-		glEnableVertexAttribArray(Shader::Position);
+		gl.EnableVertexAttribArray(Shader::Color);
+		gl.EnableVertexAttribArray(Shader::Position);
 
 		VBO::bind(flash.vbo);
 		shState->bindQuadIBO();
 
-		glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::colorOffset());
-		glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::posOffset());
+		gl.VertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::colorOffset());
+		gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::posOffset());
 
 		VAO::unbind();
 		VBO::unbind();
@@ -1162,13 +1162,13 @@ void GroundLayer::draw()
 
 void GroundLayer::drawInt()
 {
-	glDrawElements(GL_TRIANGLES, vboCount,
-	               GL_UNSIGNED_INT, (GLvoid*) (p->tiles.frameIdx * p->tiles.bufferFrameSize));
+	gl.DrawElements(GL_TRIANGLES, vboCount,
+	                GL_UNSIGNED_INT, (GLvoid*) (p->tiles.frameIdx * p->tiles.bufferFrameSize));
 }
 
 void GroundLayer::drawFlashInt()
 {
-	glDrawElements(GL_TRIANGLES, p->flash.quadCount * 6, GL_UNSIGNED_INT, 0);
+	gl.DrawElements(GL_TRIANGLES, p->flash.quadCount * 6, GL_UNSIGNED_INT, 0);
 }
 
 void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
@@ -1220,8 +1220,8 @@ void ScanRow::draw()
 
 void ScanRow::drawInt()
 {
-	glDrawElements(GL_TRIANGLES, vboBatchCount,
-	               GL_UNSIGNED_INT, (GLvoid*) (vboOffset + p->tiles.frameIdx * p->tiles.bufferFrameSize));
+	gl.DrawElements(GL_TRIANGLES, vboBatchCount,
+	                GL_UNSIGNED_INT, (GLvoid*) (vboOffset + p->tiles.frameIdx * p->tiles.bufferFrameSize));
 }
 
 void ScanRow::initUpdateZ()

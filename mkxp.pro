@@ -50,7 +50,7 @@ RGSS3 {
 
 unix {
 	CONFIG += link_pkgconfig
-	PKGCONFIG += sigc++-2.0 glew pixman-1 zlib physfs \
+	PKGCONFIG += sigc++-2.0 pixman-1 zlib physfs \
 	             sdl2 SDL2_image SDL2_ttf SDL_sound openal
 
 	RGSS2 {
@@ -124,7 +124,8 @@ HEADERS += \
 	src/sharedstate.h \
 	src/al-util.h \
 	src/boost-hash.h \
-	src/debugwriter.h
+	src/debugwriter.h \
+	src/gl-fun.h
 
 SOURCES += \
 	src/main.cpp \
@@ -152,7 +153,8 @@ SOURCES += \
 	src/config.cpp \
 	src/tileatlas.cpp \
 	src/perftimer.cpp \
-	src/sharedstate.cpp
+	src/sharedstate.cpp \
+	src/gl-fun.cpp
 
 EMBED = \
 	shader/transSimple.frag \

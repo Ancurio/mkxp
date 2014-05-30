@@ -37,22 +37,22 @@ typedef uint32_t index_t;
 /* A small hack to get mutable QuadArray constructors */
 inline void initBufferBindings(Vertex *)
 {
-	glEnableVertexAttribArray(Shader::Color);
-	glEnableVertexAttribArray(Shader::Position);
-	glEnableVertexAttribArray(Shader::TexCoord);
+	gl.EnableVertexAttribArray(Shader::Color);
+	gl.EnableVertexAttribArray(Shader::Position);
+	gl.EnableVertexAttribArray(Shader::TexCoord);
 
-	glVertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
-	glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
-	glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
+	gl.VertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
+	gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
+	gl.VertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
 }
 
 inline void initBufferBindings(SVertex *)
 {
-	glEnableVertexAttribArray(Shader::Position);
-	glEnableVertexAttribArray(Shader::TexCoord);
+	gl.EnableVertexAttribArray(Shader::Position);
+	gl.EnableVertexAttribArray(Shader::TexCoord);
 
-	glVertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
-	glVertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
+	gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
+	gl.VertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
 }
 
 template<class VertexType>
@@ -135,7 +135,7 @@ struct QuadArray
 		VAO::bind(vao);
 
 		const char *_offset = (const char*) 0 + offset * 6 * sizeof(index_t);
-		glDrawElements(GL_TRIANGLES, count * 6, _GL_INDEX_TYPE, _offset);
+		gl.DrawElements(GL_TRIANGLES, count * 6, _GL_INDEX_TYPE, _offset);
 
 		VAO::unbind();
 	}

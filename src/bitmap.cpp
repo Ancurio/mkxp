@@ -655,7 +655,7 @@ Color Bitmap::getPixel(int x, int y) const
 	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 
 	uint8_t pixel[4];
-	glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+	gl.ReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
 
 	glState.viewport.pop();
 
