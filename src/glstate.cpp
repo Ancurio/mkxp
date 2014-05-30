@@ -56,11 +56,6 @@ void GLScissorTest::apply(const bool &value)
 	value ? glEnable(GL_SCISSOR_TEST) : glDisable(GL_SCISSOR_TEST);
 }
 
-void GLTexture2D::apply(const bool &value)
-{
-	value ? glEnable(GL_TEXTURE_2D) : glDisable(GL_TEXTURE_2D);
-}
-
 void GLBlendMode::apply(const BlendType &value)
 {
 	switch (value)
@@ -115,6 +110,5 @@ GLState::GLState()
 	blendMode.init(BlendNormal);
 	scissorTest.init(false);
 	scissorBox.init(IntRect(0, 0, 640, 480));
-	texture2D.init(true);
 	program.init(0);
 }
