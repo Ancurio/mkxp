@@ -1,1 +1,0 @@
-typedef unsigned int uint

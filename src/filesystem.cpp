@@ -23,7 +23,6 @@
 
 #include "font.h"
 #include "util.h"
-#include "defines.hpp"
 #include "exception.h"
 #include "boost-hash.h"
 #include "debugwriter.h"
@@ -329,7 +328,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 		nameLen ^= advanceMagic(magic);
 
 		static char nameBuf[512];
-		uint i;
+		unsigned int i;
 		for (i = 0; i < nameLen; ++i)
 		{
 			char c;

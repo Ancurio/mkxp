@@ -135,7 +135,6 @@ set(MAIN_HEADERS
 	src/al-util.h
 	src/boost-hash.h
 	src/debugwriter.h
-	src/defines.hpp
 )
 
 set(MAIN_SOURCE
