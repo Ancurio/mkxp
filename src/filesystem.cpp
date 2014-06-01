@@ -23,6 +23,7 @@
 
 #include "font.h"
 #include "util.h"
+#include "defines.hpp"
 #include "exception.h"
 #include "boost-hash.h"
 #include "debugwriter.h"
