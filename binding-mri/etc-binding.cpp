@@ -18,7 +18,9 @@
 ** You should have received a copy of the GNU General Public License
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+#ifndef _POSIX
+  #define _POSIX
+#endif
 #include "etc.h"
 #include "binding-util.h"
 #include "serializable-binding.h"
