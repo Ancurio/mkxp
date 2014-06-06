@@ -26,8 +26,9 @@
 #include "filesystem.h"
 #include "util.h"
 #include "debugwriter.h"
-
-#include <ruby.h>
+extern "C" {
+    #include <ruby.h>
+}
 #include <ruby/encoding.h>
 
 #include <string>
