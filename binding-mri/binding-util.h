@@ -21,9 +21,9 @@
 
 #ifndef BINDING_UTIL_H
 #define BINDING_UTIL_H
-
-#include <ruby.h>
-
+extern "C" {
+    #include <ruby.h>
+}
 #include "exception.h"
 
 enum RbException
