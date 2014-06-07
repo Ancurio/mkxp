@@ -1136,7 +1136,6 @@ void GroundLayer::draw()
 	{
 		VAO::bind(p->flash.vao);
 		glState.blendMode.pushSet(BlendAddition);
-		glState.texture2D.pushSet(false);
 
 		FlashMapShader &shader = shState->shaders().flashMap;
 		shader.bind();
@@ -1155,7 +1154,6 @@ void GroundLayer::draw()
 			drawFlashInt();
 		}
 
-		glState.texture2D.pop();
 		glState.blendMode.pop();
 	}
 

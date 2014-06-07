@@ -45,8 +45,6 @@ public:
 		MouseLeft = 38, MouseMiddle = 39, MouseRight = 40
 	};
 
-	static const int buttonCodeSize;
-
 	void update();
 
 	bool isPressed(int button);

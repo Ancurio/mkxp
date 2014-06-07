@@ -74,7 +74,11 @@ unix {
 		LIBS += -L$$BOOST_L
 	}
 
-	LIBS += -lboost_program_options
+	isEmpty(BOOST_LIB_SUFFIX) {
+		BOOST_LIB_SUFFIX = $$(BOOST_LIB_SUFFIX)
+	}
+
+	LIBS += -lboost_program_options$$BOOST_LIB_SUFFIX
 }
 
 # Input

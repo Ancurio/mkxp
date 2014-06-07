@@ -84,11 +84,6 @@ class GLScissorTest : public GLProperty<bool>
 	void apply(const bool &value);
 };
 
-class GLTexture2D : public GLProperty<bool>
-{
-	void apply(const bool &value);
-};
-
 class GLBlendMode : public GLProperty<BlendType>
 {
 	void apply(const BlendType &value);
@@ -111,7 +106,6 @@ public:
 	GLClearColor clearColor;
 	GLScissorBox scissorBox;
 	GLScissorTest scissorTest;
-	GLTexture2D texture2D;
 	GLBlendMode blendMode;
 	GLViewport viewport;
 	GLProgram program;
