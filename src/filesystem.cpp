@@ -328,7 +328,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 		nameLen ^= advanceMagic(magic);
 
 		static char nameBuf[512];
-		uint i;
+		uint32_t i;
 		for (i = 0; i < nameLen; ++i)
 		{
 			char c;
