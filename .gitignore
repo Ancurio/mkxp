@@ -11,3 +11,8 @@ mkxp
 xxd+
 
 /build
+
+# Codeblocks
+mkxp.layout
+mkxp.cbp
+
