@@ -34,6 +34,7 @@
 #include "etc-internal.h"
 #include "binding.h"
 #include "perftimer.h"
+#include "debugwriter.h"
 
 #include <SDL_video.h>
 #include <SDL_timer.h>
@@ -41,6 +42,7 @@
 
 #include <time.h>
 #include <sys/time.h>
+#include <errno.h>
 #include <algorithm>
 
 struct PingPong
@@ -237,6 +239,9 @@ private:
 #endif
 };
 
+/* Nanoseconds per second */
+#define NS_PER_S 1000000000
+
 struct FPSLimiter
 {
 	uint64_t lastTickCount;
@@ -271,7 +276,7 @@ struct FPSLimiter
 	    : lastTickCount(SDL_GetPerformanceCounter()),
 	      tickFreq(SDL_GetPerformanceFrequency()),
 	      tickFreqMS(tickFreq / 1000),
-	      tickFreqNS(tickFreq / 1000000000),
+	      tickFreqNS(tickFreq / NS_PER_S),
 	      disabled(false)
 	{
 		setDesiredFPS(desiredFPS);
@@ -338,12 +343,25 @@ struct FPSLimiter
 private:
 	void delayTicks(uint64_t ticks)
 	{
-#ifdef HAVE_NANOSLEEP
+#if defined(HAVE_NANOSLEEP) && !defined(_WIN32)
 		struct timespec req;
-		req.tv_sec = 0;
-		req.tv_nsec = ticks / tickFreqNS;
+		uint64_t nsec = ticks / tickFreqNS;
+		req.tv_sec = nsec / NS_PER_S;
+		req.tv_nsec = nsec % NS_PER_S;
+		errno = 0;
+
 		while (nanosleep(&req, &req) == -1)
-			;
+		{
+			int err = errno;
+			errno = 0;
+
+			if (err == EINTR)
+				continue;
+
+			Debug() << "nanosleep failed. errno:" << err;
+			SDL_Delay(ticks / tickFreqMS);
+			break;
+		}
 #else
 		SDL_Delay(ticks / tickFreqMS);
 #endif
