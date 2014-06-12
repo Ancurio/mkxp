@@ -276,7 +276,7 @@ struct FPSLimiter
 	    : lastTickCount(SDL_GetPerformanceCounter()),
 	      tickFreq(SDL_GetPerformanceFrequency()),
 	      tickFreqMS(tickFreq / 1000),
-	      tickFreqNS(tickFreq / NS_PER_S),
+	      tickFreqNS((double) tickFreq / NS_PER_S),
 	      disabled(false)
 	{
 		setDesiredFPS(desiredFPS);
