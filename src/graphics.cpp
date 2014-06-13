@@ -33,7 +33,6 @@
 #include "bitmap.h"
 #include "etc-internal.h"
 #include "binding.h"
-#include "perftimer.h"
 #include "debugwriter.h"
 
 #include <SDL_video.h>
@@ -399,9 +398,6 @@ struct GraphicsPrivate
 
 	FPSLimiter fpsLimiter;
 
-	PerfTimer *gpuTimer;
-	PerfTimer *cpuTimer;
-
 	bool frozen;
 	TEXFBO frozenScene;
 	TEXFBO currentScene;
@@ -421,9 +417,6 @@ struct GraphicsPrivate
 	      fpsLimiter(frameRate),
 	      frozen(false)
 	{
-		gpuTimer = createGPUTimer(frameRate);
-		cpuTimer = createCPUTimer(frameRate);
-
 		TEXFBO::init(frozenScene);
 		TEXFBO::allocEmpty(frozenScene, scRes.x, scRes.y);
 		TEXFBO::linkFBO(frozenScene);
@@ -442,9 +435,6 @@ struct GraphicsPrivate
 
 	~GraphicsPrivate()
 	{
-		delete gpuTimer;
-		delete cpuTimer;
-
 		TEXFBO::fini(frozenScene);
 		TEXFBO::fini(currentScene);
 
@@ -556,9 +546,6 @@ void Graphics::update()
 {
 	shState->checkShutdown();
 
-//	p->cpuTimer->endTiming();
-//	p->gpuTimer->startTiming();
-
 	if (p->frozen)
 		return;
 
@@ -582,9 +569,6 @@ void Graphics::update()
 
 	p->checkResize();
 	p->redrawScreen();
-
-//	p->gpuTimer->endTiming();
-//	p->cpuTimer->startTiming();
 }
 
 void Graphics::freeze()

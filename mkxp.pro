@@ -120,7 +120,6 @@ HEADERS += \
 	src/util.h \
 	src/config.h \
 	src/tileatlas.h \
-	src/perftimer.h \
 	src/sharedstate.h \
 	src/al-util.h \
 	src/boost-hash.h \
@@ -152,7 +151,6 @@ SOURCES += \
 	src/etc.cpp \
 	src/config.cpp \
 	src/tileatlas.cpp \
-	src/perftimer.cpp \
 	src/sharedstate.cpp \
 	src/gl-fun.cpp
 

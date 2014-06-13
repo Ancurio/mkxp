@@ -108,27 +108,6 @@ void initGLFunctions()
 		GL_VAO_FUN;
 	}
 
-	if (HAVE_EXT(ARB_timer_query))
-	{
-		gl.timerQuery = true;
-
-#undef EXT_SUFFIX
-#define EXT_SUFFIX ""
-		GL_TIMER_QUERY_FUN;
-	}
-	else if (HAVE_EXT(EXT_timer_query))
-	{
-		gl.timerQuery = true;
-
-#undef EXT_SUFFIX
-#define EXT_SUFFIX "EXT"
-		GL_TIMER_QUERY_FUN;
-	}
-	else
-	{
-		gl.timerQuery = false;
-	}
-
 	if (HAVE_EXT(KHR_debug))
 	{
 #undef EXT_SUFFIX
