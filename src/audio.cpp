@@ -143,6 +143,18 @@ private:
 	}
 };
 
+/* Before: [a][b][c][d], After (index=1): [a][c][d][b] */
+static void
+arrayPushBack(size_t array[], size_t size, size_t index)
+{
+	size_t v = array[index];
+
+	for (size_t t = index; t < size-1; ++t)
+		array[t] = array[t+1];
+
+	array[size-1] = v;
+}
+
 struct SoundEmitter
 {
 	typedef BoostHash<std::string, SoundBuffer*> BufferHash;
@@ -155,17 +167,18 @@ struct SoundEmitter
 
 	AL::Source::ID alSrcs[SE_SOURCES];
 	SoundBuffer *atchBufs[SE_SOURCES];
-	/* Index of next source to be used */
-	int srcIndex;
+
+	/* Indices of sources, sorted by priority (lowest first) */
+	size_t srcPrio[SE_SOURCES];
 
 	SoundEmitter()
-	    : bufferBytes(0),
-	      srcIndex(0)
+	    : bufferBytes(0)
 	{
 		for (int i = 0; i < SE_SOURCES; ++i)
 		{
 			alSrcs[i] = AL::Source::gen();
 			atchBufs[i] = 0;
+			srcPrio[i] = i;
 		}
 	}
 
@@ -194,20 +207,30 @@ struct SoundEmitter
 
 		SoundBuffer *buffer = allocateBuffer(filename);
 
-		int soundIndex = srcIndex++;
-		if (srcIndex > SE_SOURCES-1)
-			srcIndex = 0;
+		/* Try to find first free source */
+		size_t i;
+		for (i = 0; i < SE_SOURCES; ++i)
+			if (AL::Source::getState(alSrcs[srcPrio[i]]) != AL_PLAYING)
+				break;
 
-		AL::Source::ID src = alSrcs[soundIndex];
+		/* If we didn't find any, overtake the one with lowest priority */
+		if (i == SE_SOURCES)
+			i = 0;
+
+		/* Push the used source to the back of the priority list */
+		size_t srcIndex = srcPrio[i];
+		arrayPushBack(srcPrio, SE_SOURCES, i);
+
+		AL::Source::ID src = alSrcs[srcIndex];
 		AL::Source::stop(src);
 		AL::Source::detachBuffer(src);
 
-		SoundBuffer *old = atchBufs[soundIndex];
+		SoundBuffer *old = atchBufs[srcIndex];
 
 		if (old)
 			SoundBuffer::deref(old);
 
-		atchBufs[soundIndex] = SoundBuffer::ref(buffer);
+		atchBufs[srcIndex] = SoundBuffer::ref(buffer);
 
 		AL::Source::attachBuffer(src, buffer->alBuffer);
 
