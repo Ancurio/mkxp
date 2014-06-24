@@ -60,9 +60,10 @@ static void APIENTRY arbDebugFunc(GLenum source,
                                   GLenum severity,
                                   GLsizei length,
                                   const GLchar* message,
-                                  GLvoid* userParam)
+                                  const void* userParam)
 {
-	DebugLoggerPrivate *p = static_cast<DebugLoggerPrivate*>(userParam);
+	DebugLoggerPrivate *p =
+		static_cast<DebugLoggerPrivate*>(const_cast<void*>(userParam));
 
 	(void) source;
 	(void) type;
