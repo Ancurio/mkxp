@@ -608,7 +608,11 @@ struct WindowPrivate
 
 		/* Draw arrows / cursors */
 		windowskin->bindTex(shader);
+		TEX::setSmooth(true);
+
 		controlsQuadArray.draw(0, controlsQuadCount);
+
+		TEX::setSmooth(false);
 
 		if (contents)
 		{
