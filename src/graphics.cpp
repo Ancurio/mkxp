@@ -404,11 +404,12 @@ struct GraphicsPrivate
 	Quad screenQuad;
 	RBOFBO transBuffer;
 
-	GraphicsPrivate()
+	GraphicsPrivate(RGSSThreadData *rtData)
 	    : scRes(640, 480),
 	      scSize(scRes),
-	      winSize(scRes),
+	      winSize(rtData->config.defScreenW, rtData->config.defScreenH),
 	      screen(scRes.x, scRes.y),
+	      threadData(rtData),
 	      frameRate(40),
 	      frameCount(0),
 #ifdef RGSS2
@@ -417,6 +418,9 @@ struct GraphicsPrivate
 	      fpsLimiter(frameRate),
 	      frozen(false)
 	{
+		recalculateScreenSize(rtData);
+		updateScreenResoRatio(rtData);
+
 		TEXFBO::init(frozenScene);
 		TEXFBO::allocEmpty(frozenScene, scRes.x, scRes.y);
 		TEXFBO::linkFBO(frozenScene);
@@ -441,21 +445,21 @@ struct GraphicsPrivate
 		RBOFBO::fini(transBuffer);
 	}
 
-	void updateScreenResoRatio()
+	void updateScreenResoRatio(RGSSThreadData *rtData)
 	{
-		Vec2 &ratio = shState->rtData().sizeResoRatio;
+		Vec2 &ratio = rtData->sizeResoRatio;
 		ratio.x = (float) scRes.x / scSize.x;
 		ratio.y = (float) scRes.y / scSize.y;
 
-		shState->rtData().screenOffset = scOffset;
+		rtData->screenOffset = scOffset;
 	}
 
 	/* Enforces fixed aspect ratio, if desired */
-	void recalculateScreenSize()
+	void recalculateScreenSize(RGSSThreadData *rtData)
 	{
 		scSize = winSize;
 
-		if (!threadData->config.fixedAspectRatio)
+		if (!rtData->config.fixedAspectRatio)
 		{
 			scOffset = Vec2i(0, 0);
 			return;
@@ -479,8 +483,8 @@ struct GraphicsPrivate
 		{
 			/* some GL drivers change the viewport on window resize */
 			glState.viewport.refresh();
-			recalculateScreenSize();
-			updateScreenResoRatio();
+			recalculateScreenSize(threadData);
+			updateScreenResoRatio(threadData);
 		}
 	}
 
@@ -528,8 +532,7 @@ struct GraphicsPrivate
 
 Graphics::Graphics(RGSSThreadData *data)
 {
-	p = new GraphicsPrivate;
-	p->threadData = data;
+	p = new GraphicsPrivate(data);
 
 	if (data->config.fixedFramerate > 0)
 		p->fpsLimiter.setDesiredFPS(data->config.fixedFramerate);
