@@ -47,6 +47,8 @@ static const int atArea = atAreaW * atAreaH;
 static const int tilesetW = 256;
 static const int tsLaneW = tilesetW / 2;
 
+static const int atBuffer = 32;
+
 static int freeArea(int width, int height)
 {
 	return width * height - atArea;
@@ -55,7 +57,7 @@ static int freeArea(int width, int height)
 Vec2i minSize(int tilesetH, int maxAtlasSize)
 {
 	int width = atAreaW;
-	int height = atAreaH;
+	int height = atAreaH + atBuffer;
 
 	const int tsArea = tilesetW * tilesetH;
 
@@ -93,7 +95,7 @@ static ColumnVec calcDstCols(int atlasW, int atlasH)
 	cols.reserve(3);
 
 	/* Columns below the autotile area */
-	const int underAt = atlasH - atAreaH;
+	const int underAt = atlasH - (atAreaH + atBuffer);
 
 	for (int i = 0; i < 3; ++i)
 		cols.push_back(Column(i*tsLaneW, atAreaH, underAt));
@@ -174,7 +176,7 @@ Vec2i tileToAtlasCoor(int tileX, int tileY, int tilesetH, int atlasH)
 	int laneY = tileY*32;
 
 	int longlaneH = atlasH;
-	int shortlaneH = longlaneH - atAreaH;
+	int shortlaneH = longlaneH - (atAreaH + atBuffer);
 
 	int longlaneOffset = shortlaneH * 3;
 

@@ -40,6 +40,7 @@
 #include "../simple.vert.xxd"
 #include "../simpleColor.vert.xxd"
 #include "../sprite.vert.xxd"
+#include "../tilemap.vert.xxd"
 
 #ifdef RGSS2
 #include "../blur.frag.xxd"
@@ -420,6 +421,22 @@ void PlaneShader::setOpacity(float value)
 {
 	gl.Uniform1f(u_opacity, value);
 }
+
+
+TilemapShader::TilemapShader()
+{
+	INIT_SHADER(tilemap, simple, TilemapShader);
+
+	ShaderBase::init();
+
+	GET_U(aniIndex);
+}
+
+void TilemapShader::setAniIndex(int value)
+{
+	gl.Uniform1f(u_aniIndex, value);
+}
+
 
 
 FlashMapShader::FlashMapShader()

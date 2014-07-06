@@ -179,6 +179,17 @@ private:
 	GLint u_tone, u_color, u_flash, u_opacity;
 };
 
+class TilemapShader : public ShaderBase
+{
+public:
+	TilemapShader();
+
+	void setAniIndex(int value);
+
+private:
+	GLint u_aniIndex;
+};
+
 class FlashMapShader : public ShaderBase
 {
 public:
@@ -259,6 +270,7 @@ struct ShaderSet
 	SimpleSpriteShader simpleSprite;
 	SpriteShader sprite;
 	PlaneShader plane;
+	TilemapShader tilemap;
 	FlashMapShader flashMap;
 	TransShader trans;
 	SimpleTransShader simpleTrans;

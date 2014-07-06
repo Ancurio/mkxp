@@ -46,7 +46,6 @@
 extern const StaticRect autotileRects[];
 
 typedef std::vector<SVertex> SVVector;
-typedef struct { SVVector v[4]; } TileVBuffer;
 
 static const int tilesetW  = 8 * 32;
 static const int autotileW = 3 * 32;
@@ -75,6 +74,9 @@ static const int tsLaneW = tilesetW / 2;
  *   other half (as if the right half was cut and pasted below
  *   the left half before fitting it all into the atlas).
  *   Internally these halves are called "tileset lanes".
+ *   There is a 32 pixel wide empty buffer below the autotile
+ *   area so the vertex shader can safely differentiate between
+ *   autotile and tileset vertices (relevant for autotile animation).
  *
  *                  Tile atlas
  *   *-----------------------*--------------*
@@ -92,6 +94,8 @@ static const int tsLaneW = tilesetW / 2;
  *   | AT7 |     |     |     |   v   ¦   v   |
  *   |     |     |     |     |       ¦       |
  *   |-----|-----|-----|-----|       ¦       |
+ *   |      Empty space      |       |       |
+ *   |-----------------------|       |       |
  *   |       ¦       ¦       ¦       ¦       |
  *   | Tile- ¦   |   ¦   |   ¦       ¦       |
  *   |  set  ¦   v   ¦   v   ¦       ¦       |
@@ -107,17 +111,9 @@ static const int tsLaneW = tilesetW / 2;
  *   is used up, and then, when the max texture size
  *   is reached, horizontally.
  *
- *   To animate the autotiles, we keep 4 buffers (packed into
- *   one big VBO and accessed using offsets) with vertex data
- *   corresponding to the respective animation frame. Likewise,
- *   the IBO is expanded to 4 times its usual size. In practice
- *   this means that all vertex data which does not stem from an
- *   animated autotile is duplicated across all 4 buffers.
- *   The range of one such buffer inside the VBO is called
- *   buffer frame, and tiles.bufferFrameSize * bufferIndex gives
- *   us the base offset into the IBO to access it.
- *   If there are no animated autotiles attached, we only use
- *   the first buffer.
+ *   To animate the autotiles, we catch any autotile vertices in
+ *   the tilemap shader based on their texcoord, and offset them
+ *   horizontally by (animation index) * (autotile frame width = 96).
  *
  * Elements:
  *   Even though the Tilemap carries similarities with other
@@ -280,10 +276,10 @@ struct TilemapPrivate
 	int mapHeight;
 
 	/* Ground layer vertices */
-	TileVBuffer groundVert;
+	SVVector groundVert;
 
 	/* Scanrow vertices */
-	std::vector<TileVBuffer> scanrowVert;
+	std::vector<SVVector> scanrowVert;
 
 	/* Base quad indices of each scanrow
 	 * in the shared buffer */
@@ -460,11 +456,6 @@ struct TilemapPrivate
 		prepareCon.disconnect();
 	}
 
-	uint8_t bufferCount() const
-	{
-		return tiles.animated ? 4 : 1;
-	}
-
 	void updateAtlasInfo()
 	{
 		if (!tileset || tileset->isDisposed())
@@ -638,7 +629,18 @@ struct TilemapPrivate
 			int blitH = std::min(autotile->height(), atAreaH);
 
 			FBO::bind(autotile->getGLTypes().fbo, FBO::Read);
-			FBO::blit(0, 0, 0, atInd*autotileH, blitW, blitH);
+
+			if (blitW <= autotileW)
+			{
+				/* Static autotile */
+				for (int j = 0; j < 4; ++j)
+					FBO::blit(0, 0, autotileW*j, atInd*autotileH, blitW, blitH);
+			}
+			else
+			{
+				/* Animated autotile */
+				FBO::blit(0, 0, 0, atInd*autotileH, blitW, blitH);
+			}
 		}
 
 		/* Blit tileset */
@@ -706,7 +708,7 @@ struct TilemapPrivate
 		return FloatRect(x, y, 16, 16);
 	}
 
-	void handleAutotile(int x, int y, int tileInd, TileVBuffer *array)
+	void handleAutotile(int x, int y, int tileInd, SVVector *array)
 	{
 		/* Which autotile [0-7] */
 		int atInd = tileInd / 48 - 1;
@@ -724,20 +726,12 @@ struct TilemapPrivate
 			/* Adjust to atlas coordinates */
 			texRect.y += atInd * autotileH;
 
-			for (size_t k = 0; k < bufferCount(); ++k)
-			{
-				FloatRect _texRect = texRect;
+			SVertex v[4];
+			Quad::setTexPosRect(v, texRect, posRect);
 
-				if (contains(atlas.animatedATs, atInd))
-					_texRect.x += autotileW*k;
-
-				SVertex v[4];
-				Quad::setTexPosRect(v, _texRect, posRect);
-
-				/* Iterate over 4 vertices */
-				for (size_t i = 0; i < 4; ++i)
-					array->v[k].push_back(v[i]);
-			}
+			/* Iterate over 4 vertices */
+			for (size_t i = 0; i < 4; ++i)
+				array->push_back(v[i]);
 		}
 	}
 
@@ -755,7 +749,7 @@ struct TilemapPrivate
 		if (prio == -1)
 			return;
 
-		TileVBuffer *targetArray;
+		SVVector *targetArray;
 
 		/* Prio 0 tiles are all part of the same ground layer */
 		if (prio == 0)
@@ -786,15 +780,13 @@ struct TilemapPrivate
 		SVertex v[4];
 		Quad::setTexPosRect(v, texRect, posRect);
 
-		for (size_t k = 0; k < bufferCount(); ++k)
-			for (size_t i = 0; i < 4; ++i)
-				targetArray->v[k].push_back(v[i]);
+		for (size_t i = 0; i < 4; ++i)
+			targetArray->push_back(v[i]);
 	}
 
 	void clearQuadArrays()
 	{
-		for (size_t i = 0; i < 4; ++i)
-			groundVert.v[i].clear();
+		groundVert.clear();
 
 		scanrowVert.clear();
 		scanrowBases.clear();
@@ -830,47 +822,58 @@ struct TilemapPrivate
 		scanrowBases.resize(scanrowCount + 1);
 
 		/* Calculate total quad count */
-		size_t groundQuadCount = groundVert.v[0].size() / 4;
+		size_t groundQuadCount = groundVert.size() / 4;
 		size_t quadCount = groundQuadCount;
 
 		for (size_t i = 0; i < scanrowCount; ++i)
 		{
 			scanrowBases[i] = quadCount;
-			quadCount += scanrowVert[i].v[0].size() / 4;
+			quadCount += scanrowVert[i].size() / 4;
 		}
 
 		scanrowBases[scanrowCount] = quadCount;
 
-		size_t bufferFrameQuadCount = quadCount;
 		tiles.bufferFrameSize = quadCount * 6 * sizeof(uint32_t);
-
-		quadCount *= bufferCount();
 
 		VBO::bind(tiles.vbo);
 		VBO::allocEmpty(quadDataSize(quadCount));
 
-		for (size_t k = 0; k < bufferCount(); ++k)
+		VBO::uploadSubData(0, quadDataSize(groundQuadCount), &groundVert[0]);
+
+		for (size_t i = 0; i < scanrowCount; ++i)
 		{
-			VBO::uploadSubData(k*quadDataSize(bufferFrameQuadCount),
-			                   quadDataSize(groundQuadCount), &groundVert.v[k][0]);
+			if (scanrowVert[i].empty())
+				continue;
 
-			for (size_t i = 0; i < scanrowCount; ++i)
-			{
-				if (scanrowVert[i].v[0].empty())
-					continue;
-
-				VBO::uploadSubData(k*quadDataSize(bufferFrameQuadCount) + quadDataSize(scanrowBases[i]),
-				                   quadDataSize(scanrowSize(i)), &scanrowVert[i].v[k][0]);
-			}
+			VBO::uploadSubData(quadDataSize(scanrowBases[i]),
+			                   quadDataSize(scanrowSize(i)), &scanrowVert[i][0]);
 		}
 
 		VBO::unbind();
 
 		/* Ensure global IBO size */
-		shState->ensureQuadIBO(quadCount*bufferCount());
+		shState->ensureQuadIBO(quadCount);
 	}
 
-	void bindAtlas(SimpleShader &shader)
+	void bindShader(ShaderBase *&shaderVar)
+	{
+		if (tiles.animated)
+		{
+			TilemapShader &tilemapShader = shState->shaders().tilemap;
+			tilemapShader.bind();
+			tilemapShader.setAniIndex(tiles.frameIdx);
+			shaderVar = &tilemapShader;
+		}
+		else
+		{
+			shaderVar = &shState->shaders().simple;
+			shaderVar->bind();
+		}
+
+		shaderVar->applyViewportProj();
+	}
+
+	void bindAtlas(ShaderBase &shader)
 	{
 		TEX::bind(atlas.gl.tex);
 		shader.setTexSize(atlas.size);
@@ -985,7 +988,7 @@ struct TilemapPrivate
 		std::vector<int> scanrowInd;
 
 		for (size_t i = 0; i < scanrowCount; ++i)
-			if (scanrowVert[i].v[0].size() > 0)
+			if (scanrowVert[i].size() > 0)
 				scanrowInd.push_back(i);
 
 		generateElements(scanrowInd);
@@ -1110,15 +1113,14 @@ GroundLayer::GroundLayer(TilemapPrivate *p, Viewport *viewport)
 
 void GroundLayer::draw()
 {
-	SimpleShader &shader = shState->shaders().simple;
-	shader.bind();
-	shader.applyViewportProj();
+	ShaderBase *shader;
 
-	p->bindAtlas(shader);
+	p->bindShader(shader);
+	p->bindAtlas(*shader);
 
 	VAO::bind(p->tiles.vao);
 
-	p->setTranslation(Normal, shader);
+	p->setTranslation(Normal, *shader);
 
 	for (size_t i = 0; i < positionsN; ++i)
 	{
@@ -1127,7 +1129,7 @@ void GroundLayer::draw()
 		if (!(p->replicas & pos))
 			continue;
 
-		p->setTranslation(pos, shader);
+		p->setTranslation(pos, *shader);
 
 		drawInt();
 	}
@@ -1163,7 +1165,7 @@ void GroundLayer::draw()
 void GroundLayer::drawInt()
 {
 	gl.DrawElements(GL_TRIANGLES, vboCount,
-	                GL_UNSIGNED_INT, (GLvoid*) (p->tiles.frameIdx * p->tiles.bufferFrameSize));
+	                GL_UNSIGNED_INT, (GLvoid*) 0);
 }
 
 void GroundLayer::drawFlashInt()
@@ -1193,15 +1195,14 @@ void ScanRow::draw()
 	if (batchedFlag)
 		return;
 
-	SimpleShader &shader = shState->shaders().simple;
-	shader.bind();
-	shader.applyViewportProj();
+	ShaderBase *shader;
 
-	p->bindAtlas(shader);
+	p->bindShader(shader);
+	p->bindAtlas(*shader);
 
 	VAO::bind(p->tiles.vao);
 
-	p->setTranslation(Normal, shader);
+	p->setTranslation(Normal, *shader);
 
 	for (size_t i = 0; i < positionsN; ++i)
 	{
@@ -1210,7 +1211,7 @@ void ScanRow::draw()
 		if (!(p->replicas & pos))
 			continue;
 
-		p->setTranslation(pos, shader);
+		p->setTranslation(pos, *shader);
 
 		drawInt();
 	}
@@ -1221,7 +1222,7 @@ void ScanRow::draw()
 void ScanRow::drawInt()
 {
 	gl.DrawElements(GL_TRIANGLES, vboBatchCount,
-	                GL_UNSIGNED_INT, (GLvoid*) (vboOffset + p->tiles.frameIdx * p->tiles.bufferFrameSize));
+	                GL_UNSIGNED_INT, (GLvoid*) vboOffset);
 }
 
 void ScanRow::initUpdateZ()

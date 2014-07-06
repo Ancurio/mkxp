@@ -168,6 +168,7 @@ EMBED = \
 	shader/simple.vert \
 	shader/simpleColor.vert \
 	shader/sprite.vert \
+	shader/tilemap.vert \
 	assets/liberation.ttf
 
 RGSS2 {
