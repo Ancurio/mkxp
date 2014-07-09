@@ -577,7 +577,7 @@ struct WindowPrivate
 
 	void drawControls()
 	{
-		if (!windowskin)
+		if (!windowskin && !contents)
 			return;
 
 		if (size == Vec2i(0, 0))
@@ -604,15 +604,19 @@ struct WindowPrivate
 		SimpleAlphaShader &shader = shState->shaders().simpleAlpha;
 		shader.bind();
 		shader.applyViewportProj();
-		shader.setTranslation(Vec2i(effectX, effectY));
 
-		/* Draw arrows / cursors */
-		windowskin->bindTex(shader);
-		TEX::setSmooth(true);
+		if (windowskin)
+		{
+			shader.setTranslation(Vec2i(effectX, effectY));
 
-		controlsQuadArray.draw(0, controlsQuadCount);
+			/* Draw arrows / cursors */
+			windowskin->bindTex(shader);
+			TEX::setSmooth(true);
 
-		TEX::setSmooth(false);
+			controlsQuadArray.draw(0, controlsQuadCount);
+
+			TEX::setSmooth(false);
+		}
 
 		if (contents)
 		{
