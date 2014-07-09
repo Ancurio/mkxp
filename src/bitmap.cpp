@@ -278,9 +278,21 @@ IntRect Bitmap::rect() const
 }
 
 void Bitmap::blt(int x, int y,
-                  const Bitmap &source, const IntRect &rect,
+                  const Bitmap &source, IntRect rect,
                   int opacity)
 {
+	// FIXME: RGSS allows the source rect to both lie outside
+	// the bitmap rect and be inverted in both directions;
+	// clamping only covers a subset of these cases (and
+	// doesn't fix anything for a direct stretch_blt call).
+
+	/* Clamp rect to source bitmap size */
+	if (rect.x + rect.w > source.width())
+		rect.w = source.width() - rect.x;
+
+	if (rect.y + rect.h > source.height())
+		rect.h = source.height() - rect.y;
+
 	stretchBlt(IntRect(x, y, rect.w, rect.h),
 	           source, rect, opacity);
 }
