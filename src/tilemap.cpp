@@ -58,6 +58,12 @@ static const int atAreaH = autotileH * autotileCount;
 
 static const int tsLaneW = tilesetW / 2;
 
+/* Map viewport size */
+static const int viewpW = 21;
+static const int viewpH = 16;
+
+static const size_t scanrowsMax = viewpH + 5;
+
 /* Vocabulary:
  *
  * Atlas: A texture containing both the tileset and all
@@ -134,46 +140,27 @@ static const int tsLaneW = tilesetW / 2;
  *   (lowest z) to the bottom part (highest z).
  *   Objects that would end up on the same scanrow are eg. trees.
  *
- * Replica:
- *   A tilemap is not drawn as one rectangular object, but
- *   "tiled" if there is an area on the screen that would
- *   otherwise not be covered by it. RGSS does this so when the
- *   game orders a screen shake which draws the tilemap at slightly
- *   different x-offsets, black area isn't exposed (this would
- *   always happen for 20x15 maps). 'Replicas' describes where the
- *   tilemap needs to be drawn again to achieve this tiled effect
- *   (above the tilemap, to the right, above and right etc.).
- *   'Normal' means no replica needs to be drawn.
- *   Because the minimum map size in RMXP covers the entire screen,
- *   we don't have to worry about ever drawing more than one replica
- *   in each dimension.
+ * Map viewport:
+ *   This rectangle describes the subregion of the map that is
+ *   actually translated to vertices and stored on the GPU ready
+ *   for rendering. Whenever, ox/oy are modified, its position is
+ *   adjusted if necessary and the data is regenerated. Its size
+ *   is fixed. This is NOT related to the RGSS Viewport class!
  *
  */
 
-/* Replica positions */
-enum Position
+static int wrap(size_t value, size_t range)
 {
-	Normal = 1 << 0,
+	int res = value % range;
+	return res < 0 ? res + range : res;
+}
 
-	Left   = 1 << 1,
-	Right  = 1 << 2,
-	Top    = 1 << 3,
-	Bottom = 1 << 4,
-
-	TopLeft     = Top | Left,
-	TopRight    = Top | Right,
-	BottomLeft  = Bottom | Left,
-	BottomRight = Bottom | Right
-};
-
-static const Position positions[] =
+static int16_t tableGetWrapped(const Table *t, int x, int y, int z = 0)
 {
-	Normal,
-	Left, Right, Top, Bottom,
-	TopLeft, TopRight, BottomLeft, BottomRight
-};
-
-static elementsN(positions);
+	return t->get(wrap(x, t->xSize()),
+	              wrap(y, t->ySize()),
+	              z);
+}
 
 /* Autotile animation */
 static const uint8_t atAnimation[16*4] =
@@ -206,6 +193,8 @@ struct GroundLayer : public ViewportElement
 
 	GroundLayer(TilemapPrivate *p, Viewport *viewport);
 
+	void updateVboCount();
+
 	void draw();
 	void drawInt();
 	void drawFlashInt();
@@ -215,7 +204,7 @@ struct GroundLayer : public ViewportElement
 
 struct ScanRow : public ViewportElement
 {
-	const size_t index;
+	size_t index;
 	GLintptr vboOffset;
 	GLsizei vboCount;
 	TilemapPrivate *p;
@@ -228,10 +217,14 @@ struct ScanRow : public ViewportElement
 	 * holds the element count of the entire batch */
 	GLsizei vboBatchCount;
 
-	ScanRow(TilemapPrivate *p, Viewport *viewport, size_t index);
+	ScanRow(TilemapPrivate *p, Viewport *viewport);
+
+	void setIndex(int value);
 
 	void draw();
 	void drawInt();
+
+	static int calculateZ(TilemapPrivate *p, int index);
 
 	void initUpdateZ();
 	void finiUpdateZ(ScanRow *prev);
@@ -271,20 +264,18 @@ struct TilemapPrivate
 		std::vector<uint8_t> animatedATs;
 	} atlas;
 
-	/* Map size in tiles */
-	int mapWidth;
-	int mapHeight;
+	/* Map viewport position */
+	Vec2i viewpPos;
 
 	/* Ground layer vertices */
 	SVVector groundVert;
 
 	/* Scanrow vertices */
-	std::vector<SVVector> scanrowVert;
+	SVVector scanrowVert[scanrowsMax];
 
 	/* Base quad indices of each scanrow
 	 * in the shared buffer */
-	std::vector<int> scanrowBases;
-	size_t scanrowCount;
+	size_t scanrowBases[scanrowsMax+1];
 
 	/* Shared buffers for all tiles */
 	struct
@@ -292,9 +283,6 @@ struct TilemapPrivate
 		VAO::ID vao;
 		VBO::ID vbo;
 		bool animated;
-
-		/* Size of an IBO buffer frame, in bytes */
-		GLintptr bufferFrameSize;
 
 		/* Animation state */
 		uint8_t frameIdx;
@@ -314,7 +302,9 @@ struct TilemapPrivate
 	struct
 	{
 		GroundLayer *ground;
-		std::vector<ScanRow*> scanrows;
+		ScanRow* scanrows[scanrowsMax];
+		/* Used rows out of 'scanrows' (rest is hidden) */
+		size_t activeRows;
 		Scene::Geometry sceneGeo;
 		Vec2i sceneOffset;
 
@@ -327,15 +317,14 @@ struct TilemapPrivate
 		unsigned int scanrowStamp;
 	} elem;
 
-	/* Replica bitmask */
-	uint8_t replicas;
-
 	/* Affected by: autotiles, tileset */
 	bool atlasSizeDirty;
 	/* Affected by: autotiles(.changed), tileset(.changed), allocateAtlas */
 	bool atlasDirty;
 	/* Affected by: mapData(.changed), priorities(.changed) */
 	bool buffersDirty;
+	/* Affected by: ox, oy */
+	bool mapViewportDirty;
 	/* Affected by: oy */
 	bool zOrderDirty;
 	/* Affected by: flashData, buffersDirty */
@@ -364,12 +353,10 @@ struct TilemapPrivate
 	      flashData(0),
 	      priorities(0),
 	      visible(true),
-	      mapWidth(0),
-	      mapHeight(0),
-	      replicas(Normal),
 	      atlasSizeDirty(false),
 	      atlasDirty(false),
 	      buffersDirty(false),
+	      mapViewportDirty(false),
 	      zOrderDirty(false),
 	      flashDirty(false),
 	      tilemapReady(false)
@@ -428,21 +415,33 @@ struct TilemapPrivate
 		elem.groundStamp = shState->genTimeStamp();
 		elem.scanrowStamp = shState->genTimeStamp();
 
+		elem.ground = new GroundLayer(this, viewport);
+
+		for (size_t i = 0; i < scanrowsMax; ++i)
+			elem.scanrows[i] = new ScanRow(this, viewport);
+
 		prepareCon = shState->prepareDraw.connect
 		        (sigc::mem_fun(this, &TilemapPrivate::prepare));
 	}
 
 	~TilemapPrivate()
 	{
-		destroyElements();
+		/* Destroy elements */
+		delete elem.ground;
+		for (size_t i = 0; i < scanrowsMax; ++i)
+			delete elem.scanrows[i];
 
 		shState->releaseAtlasTex(atlas.gl);
+
+		/* Destroy tile buffers */
 		VAO::del(tiles.vao);
 		VBO::del(tiles.vbo);
 
+		/* Destroy flash buffers */
 		VAO::del(flash.vao);
 		VBO::del(flash.vbo);
 
+		/* Disconnect signal handlers */
 		tilesetCon.disconnect();
 		for (size_t i = 0; i < autotileCount; ++i)
 		{
@@ -502,19 +501,6 @@ struct TilemapPrivate
 		tiles.animated = !animatedATs.empty();
 	}
 
-	void updateMapDataInfo()
-	{
-		if (!mapData)
-		{
-			mapWidth  = 0;
-			mapHeight = 0;
-			return;
-		}
-
-		mapWidth = mapData->xSize();
-		mapHeight = mapData->ySize();
-	}
-
 	void updateSceneGeometry(const Scene::Geometry &geo)
 	{
 		elem.sceneOffset.x = geo.rect.x - geo.xOrigin;
@@ -524,35 +510,8 @@ struct TilemapPrivate
 
 	void updatePosition()
 	{
-		if (mapWidth == 0 || mapHeight == 0)
-			return;
-
-		dispPos.x = -offset.x + elem.sceneOffset.x;
-		dispPos.y = -offset.y + elem.sceneOffset.y;
-
-		dispPos.x %= mapWidth  * 32;
-		dispPos.y %= mapHeight * 32;
-	}
-
-	/* Compute necessary replicas and store this
-	 * information in a bitfield */
-	void updateReplicas()
-	{
-		replicas = Normal;
-
-		if (mapWidth == 0 || mapHeight == 0)
-			return;
-
-		const IntRect &sRect = elem.sceneGeo.rect;
-
-		if (dispPos.x > sRect.x)
-			replicas |= Left;
-		if (dispPos.y > sRect.y)
-			replicas |= Top;
-		if (dispPos.x+mapWidth*32 < sRect.x+sRect.w)
-			replicas |= Right;
-		if (dispPos.y+mapHeight*32 < sRect.y+sRect.h)
-			replicas |= Bottom;
+		dispPos.x = -(offset.x - viewpPos.x * 32) + elem.sceneOffset.x;
+		dispPos.y = -(offset.y - viewpPos.y * 32) + elem.sceneOffset.x;
 	}
 
 	void invalidateAtlasSize()
@@ -737,7 +696,8 @@ struct TilemapPrivate
 
 	void handleTile(int x, int y, int z)
 	{
-		int tileInd = mapData->at(x, y, z);
+		int tileInd =
+			tableGetWrapped(mapData, x + viewpPos.x, y + viewpPos.y, z);
 
 		/* Check for empty space */
 		if (tileInd < 48)
@@ -788,21 +748,17 @@ struct TilemapPrivate
 	{
 		groundVert.clear();
 
-		scanrowVert.clear();
-		scanrowBases.clear();
+		for (size_t i = 0; i < scanrowsMax; ++i)
+			scanrowVert[i].clear();
 	}
 
 	void buildQuadArray()
 	{
 		clearQuadArrays();
 
-		int mapDepth = mapData->zSize();
-
-		scanrowVert.resize(mapHeight + 5);
-
-		for (int x = 0; x < mapWidth; ++x)
-			for (int y = 0; y < mapHeight; ++y)
-				for (int z = 0; z < mapDepth; ++z)
+		for (int x = 0; x < viewpW; ++x)
+			for (int y = 0; y < viewpH; ++y)
+				for (int z = 0; z < mapData->zSize(); ++z)
 					handleTile(x, y, z);
 	}
 
@@ -818,29 +774,24 @@ struct TilemapPrivate
 
 	void uploadBuffers()
 	{
-		scanrowCount = scanrowVert.size();
-		scanrowBases.resize(scanrowCount + 1);
-
 		/* Calculate total quad count */
 		size_t groundQuadCount = groundVert.size() / 4;
 		size_t quadCount = groundQuadCount;
 
-		for (size_t i = 0; i < scanrowCount; ++i)
+		for (size_t i = 0; i < scanrowsMax; ++i)
 		{
 			scanrowBases[i] = quadCount;
 			quadCount += scanrowVert[i].size() / 4;
 		}
 
-		scanrowBases[scanrowCount] = quadCount;
-
-		tiles.bufferFrameSize = quadCount * 6 * sizeof(uint32_t);
+		scanrowBases[scanrowsMax] = quadCount;
 
 		VBO::bind(tiles.vbo);
 		VBO::allocEmpty(quadDataSize(quadCount));
 
 		VBO::uploadSubData(0, quadDataSize(groundQuadCount), &groundVert[0]);
 
-		for (size_t i = 0; i < scanrowCount; ++i)
+		for (size_t i = 0; i < scanrowsMax; ++i)
 		{
 			if (scanrowVert[i].empty())
 				continue;
@@ -879,36 +830,9 @@ struct TilemapPrivate
 		shader.setTexSize(atlas.size);
 	}
 
-	Vec2i getReplicaOffset(Position pos)
-	{
-		Vec2i offset;
-
-		if (pos & Left)
-			offset.x -= mapWidth*32;
-		if (pos & Right)
-			offset.x += mapWidth*32;
-		if (pos & Top)
-			offset.y -= mapHeight*32;
-		if (pos & Bottom)
-			offset.y += mapHeight*32;
-
-		return offset;
-	}
-
-	void setTranslation(Position replicaPos, ShaderBase &shader)
-	{
-		Vec2i repOff = getReplicaOffset(replicaPos);
-		repOff += dispPos;
-
-		shader.setTranslation(repOff);
-	}
-
 	bool sampleFlashColor(Vec4 &out, int x, int y)
 	{
-		const int _x = x % flashData->xSize();
-		const int _y = y % flashData->ySize();
-
-		int16_t packed = flashData->at(_x, _y);
+		int16_t packed = tableGetWrapped(flashData, x, y);
 
 		if (packed == 0)
 			return false;
@@ -926,13 +850,16 @@ struct TilemapPrivate
 
 	void updateFlash()
 	{
+		if (!flashData)
+			return;
+
 		std::vector<CVertex> vertices;
 
-		for (int x = 0; x < mapWidth; ++x)
-			for (int y = 0; y < mapHeight; ++y)
+		for (int x = 0; x < viewpW; ++x)
+			for (int y = 0; y < viewpH; ++y)
 			{
 				Vec4 color;
-				if (!sampleFlashColor(color, x, y))
+				if (!sampleFlashColor(color, x+viewpPos.x, y+viewpPos.y))
 					continue;
 
 				FloatRect posRect(x*32, y*32, 32, 32);
@@ -958,54 +885,60 @@ struct TilemapPrivate
 		shState->ensureQuadIBO(flash.quadCount);
 	}
 
-	void destroyElements()
+	void updateActiveElements(std::vector<int> &scanrowInd)
 	{
-		delete elem.ground;
-		elem.ground = 0;
+		elem.ground->updateVboCount();
 
-		for (size_t i = 0; i < elem.scanrows.size(); ++i)
-			delete elem.scanrows[i];
-
-		elem.scanrows.clear();
-	}
-
-	void generateElements(std::vector<int> &scanrowInd)
-	{
-		elem.ground = new GroundLayer(this, viewport);
-
-		for (size_t i = 0; i < scanrowInd.size(); ++i)
+		for (size_t i = 0; i < scanrowsMax; ++i)
 		{
-			int index = scanrowInd[i];
-			elem.scanrows.push_back(new ScanRow(this, viewport, index));
+			if (i < scanrowInd.size())
+			{
+				int index = scanrowInd[i];
+				elem.scanrows[i]->setVisible(visible);
+				elem.scanrows[i]->setIndex(index);
+			}
+			else
+			{
+				/* Hide unused rows */
+				elem.scanrows[i]->setVisible(false);
+			}
 		}
 	}
 
-	void generateSceneElements()
+	void updateSceneElements()
 	{
-		destroyElements();
-
-		/* Only generate elements for non-emtpy scanrows */
+		/* Only allocate elements for non-emtpy scanrows */
 		std::vector<int> scanrowInd;
 
-		for (size_t i = 0; i < scanrowCount; ++i)
+		for (size_t i = 0; i < scanrowsMax; ++i)
 			if (scanrowVert[i].size() > 0)
 				scanrowInd.push_back(i);
 
-		generateElements(scanrowInd);
+		updateActiveElements(scanrowInd);
+		elem.activeRows = scanrowInd.size();
+		zOrderDirty = false;
+	}
+
+	void hideElements()
+	{
+		elem.ground->setVisible(false);
+
+		for (size_t i = 0; i < scanrowsMax; ++i)
+			elem.scanrows[i]->setVisible(false);
 	}
 
 	void updateZOrder()
 	{
-		if (elem.scanrows.empty())
+		if (elem.activeRows == 0)
 			return;
 
-		for (size_t i = 0; i < elem.scanrows.size(); ++i)
+		for (size_t i = 0; i < elem.activeRows; ++i)
 			elem.scanrows[i]->initUpdateZ();
 
-		ScanRow *prev = elem.scanrows.front();
+		ScanRow *prev = elem.scanrows[0];
 		prev->finiUpdateZ(0);
 
-		for (size_t i = 1; i < elem.scanrows.size(); ++i)
+		for (size_t i = 1; i < elem.activeRows; ++i)
 		{
 			ScanRow *row = elem.scanrows[i];
 			row->finiUpdateZ(prev);
@@ -1024,9 +957,9 @@ struct TilemapPrivate
 	 * single sized batches are possible. */
 	void prepareScanrowBatches()
 	{
-		const std::vector<ScanRow*> &scanrows = elem.scanrows;
+		ScanRow *const *scanrows = elem.scanrows;
 
-		for (size_t i = 0; i < scanrows.size(); ++i)
+		for (size_t i = 0; i < elem.activeRows; ++i)
 		{
 			ScanRow *batchHead = scanrows[i];
 			batchHead->batchedFlag = false;
@@ -1034,7 +967,7 @@ struct TilemapPrivate
 			GLsizei vboBatchCount = batchHead->vboCount;
 			IntruListLink<SceneElement> *iter = &batchHead->link;
 
-			for (i = i+1; i < scanrows.size(); ++i)
+			for (i = i+1; i < elem.activeRows; ++i)
 			{
 				iter = iter->next;
 				ScanRow *row = scanrows[i];
@@ -1054,13 +987,50 @@ struct TilemapPrivate
 		}
 	}
 
+	void updateMapViewport()
+	{
+		int tileOX, tileOY;
+
+		if (offset.x >= 0)
+			tileOX = offset.x / 32;
+		else
+			tileOX = -(-(offset.x-31) / 32);
+
+		if (offset.y >= 0)
+			tileOY = offset.y / 32;
+		else
+			tileOY = -(-(offset.y-31) / 32);
+
+		bool dirty = false;
+
+		if (tileOX < viewpPos.x || tileOX + 21 > viewpPos.x + viewpW)
+		{
+			viewpPos.x = tileOX;
+			dirty = true;
+		}
+
+		if (tileOY < viewpPos.y || tileOY + 16 > viewpPos.y + viewpH)
+		{
+			viewpPos.y = tileOY;
+			dirty = true;
+		}
+
+		if (dirty)
+		{
+			buffersDirty = true;
+			flashDirty = true;
+			updatePosition();
+		}
+	}
+
 	void prepare()
 	{
 		if (!verifyResources())
 		{
-			if (elem.ground)
-				destroyElements();
+			if (tilemapReady)
+				hideElements();
 			tilemapReady = false;
+
 			return;
 		}
 
@@ -1076,11 +1046,17 @@ struct TilemapPrivate
 			atlasDirty = false;
 		}
 
+		if (mapViewportDirty)
+		{
+			updateMapViewport();
+			mapViewportDirty = false;
+		}
+
 		if (buffersDirty)
 		{
 			buildQuadArray();
 			uploadBuffers();
-			generateSceneElements();
+			updateSceneElements();
 			buffersDirty = false;
 		}
 
@@ -1104,11 +1080,15 @@ struct TilemapPrivate
 
 GroundLayer::GroundLayer(TilemapPrivate *p, Viewport *viewport)
     : ViewportElement(viewport, 0, p->elem.groundStamp),
+      vboCount(0),
       p(p)
 {
-	vboCount = p->scanrowBases[0] * 6;
-
 	onGeometryChange(scene->getGeometry());
+}
+
+void GroundLayer::updateVboCount()
+{
+	vboCount = p->scanrowBases[0] * 6;
 }
 
 void GroundLayer::draw()
@@ -1120,19 +1100,8 @@ void GroundLayer::draw()
 
 	VAO::bind(p->tiles.vao);
 
-	p->setTranslation(Normal, *shader);
-
-	for (size_t i = 0; i < positionsN; ++i)
-	{
-		const Position pos = positions[i];
-
-		if (!(p->replicas & pos))
-			continue;
-
-		p->setTranslation(pos, *shader);
-
-		drawInt();
-	}
+	shader->setTranslation(p->dispPos);
+	drawInt();
 
 	if (p->flash.quadCount > 0)
 	{
@@ -1143,18 +1112,9 @@ void GroundLayer::draw()
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setAlpha(flashAlpha[p->flash.alphaIdx] / 255.f);
+		shader.setTranslation(p->dispPos);
 
-		for (size_t i = 0; i < positionsN; ++i)
-		{
-			const Position pos = positions[i];
-
-			if (!(p->replicas & pos))
-				continue;
-
-			p->setTranslation(pos, shader);
-
-			drawFlashInt();
-		}
+		drawFlashInt();
 
 		glState.blendMode.pop();
 	}
@@ -1164,8 +1124,7 @@ void GroundLayer::draw()
 
 void GroundLayer::drawInt()
 {
-	gl.DrawElements(GL_TRIANGLES, vboCount,
-	                GL_UNSIGNED_INT, (GLvoid*) 0);
+	gl.DrawElements(GL_TRIANGLES, vboCount, GL_UNSIGNED_INT, (GLvoid*) 0);
 }
 
 void GroundLayer::drawFlashInt()
@@ -1177,15 +1136,24 @@ void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
 {
 	p->updateSceneGeometry(geo);
 	p->updatePosition();
-	p->updateReplicas();
 }
 
-ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport, size_t index)
-    : ViewportElement(viewport, 32 + index*32, p->elem.scanrowStamp),
-      index(index),
+ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport)
+    : ViewportElement(viewport, 0, p->elem.scanrowStamp),
+      index(0),
+      vboOffset(0),
+      vboCount(0),
       p(p),
       vboBatchCount(0)
+{}
+
+void ScanRow::setIndex(int value)
 {
+	index = value;
+
+	z = calculateZ(p, index);
+	scene->reinsert(*this);
+
 	vboOffset = p->scanrowBases[index] * sizeof(uint32_t) * 6;
 	vboCount = p->scanrowSize(index) * 6;
 }
@@ -1202,27 +1170,20 @@ void ScanRow::draw()
 
 	VAO::bind(p->tiles.vao);
 
-	p->setTranslation(Normal, *shader);
-
-	for (size_t i = 0; i < positionsN; ++i)
-	{
-		const Position pos = positions[i];
-
-		if (!(p->replicas & pos))
-			continue;
-
-		p->setTranslation(pos, *shader);
-
-		drawInt();
-	}
+	shader->setTranslation(p->dispPos);
+	drawInt();
 
 	VAO::unbind();
 }
 
 void ScanRow::drawInt()
 {
-	gl.DrawElements(GL_TRIANGLES, vboBatchCount,
-	                GL_UNSIGNED_INT, (GLvoid*) vboOffset);
+	gl.DrawElements(GL_TRIANGLES, vboBatchCount, GL_UNSIGNED_INT, (GLvoid*) vboOffset);
+}
+
+int ScanRow::calculateZ(TilemapPrivate *p, int index)
+{
+	return 32 * (index + p->viewpPos.y + 1) - p->offset.y;
 }
 
 void ScanRow::initUpdateZ()
@@ -1232,7 +1193,7 @@ void ScanRow::initUpdateZ()
 
 void ScanRow::finiUpdateZ(ScanRow *prev)
 {
-	z = 32 * (index+1) - p->offset.y;
+	z = calculateZ(p, index);
 
 	if (prev)
 		scene->insertAfter(*this, *prev);
@@ -1369,9 +1330,6 @@ void Tilemap::setMapData(Table *value)
 	p->mapDataCon.disconnect();
 	p->mapDataCon = value->modified.connect
 	        (sigc::mem_fun(p, &TilemapPrivate::invalidateBuffers));
-
-
-	p->updateMapDataInfo();
 }
 
 void Tilemap::setFlashData(Table *value)
@@ -1417,7 +1375,7 @@ void Tilemap::setVisible(bool value)
 		return;
 
 	p->elem.ground->setVisible(value);
-	for (size_t i = 0; i < p->elem.scanrows.size(); ++i)
+	for (size_t i = 0; i < p->elem.activeRows; ++i)
 		p->elem.scanrows[i]->setVisible(value);
 }
 
@@ -1430,7 +1388,7 @@ void Tilemap::setOX(int value)
 
 	p->offset.x = value;
 	p->updatePosition();
-	p->updateReplicas();
+	p->mapViewportDirty = true;
 }
 
 void Tilemap::setOY(int value)
@@ -1442,9 +1400,8 @@ void Tilemap::setOY(int value)
 
 	p->offset.y = value;
 	p->updatePosition();
-	p->updateReplicas();
-
 	p->zOrderDirty = true;
+	p->mapViewportDirty = true;
 }
 
 
