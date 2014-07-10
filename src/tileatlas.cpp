@@ -37,17 +37,17 @@ struct Column
 
 typedef std::vector<Column> ColumnVec;
 
+/* Buffer between autotile area and tileset */
+static const int atBuffer = 32;
 /* Autotile area width */
 static const int atAreaW = 96*4;
 /* Autotile area height */
-static const int atAreaH = 128*7;
+static const int atAreaH = 128*7 + atBuffer;
 /* Autotile area */
 static const int atArea = atAreaW * atAreaH;
 
 static const int tilesetW = 256;
 static const int tsLaneW = tilesetW / 2;
-
-static const int atBuffer = 32;
 
 static int freeArea(int width, int height)
 {
@@ -57,7 +57,7 @@ static int freeArea(int width, int height)
 Vec2i minSize(int tilesetH, int maxAtlasSize)
 {
 	int width = atAreaW;
-	int height = atAreaH + atBuffer;
+	int height = atAreaH;
 
 	const int tsArea = tilesetW * tilesetH;
 
@@ -95,7 +95,7 @@ static ColumnVec calcDstCols(int atlasW, int atlasH)
 	cols.reserve(3);
 
 	/* Columns below the autotile area */
-	const int underAt = atlasH - (atAreaH + atBuffer);
+	const int underAt = atlasH - atAreaH;
 
 	for (int i = 0; i < 3; ++i)
 		cols.push_back(Column(i*tsLaneW, atAreaH, underAt));
@@ -176,7 +176,7 @@ Vec2i tileToAtlasCoor(int tileX, int tileY, int tilesetH, int atlasH)
 	int laneY = tileY*32;
 
 	int longlaneH = atlasH;
-	int shortlaneH = longlaneH - (atAreaH + atBuffer);
+	int shortlaneH = longlaneH - atAreaH;
 
 	int longlaneOffset = shortlaneH * 3;
 
