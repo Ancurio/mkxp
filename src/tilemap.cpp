@@ -150,7 +150,7 @@ static const size_t scanrowsMax = viewpH + 5;
  *
  */
 
-static int wrap(size_t value, size_t range)
+static int wrap(int value, int range)
 {
 	int res = value % range;
 	return res < 0 ? res + range : res;
