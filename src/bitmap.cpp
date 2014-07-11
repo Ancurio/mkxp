@@ -25,6 +25,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_rect.h>
+#include <SDL_surface.h>
 
 #include <pixman.h>
 
@@ -53,6 +54,8 @@
 
 struct BitmapPrivate
 {
+	Bitmap *self;
+
 	TEXFBO gl;
 
 	Font *font;
@@ -63,6 +66,12 @@ struct BitmapPrivate
 	 * any context other than as Tilesets */
 	SDL_Surface *megaSurface;
 
+	/* A cached version of the bitmap in client memory, for
+	 * getPixel calls. Is invalidated any time the bitmap
+	 * is modified */
+	SDL_Surface *surface;
+	SDL_PixelFormat *format;
+
 	/* The 'tainted' area describes which parts of the
 	 * bitmap are not cleared, ie. don't have 0 opacity.
 	 * If we're blitting / drawing text to a cleared part
@@ -71,9 +80,13 @@ struct BitmapPrivate
 	 * ourselves the expensive blending calculation */
 	pixman_region16_t tainted;
 
-	BitmapPrivate()
-	    : megaSurface(0)
+	BitmapPrivate(Bitmap *self)
+	    : self(self),
+	      megaSurface(0),
+	      surface(0)
 	{
+		format = SDL_AllocFormat(SDL_PIXELFORMAT_ABGR8888);
+
 		font = &shState->defaultFont();
 		pixman_region_init(&tainted);
 	}
@@ -81,6 +94,13 @@ struct BitmapPrivate
 	~BitmapPrivate()
 	{
 		pixman_region_fini(&tainted);
+	}
+
+	void allocSurface()
+	{
+		surface = SDL_CreateRGBSurface(0, gl.width, gl.height, format->BitsPerPixel,
+		                               format->Rmask, format->Gmask,
+		                               format->Bmask, format->Amask);
 	}
 
 	void clearTaintedArea()
@@ -175,6 +195,17 @@ struct BitmapPrivate
 		SDL_FreeSurface(surf);
 		surf = surfConv;
 	}
+
+	void onModified()
+	{
+		if (surface)
+		{
+			SDL_FreeSurface(surface);
+			surface = 0;
+		}
+
+		self->modified();
+	}
 };
 
 Bitmap::Bitmap(const char *filename)
@@ -193,7 +224,7 @@ Bitmap::Bitmap(const char *filename)
 	if (imgSurf->w > glState.caps.maxTexSize || imgSurf->h > glState.caps.maxTexSize)
 	{
 		/* Mega surface */
-		p = new BitmapPrivate;
+		p = new BitmapPrivate(this);
 		p->megaSurface = imgSurf;
 	}
 	else
@@ -211,7 +242,7 @@ Bitmap::Bitmap(const char *filename)
 			throw e;
 		}
 
-		p = new BitmapPrivate;
+		p = new BitmapPrivate(this);
 		p->gl = tex;
 
 		TEX::bind(p->gl.tex);
@@ -230,7 +261,7 @@ Bitmap::Bitmap(int width, int height)
 
 	TEXFBO tex = shState->texPool().request(width, height);
 
-	p = new BitmapPrivate;
+	p = new BitmapPrivate(this);
 	p->gl = tex;
 
 	clear();
@@ -240,7 +271,7 @@ Bitmap::Bitmap(const Bitmap &other)
 {
 	other.ensureNonMega();
 
-	p = new BitmapPrivate;
+	p = new BitmapPrivate(this);
 
 	p->gl = shState->texPool().request(other.width(), other.height());
 
@@ -345,7 +376,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 
 		SDL_FreeSurface(blitTemp);
 
-		modified();
+		p->onModified();
 		return;
 	}
 
@@ -395,7 +426,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 
 	p->addTaintedArea(destRect);
 
-	modified();
+	p->onModified();
 }
 
 void Bitmap::fillRect(int x, int y,
@@ -420,7 +451,7 @@ void Bitmap::fillRect(const IntRect &rect, const Vec4 &color)
 		/* Fill op */
 		p->addTaintedArea(rect);
 
-	modified();
+	p->onModified();
 }
 
 #ifdef RGSS2
@@ -473,7 +504,7 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	p->addTaintedArea(rect);
 
-	modified();
+	p->onModified();
 }
 
 void Bitmap::clearRect(int x, int y, int width, int height)
@@ -489,7 +520,7 @@ void Bitmap::clearRect(const IntRect &rect)
 
 	p->fillRect(rect, Vec4());
 
-	modified();
+	p->onModified();
 }
 
 void Bitmap::blur()
@@ -534,7 +565,7 @@ void Bitmap::blur()
 
 	shState->texPool().release(auxTex);
 
-	modified();
+	p->onModified();
 }
 
 void Bitmap::radialBlur(int angle, int divisions)
@@ -629,7 +660,7 @@ void Bitmap::radialBlur(int angle, int divisions)
 	shState->texPool().release(p->gl);
 	p->gl = newTex;
 
-	modified();
+	p->onModified();
 }
 
 #endif
@@ -650,7 +681,7 @@ void Bitmap::clear()
 
 	p->clearTaintedArea();
 
-	modified();
+	p->onModified();
 }
 
 Color Bitmap::getPixel(int x, int y) const
@@ -662,16 +693,27 @@ Color Bitmap::getPixel(int x, int y) const
 	if (x < 0 || y < 0 || x >= width() || y >= height())
 		return Vec4();
 
-	FBO::bind(p->gl.fbo, FBO::Read);
+	if (!p->surface)
+	{
+		p->allocSurface();
 
-	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
+		FBO::bind(p->gl.fbo, FBO::Read);
 
-	uint8_t pixel[4];
-	gl.ReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+		glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 
-	glState.viewport.pop();
+		gl.ReadPixels(0, 0, width(), height(), GL_RGBA, GL_UNSIGNED_BYTE, p->surface->pixels);
 
-	return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
+		glState.viewport.pop();
+	}
+
+	size_t offset = x*p->format->BytesPerPixel + y*p->surface->pitch;
+	uint8_t *bytes = (uint8_t*) p->surface->pixels + offset;
+	uint32_t pixel = *((uint32_t*) bytes);
+
+	return Color((pixel >> p->format->Rshift) & 0xFF,
+	             (pixel >> p->format->Gshift) & 0xFF,
+	             (pixel >> p->format->Bshift) & 0xFF,
+	             (pixel >> p->format->Ashift) & 0xFF);
 }
 
 void Bitmap::setPixel(int x, int y, const Color &color)
@@ -693,7 +735,7 @@ void Bitmap::setPixel(int x, int y, const Color &color)
 
 	p->addTaintedArea(IntRect(x, y, 1, 1));
 
-	modified();
+	p->onModified();
 }
 
 void Bitmap::hueChange(int hue)
@@ -734,7 +776,7 @@ void Bitmap::hueChange(int hue)
 	shState->texPool().release(p->gl);
 	p->gl = newTex;
 
-	modified();
+	p->onModified();
 }
 
 void Bitmap::drawText(int x, int y,
@@ -914,7 +956,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	SDL_FreeSurface(txtSurf);
 	p->addTaintedArea(posRect);
 
-	modified();
+	p->onModified();
 }
 
 /* http://www.lemoda.net/c/utf8-to-ucs2/index.html */
