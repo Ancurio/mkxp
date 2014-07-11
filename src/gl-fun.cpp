@@ -95,6 +95,9 @@ void initGLFunctions()
 	else
 		parseExtensionsCompat(gl.GetString, ext);
 
+	// FIXME: Set based on GL kind
+	gl.unpack_subimage = true;
+
 #define HAVE_EXT(_ext) ext.contains("GL_" #_ext)
 
 	if (!HAVE_EXT(ARB_framebuffer_object))

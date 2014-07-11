@@ -124,7 +124,8 @@ HEADERS += \
 	src/al-util.h \
 	src/boost-hash.h \
 	src/debugwriter.h \
-	src/gl-fun.h
+	src/gl-fun.h \
+	src/gl-meta.h
 
 SOURCES += \
 	src/main.cpp \

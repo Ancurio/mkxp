@@ -146,6 +146,8 @@ struct GLFunctions
 	GL_VAO_FUN
 	GL_DEBUG_KHR_FUN
 
+	bool unpack_subimage;
+
 #undef GL_FUN
 };
 

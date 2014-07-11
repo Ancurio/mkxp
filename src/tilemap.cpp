@@ -28,6 +28,7 @@
 #include "sharedstate.h"
 #include "glstate.h"
 #include "gl-util.h"
+#include "gl-meta.h"
 #include "global-ibo.h"
 #include "etc-internal.h"
 #include "quadarray.h"
@@ -616,12 +617,11 @@ struct TilemapPrivate
 			{
 				const TileAtlas::Blit &blitOp = blits[i];
 
-				PixelStore::setupSubImage(tsSurf->w, blitOp.src.x, blitOp.src.y);
-
-				TEX::uploadSubImage(blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, tsSurf->pixels, GL_RGBA);
+				GLMeta::subRectImageUpload(tsSurf->w, blitOp.src.x, blitOp.src.y,
+				                           blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, tsSurf, GL_RGBA);
 			}
 
-			PixelStore::reset();
+			GLMeta::subRectImageFinish();
 		}
 		else
 		{

@@ -30,6 +30,7 @@
 #include <pixman.h>
 
 #include "gl-util.h"
+#include "gl-meta.h"
 #include "quad.h"
 #include "quadarray.h"
 #include "transform.h"
@@ -875,25 +876,38 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 			 * there's nothing to upload to begin with */
 			if (SDL_IntersectRect(&btmRect, &txtRect, &inters))
 			{
+				bool subImage = false;
+				int subSrcX = 0, subSrcY = 0;
+
 				if (inters.w != txtRect.w || inters.h != txtRect.h)
 				{
 					/* Clip the text surface */
-					SDL_Rect clipSrc = inters;
-					clipSrc.x -= txtRect.x;
-					clipSrc.y -= txtRect.y;
+					subSrcX = inters.x - txtRect.x;
+					subSrcY = inters.y - txtRect.y;
+					subImage = true;
 
 					posRect.x = inters.x;
 					posRect.y = inters.y;
 					posRect.w = inters.w;
 					posRect.h = inters.h;
-
-					PixelStore::setupSubImage(txtSurf->w, clipSrc.x, clipSrc.y);
 				}
 
 				TEX::bind(p->gl.tex);
-				TEX::uploadSubImage(posRect.x, posRect.y, posRect.w, posRect.h, txtSurf->pixels, GL_BGRA);
 
-				PixelStore::reset();
+				if (!subImage)
+				{
+					TEX::uploadSubImage(posRect.x, posRect.y,
+					                    posRect.w, posRect.h,
+					                    txtSurf->pixels, GL_BGRA);
+				}
+				else
+				{
+					GLMeta::subRectImageUpload(txtSurf->w, subSrcX, subSrcY,
+					                           posRect.x, posRect.y,
+					                           posRect.w, posRect.h,
+					                           txtSurf, GL_BGRA);
+					GLMeta::subRectImageFinish();
+				}
 			}
 		}
 		else
