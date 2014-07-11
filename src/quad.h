@@ -176,7 +176,7 @@ struct Quad
 		}
 
 		VAO::bind(vao);
-		gl.DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		gl.DrawElements(GL_TRIANGLES, 6, _GL_INDEX_TYPE, 0);
 		VAO::unbind();
 	}
 };

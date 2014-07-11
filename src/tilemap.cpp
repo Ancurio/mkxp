@@ -28,6 +28,7 @@
 #include "sharedstate.h"
 #include "glstate.h"
 #include "gl-util.h"
+#include "global-ibo.h"
 #include "etc-internal.h"
 #include "quadarray.h"
 #include "texpool.h"
@@ -1124,12 +1125,12 @@ void GroundLayer::draw()
 
 void GroundLayer::drawInt()
 {
-	gl.DrawElements(GL_TRIANGLES, vboCount, GL_UNSIGNED_INT, (GLvoid*) 0);
+	gl.DrawElements(GL_TRIANGLES, vboCount, _GL_INDEX_TYPE, (GLvoid*) 0);
 }
 
 void GroundLayer::drawFlashInt()
 {
-	gl.DrawElements(GL_TRIANGLES, p->flash.quadCount * 6, GL_UNSIGNED_INT, 0);
+	gl.DrawElements(GL_TRIANGLES, p->flash.quadCount * 6, _GL_INDEX_TYPE, 0);
 }
 
 void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
@@ -1154,7 +1155,7 @@ void ScanRow::setIndex(int value)
 	z = calculateZ(p, index);
 	scene->reinsert(*this);
 
-	vboOffset = p->scanrowBases[index] * sizeof(uint32_t) * 6;
+	vboOffset = p->scanrowBases[index] * sizeof(index_t) * 6;
 	vboCount = p->scanrowSize(index) * 6;
 }
 
@@ -1178,7 +1179,7 @@ void ScanRow::draw()
 
 void ScanRow::drawInt()
 {
-	gl.DrawElements(GL_TRIANGLES, vboBatchCount, GL_UNSIGNED_INT, (GLvoid*) vboOffset);
+	gl.DrawElements(GL_TRIANGLES, vboBatchCount, _GL_INDEX_TYPE, (GLvoid*) vboOffset);
 }
 
 int ScanRow::calculateZ(TilemapPrivate *p, int index)

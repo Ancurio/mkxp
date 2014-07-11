@@ -31,9 +31,6 @@
 
 #include <stdint.h>
 
-typedef uint32_t index_t;
-#define _GL_INDEX_TYPE GL_UNSIGNED_INT
-
 /* A small hack to get mutable QuadArray constructors */
 inline void initBufferBindings(Vertex *)
 {
