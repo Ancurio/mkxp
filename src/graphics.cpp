@@ -797,7 +797,7 @@ void Graphics::resizeScreen(int width, int height)
 	RBO::bind(p->transBuffer.rbo);
 	RBO::allocEmpty(width, height);
 
-	p->updateScreenResoRatio();
+	p->updateScreenResoRatio(p->threadData);
 }
 
 DEF_ATTR_RD_SIMPLE(Graphics, Brightness, int, p->brightness)

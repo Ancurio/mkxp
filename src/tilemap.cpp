@@ -1295,7 +1295,7 @@ void Tilemap::setViewport(Viewport *value)
 
 	p->elem.ground->setViewport(value);
 
-	for (size_t i = 0; i < p->elem.scanrows.size(); ++i)
+	for (size_t i = 0; i < scanrowsMax; ++i)
 		p->elem.scanrows[i]->setViewport(value);
 }
 

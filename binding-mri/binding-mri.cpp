@@ -70,7 +70,9 @@ RB_METHOD(mriP);
 RB_METHOD(mriDataDirectory);
 RB_METHOD(mkxpPuts);
 
+#ifndef RGSS3
 RB_METHOD(_kernelCaller);
+#endif
 
 static void mriBindingInit()
 {

@@ -77,7 +77,7 @@ RB_METHOD(spriteWidth)
 
 	Sprite *s = getPrivateData<Sprite>(self);
 
-	int value;
+	int value = 0;
 	GUARD_EXC( value = s->getWidth(); )
 
 	return rb_fix_new(value);
@@ -89,7 +89,7 @@ RB_METHOD(spriteHeight)
 
 	Sprite *s = getPrivateData<Sprite>(self);
 
-	int value;
+	int value = 0;
 	GUARD_EXC( value = s->getHeight(); )
 
 	return rb_fix_new(value);
