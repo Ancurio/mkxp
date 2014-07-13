@@ -133,6 +133,8 @@ set(MAIN_HEADERS
 	src/boost-hash.h
 	src/debugwriter.h
 	src/gl-fun.h
+	src/gl-meta.h
+	src/vertex.h
 )
 
 set(MAIN_SOURCE
@@ -162,6 +164,8 @@ set(MAIN_SOURCE
 	src/tileatlas.cpp
 	src/sharedstate.cpp
 	src/gl-fun.cpp
+	src/gl-meta.cpp
+	src/vertex.cpp
 )
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
