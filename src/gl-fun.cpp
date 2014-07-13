@@ -100,6 +100,7 @@ void initGLFunctions()
 
 #define HAVE_EXT(_ext) ext.contains("GL_" #_ext)
 
+	/* FBO entrypoints */
 	if (!HAVE_EXT(ARB_framebuffer_object))
 	{
 		if (!(HAVE_EXT(EXT_framebuffer_object) && HAVE_EXT(EXT_framebuffer_blit)))
@@ -116,6 +117,7 @@ void initGLFunctions()
 		GL_FBO_FUN;
 	}
 
+	/* VAO entrypoints */
 	if (!HAVE_EXT(ARB_vertex_array_object))
 	{
 		if (!HAVE_EXT(APPLE_vertex_array_object))
@@ -132,6 +134,7 @@ void initGLFunctions()
 		GL_VAO_FUN;
 	}
 
+	/* Debug callback entrypoints */
 	if (HAVE_EXT(KHR_debug))
 	{
 #undef EXT_SUFFIX
