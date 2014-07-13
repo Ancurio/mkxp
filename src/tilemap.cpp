@@ -571,7 +571,7 @@ struct TilemapPrivate
 
 			FBO::bind(autotile->getGLTypes().fbo, FBO::Read);
 
-			if (blitW <= autotileW)
+			if (blitW <= autotileW && tiles.animated)
 			{
 				/* Static autotile */
 				for (int j = 0; j < 4; ++j)
