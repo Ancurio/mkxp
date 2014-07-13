@@ -42,7 +42,7 @@
 #include <string>
 
 SharedState *SharedState::instance = 0;
-static GlobalIBO *globalIBO = 0;
+static GlobalIBO *_globalIBO = 0;
 
 #define GAME_ARCHIVE "Game.rgssad"
 
@@ -153,8 +153,8 @@ void SharedState::initInstance(RGSSThreadData *threadData)
 	 * SharedState depends on GlobalIBO existing,
 	 * Font depends on SharedState existing */
 
-	globalIBO = new GlobalIBO();
-	globalIBO->ensureSize(1);
+	_globalIBO = new GlobalIBO();
+	_globalIBO->ensureSize(1);
 
 	SharedState::instance = 0;
 	Font *defaultFont = 0;
@@ -166,7 +166,7 @@ void SharedState::initInstance(RGSSThreadData *threadData)
 	}
 	catch (const Exception &exc)
 	{
-		delete globalIBO;
+		delete _globalIBO;
 		delete SharedState::instance;
 		delete defaultFont;
 
@@ -182,7 +182,7 @@ void SharedState::finiInstance()
 
 	delete SharedState::instance;
 
-	delete globalIBO;
+	delete _globalIBO;
 }
 
 void SharedState::setScreen(Scene &screen)
@@ -219,12 +219,12 @@ void SharedState::setBindingData(void *data)
 
 void SharedState::ensureQuadIBO(int minSize)
 {
-	globalIBO->ensureSize(minSize);
+	_globalIBO->ensureSize(minSize);
 }
 
-void SharedState::bindQuadIBO()
+GlobalIBO &SharedState::globalIBO()
 {
-	IBO::bind(globalIBO->ibo);
+	return *_globalIBO;
 }
 
 void SharedState::bindTex()

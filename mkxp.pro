@@ -125,7 +125,8 @@ HEADERS += \
 	src/boost-hash.h \
 	src/debugwriter.h \
 	src/gl-fun.h \
-	src/gl-meta.h
+	src/gl-meta.h \
+	src/vertex.h
 
 SOURCES += \
 	src/main.cpp \
@@ -153,7 +154,9 @@ SOURCES += \
 	src/config.cpp \
 	src/tileatlas.cpp \
 	src/sharedstate.cpp \
-	src/gl-fun.cpp
+	src/gl-fun.cpp \
+	src/gl-meta.cpp \
+	src/vertex.cpp
 
 EMBED = \
 	shader/transSimple.frag \

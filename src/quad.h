@@ -22,8 +22,9 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-#include "etc-internal.h"
+#include "vertex.h"
 #include "gl-util.h"
+#include "gl-meta.h"
 #include "sharedstate.h"
 #include "global-ibo.h"
 #include "shader.h"
@@ -32,7 +33,7 @@ struct Quad
 {
 	Vertex vert[4];
 	VBO::ID vbo;
-	VAO::ID vao;
+	GLMeta::VAO vao;
 	bool vboDirty;
 
 	static void setPosRect(CVertex *vert, const FloatRect &r)
@@ -104,33 +105,22 @@ struct Quad
 
 	Quad()
 	    : vbo(VBO::gen()),
-	      vao(VAO::gen()),
 	      vboDirty(true)
 	{
-		VAO::bind(vao);
-		VBO::bind(vbo);
-		shState->bindQuadIBO();
+		GLMeta::vaoFillInVertexData<Vertex>(vao);
+		vao.vbo = vbo;
+		vao.ibo = shState->globalIBO().ibo;
 
+		GLMeta::vaoInit(vao, true);
 		VBO::allocEmpty(sizeof(Vertex[4]), GL_DYNAMIC_DRAW);
-
-		gl.EnableVertexAttribArray(Shader::Color);
-		gl.EnableVertexAttribArray(Shader::Position);
-		gl.EnableVertexAttribArray(Shader::TexCoord);
-
-		gl.VertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
-		gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
-		gl.VertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
-
-		VAO::unbind();
-		VBO::unbind();
-		IBO::unbind();
+		GLMeta::vaoUnbind(vao);
 
 		setColor(Vec4(1, 1, 1, 1));
 	}
 
 	~Quad()
 	{
-		VAO::del(vao);
+		GLMeta::vaoFini(vao);
 		VBO::del(vbo);
 	}
 
@@ -175,9 +165,9 @@ struct Quad
 			vboDirty = false;
 		}
 
-		VAO::bind(vao);
+		GLMeta::vaoBind(vao);
 		gl.DrawElements(GL_TRIANGLES, 6, _GL_INDEX_TYPE, 0);
-		VAO::unbind();
+		GLMeta::vaoUnbind(vao);
 	}
 };
 

@@ -34,6 +34,7 @@
 #include "quadarray.h"
 #include "texpool.h"
 #include "quad.h"
+#include "vertex.h"
 #include "tileatlas.h"
 
 #include <sigc++/connection.h>
@@ -282,7 +283,7 @@ struct TilemapPrivate
 	/* Shared buffers for all tiles */
 	struct
 	{
-		VAO::ID vao;
+		GLMeta::VAO vao;
 		VBO::ID vbo;
 		bool animated;
 
@@ -294,7 +295,7 @@ struct TilemapPrivate
 	/* Flash buffers */
 	struct
 	{
-		VAO::ID vao;
+		GLMeta::VAO vao;
 		VBO::ID vbo;
 		size_t quadCount;
 		uint8_t alphaIdx;
@@ -375,44 +376,23 @@ struct TilemapPrivate
 		/* Init tile buffers */
 		tiles.vbo = VBO::gen();
 
-		tiles.vao = VAO::gen();
-		VAO::bind(tiles.vao);
+		GLMeta::vaoFillInVertexData<SVertex>(tiles.vao);
+		tiles.vao.vbo = tiles.vbo;
+		tiles.vao.ibo = shState->globalIBO().ibo;
 
-		gl.EnableVertexAttribArray(Shader::Position);
-		gl.EnableVertexAttribArray(Shader::TexCoord);
-
-		VBO::bind(tiles.vbo);
-		shState->bindQuadIBO();
-
-		gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
-		gl.VertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
-
-		VAO::unbind();
-		VBO::unbind();
-		IBO::unbind();
+		GLMeta::vaoInit(tiles.vao);
 
 		/* Init flash buffers */
 		flash.vbo = VBO::gen();
-		flash.vao = VAO::gen();
+
+		GLMeta::vaoFillInVertexData<CVertex>(flash.vao);
+		flash.vao.vbo = flash.vbo;
+		flash.vao.ibo = shState->globalIBO().ibo;
+
+		GLMeta::vaoInit(flash.vao);
+
 		flash.quadCount = 0;
 		flash.alphaIdx = 0;
-
-		VAO::bind(flash.vao);
-
-		gl.EnableVertexAttribArray(Shader::Color);
-		gl.EnableVertexAttribArray(Shader::Position);
-
-		VBO::bind(flash.vbo);
-		shState->bindQuadIBO();
-
-		gl.VertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::colorOffset());
-		gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), CVertex::posOffset());
-
-		VAO::unbind();
-		VBO::unbind();
-		IBO::unbind();
-
-		elem.ground = 0;
 
 		elem.groundStamp = shState->genTimeStamp();
 		elem.scanrowStamp = shState->genTimeStamp();
@@ -436,11 +416,11 @@ struct TilemapPrivate
 		shState->releaseAtlasTex(atlas.gl);
 
 		/* Destroy tile buffers */
-		VAO::del(tiles.vao);
+		GLMeta::vaoFini(tiles.vao);
 		VBO::del(tiles.vbo);
 
 		/* Destroy flash buffers */
-		VAO::del(flash.vao);
+		GLMeta::vaoFini(flash.vao);
 		VBO::del(flash.vbo);
 
 		/* Disconnect signal handlers */
@@ -1099,14 +1079,16 @@ void GroundLayer::draw()
 	p->bindShader(shader);
 	p->bindAtlas(*shader);
 
-	VAO::bind(p->tiles.vao);
+	GLMeta::vaoBind(p->tiles.vao);
 
 	shader->setTranslation(p->dispPos);
 	drawInt();
 
+	GLMeta::vaoUnbind(p->tiles.vao);
+
 	if (p->flash.quadCount > 0)
 	{
-		VAO::bind(p->flash.vao);
+		GLMeta::vaoBind(p->flash.vao);
 		glState.blendMode.pushSet(BlendAddition);
 
 		FlashMapShader &shader = shState->shaders().flashMap;
@@ -1118,9 +1100,9 @@ void GroundLayer::draw()
 		drawFlashInt();
 
 		glState.blendMode.pop();
-	}
 
-	VAO::unbind();
+		GLMeta::vaoUnbind(p->flash.vao);
+	}
 }
 
 void GroundLayer::drawInt()
@@ -1169,12 +1151,12 @@ void ScanRow::draw()
 	p->bindShader(shader);
 	p->bindAtlas(*shader);
 
-	VAO::bind(p->tiles.vao);
+	GLMeta::vaoBind(p->tiles.vao);
 
 	shader->setTranslation(p->dispPos);
 	drawInt();
 
-	VAO::unbind();
+	GLMeta::vaoUnbind(p->tiles.vao);
 }
 
 void ScanRow::drawInt()

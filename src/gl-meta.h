@@ -24,41 +24,45 @@
 
 #include "gl-fun.h"
 #include "gl-util.h"
+#include "vertex.h"
 
 #include <SDL_surface.h>
 
 namespace GLMeta
 {
 
-inline void subRectImageUpload(GLint srcW, GLint srcX, GLint srcY,
-                               GLint dstX, GLint dstY, GLsizei dstW, GLsizei dstH,
-                               SDL_Surface *src, GLenum format)
+/* EXT_unpack_subimage */
+void subRectImageUpload(GLint srcW, GLint srcX, GLint srcY,
+                        GLint dstX, GLint dstY, GLsizei dstW, GLsizei dstH,
+                        SDL_Surface *src, GLenum format);
+void subRectImageFinish();
+
+/* ARB_vertex_array_object */
+struct VAO
 {
-	if (gl.unpack_subimage)
-	{
-		PixelStore::setupSubImage(srcW, srcX, srcY);
-		TEX::uploadSubImage(dstX, dstY, dstW, dstH, src->pixels, format);
-	}
-	else
-	{
-		SDL_PixelFormat *form = src->format;
-		SDL_Surface *tmp = SDL_CreateRGBSurface(0, dstW, dstH, form->BitsPerPixel,
-		                                        form->Rmask, form->Gmask, form->Bmask, form->Amask);
-		SDL_Rect srcRect = { srcX, srcY, dstW, dstH };
+	/* Set manually, then call vaoInit() */
+	const VertexAttribute *attr;
+	size_t attrCount;
+	GLsizei vertSize;
+	VBO::ID vbo;
+	IBO::ID ibo;
 
-		SDL_BlitSurface(src, &srcRect, tmp, 0);
+	/* Don't touch */
+	::VAO::ID vao;
+};
 
-		TEX::uploadSubImage(dstX, dstY, dstW, dstH, tmp->pixels, format);
-
-		SDL_FreeSurface(tmp);
-	}
+template<class VertexType>
+inline void vaoFillInVertexData(VAO &vao)
+{
+	vao.attr      = VertexTraits<VertexType>::attr;
+	vao.attrCount = VertexTraits<VertexType>::attrCount;
+	vao.vertSize  = sizeof(VertexType);
 }
 
-inline void subRectImageFinish()
-{
-	if (gl.unpack_subimage)
-		PixelStore::reset();
-}
+void vaoInit(VAO &vao, bool keepBound = false);
+void vaoFini(VAO &vao);
+void vaoBind(VAO &vao);
+void vaoUnbind(VAO &vao);
 
 }
 

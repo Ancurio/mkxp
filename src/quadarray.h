@@ -22,35 +22,15 @@
 #ifndef QUADARRAY_H
 #define QUADARRAY_H
 
+#include "vertex.h"
 #include "gl-util.h"
+#include "gl-meta.h"
 #include "sharedstate.h"
 #include "global-ibo.h"
 #include "shader.h"
 
 #include <vector>
-
 #include <stdint.h>
-
-/* A small hack to get mutable QuadArray constructors */
-inline void initBufferBindings(Vertex *)
-{
-	gl.EnableVertexAttribArray(Shader::Color);
-	gl.EnableVertexAttribArray(Shader::Position);
-	gl.EnableVertexAttribArray(Shader::TexCoord);
-
-	gl.VertexAttribPointer(Shader::Color,    4, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::colorOffset());
-	gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::posOffset());
-	gl.VertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), Vertex::texPosOffset());
-}
-
-inline void initBufferBindings(SVertex *)
-{
-	gl.EnableVertexAttribArray(Shader::Position);
-	gl.EnableVertexAttribArray(Shader::TexCoord);
-
-	gl.VertexAttribPointer(Shader::Position, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::posOffset());
-	gl.VertexAttribPointer(Shader::TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), SVertex::texPosOffset());
-}
 
 template<class VertexType>
 struct QuadArray
@@ -58,7 +38,7 @@ struct QuadArray
 	std::vector<VertexType> vertices;
 
 	VBO::ID vbo;
-	VAO::ID vao;
+	GLMeta::VAO vao;
 
 	int quadCount;
 	GLsizeiptr vboSize;
@@ -68,25 +48,18 @@ struct QuadArray
 	      vboSize(-1)
 	{
 		vbo = VBO::gen();
-		vao = VAO::gen();
 
-		VAO::bind(vao);
-		VBO::bind(vbo);
-		shState->bindQuadIBO();
+		GLMeta::vaoFillInVertexData<VertexType>(vao);
+		vao.vbo = vbo;
+		vao.ibo = shState->globalIBO().ibo;
 
-		/* Call correct implementation here via overloading */
-		VertexType *dummy = 0;
-		initBufferBindings(dummy);
-
-		VAO::unbind();
-		IBO::unbind();
-		VBO::unbind();
+		GLMeta::vaoInit(vao);
 	}
 
 	~QuadArray()
 	{
+		GLMeta::vaoFini(vao);
 		VBO::del(vbo);
-		VAO::del(vao);
 	}
 
 	void resize(int size)
@@ -129,12 +102,12 @@ struct QuadArray
 
 	void draw(size_t offset, size_t count)
 	{
-		VAO::bind(vao);
+		GLMeta::vaoBind(vao);
 
 		const char *_offset = (const char*) 0 + offset * 6 * sizeof(index_t);
 		gl.DrawElements(GL_TRIANGLES, count * 6, _GL_INDEX_TYPE, _offset);
 
-		VAO::unbind();
+		GLMeta::vaoUnbind(vao);
 	}
 
 	void draw()
