@@ -118,7 +118,7 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	gl.ShaderSource(vertShader, 1, (const GLchar**) &vert, (const GLint*) &vertSize);
 	gl.CompileShader(vertShader);
 
-	gl.GetObjectParameterivARB(vertShader, GL_COMPILE_STATUS, &success);
+	gl.GetShaderiv(vertShader, GL_COMPILE_STATUS, &success);
 
 	if (!success)
 	{
@@ -132,7 +132,7 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	gl.ShaderSource(fragShader, 1, (const GLchar**) &frag, (const GLint*) &fragSize);
 	gl.CompileShader(fragShader);
 
-	gl.GetObjectParameterivARB(fragShader, GL_COMPILE_STATUS, &success);
+	gl.GetShaderiv(fragShader, GL_COMPILE_STATUS, &success);
 
 	if (!success)
 	{
@@ -152,7 +152,7 @@ void Shader::init(const unsigned char *vert, int vertSize,
 
 	gl.LinkProgram(program);
 
-	gl.GetObjectParameterivARB(program, GL_LINK_STATUS, &success);
+	gl.GetProgramiv(program, GL_LINK_STATUS, &success);
 
 	if (!success)
 	{
