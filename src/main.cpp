@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
 
 	if (!win)
 	{
-		Debug() << "Error creating window";
+		Debug() << "Error creating window:" << SDL_GetError();
 		return 0;
 	}
 
