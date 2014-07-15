@@ -97,10 +97,6 @@ struct PingPong
 	{
 		std::swap(srcInd, dstInd);
 
-		/* Discard dest buffer */
-		TEX::bind(rt[dstInd].tex);
-		TEX::allocEmpty(screenW, screenH);
-
 		bind();
 	}
 
