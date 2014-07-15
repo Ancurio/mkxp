@@ -22,6 +22,7 @@
 #include "graphics.h"
 #include "sharedstate.h"
 #include "binding-util.h"
+#include "binding-types.h"
 #include "exception.h"
 
 RB_METHOD(graphicsUpdate)
@@ -115,6 +116,52 @@ RB_METHOD(graphicsHeight)
 	return rb_fix_new(shState->graphics().height());
 }
 
+RB_METHOD(graphicsWait)
+{
+	RB_UNUSED_PARAM;
+
+	int duration;
+	rb_get_args(argc, argv, "i", &duration RB_ARG_END);
+
+	shState->graphics().wait(duration);
+
+	return Qnil;
+}
+
+RB_METHOD(graphicsFadeout)
+{
+	RB_UNUSED_PARAM;
+
+	int duration;
+	rb_get_args(argc, argv, "i", &duration RB_ARG_END);
+
+	shState->graphics().fadeout(duration);
+
+	return Qnil;
+}
+
+RB_METHOD(graphicsFadein)
+{
+	RB_UNUSED_PARAM;
+
+	int duration;
+	rb_get_args(argc, argv, "i", &duration RB_ARG_END);
+
+	shState->graphics().fadein(duration);
+
+	return Qnil;
+}
+
+RB_METHOD(graphicsSnapToBitmap)
+{
+	RB_UNUSED_PARAM;
+
+	Bitmap *result = 0;
+	GUARD_EXC( result = shState->graphics().snapToBitmap(); );
+
+	return wrapObject(result, BitmapType);
+}
+
 #endif
 
 DEF_GRA_PROP_B(Fullscreen)
@@ -139,8 +186,12 @@ void graphicsBindingInit()
 	INIT_GRA_PROP_BIND( FrameCount, "frame_count" );
 
 #ifdef RGSS2
-	_rb_define_module_function(module, "width",  graphicsWidth);
+	_rb_define_module_function(module, "width", graphicsWidth);
 	_rb_define_module_function(module, "height", graphicsHeight);
+	_rb_define_module_function(module, "wait", graphicsWait);
+	_rb_define_module_function(module, "fadeout", graphicsFadeout);
+	_rb_define_module_function(module, "fadein", graphicsFadein);
+	_rb_define_module_function(module, "snap_to_bitmap", graphicsSnapToBitmap);
 #endif
 
 	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
