@@ -180,6 +180,7 @@ public:
 		shader.setColor(c);
 		shader.setFlash(f);
 		shader.setTone(t);
+		shader.setOpacity(1.0);
 		shader.applyViewportProj();
 		shader.setTexSize(geometry.rect.size());
 
