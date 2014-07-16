@@ -136,7 +136,10 @@ void Plane::setBitmap(Bitmap *value)
 
 void Plane::setOX(int value)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	if (p->ox == value)
+	        return;
 
 	p->ox = value;
 	p->quadSourceDirty = true;
@@ -144,7 +147,10 @@ void Plane::setOX(int value)
 
 void Plane::setOY(int value)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	if (p->oy == value)
+	        return;
 
 	p->oy = value;
 	p->quadSourceDirty = true;
@@ -152,7 +158,10 @@ void Plane::setOY(int value)
 
 void Plane::setZoomX(float value)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	if (p->zoomX == value)
+	        return;
 
 	p->zoomX = value;
 	p->quadSourceDirty = true;
@@ -160,7 +169,10 @@ void Plane::setZoomX(float value)
 
 void Plane::setZoomY(float value)
 {
-	GUARD_DISPOSED
+	GUARD_DISPOSED;
+
+	if (p->zoomY == value)
+	        return;
 
 	p->zoomY = value;
 	p->quadSourceDirty = true;
