@@ -30,6 +30,19 @@
 
 DEF_TYPE(Bitmap);
 
+void bitmapInitProps(Bitmap *b, VALUE self)
+{
+	/* Wrap properties */
+	VALUE fontKlass = rb_const_get(rb_cObject, rb_intern("Font"));
+	VALUE fontObj = rb_obj_alloc(fontKlass);
+	rb_obj_call_init(fontObj, 0, 0);
+
+	Font *font = getPrivateData<Font>(fontObj);
+	b->setFont(font);
+
+	rb_iv_set(self, "font", fontObj);
+}
+
 RB_METHOD(bitmapInitialize)
 {
 	Bitmap *b = 0;
@@ -50,16 +63,7 @@ RB_METHOD(bitmapInitialize)
 	}
 
 	setPrivateData(self, b);
-
-	/* Wrap properties */
-	VALUE fontKlass = rb_const_get(rb_cObject, rb_intern("Font"));
-	VALUE fontObj = rb_obj_alloc(fontKlass);
-	rb_obj_call_init(fontObj, 0, 0);
-
-	Font *font = getPrivateData<Font>(fontObj);
-	b->setFont(font);
-
-	rb_iv_set(self, "font", fontObj);
+	bitmapInitProps(b, self);
 
 	return self;
 }

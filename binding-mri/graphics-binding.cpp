@@ -152,6 +152,8 @@ RB_METHOD(graphicsFadein)
 	return Qnil;
 }
 
+void bitmapInitProps(Bitmap *b, VALUE self);
+
 RB_METHOD(graphicsSnapToBitmap)
 {
 	RB_UNUSED_PARAM;
@@ -159,7 +161,10 @@ RB_METHOD(graphicsSnapToBitmap)
 	Bitmap *result = 0;
 	GUARD_EXC( result = shState->graphics().snapToBitmap(); );
 
-	return wrapObject(result, BitmapType);
+	VALUE obj = wrapObject(result, BitmapType);
+	bitmapInitProps(result, obj);
+
+	return obj;
 }
 
 #endif
