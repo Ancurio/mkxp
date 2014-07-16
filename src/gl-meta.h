@@ -35,7 +35,7 @@ namespace GLMeta
 void subRectImageUpload(GLint srcW, GLint srcX, GLint srcY,
                         GLint dstX, GLint dstY, GLsizei dstW, GLsizei dstH,
                         SDL_Surface *src, GLenum format);
-void subRectImageFinish();
+void subRectImageEnd();
 
 /* ARB_vertex_array_object */
 struct VAO
@@ -72,7 +72,7 @@ void blitRectangle(const IntRect &src, const Vec2i &dstPos,
                    FBO::BlitMode mode = FBO::Nearest);
 void blitRectangle(const IntRect &src, const IntRect &dst,
                    FBO::BlitMode mode = FBO::Nearest);
-void blitFinish();
+void blitEnd();
 
 }
 

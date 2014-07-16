@@ -387,7 +387,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		GLMeta::blitBegin(p->gl);
 		GLMeta::blitSource(source.p->gl);
 		GLMeta::blitRectangle(sourceRect, destRect);
-		GLMeta::blitFinish();
+		GLMeta::blitEnd();
 	}
 	else
 	{
@@ -399,7 +399,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		GLMeta::blitBegin(gpTex);
 		GLMeta::blitSource(p->gl);
 		GLMeta::blitRectangle(destRect, Vec2i());
-		GLMeta::blitFinish();
+		GLMeta::blitEnd();
 
 		FloatRect bltSubRect((float) sourceRect.x / source.width(),
 		                     (float) sourceRect.y / source.height(),
@@ -906,7 +906,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 					                           posRect.x, posRect.y,
 					                           posRect.w, posRect.h,
 					                           txtSurf, GL_BGRA);
-					GLMeta::subRectImageFinish();
+					GLMeta::subRectImageEnd();
 				}
 			}
 		}
@@ -922,7 +922,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 			GLMeta::blitSource(gpTF);
 			GLMeta::blitRectangle(IntRect(0, 0, txtSurf->w, txtSurf->h),
 			                      posRect, FBO::Linear);
-			GLMeta::blitFinish();
+			GLMeta::blitEnd();
 		}
 	}
 	else
@@ -934,7 +934,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		GLMeta::blitBegin(gpTex2);
 		GLMeta::blitSource(p->gl);
 		GLMeta::blitRectangle(posRect, Vec2i());
-		GLMeta::blitFinish();
+		GLMeta::blitEnd();
 
 		FloatRect bltRect(0, 0,
 		                  (float) gpTexSize.x / gpTex2.width,

@@ -52,7 +52,7 @@ void subRectImageUpload(GLint srcW, GLint srcX, GLint srcY,
 	}
 }
 
-void subRectImageFinish()
+void subRectImageEnd()
 {
 	if (gl.unpack_subimage)
 		PixelStore::reset();
@@ -195,7 +195,7 @@ void blitRectangle(const IntRect &src, const IntRect &dst, FBO::BlitMode mode)
 	}
 }
 
-void blitFinish()
+void blitEnd()
 {
 	if (!HAVE_NATIVE_BLIT)
 		glState.viewport.pop();

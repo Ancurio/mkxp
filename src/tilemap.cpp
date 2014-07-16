@@ -588,7 +588,7 @@ struct TilemapPrivate
 			}
 		}
 
-		GLMeta::blitFinish();
+		GLMeta::blitEnd();
 
 		/* Blit tileset */
 		if (tileset->megaSurface())
@@ -606,7 +606,7 @@ struct TilemapPrivate
 				                           blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, tsSurf, GL_RGBA);
 			}
 
-			GLMeta::subRectImageFinish();
+			GLMeta::subRectImageEnd();
 		}
 		else
 		{
@@ -622,7 +622,7 @@ struct TilemapPrivate
 				                      blitOp.dst);
 			}
 
-			GLMeta::blitFinish();
+			GLMeta::blitEnd();
 		}
 	}
 

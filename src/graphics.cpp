@@ -163,9 +163,9 @@ public:
 		glState.scissorTest.pushSet(false);
 
 		GLMeta::blitBegin(pp.frontBuffer());
-		GLMeta::blitSetSource(pp.backBuffer());
+		GLMeta::blitSource(pp.backBuffer());
 		GLMeta::blitRectangle(geometry.rect, Vec2i());
-		GLMeta::blitFinish();
+		GLMeta::blitEnd();
 
 		glState.scissorTest.pop();
 
@@ -504,9 +504,9 @@ struct GraphicsPrivate
 		screen.composite();
 
 		GLMeta::blitBegin(buffer);
-		GLMeta::blitSetSource(screen.getPP().frontBuffer());
+		GLMeta::blitSource(screen.getPP().frontBuffer());
 		GLMeta::blitRectangle(IntRect(0, 0, scRes.x, scRes.y), Vec2i());
-		GLMeta::blitFinish();
+		GLMeta::blitEnd();
 	}
 
 	void metaBlitBufferFlippedScaled()
@@ -521,12 +521,12 @@ struct GraphicsPrivate
 		screen.composite();
 
 		GLMeta::blitBeginScreen(winSize);
-		GLMeta::blitSetSource(screen.getPP().frontBuffer());
+		GLMeta::blitSource(screen.getPP().frontBuffer());
 
 		FBO::clear();
 		metaBlitBufferFlippedScaled();
 
-		GLMeta::blitFinish();
+		GLMeta::blitEnd();
 
 		swapGLBuffer();
 	}
@@ -663,9 +663,9 @@ void Graphics::transition(int duration,
 		FBO::clear();
 
 		GLMeta::blitBeginScreen(Vec2i(p->winSize));
-		GLMeta::blitSetSource(p->transBuffer);
+		GLMeta::blitSource(p->transBuffer);
 		p->metaBlitBufferFlippedScaled();
-		GLMeta::blitFinish();
+		GLMeta::blitEnd();
 
 		p->swapGLBuffer();
 	}
@@ -725,12 +725,12 @@ void Graphics::fadeout(int duration)
 		if (p->frozen)
 		{
 			GLMeta::blitBeginScreen(p->scSize);
-			GLMeta::blitSetSource(p->frozenScene);
+			GLMeta::blitSource(p->frozenScene);
 
 			FBO::clear();
 			p->metaBlitBufferFlippedScaled();
 
-			GLMeta::blitFinish();
+			GLMeta::blitEnd();
 
 			p->swapGLBuffer();
 		}
@@ -752,12 +752,12 @@ void Graphics::fadein(int duration)
 		if (p->frozen)
 		{
 			GLMeta::blitBeginScreen(p->scSize);
-			GLMeta::blitSetSource(p->frozenScene);
+			GLMeta::blitSource(p->frozenScene);
 
 			FBO::clear();
 			p->metaBlitBufferFlippedScaled();
 
-			GLMeta::blitFinish();
+			GLMeta::blitEnd();
 
 			p->swapGLBuffer();
 		}
@@ -868,7 +868,7 @@ void Graphics::repaintWait(volatile bool *exitCond)
 	/* Repaint the screen with the last good frame we drew */
 	TEXFBO &lastFrame = p->screen.getPP().frontBuffer();
 	GLMeta::blitBeginScreen(p->winSize);
-	GLMeta::blitSetSource(lastFrame);
+	GLMeta::blitSource(lastFrame);
 
 	while (!*exitCond)
 	{
@@ -882,5 +882,5 @@ void Graphics::repaintWait(volatile bool *exitCond)
 		p->threadData->ethread->notifyFrame();
 	}
 
-	GLMeta::blitFinish();
+	GLMeta::blitEnd();
 }
