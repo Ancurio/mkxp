@@ -551,7 +551,7 @@ struct TilemapPrivate
 		TileAtlas::BlitVec blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
 
 		/* Clear atlas */
-		FBO::bind(atlas.gl.fbo, FBO::Draw);
+		FBO::bind(atlas.gl.fbo, FBO::Generic);
 		glState.clearColor.pushSet(Vec4());
 		glState.scissorTest.pushSet(false);
 
@@ -559,6 +559,8 @@ struct TilemapPrivate
 
 		glState.scissorTest.pop();
 		glState.clearColor.pop();
+
+		GLMeta::blitBegin(atlas.gl);
 
 		/* Blit autotiles */
 		for (size_t i = 0; i < atlas.usableATs.size(); ++i)
@@ -569,26 +571,29 @@ struct TilemapPrivate
 			int blitW = std::min(autotile->width(), atAreaW);
 			int blitH = std::min(autotile->height(), atAreaH);
 
-			FBO::bind(autotile->getGLTypes().fbo, FBO::Read);
+			GLMeta::blitSource(autotile->getGLTypes());
 
 			if (blitW <= autotileW && tiles.animated)
 			{
 				/* Static autotile */
 				for (int j = 0; j < 4; ++j)
-					FBO::blit(0, 0, autotileW*j, atInd*autotileH, blitW, blitH);
+					GLMeta::blitRectangle(IntRect(0, 0, blitW, blitH),
+					                      Vec2i(autotileW*j, atInd*autotileH));
 			}
 			else
 			{
 				/* Animated autotile */
-				FBO::blit(0, 0, 0, atInd*autotileH, blitW, blitH);
+				GLMeta::blitRectangle(IntRect(0, 0, blitW, blitH),
+				                      Vec2i(0, atInd*autotileH));
 			}
 		}
+
+		GLMeta::blitFinish();
 
 		/* Blit tileset */
 		if (tileset->megaSurface())
 		{
 			/* Mega surface tileset */
-			FBO::unbind(FBO::Draw);
 			TEX::bind(atlas.gl.tex);
 
 			SDL_Surface *tsSurf = tileset->megaSurface();
@@ -606,14 +611,18 @@ struct TilemapPrivate
 		else
 		{
 			/* Regular tileset */
-			FBO::bind(tileset->getGLTypes().fbo, FBO::Read);
+			GLMeta::blitBegin(atlas.gl);
+			GLMeta::blitSource(tileset->getGLTypes());
 
 			for (size_t i = 0; i < blits.size(); ++i)
 			{
 				const TileAtlas::Blit &blitOp = blits[i];
 
-				FBO::blit(blitOp.src.x, blitOp.src.y, blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h);
+				GLMeta::blitRectangle(IntRect(blitOp.src.x, blitOp.src.y, tsLaneW, blitOp.h),
+				                      blitOp.dst);
 			}
+
+			GLMeta::blitFinish();
 		}
 	}
 

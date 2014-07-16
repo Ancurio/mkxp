@@ -294,17 +294,17 @@ TransShader::TransShader()
 
 void TransShader::setCurrentScene(TEX::ID tex)
 {
-	setTexUniform(u_currentScene, 0, tex);
+	setTexUniform(u_currentScene, 1, tex);
 }
 
 void TransShader::setFrozenScene(TEX::ID tex)
 {
-	setTexUniform(u_frozenScene, 1, tex);
+	setTexUniform(u_frozenScene, 2, tex);
 }
 
 void TransShader::setTransMap(TEX::ID tex)
 {
-	setTexUniform(u_transMap, 2, tex);
+	setTexUniform(u_transMap, 3, tex);
 }
 
 void TransShader::setProg(float value)
@@ -331,12 +331,12 @@ SimpleTransShader::SimpleTransShader()
 
 void SimpleTransShader::setCurrentScene(TEX::ID tex)
 {
-	setTexUniform(u_currentScene, 0, tex);
+	setTexUniform(u_currentScene, 1, tex);
 }
 
 void SimpleTransShader::setFrozenScene(TEX::ID tex)
 {
-	setTexUniform(u_frozenScene, 1, tex);
+	setTexUniform(u_frozenScene, 2, tex);
 }
 
 void SimpleTransShader::setProg(float value)

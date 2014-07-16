@@ -100,40 +100,6 @@ namespace TEX
 	}
 }
 
-/* Renderbuffer Object */
-namespace RBO
-{
-	DEF_GL_ID
-
-	inline ID gen()
-	{
-		ID id;
-		gl.GenRenderbuffers(1, &id.gl);
-
-		return id;
-	}
-
-	inline void del(ID id)
-	{
-		gl.DeleteRenderbuffers(1, &id.gl);
-	}
-
-	inline void bind(ID id)
-	{
-		gl.BindRenderbuffer(GL_RENDERBUFFER, id.gl);
-	}
-
-	inline void unbind()
-	{
-		bind(ID(0));
-	}
-
-	inline void allocEmpty(GLsizei width, GLsizei height)
-	{
-		gl.RenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
-	}
-}
-
 /* Framebuffer Object */
 namespace FBO
 {
@@ -142,7 +108,8 @@ namespace FBO
 	enum Mode
 	{
 		Draw = 0,
-		Read = 1
+		Read = 1,
+		Generic = 2
 	};
 
 	enum BlitMode
@@ -169,7 +136,8 @@ namespace FBO
 		static const GLenum modes[] =
 		{
 			GL_DRAW_FRAMEBUFFER,
-			GL_READ_FRAMEBUFFER
+			GL_READ_FRAMEBUFFER,
+			GL_FRAMEBUFFER
 		};
 
 		gl.BindFramebuffer(modes[mode], id.gl);
@@ -183,11 +151,6 @@ namespace FBO
 	inline void setTarget(TEX::ID target, unsigned colorAttach = 0)
 	{
 		gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
-	}
-
-	inline void setTarget(RBO::ID target, unsigned colorAttach = 0)
-	{
-		gl.FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_RENDERBUFFER, target.gl);
 	}
 
 	inline void blit(int srcX, int srcY,
@@ -364,45 +327,6 @@ struct TEXFBO
 	{
 		FBO::del(obj.fbo);
 		TEX::del(obj.tex);
-	}
-};
-
-/* Convenience struct wrapping a framebuffer
- * and a renderbuffer as its target */
-struct RBOFBO
-{
-	RBO::ID rbo;
-	FBO::ID fbo;
-	int width, height;
-
-	RBOFBO()
-	    : rbo(0), fbo(0), width(0), height(0)
-	{}
-
-	static inline void init(RBOFBO &obj)
-	{
-		obj.rbo = RBO::gen();
-		obj.fbo = FBO::gen();
-	}
-
-	static inline void allocEmpty(RBOFBO &obj, int width, int height)
-	{
-		RBO::bind(obj.rbo);
-		RBO::allocEmpty(width, height);
-		obj.width = width;
-		obj.height = height;
-	}
-
-	static inline void linkFBO(RBOFBO &obj)
-	{
-		FBO::bind(obj.fbo, FBO::Draw);
-		FBO::setTarget(obj.rbo);
-	}
-
-	static inline void fini(RBOFBO &obj)
-	{
-		FBO::del(obj.fbo);
-		RBO::del(obj.rbo);
 	}
 };
 

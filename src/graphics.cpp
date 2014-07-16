@@ -70,10 +70,14 @@ struct PingPong
 			TEXFBO::fini(rt[i]);
 	}
 
-	/* Binds FBO of last good buffer for reading */
-	void bindLastBuffer()
+	TEXFBO &backBuffer()
 	{
-		FBO::bind(rt[dstInd].fbo, FBO::Read);
+		return rt[srcInd];
+	}
+
+	TEXFBO &frontBuffer()
+	{
+		return rt[dstInd];
 	}
 
 	/* Better not call this during render cycles */
@@ -100,23 +104,10 @@ struct PingPong
 		bind();
 	}
 
-	void blitFBOs()
-	{
-		FBO::blit(0, 0, 0, 0, screenW, screenH);
-	}
-
-	void finishRender()
-	{
-		FBO::unbind(FBO::Draw);
-		FBO::bind(rt[dstInd].fbo, FBO::Read);
-	}
-
 private:
 	void bind()
 	{
-		TEX::bind(rt[srcInd].tex);
-		FBO::bind(rt[srcInd].fbo, FBO::Read);
-		FBO::bind(rt[dstInd].fbo, FBO::Draw);
+		FBO::bind(rt[dstInd].fbo, FBO::Generic);
 	}
 };
 
@@ -160,8 +151,6 @@ public:
 			brightnessQuad.draw();
 		}
 #endif
-
-		pp.finishRender();
 	}
 
 	void requestViewportRender(Vec4 &c, Vec4 &f, Vec4 &t)
@@ -172,7 +161,12 @@ public:
 		 * and since we're inside the draw cycle, it will
 		 * be turned on, so turn it off temporarily */
 		glState.scissorTest.pushSet(false);
-		pp.blitFBOs();
+
+		GLMeta::blitBegin(pp.frontBuffer());
+		GLMeta::blitSetSource(pp.backBuffer());
+		GLMeta::blitRectangle(geometry.rect, Vec2i());
+		GLMeta::blitFinish();
+
 		glState.scissorTest.pop();
 
 		PlaneShader &shader = shState->shaders().plane;
@@ -183,6 +177,8 @@ public:
 		shader.setOpacity(1.0);
 		shader.applyViewportProj();
 		shader.setTexSize(geometry.rect.size());
+
+		TEX::bind(pp.backBuffer().tex);
 
 		glState.blendMode.pushSet(BlendNone);
 
@@ -399,7 +395,7 @@ struct GraphicsPrivate
 	TEXFBO frozenScene;
 	TEXFBO currentScene;
 	Quad screenQuad;
-	RBOFBO transBuffer;
+	TEXFBO transBuffer;
 
 	GraphicsPrivate(RGSSThreadData *rtData)
 	    : scRes(640, 480),
@@ -429,9 +425,9 @@ struct GraphicsPrivate
 		FloatRect screenRect(0, 0, scRes.x, scRes.y);
 		screenQuad.setTexPosRect(screenRect, screenRect);
 
-		RBOFBO::init(transBuffer);
-		RBOFBO::allocEmpty(transBuffer, scRes.x, scRes.y);
-		RBOFBO::linkFBO(transBuffer);
+		TEXFBO::init(transBuffer);
+		TEXFBO::allocEmpty(transBuffer, scRes.x, scRes.y);
+		TEXFBO::linkFBO(transBuffer);
 	}
 
 	~GraphicsPrivate()
@@ -439,7 +435,7 @@ struct GraphicsPrivate
 		TEXFBO::fini(frozenScene);
 		TEXFBO::fini(currentScene);
 
-		RBOFBO::fini(transBuffer);
+		TEXFBO::fini(transBuffer);
 	}
 
 	void updateScreenResoRatio(RGSSThreadData *rtData)
@@ -503,25 +499,34 @@ struct GraphicsPrivate
 		threadData->ethread->notifyFrame();
 	}
 
-	void compositeToBuffer(FBO::ID fbo)
+	void compositeToBuffer(TEXFBO &buffer)
 	{
 		screen.composite();
-		FBO::bind(fbo, FBO::Draw);
-		FBO::blit(0, 0, 0, 0, scRes.x, scRes.y);
+
+		GLMeta::blitBegin(buffer);
+		GLMeta::blitSetSource(screen.getPP().frontBuffer());
+		GLMeta::blitRectangle(IntRect(0, 0, scRes.x, scRes.y), Vec2i());
+		GLMeta::blitFinish();
 	}
 
-	void blitBufferFlippedScaled()
+	void metaBlitBufferFlippedScaled()
 	{
-		FBO::blit(0, 0, scRes.x, scRes.y,
-		          scOffset.x, scSize.y+scOffset.y, scSize.x, -scSize.y,
-		          threadData->config.smoothScaling ? FBO::Linear : FBO::Nearest);
+		GLMeta::blitRectangle(IntRect(0, 0, scRes.x, scRes.y),
+		                      IntRect(scOffset.x, scSize.y+scOffset.y, scSize.x, -scSize.y),
+		                      threadData->config.smoothScaling ? FBO::Linear : FBO::Nearest);
 	}
 
 	void redrawScreen()
 	{
 		screen.composite();
+
+		GLMeta::blitBeginScreen(winSize);
+		GLMeta::blitSetSource(screen.getPP().frontBuffer());
+
 		FBO::clear();
-		blitBufferFlippedScaled();
+		metaBlitBufferFlippedScaled();
+
+		GLMeta::blitFinish();
 
 		swapGLBuffer();
 	}
@@ -579,7 +584,7 @@ void Graphics::freeze()
 	p->checkResize();
 
 	/* Capture scene into frozen buffer */
-	p->compositeToBuffer(p->frozenScene.fbo);
+	p->compositeToBuffer(p->frozenScene);
 }
 
 void Graphics::transition(int duration,
@@ -594,13 +599,16 @@ void Graphics::transition(int duration,
 #endif
 
 	/* Capture new scene */
-	p->compositeToBuffer(p->currentScene.fbo);
+	p->compositeToBuffer(p->currentScene);
 
 	/* If no transition bitmap is provided,
 	 * we can use a simplified shader */
+	TransShader &transShader = shState->shaders().trans;
+	SimpleTransShader &simpleShader = shState->shaders().simpleTrans;
+
 	if (transMap)
 	{
-		TransShader &shader = shState->shaders().trans;
+		TransShader &shader = transShader;
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
@@ -611,7 +619,7 @@ void Graphics::transition(int duration,
 	}
 	else
 	{
-		SimpleTransShader &shader = shState->shaders().simpleTrans;
+		SimpleTransShader &shader = simpleShader;
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
@@ -632,23 +640,32 @@ void Graphics::transition(int duration,
 		const float prog = i * (1.0 / duration);
 
 		if (transMap)
-			shState->shaders().trans.setProg(prog);
+		{
+			transShader.bind();
+			transShader.setProg(prog);
+		}
 		else
-			shState->shaders().simpleTrans.setProg(prog);
+		{
+			simpleShader.bind();
+			simpleShader.setProg(prog);
+		}
 
 		/* Draw the composed frame to a buffer first
 		 * (we need this because we're skipping PingPong) */
-		FBO::bind(p->transBuffer.fbo, FBO::Draw);
+		FBO::bind(p->transBuffer.fbo, FBO::Generic);
 		FBO::clear();
 		p->screenQuad.draw();
 
 		p->checkResize();
 
 		/* Then blit it flipped and scaled to the screen */
-		FBO::bind(p->transBuffer.fbo, FBO::Read);
-		FBO::unbind(FBO::Draw);
+		FBO::unbind(FBO::Generic);
 		FBO::clear();
-		p->blitBufferFlippedScaled();
+
+		GLMeta::blitBeginScreen(Vec2i(p->winSize));
+		GLMeta::blitSetSource(p->transBuffer);
+		p->metaBlitBufferFlippedScaled();
+		GLMeta::blitFinish();
 
 		p->swapGLBuffer();
 	}
@@ -699,10 +716,7 @@ void Graphics::wait(int duration)
 
 void Graphics::fadeout(int duration)
 {
-	if (p->frozen)
-		FBO::bind(p->frozenScene.fbo, FBO::Read);
-
-	FBO::unbind(FBO::Draw);
+	FBO::unbind(FBO::Generic);
 
 	for (int i = duration-1; i > -1; --i)
 	{
@@ -710,8 +724,14 @@ void Graphics::fadeout(int duration)
 
 		if (p->frozen)
 		{
+			GLMeta::blitBeginScreen(p->scSize);
+			GLMeta::blitSetSource(p->frozenScene);
+
 			FBO::clear();
-			p->blitBufferFlippedScaled();
+			p->metaBlitBufferFlippedScaled();
+
+			GLMeta::blitFinish();
+
 			p->swapGLBuffer();
 		}
 		else
@@ -723,10 +743,7 @@ void Graphics::fadeout(int duration)
 
 void Graphics::fadein(int duration)
 {
-	if (p->frozen)
-		FBO::bind(p->frozenScene.fbo, FBO::Read);
-
-	FBO::unbind(FBO::Draw);
+	FBO::unbind(FBO::Generic);
 
 	for (int i = 0; i < duration; ++i)
 	{
@@ -734,8 +751,14 @@ void Graphics::fadein(int duration)
 
 		if (p->frozen)
 		{
+			GLMeta::blitBeginScreen(p->scSize);
+			GLMeta::blitSetSource(p->frozenScene);
+
 			FBO::clear();
-			p->blitBufferFlippedScaled();
+			p->metaBlitBufferFlippedScaled();
+
+			GLMeta::blitFinish();
+
 			p->swapGLBuffer();
 		}
 		else
@@ -749,7 +772,7 @@ Bitmap *Graphics::snapToBitmap()
 {
 	Bitmap *bitmap = new Bitmap(width(), height());
 
-	p->compositeToBuffer(bitmap->getGLTypes().fbo);
+	p->compositeToBuffer(bitmap->getGLTypes());
 
 	/* Taint entire bitmap */
 	bitmap->taintArea(IntRect(0, 0, width(), height()));
@@ -791,8 +814,8 @@ void Graphics::resizeScreen(int width, int height)
 	FloatRect screenRect(0, 0, width, height);
 	p->screenQuad.setTexPosRect(screenRect, screenRect);
 
-	RBO::bind(p->transBuffer.rbo);
-	RBO::allocEmpty(width, height);
+	TEX::bind(p->transBuffer.tex);
+	TEX::allocEmpty(width, height);
 
 	p->updateScreenResoRatio(p->threadData);
 }
@@ -843,18 +866,21 @@ void Graphics::repaintWait(volatile bool *exitCond)
 		return;
 
 	/* Repaint the screen with the last good frame we drew */
-	p->screen.getPP().bindLastBuffer();
-	FBO::unbind(FBO::Draw);
+	TEXFBO &lastFrame = p->screen.getPP().frontBuffer();
+	GLMeta::blitBeginScreen(p->winSize);
+	GLMeta::blitSetSource(lastFrame);
 
 	while (!*exitCond)
 	{
 		shState->checkShutdown();
 
 		FBO::clear();
-		p->blitBufferFlippedScaled();
+		p->metaBlitBufferFlippedScaled();
 		SDL_GL_SwapWindow(p->threadData->window);
 		p->fpsLimiter.delay();
 
 		p->threadData->ethread->notifyFrame();
 	}
+
+	GLMeta::blitFinish();
 }

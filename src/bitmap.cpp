@@ -150,7 +150,7 @@ struct BitmapPrivate
 
 	void bindFBO()
 	{
-		FBO::bind(gl.fbo, FBO::Draw);
+		FBO::bind(gl.fbo, FBO::Generic);
 	}
 
 	void pushSetViewport(ShaderBase &shader) const
@@ -384,11 +384,10 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	if (opacity == 255 && !p->touchesTaintedArea(destRect))
 	{
 		/* Fast blit */
-		FBO::bind(source.p->gl.fbo, FBO::Read);
-		FBO::bind(p->gl.fbo, FBO::Draw);
-
-		FBO::blit(sourceRect.x, sourceRect.y, sourceRect.w, sourceRect.h,
-		          destRect.x,   destRect.y,   destRect.w,   destRect.h);
+		GLMeta::blitBegin(p->gl);
+		GLMeta::blitSource(source.p->gl);
+		GLMeta::blitRectangle(sourceRect, destRect);
+		GLMeta::blitFinish();
 	}
 	else
 	{
@@ -397,9 +396,10 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 
 		TEXFBO &gpTex = shState->gpTexFBO(destRect.w, destRect.h);
 
-		FBO::bind(gpTex.fbo, FBO::Draw);
-		FBO::bind(p->gl.fbo, FBO::Read);
-		FBO::blit(destRect.x, destRect.y, 0, 0, destRect.w, destRect.h);
+		GLMeta::blitBegin(gpTex);
+		GLMeta::blitSource(p->gl);
+		GLMeta::blitRectangle(destRect, Vec2i());
+		GLMeta::blitFinish();
 
 		FloatRect bltSubRect((float) sourceRect.x / source.width(),
 		                     (float) sourceRect.y / source.height(),
@@ -544,7 +544,7 @@ void Bitmap::blur()
 	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 
 	TEX::bind(p->gl.tex);
-	FBO::bind(auxTex.fbo, FBO::Draw);
+	FBO::bind(auxTex.fbo, FBO::Generic);
 
 	pass1.bind();
 	pass1.setTexSize(Vec2i(width(), height()));
@@ -553,7 +553,7 @@ void Bitmap::blur()
 	quad.draw();
 
 	TEX::bind(auxTex.tex);
-	FBO::bind(p->gl.fbo, FBO::Draw);
+	p->bindFBO();
 
 	pass2.bind();
 	pass2.setTexSize(Vec2i(width(), height()));
@@ -625,7 +625,7 @@ void Bitmap::radialBlur(int angle, int divisions)
 
 	TEXFBO newTex = shState->texPool().request(_width, _height);
 
-	FBO::bind(newTex.fbo, FBO::Draw);
+	FBO::bind(newTex.fbo, FBO::Generic);
 
 	glState.clearColor.pushSet(Vec4());
 	FBO::clear();
@@ -698,7 +698,7 @@ Color Bitmap::getPixel(int x, int y) const
 	{
 		p->allocSurface();
 
-		FBO::bind(p->gl.fbo, FBO::Read);
+		FBO::bind(p->gl.fbo, FBO::Generic);
 
 		glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 
@@ -764,7 +764,7 @@ void Bitmap::hueChange(int hue)
 	shader.bind();
 	shader.setHueAdjust(hueAdj);
 
-	FBO::bind(newTex.fbo, FBO::Draw);
+	FBO::bind(newTex.fbo, FBO::Generic);
 	p->pushSetViewport(shader);
 	p->bindTexture(shader);
 
@@ -918,12 +918,11 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 			TEX::bind(gpTF.tex);
 			TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
 
-			FBO::bind(gpTF.fbo, FBO::Read);
-			p->bindFBO();
-
-			FBO::blit(0, 0, txtSurf->w, txtSurf->h,
-			          posRect.x, posRect.y, posRect.w, posRect.h,
-			          FBO::Linear);
+			GLMeta::blitBegin(p->gl);
+			GLMeta::blitSource(gpTF);
+			GLMeta::blitRectangle(IntRect(0, 0, txtSurf->w, txtSurf->h),
+			                      posRect, FBO::Linear);
+			GLMeta::blitFinish();
 		}
 	}
 	else
@@ -932,9 +931,10 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		 * buffer we're about to render to */
 		TEXFBO &gpTex2 = shState->gpTexFBO(posRect.w, posRect.h);
 
-		FBO::bind(gpTex2.fbo, FBO::Draw);
-		FBO::bind(p->gl.fbo, FBO::Read);
-		FBO::blit(posRect.x, posRect.y, 0, 0, posRect.w, posRect.h);
+		GLMeta::blitBegin(gpTex2);
+		GLMeta::blitSource(p->gl);
+		GLMeta::blitRectangle(posRect, Vec2i());
+		GLMeta::blitFinish();
 
 		FloatRect bltRect(0, 0,
 		                  (float) gpTexSize.x / gpTex2.width,

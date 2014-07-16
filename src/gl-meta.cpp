@@ -21,6 +21,9 @@
 
 #include "gl-meta.h"
 #include "gl-fun.h"
+#include "sharedstate.h"
+#include "glstate.h"
+#include "quad.h"
 
 namespace GLMeta
 {
@@ -119,6 +122,83 @@ void vaoUnbind(VAO &vao)
 		VBO::unbind();
 		IBO::unbind();
 	}
+}
+
+#define HAVE_NATIVE_BLIT gl.BlitFramebuffer
+
+static void _blitBegin(FBO::ID fbo, const Vec2i &size)
+{
+	if (HAVE_NATIVE_BLIT)
+	{
+		FBO::bind(fbo, FBO::Draw);
+	}
+	else
+	{
+		FBO::bind(fbo, FBO::Generic);
+		glState.viewport.pushSet(IntRect(0, 0, size.x, size.y));
+
+		SimpleShader &shader = shState->shaders().simple;
+		shader.bind();
+		shader.applyViewportProj();
+		shader.setTranslation(Vec2i());
+	}
+}
+
+void blitBegin(TEXFBO &target)
+{
+	_blitBegin(target.fbo, Vec2i(target.width, target.height));
+}
+
+void blitBeginScreen(const Vec2i &size)
+{
+	_blitBegin(FBO::ID(0), size);
+}
+
+void blitSource(TEXFBO &source)
+{
+	if (HAVE_NATIVE_BLIT)
+	{
+		FBO::bind(source.fbo, FBO::Read);
+	}
+	else
+	{
+		SimpleShader &shader = shState->shaders().simple;
+		shader.setTexSize(Vec2i(source.width, source.height));
+		TEX::bind(source.tex);
+	}
+}
+
+void blitRectangle(const IntRect &src, const Vec2i &dstPos, FBO::BlitMode mode)
+{
+	blitRectangle(src, IntRect(dstPos.x, dstPos.y, src.w, src.h), mode);
+}
+
+void blitRectangle(const IntRect &src, const IntRect &dst, FBO::BlitMode mode)
+{
+	if (HAVE_NATIVE_BLIT)
+	{
+		FBO::blit(src.x, src.y, src.w, src.h,
+		          dst.x, dst.y, dst.w, dst.h,
+		          mode);
+	}
+	else
+	{
+		if (mode == FBO::Linear)
+			TEX::setSmooth(true);
+
+		Quad &quad = shState->gpQuad();
+		quad.setTexPosRect(src, dst);
+		quad.draw();
+
+		if (mode == FBO::Linear)
+			TEX::setSmooth(false);
+	}
+}
+
+void blitFinish()
+{
+	if (!HAVE_NATIVE_BLIT)
+		glState.viewport.pop();
 }
 
 }

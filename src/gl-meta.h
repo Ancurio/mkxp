@@ -64,6 +64,16 @@ void vaoFini(VAO &vao);
 void vaoBind(VAO &vao);
 void vaoUnbind(VAO &vao);
 
+/* EXT_framebuffer_blit */
+void blitBegin(TEXFBO &target);
+void blitBeginScreen(const Vec2i &size);
+void blitSource(TEXFBO &source);
+void blitRectangle(const IntRect &src, const Vec2i &dstPos,
+                   FBO::BlitMode mode = FBO::Nearest);
+void blitRectangle(const IntRect &src, const IntRect &dst,
+                   FBO::BlitMode mode = FBO::Nearest);
+void blitFinish();
+
 }
 
 #endif // GLMETA_H
