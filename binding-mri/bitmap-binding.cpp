@@ -203,11 +203,6 @@ RB_METHOD(bitmapGetPixel)
 
 	rb_get_args(argc, argv, "ii", &x, &y RB_ARG_END);
 
-	GUARD_EXC(
-		if (x < 0 || y < 0 || x >= b->width() || y >= b->height())
-	            return Qnil;
-	         )
-
 	Color value;
 	GUARD_EXC( value = b->getPixel(x, y); );
 

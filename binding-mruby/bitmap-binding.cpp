@@ -189,11 +189,6 @@ MRB_METHOD(bitmapGetPixel)
 
 	mrb_get_args(mrb, "ii", &x, &y);
 
-	GUARD_EXC(
-		if (x < 0 || y < 0 || x >= b->width() || y >= b->height())
-	            return mrb_nil_value();
-	         )
-
 	Color value;
 	GUARD_EXC( value = b->getPixel(x, y); )
 
