@@ -551,7 +551,7 @@ struct TilemapPrivate
 		TileAtlas::BlitVec blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
 
 		/* Clear atlas */
-		FBO::bind(atlas.gl.fbo, FBO::Generic);
+		FBO::bind(atlas.gl.fbo);
 		glState.clearColor.pushSet(Vec4());
 		glState.scissorTest.pushSet(false);
 

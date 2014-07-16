@@ -34,7 +34,10 @@ void subRectImageUpload(GLint srcW, GLint srcX, GLint srcY,
 {
 	if (gl.unpack_subimage)
 	{
-		PixelStore::setupSubImage(srcW, srcX, srcY);
+		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, srcW);
+		gl.PixelStorei(GL_UNPACK_SKIP_PIXELS, srcX);
+		gl.PixelStorei(GL_UNPACK_SKIP_ROWS, srcY);
+
 		TEX::uploadSubImage(dstX, dstY, dstW, dstH, src->pixels, format);
 	}
 	else
@@ -55,7 +58,11 @@ void subRectImageUpload(GLint srcW, GLint srcX, GLint srcY,
 void subRectImageEnd()
 {
 	if (gl.unpack_subimage)
-		PixelStore::reset();
+	{
+		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+		gl.PixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+		gl.PixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+	}
 }
 
 #define HAVE_NATIVE_VAO gl.GenVertexArrays
@@ -78,11 +85,11 @@ void vaoInit(VAO &vao, bool keepBound)
 {
 	if (HAVE_NATIVE_VAO)
 	{
-		vao.vao = ::VAO::gen();
-		::VAO::bind(vao.vao);
+		gl.GenVertexArrays(1, &vao.nativeVAO);
+		gl.BindVertexArray(vao.nativeVAO);
 		vaoBindRes(vao);
 		if (!keepBound)
-			::VAO::unbind();
+			gl.BindVertexArray(0);
 	}
 	else
 	{
@@ -97,13 +104,13 @@ void vaoInit(VAO &vao, bool keepBound)
 void vaoFini(VAO &vao)
 {
 	if (HAVE_NATIVE_VAO)
-		::VAO::del(vao.vao);
+		gl.DeleteVertexArrays(1, &vao.nativeVAO);
 }
 
 void vaoBind(VAO &vao)
 {
 	if (HAVE_NATIVE_VAO)
-		::VAO::bind(vao.vao);
+		gl.BindVertexArray(vao.nativeVAO);
 	else
 		vaoBindRes(vao);
 }
@@ -112,7 +119,7 @@ void vaoUnbind(VAO &vao)
 {
 	if (HAVE_NATIVE_VAO)
 	{
-		::VAO::unbind();
+		gl.BindVertexArray(0);
 	}
 	else
 	{
@@ -130,11 +137,11 @@ static void _blitBegin(FBO::ID fbo, const Vec2i &size)
 {
 	if (HAVE_NATIVE_BLIT)
 	{
-		FBO::bind(fbo, FBO::Draw);
+		gl.BindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo.gl);
 	}
 	else
 	{
-		FBO::bind(fbo, FBO::Generic);
+		FBO::bind(fbo);
 		glState.viewport.pushSet(IntRect(0, 0, size.x, size.y));
 
 		SimpleShader &shader = shState->shaders().simple;
@@ -158,7 +165,7 @@ void blitSource(TEXFBO &source)
 {
 	if (HAVE_NATIVE_BLIT)
 	{
-		FBO::bind(source.fbo, FBO::Read);
+		gl.BindFramebuffer(GL_READ_FRAMEBUFFER, source.fbo.gl);
 	}
 	else
 	{
@@ -168,29 +175,29 @@ void blitSource(TEXFBO &source)
 	}
 }
 
-void blitRectangle(const IntRect &src, const Vec2i &dstPos, FBO::BlitMode mode)
+void blitRectangle(const IntRect &src, const Vec2i &dstPos, bool smooth)
 {
-	blitRectangle(src, IntRect(dstPos.x, dstPos.y, src.w, src.h), mode);
+	blitRectangle(src, IntRect(dstPos.x, dstPos.y, src.w, src.h), smooth);
 }
 
-void blitRectangle(const IntRect &src, const IntRect &dst, FBO::BlitMode mode)
+void blitRectangle(const IntRect &src, const IntRect &dst, bool smooth)
 {
 	if (HAVE_NATIVE_BLIT)
 	{
-		FBO::blit(src.x, src.y, src.w, src.h,
-		          dst.x, dst.y, dst.w, dst.h,
-		          mode);
+		gl.BlitFramebuffer(src.x, src.y, src.x+src.w, src.y+src.h,
+		                   dst.x, dst.y, dst.x+dst.w, dst.y+dst.h,
+		                   GL_COLOR_BUFFER_BIT, smooth ? GL_LINEAR : GL_NEAREST);
 	}
 	else
 	{
-		if (mode == FBO::Linear)
+		if (smooth)
 			TEX::setSmooth(true);
 
 		Quad &quad = shState->gpQuad();
 		quad.setTexPosRect(src, dst);
 		quad.draw();
 
-		if (mode == FBO::Linear)
+		if (smooth)
 			TEX::setSmooth(false);
 	}
 }

@@ -105,19 +105,6 @@ namespace FBO
 {
 	DEF_GL_ID
 
-	enum Mode
-	{
-		Draw = 0,
-		Read = 1,
-		Generic = 2
-	};
-
-	enum BlitMode
-	{
-		Nearest = 0,
-		Linear  = 1
-	};
-
 	inline ID gen()
 	{
 		ID id;
@@ -131,21 +118,14 @@ namespace FBO
 		gl.DeleteFramebuffers(1, &id.gl);
 	}
 
-	inline void bind(ID id, Mode mode)
+	inline void bind(ID id)
 	{
-		static const GLenum modes[] =
-		{
-			GL_DRAW_FRAMEBUFFER,
-			GL_READ_FRAMEBUFFER,
-			GL_FRAMEBUFFER
-		};
-
-		gl.BindFramebuffer(modes[mode], id.gl);
+		gl.BindFramebuffer(GL_FRAMEBUFFER, id.gl);
 	}
 
-	inline void unbind(Mode mode)
+	inline void unbind()
 	{
-		bind(ID(0), mode);
+		bind(ID(0));
 	}
 
 	inline void setTarget(TEX::ID target, unsigned colorAttach = 0)
@@ -153,63 +133,9 @@ namespace FBO
 		gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
 	}
 
-	inline void blit(int srcX, int srcY,
-	                 int srcW, int srcH,
-	                 int dstX, int dstY,
-	                 int dstW, int dstH,
-	                 BlitMode mode = Nearest)
-	{
-		static const GLenum modes[] =
-		{
-			GL_NEAREST,
-			GL_LINEAR
-		};
-
-		gl.BlitFramebuffer(srcX, srcY, srcX+srcW, srcY+srcH,
-		                   dstX, dstY, dstX+dstW, dstY+dstH,
-		                   GL_COLOR_BUFFER_BIT, modes[mode]);
-	}
-
-	inline void blit(int srcX, int srcY,
-	                 int dstX, int dstY,
-	                 int srcW, int srcH,
-	                 BlitMode mode = Nearest)
-	{
-		blit(srcX, srcY, srcW, srcH, dstX, dstY, srcW, srcH, mode);
-	}
-
 	inline void clear()
 	{
 		gl.Clear(GL_COLOR_BUFFER_BIT);
-	}
-}
-
-/* Vertex Array Object */
-namespace VAO
-{
-	DEF_GL_ID
-
-	inline ID gen()
-	{
-		ID id;
-		gl.GenVertexArrays(1, &id.gl);
-
-		return id;
-	}
-
-	inline void del(ID id)
-	{
-		gl.DeleteVertexArrays(1, &id.gl);
-	}
-
-	inline void bind(ID id)
-	{
-		gl.BindVertexArray(id.gl);
-	}
-
-	inline void unbind()
-	{
-		bind(ID(0));
 	}
 }
 
@@ -265,24 +191,6 @@ typedef struct GenericBO<GL_ELEMENT_ARRAY_BUFFER> IBO;
 
 #undef DEF_GL_ID
 
-namespace PixelStore
-{
-	/* Setup a 'glSubTexImage2D()' call where the uploaded image
-	 * itself is part of a bigger image in client memory */
-	inline void setupSubImage(GLint imgWidth, GLint subX, GLint subY)
-	{
-		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, imgWidth);
-		gl.PixelStorei(GL_UNPACK_SKIP_PIXELS, subX);
-		gl.PixelStorei(GL_UNPACK_SKIP_ROWS, subY);
-	}
-
-	/* Reset all states set with 'setupSubImage()' */
-	inline void reset()
-	{
-		setupSubImage(0, 0, 0);
-	}
-}
-
 /* Convenience struct wrapping a framebuffer
  * and a 2D texture as its target */
 struct TEXFBO
@@ -319,7 +227,7 @@ struct TEXFBO
 
 	static inline void linkFBO(TEXFBO &obj)
 	{
-		FBO::bind(obj.fbo, FBO::Draw);
+		FBO::bind(obj.fbo);
 		FBO::setTarget(obj.tex);
 	}
 

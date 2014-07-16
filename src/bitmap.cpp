@@ -150,7 +150,7 @@ struct BitmapPrivate
 
 	void bindFBO()
 	{
-		FBO::bind(gl.fbo, FBO::Generic);
+		FBO::bind(gl.fbo);
 	}
 
 	void pushSetViewport(ShaderBase &shader) const
@@ -544,7 +544,7 @@ void Bitmap::blur()
 	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 
 	TEX::bind(p->gl.tex);
-	FBO::bind(auxTex.fbo, FBO::Generic);
+	FBO::bind(auxTex.fbo);
 
 	pass1.bind();
 	pass1.setTexSize(Vec2i(width(), height()));
@@ -625,7 +625,7 @@ void Bitmap::radialBlur(int angle, int divisions)
 
 	TEXFBO newTex = shState->texPool().request(_width, _height);
 
-	FBO::bind(newTex.fbo, FBO::Generic);
+	FBO::bind(newTex.fbo);
 
 	glState.clearColor.pushSet(Vec4());
 	FBO::clear();
@@ -698,7 +698,7 @@ Color Bitmap::getPixel(int x, int y) const
 	{
 		p->allocSurface();
 
-		FBO::bind(p->gl.fbo, FBO::Generic);
+		FBO::bind(p->gl.fbo);
 
 		glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 
@@ -764,7 +764,7 @@ void Bitmap::hueChange(int hue)
 	shader.bind();
 	shader.setHueAdjust(hueAdj);
 
-	FBO::bind(newTex.fbo, FBO::Generic);
+	FBO::bind(newTex.fbo);
 	p->pushSetViewport(shader);
 	p->bindTexture(shader);
 
@@ -921,7 +921,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 			GLMeta::blitBegin(p->gl);
 			GLMeta::blitSource(gpTF);
 			GLMeta::blitRectangle(IntRect(0, 0, txtSurf->w, txtSurf->h),
-			                      posRect, FBO::Linear);
+			                      posRect, true);
 			GLMeta::blitEnd();
 		}
 	}

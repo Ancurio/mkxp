@@ -48,7 +48,7 @@ struct VAO
 	IBO::ID ibo;
 
 	/* Don't touch */
-	::VAO::ID vao;
+	GLuint nativeVAO;
 };
 
 template<class VertexType>
@@ -69,9 +69,9 @@ void blitBegin(TEXFBO &target);
 void blitBeginScreen(const Vec2i &size);
 void blitSource(TEXFBO &source);
 void blitRectangle(const IntRect &src, const Vec2i &dstPos,
-                   FBO::BlitMode mode = FBO::Nearest);
+                   bool smooth = false);
 void blitRectangle(const IntRect &src, const IntRect &dst,
-                   FBO::BlitMode mode = FBO::Nearest);
+                   bool smooth = false);
 void blitEnd();
 
 }

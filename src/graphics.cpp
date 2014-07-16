@@ -107,7 +107,7 @@ struct PingPong
 private:
 	void bind()
 	{
-		FBO::bind(rt[dstInd].fbo, FBO::Generic);
+		FBO::bind(rt[dstInd].fbo);
 	}
 };
 
@@ -513,7 +513,7 @@ struct GraphicsPrivate
 	{
 		GLMeta::blitRectangle(IntRect(0, 0, scRes.x, scRes.y),
 		                      IntRect(scOffset.x, scSize.y+scOffset.y, scSize.x, -scSize.y),
-		                      threadData->config.smoothScaling ? FBO::Linear : FBO::Nearest);
+		                      threadData->config.smoothScaling);
 	}
 
 	void redrawScreen()
@@ -652,14 +652,14 @@ void Graphics::transition(int duration,
 
 		/* Draw the composed frame to a buffer first
 		 * (we need this because we're skipping PingPong) */
-		FBO::bind(p->transBuffer.fbo, FBO::Generic);
+		FBO::bind(p->transBuffer.fbo);
 		FBO::clear();
 		p->screenQuad.draw();
 
 		p->checkResize();
 
 		/* Then blit it flipped and scaled to the screen */
-		FBO::unbind(FBO::Generic);
+		FBO::unbind();
 		FBO::clear();
 
 		GLMeta::blitBeginScreen(Vec2i(p->winSize));
@@ -716,7 +716,7 @@ void Graphics::wait(int duration)
 
 void Graphics::fadeout(int duration)
 {
-	FBO::unbind(FBO::Generic);
+	FBO::unbind();
 
 	for (int i = duration-1; i > -1; --i)
 	{
@@ -743,7 +743,7 @@ void Graphics::fadeout(int duration)
 
 void Graphics::fadein(int duration)
 {
-	FBO::unbind(FBO::Generic);
+	FBO::unbind();
 
 	for (int i = 0; i < duration; ++i)
 	{
