@@ -97,6 +97,7 @@ void initGLFunctions()
 
 	// FIXME: Set based on GL kind
 	gl.unpack_subimage = true;
+	gl.npot_repeat = true;
 
 #define HAVE_EXT(_ext) ext.contains("GL_" #_ext)
 

@@ -28,12 +28,19 @@
 
 #include "gl-util.h"
 #include "quad.h"
+#include "quadarray.h"
 #include "transform.h"
 #include "etc-internal.h"
 #include "shader.h"
 #include "glstate.h"
 
 #include <sigc++/connection.h>
+
+static float fwrap(float value, float range)
+{
+	float res = fmod(value, range);
+	return res < 0 ? res + range : res;
+}
 
 struct PlanePrivate
 {
@@ -50,7 +57,7 @@ struct PlanePrivate
 
 	bool quadSourceDirty;
 
-	Quad quad;
+	SimpleQuadArray qArray;
 
 	EtcTemps tmp;
 
@@ -68,6 +75,8 @@ struct PlanePrivate
 	{
 		prepareCon = shState->prepareDraw.connect
 		        (sigc::mem_fun(this, &PlanePrivate::prepare));
+
+		qArray.resize(1);
 	}
 
 	~PlanePrivate()
@@ -77,13 +86,53 @@ struct PlanePrivate
 
 	void updateQuadSource()
 	{
-		FloatRect srcRect;
-		srcRect.x = (sceneGeo.yOrigin + ox) / zoomX;
-		srcRect.y = (sceneGeo.xOrigin + oy) / zoomY;
-		srcRect.w = sceneGeo.rect.w / zoomX;
-		srcRect.h = sceneGeo.rect.h / zoomY;
+		if (gl.npot_repeat)
+		{
+			FloatRect srcRect;
+			srcRect.x = (sceneGeo.yOrigin + ox) / zoomX;
+			srcRect.y = (sceneGeo.xOrigin + oy) / zoomY;
+			srcRect.w = sceneGeo.rect.w / zoomX;
+			srcRect.h = sceneGeo.rect.h / zoomY;
 
-		quad.setTexRect(srcRect);
+			Quad::setTexRect(&qArray.vertices[0], srcRect);
+			qArray.commit();
+
+			return;
+		}
+
+		if (!bitmap)
+			return;
+
+		/* Scaled (zoomed) bitmap dimensions */
+		double sw = bitmap->width()  * zoomX;
+		double sh = bitmap->height() * zoomY;
+
+		/* Plane offset wrapped by scaled bitmap dims */
+		float wox = fwrap(ox, sw);
+		float woy = fwrap(oy, sh);
+
+		/* Viewport dimensions */
+		int vpw = sceneGeo.rect.w;
+		int vph = sceneGeo.rect.h;
+
+		/* Amount the scaled bitmap is tiled (repeated) */
+		size_t tilesX = ceil((vpw - sw + wox) / sw) + 1;
+		size_t tilesY = ceil((vph - sh + woy) / sh) + 1;
+
+		FloatRect tex = bitmap->rect();
+
+		qArray.resize(tilesX * tilesY);
+
+		for (size_t y = 0; y < tilesY; ++y)
+			for (size_t x = 0; x < tilesX; ++x)
+			{
+				SVertex *vert = &qArray.vertices[(y*tilesX + x) * 4];
+				FloatRect pos(x*sw - wox, y*sh - woy, sw, sh);
+
+				Quad::setTexPosRect(vert, tex, pos);
+			}
+
+		qArray.commit();
 	}
 
 	void prepare()
@@ -238,18 +287,22 @@ void Plane::draw()
 	glState.blendMode.pushSet(p->blendType);
 
 	p->bitmap->bindTex(*base);
-	TEX::setRepeat(true);
 
-	p->quad.draw();
+	if (gl.npot_repeat)
+		TEX::setRepeat(true);
 
-	TEX::setRepeat(false);
+	p->qArray.draw();
+
+	if (gl.npot_repeat)
+		TEX::setRepeat(false);
 
 	glState.blendMode.pop();
 }
 
 void Plane::onGeometryChange(const Scene::Geometry &geo)
 {
-	p->quad.setPosRect(FloatRect(geo.rect));
+	if (gl.npot_repeat)
+		Quad::setPosRect(&p->qArray.vertices[0], FloatRect(geo.rect));
 
 	p->sceneGeo = geo;
 	p->quadSourceDirty = true;

@@ -142,6 +142,7 @@ struct GLFunctions
 	GL_DEBUG_KHR_FUN
 
 	bool unpack_subimage;
+	bool npot_repeat;
 
 #undef GL_FUN
 };
