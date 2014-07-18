@@ -100,19 +100,19 @@ MrbData::MrbData(mrb_state *mrb)
 {
 	int arena = mrb_gc_arena_save(mrb);
 
-	for (int i = 0; i < excDataN; ++i)
+	for (size_t i = 0; i < excDataN; ++i)
 		exc[excData[i].ind] = mrb_define_class(mrb, excData[i].str, mrb->eException_class);
 
 	RClass *errnoMod = mrb_define_module(mrb, "Errno");
 
-	for (int i = 0; i < enoExcDataN; ++i)
+	for (size_t i = 0; i < enoExcDataN; ++i)
 		exc[enoExcData[i].ind] =
 		        mrb_define_class_under(mrb, errnoMod, enoExcData[i].str, mrb->eStandardError_class);
 
 	exc[TypeError] = mrb_class_get(mrb, "TypeError");
 	exc[ArgumentError] = mrb_class_get(mrb, "ArgumentError");
 
-	for (int i = 0; i < symDataN; ++i)
+	for (size_t i = 0; i < symDataN; ++i)
 		symbols[symData[i].ind] = mrb_intern_cstr(mrb, symData[i].str);
 
 	mrb_gc_arena_restore(mrb, arena);

@@ -103,7 +103,7 @@ inline bool contains(const C &c, const V &v)
 
 #define ARRAY_SIZE(obj) (sizeof(obj) / sizeof((obj)[0]))
 
-#define elementsN(obj) const int obj##N = ARRAY_SIZE(obj)
+#define elementsN(obj) const size_t obj##N = ARRAY_SIZE(obj)
 
 #define DECL_ATTR_DETAILED(name, type, keyword1, keyword2) \
 	keyword1 type get##name() keyword2; \

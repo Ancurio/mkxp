@@ -332,7 +332,7 @@ struct InputPrivate
 	{
 		int index;
 
-		if (code < 0 || code > mapToIndexN-1)
+		if (code < 0 || (size_t) code > mapToIndexN-1)
 			index = 0;
 		else
 			index = mapToIndex[code];
