@@ -425,7 +425,7 @@ struct TilemapPrivate
 
 		/* Disconnect signal handlers */
 		tilesetCon.disconnect();
-		for (size_t i = 0; i < autotileCount; ++i)
+		for (int i = 0; i < autotileCount; ++i)
 		{
 			autotilesCon[i].disconnect();
 			autotilesDispCon[i].disconnect();
@@ -463,7 +463,7 @@ struct TilemapPrivate
 
 		usableATs.clear();
 
-		for (size_t i = 0; i < autotileCount; ++i)
+		for (int i = 0; i < autotileCount; ++i)
 		{
 			if (!autotiles[i])
 				continue;
