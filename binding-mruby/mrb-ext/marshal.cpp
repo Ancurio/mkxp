@@ -114,7 +114,7 @@ struct LinkBuffer
 		return hash.contains(value);
 	}
 
-	bool containsIdx(int idx)
+	bool containsIdx(size_t idx)
 	{
 		if (vec.empty())
 			return false;
@@ -132,7 +132,7 @@ struct LinkBuffer
 		return idx;
 	}
 
-	T lookup(int idx)
+	T lookup(size_t idx)
 	{	
 		return vec[idx];
 	}
