@@ -197,8 +197,8 @@ TIME_ATTR(wday)
 void
 timeBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "Time", 0);
-	mrb_include_module(mrb, klass, mrb_class_get(mrb, "Comparable"));
+	RClass *klass = defineClass(mrb, "Time");
+	mrb_include_module(mrb, klass, mrb_module_get(mrb, "Comparable"));
 
 	mrb_define_class_method(mrb, klass, "now", timeNow, MRB_ARGS_NONE());
 	mrb_define_class_method(mrb, klass, "at", timeAt, MRB_ARGS_REQ(1));

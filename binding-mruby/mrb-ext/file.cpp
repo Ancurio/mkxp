@@ -227,7 +227,7 @@ MRB_FUNCTION(fileExpandPath)
 	if (defDir)
 		Debug() << "FIXME: File.expand_path: default_dir not implemented";
 
-	char buffer[512];
+	char buffer[PATH_MAX];
 	char *unused = realpath(path, buffer);
 	(void) unused;
 
@@ -568,7 +568,7 @@ fileBindingInit(mrb_state *mrb)
 {
 	mrb_define_method(mrb, mrb->kernel_module, "open", fileOpen, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(1) | MRB_ARGS_BLOCK());
 
-	RClass *klass = mrb_define_class(mrb, "IO", 0);
+	RClass *klass = defineClass(mrb, "IO");
 	klass = mrb_define_class(mrb, "File", klass);
 
 	mrb_define_class_method(mrb, klass, "basename", fileBasename, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(1));

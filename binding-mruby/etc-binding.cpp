@@ -169,7 +169,7 @@ CLONE_FUN(Rect)
 
 #define INIT_BIND(Klass) \
 { \
-	klass = mrb_define_class(mrb, #Klass, 0); \
+	klass = defineClass(mrb, #Klass); \
 	mrb_define_class_method(mrb, klass, "_load", Klass##Load, MRB_ARGS_REQ(1)); \
 	serializableBindingInit<Klass>(mrb, klass); \
 	mrb_define_method(mrb, klass, "initialize", Klass##Initialize, MRB_ARGS_REQ(3) | MRB_ARGS_OPT(1)); \

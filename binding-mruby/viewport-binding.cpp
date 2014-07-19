@@ -81,7 +81,7 @@ DEF_PROP_I(Viewport, OY)
 void
 viewportBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "Viewport", 0);
+	RClass *klass = defineClass(mrb, "Viewport");
 
 	disposableBindingInit  <Viewport>(mrb, klass);
 	flashableBindingInit   <Viewport>(mrb, klass);

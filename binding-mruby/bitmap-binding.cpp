@@ -306,7 +306,7 @@ CLONE_FUN(Bitmap)
 void
 bitmapBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "Bitmap", 0);
+	RClass *klass = defineClass(mrb, "Bitmap");
 
 	disposableBindingInit<Bitmap>(mrb, klass);
 

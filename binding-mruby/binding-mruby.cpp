@@ -140,7 +140,7 @@ mkxpTimeOp(mrb_state *mrb, mrb_value)
 	printf("<%s> [%f ms]\n", opName, ms);
 	fflush(stdout);
 
-	return mrb__float_value(ms);
+	return mrb_float_value(mrb, ms);
 }
 
 static const char *

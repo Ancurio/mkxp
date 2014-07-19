@@ -100,7 +100,7 @@ DEF_PROP_F(Sprite, WavePhase)
 void
 spriteBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "Sprite", 0);
+	RClass *klass = defineClass(mrb, "Sprite");
 
 	disposableBindingInit     <Sprite>(mrb, klass);
 	flashableBindingInit      <Sprite>(mrb, klass);

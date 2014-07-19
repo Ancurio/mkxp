@@ -145,7 +145,7 @@ MARSH_LOAD_FUN(Table)
 void
 tableBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "Table", 0);
+	RClass *klass = defineClass(mrb, "Table");
 
 	mrb_define_class_method(mrb, klass, "_load", TableLoad, MRB_ARGS_REQ(1));
 	serializableBindingInit<Table>(mrb, klass);

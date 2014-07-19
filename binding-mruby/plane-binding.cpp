@@ -61,7 +61,7 @@ DEF_PROP_F(Plane, ZoomY)
 void
 planeBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "Plane", 0);
+	RClass *klass = defineClass(mrb, "Plane");
 
 	disposableBindingInit<Plane>     (mrb, klass);
 	viewportElementBindingInit<Plane>(mrb, klass);

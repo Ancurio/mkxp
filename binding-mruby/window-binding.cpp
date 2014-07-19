@@ -73,7 +73,7 @@ DEF_PROP_I(Window, ContentsOpacity)
 void
 windowBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "Window", 0);
+	RClass *klass = defineClass(mrb, "Window");
 
 	disposableBindingInit     <Window>(mrb, klass);
 	viewportElementBindingInit<Window>(mrb, klass);

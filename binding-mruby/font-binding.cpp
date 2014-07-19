@@ -142,7 +142,7 @@ MRB_METHOD(FontSetDefaultColor)
 void
 fontBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "Font", 0);
+	RClass *klass = defineClass(mrb, "Font");
 
 	Font::setDefaultColor(new Color(*Font::getDefaultColor()));
 	wrapProperty(mrb, mrb_obj_value(klass), Font::getDefaultColor(), CSdefault_color, ColorType);

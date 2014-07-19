@@ -259,21 +259,13 @@ read_string_value(MarshalContext *ctx)
 	mrb_state *mrb = ctx->mrb;
 	int len = read_fixnum(ctx);
 
-	struct RString *str =
-		(struct RString*) mrb_obj_alloc
-			(mrb, MRB_TT_STRING, mrb->string_class);
+	mrb_value str = mrb_str_new(mrb, 0, len);
+	char *ptr = RSTR_PTR(RSTRING(str));
 
-	str->c = mrb->string_class;
-	str->len = len;
-	str->aux.capa = len;
-	str->ptr = (char*) mrb_malloc(mrb, len+1);
+	ctx->readData(ptr, len);
+	ptr[len] = '\0';
 
-	ctx->readData(str->ptr, len);
-	str->ptr[len] = '\0';
-
-	mrb_value str_obj = mrb_obj_value(str);
-
-	return str_obj;
+	return str;
 }
 
 static mrb_value read_value(MarshalContext *ctx);
@@ -724,7 +716,7 @@ write_symbol(MarshalContext *ctx, mrb_value symbol)
 {
 	mrb_state *mrb = ctx->mrb;
 	mrb_sym sym = mrb_symbol(symbol);
-	size_t len;
+	mrb_int len;
 	const char *p = mrb_sym2name_len(mrb, sym, &len);
 
 	write_string(ctx, p);

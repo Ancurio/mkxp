@@ -112,6 +112,12 @@ getMrbData(mrb_state *mrb)
 	return static_cast<MrbData*>(mrb->ud);
 }
 
+inline RClass*
+defineClass(mrb_state *mrb, const char *name)
+{
+	return mrb_define_class(mrb, name, mrb->object_class);
+}
+
 #define GUARD_EXC(exp) \
 { try { exp } catch (Exception &exc) { raiseMrbExc(mrb, exc); } }
 
@@ -237,7 +243,7 @@ mrb__float_value(mrb_float f)
 {
 	mrb_value v;
 
-	MRB_SET_VALUE(v, MRB_TT_FLOAT, value.f, f);
+	SET_FLOAT_VALUE(0, v, f);
 	return v;
 }
 

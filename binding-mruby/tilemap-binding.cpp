@@ -142,13 +142,13 @@ DEF_PROP_I(Tilemap, OY)
 void
 tilemapBindingInit(mrb_state *mrb)
 {
-	RClass *klass = mrb_define_class(mrb, "TilemapAutotiles", 0);
+	RClass *klass = defineClass(mrb, "TilemapAutotiles");
 
 	mrb_define_method(mrb, klass, "[]=", tilemapAutotilesSet, MRB_ARGS_REQ(2));
 	mrb_define_method(mrb, klass, "[]", tilemapAutotilesGet, MRB_ARGS_REQ(1));
 	mrb_define_method(mrb, klass, "inspect", inspectObject, MRB_ARGS_NONE());
 
-	klass = mrb_define_class(mrb, "Tilemap", 0);
+	klass = defineClass(mrb, "Tilemap");
 
 	disposableBindingInit<Tilemap>(mrb, klass);
 
