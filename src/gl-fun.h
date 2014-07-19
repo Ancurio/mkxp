@@ -119,7 +119,9 @@ typedef void (APIENTRYP PFNGLDEBUGMESSAGECALLBACKPROC) (GLDEBUGPROC callback, co
 	GL_FUN(DeleteFramebuffers, PFNGLDELETEFRAMEBUFFERSPROC) \
 	GL_FUN(BindFramebuffer, PFNGLBINDFRAMEBUFFERPROC) \
 	GL_FUN(FramebufferTexture2D, PFNGLFRAMEBUFFERTEXTURE2DPROC) \
-	GL_FUN(FramebufferRenderbuffer, PFNGLFRAMEBUFFERRENDERBUFFERPROC) \
+	GL_FUN(FramebufferRenderbuffer, PFNGLFRAMEBUFFERRENDERBUFFERPROC)
+
+#define GL_FBO_BLIT_FUN \
 	GL_FUN(BlitFramebuffer, PFNGLBLITFRAMEBUFFERPROC)
 
 #define GL_VAO_FUN \
@@ -138,9 +140,11 @@ struct GLFunctions
 
 	GL_20_FUN
 	GL_FBO_FUN
+	GL_FBO_BLIT_FUN
 	GL_VAO_FUN
 	GL_DEBUG_KHR_FUN
 
+	bool glsles;
 	bool unpack_subimage;
 	bool npot_repeat;
 

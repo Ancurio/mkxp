@@ -25,6 +25,7 @@
 #include "exception.h"
 
 #include <assert.h>
+#include <string.h>
 #include <iostream>
 
 #include "../sprite.frag.xxd"
@@ -107,6 +108,34 @@ void Shader::unbind()
 	glState.program.set(0);
 }
 
+static const char *glesHeader = "precision mediump float;\n";
+static const size_t glesHeaderSize = strlen(glesHeader);
+
+static void setupShaderSource(GLuint shader,
+                              const unsigned char *src, int srcSize)
+{
+	GLuint shaderSrcN;
+	const GLchar *shaderSrc[2];
+	GLint shaderSrcSize[2];
+
+	if (gl.glsles)
+	{
+		shaderSrcN = 2;
+		shaderSrc[0] = glesHeader;
+		shaderSrc[1] = (const GLchar*) src;
+		shaderSrcSize[0] = glesHeaderSize;
+		shaderSrcSize[1] = srcSize;
+	}
+	else
+	{
+		shaderSrcN = 1;
+		shaderSrc[0] = (const GLchar*) src;
+		shaderSrcSize[0] = srcSize;
+	}
+
+	gl.ShaderSource(shader, shaderSrcN, shaderSrc, shaderSrcSize);
+}
+
 void Shader::init(const unsigned char *vert, int vertSize,
                   const unsigned char *frag, int fragSize,
                   const char *vertName, const char *fragName,
@@ -115,7 +144,7 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	GLint success;
 
 	/* Compile vertex shader */
-	gl.ShaderSource(vertShader, 1, (const GLchar**) &vert, (const GLint*) &vertSize);
+	setupShaderSource(vertShader, vert, vertSize);
 	gl.CompileShader(vertShader);
 
 	gl.GetShaderiv(vertShader, GL_COMPILE_STATUS, &success);
@@ -129,7 +158,7 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	}
 
 	/* Compile fragment shader */
-	gl.ShaderSource(fragShader, 1, (const GLchar**) &frag, (const GLint*) &fragSize);
+	setupShaderSource(fragShader, frag, fragSize);
 	gl.CompileShader(fragShader);
 
 	gl.GetShaderiv(fragShader, GL_COMPILE_STATUS, &success);

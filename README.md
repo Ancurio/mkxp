@@ -58,7 +58,7 @@ The exception is boost, which is weird in that it still hasn't managed to pull o
 ### Supported image/audio formats
 These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
 
-To run mkxp, you should have a graphics card capable of at least **OpenGL 2.0** with an up-to-date driver installed.
+To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2.0** with an up-to-date driver installed.
 
 ## Configuration
 

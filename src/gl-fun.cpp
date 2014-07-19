@@ -82,11 +82,24 @@ void initGLFunctions()
 	/* Determine GL version */
 	const char *ver = (const char*) gl.GetString(GL_VERSION);
 
+	const char *glesPrefix = "OpenGL ES ";
+	size_t glesPrefixN = strlen(glesPrefix);
+
+	bool gles = false;
+
+	if (!strncmp(ver, glesPrefix, glesPrefixN))
+	{
+		gles = true;
+		gl.glsles = true;
+
+		ver += glesPrefixN;
+	}
+
 	/* Assume single digit */
 	int glMajor = *ver - '0';
 
 	if (glMajor < 2)
-		throw EXC("At least OpenGL 2.0 is required");
+		throw EXC("At least OpenGL (ES) 2.0 is required");
 
 	BoostSet<std::string> ext;
 
@@ -95,43 +108,53 @@ void initGLFunctions()
 	else
 		parseExtensionsCompat(gl.GetString, ext);
 
-	// FIXME: Set based on GL kind
-	gl.unpack_subimage = true;
-	gl.npot_repeat = true;
-
 #define HAVE_EXT(_ext) ext.contains("GL_" #_ext)
 
 	/* FBO entrypoints */
-	if (!HAVE_EXT(ARB_framebuffer_object))
-	{
-		if (!(HAVE_EXT(EXT_framebuffer_object) && HAVE_EXT(EXT_framebuffer_blit)))
-			throw EXC("No FBO extensions available");
-
-#undef EXT_SUFFIX
-#define EXT_SUFFIX "EXT"
-		GL_FBO_FUN;
-	}
-	else
+	if (glMajor >= 3 || HAVE_EXT(ARB_framebuffer_object))
 	{
 #undef EXT_SUFFIX
 #define EXT_SUFFIX ""
 		GL_FBO_FUN;
+		GL_FBO_BLIT_FUN;
+	}
+	else if (gles && glMajor == 2)
+	{
+		GL_FBO_FUN;
+	}
+	else if (HAVE_EXT(EXT_framebuffer_object))
+	{
+#undef EXT_SUFFIX
+#define EXT_SUFFIX "EXT"
+		GL_FBO_FUN;
+
+		if (HAVE_EXT(EXT_framebuffer_blit))
+		{
+			GL_FBO_BLIT_FUN;
+		}
+	}
+	else
+	{
+		throw EXC("No FBO support available");
 	}
 
 	/* VAO entrypoints */
-	if (!HAVE_EXT(ARB_vertex_array_object))
+	if (HAVE_EXT(ARB_vertex_array_object) || glMajor >= 3)
 	{
-		if (!HAVE_EXT(APPLE_vertex_array_object))
-			throw EXC("No VAO extensions available");
-
+#undef EXT_SUFFIX
+#define EXT_SUFFIX ""
+		GL_VAO_FUN;
+	}
+	else if (HAVE_EXT(APPLE_vertex_array_object))
+	{
 #undef EXT_SUFFIX
 #define EXT_SUFFIX "APPLE"
 		GL_VAO_FUN;
 	}
-	else
+	else if (HAVE_EXT(OES_vertex_array_object))
 	{
 #undef EXT_SUFFIX
-#define EXT_SUFFIX ""
+#define EXT_SUFFIX "OES"
 		GL_VAO_FUN;
 	}
 
@@ -148,4 +171,11 @@ void initGLFunctions()
 #define EXT_SUFFIX "ARB"
 		GL_DEBUG_KHR_FUN;
 	}
+
+	/* Misc caps */
+	if (!gles || glMajor >= 3 || HAVE_EXT(EXT_unpack_subimage))
+		gl.unpack_subimage = true;
+
+	if (!gles || glMajor >= 3 || HAVE_EXT(OES_texture_npot))
+		gl.npot_repeat = true;
 }
