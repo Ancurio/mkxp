@@ -321,7 +321,7 @@ readLine(FILE *f, std::vector<char> &buffer)
 		if (feof(f))
 			break;
 
-		char c = fgetc(f);
+		int c = fgetc(f);
 
 		if (c == '\n' || c == EOF)
 			break;
