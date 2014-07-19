@@ -153,9 +153,9 @@ struct MarshalContext
 	LinkBuffer<mrb_sym> symbols;
 	LinkBuffer<mrb_value> objects;
 
-	char readByte()
+	int8_t readByte()
 	{
-		char byte;
+		int8_t byte;
 		int result = SDL_RWread(ops, &byte, 1, 1);
 
 		if (result < 1)
@@ -172,7 +172,7 @@ struct MarshalContext
 			throw Exception(Exception::ArgumentError, "dump format error");
 	}
 
-	void writeByte(char byte)
+	void writeByte(int8_t byte)
 	{
 		int result = SDL_RWwrite(ops, &byte, 1, 1);
 
@@ -193,7 +193,7 @@ struct MarshalContext
 static int
 read_fixnum(MarshalContext *ctx)
 {
-	char head = ctx->readByte();
+	int8_t head = ctx->readByte();
 
 	if (head == 0)
 		return 0;
@@ -202,10 +202,10 @@ read_fixnum(MarshalContext *ctx)
 	else if (head < -4)
 		return head + 5;
 
-	int pos = (head > 0);
-	int len = pos ? head : head * -1;
+	int8_t pos = (head > 0);
+	int8_t len = pos ? head : head * -1;
 
-	char n1, n2, n3, n4;
+	int8_t n1, n2, n3, n4;
 
 	if (pos)
 		n2 = n3 = n4 = 0;
@@ -471,7 +471,7 @@ static mrb_value
 read_value(MarshalContext *ctx)
 {
 	mrb_state *mrb = ctx->mrb;
-	char type = ctx->readByte();
+	int8_t type = ctx->readByte();
 	mrb_value value;
 	if (mrb->arena_idx > maxArena)
 		maxArena = mrb->arena_idx;
@@ -559,16 +559,16 @@ write_fixnum(MarshalContext *ctx, int value)
 	}
 	else if (value > 0 && value < 123)
 	{
-		ctx->writeByte((char) value + 5);
+		ctx->writeByte((int8_t) value + 5);
 		return;
 	}
 	else if (value < 0 && value > -124)
 	{
-		ctx->writeByte((char) value - 5);
+		ctx->writeByte((int8_t) value - 5);
 		return;
 	}
 
-	char len;
+	int8_t len;
 
 	if (value > 0)
 	{
@@ -875,8 +875,8 @@ writeMarshalHeader(MarshalContext *ctx)
 static void
 verifyMarshalHeader(MarshalContext *ctx)
 {
-	char maj = ctx->readByte();
-	char min = ctx->readByte();
+	int8_t maj = ctx->readByte();
+	int8_t min = ctx->readByte();
 
 	if (maj != MARSHAL_MAJOR || min != MARSHAL_MINOR)
 		throw Exception(Exception::TypeError, "incompatible marshal file format (can't be read)");
