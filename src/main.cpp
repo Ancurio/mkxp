@@ -284,8 +284,11 @@ int main(int argc, char *argv[])
 		                         "The RGSS script seems to be stuck and mkxp will now force quit", win);
 
 	if (!rtData.rgssErrorMsg.empty())
+	{
+		Debug() << rtData.rgssErrorMsg;
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, conf.game.title.c_str(),
 		                         rtData.rgssErrorMsg.c_str(), win);
+	}
 
 	/* Clean up any remainin events */
 	eventThread.cleanup();
