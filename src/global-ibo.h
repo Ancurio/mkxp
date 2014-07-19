@@ -29,9 +29,9 @@
 #include <assert.h>
 #include <stdint.h>
 
-typedef uint32_t index_t;
+typedef uint16_t index_t;
 #define INDEX_T_MAX std::numeric_limits<index_t>::max()
-#define _GL_INDEX_TYPE GL_UNSIGNED_INT
+#define _GL_INDEX_TYPE GL_UNSIGNED_SHORT
 
 struct GlobalIBO
 {
