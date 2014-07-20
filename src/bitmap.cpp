@@ -166,9 +166,9 @@ struct BitmapPrivate
 
 	void blitQuad(Quad &quad)
 	{
-		glState.blendMode.pushSet(BlendNone);
+		glState.blend.pushSet(false);
 		quad.draw();
-		glState.blendMode.pop();
+		glState.blend.pop();
 	}
 
 	void fillRect(const IntRect &rect,
@@ -540,7 +540,7 @@ void Bitmap::blur()
 	BlurShader::HPass &pass1 = shader.pass1;
 	BlurShader::VPass &pass2 = shader.pass2;
 
-	glState.blendMode.pushSet(BlendNone);
+	glState.blend.pushSet(false);
 	glState.viewport.pushSet(IntRect(0, 0, width(), height()));
 
 	TEX::bind(p->gl.tex);
@@ -562,7 +562,7 @@ void Bitmap::blur()
 	quad.draw();
 
 	glState.viewport.pop();
-	glState.blendMode.pop();
+	glState.blend.pop();
 
 	shState->texPool().release(auxTex);
 
@@ -959,11 +959,8 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		p->bindFBO();
 		p->pushSetViewport(shader);
 
-		glState.blendMode.pushSet(BlendNone);
+		p->blitQuad(quad);
 
-		quad.draw();
-
-		glState.blendMode.pop();
 		p->popViewport();
 	}
 

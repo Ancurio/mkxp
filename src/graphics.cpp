@@ -180,11 +180,11 @@ public:
 
 		TEX::bind(pp.backBuffer().tex);
 
-		glState.blendMode.pushSet(BlendNone);
+		glState.blend.pushSet(false);
 
 		screenQuad.draw();
 
-		glState.blendMode.pop();
+		glState.blend.pop();
 	}
 
 #ifdef RGSS2
@@ -627,7 +627,7 @@ void Graphics::transition(int duration,
 		shader.setTexSize(p->scRes);
 	}
 
-	glState.blendMode.pushSet(BlendNone);
+	glState.blend.pushSet(false);
 
 	for (int i = 0; i < duration; ++i)
 	{
@@ -670,7 +670,7 @@ void Graphics::transition(int duration,
 		p->swapGLBuffer();
 	}
 
-	glState.blendMode.pop();
+	glState.blend.pop();
 
 	delete transMap;
 

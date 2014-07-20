@@ -95,6 +95,11 @@ class GLBlendMode : public GLProperty<BlendType>
 	void apply(const BlendType &value);
 };
 
+class GLBlend : public GLProperty<bool>
+{
+	void apply(const bool &value);
+};
+
 class GLViewport : public GLProperty<IntRect>
 {
 	void apply(const IntRect &value);
@@ -113,6 +118,7 @@ public:
 	GLScissorBox scissorBox;
 	GLScissorTest scissorTest;
 	GLBlendMode blendMode;
+	GLBlend blend;
 	GLViewport viewport;
 	GLProgram program;
 

@@ -435,12 +435,13 @@ struct WindowPrivate
 		/* We need to blit the background without blending,
 		 * because we want to retain its correct alpha value.
 		 * Otherwise it would be mutliplied by the backgrounds 0 alpha */
-		glState.blendMode.pushSet(BlendNone);
+		glState.blend.pushSet(false);
 
 		baseQuadArray.draw(0, backgroundVert.count);
 
 		/* Now draw the rest (ie. the frame) with blending */
-		glState.blendMode.set(BlendNormal);
+		glState.blend.pop();
+		glState.blendMode.pushSet(BlendNormal);
 
 		baseQuadArray.draw(backgroundVert.count, baseQuadArray.count()-backgroundVert.count);
 

@@ -26,6 +26,11 @@
 
 #include <SDL_rect.h>
 
+static void applyBool(GLenum state, bool mode)
+{
+	mode ? gl.Enable(state) : gl.Disable(state);
+}
+
 void GLClearColor::apply(const Vec4 &value)
 {
 	gl.ClearColor(value.x, value.y, value.z, value.w);
@@ -52,18 +57,13 @@ void GLScissorBox::setIntersect(const IntRect &value)
 
 void GLScissorTest::apply(const bool &value)
 {
-	value ? gl.Enable(GL_SCISSOR_TEST) : gl.Disable(GL_SCISSOR_TEST);
+	applyBool(GL_SCISSOR_TEST, value);
 }
 
 void GLBlendMode::apply(const BlendType &value)
 {
 	switch (value)
 	{
-	case BlendNone :
-		gl.BlendEquation(GL_FUNC_ADD);
-		gl.BlendFunc(GL_ONE, GL_ZERO);
-		break;
-
 	case BlendNormal :
 		gl.BlendEquation(GL_FUNC_ADD);
 		gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
@@ -85,6 +85,11 @@ void GLBlendMode::apply(const BlendType &value)
 	}
 }
 
+void GLBlend::apply(const bool &value)
+{
+	applyBool(GL_BLEND, value);
+}
+
 void GLViewport::apply(const IntRect &value)
 {
 	gl.Viewport(value.x, value.y, value.w, value.h);
@@ -102,11 +107,11 @@ GLState::Caps::Caps()
 
 GLState::GLState()
 {
-	gl.Enable(GL_BLEND);
 	gl.Disable(GL_DEPTH_TEST);
 
 	clearColor.init(Vec4(0, 0, 0, 1));
 	blendMode.init(BlendNormal);
+	blend.init(true);
 	scissorTest.init(false);
 	scissorBox.init(IntRect(0, 0, 640, 480));
 	program.init(0);
