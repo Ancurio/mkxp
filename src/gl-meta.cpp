@@ -193,9 +193,11 @@ void blitRectangle(const IntRect &src, const IntRect &dst, bool smooth)
 		if (smooth)
 			TEX::setSmooth(true);
 
+		glState.blend.pushSet(false);
 		Quad &quad = shState->gpQuad();
 		quad.setTexPosRect(src, dst);
 		quad.draw();
+		glState.blend.pop();
 
 		if (smooth)
 			TEX::setSmooth(false);
