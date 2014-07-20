@@ -25,10 +25,16 @@
 #include "etc.h"
 
 #include <stack>
+#include <assert.h>
 
 template<typename T>
 struct GLProperty
 {
+	~GLProperty()
+	{
+		assert(stack.size() == 0);
+	}
+
 	void init(const T &value)
 	{
 		current = value;
