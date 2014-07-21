@@ -814,7 +814,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	else
 		txtSurf = TTF_RenderUTF8_Blended(font, str, c);
 
-	p->ensureFormat(txtSurf, SDL_PIXELFORMAT_ARGB8888);
+	p->ensureFormat(txtSurf, SDL_PIXELFORMAT_ABGR8888);
 
 	int alignX = rect.x;
 
@@ -898,14 +898,14 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 				{
 					TEX::uploadSubImage(posRect.x, posRect.y,
 					                    posRect.w, posRect.h,
-					                    txtSurf->pixels, GL_BGRA);
+					                    txtSurf->pixels, GL_RGBA);
 				}
 				else
 				{
 					GLMeta::subRectImageUpload(txtSurf->w, subSrcX, subSrcY,
 					                           posRect.x, posRect.y,
 					                           posRect.w, posRect.h,
-					                           txtSurf, GL_BGRA);
+					                           txtSurf, GL_RGBA);
 					GLMeta::subRectImageEnd();
 				}
 			}
@@ -916,7 +916,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 			TEXFBO &gpTF = shState->gpTexFBO(txtSurf->w, txtSurf->h);
 
 			TEX::bind(gpTF.tex);
-			TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
+			TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_RGBA);
 
 			GLMeta::blitBegin(p->gl);
 			GLMeta::blitSource(gpTF);
@@ -949,7 +949,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		shader.setOpacity(txtAlpha);
 
 		shState->bindTex();
-		TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_BGRA);
+		TEX::uploadSubImage(0, 0, txtSurf->w, txtSurf->h, txtSurf->pixels, GL_RGBA);
 		TEX::setSmooth(true);
 
 		Quad &quad = shState->gpQuad();
