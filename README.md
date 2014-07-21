@@ -42,6 +42,7 @@ This binding only exists for testing purposes and does nothing (the engine quits
 * SDL_sound (latest hg, apply provided patches!)
 * pixman
 * zlib (only ruby bindings)
+* OpenGL header (alternatively GLES2 with `DEFINES+=GLES2_HEADER`)
 
 mkxp employs Qt's qmake build system, so you'll need to install that beforehand. Alternatively, you can build with cmake (FIXME: add cmake instructions).
 
