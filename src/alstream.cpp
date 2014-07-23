@@ -1,0 +1,425 @@
+/*
+** alstream.cpp
+**
+** This file is part of mkxp.
+**
+** Copyright (C) 2014 Jonas Kulla <Nyocurio@gmail.com>
+**
+** mkxp is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 2 of the License, or
+** (at your option) any later version.
+**
+** mkxp is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "alstream.h"
+
+#include "sharedstate.h"
+#include "filesystem.h"
+#include "aldatasource.h"
+
+#include <SDL_mutex.h>
+#include <SDL_thread.h>
+#include <SDL_timer.h>
+
+ALStream::ALStream(LoopMode loopMode,
+		           const std::string &threadId)
+	: looped(loopMode == Looped),
+	  state(Closed),
+	  source(0),
+	  thread(0),
+	  preemptPause(false),
+	  streamInited(false),
+	  needsRewind(false)
+{
+	alSrc = AL::Source::gen();
+
+	AL::Source::setVolume(alSrc, 1.0);
+	AL::Source::setPitch(alSrc, 1.0);
+	AL::Source::detachBuffer(alSrc);
+
+	for (int i = 0; i < STREAM_BUFS; ++i)
+		alBuf[i] = AL::Buffer::gen();
+
+	pauseMut = SDL_CreateMutex();
+
+	threadName = std::string("al_stream (") + threadId + ")";
+}
+
+ALStream::~ALStream()
+{
+	close();
+
+	clearALQueue();
+
+	AL::Source::del(alSrc);
+
+	for (int i = 0; i < STREAM_BUFS; ++i)
+		AL::Buffer::del(alBuf[i]);
+
+	SDL_DestroyMutex(pauseMut);
+}
+
+void ALStream::close()
+{
+	checkStopped();
+
+	switch (state)
+	{
+	case Playing:
+	case Paused:
+		stopStream();
+	case Stopped:
+		closeSource();
+		state = Closed;
+	case Closed:
+		return;
+	}
+}
+
+void ALStream::open(const std::string &filename)
+{
+	checkStopped();
+
+	switch (state)
+	{
+	case Playing:
+	case Paused:
+		stopStream();
+	case Stopped:
+		closeSource();
+	case Closed:
+		openSource(filename);
+	}
+
+	state = Stopped;
+}
+
+void ALStream::stop()
+{
+	checkStopped();
+
+	switch (state)
+	{
+	case Closed:
+	case Stopped:
+		return;
+	case Playing:
+	case Paused:
+		stopStream();
+	}
+
+	state = Stopped;
+}
+
+void ALStream::play(float offset)
+{
+	checkStopped();
+
+	switch (state)
+	{
+	case Closed:
+	case Playing:
+		return;
+	case Stopped:
+		startStream(offset);
+		break;
+	case Paused :
+		resumeStream();
+	}
+
+	state = Playing;
+}
+
+void ALStream::pause()
+{
+	checkStopped();
+
+	switch (state)
+	{
+	case Closed:
+	case Stopped:
+	case Paused:
+		return;
+	case Playing:
+		pauseStream();
+	}
+
+	state = Paused;
+}
+
+void ALStream::setVolume(float value)
+{
+	AL::Source::setVolume(alSrc, value);
+}
+
+void ALStream::setPitch(float value)
+{
+	AL::Source::setPitch(alSrc, value);
+}
+
+ALStream::State ALStream::queryState()
+{
+	checkStopped();
+
+	return state;
+}
+
+float ALStream::queryOffset()
+{
+	if (state == Closed)
+		return 0;
+
+	float procOffset = static_cast<float>(procFrames) / source->sampleRate();
+
+	return procOffset + AL::Source::getSecOffset(alSrc);
+}
+
+void ALStream::closeSource()
+{
+	delete source;
+}
+
+void ALStream::openSource(const std::string &filename)
+{
+	const char *ext;
+	shState->fileSystem().openRead(srcOps, filename.c_str(), FileSystem::Audio, false, &ext);
+
+#ifdef RGSS2
+	/* Try to read ogg file signature */
+	char sig[5];
+	memset(sig, '\0', sizeof(sig));
+	SDL_RWread(&srcOps, sig, 1, 4);
+	SDL_RWseek(&srcOps, 0, RW_SEEK_SET);
+
+	if (!strcmp(sig, "OggS"))
+		source = createVorbisSource(srcOps, looped);
+	else
+		source = createSDLSource(srcOps, ext, STREAM_BUF_SIZE, looped);
+#else
+	source = createSDLSource(srcOps, ext, STREAM_BUF_SIZE, looped);
+#endif
+
+	needsRewind = false;
+}
+
+void ALStream::stopStream()
+{
+	threadTermReq = true;
+
+	AL::Source::stop(alSrc);
+
+	if (thread)
+	{
+		SDL_WaitThread(thread, 0);
+		thread = 0;
+		needsRewind = true;
+	}
+
+	procFrames = 0;
+}
+
+void ALStream::startStream(float offset)
+{
+	clearALQueue();
+
+	preemptPause = false;
+	streamInited = false;
+	sourceExhausted = false;
+	threadTermReq = false;
+
+	startOffset = offset;
+	procFrames = offset * source->sampleRate();
+
+	thread = SDL_CreateThread(streamDataFun, threadName.c_str(), this);
+}
+
+void ALStream::pauseStream()
+{
+	SDL_LockMutex(pauseMut);
+
+	if (AL::Source::getState(alSrc) != AL_PLAYING)
+		preemptPause = true;
+	else
+		AL::Source::pause(alSrc);
+
+	SDL_UnlockMutex(pauseMut);
+}
+
+void ALStream::resumeStream()
+{
+	SDL_LockMutex(pauseMut);
+
+	if (preemptPause)
+		preemptPause = false;
+	else
+		AL::Source::play(alSrc);
+
+	SDL_UnlockMutex(pauseMut);
+}
+
+void ALStream::checkStopped()
+{
+	/* This only concerns the scenario where
+	 * state is still 'Playing', but the stream
+	 * has already ended on its own (EOF, Error) */
+	if (state != Playing)
+		return;
+
+	/* If streaming thread hasn't queued up
+	 * buffers yet there's not point in querying
+	 * the AL source */
+	if (!streamInited)
+		return;
+
+	/* If alSrc isn't playing, but we haven't
+	 * exhausted the data source yet, we're just
+	 * having a buffer underrun */
+	if (!sourceExhausted)
+		return;
+
+	if (AL::Source::getState(alSrc) == AL_PLAYING)
+		return;
+
+	stopStream();
+	state = Stopped;
+}
+
+void ALStream::clearALQueue()
+{
+	/* Unqueue all buffers */
+	ALint queuedBufs = AL::Source::getProcBufferCount(alSrc);
+
+	while (queuedBufs--)
+		AL::Source::unqueueBuffer(alSrc);
+}
+
+/* thread func */
+void ALStream::streamData()
+{
+	/* Fill up queue */
+	bool firstBuffer = true;
+	ALDataSource::Status status;
+
+	if (needsRewind)
+	{
+		if (startOffset > 0)
+			source->seekToOffset(startOffset);
+		else
+			source->reset();
+	}
+
+	for (int i = 0; i < STREAM_BUFS; ++i)
+	{
+		AL::Buffer::ID buf = alBuf[i];
+
+		status = source->fillBuffer(buf);
+
+		if (status == ALDataSource::Error)
+			return;
+
+		AL::Source::queueBuffer(alSrc, buf);
+
+		if (firstBuffer)
+		{
+			resumeStream();
+
+			firstBuffer = false;
+			streamInited = true;
+		}
+
+		if (threadTermReq)
+			return;
+
+		if (status == ALDataSource::EndOfStream)
+		{
+			sourceExhausted = true;
+			break;
+		}
+	}
+
+	/* Wait for buffers to be consumed, then
+	 * refill and queue them up again */
+	while (true)
+	{
+		ALint procBufs = AL::Source::getProcBufferCount(alSrc);
+
+		while (procBufs--)
+		{
+			if (threadTermReq)
+				break;
+
+			AL::Buffer::ID buf = AL::Source::unqueueBuffer(alSrc);
+
+			/* If something went wrong, try again later */
+			if (buf == AL::Buffer::ID(0))
+				break;
+
+			if (buf == lastBuf)
+			{
+				/* Reset the processed sample count so
+				 * querying the playback offset returns 0.0 again */
+				procFrames = source->loopStartFrames();
+				lastBuf = AL::Buffer::ID(0);
+			}
+			else
+			{
+				/* Add the frame count contained in this
+				 * buffer to the total count */
+				ALint bits = AL::Buffer::getBits(buf);
+				ALint size = AL::Buffer::getSize(buf);
+				ALint chan = AL::Buffer::getChannels(buf);
+
+				if (bits != 0 && chan != 0)
+					procFrames += ((size / (bits / 8)) / chan);
+			}
+
+			if (sourceExhausted)
+				continue;
+
+			status = source->fillBuffer(buf);
+
+			if (status == ALDataSource::Error)
+			{
+				sourceExhausted = true;
+				return;
+			}
+
+			AL::Source::queueBuffer(alSrc, buf);
+
+			/* In case of buffer underrun,
+			 * start playing again */
+			if (AL::Source::getState(alSrc) == AL_STOPPED)
+				AL::Source::play(alSrc);
+
+			/* If this was the last buffer before the data
+			 * source loop wrapped around again, mark it as
+			 * such so we can catch it and reset the processed
+			 * sample count once it gets unqueued */
+			if (status == ALDataSource::WrapAround)
+				lastBuf = buf;
+
+			if (status == ALDataSource::EndOfStream)
+				sourceExhausted = true;
+		}
+
+		if (threadTermReq)
+			break;
+
+		SDL_Delay(AUDIO_SLEEP);
+	}
+}
+
+int ALStream::streamDataFun(void *_self)
+{
+	ALStream &self = *static_cast<ALStream*>(_self);
+	self.streamData();
+	return 0;
+}

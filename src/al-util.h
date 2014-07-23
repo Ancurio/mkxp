@@ -23,6 +23,8 @@
 #define ALUTIL_H
 
 #include <al.h>
+#include <SDL_audio.h>
+#include <assert.h>
 
 namespace AL
 {
@@ -184,5 +186,52 @@ namespace Source
 }
 
 }
+
+inline uint8_t formatSampleSize(int sdlFormat)
+{
+	switch (sdlFormat)
+	{
+	case AUDIO_U8 :
+	case AUDIO_S8 :
+		return 1;
+
+	case AUDIO_U16LSB :
+	case AUDIO_U16MSB :
+	case AUDIO_S16LSB :
+	case AUDIO_S16MSB :
+		return 2;
+
+	default :
+		assert(!"Unhandled sample format");
+	}
+
+	return 0;
+}
+
+inline ALenum chooseALFormat(int sampleSize, int channelCount)
+{
+	switch (sampleSize)
+	{
+	case 1 :
+		switch (channelCount)
+		{
+		case 1 : return AL_FORMAT_MONO8;
+		case 2 : return AL_FORMAT_STEREO8;
+		}
+	case 2 :
+		switch (channelCount)
+		{
+		case 1 : return AL_FORMAT_MONO16;
+		case 2 : return AL_FORMAT_STEREO16;
+		}
+	default :
+		assert(!"Unhandled sample size / channel count");
+	}
+
+	return 0;
+}
+
+#define AUDIO_SLEEP 10
+#define STREAM_BUF_SIZE 32768
 
 #endif // ALUTIL_H

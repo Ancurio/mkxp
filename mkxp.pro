@@ -126,7 +126,11 @@ HEADERS += \
 	src/debugwriter.h \
 	src/gl-fun.h \
 	src/gl-meta.h \
-	src/vertex.h
+	src/vertex.h \
+	src/soundemitter.h \
+	src/aldatasource.h \
+	src/alstream.h \
+	src/audiostream.h
 
 SOURCES += \
 	src/main.cpp \
@@ -156,7 +160,11 @@ SOURCES += \
 	src/sharedstate.cpp \
 	src/gl-fun.cpp \
 	src/gl-meta.cpp \
-	src/vertex.cpp
+	src/vertex.cpp \
+	src/soundemitter.cpp \
+	src/sdlsoundsource.cpp \
+	src/alstream.cpp \
+	src/audiostream.cpp
 
 EMBED = \
 	shader/transSimple.frag \
@@ -176,6 +184,9 @@ EMBED = \
 	assets/liberation.ttf
 
 RGSS2 {
+	SOURCES += \
+	src/vorbissource.cpp
+
 	EMBED += \
 	shader/blur.frag \
 	shader/blurH.vert \

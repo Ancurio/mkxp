@@ -135,6 +135,10 @@ set(MAIN_HEADERS
 	src/gl-fun.h
 	src/gl-meta.h
 	src/vertex.h
+	src/soundemitter.h
+	src/aldatasource.h
+	src/alstream.h
+	src/audiostream.h
 )
 
 set(MAIN_SOURCE
@@ -166,6 +170,10 @@ set(MAIN_SOURCE
 	src/gl-fun.cpp
 	src/gl-meta.cpp
 	src/vertex.cpp
+	src/soundemitter.cpp
+	src/sdlsoundsource.cpp
+	src/alstream.cpp
+	src/audiostream.cpp
 )
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
@@ -191,6 +199,10 @@ set(EMBEDDED_INPUT
 )
 
 if (RGSS2)
+	list(APPEND MAIN_SOURCE
+		src/vorbissource.cpp
+	)
+
 	list(APPEND EMBEDDED_INPUT
 		shader/blur.frag
 		shader/blurH.vert
