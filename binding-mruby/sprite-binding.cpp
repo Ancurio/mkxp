@@ -74,7 +74,7 @@ MRB_METHOD(spriteWidth)
 {
 	Sprite *s = getPrivateData<Sprite>(mrb, self);
 
-	int value;
+	int value = 0;
 	GUARD_EXC( value = s->getWidth(); )
 
 	return mrb_fixnum_value(value);
@@ -84,7 +84,7 @@ MRB_METHOD(spriteHeight)
 {
 	Sprite *s = getPrivateData<Sprite>(mrb, self);
 
-	int value;
+	int value = 0;
 	GUARD_EXC( value = s->getHeight(); )
 
 	return mrb_fixnum_value(value);
