@@ -337,7 +337,9 @@ FileSystem::FileSystem(const char *argv0,
 	p->extensions[Font].push_back("otf");
 
 	PHYSFS_init(argv0);
-	PHYSFS_registerArchiver(&RGSS_Archiver);
+
+	PHYSFS_registerArchiver(&RGSS1_Archiver);
+	PHYSFS_registerArchiver(&RGSS2_Archiver);
 
 	if (allowSymlinks)
 		PHYSFS_permitSymbolicLinks(1);

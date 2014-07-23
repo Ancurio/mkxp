@@ -24,6 +24,7 @@
 
 #include <physfs.h>
 
-extern const PHYSFS_Archiver RGSS_Archiver;
+extern const PHYSFS_Archiver RGSS1_Archiver;
+extern const PHYSFS_Archiver RGSS2_Archiver;
 
 #endif // RGSSAD_H

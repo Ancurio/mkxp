@@ -466,14 +466,35 @@ RGSS_noop2(void*, const char*)
 	return 0;
 }
 
-const PHYSFS_Archiver RGSS_Archiver =
+const PHYSFS_Archiver RGSS1_Archiver =
 {
 	0,
 	{
 		"RGSSAD",
 		"RGSS encrypted archive format",
-		"Jonas Kulla <Nyocurio@gmail.com>",
-		"http://k-du.de/rgss/rgss.html",
+		"", /* Author */
+		"", /* Website */
+		0 /* symlinks not supported */
+	},
+	RGSS_openArchive,
+	RGSS_enumerateFiles,
+	RGSS_openRead,
+	RGSS_noop1, /* openWrite */
+	RGSS_noop1, /* openAppend */
+	RGSS_noop2, /* remove */
+	RGSS_noop2, /* mkdir */
+	RGSS_stat,
+	RGSS_closeArchive
+};
+
+const PHYSFS_Archiver RGSS2_Archiver =
+{
+	0,
+	{
+		"RGSS2A",
+		"RGSS2 encrypted archive format",
+		"", /* Author */
+		"", /* Website */
 		0 /* symlinks not supported */
 	},
 	RGSS_openArchive,
