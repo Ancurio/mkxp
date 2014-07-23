@@ -79,13 +79,13 @@ readUint32(PHYSFS_Io *io, uint32_t &result)
 	return (count == 4);
 }
 
-#define RGSS_HEADER_1 0x53534752
-#define RGSS_HEADER_2 0x01004441
-
+#define RGSS_HEADER "RGSSAD"
 #define RGSS_MAGIC 0xDEADCAFE
 
 #define PHYSFS_ALLOC(type) \
 	static_cast<type*>(PHYSFS_getAllocator()->Malloc(sizeof(type)))
+
+#define IO_READ(io, dest, size) (io->read(io, dest, size) == size)
 
 static inline uint32_t
 advanceMagic(uint32_t &magic)
@@ -278,22 +278,65 @@ static const PHYSFS_Io RGSS_IoTemplate =
     RGSS_ioDestroy
 };
 
+static void
+processDirectories(RGSS_archiveData *data, BoostSet<std::string> &topLevel,
+                   char *nameBuf, uint32_t nameLen)
+{
+	/* Check for top level entries */
+	for (uint32_t i = 0; i < nameLen; ++i)
+	{
+		bool slash = nameBuf[i] == '/';
+		if (!slash && i+1 < nameLen)
+			continue;
+
+		if (slash)
+			nameBuf[i] = '\0';
+
+		topLevel.insert(nameBuf);
+
+		if (slash)
+			nameBuf[i] = '/';
+	}
+
+	/* Check for more entries */
+	for (uint32_t i = nameLen; i > 0; i--)
+		if (nameBuf[i] == '/')
+		{
+			nameBuf[i] = '\0';
+
+			const char *dir = nameBuf;
+			const char *entry = &nameBuf[i+1];
+
+			BoostSet<std::string> &entryList = data->dirHash[dir];
+			entryList.insert(entry);
+		}
+}
+
+static bool
+verifyHeader(PHYSFS_Io *io, char version)
+{
+	char header[8];
+
+	if (!IO_READ(io, header, sizeof(header)))
+		return false;
+
+	if (strcmp(header, RGSS_HEADER))
+		return false;
+
+	if (header[7] != version)
+		return false;
+
+	return true;
+}
+
 static void*
 RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 {
 	if (forWrite)
 		return 0;
 
-	/* Check header */
-	uint32_t header1, header2;
-
-	if (!readUint32(io, header1))
-		return 0;
-
-	if (!readUint32(io, header2))
-		return 0;
-
-	if (header1 != RGSS_HEADER_1 || header2 != RGSS_HEADER_2)
+	/* Version 1 */
+	if (!verifyHeader(io, 1))
 		return 0;
 
 	RGSS_archiveData *data = new RGSS_archiveData;
@@ -337,35 +380,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 		entry.startMagic = magic;
 
 		data->entryHash.insert(nameBuf, entry);
-
-		/* Check for top level entries */
-		for (i = 0; i < nameLen; ++i)
-		{
-			bool slash = nameBuf[i] == '/';
-			if (!slash && i+1 < nameLen)
-				continue;
-
-			if (slash)
-				nameBuf[i] = '\0';
-
-			topLevel.insert(nameBuf);
-
-			if (slash)
-				nameBuf[i] = '/';
-		}
-
-		/* Check for more entries */
-		for (i = nameLen; i > 0; i--)
-			if (nameBuf[i] == '/')
-			{
-				nameBuf[i] = '\0';
-
-				const char *dir = nameBuf;
-				const char *entry = &nameBuf[i+1];
-
-				BoostSet<std::string> &entryList = data->dirHash[dir];
-				entryList.insert(entry);
-			}
+		processDirectories(data, topLevel, nameBuf, nameLen);
 
 		io->seek(io, entry.offset + entry.size);
 	}
@@ -498,6 +513,115 @@ const PHYSFS_Archiver RGSS2_Archiver =
 		0 /* symlinks not supported */
 	},
 	RGSS_openArchive,
+	RGSS_enumerateFiles,
+	RGSS_openRead,
+	RGSS_noop1, /* openWrite */
+	RGSS_noop1, /* openAppend */
+	RGSS_noop2, /* remove */
+	RGSS_noop2, /* mkdir */
+	RGSS_stat,
+	RGSS_closeArchive
+};
+
+static bool
+readUint32AndXor(PHYSFS_Io *io, uint32_t &result, uint32_t key)
+{
+	if (!readUint32(io, result))
+		return false;
+
+	result ^= key;
+
+	return true;
+}
+
+static void*
+RGSS3_openArchive(PHYSFS_Io *io, const char *, int forWrite)
+{
+	if (forWrite)
+		return 0;
+
+	/* Version 3 */
+	if (!verifyHeader(io, 3))
+		return 0;
+
+	uint32_t baseMagic;
+
+	if (!readUint32(io, baseMagic))
+		return 0;
+
+	baseMagic = (baseMagic * 9) + 3;
+
+	RGSS_archiveData *data = new RGSS_archiveData;
+	data->archiveIo = io;
+
+	/* Top level entry list */
+	BoostSet<std::string> &topLevel = data->dirHash[""];
+
+	while (true)
+	{
+		uint32_t offset, size, magic, nameLen;
+
+		if (!readUint32AndXor(io, offset, baseMagic))
+			goto error;
+
+		/* Zero offset means entry list has ended */
+		if (offset == 0)
+			break;
+
+		if (!readUint32AndXor(io, size, baseMagic))
+			goto error;
+
+		if (!readUint32AndXor(io, magic, baseMagic))
+			goto error;
+
+		if (!readUint32AndXor(io, nameLen, baseMagic))
+			goto error;
+
+		char nameBuf[512];
+
+		if (!IO_READ(io, nameBuf, nameLen))
+			goto error;
+
+		uint32_t i;
+		for (i = 0; i < nameLen; ++i)
+		{
+			nameBuf[i] ^= ((baseMagic >> 8*(i%4)) & 0xFF);
+
+			if (nameBuf[i] == '\\')
+				nameBuf[i] = '/';
+		}
+
+		nameBuf[i] = '\0';
+
+		RGSS_entryData entry;
+		entry.offset = offset;
+		entry.size = size;
+		entry.startMagic = magic;
+
+		data->entryHash.insert(nameBuf, entry);
+		processDirectories(data, topLevel, nameBuf, nameLen);
+
+		continue;
+
+	error:
+		delete data;
+		return 0;
+	}
+
+	return data;
+}
+
+const PHYSFS_Archiver RGSS3_Archiver =
+{
+	0,
+	{
+		"RGSS3A",
+		"RGSS3 encrypted archive format",
+		"", /* Author */
+		"", /* Website */
+		0 /* symlinks not supported */
+	},
+	RGSS3_openArchive,
 	RGSS_enumerateFiles,
 	RGSS_openRead,
 	RGSS_noop1, /* openWrite */

@@ -340,6 +340,7 @@ FileSystem::FileSystem(const char *argv0,
 
 	PHYSFS_registerArchiver(&RGSS1_Archiver);
 	PHYSFS_registerArchiver(&RGSS2_Archiver);
+	PHYSFS_registerArchiver(&RGSS3_Archiver);
 
 	if (allowSymlinks)
 		PHYSFS_permitSymbolicLinks(1);

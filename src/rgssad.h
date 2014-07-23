@@ -26,5 +26,6 @@
 
 extern const PHYSFS_Archiver RGSS1_Archiver;
 extern const PHYSFS_Archiver RGSS2_Archiver;
+extern const PHYSFS_Archiver RGSS3_Archiver;
 
 #endif // RGSSAD_H
