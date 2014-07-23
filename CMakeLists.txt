@@ -139,6 +139,7 @@ set(MAIN_HEADERS
 	src/aldatasource.h
 	src/alstream.h
 	src/audiostream.h
+	src/rgssad.h
 )
 
 set(MAIN_SOURCE
@@ -174,6 +175,7 @@ set(MAIN_SOURCE
 	src/sdlsoundsource.cpp
 	src/alstream.cpp
 	src/audiostream.cpp
+	src/rgssad.cpp
 )
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})

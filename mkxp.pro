@@ -130,7 +130,8 @@ HEADERS += \
 	src/soundemitter.h \
 	src/aldatasource.h \
 	src/alstream.h \
-	src/audiostream.h
+	src/audiostream.h \
+	src/rgssad.h
 
 SOURCES += \
 	src/main.cpp \
@@ -164,7 +165,8 @@ SOURCES += \
 	src/soundemitter.cpp \
 	src/sdlsoundsource.cpp \
 	src/alstream.cpp \
-	src/audiostream.cpp
+	src/audiostream.cpp \
+	src/rgssad.cpp
 
 EMBED = \
 	shader/transSimple.frag \
