@@ -20,6 +20,7 @@
 */
 
 #include "vertex.h"
+#include "util.h"
 
 #include <cstddef>
 
@@ -56,7 +57,7 @@ static const VertexAttribute VertexAttribs[] =
 	template<> \
 	const VertexAttribute *VertexTraits<VertType>::attr = VertType##Attribs; \
 	template<> \
-	const GLsizei VertexTraits<VertType>::attrCount = sizeof(VertType##Attribs) / sizeof(VertType##Attribs[0])
+	const GLsizei VertexTraits<VertType>::attrCount = ARRAY_SIZE(VertType##Attribs)
 
 DEF_TRAITS(SVertex);
 DEF_TRAITS(CVertex);
