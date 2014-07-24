@@ -398,17 +398,6 @@ static void showExc(VALUE exc)
 	showMsg(StringValueCStr(ms));
 }
 
-/* Appends if exists, sets if not */
-static void globalAryAppend(const char *globalName, VALUE ary)
-{
-	VALUE existing = rb_gv_get(globalName);
-
-	if (NIL_P(existing))
-		rb_gv_set(globalName, ary);
-	else
-		rb_ary_concat(existing, ary);
-}
-
 static void mriBindingExecute()
 {
 	ruby_setup();
@@ -429,8 +418,7 @@ static void mriBindingExecute()
 			rb_ary_push(lpaths, pathv);
 		}
 
-		globalAryAppend("$", lpaths);
-		globalAryAppend("LOAD_PATH", lpaths);
+		rb_ary_concat(rb_gv_get(":"), lpaths);
 	}
 
 	RbData rbData;
