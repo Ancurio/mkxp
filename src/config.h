@@ -57,6 +57,8 @@ struct Config
 
 	std::vector<std::string> fontSubs;
 
+	std::vector<std::string> rubyLoadpaths;
+
 	/* Game INI contents */
 	struct {
 		std::string scripts;

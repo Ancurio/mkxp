@@ -84,6 +84,7 @@ void Config::read(int argc, char *argv[])
 	        PO_DESC_ALL
 	        ("RTP", po::value<StringVec>()->composing())
 	        ("fontSub", po::value<StringVec>()->composing())
+	        ("rubyLoadpath", po::value<StringVec>()->composing())
 	        ;
 
 	po::variables_map vm;
@@ -117,6 +118,8 @@ void Config::read(int argc, char *argv[])
 	GUARD_ALL( rtps = vm["RTP"].as<StringVec>(); );
 
 	GUARD_ALL( fontSubs = vm["fontSub"].as<StringVec>(); );
+
+	GUARD_ALL( rubyLoadpaths = vm["rubyLoadpath"].as<StringVec>(); )
 
 #undef PO_DESC
 #undef PO_DESC_ALL

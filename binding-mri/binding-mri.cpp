@@ -398,17 +398,47 @@ static void showExc(VALUE exc)
 	showMsg(StringValueCStr(ms));
 }
 
+/* Appends if exists, sets if not */
+static void globalAryAppend(const char *globalName, VALUE ary)
+{
+	VALUE existing = rb_gv_get(globalName);
+
+	if (NIL_P(existing))
+		rb_gv_set(globalName, ary);
+	else
+		rb_ary_concat(existing, ary);
+}
+
 static void mriBindingExecute()
 {
 	ruby_setup();
 	rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
+
+	Config &conf = shState->rtData().config;
+
+	if (!conf.rubyLoadpaths.empty())
+	{
+		/* Setup custom load paths */
+		VALUE lpaths = rb_ary_new_capa(conf.rubyLoadpaths.size());
+
+		for (size_t i = 0; i < conf.rubyLoadpaths.size(); ++i)
+		{
+			std::string &path = conf.rubyLoadpaths[i];
+
+			VALUE pathv = rb_str_new(path.c_str(), path.size());
+			rb_ary_push(lpaths, pathv);
+		}
+
+		globalAryAppend("$", lpaths);
+		globalAryAppend("LOAD_PATH", lpaths);
+	}
 
 	RbData rbData;
 	shState->setBindingData(&rbData);
 
 	mriBindingInit();
 
-	std::string &customScript = shState->rtData().config.customScript;
+	std::string &customScript = conf.customScript;
 	if (!customScript.empty())
 		runCustomScript(customScript);
 	else

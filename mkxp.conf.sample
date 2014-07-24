@@ -135,3 +135,15 @@
 #
 # fontSub=Arial>Open Sans
 # fontSub=Times New Roman>Liberation Serif
+
+
+# Because mkxp is usually distributed as a stand alone
+# build, no predefined load paths are initialized
+# ($:, $LOAD_PATH) in the MRI backend. With this option,
+# they can be specified manually (eg. when using a system
+# libruby.so). It is however recommended to statically
+# link all required gems into libruby.so.
+# (default: none)
+#
+# rubyLoadpath=/usr/lib64/ruby/
+# rubyLoadpath=/usr/local/share/ruby/site_ruby
