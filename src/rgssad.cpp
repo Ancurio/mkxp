@@ -359,8 +359,7 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 		nameLen ^= advanceMagic(magic);
 
 		static char nameBuf[512];
-		uint32_t i;
-		for (i = 0; i < nameLen; ++i)
+		for (uint32_t i = 0; i < nameLen; ++i)
 		{
 			char c;
 			io->read(io, &c, 1);
@@ -368,7 +367,8 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 			if (nameBuf[i] == '\\')
 				nameBuf[i] = '/';
 		}
-		nameBuf[i] = 0;
+
+		nameBuf[nameLen] = '\0';
 
 		uint32_t entrySize;
 		readUint32(io, entrySize);
@@ -582,8 +582,7 @@ RGSS3_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 		if (!IO_READ(io, nameBuf, nameLen))
 			goto error;
 
-		uint32_t i;
-		for (i = 0; i < nameLen; ++i)
+		for (uint32_t i = 0; i < nameLen; ++i)
 		{
 			nameBuf[i] ^= ((baseMagic >> 8*(i%4)) & 0xFF);
 
@@ -591,7 +590,7 @@ RGSS3_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 				nameBuf[i] = '/';
 		}
 
-		nameBuf[i] = '\0';
+		nameBuf[nameLen] = '\0';
 
 		RGSS_entryData entry;
 		entry.offset = offset;
