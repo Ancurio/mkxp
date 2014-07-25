@@ -408,7 +408,7 @@ static void mriBindingExecute()
 	if (!conf.rubyLoadpaths.empty())
 	{
 		/* Setup custom load paths */
-		VALUE lpaths = rb_ary_new_capa(conf.rubyLoadpaths.size());
+		VALUE lpaths = rb_gv_get(":");
 
 		for (size_t i = 0; i < conf.rubyLoadpaths.size(); ++i)
 		{
@@ -417,8 +417,6 @@ static void mriBindingExecute()
 			VALUE pathv = rb_str_new(path.c_str(), path.size());
 			rb_ary_push(lpaths, pathv);
 		}
-
-		rb_ary_concat(rb_gv_get(":"), lpaths);
 	}
 
 	RbData rbData;
