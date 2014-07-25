@@ -3,7 +3,7 @@ Project(mkxp)
 
 ## Setup options ##
 
-option(RGSS2 "Enable RGSS2" ON)
+option(RGSS2 "Enable RGSS2" OFF)
 option(FORCE32 "Force 32bit compile on 64bit OS" OFF)
 set(BINDING "MRI" CACHE STRING "The Binding Type (MRI, MRUBY, NULL)")
 set(EXTERNAL_LIB_PATH "" CACHE PATH "External precompiled lib prefix")
