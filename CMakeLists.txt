@@ -201,10 +201,13 @@ set(EMBEDDED_INPUT
 )
 
 if (RGSS2)
+	pkg_check_modules(RGSS2 REQUIRED vorbisfile)
+	list(APPEND DEFINES
+		RGSS2
+	)
 	list(APPEND MAIN_SOURCE
 		src/vorbissource.cpp
 	)
-
 	list(APPEND EMBEDDED_INPUT
 		shader/blur.frag
 		shader/blurH.vert
@@ -370,6 +373,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	${SDL2_INCLUDE_DIRS} # Blindly assume other SDL bits are in same directory
 	${Boost_INCLUDE_DIR}
 	${MRI_INCLUDE_DIRS}
+	${RGSS2_INCLUDE_DIRS}
 	${OPENAL_INCLUDE_DIR}
 )
 
@@ -383,6 +387,7 @@ target_link_libraries(${PROJECT_NAME}
 	${PIXMAN_LIBRARIES}
 	${Boost_LIBRARIES}
 	${MRI_LIBRARIES}
+	${RGSS2_LIBRARIES}
 	${OPENAL_LIBRARY}
 	${ZLIB_LIBRARY}
 
