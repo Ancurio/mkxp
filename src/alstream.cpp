@@ -213,14 +213,17 @@ void ALStream::stopStream()
 {
 	threadTermReq = true;
 
-	AL::Source::stop(alSrc);
-
 	if (thread)
 	{
 		SDL_WaitThread(thread, 0);
 		thread = 0;
 		needsRewind = true;
 	}
+
+	/* Need to stop the source _after_ the thread has terminated,
+	 * because it might have accidentally started it again before
+	 * seeing the term request */
+	AL::Source::stop(alSrc);
 
 	procFrames = 0;
 }
@@ -298,6 +301,9 @@ void ALStream::streamData()
 	bool firstBuffer = true;
 	ALDataSource::Status status;
 
+	if (threadTermReq)
+		return;
+
 	if (needsRewind)
 	{
 		if (startOffset > 0)
@@ -308,6 +314,9 @@ void ALStream::streamData()
 
 	for (int i = 0; i < STREAM_BUFS; ++i)
 	{
+		if (threadTermReq)
+			return;
+
 		AL::Buffer::ID buf = alBuf[i];
 
 		status = source->fillBuffer(buf);
