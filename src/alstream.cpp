@@ -57,8 +57,7 @@ ALStream::~ALStream()
 {
 	close();
 
-	clearALQueue();
-
+	AL::Source::clearQueue(alSrc);
 	AL::Source::del(alSrc);
 
 	for (int i = 0; i < STREAM_BUFS; ++i)
@@ -228,7 +227,7 @@ void ALStream::stopStream()
 
 void ALStream::startStream(float offset)
 {
-	clearALQueue();
+	AL::Source::clearQueue(alSrc);
 
 	preemptPause = false;
 	streamInited = false;
@@ -290,15 +289,6 @@ void ALStream::checkStopped()
 
 	stopStream();
 	state = Stopped;
-}
-
-void ALStream::clearALQueue()
-{
-	/* Unqueue all buffers */
-	ALint queuedBufs = AL::Source::getProcBufferCount(alSrc);
-
-	while (queuedBufs--)
-		AL::Source::unqueueBuffer(alSrc);
 }
 
 /* thread func */

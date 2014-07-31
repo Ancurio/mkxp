@@ -112,7 +112,6 @@ private:
 	void resumeStream();
 
 	void checkStopped();
-	void clearALQueue();
 
 	/* thread func */
 	void streamData();

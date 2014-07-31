@@ -133,6 +133,11 @@ namespace Source
 		return buffer;
 	}
 
+	inline void clearQueue(Source::ID id)
+	{
+		attachBuffer(id, Buffer::ID(0));
+	}
+
 	inline ALint getInteger(Source::ID id, ALenum prop)
 	{
 		ALint value;
