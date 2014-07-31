@@ -147,3 +147,19 @@
 #
 # rubyLoadpath=/usr/lib64/ruby/
 # rubyLoadpath=/usr/local/share/ruby/site_ruby
+
+
+# SoundFont to use for midi playback (via fluidsynth)
+# (default: none)
+#
+# midi.soundFont=/usr/share/mysoundfont.sf2
+
+
+# Activate "chorus" effect for midi playback
+#
+# midi.chorus=false
+
+
+# Activate "reverb" effect for midi playback
+#
+# midi.reverb=false

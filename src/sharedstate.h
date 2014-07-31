@@ -49,6 +49,10 @@ struct GlobalIBO;
 struct Config;
 struct Vec2i;
 
+#ifdef MIDI
+struct SharedMidiState;
+#endif
+
 struct SharedState
 {
 	void *bindingData();
@@ -77,6 +81,10 @@ struct SharedState
 
 	SharedFontState &fontState();
 	Font &defaultFont();
+
+#ifdef MIDI
+	SharedMidiState &midiState();
+#endif
 
 	sigc::signal<void> prepareDraw;
 

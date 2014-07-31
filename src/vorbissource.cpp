@@ -157,6 +157,12 @@ struct VorbisSource : ALDataSource
 
 	void seekToOffset(float seconds)
 	{
+		if (seconds <= 0)
+		{
+			ov_raw_seek(&vf, 0);
+			currentFrame = 0;
+		}
+
 		currentFrame = seconds * info.rate;
 
 		if (loop.valid && currentFrame > loop.end)
@@ -205,7 +211,7 @@ struct VorbisSource : ALDataSource
 				if (loop.requested)
 				{
 					retStatus = ALDataSource::WrapAround;
-					reset();
+					seekToOffset(0);
 				}
 				else
 				{
@@ -261,18 +267,17 @@ struct VorbisSource : ALDataSource
 		return retStatus;
 	}
 
-	void reset()
-	{
-		ov_raw_seek(&vf, 0);
-		currentFrame = 0;
-	}
-
 	uint32_t loopStartFrames()
 	{
 		if (loop.valid)
 			return loop.start;
 		else
 			return 0;
+	}
+
+	bool setPitch(float)
+	{
+		return false;
 	}
 };
 

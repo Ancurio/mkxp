@@ -37,6 +37,10 @@
 #include "binding.h"
 #include "exception.h"
 
+#ifdef MIDI
+#include "sharedmidistate.h"
+#endif
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string>
@@ -57,6 +61,10 @@ struct SharedStatePrivate
 	EventThread &eThread;
 	RGSSThreadData &rtData;
 	Config &config;
+
+#ifdef MIDI
+	SharedMidiState midiState;
+#endif
 
 	Graphics graphics;
 	Input input;
@@ -89,6 +97,9 @@ struct SharedStatePrivate
 	      eThread(*threadData->ethread),
 	      rtData(*threadData),
 	      config(threadData->config),
+#ifdef MIDI
+	      midiState(threadData->config),
+#endif
 	      graphics(threadData),
 	      fontState(threadData->config),
 	      stampCounter(0)
@@ -137,6 +148,12 @@ struct SharedStatePrivate
 		/* Reuse starting values */
 		TEXFBO::allocEmpty(gpTexFBO, globalTexW, globalTexH);
 		TEXFBO::linkFBO(gpTexFBO);
+
+		/* RGSS3 games will call setup_midi, so there's
+		 * no need to do it on startup */
+#if MIDI && !RGSS3
+		midiState.initDefaultSynths();
+#endif
 	}
 
 	~SharedStatePrivate()
@@ -211,6 +228,10 @@ GSATT(ShaderSet&, shaders)
 GSATT(TexPool&, texPool)
 GSATT(Quad&, gpQuad)
 GSATT(SharedFontState&, fontState)
+
+#ifdef MIDI
+GSATT(SharedMidiState&, midiState)
+#endif
 
 void SharedState::setBindingData(void *data)
 {

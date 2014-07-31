@@ -50,7 +50,10 @@ Config::Config()
       allowSymlinks(false),
       pathCache(true),
       useScriptNames(false)
-{}
+{
+	midi.chorus = false;
+	midi.reverb = false;
+}
 
 void Config::read(int argc, char *argv[])
 {
@@ -70,6 +73,9 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(anyAltToggleFS, bool) \
 	PO_DESC(allowSymlinks, bool) \
 	PO_DESC(iconPath, std::string) \
+	PO_DESC(midi.soundFont, std::string) \
+	PO_DESC(midi.chorus, bool) \
+	PO_DESC(midi.reverb, bool) \
 	PO_DESC(customScript, std::string) \
 	PO_DESC(pathCache, bool) \
 	PO_DESC(useScriptNames, bool)

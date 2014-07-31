@@ -37,7 +37,8 @@ ALStream::ALStream(LoopMode loopMode,
 	  thread(0),
 	  preemptPause(false),
 	  streamInited(false),
-	  needsRewind(false)
+	  needsRewind(false),
+      pitch(1.0)
 {
 	alSrc = AL::Source::gen();
 
@@ -161,7 +162,12 @@ void ALStream::setVolume(float value)
 
 void ALStream::setPitch(float value)
 {
-	AL::Source::setPitch(alSrc, value);
+	/* If the source supports setting pitch natively,
+	 * we don't have to do it via OpenAL */
+	if (source && source->setPitch(value))
+		AL::Source::setPitch(alSrc, 1.0);
+	else
+		AL::Source::setPitch(alSrc, value);
 }
 
 ALStream::State ALStream::queryState()
@@ -190,23 +196,31 @@ void ALStream::openSource(const std::string &filename)
 {
 	const char *ext;
 	shState->fileSystem().openRead(srcOps, filename.c_str(), FileSystem::Audio, false, &ext);
+	needsRewind = false;
 
-#ifdef RGSS2
+#if RGSS2 || MIDI
 	/* Try to read ogg file signature */
-	char sig[5];
-	memset(sig, '\0', sizeof(sig));
+	char sig[5] = { 0 };
 	SDL_RWread(&srcOps, sig, 1, 4);
 	SDL_RWseek(&srcOps, 0, RW_SEEK_SET);
 
+#ifdef RGSS2
 	if (!strcmp(sig, "OggS"))
+	{
 		source = createVorbisSource(srcOps, looped);
-	else
-		source = createSDLSource(srcOps, ext, STREAM_BUF_SIZE, looped);
-#else
-	source = createSDLSource(srcOps, ext, STREAM_BUF_SIZE, looped);
+		return;
+	}
+#endif
+#ifdef MIDI
+	if (!strcmp(sig, "MThd"))
+	{
+		source = createMidiSource(srcOps, looped);
+		return;
+	}
+#endif
 #endif
 
-	needsRewind = false;
+	source = createSDLSource(srcOps, ext, STREAM_BUF_SIZE, looped);
 }
 
 void ALStream::stopStream()
@@ -306,10 +320,7 @@ void ALStream::streamData()
 
 	if (needsRewind)
 	{
-		if (startOffset > 0)
-			source->seekToOffset(startOffset);
-		else
-			source->reset();
+		source->seekToOffset(startOffset);
 	}
 
 	for (int i = 0; i < STREAM_BUFS; ++i)

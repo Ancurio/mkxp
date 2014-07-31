@@ -4,6 +4,7 @@ Project(mkxp)
 ## Setup options ##
 
 option(RGSS2 "Enable RGSS2" OFF)
+option(MIDI "Enable midi support" ON)
 option(FORCE32 "Force 32bit compile on 64bit OS" OFF)
 set(BINDING "MRI" CACHE STRING "The Binding Type (MRI, MRUBY, NULL)")
 set(EXTERNAL_LIB_PATH "" CACHE PATH "External precompiled lib prefix")
@@ -216,6 +217,19 @@ if (RGSS2)
 	)
 endif()
 
+if (MIDI)
+	pkg_check_modules(MIDI REQUIRED fluidsynth)
+	list(APPEND DEFINES
+		MIDI
+	)
+	list(APPEND MAIN_HEADERS
+		src/sharedmidistate.h
+	)
+	list(APPEND MAIN_SOURCE
+		src/midisource.cpp
+	)
+endif()
+
 ## Process Embeddeds ##
 
 find_program(XXD_EXE xxd
@@ -374,6 +388,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	${Boost_INCLUDE_DIR}
 	${MRI_INCLUDE_DIRS}
 	${RGSS2_INCLUDE_DIRS}
+	${MIDI_INCLUDE_DIRS}
 	${OPENAL_INCLUDE_DIR}
 )
 
@@ -388,6 +403,7 @@ target_link_libraries(${PROJECT_NAME}
 	${Boost_LIBRARIES}
 	${MRI_LIBRARIES}
 	${RGSS2_LIBRARIES}
+	${MIDI_LIBRARIES}
 	${OPENAL_LIBRARY}
 	${ZLIB_LIBRARY}
 

@@ -103,18 +103,21 @@ struct SDLSoundSource : ALDataSource
 
 	void seekToOffset(float seconds)
 	{
-		Sound_Seek(sample, static_cast<uint32_t>(seconds * 1000));
-	}
-
-	void reset()
-	{
-		Sound_Rewind(sample);
+		if (seconds <= 0)
+			Sound_Rewind(sample);
+		else
+			Sound_Seek(sample, static_cast<uint32_t>(seconds * 1000));
 	}
 
 	uint32_t loopStartFrames()
 	{
 		/* Loops from the beginning of the file */
 		return 0;
+	}
+
+	bool setPitch(float)
+	{
+		return false;
 	}
 };
 

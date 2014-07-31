@@ -332,6 +332,11 @@ FileSystem::FileSystem(const char *argv0,
 		}
 	}
 
+#if MIDI
+	p->extensions[Audio].push_back("mid");
+	p->extensions[Audio].push_back("midi");
+#endif
+
 	/* Font extensions */
 	p->extensions[Font].push_back("ttf");
 	p->extensions[Font].push_back("otf");

@@ -8,6 +8,12 @@ INCLUDEPATH += . src
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
+CONFIG += MIDI
+
+DISABLE_MIDI {
+	CONFIG -= MIDI
+}
+
 isEmpty(BINDING) {
 	BINDING = MRI
 }
@@ -55,6 +61,10 @@ unix {
 
 	RGSS2 {
 		PKGCONFIG += vorbisfile
+	}
+
+	MIDI {
+		PKGCONFIG += fluidsynth
 	}
 
 	# Deal with boost paths...
@@ -194,6 +204,14 @@ RGSS2 {
 	shader/blurH.vert \
 	shader/blurV.vert \
 	shader/simpleMatrix.vert
+}
+
+MIDI {
+	SOURCES += \
+	src/midisource.cpp \
+	src/sharedmidistate.h
+
+	DEFINES += MIDI
 }
 
 defineReplace(xxdOutput) {

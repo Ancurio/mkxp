@@ -50,6 +50,13 @@ struct Config
 
 	std::string iconPath;
 
+	struct
+	{
+		std::string soundFont;
+		bool chorus;
+		bool reverb;
+	} midi;
+
 	bool useScriptNames;
 
 	std::string customScript;

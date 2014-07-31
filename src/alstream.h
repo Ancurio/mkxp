@@ -67,6 +67,8 @@ struct ALStream
 	bool needsRewind;
 	float startOffset;
 
+	float pitch;
+
 	AL::Source::ID alSrc;
 	AL::Buffer::ID alBuf[STREAM_BUFS];
 
@@ -101,6 +103,7 @@ struct ALStream
 	void setPitch(float value);
 	State queryState();
 	float queryOffset();
+	bool queryNativePitch();
 
 private:
 	void closeSource();
