@@ -70,6 +70,12 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2
 
 mkxp reads configuration data from the file "mkxp.conf". The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. See 'mkxp.conf.sample' for a list of accepted entries.
 
+All option entries can alternatively be specified as command line options. Any options that are not arrays (eg. RTP paths) specified as command line options will override entries in mkxp.conf. Note that you will have to wrap values containing spaces in quotes (unlike in mkxp.conf).
+
+The syntax is: `--<option>=<value>`
+
+Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
+
 ## Midi music (*ALPHA STATUS*)
 
 mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
