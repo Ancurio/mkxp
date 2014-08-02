@@ -5,6 +5,7 @@ Project(mkxp)
 
 option(RGSS2 "Enable RGSS2" OFF)
 option(MIDI "Enable midi support" ON)
+option(WORKDIR_CURRENT "Keep current directory on startup" OFF)
 option(FORCE32 "Force 32bit compile on 64bit OS" OFF)
 set(BINDING "MRI" CACHE STRING "The Binding Type (MRI, MRUBY, NULL)")
 set(EXTERNAL_LIB_PATH "" CACHE PATH "External precompiled lib prefix")
@@ -17,6 +18,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
 	SET(LINUX ON)
+ENDIF()
+
+IF(WORKDIR_CURRENT)
+	list(APPEND DEFINES
+		WORKDIR_CURRENT
+	)
 ENDIF()
 
 IF(FORCE32)

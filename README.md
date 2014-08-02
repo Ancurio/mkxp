@@ -53,6 +53,8 @@ The exception is boost, which is weird in that it still hasn't managed to pull o
 
 Midi support is enabled by default; you can disable it via `qmake CONFIG+=DISABLE_MIDI`, in which case the fluidsynth dependency is dropped. When building fluidsynth yourself, you can disable almost all options (audio drivers etc.) as they are not used. Note that upstream fluidsynth has support for sharing soundfont data between synthesizers (mkxp uses multiple synths), so if your memory usage is very high, you might want to try compiling fluidsynth from git master.
 
+By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `DEFINES+=WORKDIR_CURRENT` to qmake's arguments.
+
 **MRI-Binding**: pkg-config will look for `ruby-2.1.pc`, but you can modify mkxp.pro to use 2.0 instead. This is the default binding, so no arguments to qmake needed (`BINDING=MRI` to be explicit).
 
 **MRuby-Binding**: place the "mruby" folder into the project folder and build it first. Add `BINDING=MRUBY` to qmake's arguments.
@@ -66,7 +68,7 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2
 
 ## Configuration
 
-mkxp reads configuration data from the file "mkxp.conf" contained in the current directory. The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. See 'mkxp.conf.sample' for a list of accepted entries.
+mkxp reads configuration data from the file "mkxp.conf". The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. See 'mkxp.conf.sample' for a list of accepted entries.
 
 ## Midi music (*ALPHA STATUS*)
 

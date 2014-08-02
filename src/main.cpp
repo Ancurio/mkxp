@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+#ifndef WORKDIR_CURRENT
 	/* set working directory */
 	char *dataDir = SDL_GetBasePath();
 	if (dataDir)
@@ -183,6 +184,7 @@ int main(int argc, char *argv[])
 		(void)result;
 		SDL_free(dataDir);
 	}
+#endif
 
 	/* now we load the config */
 	Config conf;
