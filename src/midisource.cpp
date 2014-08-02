@@ -93,7 +93,7 @@ struct NoteTouchEvent : ChannelEvent
 
 struct PitchBendEvent : ChannelEvent
 {
-    uint16_t val;
+	uint16_t val;
 };
 
 struct CCEvent : ChannelEvent
@@ -104,7 +104,7 @@ struct CCEvent : ChannelEvent
 
 struct PCEvent : ChannelEvent
 {
-    uint8_t prog;
+	uint8_t prog;
 };
 
 struct TempoEvent
@@ -116,7 +116,8 @@ struct MidiEvent
 {
 	MidiEventType type;
 	uint32_t delta;
-	union {
+	union
+	{
 		ChannelEvent chan;
 		NoteOnEvent noteOn;
 		NoteOffEvent noteOff;
@@ -472,12 +473,12 @@ struct Track
 	bool atEnd;
 
 	Track()
-		: length(0),
-		  loopI(-1),
+	    : length(0),
+	      loopI(-1),
 	      loopOffsetEnd(0),
-		  loopOffsetStart(0),
+	      loopOffsetStart(0),
 	      valid(false),
-		  index(0),
+	      index(0),
 	      wrapAroundFlag(false),
 	      atEnd(false)
 	{}
@@ -561,11 +562,11 @@ struct MidiSource : ALDataSource, MidiReadHandler
 
 	MidiSource(SDL_RWops &ops,
 	           bool looped)
-		: freq(SYNTH_SAMPLERATE),
+	    : freq(SYNTH_SAMPLERATE),
 	      looped(looped),
-		  dpb(480),
+	      dpb(480),
 	      pitchShift(0),
-		  genDeltasCarry(0),
+	      genDeltasCarry(0),
 	      curTrack(-1)
 	{
 		uint8_t *data = 0;
