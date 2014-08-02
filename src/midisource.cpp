@@ -145,36 +145,34 @@ badMidiFormat()
 /* File-like interface to a read-only memory buffer */
 struct MemChunk
 {
-	const uint8_t *data;
-	const size_t len;
+	const std::vector<uint8_t> &data;
 	size_t i;
 
-	MemChunk(const uint8_t *data, size_t len)
+	MemChunk(const std::vector<uint8_t> &data)
 	    : data(data),
-	      len(len),
 	      i(0)
 	{}
 
 	uint8_t readByte()
 	{
-		if (i >= len)
+		if (i >= data.size())
 			endOfFile();
 
 		return data[i++];
 	}
 
-	void readData(void *buf, size_t dataLen)
+	void readData(void *buf, size_t n)
 	{
-		if (i + dataLen > len)
+		if (i + n > data.size())
 			endOfFile();
 
-		memcpy(buf, &data[i], dataLen);
-		i += dataLen;
+		memcpy(buf, &data[i], n);
+		i += n;
 	}
 
-	void skipData(size_t dataLen)
+	void skipData(size_t n)
 	{
-		if ((i += dataLen) > len)
+		if ((i += n) > data.size())
 			endOfFile();
 	}
 
@@ -411,9 +409,9 @@ void readMidiTrack(MidiReadHandler *handler, MemChunk &chunk)
 		badMidiFormat();
 }
 
-void readMidi(MidiReadHandler *handler, uint8_t *data, size_t len)
+void readMidi(MidiReadHandler *handler, const std::vector<uint8_t> &data)
 {
-	MemChunk chunk(data, len);
+	MemChunk chunk(data);
 
 	/* Midi signature */
 	char sig[5] = { 0 };
@@ -569,22 +567,13 @@ struct MidiSource : ALDataSource, MidiReadHandler
 	      genDeltasCarry(0),
 	      curTrack(-1)
 	{
-		uint8_t *data = 0;
+		size_t dataLen = SDL_RWsize(&ops);
+		std::vector<uint8_t> data(dataLen);
 
-		try
-		{
-			size_t dataLen = SDL_RWsize(&ops);
-			data = new uint8_t[dataLen];
-			if (SDL_RWread(&ops, data, 1, dataLen) < dataLen)
-				throw Exception(Exception::MKXPError, "Reading midi data failed");
+		if (SDL_RWread(&ops, &data[0], 1, dataLen) < dataLen)
+			throw Exception(Exception::MKXPError, "Reading midi data failed");
 
-			readMidi(this, data, dataLen);
-		}
-		catch (Exception &e)
-		{
-			delete[] data;
-			throw e;
-		}
+		readMidi(this, data);
 
 		synth = shState->midiState().allocateSynth();
 
