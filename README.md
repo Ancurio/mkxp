@@ -83,7 +83,6 @@ mkxp doesn't come with a soundfont by default, so you will have to supply it you
 Known issues with midi playback:
 
 * Some songs' instruments become mute after looping
-* Pitch shifting is implemented poorly
 
 ## Fonts
 

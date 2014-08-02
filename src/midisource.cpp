@@ -75,12 +75,7 @@ struct ChannelEvent
 	uint8_t chan;
 };
 
-struct NoteOffEvent : ChannelEvent
-{
-	uint8_t key;
-};
-
-struct NoteOnEvent : ChannelEvent
+struct NoteEvent : ChannelEvent
 {
 	uint8_t key;
 	uint8_t vel;
@@ -119,8 +114,7 @@ struct MidiEvent
 	union
 	{
 		ChannelEvent chan;
-		NoteOnEvent noteOn;
-		NoteOffEvent noteOff;
+		NoteEvent note;
 		NoteTouchEvent chanTouch;
 		PitchBendEvent pitchBend;
 		CCEvent cc;
@@ -226,14 +220,14 @@ readVoiceEvent(MidiEvent &e, MemChunk &chunk,
 	{
 	case 0x8 :
 		e.type = NoteOff;
-		e.e.noteOff.key = data1;
+		e.e.note.key = data1;
 		chunk.readByte(); /* We don't care about velocity */
 		break;
 
 	case 0x9 :
 		e.type = NoteOn;
-		e.e.noteOn.key = data1;
-		e.e.noteOn.vel = chunk.readByte();
+		e.e.note.key = data1;
+		e.e.note.vel = chunk.readByte();
 		break;
 
 	case 0xA :
@@ -639,20 +633,25 @@ struct MidiSource : ALDataSource, MidiReadHandler
 
 	void activateEvent(MidiEvent &e)
 	{
-		// FIXME: This is not a good solution for very high/low
-		// keys, but I'm not sure what else would be.
-		int8_t shift = (e.e.chan.chan != 9) ? pitchShift : 0;
-		int16_t key;
+		int16_t key = e.e.note.key;
+
+		/* Apply pitch shift if necessary */
+		if ((e.type == NoteOn || e.type == NoteOff) && e.e.chan.chan != 9)
+		{
+			key += pitchShift;
+
+			/* Drop events whose keys are out of bounds */
+			if (key < 0 || key > 127)
+				return;
+		}
 
 		switch (e.type)
 		{
 		case NoteOn:
-			key = clamp<int16_t>(e.e.noteOn.key+shift, 0, 127);
-			fluid_synth_noteon(synth, e.e.noteOn.chan, key, e.e.noteOn.vel);
+			fluid_synth_noteon(synth, e.e.note.chan, key, e.e.note.vel);
 			break;
 		case NoteOff:
-			key = clamp<int16_t>(e.e.noteOn.key+shift, 0, 127);
-			fluid_synth_noteoff(synth, e.e.noteOff.chan, key);
+			fluid_synth_noteoff(synth, e.e.note.chan, key);
 			break;
 		case ChanTouch:
 			fluid_synth_channel_pressure(synth, e.e.chanTouch.chan, e.e.chanTouch.val);
@@ -833,8 +832,8 @@ struct MidiSource : ALDataSource, MidiReadHandler
 
 	bool setPitch(float value)
 	{
-		// 1.0 = one octave, not sure about this yet
-		pitchShift = 12 * (value - 1.0);
+		// not completely correct, but close
+		pitchShift = round((value > 1.0 ? 14 : 24) * (value - 1.0));
 
 		return true;
 	}
