@@ -36,6 +36,14 @@ Table::Table(int x, int y /*= 1*/, int z /*= 1*/)
 	data = static_cast<int16_t*>(calloc(x * y * z, sizeof(int16_t)));
 }
 
+Table::Table(const Table &other)
+    :m_x(other.m_x), m_y(other.m_y), m_z(other.m_z)
+{
+	const size_t size = m_x * m_y * m_z * sizeof(int16_t);;
+	data = static_cast<int16_t*>(malloc(size));
+	memcpy(data, other.data, size);
+}
+
 Table::~Table()
 {
 	free(data);

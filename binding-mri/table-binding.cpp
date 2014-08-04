@@ -142,6 +142,7 @@ RB_METHOD(tableSetAt)
 }
 
 MARSH_LOAD_FUN(Table)
+INITCOPY_FUN(Table)
 
 void
 tableBindingInit()
@@ -156,6 +157,7 @@ tableBindingInit()
 	rb_define_class_method(klass, "_load", TableLoad);
 
 	_rb_define_method(klass, "initialize", tableInitialize);
+	_rb_define_method(klass, "initialize_copy", TableInitializeCopy);
 	_rb_define_method(klass, "resize", tableResize);
 	_rb_define_method(klass, "xsize", tableXSize);
 	_rb_define_method(klass, "ysize", tableYSize);

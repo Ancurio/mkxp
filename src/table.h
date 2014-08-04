@@ -31,6 +31,8 @@ class Table : public Serializable
 {
 public:
 	Table(int x, int y = 1, int z = 1);
+	/* Clone constructor */
+	Table(const Table &other);
 	virtual ~Table();
 
 	int xSize() const { return m_x; }
