@@ -48,8 +48,7 @@ EventThread::MouseState EventThread::mouseState =
 /* User event codes */
 enum
 {
-	REQUEST_TERMINATION,
-	REQUEST_SETFULLSCREEN,
+	REQUEST_SETFULLSCREEN = 0,
 	REQUEST_WINRESIZE,
 	REQUEST_MESSAGEBOX,
 	REQUEST_SETCURSORVISIBLE,
@@ -59,17 +58,14 @@ enum
 	EVENT_COUNT
 };
 
-static uint32_t usrId[EVENT_COUNT];
+static uint32_t usrIdStart;
 
 bool EventThread::allocUserEvents()
 {
-	uint32_t first = SDL_RegisterEvents(EVENT_COUNT);
+	usrIdStart = SDL_RegisterEvents(EVENT_COUNT);
 
-	if (first == (uint32_t) -1)
+	if (usrIdStart == (uint32_t) -1)
 		return false;
-
-	for (size_t i = 0; i < EVENT_COUNT; ++i)
-		usrId[i] = first + i;
 
 	return true;
 }
@@ -259,34 +255,30 @@ void EventThread::process(RGSSThreadData &rtData)
 
 		default :
 			/* Handle user events */
-			if (event.type == usrId[REQUEST_TERMINATION])
+			switch(event.type - usrIdStart)
 			{
-				terminate = true;
-				Debug() << "EventThread termination requested";
-			}
-			else if (event.type == usrId[REQUEST_SETFULLSCREEN])
-			{
+			case REQUEST_SETFULLSCREEN :
 				setFullscreen(win, static_cast<bool>(event.user.code));
-			}
-			else if (event.type == usrId[REQUEST_WINRESIZE])
-			{
+				break;
+
+			case REQUEST_WINRESIZE :
 				SDL_SetWindowSize(win, event.window.data1, event.window.data2);
-			}
-			else if (event.type == usrId[REQUEST_MESSAGEBOX])
-			{
+				break;
+
+			case REQUEST_MESSAGEBOX :
 				SDL_ShowSimpleMessageBox(event.user.code,
 				                         rtData.config.game.title.c_str(),
 				                         (const char*) event.user.data1, win);
 				free(event.user.data1);
 				msgBoxDone = true;
-			}
-			else if (event.type == usrId[REQUEST_SETCURSORVISIBLE])
-			{
+				break;
+
+			case REQUEST_SETCURSORVISIBLE :
 				showCursor = event.user.code;
 				updateCursorState(cursorInWindow);
-			}
-			else if (event.type == usrId[UPDATE_FPS])
-			{
+				break;
+
+			case UPDATE_FPS :
 				if (!fps.displaying)
 					break;
 
@@ -304,6 +296,7 @@ void EventThread::process(RGSSThreadData &rtData)
 				}
 
 				SDL_SetWindowTitle(win, buffer);
+				break;
 			}
 		}
 
@@ -320,7 +313,7 @@ void EventThread::cleanup()
 	SDL_Event event;
 
 	while (SDL_PollEvent(&event))
-		if (event.type == usrId[REQUEST_MESSAGEBOX])
+		if ((event.type - usrIdStart) == REQUEST_MESSAGEBOX)
 			free(event.user.data1);
 }
 
@@ -349,7 +342,7 @@ void EventThread::updateCursorState(bool inWindow)
 void EventThread::requestTerminate()
 {
 	SDL_Event event;
-	event.type = usrId[REQUEST_TERMINATION];
+	event.type = SDL_QUIT;
 	SDL_PushEvent(&event);
 }
 
@@ -359,7 +352,7 @@ void EventThread::requestFullscreenMode(bool mode)
 		return;
 
 	SDL_Event event;
-	event.type = usrId[REQUEST_SETFULLSCREEN];
+	event.type = usrIdStart + REQUEST_SETFULLSCREEN;
 	event.user.code = static_cast<Sint32>(mode);
 	SDL_PushEvent(&event);
 }
@@ -367,7 +360,7 @@ void EventThread::requestFullscreenMode(bool mode)
 void EventThread::requestWindowResize(int width, int height)
 {
 	SDL_Event event;
-	event.type = usrId[REQUEST_WINRESIZE];
+	event.type = usrIdStart + REQUEST_WINRESIZE;
 	event.window.data1 = width;
 	event.window.data2 = height;
 	SDL_PushEvent(&event);
@@ -376,7 +369,7 @@ void EventThread::requestWindowResize(int width, int height)
 void EventThread::requestShowCursor(bool mode)
 {
 	SDL_Event event;
-	event.type = usrId[REQUEST_SETCURSORVISIBLE];
+	event.type = usrIdStart + REQUEST_SETCURSORVISIBLE;
 	event.user.code = mode;
 	SDL_PushEvent(&event);
 }
@@ -388,7 +381,7 @@ void EventThread::showMessageBox(const char *body, int flags)
 	SDL_Event event;
 	event.user.code = flags;
 	event.user.data1 = strdup(body);
-	event.type = usrId[REQUEST_MESSAGEBOX];
+	event.type = usrIdStart + REQUEST_MESSAGEBOX;
 	SDL_PushEvent(&event);
 
 	/* Keep repainting screen while box is open */
@@ -442,6 +435,6 @@ void EventThread::notifyFrame()
 
 	SDL_Event event;
 	event.user.code = avgFPS;
-	event.user.type = usrId[UPDATE_FPS];
+	event.user.type = usrIdStart + UPDATE_FPS;
 	SDL_PushEvent(&event);
 }
