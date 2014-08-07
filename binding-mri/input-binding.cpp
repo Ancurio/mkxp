@@ -23,6 +23,7 @@
 #include "sharedstate.h"
 #include "exception.h"
 #include "binding-util.h"
+#include "util.h"
 
 RB_METHOD(inputUpdate)
 {
@@ -33,7 +34,7 @@ RB_METHOD(inputUpdate)
 	return Qnil;
 }
 
-static int getButtonArg(VALUE self, int argc, VALUE *argv)
+static int getButtonArg(int argc, VALUE *argv)
 {
 	int num;
 
@@ -41,12 +42,9 @@ static int getButtonArg(VALUE self, int argc, VALUE *argv)
 	ID sym;
 	rb_get_args(argc, argv, "n", &sym RB_ARG_END);
 
-	if (rb_const_defined(self, sym))
-		num = FIX2INT(rb_const_get(self, sym));
-	else
-		num = 0;
+	VALUE symHash = getRbData()->buttoncodeHash;
+	num = FIX2INT(rb_hash_lookup2(symHash, ID2SYM(sym), INT2FIX(Input::None)));
 #else
-	(void) self;
 	rb_get_args(argc, argv, "i", &num RB_ARG_END);
 #endif
 
@@ -55,21 +53,27 @@ static int getButtonArg(VALUE self, int argc, VALUE *argv)
 
 RB_METHOD(inputPress)
 {
-	int num = getButtonArg(self, argc, argv);
+	RB_UNUSED_PARAM;
+
+	int num = getButtonArg(argc, argv);
 
 	return rb_bool_new(shState->input().isPressed(num));
 }
 
 RB_METHOD(inputTrigger)
 {
-	int num = getButtonArg(self, argc, argv);
+	RB_UNUSED_PARAM;
+
+	int num = getButtonArg(argc, argv);
 
 	return rb_bool_new(shState->input().isTriggered(num));
 }
 
 RB_METHOD(inputRepeat)
 {
-	int num = getButtonArg(self, argc, argv);
+	RB_UNUSED_PARAM;
+
+	int num = getButtonArg(argc, argv);
 
 	return rb_bool_new(shState->input().isRepeated(num));
 }
@@ -103,8 +107,44 @@ RB_METHOD(inputMouseY)
 	return rb_fix_new(shState->input().mouseY());
 }
 
-#define DEF_CONST_I(name, value) \
-	rb_const_set(module, rb_intern(name), rb_fix_new(value))
+
+struct
+{
+	const char *str;
+	Input::ButtonCode val;
+}
+static buttonCodes[] =
+{
+	{ "DOWN",  Input::Down  },
+	{ "LEFT",  Input::Left  },
+	{ "RIGHT", Input::Right },
+	{ "UP",    Input::Up    },
+
+	{ "A",     Input::A     },
+	{ "B",     Input::B     },
+	{ "C",     Input::C     },
+	{ "X",     Input::X     },
+	{ "Y",     Input::Y     },
+	{ "Z",     Input::Z     },
+	{ "L",     Input::L     },
+	{ "R",     Input::R     },
+
+	{ "SHIFT", Input::Shift },
+	{ "CTRL",  Input::Ctrl  },
+	{ "ALT",   Input::Alt   },
+
+	{ "F5",    Input::F5    },
+	{ "F6",    Input::F6    },
+	{ "F7",    Input::F7    },
+	{ "F8",    Input::F8    },
+	{ "F9",    Input::F9    },
+
+	{ "MOUSELEFT",   Input::MouseLeft   },
+	{ "MOUSEMIDDLE", Input::MouseMiddle },
+	{ "MOUSERIGHT",  Input::MouseRight  }
+};
+
+static elementsN(buttonCodes);
 
 void
 inputBindingInit()
@@ -118,34 +158,32 @@ inputBindingInit()
 	_rb_define_module_function(module, "dir4", inputDir4);
 	_rb_define_module_function(module, "dir8", inputDir8);
 
-	DEF_CONST_I("DOWN",  Input::Down );
-	DEF_CONST_I("LEFT",  Input::Left );
-	DEF_CONST_I("RIGHT", Input::Right);
-	DEF_CONST_I("UP",    Input::Up   );
-
-	DEF_CONST_I("A",     Input::A    );
-	DEF_CONST_I("B",     Input::B    );
-	DEF_CONST_I("C",     Input::C    );
-	DEF_CONST_I("X",     Input::X    );
-	DEF_CONST_I("Y",     Input::Y    );
-	DEF_CONST_I("Z",     Input::Z    );
-	DEF_CONST_I("L",     Input::L    );
-	DEF_CONST_I("R",     Input::R    );
-
-	DEF_CONST_I("SHIFT", Input::Shift);
-	DEF_CONST_I("CTRL",  Input::Ctrl );
-	DEF_CONST_I("ALT",   Input::Alt  );
-
-	DEF_CONST_I("F5",    Input::F5   );
-	DEF_CONST_I("F6",    Input::F6   );
-	DEF_CONST_I("F7",    Input::F7   );
-	DEF_CONST_I("F8",    Input::F8   );
-	DEF_CONST_I("F9",    Input::F9   );
-
 	_rb_define_module_function(module, "mouse_x", inputMouseX);
 	_rb_define_module_function(module, "mouse_y", inputMouseY);
 
-	DEF_CONST_I("MOUSELEFT",   Input::MouseLeft  );
-	DEF_CONST_I("MOUSEMIDDLE", Input::MouseMiddle);
-	DEF_CONST_I("MOUSERIGHT",  Input::MouseRight );
+#ifndef RGSS3
+	for (size_t i = 0; i < buttonCodesN; ++i)
+	{
+		ID sym = rb_intern(buttonCodes[i].str);
+		VALUE val = INT2FIX(buttonCodes[i].val);
+
+		rb_const_set(module, sym, val);
+	}
+#else
+	VALUE symHash = rb_hash_new();
+
+	for (size_t i = 0; i < buttonCodesN; ++i)
+	{
+		ID sym = rb_intern(buttonCodes[i].str);
+		VALUE val = INT2FIX(buttonCodes[i].val);
+
+		/* In RGSS3 all Input::XYZ constants are equal to :XYZ symbols,
+		 * to be compatible with the previous convention */
+		rb_const_set(module, sym, ID2SYM(sym));
+		rb_hash_aset(symHash, ID2SYM(sym), val);
+	}
+
+	rb_iv_set(module, "buttoncodes", symHash);
+	getRbData()->buttoncodeHash = symHash;
+#endif
 }

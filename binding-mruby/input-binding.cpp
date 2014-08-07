@@ -41,6 +41,8 @@ static mrb_int getButtonArg(mrb_state *mrb, mrb_value self)
 	mrb_sym sym;
 	mrb_get_args(mrb, "n", &sym);
 
+	// FIXME: This is wrong, Input:: constants should be
+	// symbols in RGSS3, see MRI binding for reference
 	if (mrb_const_defined(mrb, self, sym))
 		num = mrb_fixnum(mrb_const_get(mrb, self, sym));
 	else
