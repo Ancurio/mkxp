@@ -111,8 +111,24 @@ struct BitmapPrivate
 
 	void addTaintedArea(const IntRect &rect)
 	{
+		/* Normalize (= ensure width and
+		 * height are positive) */
+		IntRect norm = rect;
+
+		if (norm.w < 0)
+		{
+			norm.x += norm.w;
+			norm.w = -norm.w;
+		}
+
+		if (norm.h < 0)
+		{
+			norm.y += norm.h;
+			norm.h = -norm.h;
+		}
+
 		pixman_region_union_rect
-		        (&tainted, &tainted, rect.x, rect.y, rect.w, rect.h);
+		        (&tainted, &tainted, norm.x, norm.y, norm.w, norm.h);
 	}
 
 	void substractTaintedArea(const IntRect &rect)
