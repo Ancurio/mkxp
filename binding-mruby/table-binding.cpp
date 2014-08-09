@@ -35,7 +35,7 @@ MRB_METHOD(tableInitialize)
 
 	Table *t = new Table(x, y, z);
 
-	setPrivateData(mrb, self, t, TableType);
+	setPrivateData(self, t, TableType);
 
 	return self;
 }

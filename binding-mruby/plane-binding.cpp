@@ -31,7 +31,7 @@ MRB_METHOD(planeInitialize)
 {
 	Plane *p = viewportElementInitialize<Plane>(mrb, self);
 
-	setPrivateData(mrb, self, p, PlaneType);
+	setPrivateData(self, p, PlaneType);
 
 	p->setColor(new Color);
 	p->setTone(new Tone);

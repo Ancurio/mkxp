@@ -32,7 +32,7 @@ MRB_METHOD(spriteInitialize)
 {
 	Sprite *s = viewportElementInitialize<Sprite>(mrb, self);
 
-	setPrivateData(mrb, self, s, SpriteType);
+	setPrivateData(self, s, SpriteType);
 
 	/* Wrap property objects */
 	s->setSrcRect(new Rect);

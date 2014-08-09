@@ -31,7 +31,6 @@ struct
 	const char *str;
 } static const symData[] =
 {
-	SYMD(priv_iv),
 	SYMD(font),
 	SYMD(viewport),
 	SYMD(bitmap),
@@ -143,10 +142,8 @@ void raiseMrbExc(mrb_state *mrb, const Exception &exc)
 
 MRB_METHOD_PUB(inspectObject)
 {
-	mrb_value priv = mrb_obj_iv_get(mrb, mrb_obj_ptr(self), getSym(mrb, CSpriv_iv));
-
 	static char buffer[64];
-	snprintf(buffer, sizeof(buffer), "#<%s:%p>", DATA_TYPE(priv)->struct_name, DATA_PTR(priv));
+	snprintf(buffer, sizeof(buffer), "#<%s:%p>", DATA_TYPE(self)->struct_name, DATA_PTR(self));
 
 	return mrb_str_new_cstr(mrb, buffer);
 }

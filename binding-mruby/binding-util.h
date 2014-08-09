@@ -32,11 +32,7 @@
 
 enum CommonSymbol
 {
-	CSpriv_iv = 0, /* private data */
-
-	/* From here on out all symbols
-	 * have implicit '@' prefix */
-	CSfont,
+	CSfont = 0,
 	CSviewport,
 	CSbitmap,
 	CScolor,
@@ -115,7 +111,10 @@ getMrbData(mrb_state *mrb)
 inline RClass*
 defineClass(mrb_state *mrb, const char *name)
 {
-	return mrb_define_class(mrb, name, mrb->object_class);
+	RClass *klass = mrb_define_class(mrb, name, mrb->object_class);
+	MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
+
+	return klass;
 }
 
 #define GUARD_EXC(exp) \
@@ -222,7 +221,7 @@ defineClass(mrb_state *mrb, const char *name)
 		Klass *k = getPrivateData<Klass>(mrb, self); \
 		mrb_value dupObj = mrb_obj_clone(mrb, self); \
 		Klass *dupK = new Klass(*k); \
-		setPrivateData(mrb, dupObj, dupK, Klass##Type); \
+		setPrivateData(dupObj, dupK, Klass##Type); \
 		return dupObj; \
 	}
 
@@ -257,62 +256,33 @@ template<typename T>
 inline T *
 getPrivateData(mrb_state *mrb, mrb_value self)
 {
-	mrb_value priv = mrb_obj_iv_get(mrb,
-	                                mrb_obj_ptr(self),
-	                                getSym(mrb, CSpriv_iv));
-
-	return static_cast<T*>(DATA_PTR(priv));
+	(void) mrb;
+	return static_cast<T*>(DATA_PTR(self));
 }
 
 template<typename T>
 inline T *
 getPrivateDataCheck(mrb_state *mrb, mrb_value obj, const mrb_data_type &type)
 {
-	static const char mesg[] = "wrong argument type %S (expected %S)";
-
-	if (mrb_type(obj) != MRB_TT_OBJECT)
-		mrb_raisef(mrb, E_TYPE_ERROR, mesg,
-		           mrb_str_new_cstr(mrb, (mrb_class_name(mrb, mrb_class(mrb, obj)))),
-		           mrb_str_new_cstr(mrb, type.struct_name));
-
-	RObject *objP = mrb_obj_ptr(obj);
-
-	if (!mrb_obj_iv_defined(mrb, objP, getSym(mrb, CSpriv_iv)))
-		mrb_raisef(mrb, E_TYPE_ERROR, mesg,
-		           mrb_str_new_cstr(mrb, (mrb_class_name(mrb, mrb_class(mrb, obj)))),
-		           mrb_str_new_cstr(mrb, type.struct_name));
-
-	mrb_value priv = mrb_obj_iv_get(mrb, objP, getSym(mrb, CSpriv_iv));
-
-	void *p = mrb_check_datatype(mrb, priv, &type);
-
-	return static_cast<T*>(p);
+	return static_cast<T*>(mrb_check_datatype(mrb, obj, &type));
 }
 
 inline void
-setPrivateData(mrb_state *mrb, mrb_value self, void *p, const mrb_data_type &type)
+setPrivateData(mrb_value self, void *p, const mrb_data_type &type)
 {
-	RData *data =
-		mrb_data_object_alloc(mrb,
-		                      mrb_obj_class(mrb, self),
-		                      p,
-		                      &type);
-
-	mrb_obj_iv_set(mrb,
-	               mrb_obj_ptr(self),
-	               getSym(mrb, CSpriv_iv),
-	               mrb_obj_value(data));
+	DATA_PTR(self) = p;
+	DATA_TYPE(self) = &type;
 }
 
 
 inline mrb_value
 wrapObject(mrb_state *mrb, void *p, const mrb_data_type &type)
 {
-	RClass *c = mrb_class_get(mrb, type.struct_name);
-	RObject *o = (RObject*) mrb_obj_alloc(mrb, MRB_TT_OBJECT, c);
-	mrb_value obj = mrb_obj_value(o);
+	RClass *klass = mrb_class_get(mrb, type.struct_name);
+	RData *data = mrb_data_object_alloc(mrb, klass, p, &type);
+	mrb_value obj = mrb_obj_value(data);
 
-	setPrivateData(mrb, obj, p, type);
+	setPrivateData(obj, p, type);
 
 	return obj;
 }
@@ -384,12 +354,10 @@ objectLoad(mrb_state *mrb, mrb_value self, const mrb_data_type &type)
 	int data_len;
 	mrb_get_args(mrb, "s", &data, &data_len);
 
-	RObject *obj = (RObject*) mrb_obj_alloc(mrb, MRB_TT_OBJECT, klass);
-	mrb_value obj_value = mrb_obj_value(obj);
-
 	C *c = C::deserialize(data, data_len);
 
-	setPrivateData(mrb, obj_value, c, type);
+	RData *obj = mrb_data_object_alloc(mrb, klass, c, &type);
+	mrb_value obj_value = mrb_obj_value(obj);
 
 	return obj_value;
 }

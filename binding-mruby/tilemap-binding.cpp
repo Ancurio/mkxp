@@ -87,7 +87,7 @@ MRB_METHOD(tilemapInitialize)
 	/* Construct object */
 	t = new Tilemap(viewport);
 
-	setPrivateData(mrb, self, t, TilemapType);
+	setPrivateData(self, t, TilemapType);
 
 	setProperty(mrb, self, CSviewport, viewportObj);
 

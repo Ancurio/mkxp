@@ -54,7 +54,7 @@ MRB_METHOD(viewportInitialize)
 		v = new Viewport(x, y, width, height);
 	}
 
-	setPrivateData(mrb, self, v, ViewportType);
+	setPrivateData(self, v, ViewportType);
 
 	/* Wrap property objects */
 	v->setRect(new Rect(*v->getRect()));

@@ -95,7 +95,7 @@ DEF_TYPE(Rect);
 		param_type p1, p2, p3, p4 = last_param_def; \
 		mrb_get_args(mrb, param_t_s, &p1, &p2, &p3, &p4); \
 		Klass *k = new Klass(p1, p2, p3, p4); \
-		setPrivateData(mrb, self, k, Klass##Type); \
+		setPrivateData(self, k, Klass##Type); \
 		return self; \
 	}
 

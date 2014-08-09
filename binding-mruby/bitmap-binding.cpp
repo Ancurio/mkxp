@@ -49,7 +49,7 @@ MRB_METHOD(bitmapInitialize)
 		GUARD_EXC( b = new Bitmap(width, height); )
 	}
 
-	setPrivateData(mrb, self, b, BitmapType);
+	setPrivateData(self, b, BitmapType);
 
 	/* Wrap properties */
 	Font *font = new Font();

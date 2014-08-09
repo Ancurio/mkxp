@@ -45,7 +45,7 @@ MRB_METHOD(fontInitialize)
 
 	Font *f = new Font(name, size);
 
-	setPrivateData(mrb, self, f, FontType);
+	setPrivateData(self, f, FontType);
 
 	/* Wrap property objects */
 	f->setColor(new Color(*f->getColor()));

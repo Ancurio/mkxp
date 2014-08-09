@@ -30,7 +30,7 @@ MRB_METHOD(windowInitialize)
 {
 	Window *w = viewportElementInitialize<Window>(mrb, self);
 
-	setPrivateData(mrb, self, w, WindowType);
+	setPrivateData(self, w, WindowType);
 
 	w->setCursorRect(new Rect);
 	wrapNilProperty(mrb, self, CSwindowskin);
