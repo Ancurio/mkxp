@@ -30,8 +30,13 @@ DEF_TYPE(Font);
 
 MRB_FUNCTION(fontDoesExist)
 {
-	const char *name;
-	mrb_get_args(mrb, "z", &name);
+	const char *name = 0;
+	mrb_value nameObj;
+
+	mrb_get_args(mrb, "o", &nameObj);
+
+	if (mrb_string_p(nameObj))
+		name = mrb_string_value_cstr(mrb, &nameObj);
 
 	return mrb_bool_value(Font::doesExist(name));
 }

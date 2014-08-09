@@ -33,8 +33,13 @@ RB_METHOD(fontDoesExist)
 {
 	RB_UNUSED_PARAM;
 
-	const char *name;
-	rb_get_args(argc, argv, "z", &name RB_ARG_END);
+	const char *name = 0;
+	VALUE nameObj;
+
+	rb_get_args(argc, argv, "o", &nameObj RB_ARG_END);
+
+	if (rb_type(nameObj) == RUBY_T_STRING)
+		name = rb_string_value_cstr(&nameObj);
 
 	return rb_bool_new(Font::doesExist(name));
 }

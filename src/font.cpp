@@ -247,6 +247,9 @@ Color FontPrivate::defaultColorTmp(255, 255, 255, 255);
 
 bool Font::doesExist(const char *name)
 {
+	if (!name)
+		return false;
+
 	return shState->fontState().fontPresent(name);
 }
 
