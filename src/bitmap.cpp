@@ -366,30 +366,40 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 
 		SDL_Surface *srcSurf = source.megaSurface();
 
+		SDL_Rect srcRect = sourceRect;
+		SDL_Rect dstRect = destRect;
+		SDL_Rect btmRect = { 0, 0, width(), height() };
+		SDL_Rect bltRect;
+
+		if (SDL_IntersectRect(&btmRect, &dstRect, &bltRect) != SDL_TRUE)
+			return;
+
 		int bpp;
 		Uint32 rMask, gMask, bMask, aMask;
 		SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ABGR8888,
 		                           &bpp, &rMask, &gMask, &bMask, &aMask);
 		SDL_Surface *blitTemp =
-		        SDL_CreateRGBSurface(0, destRect.w, destRect.h, bpp, rMask, gMask, bMask, aMask);
-
-		SDL_Rect srcRect;
-		srcRect.x = sourceRect.x;
-		srcRect.y = sourceRect.y;
-		srcRect.w = sourceRect.w;
-		srcRect.h = sourceRect.h;
-
-		SDL_Rect dstRect;
-		dstRect.x = dstRect.y = 0;
-		dstRect.w = blitTemp->w;
-		dstRect.h = blitTemp->h;
+			SDL_CreateRGBSurface(0, destRect.w, destRect.h, bpp, rMask, gMask, bMask, aMask);
 
 		// FXIME: This is supposed to be a scaled blit, put SDL2 for some reason
 		// makes the source surface unusable after BlitScaled() is called. Investigate!
-		SDL_BlitSurface(srcSurf, &srcRect, blitTemp, &dstRect);
+		SDL_BlitSurface(srcSurf, &srcRect, blitTemp, 0);
 
 		TEX::bind(p->gl.tex);
-		TEX::uploadSubImage(destRect.x, destRect.y, destRect.w, destRect.h, blitTemp->pixels, GL_RGBA);
+
+		if (bltRect.w == dstRect.w && bltRect.h == dstRect.h)
+		{
+			TEX::uploadSubImage(destRect.x, destRect.y,
+			                    destRect.w, destRect.h,
+			                    blitTemp->pixels, GL_RGBA);
+		}
+		else
+		{
+			GLMeta::subRectImageUpload(blitTemp->w, bltRect.x - dstRect.x, bltRect.y - dstRect.y,
+			                           bltRect.x, bltRect.y, bltRect.w, bltRect.h, blitTemp, GL_RGBA);
+			GLMeta::subRectImageEnd();
+		}
+
 
 		SDL_FreeSurface(blitTemp);
 

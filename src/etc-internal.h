@@ -24,6 +24,8 @@
 
 #include "util.h"
 
+#include <SDL_rect.h>
+
 struct Vec2
 {
 	float x, y;
@@ -117,6 +119,12 @@ struct IntRect
 	Vec2i size() const
 	{
 		return Vec2i(w, h);
+	}
+
+	operator SDL_Rect() const
+	{
+		SDL_Rect r = { x, y, w, h };
+		return r;
 	}
 };
 
