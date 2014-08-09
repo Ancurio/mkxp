@@ -118,13 +118,9 @@ MRB_METHOD(tilemapUpdate)
 	return mrb_nil_value();
 }
 
-#define DISP_CLASS_NAME "tilemap"
-
 MRB_METHOD(tilemapGetViewport)
 {
-	Tilemap *t = getPrivateData<Tilemap>(mrb, self);
-
-	checkDisposed(mrb, t, DISP_CLASS_NAME);
+	checkDisposed(mrb, self);
 
 	return getProperty(mrb, self, CSviewport);
 }

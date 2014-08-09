@@ -75,8 +75,6 @@ private:
 
 	void draw();
 	void onGeometryChange(const Scene::Geometry &);
-
-	void releaseResources();
 };
 
 #endif // SPRITE_H

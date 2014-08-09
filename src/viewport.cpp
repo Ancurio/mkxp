@@ -125,10 +125,10 @@ void Viewport::initViewport(int x, int y, int width, int height)
 
 Viewport::~Viewport()
 {
-	dispose();
-}
+	unlink();
 
-#define DISP_CLASS_NAME "viewport"
+	delete p;
+}
 
 DEF_ATTR_RD_SIMPLE(Viewport, OX,   int,   geometry.xOrigin)
 DEF_ATTR_RD_SIMPLE(Viewport, OY,   int,   geometry.yOrigin)
@@ -139,8 +139,6 @@ DEF_ATTR_SIMPLE(Viewport, Tone, Tone*, p->tone)
 
 void Viewport::setOX(int value)
 {
-	GUARD_DISPOSED
-
 	if (geometry.xOrigin == value)
 		return;
 
@@ -150,8 +148,6 @@ void Viewport::setOX(int value)
 
 void Viewport::setOY(int value)
 {
-	GUARD_DISPOSED
-
 	if (geometry.yOrigin == value)
 		return;
 
@@ -161,8 +157,6 @@ void Viewport::setOY(int value)
 
 void Viewport::setRect(Rect *value)
 {
-	GUARD_DISPOSED
-
 	if (p->rect == value)
 		return;
 
@@ -208,14 +202,6 @@ void Viewport::onGeometryChange(const Geometry &geo)
 {
 	p->screenRect = geo.rect;
 	p->recomputeOnScreen();
-}
-
-/* Disposable */
-void Viewport::releaseResources()
-{
-	unlink();
-
-	delete p;
 }
 
 

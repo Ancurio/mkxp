@@ -49,8 +49,6 @@ MRB_METHOD(windowUpdate)
 	return mrb_nil_value();
 }
 
-#define DISP_CLASS_NAME "window"
-
 DEF_PROP_OBJ_NIL(Window, Bitmap, Windowskin, CSwindowskin)
 DEF_PROP_OBJ_NIL(Window, Bitmap, Contents,   CScontents)
 DEF_PROP_OBJ(Window, Rect, CursorRect, CScursor_rect)

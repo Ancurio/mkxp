@@ -25,14 +25,60 @@
 #include "disposable.h"
 #include "binding-util.h"
 
+#include "mruby/array.h"
+
 #include <string.h>
+
+/* 'Children' are disposables that are disposed together
+ * with their parent. Currently this is only used by Viewport
+ * in RGSS1.
+ * FIXME: Disable this behavior when RGSS2 or 3 */
+inline void
+disposableAddChild(mrb_state *mrb, mrb_value disp, mrb_value child)
+{
+	mrb_sym sym = getMrbData(mrb)->symbols[CSchildren];
+	mrb_value children = mrb_iv_get(mrb, disp, sym);
+
+	if (mrb_nil_p(children))
+	{
+		children = mrb_ary_new(mrb);
+		mrb_iv_set(mrb, disp, sym, children);
+	}
+
+	/* Assumes children are never removed until destruction */
+	mrb_ary_push(mrb, children, child);
+}
+
+inline void
+disposableDisposeChildren(mrb_state *mrb, mrb_value disp)
+{
+	MrbData *mrbData = getMrbData(mrb);
+	mrb_value children = mrb_iv_get(mrb, disp, mrbData->symbols[CSchildren]);
+
+	if (mrb_nil_p(children))
+		return;
+
+	for (mrb_int i = 0; i < RARRAY_LEN(children); ++i)
+		mrb_funcall_argv(mrb, mrb_ary_entry(children, i),
+						 mrbData->symbols[CSdispose], 0, 0);
+}
 
 template<class C>
 MRB_METHOD(disposableDispose)
 {
-	Disposable *d = getPrivateData<C>(mrb, self);
+	C *c = static_cast<C*>(DATA_PTR(self));
 
-	d->dispose();
+	/* Nothing to do if already disposed */
+	if (!c)
+		return mrb_nil_value();
+
+	/* Inform core */
+	c->wasDisposed();
+
+	disposableDisposeChildren(mrb, self);
+
+	delete c;
+	DATA_PTR(self) = 0;
 
 	return mrb_nil_value();
 }
@@ -40,9 +86,9 @@ MRB_METHOD(disposableDispose)
 template<class C>
 MRB_METHOD(disposableDisposed)
 {
-	Disposable *d = getPrivateData<C>(mrb, self);
+	MRB_UNUSED_PARAM;
 
-	return mrb_bool_value(d->isDisposed());
+	return mrb_bool_value(DATA_PTR(self) == 0);
 }
 
 template<class C>
@@ -50,15 +96,6 @@ static void disposableBindingInit(mrb_state *mrb, RClass *klass)
 {
 	mrb_define_method(mrb, klass, "dispose", disposableDispose<C>, MRB_ARGS_NONE());
 	mrb_define_method(mrb, klass, "disposed?", disposableDisposed<C>, MRB_ARGS_NONE());
-}
-
-inline void checkDisposed(mrb_state *mrb, Disposable *d, const char *klassName)
-{
-	MrbData *data = getMrbData(mrb);
-
-	if (d->isDisposed())
-		mrb_raisef(mrb, data->exc[RGSS], "disposed %S",
-		           mrb_str_new_static(mrb, klassName, strlen(klassName)));
 }
 
 #endif // DISPOSABLEBINDING_H

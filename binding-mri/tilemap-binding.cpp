@@ -115,15 +115,11 @@ RB_METHOD(tilemapUpdate)
 	return Qnil;
 }
 
-#define DISP_CLASS_NAME "tilemap"
-
 RB_METHOD(tilemapGetViewport)
 {
 	RB_UNUSED_PARAM;
 
-	Tilemap *t = getPrivateData<Tilemap>(self);
-
-	checkDisposed(t, DISP_CLASS_NAME);
+	checkDisposed(self);
 
 	return rb_iv_get(self, "viewport");
 }
@@ -170,4 +166,3 @@ tilemapBindingInit()
 	INIT_PROP_BIND( Tilemap, OX,         "ox"         );
 	INIT_PROP_BIND( Tilemap, OY,         "oy"         );
 }
-

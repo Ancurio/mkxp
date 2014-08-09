@@ -51,8 +51,6 @@ RB_METHOD(windowUpdate)
 	return Qnil;
 }
 
-#define DISP_CLASS_NAME "window"
-
 DEF_PROP_OBJ_NIL(Window, Bitmap, Windowskin, "windowskin")
 DEF_PROP_OBJ_NIL(Window, Bitmap, Contents,   "contents")
 DEF_PROP_OBJ(Window, Rect, CursorRect, "cursor_rect")

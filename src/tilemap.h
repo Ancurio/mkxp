@@ -68,8 +68,6 @@ public:
 
 private:
 	TilemapPrivate *p;
-
-	void releaseResources();
 };
 
 #endif // TILEMAP_H

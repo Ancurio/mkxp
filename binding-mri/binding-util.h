@@ -87,17 +87,34 @@ static void freeInstance(void *inst)
 
 #define INIT_TYPE(Klass) initType(Klass##Type, #Klass, freeInstance<Klass>)
 
+void
+raiseDisposedAccess(VALUE self);
+
+inline void
+checkDisposed(VALUE self)
+{
+	if (!RTYPEDDATA_DATA(self))
+		raiseDisposedAccess(self);
+}
+
 template<class C>
-static inline C *
+inline C *
 getPrivateData(VALUE self)
 {
-	return static_cast<C*>(RTYPEDDATA_DATA(self));
+	C *c = static_cast<C*>(RTYPEDDATA_DATA(self));
+
+	if (!c)
+		raiseDisposedAccess(self);
+
+	return c;
 }
 
 template<class C>
 static inline C *
 getPrivateDataCheck(VALUE self, const rb_data_type_struct &type)
 {
+	/* We don't check for disposed here because any disposable
+	 * property is always also nullable */
 	void *obj = Check_TypedStruct(self, &type);
 	return static_cast<C*>(obj);
 }
@@ -286,17 +303,11 @@ rb_check_argc(int actual, int expected)
 		return self; \
 	}
 
-/* If we're not binding a disposable class,
- * we want to #undef DEF_PROP_CHK_DISP */
-#define DEF_PROP_CHK_DISP \
-	checkDisposed(k, DISP_CLASS_NAME);
-
 #define DEF_PROP_OBJ(Klass, PropKlass, PropName, prop_iv) \
 	RB_METHOD(Klass##Get##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
-		Klass *k = getPrivateData<Klass>(self); (void) k; \
-		DEF_PROP_CHK_DISP \
+		checkDisposed(self); \
 		return rb_iv_get(self, prop_iv); \
 	} \
 	RB_METHOD(Klass##Set##PropName) \
@@ -311,13 +322,14 @@ rb_check_argc(int actual, int expected)
 		return propObj; \
 	}
 
-/* Object property with allowed NIL */
+/* Object property with allowed NIL
+ * FIXME: Getter assumes prop is disposable,
+ * because self.disposed? is not checked in this case.
+ * Should make this more clear */
 #define DEF_PROP_OBJ_NIL(Klass, PropKlass, PropName, prop_iv) \
 	RB_METHOD(Klass##Get##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
-		Klass *k = getPrivateData<Klass>(self); (void) k; \
-		DEF_PROP_CHK_DISP \
 		return rb_iv_get(self, prop_iv); \
 	} \
 	RB_METHOD(Klass##Set##PropName) \
@@ -341,7 +353,6 @@ rb_check_argc(int actual, int expected)
 	{ \
 		RB_UNUSED_PARAM; \
 		Klass *k = getPrivateData<Klass>(self); \
-		DEF_PROP_CHK_DISP \
 		return value_fun(k->get##PropName()); \
 	} \
 	RB_METHOD(Klass##Set##PropName) \

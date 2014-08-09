@@ -43,6 +43,7 @@
 struct SpritePrivate
 {
 	Bitmap *bitmap;
+	DisposeWatch<SpritePrivate, Bitmap> bitmapWatch;
 
 	Quad quad;
 	Transform trans;
@@ -88,6 +89,7 @@ struct SpritePrivate
 
 	SpritePrivate()
 	    : bitmap(0),
+	      bitmapWatch(this, bitmap),
 	      srcRect(&tmp.rect),
 	      mirrored(false),
 	      bushDepth(0),
@@ -163,9 +165,6 @@ struct SpritePrivate
 		isVisible = false;
 
 		if (!bitmap)
-			return;
-
-		if (bitmap->isDisposed())
 			return;
 
 		if (!opacity)
@@ -310,10 +309,10 @@ Sprite::Sprite(Viewport *viewport)
 
 Sprite::~Sprite()
 {
-	dispose();
-}
+	unlink();
 
-#define DISP_CLASS_NAME "sprite"
+	delete p;
+}
 
 DEF_ATTR_RD_SIMPLE(Sprite, Bitmap,    Bitmap*, p->bitmap)
 DEF_ATTR_RD_SIMPLE(Sprite, SrcRect,   Rect*,   p->srcRect)
@@ -344,12 +343,11 @@ DEF_ATTR_RD_SIMPLE(Sprite, WavePhase,  float, p->wave.phase)
 
 void Sprite::setBitmap(Bitmap *bitmap)
 {
-	GUARD_DISPOSED
-
 	if (p->bitmap == bitmap)
 		return;
 
 	p->bitmap = bitmap;
+	p->bitmapWatch.update(bitmap);
 
 	if (!bitmap)
 		return;
@@ -367,8 +365,6 @@ void Sprite::setBitmap(Bitmap *bitmap)
 
 void Sprite::setSrcRect(Rect *rect)
 {
-	GUARD_DISPOSED
-
 	if (p->srcRect == rect)
 		return;
 
@@ -381,8 +377,6 @@ void Sprite::setSrcRect(Rect *rect)
 
 void Sprite::setX(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->trans.getPosition().x == value)
 		return;
 
@@ -391,8 +385,6 @@ void Sprite::setX(int value)
 
 void Sprite::setY(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->trans.getPosition().y == value)
 		return;
 
@@ -405,8 +397,6 @@ void Sprite::setY(int value)
 
 void Sprite::setOX(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->trans.getOrigin().x == value)
 		return;
 
@@ -415,8 +405,6 @@ void Sprite::setOX(int value)
 
 void Sprite::setOY(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->trans.getOrigin().y == value)
 		return;
 
@@ -425,8 +413,6 @@ void Sprite::setOY(int value)
 
 void Sprite::setZoomX(float value)
 {
-	GUARD_DISPOSED
-
 	if (p->trans.getScale().x == value)
 		return;
 
@@ -435,8 +421,6 @@ void Sprite::setZoomX(float value)
 
 void Sprite::setZoomY(float value)
 {
-	GUARD_DISPOSED
-
 	if (p->trans.getScale().y == value)
 		return;
 
@@ -450,8 +434,6 @@ void Sprite::setZoomY(float value)
 
 void Sprite::setAngle(float value)
 {
-	GUARD_DISPOSED
-
 	if (p->trans.getRotation() == value)
 		return;
 
@@ -460,8 +442,6 @@ void Sprite::setAngle(float value)
 
 void Sprite::setMirror(bool mirrored)
 {
-	GUARD_DISPOSED
-
 	if (p->mirrored == mirrored)
 		return;
 
@@ -471,8 +451,6 @@ void Sprite::setMirror(bool mirrored)
 
 void Sprite::setBushDepth(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->bushDepth == value)
 		return;
 
@@ -482,8 +460,6 @@ void Sprite::setBushDepth(int value)
 
 void Sprite::setBlendType(int type)
 {
-	GUARD_DISPOSED
-
 	switch (type)
 	{
 	default :
@@ -504,7 +480,6 @@ void Sprite::setBlendType(int type)
 #define DEF_WAVE_SETTER(Name, name, type) \
 	void Sprite::setWave##Name(type value) \
 	{ \
-		GUARD_DISPOSED; \
 		if (p->wave.name == value) \
 			return; \
 		p->wave.name = value; \
@@ -528,14 +503,6 @@ void Sprite::update()
 }
 
 #endif
-
-/* Disposable */
-void Sprite::releaseResources()
-{
-	unlink();
-
-	delete p;
-}
 
 /* SceneElement */
 void Sprite::draw()

@@ -23,6 +23,8 @@
 #include "util.h"
 #include "exception.h"
 
+#include <string.h>
+
 #define SYMD(symbol) { CS##symbol, #symbol }
 
 struct
@@ -48,7 +50,9 @@ struct
 	SYMD(cursor_rect),
 	SYMD(path),
 	SYMD(array),
-	SYMD(default_color)
+	SYMD(default_color),
+	SYMD(children),
+	SYMD(dispose)
 };
 
 static elementsN(symData);
@@ -138,6 +142,19 @@ void raiseMrbExc(mrb_state *mrb, const Exception &exc)
 	RClass *excClass = data->exc[excToMrbExc[exc.type]];
 
 	mrb_raise(mrb, excClass, exc.msg.c_str());
+}
+
+void
+raiseDisposedAccess(mrb_state *mrb, mrb_value self)
+{
+	const char *klassName = DATA_TYPE(self)->struct_name;
+	char buf[32];
+
+	strncpy(buf, klassName, sizeof(buf));
+	buf[0] = tolower(buf[0]);
+
+	mrb_raisef(mrb, getMrbData(mrb)->exc[RGSS],
+	           "disposed %S", mrb_str_new_cstr(mrb, buf));
 }
 
 MRB_METHOD_PUB(inspectObject)

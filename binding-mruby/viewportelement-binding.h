@@ -27,13 +27,12 @@
 #include "binding-types.h"
 
 #include "sceneelement-binding.h"
+#include "disposable-binding.h"
 
 template<class C>
 MRB_METHOD(viewportElementGetViewport)
 {
-	ViewportElement *ve = getPrivateData<C>(mrb, self);
-
-	GUARD_EXC( ve->aboutToAccess(); )
+	checkDisposed(mrb, self);
 
 	return getProperty(mrb, self, CSviewport);
 }
@@ -49,7 +48,10 @@ viewportElementInitialize(mrb_state *mrb, mrb_value self)
 	mrb_get_args(mrb, "|o", &viewportObj);
 
 	if (!mrb_nil_p(viewportObj))
+	{
 		viewport = getPrivateDataCheck<Viewport>(mrb, viewportObj, ViewportType);
+		disposableAddChild(mrb, viewportObj, self);
+	}
 
 	/* Construct object */
 	C *ve = new C(viewport);

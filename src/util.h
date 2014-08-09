@@ -116,13 +116,9 @@ inline bool contains(const C &c, const V &v)
 	type get##name() const { return loc; } \
 	void set##name(type value) { loc = value; }
 
-/* Undef this if not needed */
-#define CHK_DISP GUARD_DISPOSED
-
 #define DEF_ATTR_RD_SIMPLE_DETAILED(klass, name, type, location, keyword1) \
 	type klass :: get##name() keyword1 \
 	{ \
-		CHK_DISP \
 		return location; \
 	}
 
@@ -130,7 +126,6 @@ inline bool contains(const C &c, const V &v)
 	DEF_ATTR_RD_SIMPLE_DETAILED(klass, name, type, location, keyword1) \
 	void klass :: set##name(type value) \
 { \
-	CHK_DISP \
 	location = value; \
 }
 

@@ -78,9 +78,6 @@ MRB_METHOD(FontSetName)
 	return name;
 }
 
-#undef DEF_PROP_CHK_DISP
-#define DEF_PROP_CHK_DISP
-
 DEF_PROP_I(Font, Size)
 DEF_PROP_B(Font, Bold)
 DEF_PROP_B(Font, Italic)

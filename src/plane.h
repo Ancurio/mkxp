@@ -52,9 +52,6 @@ private:
 
 	void draw();
 	void onGeometryChange(const Scene::Geometry &);
-	void aboutToAccess() const;
-
-	void releaseResources();
 };
 
 #endif // PLANE_H

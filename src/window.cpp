@@ -169,7 +169,11 @@ struct QuadChunk
 struct WindowPrivate
 {
 	Bitmap *windowskin;
+	DisposeWatch<WindowPrivate, Bitmap> windowskinWatch;
+
 	Bitmap *contents;
+	DisposeWatch<WindowPrivate, Bitmap> contentsWatch;
+
 	bool bgStretch;
 	Rect *cursorRect;
 	bool active;
@@ -246,7 +250,9 @@ struct WindowPrivate
 
 	WindowPrivate(Viewport *viewport = 0)
 	    : windowskin(0),
+	      windowskinWatch(this, windowskin),
 	      contents(0),
+	      contentsWatch(this, contents, &WindowPrivate::markControlVertDirty),
 	      bgStretch(true),
 	      cursorRect(&tmp.rect),
 	      active(true),
@@ -280,7 +286,7 @@ struct WindowPrivate
 		prepareCon.disconnect();
 	}
 
-	void onCursorRectChange()
+	void markControlVertDirty()
 	{
 		controlsVertDirty = true;
 	}
@@ -289,7 +295,7 @@ struct WindowPrivate
 	{
 		cursorRectCon.disconnect();
 		cursorRectCon = cursorRect->valueChanged.connect
-		        (sigc::mem_fun(this, &WindowPrivate::onCursorRectChange));
+		        (sigc::mem_fun(this, &WindowPrivate::markControlVertDirty));
 	}
 
 	void buildBaseVert()
@@ -686,7 +692,11 @@ Window::Window(Viewport *viewport)
 
 Window::~Window()
 {
-	dispose();
+	p->controlsElement.release();
+
+	unlink();
+
+	delete p;
 }
 
 void Window::update()
@@ -694,8 +704,6 @@ void Window::update()
 	p->updateControls();
 	p->stepAnimations();
 }
-
-#define DISP_CLASS_NAME "window"
 
 DEF_ATTR_SIMPLE(Window, X,          int,     p->position.x)
 DEF_ATTR_SIMPLE(Window, Y,          int,     p->position.y)
@@ -716,9 +724,8 @@ DEF_ATTR_RD_SIMPLE(Window, ContentsOpacity, int,     p->contentsOpacity)
 
 void Window::setWindowskin(Bitmap *value)
 {
-	GUARD_DISPOSED;
-
 	p->windowskin = value;
+	p->windowskinWatch.update(value);
 
 	if (!value)
 		return;
@@ -728,12 +735,11 @@ void Window::setWindowskin(Bitmap *value)
 
 void Window::setContents(Bitmap *value)
 {
-	GUARD_DISPOSED;
-
 	if (p->contents == value)
 		return;
 
 	p->contents = value;
+	p->contentsWatch.update(value);
 	p->controlsVertDirty = true;
 
 	if (!value)
@@ -745,8 +751,6 @@ void Window::setContents(Bitmap *value)
 
 void Window::setStretch(bool value)
 {
-	GUARD_DISPOSED
-
 	if (value == p->bgStretch)
 		return;
 
@@ -756,21 +760,17 @@ void Window::setStretch(bool value)
 
 void Window::setCursorRect(Rect *value)
 {
-	GUARD_DISPOSED
-
 	if (p->cursorRect == value)
 		return;
 
 	p->cursorRect = value;
 
 	p->refreshCursorRectCon();
-	p->onCursorRectChange();
+	p->markControlVertDirty();
 }
 
 void Window::setActive(bool value)
 {
-	GUARD_DISPOSED
-
 	if (p->active == value)
 		return;
 
@@ -780,8 +780,6 @@ void Window::setActive(bool value)
 
 void Window::setPause(bool value)
 {
-	GUARD_DISPOSED
-
 	if (p->pause == value)
 		return;
 
@@ -793,8 +791,6 @@ void Window::setPause(bool value)
 
 void Window::setWidth(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->size.x == value)
 		return;
 
@@ -804,8 +800,6 @@ void Window::setWidth(int value)
 
 void Window::setHeight(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->size.y == value)
 		return;
 
@@ -815,8 +809,6 @@ void Window::setHeight(int value)
 
 void Window::setOX(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->contentsOffset.x == value)
 		return;
 
@@ -826,8 +818,6 @@ void Window::setOX(int value)
 
 void Window::setOY(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->contentsOffset.y == value)
 		return;
 
@@ -837,8 +827,6 @@ void Window::setOY(int value)
 
 void Window::setOpacity(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->opacity == value)
 		return;
 
@@ -848,8 +836,6 @@ void Window::setOpacity(int value)
 
 void Window::setBackOpacity(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->backOpacity == value)
 		return;
 
@@ -859,8 +845,6 @@ void Window::setBackOpacity(int value)
 
 void Window::setContentsOpacity(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->contentsOpacity == value)
 		return;
 
@@ -896,13 +880,4 @@ void Window::setVisible(bool value)
 void Window::onViewportChange()
 {
 	p->controlsElement.setScene(*this->scene);
-}
-
-void Window::releaseResources()
-{
-	p->controlsElement.release();
-
-	unlink();
-
-	delete p;
 }

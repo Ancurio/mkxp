@@ -65,8 +65,6 @@ private:
 	void setVisible(bool value);
 
 	void onViewportChange();
-
-	void releaseResources();
 };
 
 #endif // WINDOW_H

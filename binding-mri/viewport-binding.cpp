@@ -65,10 +65,13 @@ RB_METHOD(viewportInitialize)
 	wrapProperty(self, v->getColor(), "color", ColorType);
 	wrapProperty(self, v->getTone(),  "tone",  ToneType);
 
+	/* 'elements' holds all SceneElements that become children
+	 * of this viewport, so we can dispose them when the viewport
+	 * is disposed */
+	rb_iv_set(self, "elements", rb_ary_new());
+
 	return self;
 }
-
-#define DISP_CLASS_NAME "viewport"
 
 DEF_PROP_OBJ(Viewport, Rect, Rect, "rect")
 DEF_PROP_OBJ(Viewport, Color, Color, "color")

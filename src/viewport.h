@@ -51,8 +51,6 @@ private:
 	void onGeometryChange(const Geometry &);
 	bool isEffectiveViewport(Rect *&, Color *&, Tone *&) const;
 
-	void releaseResources();
-
 	ViewportPrivate *p;
 	friend struct ViewportPrivate;
 

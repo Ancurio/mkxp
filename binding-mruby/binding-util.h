@@ -50,6 +50,8 @@ enum CommonSymbol
 	CSpath,
 	CSarray,
 	CSdefault_color,
+	CSchildren,
+	CSdispose,
 
 	CommonSymbolsMax
 };
@@ -143,16 +145,10 @@ defineClass(mrb_state *mrb, const char *name)
 
 #define MRB_FUN_UNUSED_PARAM { (void) mrb; }
 
-/* If we're not binding a disposable class,
- * we want to #undef DEF_PROP_CHK_DISP */
-#define DEF_PROP_CHK_DISP \
-	checkDisposed(mrb, k, DISP_CLASS_NAME);
-
 #define DEF_PROP_OBJ(Klass, PropKlass, PropName, prop_iv) \
 	MRB_METHOD(Klass##Get##PropName) \
 	{ \
-		Klass *k = getPrivateData<Klass>(mrb, self); (void) k; \
-		DEF_PROP_CHK_DISP \
+		checkDisposed(mrb, self); \
 		return getProperty(mrb, self, prop_iv); \
 	} \
 	MRB_METHOD(Klass##Set##PropName) \
@@ -171,8 +167,6 @@ defineClass(mrb_state *mrb, const char *name)
 #define DEF_PROP_OBJ_NIL(Klass, PropKlass, PropName, prop_iv) \
 	MRB_METHOD(Klass##Get##PropName) \
 	{ \
-		Klass *k = getPrivateData<Klass>(mrb, self); (void) k; \
-		DEF_PROP_CHK_DISP \
 		return getProperty(mrb, self, prop_iv); \
 	} \
 	MRB_METHOD(Klass##Set##PropName) \
@@ -194,7 +188,6 @@ defineClass(mrb_state *mrb, const char *name)
 	MRB_METHOD(Klass##Get##PropName) \
 	{ \
 		Klass *k = getPrivateData<Klass>(mrb, self); \
-		DEF_PROP_CHK_DISP \
 		return mrb_##conv_t##_value(k->get##PropName()); \
 	} \
 	MRB_METHOD(Klass##Set##PropName) \
@@ -215,6 +208,7 @@ defineClass(mrb_state *mrb, const char *name)
 #define DEF_PROP_B(Klass, PropName) \
 	DEF_PROP(Klass, mrb_bool, PropName, "b", bool)
 
+// FIXME: use initialize_copy
 #define CLONE_FUN(Klass) \
 	MRB_METHOD(Klass##Clone) \
 	{ \
@@ -252,19 +246,33 @@ getSym(mrb_state *mrb, CommonSymbol sym)
 	return getMrbData(mrb)->symbols[sym];
 }
 
-template<typename T>
-inline T *
+void
+raiseDisposedAccess(mrb_state *mrb, mrb_value self);
+
+inline void checkDisposed(mrb_state *mrb, mrb_value self)
+{
+	if (!DATA_PTR(self))
+		raiseDisposedAccess(mrb, self);
+}
+
+template<class C>
+inline C *
 getPrivateData(mrb_state *mrb, mrb_value self)
 {
-	(void) mrb;
-	return static_cast<T*>(DATA_PTR(self));
+	C *c = static_cast<C*>(DATA_PTR(self));
+
+	if (!c)
+		raiseDisposedAccess(mrb, self);
+
+	return c;
 }
 
 template<typename T>
 inline T *
 getPrivateDataCheck(mrb_state *mrb, mrb_value obj, const mrb_data_type &type)
 {
-	return static_cast<T*>(mrb_check_datatype(mrb, obj, &type));
+	void *ptr = mrb_check_datatype(mrb, obj, &type);
+	return static_cast<T*>(ptr);
 }
 
 inline void

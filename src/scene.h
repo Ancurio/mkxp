@@ -78,10 +78,6 @@ public:
 	DECL_ATTR_VIRT( Z,       int  )
 	DECL_ATTR_VIRT( Visible, bool )
 
-	/* Disposable classes reimplement this to
-	 * check if they're disposed before access */
-	virtual void aboutToAccess() const {}
-
 protected:
 	/* A bit about OpenGL state:
 	 *

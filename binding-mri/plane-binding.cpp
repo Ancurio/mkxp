@@ -43,8 +43,6 @@ RB_METHOD(planeInitialize)
 	return self;
 }
 
-#define DISP_CLASS_NAME "plane"
-
 DEF_PROP_OBJ_NIL(Plane, Bitmap, Bitmap, "bitmap")
 DEF_PROP_OBJ(Plane, Color, Color, "color")
 DEF_PROP_OBJ(Plane, Tone, Tone, "tone")

@@ -45,6 +45,8 @@ static float fwrap(float value, float range)
 struct PlanePrivate
 {
 	Bitmap *bitmap;
+	DisposeWatch<PlanePrivate, Bitmap> bitmapWatch;
+
 	NormValue opacity;
 	BlendType blendType;
 	Color *color;
@@ -65,6 +67,7 @@ struct PlanePrivate
 
 	PlanePrivate()
 	    : bitmap(0),
+	      bitmapWatch(this, bitmap),
 	      opacity(255),
 	      blendType(BlendNormal),
 	      color(&tmp.color),
@@ -153,8 +156,6 @@ Plane::Plane(Viewport *viewport)
 	onGeometryChange(scene->getGeometry());
 }
 
-#define DISP_CLASS_NAME "plane"
-
 DEF_ATTR_RD_SIMPLE(Plane, Bitmap,    Bitmap*, p->bitmap)
 DEF_ATTR_RD_SIMPLE(Plane, OX,        int,     p->ox)
 DEF_ATTR_RD_SIMPLE(Plane, OY,        int,     p->oy)
@@ -168,14 +169,15 @@ DEF_ATTR_SIMPLE(Plane, Tone,    Tone*,   p->tone)
 
 Plane::~Plane()
 {
-	dispose();
+	unlink();
+
+	delete p;
 }
 
 void Plane::setBitmap(Bitmap *value)
 {
-	GUARD_DISPOSED;
-
 	p->bitmap = value;
+	p->bitmapWatch.update(value);
 
 	if (!value)
 		return;
@@ -185,8 +187,6 @@ void Plane::setBitmap(Bitmap *value)
 
 void Plane::setOX(int value)
 {
-	GUARD_DISPOSED;
-
 	if (p->ox == value)
 	        return;
 
@@ -196,8 +196,6 @@ void Plane::setOX(int value)
 
 void Plane::setOY(int value)
 {
-	GUARD_DISPOSED;
-
 	if (p->oy == value)
 	        return;
 
@@ -207,8 +205,6 @@ void Plane::setOY(int value)
 
 void Plane::setZoomX(float value)
 {
-	GUARD_DISPOSED;
-
 	if (p->zoomX == value)
 	        return;
 
@@ -218,8 +214,6 @@ void Plane::setZoomX(float value)
 
 void Plane::setZoomY(float value)
 {
-	GUARD_DISPOSED;
-
 	if (p->zoomY == value)
 	        return;
 
@@ -229,8 +223,6 @@ void Plane::setZoomY(float value)
 
 void Plane::setBlendType(int value)
 {
-	GUARD_DISPOSED
-
 	switch (value)
 	{
 	default :
@@ -250,9 +242,6 @@ void Plane::setBlendType(int value)
 void Plane::draw()
 {
 	if (!p->bitmap)
-		return;
-
-	if (p->bitmap->isDisposed())
 		return;
 
 	if (!p->opacity)
@@ -306,17 +295,4 @@ void Plane::onGeometryChange(const Scene::Geometry &geo)
 
 	p->sceneGeo = geo;
 	p->quadSourceDirty = true;
-}
-
-void Plane::aboutToAccess() const
-{
-	GUARD_DISPOSED
-}
-
-
-void Plane::releaseResources()
-{
-	unlink();
-
-	delete p;
 }

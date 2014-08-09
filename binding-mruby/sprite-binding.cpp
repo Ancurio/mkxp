@@ -47,8 +47,6 @@ MRB_METHOD(spriteInitialize)
 	return self;
 }
 
-#define DISP_CLASS_NAME "sprite"
-
 DEF_PROP_OBJ_NIL(Sprite, Bitmap, Bitmap,  CSbitmap)
 DEF_PROP_OBJ(Sprite, Rect,   SrcRect, CSsrc_rect)
 DEF_PROP_OBJ(Sprite, Color,  Color,   CScolor)

@@ -43,8 +43,6 @@ MRB_METHOD(planeInitialize)
 	return self;
 }
 
-#define DISP_CLASS_NAME "plane"
-
 DEF_PROP_OBJ(Plane, Bitmap, Bitmap, CSbitmap)
 DEF_PROP_OBJ(Plane, Color, Color, CScolor)
 DEF_PROP_OBJ(Plane, Tone, Tone, CStone)

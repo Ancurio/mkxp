@@ -38,6 +38,7 @@
 #include "tileatlas.h"
 
 #include <sigc++/connection.h>
+#include <sigc++/bind.h>
 
 #include <string.h>
 #include <stdint.h>
@@ -241,6 +242,8 @@ struct TilemapPrivate
 	Bitmap *autotiles[autotileCount];
 
 	Bitmap *tileset;
+	DisposeWatch<TilemapPrivate, Bitmap> tilesetWatch;
+
 	Table *mapData;
 	Table *flashData;
 	Table *priorities;
@@ -352,6 +355,7 @@ struct TilemapPrivate
 	TilemapPrivate(Viewport *viewport)
 	    : viewport(viewport),
 	      tileset(0),
+	      tilesetWatch(this, tileset),
 	      mapData(0),
 	      flashData(0),
 	      priorities(0),
@@ -439,7 +443,7 @@ struct TilemapPrivate
 
 	void updateAtlasInfo()
 	{
-		if (!tileset || tileset->isDisposed())
+		if (!tileset)
 		{
 			atlas.size = Vec2i();
 			return;
@@ -466,9 +470,6 @@ struct TilemapPrivate
 		for (int i = 0; i < autotileCount; ++i)
 		{
 			if (!autotiles[i])
-				continue;
-
-			if (autotiles[i]->isDisposed())
 				continue;
 
 			if (autotiles[i]->megaSurface())
@@ -516,13 +517,20 @@ struct TilemapPrivate
 		flashDirty = true;
 	}
 
+	void onAutotileDisposed(int i)
+	{
+		/* RMXP actually crashes if an active autotile bitmap is disposed..
+		 * let's not crash ourselves, for consistency's sake */
+		autotiles[i] = 0;
+		autotilesCon[i].disconnect();
+		autotilesDispCon[i].disconnect();
+		atlasDirty = true;
+	}
+
 	/* Checks for the minimum amount of data needed to display */
 	bool verifyResources()
 	{
 		if (!tileset)
-			return false;
-
-		if (tileset->isDisposed())
 			return false;
 
 		if (!mapData)
@@ -1211,7 +1219,7 @@ void Tilemap::Autotiles::set(int i, Bitmap *bitmap)
 
 	p->autotilesDispCon[i].disconnect();
 	p->autotilesDispCon[i] = bitmap->wasDisposed.connect
-	        (sigc::mem_fun(p, &TilemapPrivate::invalidateAtlasContents));
+	        (sigc::bind(sigc::mem_fun(p, &TilemapPrivate::onAutotileDisposed), i));
 
 	p->updateAutotileInfo();
 }
@@ -1232,7 +1240,7 @@ Tilemap::Tilemap(Viewport *viewport)
 
 Tilemap::~Tilemap()
 {
-	dispose();
+	delete p;
 }
 
 void Tilemap::update()
@@ -1259,8 +1267,6 @@ Tilemap::Autotiles &Tilemap::getAutotiles() const
 	return p->autotilesProxy;
 }
 
-#define DISP_CLASS_NAME "tilemap"
-
 DEF_ATTR_RD_SIMPLE(Tilemap, Viewport, Viewport*, p->viewport)
 DEF_ATTR_RD_SIMPLE(Tilemap, Tileset, Bitmap*, p->tileset)
 DEF_ATTR_RD_SIMPLE(Tilemap, MapData, Table*, p->mapData)
@@ -1274,8 +1280,6 @@ DEF_ATTR_RD_SIMPLE(Tilemap, OY, int, p->offset.y)
 
 void Tilemap::setViewport(Viewport *value)
 {
-	GUARD_DISPOSED
-
 	if (p->viewport == value)
 		return;
 
@@ -1294,12 +1298,14 @@ void Tilemap::setViewport(Viewport *value)
 
 void Tilemap::setTileset(Bitmap *value)
 {
-	GUARD_DISPOSED
-
 	if (p->tileset == value)
 		return;
 
 	p->tileset = value;
+	p->tilesetWatch.update(value);
+
+	if (!value)
+		return;
 
 	p->invalidateAtlasSize();
 	p->tilesetCon.disconnect();
@@ -1311,12 +1317,13 @@ void Tilemap::setTileset(Bitmap *value)
 
 void Tilemap::setMapData(Table *value)
 {
-	GUARD_DISPOSED
-
 	if (p->mapData == value)
 		return;
 
 	p->mapData = value;
+
+	if (!value)
+		return;
 
 	p->invalidateBuffers();
 	p->mapDataCon.disconnect();
@@ -1326,12 +1333,13 @@ void Tilemap::setMapData(Table *value)
 
 void Tilemap::setFlashData(Table *value)
 {
-	GUARD_DISPOSED
-
 	if (p->flashData == value)
 		return;
 
 	p->flashData = value;
+
+	if (!value)
+		return;
 
 	p->invalidateFlash();
 	p->flashDataCon.disconnect();
@@ -1341,12 +1349,13 @@ void Tilemap::setFlashData(Table *value)
 
 void Tilemap::setPriorities(Table *value)
 {
-	GUARD_DISPOSED
-
 	if (p->priorities == value)
 		return;
 
 	p->priorities = value;
+
+	if (!value)
+		return;
 
 	p->invalidateBuffers();
 	p->prioritiesCon.disconnect();
@@ -1356,8 +1365,6 @@ void Tilemap::setPriorities(Table *value)
 
 void Tilemap::setVisible(bool value)
 {
-	GUARD_DISPOSED
-
 	if (p->visible == value)
 		return;
 
@@ -1373,8 +1380,6 @@ void Tilemap::setVisible(bool value)
 
 void Tilemap::setOX(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->offset.x == value)
 		return;
 
@@ -1385,8 +1390,6 @@ void Tilemap::setOX(int value)
 
 void Tilemap::setOY(int value)
 {
-	GUARD_DISPOSED
-
 	if (p->offset.y == value)
 		return;
 
@@ -1394,10 +1397,4 @@ void Tilemap::setOY(int value)
 	p->updatePosition();
 	p->zOrderDirty = true;
 	p->mapViewportDirty = true;
-}
-
-
-void Tilemap::releaseResources()
-{
-	delete p;
 }

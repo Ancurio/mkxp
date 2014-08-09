@@ -68,8 +68,6 @@ MRB_METHOD(viewportInitialize)
 	return self;
 }
 
-#define DISP_CLASS_NAME "viewport"
-
 DEF_PROP_OBJ(Viewport, Rect, Rect, CSrect)
 DEF_PROP_OBJ(Viewport, Color, Color, CScolor)
 DEF_PROP_OBJ(Viewport, Tone, Tone, CStone)

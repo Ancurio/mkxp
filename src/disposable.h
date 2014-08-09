@@ -25,39 +25,63 @@
 #include "exception.h"
 
 #include <sigc++/signal.h>
+#include <sigc++/connection.h>
 
 class Disposable
 {
 public:
-	Disposable()
-		: disposed(false)
-	{}
-
-	virtual ~Disposable() {}
-
-	void dispose()
-	{
-		if (disposed)
-			return;
-
-		releaseResources();
-		disposed = true;
-		wasDisposed();
-	}
-
-	bool isDisposed() const { return disposed; }
-
 	sigc::signal<void> wasDisposed;
-
-protected:
-	virtual void releaseResources() = 0;
-
-private:
-	bool disposed;
 };
 
-/* Every cpp needs to define DISP_CLASS_NAME for itself (lowercase) */
-#define GUARD_DISPOSED \
-{ if (isDisposed()) throw Exception(Exception::RGSSError, "disposed %s", DISP_CLASS_NAME); }
+/* A helper struct which monitors the dispose signal of
+ * properties, and automatically sets the prop pointer to
+ * null. Can call an optional notify method when prop is
+ * nulled */
+template<class C, typename P>
+struct DisposeWatch
+{
+	typedef void (C::*NotifyFun)();
+
+	/* The object owning the prop (and this helper) */
+	C *owner;
+	/* Optional notify method */
+	const NotifyFun notify;
+	/* Location of the prop pointer inside the owner */
+	P *&propLocation;
+	sigc::connection dispCon;
+
+	DisposeWatch(C *owner, P *&propLocation, NotifyFun notify = 0)
+	    : owner(owner),
+	      notify(notify),
+	      propLocation(propLocation)
+	{}
+
+	~DisposeWatch()
+	{
+		dispCon.disconnect();
+	}
+
+	/* Call this when a new object was set for the prop */
+	void update(Disposable *prop)
+	{
+		dispCon.disconnect();
+
+		if (!prop)
+			return;
+
+		dispCon = prop->wasDisposed.connect
+			(sigc::mem_fun(this, &DisposeWatch::onDisposed));
+	}
+
+private:
+	void onDisposed()
+	{
+		dispCon.disconnect();
+		propLocation = 0;
+
+		if (notify)
+			(owner->*notify)();
+	}
+};
 
 #endif // DISPOSABLE_H
