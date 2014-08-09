@@ -22,6 +22,8 @@
 #ifndef BINDINGUTIL_H
 #define BINDINGUTIL_H
 
+#include "exception.h"
+
 #include <mruby.h>
 #include <mruby/data.h>
 #include <mruby/variable.h>
@@ -212,15 +214,16 @@ defineClass(mrb_state *mrb, const char *name)
 #define DEF_PROP_B(Klass, PropName) \
 	DEF_PROP(Klass, mrb_bool, PropName, "b", bool)
 
-// FIXME: use initialize_copy
-#define CLONE_FUN(Klass) \
-	MRB_METHOD(Klass##Clone) \
+#define INITCOPY_FUN(Klass) \
+	MRB_METHOD(Klass##InitializeCopy) \
 	{ \
-		Klass *k = getPrivateData<Klass>(mrb, self); \
-		mrb_value dupObj = mrb_obj_clone(mrb, self); \
-		Klass *dupK = new Klass(*k); \
-		setPrivateData(dupObj, dupK, Klass##Type); \
-		return dupObj; \
+		mrb_value origObj; \
+		mrb_get_args(mrb, "o", &origObj); \
+		Klass *orig = getPrivateData<Klass>(mrb, origObj); \
+		Klass *k = 0; \
+		GUARD_EXC( k = new Klass(*orig); ) \
+		setPrivateData(self, k, Klass##Type); \
+		return self; \
 	}
 
 #define MARSH_LOAD_FUN(Klass) \

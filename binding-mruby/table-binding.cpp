@@ -141,6 +141,7 @@ MRB_METHOD(tableSetAt)
 }
 
 MARSH_LOAD_FUN(Table)
+INITCOPY_FUN(Table)
 
 void
 tableBindingInit(mrb_state *mrb)
@@ -150,7 +151,9 @@ tableBindingInit(mrb_state *mrb)
 	mrb_define_class_method(mrb, klass, "_load", TableLoad, MRB_ARGS_REQ(1));
 	serializableBindingInit<Table>(mrb, klass);
 
-	mrb_define_method(mrb, klass, "initialize", tableInitialize, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(2));
+	mrb_define_method(mrb, klass, "initialize",      tableInitialize,     MRB_ARGS_REQ(1) | MRB_ARGS_OPT(2));
+	mrb_define_method(mrb, klass, "initialize_copy", TableInitializeCopy, MRB_ARGS_REQ(1));
+
 	mrb_define_method(mrb, klass, "resize",     tableResize,     MRB_ARGS_REQ(1) | MRB_ARGS_OPT(2));
 	mrb_define_method(mrb, klass, "xsize",      tableXSize,      MRB_ARGS_NONE()                  );
 	mrb_define_method(mrb, klass, "ysize",      tableYSize,      MRB_ARGS_NONE()                  );

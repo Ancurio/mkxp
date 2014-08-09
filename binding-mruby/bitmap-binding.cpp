@@ -297,7 +297,7 @@ MRB_METHOD(bitmapSetFont)
 	return mrb_nil_value();
 }
 
-CLONE_FUN(Bitmap)
+INITCOPY_FUN(Bitmap)
 
 
 void
@@ -307,7 +307,8 @@ bitmapBindingInit(mrb_state *mrb)
 
 	disposableBindingInit<Bitmap>(mrb, klass);
 
-	mrb_define_method(mrb, klass, "initialize",  bitmapInitialize, MRB_ARGS_REQ(1) | MRB_ARGS_OPT(1));
+	mrb_define_method(mrb, klass, "initialize",      bitmapInitialize,     MRB_ARGS_REQ(1) | MRB_ARGS_OPT(1));
+	mrb_define_method(mrb, klass, "initialize_copy", BitmapInitializeCopy, MRB_ARGS_REQ(1));
 
 	mrb_define_method(mrb, klass, "width",       bitmapWidth,      MRB_ARGS_NONE());
 	mrb_define_method(mrb, klass, "height",      bitmapHeight,     MRB_ARGS_NONE());
@@ -326,5 +327,4 @@ bitmapBindingInit(mrb_state *mrb)
 	mrb_define_method(mrb, klass, "font=",       bitmapSetFont,    MRB_ARGS_REQ(1));
 
 	mrb_define_method(mrb, klass, "inspect",     inspectObject,    MRB_ARGS_NONE());
-	mrb_define_method(mrb, klass, "clone",       BitmapClone,      MRB_ARGS_NONE());
 }

@@ -59,6 +59,22 @@ MRB_METHOD(fontInitialize)
 	return self;
 }
 
+MRB_METHOD(fontInitializeCopy)
+{
+	mrb_value origObj;
+	mrb_get_args(mrb, "o", &origObj);
+
+	Font *orig = getPrivateData<Font>(mrb, origObj);
+	Font *f = new Font(*orig);
+	setPrivateData(self, f, FontType);
+
+	/* Wrap property objects */
+	f->setColor(new Color(*f->getColor()));
+	wrapProperty(mrb, self, f->getColor(), CScolor, ColorType);
+
+	return self;
+}
+
 MRB_METHOD(FontGetName)
 {
 	Font *f = getPrivateData<Font>(mrb, self);
@@ -157,7 +173,8 @@ fontBindingInit(mrb_state *mrb)
 	INIT_KLASS_PROP_BIND(Font, DefaultItalic, "default_italic");
 	INIT_KLASS_PROP_BIND(Font, DefaultColor, "default_color");
 
-	mrb_define_method(mrb, klass, "initialize", fontInitialize, MRB_ARGS_OPT(2));
+	mrb_define_method(mrb, klass, "initialize",      fontInitialize,     MRB_ARGS_OPT(2));
+	mrb_define_method(mrb, klass, "initialize_copy", fontInitializeCopy, MRB_ARGS_REQ(1));
 
 	INIT_PROP_BIND(Font, Name, "name");
 	INIT_PROP_BIND(Font, Size, "size");

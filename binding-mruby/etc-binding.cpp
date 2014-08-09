@@ -159,9 +159,9 @@ MARSH_LOAD_FUN(Color)
 MARSH_LOAD_FUN(Tone)
 MARSH_LOAD_FUN(Rect)
 
-CLONE_FUN(Tone)
-CLONE_FUN(Color)
-CLONE_FUN(Rect)
+INITCOPY_FUN(Tone)
+INITCOPY_FUN(Color)
+INITCOPY_FUN(Rect)
 
 #define MRB_ATTR_R(Class, Attr, sym) mrb_define_method(mrb, klass, sym, Class##Get##Attr, MRB_ARGS_NONE())
 #define MRB_ATTR_W(Class, Attr, sym) mrb_define_method(mrb, klass, sym "=", Class##Set##Attr, MRB_ARGS_REQ(1))
@@ -173,8 +173,8 @@ CLONE_FUN(Rect)
 	mrb_define_class_method(mrb, klass, "_load", Klass##Load, MRB_ARGS_REQ(1)); \
 	serializableBindingInit<Klass>(mrb, klass); \
 	mrb_define_method(mrb, klass, "initialize", Klass##Initialize, MRB_ARGS_REQ(3) | MRB_ARGS_OPT(1)); \
+	mrb_define_method(mrb, klass, "initialize_copy", Klass##InitializeCopy, MRB_ARGS_REQ(1)); \
 	mrb_define_method(mrb, klass, "set", Klass##Set, MRB_ARGS_REQ(3) | MRB_ARGS_OPT(1)); \
-	mrb_define_method(mrb, klass, "clone", Klass##Clone, MRB_ARGS_NONE()); \
 	mrb_define_method(mrb, klass, "==", Klass##Equal, MRB_ARGS_REQ(1)); \
 	mrb_define_method(mrb, klass, "to_s", Klass##Stringify, MRB_ARGS_NONE()); \
 	mrb_define_method(mrb, klass, "inspect", Klass##Stringify, MRB_ARGS_NONE()); \
