@@ -23,6 +23,10 @@
 #include "sharedstate.h"
 #include "exception.h"
 #include "binding-util.h"
+#include "util.h"
+
+#include <mruby/hash.h>
+#include <string.h>
 
 MRB_FUNCTION(inputUpdate)
 {
@@ -33,7 +37,7 @@ MRB_FUNCTION(inputUpdate)
 	return mrb_nil_value();
 }
 
-static mrb_int getButtonArg(mrb_state *mrb, mrb_value self)
+static mrb_int getButtonArg(mrb_state *mrb)
 {
 	mrb_int num;
 
@@ -41,14 +45,11 @@ static mrb_int getButtonArg(mrb_state *mrb, mrb_value self)
 	mrb_sym sym;
 	mrb_get_args(mrb, "n", &sym);
 
-	// FIXME: This is wrong, Input:: constants should be
-	// symbols in RGSS3, see MRI binding for reference
-	if (mrb_const_defined(mrb, self, sym))
-		num = mrb_fixnum(mrb_const_get(mrb, self, sym));
-	else
-		num = 0;
+	mrb_value symHash = getMrbData(mrb)->buttoncodeHash;
+	mrb_value numVal = mrb_hash_fetch(mrb, symHash, mrb_symbol_value(sym),
+	                                  mrb_fixnum_value(Input::None));
+	num = mrb_fixnum(numVal);
 #else
-	(void) self;
 	mrb_get_args(mrb, "i", &num);
 #endif
 
@@ -57,21 +58,27 @@ static mrb_int getButtonArg(mrb_state *mrb, mrb_value self)
 
 MRB_METHOD(inputPress)
 {
-	mrb_int num = getButtonArg(mrb, self);
+	MRB_UNUSED_PARAM;
+
+	mrb_int num = getButtonArg(mrb);
 
 	return mrb_bool_value(shState->input().isPressed(num));
 }
 
 MRB_METHOD(inputTrigger)
 {
-	mrb_int num = getButtonArg(mrb, self);
+	MRB_UNUSED_PARAM;
+
+	mrb_int num = getButtonArg(mrb);
 
 	return mrb_bool_value(shState->input().isTriggered(num));
 }
 
 MRB_METHOD(inputRepeat)
 {
-	mrb_int num = getButtonArg(mrb, self);
+	MRB_UNUSED_PARAM;
+
+	mrb_int num = getButtonArg(mrb);
 
 	return mrb_bool_value(shState->input().isRepeated(num));
 }
@@ -105,8 +112,43 @@ MRB_FUNCTION(inputMouseY)
 	return mrb_fixnum_value(shState->input().mouseY());
 }
 
-#define DEF_CONST_I(name, value) \
-	mrb_const_set(mrb, mrb_obj_value(module), mrb_intern_lit(mrb, name), mrb_fixnum_value(value))
+struct
+{
+	const char *str;
+	Input::ButtonCode val;
+}
+static buttonCodes[] =
+{
+	{ "DOWN",  Input::Down  },
+	{ "LEFT",  Input::Left  },
+	{ "RIGHT", Input::Right },
+	{ "UP",    Input::Up    },
+
+	{ "A",     Input::A     },
+	{ "B",     Input::B     },
+	{ "C",     Input::C     },
+	{ "X",     Input::X     },
+	{ "Y",     Input::Y     },
+	{ "Z",     Input::Z     },
+	{ "L",     Input::L     },
+	{ "R",     Input::R     },
+
+	{ "SHIFT", Input::Shift },
+	{ "CTRL",  Input::Ctrl  },
+	{ "ALT",   Input::Alt   },
+
+	{ "F5",    Input::F5    },
+	{ "F6",    Input::F6    },
+	{ "F7",    Input::F7    },
+	{ "F8",    Input::F8    },
+	{ "F9",    Input::F9    },
+
+	{ "MOUSELEFT",   Input::MouseLeft   },
+	{ "MOUSEMIDDLE", Input::MouseMiddle },
+	{ "MOUSERIGHT",  Input::MouseRight  }
+};
+
+static elementsN(buttonCodes);
 
 void
 inputBindingInit(mrb_state *mrb)
@@ -120,34 +162,37 @@ inputBindingInit(mrb_state *mrb)
 	mrb_define_module_function(mrb, module, "dir4", inputDir4, MRB_ARGS_NONE());
 	mrb_define_module_function(mrb, module, "dir8", inputDir8, MRB_ARGS_NONE());
 
-	DEF_CONST_I("DOWN",  Input::Down );
-	DEF_CONST_I("LEFT",  Input::Left );
-	DEF_CONST_I("RIGHT", Input::Right);
-	DEF_CONST_I("UP",    Input::Up   );
-
-	DEF_CONST_I("A",     Input::A    );
-	DEF_CONST_I("B",     Input::B    );
-	DEF_CONST_I("C",     Input::C    );
-	DEF_CONST_I("X",     Input::X    );
-	DEF_CONST_I("Y",     Input::Y    );
-	DEF_CONST_I("Z",     Input::Z    );
-	DEF_CONST_I("L",     Input::L    );
-	DEF_CONST_I("R",     Input::R    );
-
-	DEF_CONST_I("SHIFT", Input::Shift);
-	DEF_CONST_I("CTRL",  Input::Ctrl );
-	DEF_CONST_I("ALT",   Input::Alt  );
-
-	DEF_CONST_I("F5",    Input::F5   );
-	DEF_CONST_I("F6",    Input::F6   );
-	DEF_CONST_I("F7",    Input::F7   );
-	DEF_CONST_I("F8",    Input::F8   );
-	DEF_CONST_I("F9",    Input::F9   );
-
 	mrb_define_module_function(mrb, module, "mouse_x", inputMouseX, MRB_ARGS_NONE());
 	mrb_define_module_function(mrb, module, "mouse_y", inputMouseY, MRB_ARGS_NONE());
 
-	DEF_CONST_I("MOUSELEFT",   Input::MouseLeft  );
-	DEF_CONST_I("MOUSEMIDDLE", Input::MouseMiddle);
-	DEF_CONST_I("MOUSERIGHT",  Input::MouseRight );
+	mrb_value modVal = mrb_obj_value(module);
+
+#ifndef RGSS3
+	for (size_t i = 0; i < buttonCodesN; ++i)
+	{
+		const char *str = buttonCodes[i].str;
+		mrb_sym sym = mrb_intern_static(mrb, str, strlen(str));
+		mrb_value val = mrb_fixnum_value(buttonCodes[i].val);
+
+		mrb_const_set(mrb, modVal, sym, val);
+	}
+#else
+	mrb_value symHash = mrb_hash_new_capa(mrb, buttonCodesN);
+
+	for (size_t i = 0; i < buttonCodesN; ++i)
+	{
+		const char *str = buttonCodes[i].str;
+		mrb_sym sym = mrb_intern_static(mrb, str, strlen(str));
+		mrb_value symVal = mrb_symbol_value(sym);
+		mrb_value val = mrb_fixnum_value(buttonCodes[i].val);
+
+		/* In RGSS3 all Input::XYZ constants are equal to :XYZ symbols,
+		 * to be compatible with the previous convention */
+		mrb_const_set(mrb, modVal, sym, symVal);
+		mrb_hash_set(mrb, symHash, symVal, val);
+	}
+
+	mrb_iv_set(mrb, modVal, mrb_intern_lit(mrb, "buttoncodes"), symHash);
+	getMrbData(mrb)->buttoncodeHash = symHash;
+#endif
 }
