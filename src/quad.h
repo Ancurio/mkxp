@@ -36,7 +36,8 @@ struct Quad
 	GLMeta::VAO vao;
 	bool vboDirty;
 
-	static void setPosRect(CVertex *vert, const FloatRect &r)
+	template<typename V>
+	static void setPosRect(V *vert, const FloatRect &r)
 	{
 		int i = 0;
 		vert[i++].pos = r.topLeft();
@@ -45,62 +46,30 @@ struct Quad
 		vert[i++].pos = r.bottomLeft();
 	}
 
-	static void setColor(CVertex *vert, const Vec4 &c)
+	template<typename V>
+	static void setTexRect(V *vert, const FloatRect &r)
+	{
+		int i = 0;
+		vert[i++].texPos = r.topLeft();
+		vert[i++].texPos = r.topRight();
+		vert[i++].texPos = r.bottomRight();
+		vert[i++].texPos = r.bottomLeft();
+	}
+
+	template<typename V>
+	static int setTexPosRect(V *vert, const FloatRect &tex, const FloatRect &pos)
+	{
+		setPosRect(vert, pos);
+		setTexRect(vert, tex);
+
+		return 1;
+	}
+
+	template<typename V>
+	static void setColor(V *vert, const Vec4 &c)
 	{
 		for (int i = 0; i < 4; ++i)
 			vert[i].color = c;
-	}
-
-	static void setPosRect(SVertex *vert, const FloatRect &r)
-	{
-		int i = 0;
-		vert[i++].pos = r.topLeft();
-		vert[i++].pos = r.topRight();
-		vert[i++].pos = r.bottomRight();
-		vert[i++].pos = r.bottomLeft();
-	}
-
-	static void setTexRect(SVertex *vert, const FloatRect &r)
-	{
-		int i = 0;
-		vert[i++].texPos = r.topLeft();
-		vert[i++].texPos = r.topRight();
-		vert[i++].texPos = r.bottomRight();
-		vert[i++].texPos = r.bottomLeft();
-	}
-
-	static void setPosRect(Vertex *vert, const FloatRect &r)
-	{
-		int i = 0;
-		vert[i++].pos = r.topLeft();
-		vert[i++].pos = r.topRight();
-		vert[i++].pos = r.bottomRight();
-		vert[i++].pos = r.bottomLeft();
-	}
-
-	static void setTexRect(Vertex *vert, const FloatRect &r)
-	{
-		int i = 0;
-		vert[i++].texPos = r.topLeft();
-		vert[i++].texPos = r.topRight();
-		vert[i++].texPos = r.bottomRight();
-		vert[i++].texPos = r.bottomLeft();
-	}
-
-	static int setTexPosRect(SVertex *vert, const FloatRect &tex, const FloatRect &pos)
-	{
-		setPosRect(vert, pos);
-		setTexRect(vert, tex);
-
-		return 1;
-	}
-
-	static int setTexPosRect(Vertex *vert, const FloatRect &tex, const FloatRect &pos)
-	{
-		setPosRect(vert, pos);
-		setTexRect(vert, tex);
-
-		return 1;
 	}
 
 	Quad()
