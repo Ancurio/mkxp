@@ -24,6 +24,7 @@
 #include "util.h"
 #include "gl-util.h"
 #include "sharedstate.h"
+#include "config.h"
 #include "glstate.h"
 #include "shader.h"
 #include "scene.h"
@@ -398,7 +399,7 @@ struct GraphicsPrivate
 	TEXFBO transBuffer;
 
 	GraphicsPrivate(RGSSThreadData *rtData)
-	    : scRes(640, 480),
+	    : scRes(DEF_SCREEN_W, DEF_SCREEN_H),
 	      scSize(scRes),
 	      winSize(rtData->config.defScreenW, rtData->config.defScreenH),
 	      screen(scRes.x, scRes.y),

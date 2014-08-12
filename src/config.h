@@ -25,6 +25,14 @@
 #include <string>
 #include <vector>
 
+#ifndef RGSS2
+#define DEF_SCREEN_W 640
+#define DEF_SCREEN_H 480
+#else
+#define DEF_SCREEN_W 544
+#define DEF_SCREEN_H 416
+#endif
+
 struct Config
 {
 	bool debugMode;
