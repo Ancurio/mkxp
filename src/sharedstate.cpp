@@ -238,7 +238,7 @@ void SharedState::setBindingData(void *data)
 	p->bindingData = data;
 }
 
-void SharedState::ensureQuadIBO(int minSize)
+void SharedState::ensureQuadIBO(size_t minSize)
 {
 	_globalIBO->ensureSize(minSize);
 }

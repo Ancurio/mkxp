@@ -40,7 +40,7 @@ struct QuadArray
 	VBO::ID vbo;
 	GLMeta::VAO vao;
 
-	int quadCount;
+	size_t quadCount;
 	GLsizeiptr vboSize;
 
 	QuadArray()
@@ -62,7 +62,7 @@ struct QuadArray
 		VBO::del(vbo);
 	}
 
-	void resize(int size)
+	void resize(size_t size)
 	{
 		vertices.resize(size * 4);
 		quadCount = size;
@@ -115,7 +115,7 @@ struct QuadArray
 		draw(0, quadCount);
 	}
 
-	int count() const
+	size_t count() const
 	{
 		return quadCount;
 	}
