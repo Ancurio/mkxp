@@ -208,7 +208,7 @@ void SharedState::setScreen(Scene &screen)
 }
 
 #define GSATT(type, lower) \
-	type SharedState :: lower() \
+	type SharedState :: lower() const \
 	{ \
 		return p->lower; \
 	}
@@ -330,7 +330,7 @@ void SharedState::checkShutdown()
 	scriptBinding->terminate();
 }
 
-Font &SharedState::defaultFont()
+Font &SharedState::defaultFont() const
 {
 	return *p->defaultFont;
 }

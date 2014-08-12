@@ -55,35 +55,35 @@ struct SharedMidiState;
 
 struct SharedState
 {
-	void *bindingData();
+	void *bindingData() const;
 	void setBindingData(void *data);
 
-	SDL_Window *sdlWindow();
+	SDL_Window *sdlWindow() const;
 
-	Scene *screen();
+	Scene *screen() const;
 	void setScreen(Scene &screen);
 
-	FileSystem &fileSystem();
+	FileSystem &fileSystem() const;
 
-	EventThread &eThread();
-	RGSSThreadData &rtData();
-	Config &config();
+	EventThread &eThread() const;
+	RGSSThreadData &rtData() const;
+	Config &config() const;
 
-	Graphics &graphics();
-	Input &input();
-	Audio &audio();
+	Graphics &graphics() const;
+	Input &input() const;
+	Audio &audio() const;
 
-	GLState &_glState();
+	GLState &_glState() const;
 
-	ShaderSet &shaders();
+	ShaderSet &shaders() const;
 
-	TexPool &texPool();
+	TexPool &texPool() const;
 
-	SharedFontState &fontState();
-	Font &defaultFont();
+	SharedFontState &fontState() const;
+	Font &defaultFont() const;
 
 #ifdef MIDI
-	SharedMidiState &midiState();
+	SharedMidiState &midiState() const;
 #endif
 
 	sigc::signal<void> prepareDraw;
@@ -101,7 +101,7 @@ struct SharedState
 
 	TEXFBO &gpTexFBO(int minW, int minH);
 
-	Quad &gpQuad();
+	Quad &gpQuad() const;
 
 	/* Basically just a simple "TexPool"
 	 * replacement for Tilemap atlas use */
