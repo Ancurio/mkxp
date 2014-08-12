@@ -31,6 +31,8 @@ struct SDL_Color;
 
 enum BlendType
 {
+	BlendKeepDestAlpha = -1,
+
 	BlendNormal = 0,
 	BlendAddition = 1,
 	BlendSubstraction = 2
