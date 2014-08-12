@@ -59,6 +59,10 @@ void planeBindingInit();
 void windowBindingInit();
 void tilemapBindingInit();
 
+#ifdef RGSS2
+void windowVXBindingInit();
+#endif
+
 void inputBindingInit();
 void audioBindingInit();
 void graphicsBindingInit();
@@ -83,8 +87,13 @@ static void mriBindingInit()
 	spriteBindingInit();
 	viewportBindingInit();
 	planeBindingInit();
-	windowBindingInit();
 	tilemapBindingInit();
+
+#ifdef RGSS2
+	windowVXBindingInit();
+#else
+	windowBindingInit();
+#endif
 
 	inputBindingInit();
 	audioBindingInit();

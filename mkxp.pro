@@ -196,8 +196,12 @@ EMBED = \
 	assets/liberation.ttf
 
 RGSS2 {
+	HEADERS += \
+	src/windowvx.h
+
 	SOURCES += \
-	src/vorbissource.cpp
+	src/vorbissource.cpp \
+	src/windowvx.cpp
 
 	EMBED += \
 	shader/blur.frag \
@@ -311,6 +315,11 @@ BINDING_MRI {
 	binding-mri/audio-binding.cpp \
 	binding-mri/module_rpg.cpp \
 	binding-mri/filesystem-binding.cpp
+
+	RGSS2 {
+		SOURCES += \
+		binding-mri/windowvx-binding.cpp
+	}
 }
 
 OTHER_FILES += $$EMBED
