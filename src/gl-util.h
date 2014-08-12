@@ -42,6 +42,10 @@ struct ID \
 	{  \
 		return gl == o.gl;  \
 	}  \
+	bool operator!=(const ID &o) const \
+	{ \
+		return !(*this == o); \
+	} \
 };
 
 /* 2D Texture */
@@ -235,6 +239,13 @@ struct TEXFBO
 	{
 		FBO::del(obj.fbo);
 		TEX::del(obj.tex);
+	}
+
+	static inline void clear(TEXFBO &obj)
+	{
+		obj.tex = TEX::ID(0);
+		obj.fbo = FBO::ID(0);
+		obj.width = obj.height = 0;
 	}
 };
 
