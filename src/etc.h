@@ -134,6 +134,8 @@ struct Tone : public Serializable
 
 	/* Normalized (-1.0 ~ 1.0) */
 	Vec4 norm;
+
+	sigc::signal<void> valueChanged;
 };
 
 struct Rect : public Serializable

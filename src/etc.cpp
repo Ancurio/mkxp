@@ -180,30 +180,39 @@ void Tone::set(double red, double green, double blue, double gray)
 	this->gray  = gray;
 
 	updateInternal();
+	valueChanged();
 }
 
 void Tone::setRed(double value)
 {
 	red = value;
 	norm.x = (float) clamp<double>(value, -255, 255) / 255;
+
+	valueChanged();
 }
 
 void Tone::setGreen(double value)
 {
 	green = value;
 	norm.y = (float) clamp<double>(value, -255, 255) / 255;
+
+	valueChanged();
 }
 
 void Tone::setBlue(double value)
 {
 	blue = value;
 	norm.z = (float) clamp<double>(value, -255, 255) / 255;
+
+	valueChanged();
 }
 
 void Tone::setGray(double value)
 {
 	gray = value;
 	norm.w = (float) clamp<double>(value, 0, 255) / 255;
+
+	valueChanged();
 }
 
 /* Serializable */
