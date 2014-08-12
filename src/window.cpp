@@ -48,11 +48,11 @@ struct Corners
 	T tl, tr, bl, br;
 };
 
-static IntRect backgroundSrc(0, 0, 128, 128);
+static const IntRect backgroundSrc(0, 0, 128, 128);
 
-static IntRect cursorSrc(128, 64, 32, 32);
+static const IntRect cursorSrc(128, 64, 32, 32);
 
-static IntRect pauseAniSrc[] =
+static const IntRect pauseAniSrc[] =
 {
 	IntRect(160, 64, 16, 16),
 	IntRect(176, 64, 16, 16),
@@ -60,7 +60,7 @@ static IntRect pauseAniSrc[] =
 	IntRect(176, 80, 16, 16)
 };
 
-static Sides<IntRect> bordersSrc =
+static const Sides<IntRect> bordersSrc =
 {
 	IntRect(128, 16, 16, 32),
 	IntRect(176, 16, 16, 32),
@@ -68,7 +68,7 @@ static Sides<IntRect> bordersSrc =
 	IntRect(144, 48, 32, 16)
 };
 
-static Corners<IntRect> cornersSrc =
+static const Corners<IntRect> cornersSrc =
 {
 	IntRect(128,  0, 16, 16),
 	IntRect(176,  0, 16, 16),
@@ -76,7 +76,7 @@ static Corners<IntRect> cornersSrc =
 	IntRect(176, 48, 16, 16)
 };
 
-static Sides<IntRect> scrollArrowSrc =
+static const Sides<IntRect> scrollArrowSrc =
 {
 	IntRect(144, 24,  8, 16),
 	IntRect(168, 24,  8, 16),
@@ -85,7 +85,7 @@ static Sides<IntRect> scrollArrowSrc =
 };
 
 /* Cycling */
-static unsigned char cursorAniAlpha[] =
+static const uint8_t cursorAniAlpha[] =
 {
 	/* Fade out */
 	0xFF, 0xF7, 0xEF, 0xE7, 0xDF, 0xD7, 0xCF, 0xC7,
@@ -98,7 +98,7 @@ static unsigned char cursorAniAlpha[] =
 static elementsN(cursorAniAlpha);
 
 /* Cycling */
-static unsigned char pauseAniQuad[] =
+static const uint8_t pauseAniQuad[] =
 {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	1, 1, 1, 1, 1, 1, 1, 1,
@@ -109,7 +109,7 @@ static unsigned char pauseAniQuad[] =
 static elementsN(pauseAniQuad);
 
 /* No cycle */
-static unsigned char pauseAniAlpha[] =
+static const uint8_t pauseAniAlpha[] =
 {
 	0x00, 0x20, 0x40, 0x60,
 	0x80, 0xA0, 0xC0, 0xE0,
@@ -238,9 +238,9 @@ struct WindowPrivate
 	QuadChunk pauseAniVert;
 	QuadChunk cursorVert;
 
-	unsigned char cursorAniAlphaIdx;
-	unsigned char pauseAniAlphaIdx;
-	unsigned char pauseAniQuadIdx;
+	uint8_t cursorAniAlphaIdx;
+	uint8_t pauseAniAlphaIdx;
+	uint8_t pauseAniQuadIdx;
 
 	bool controlsVertDirty;
 
