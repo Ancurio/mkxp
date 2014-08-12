@@ -67,7 +67,7 @@ struct PlanePrivate
 
 	PlanePrivate()
 	    : bitmap(0),
-	      bitmapWatch(this, bitmap),
+	      bitmapWatch(*this, bitmap),
 	      opacity(255),
 	      blendType(BlendNormal),
 	      color(&tmp.color),

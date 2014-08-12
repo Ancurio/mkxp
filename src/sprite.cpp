@@ -89,7 +89,7 @@ struct SpritePrivate
 
 	SpritePrivate()
 	    : bitmap(0),
-	      bitmapWatch(this, bitmap),
+	      bitmapWatch(*this, bitmap),
 	      srcRect(&tmp.rect),
 	      mirrored(false),
 	      bushDepth(0),

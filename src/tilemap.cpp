@@ -355,7 +355,7 @@ struct TilemapPrivate
 	TilemapPrivate(Viewport *viewport)
 	    : viewport(viewport),
 	      tileset(0),
-	      tilesetWatch(this, tileset),
+	      tilesetWatch(*this, tileset),
 	      mapData(0),
 	      flashData(0),
 	      priorities(0),

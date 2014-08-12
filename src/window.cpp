@@ -250,9 +250,9 @@ struct WindowPrivate
 
 	WindowPrivate(Viewport *viewport = 0)
 	    : windowskin(0),
-	      windowskinWatch(this, windowskin),
+	      windowskinWatch(*this, windowskin),
 	      contents(0),
-	      contentsWatch(this, contents, &WindowPrivate::markControlVertDirty),
+	      contentsWatch(*this, contents, &WindowPrivate::markControlVertDirty),
 	      bgStretch(true),
 	      cursorRect(&tmp.rect),
 	      active(true),

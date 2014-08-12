@@ -42,15 +42,7 @@ struct DisposeWatch
 {
 	typedef void (C::*NotifyFun)();
 
-	/* The object owning the prop (and this helper) */
-	C *owner;
-	/* Optional notify method */
-	const NotifyFun notify;
-	/* Location of the prop pointer inside the owner */
-	P *&propLocation;
-	sigc::connection dispCon;
-
-	DisposeWatch(C *owner, P *&propLocation, NotifyFun notify = 0)
+	DisposeWatch(C &owner, P *&propLocation, NotifyFun notify = 0)
 	    : owner(owner),
 	      notify(notify),
 	      propLocation(propLocation)
@@ -74,13 +66,21 @@ struct DisposeWatch
 	}
 
 private:
+	/* The object owning the prop (and this helper) */
+	C  &owner;
+	/* Optional notify method */
+	const NotifyFun notify;
+	/* Location of the prop pointer inside the owner */
+	P * &propLocation;
+	sigc::connection dispCon;
+
 	void onDisposed()
 	{
 		dispCon.disconnect();
 		propLocation = 0;
 
 		if (notify)
-			(owner->*notify)();
+			(owner.*notify)();
 	}
 };
 
