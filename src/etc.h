@@ -64,7 +64,7 @@ struct Color : public Serializable
 	double getBlue()  const { return blue;  }
 	double getAlpha() const { return alpha; }
 
-	bool hasEffect()
+	bool hasEffect() const
 	{
 		return (alpha != 0);
 	}
@@ -112,7 +112,7 @@ struct Tone : public Serializable
 	double getBlue()  const { return blue;  }
 	double getGray()  const { return gray;  }
 
-	bool hasEffect()
+	bool hasEffect() const
 	{
 		return ((int)red   != 0 ||
 				(int)green != 0 ||
