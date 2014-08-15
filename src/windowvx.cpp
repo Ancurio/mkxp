@@ -761,8 +761,8 @@ struct WindowVXPrivate
 			if (drawCursor)
 			{
 				Vec2i contTrans = pad.pos();
-				contTrans.x += std::abs(-contentsOff.x) + cursorRect->x;
-				contTrans.y += std::abs(-contentsOff.y) + cursorRect->y;
+				contTrans.x += -contentsOff.x + cursorRect->x;
+				contTrans.y += -contentsOff.y + cursorRect->y;
 				shader.setTranslation(contTrans);
 
 				TEX::setSmooth(true);
