@@ -56,6 +56,8 @@ struct Color : public Serializable
 	void updateExternal();
 
 	void set(double red, double green, double blue, double alpha);
+	void set(const Color &other);
+
 	void setRed(double value);
 	void setGreen(double value);
 	void setBlue(double value);
@@ -104,6 +106,8 @@ struct Tone : public Serializable
 	void updateInternal();
 
 	void set(double red, double green, double blue, double gray);
+	void set(const Tone &other);
+
 	void setRed(double value);
 	void setGreen(double value);
 	void setBlue(double value);
@@ -155,6 +159,7 @@ struct Rect : public Serializable
 	bool operator==(const Rect &o) const;
 	void operator=(const IntRect &rect);
 	void set(int x, int y, int w, int h);
+	void set(const Rect &other);
 
 	FloatRect toFloatRect() const
 	{

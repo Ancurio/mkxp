@@ -78,6 +78,15 @@ void Color::set(double red, double green, double blue, double alpha)
 	updateInternal();
 }
 
+void Color::set(const Color &other)
+{
+	red   = other.red;
+	green = other.green;
+	blue  = other.blue;
+	alpha = other.alpha;
+	norm  = other.norm;
+}
+
 void Color::setRed(double value)
 {
 	red = value;
@@ -180,6 +189,17 @@ void Tone::set(double red, double green, double blue, double gray)
 	this->gray  = gray;
 
 	updateInternal();
+	valueChanged();
+}
+
+void Tone::set(const Tone &other)
+{
+	red  = other.red;
+	green= other.green;
+	blue = other.blue;
+	gray = other.gray;
+	norm = other.norm;
+
 	valueChanged();
 }
 
@@ -292,6 +312,16 @@ void Rect::set(int x, int y, int w, int h)
 	this->y = y;
 	width = w;
 	height = h;
+	valueChanged();
+}
+
+void Rect::set(const Rect &other)
+{
+	x      = other.x;
+	y      = other.y;
+	width  = other.width;
+	height = other.height;
+
 	valueChanged();
 }
 

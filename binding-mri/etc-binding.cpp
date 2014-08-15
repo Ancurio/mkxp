@@ -79,9 +79,17 @@ EQUAL_FUN(Rect)
 #define INIT_FUN(Klass, param_type, param_t_s, last_param_def) \
 	RB_METHOD(Klass##Initialize) \
 	{ \
-		param_type p1, p2, p3, p4 = last_param_def; \
-		rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END); \
-		Klass *k = new Klass(p1, p2, p3, p4); \
+		Klass *k; \
+		if (argc == 0) \
+		{ \
+			k = new Klass(); \
+		} \
+		else \
+		{ \
+			param_type p1, p2, p3, p4 = last_param_def; \
+			rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END); \
+			k = new Klass(p1, p2, p3, p4); \
+		} \
 		setPrivateData(self, k); \
 		return self; \
 	}
@@ -93,10 +101,19 @@ INIT_FUN(Rect, int, "iiii", 0)
 #define SET_FUN(Klass, param_type, param_t_s, last_param_def) \
 	RB_METHOD(Klass##Set) \
 	{ \
-		param_type p1, p2, p3, p4 = last_param_def; \
-		rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END); \
 		Klass *k = getPrivateData<Klass>(self); \
-		k->set(p1, p2, p3, p4); \
+		if (argc == 1) \
+		{ \
+			VALUE otherObj = argv[0]; \
+			Klass *other = getPrivateDataCheck<Klass>(otherObj, Klass##Type); \
+			k->set(*other); \
+		} \
+		else \
+		{ \
+			param_type p1, p2, p3, p4 = last_param_def; \
+			rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END); \
+			k->set(p1, p2, p3, p4); \
+		} \
 		return self; \
 	}
 
