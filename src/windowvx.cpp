@@ -47,7 +47,9 @@ struct Corners
 	T tl, tr, bl, br;
 };
 
-static const IntRect bgStretchSrc( 0,  0, 64, 64 );
+/* Offsetting this by one gives a great visual improvement
+ * in Majo no Ie */
+static const IntRect bgStretchSrc( 1,  1, 62, 62 );
 static const IntRect bgTileSrc   ( 0, 64, 64, 64 );
 
 static const Corners<IntRect> cornerSrc =
