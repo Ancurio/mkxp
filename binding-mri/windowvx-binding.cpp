@@ -129,7 +129,7 @@ windowVXBindingInit()
 	_rb_define_method(klass, "update",     windowVXUpdate);
 	_rb_define_method(klass, "move",       windowVXMove);
 	_rb_define_method(klass, "open?",      windowVXIsOpen);
-	_rb_define_method(klass, "closed?",    windowVXIsClosed);
+	_rb_define_method(klass, "close?",     windowVXIsClosed);
 
 	INIT_PROP_BIND( WindowVX, Windowskin,      "windowskin"       );
 	INIT_PROP_BIND( WindowVX, Contents,        "contents"         );
