@@ -506,10 +506,10 @@ void Bitmap::gradientFillRect(const IntRect &rect,
 
 	if (vertical)
 	{
-		quad.vert[0].color = color2;
-		quad.vert[1].color = color2;
-		quad.vert[2].color = color1;
-		quad.vert[3].color = color1;
+		quad.vert[0].color = color1;
+		quad.vert[1].color = color1;
+		quad.vert[2].color = color2;
+		quad.vert[3].color = color2;
 	}
 	else
 	{
