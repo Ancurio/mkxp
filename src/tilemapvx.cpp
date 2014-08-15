@@ -189,28 +189,21 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		dispPos.y = -(offset.y - viewpPos.y * 32) + sceneOffset.y;
 	}
 
-	void onGeometryChange(const Scene::Geometry &geo)
-	{
-		sceneOffset.x = geo.rect.x - geo.xOrigin;
-		sceneOffset.y = geo.rect.y - geo.yOrigin;
-		sceneGeo = geo;
-
-		updatePosition();
-	}
-
 	void updateMapViewport()
 	{
 		int tileOX, tileOY;
 
-		if (offset.x >= 0)
-			tileOX = offset.x / 32;
-		else
-			tileOX = -(-(offset.x-31) / 32);
+		Vec2i offs(offset.x-sceneOffset.x, offset.y-sceneOffset.y);
 
-		if (offset.y >= 0)
-			tileOY = offset.y / 32;
+		if (offs.x >= 0)
+			tileOX = offs.x / 32;
 		else
-			tileOY = -(-(offset.y-31) / 32);
+			tileOX = -(-(offs.x-31) / 32);
+
+		if (offs.y >= 0)
+			tileOY = offs.y / 32;
+		else
+			tileOY = -(-(offs.y-31) / 32);
 
 		bool dirty = false;
 
@@ -338,6 +331,15 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		                (GLvoid*) (groundQuads*6*sizeof(index_t)));
 
 		GLMeta::vaoUnbind(vao);
+	}
+
+	void onGeometryChange(const Scene::Geometry &geo)
+	{
+		sceneOffset.x = geo.rect.x - geo.xOrigin;
+		sceneOffset.y = geo.rect.y - geo.yOrigin;
+		sceneGeo = geo;
+
+		mapViewportDirty = true;
 	}
 
 	/* TileAtlasVX::Reader */
