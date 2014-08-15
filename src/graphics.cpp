@@ -435,6 +435,8 @@ struct GraphicsPrivate
 		TEXFBO::init(transBuffer);
 		TEXFBO::allocEmpty(transBuffer, scRes.x, scRes.y);
 		TEXFBO::linkFBO(transBuffer);
+
+		fpsLimiter.resetFrameAdjust();
 	}
 
 	~GraphicsPrivate()
