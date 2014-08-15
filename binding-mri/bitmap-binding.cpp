@@ -252,7 +252,17 @@ RB_METHOD(bitmapDrawText)
 		VALUE rectObj;
 		Rect *rect;
 
+#ifdef RGSS2
+		VALUE strObj;
+		rb_get_args(argc, argv, "oo|i", &rectObj, &strObj, &align RB_ARG_END);
+
+		if (rb_type(strObj) != RUBY_T_STRING)
+			strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
+
+		str = RSTRING_PTR(strObj);
+#else
 		rb_get_args(argc, argv, "oz|i", &rectObj, &str, &align RB_ARG_END);
+#endif
 
 		rect = getPrivateDataCheck<Rect>(rectObj, RectType);
 
@@ -262,7 +272,17 @@ RB_METHOD(bitmapDrawText)
 	{
 		int x, y, width, height;
 
+#ifdef RGSS2
+		VALUE strObj;
+		rb_get_args(argc, argv, "iiiio|i", &x, &y, &width, &height, &strObj, &align RB_ARG_END);
+
+		if (rb_type(strObj) != RUBY_T_STRING)
+			strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
+
+		str = RSTRING_PTR(strObj);
+#else
 		rb_get_args(argc, argv, "iiiiz|i", &x, &y, &width, &height, &str, &align RB_ARG_END);
+#endif
 
 		GUARD_EXC( b->drawText(x, y, width, height, str, align); );
 	}
@@ -276,7 +296,17 @@ RB_METHOD(bitmapTextSize)
 
 	const char *str;
 
+#ifdef RGSS2
+	VALUE strObj;
+	rb_get_args(argc, argv, "o", &strObj RB_ARG_END);
+
+	if (rb_type(strObj) != RUBY_T_STRING)
+		strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
+
+	str = RSTRING_PTR(strObj);
+#else
 	rb_get_args(argc, argv, "z", &str RB_ARG_END);
+#endif
 
 	IntRect value;
 	GUARD_EXC( value = b->textSize(str); );
