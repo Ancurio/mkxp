@@ -217,9 +217,11 @@ RGSS2 {
 }
 
 MIDI {
-	SOURCES += \
-	src/midisource.cpp \
+	HEADERS += \
 	src/sharedmidistate.h
+
+	SOURCES += \
+	src/midisource.cpp
 
 	DEFINES += MIDI
 }
