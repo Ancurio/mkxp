@@ -251,6 +251,8 @@ struct WindowVXPrivate
 
 		prepareCon = shState->prepareDraw.connect
 			(sigc::mem_fun(this, &WindowVXPrivate::prepare));
+
+		refreshCursorRectCon();
 	}
 
 	~WindowVXPrivate()
@@ -759,8 +761,8 @@ struct WindowVXPrivate
 			if (drawCursor)
 			{
 				Vec2i contTrans = pad.pos();
-				contTrans.x += std::abs(-contentsOff.x);
-				contTrans.y += std::abs(-contentsOff.y);
+				contTrans.x += std::abs(-contentsOff.x) + cursorRect->x;
+				contTrans.y += std::abs(-contentsOff.y) + cursorRect->y;
 				shader.setTranslation(contTrans);
 
 				TEX::setSmooth(true);
