@@ -167,6 +167,8 @@ RB_METHOD(graphicsSnapToBitmap)
 	return obj;
 }
 
+DEF_GRA_PROP_I(Brightness)
+
 #endif
 
 DEF_GRA_PROP_B(Fullscreen)
@@ -197,6 +199,8 @@ void graphicsBindingInit()
 	_rb_define_module_function(module, "fadeout", graphicsFadeout);
 	_rb_define_module_function(module, "fadein", graphicsFadein);
 	_rb_define_module_function(module, "snap_to_bitmap", graphicsSnapToBitmap);
+
+	INIT_GRA_PROP_BIND( Brightness, "brightness" );
 #endif
 
 	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
