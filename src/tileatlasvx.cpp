@@ -274,11 +274,13 @@ void build(TEXFBO &tf, Bitmap *bitmaps[BM_COUNT])
 	FBO::clear();
 	glState.clearColor.pop();
 
+#ifdef RGSS3
 	SDL_Surface *shadow = createShadowSet();
 	TEX::bind(tf.tex);
 	TEX::uploadSubImage(shadowArea.x*32, shadowArea.y*32,
 	                    shadow->w, shadow->h, shadow->pixels, GL_RGBA);
 	SDL_FreeSurface(shadow);
+#endif
 
 	Bitmap *bm;
 #define EXEC_BLITS(part) \
@@ -627,7 +629,11 @@ void readTiles(Reader &reader, const Table &data,
 	for (int i = 0; i < 2; ++i)
 		readLayer(reader, data, flags, ox, oy, w, h, i);
 
+#ifdef RGSS3
 	readShadowLayer(reader, data, ox, oy, w, h);
+#else
+	(void) createShadowSet; (void) readShadowLayer;
+#endif
 
 	readLayer(reader, data, flags, ox, oy, w, h, 2);
 }
