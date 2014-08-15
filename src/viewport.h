@@ -34,6 +34,11 @@ class Viewport : public Scene, public SceneElement, public Flashable, public Dis
 public:
 	Viewport(int x, int y, int width, int height);
 	Viewport(Rect *rect);
+
+#ifdef RGSS3
+	Viewport();
+#endif
+
 	~Viewport();
 
 	DECL_ATTR( Rect,  Rect*  )

@@ -26,6 +26,7 @@
 #include "util.h"
 #include "quad.h"
 #include "glstate.h"
+#include "graphics.h"
 
 #include <SDL_rect.h>
 
@@ -111,6 +112,18 @@ Viewport::Viewport(Rect *rect)
 {
 	initViewport(rect->x, rect->y, rect->width, rect->height);
 }
+
+#ifdef RGSS3
+
+Viewport::Viewport()
+    : SceneElement(*shState->screen()),
+      sceneLink(this)
+{
+	const Graphics &graphics = shState->graphics();
+	initViewport(0, 0, graphics.width(), graphics.height());
+}
+
+#endif
 
 void Viewport::initViewport(int x, int y, int width, int height)
 {
