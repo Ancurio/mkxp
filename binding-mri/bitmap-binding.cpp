@@ -318,6 +318,98 @@ RB_METHOD(bitmapTextSize)
 
 DEF_PROP_OBJ(Bitmap, Font, Font, "font")
 
+#ifdef RGSS2
+
+RB_METHOD(bitmapGradientFillRect)
+{
+	Bitmap *b = getPrivateData<Bitmap>(self);
+
+	VALUE color1Obj, color2Obj;
+	Color *color1, *color2;
+	bool vertical = false;
+
+	if (argc == 3 || argc == 4)
+	{
+		VALUE rectObj;
+		Rect *rect;
+
+		rb_get_args(argc, argv, "ooo|b", &rectObj,
+		            &color1Obj, &color2Obj, &vertical RB_ARG_END);
+
+		rect = getPrivateDataCheck<Rect>(rectObj, RectType);
+		color1 = getPrivateDataCheck<Color>(color1Obj, ColorType);
+		color2 = getPrivateDataCheck<Color>(color2Obj, ColorType);
+
+		GUARD_EXC( b->gradientFillRect(rect->toIntRect(), color1->norm, color2->norm, vertical); );
+	}
+	else
+	{
+		int x, y, width, height;
+
+		rb_get_args(argc, argv, "iiiioo|b", &x, &y, &width, &height,
+		            &color1Obj, &color2Obj, &vertical RB_ARG_END);
+
+		color1 = getPrivateDataCheck<Color>(color1Obj, ColorType);
+		color2 = getPrivateDataCheck<Color>(color2Obj, ColorType);
+
+		GUARD_EXC( b->gradientFillRect(x, y, width, height, color1->norm, color2->norm, vertical); );
+	}
+
+	return self;
+}
+
+RB_METHOD(bitmapClearRect)
+{
+	Bitmap *b = getPrivateData<Bitmap>(self);
+
+	if (argc == 1)
+	{
+		VALUE rectObj;
+		Rect *rect;
+
+		rb_get_args(argc, argv, "o", &rectObj RB_ARG_END);
+
+		rect = getPrivateDataCheck<Rect>(rectObj, RectType);
+
+		GUARD_EXC( b->clearRect(rect->toIntRect()); );
+	}
+	else
+	{
+		int x, y, width, height;
+
+		rb_get_args(argc, argv, "iiii", &x, &y, &width, &height RB_ARG_END);
+
+		GUARD_EXC( b->clearRect(x, y, width, height); );
+	}
+
+	return self;
+}
+
+RB_METHOD(bitmapBlur)
+{
+	RB_UNUSED_PARAM;
+
+	Bitmap *b = getPrivateData<Bitmap>(self);
+
+	b->blur();
+
+	return Qnil;
+}
+
+RB_METHOD(bitmapRadialBlur)
+{
+	Bitmap *b = getPrivateData<Bitmap>(self);
+
+	int angle, divisions;
+	rb_get_args(argc, argv, "ii", &angle, &divisions RB_ARG_END);
+
+	b->radialBlur(angle, divisions);
+
+	return Qnil;
+}
+
+#endif
+
 // FIXME: This isn't entire correct as the cloned bitmap
 // does not get a cloned version of the original bitmap's 'font'
 // attribute (the internal font attrb is the default one, whereas
@@ -351,6 +443,13 @@ bitmapBindingInit()
 	_rb_define_method(klass, "hue_change",  bitmapHueChange);
 	_rb_define_method(klass, "draw_text",   bitmapDrawText);
 	_rb_define_method(klass, "text_size",   bitmapTextSize);
+
+#ifdef RGSS2
+	_rb_define_method(klass, "gradient_fill_rect", bitmapGradientFillRect);
+	_rb_define_method(klass, "clear_rect",         bitmapClearRect);
+	_rb_define_method(klass, "blur",               bitmapBlur);
+	_rb_define_method(klass, "radial_blur",        bitmapRadialBlur);
+#endif
 
 	INIT_PROP_BIND(Bitmap, Font, "font");
 }
