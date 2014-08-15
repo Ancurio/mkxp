@@ -48,7 +48,11 @@
 SharedState *SharedState::instance = 0;
 static GlobalIBO *_globalIBO = 0;
 
+#ifdef RGSS3
+#define GAME_ARCHIVE "Game.rgss3a"
+#else
 #define GAME_ARCHIVE "Game.rgssad"
+#endif
 
 struct SharedStatePrivate
 {
