@@ -61,6 +61,7 @@ void tilemapBindingInit();
 
 #ifdef RGSS2
 void windowVXBindingInit();
+void tilemapVXBindingInit();
 #endif
 
 void inputBindingInit();
@@ -87,12 +88,13 @@ static void mriBindingInit()
 	spriteBindingInit();
 	viewportBindingInit();
 	planeBindingInit();
-	tilemapBindingInit();
 
 #ifdef RGSS2
 	windowVXBindingInit();
+	tilemapVXBindingInit();
 #else
 	windowBindingInit();
+	tilemapBindingInit();
 #endif
 
 	inputBindingInit();

@@ -197,17 +197,23 @@ EMBED = \
 
 RGSS2 {
 	HEADERS += \
-	src/windowvx.h
+	src/windowvx.h \
+	src/tilemapvx.h \
+	src/tileatlasvx.h
 
 	SOURCES += \
 	src/vorbissource.cpp \
-	src/windowvx.cpp
+	src/windowvx.cpp \
+	src/tilemapvx.cpp \
+	src/tileatlasvx.cpp \
+	src/autotilesvx.cpp
 
 	EMBED += \
 	shader/blur.frag \
 	shader/blurH.vert \
 	shader/blurV.vert \
-	shader/simpleMatrix.vert
+	shader/simpleMatrix.vert \
+	shader/tilemapvx.vert
 }
 
 MIDI {
@@ -318,7 +324,8 @@ BINDING_MRI {
 
 	RGSS2 {
 		SOURCES += \
-		binding-mri/windowvx-binding.cpp
+		binding-mri/windowvx-binding.cpp \
+		binding-mri/tilemapvx-binding.cpp
 	}
 }
 

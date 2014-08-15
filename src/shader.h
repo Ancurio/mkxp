@@ -243,6 +243,18 @@ struct BlurShader
 	HPass pass1;
 	VPass pass2;
 };
+
+class TilemapVXShader : public ShaderBase
+{
+public:
+	TilemapVXShader();
+
+	void setAniOffset(const Vec2 &value);
+
+private:
+	GLint u_aniOffset;
+};
+
 #endif
 
 /* Bitmap blit */
@@ -280,6 +292,7 @@ struct ShaderSet
 #ifdef RGSS2
 	SimpleMatrixShader simpleMatrix;
 	BlurShader blur;
+	TilemapVXShader tilemapVX;
 #endif
 };
 

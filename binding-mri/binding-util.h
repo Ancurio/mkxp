@@ -126,9 +126,10 @@ setPrivateData(VALUE self, void *p)
 }
 
 inline VALUE
-wrapObject(void *p, const rb_data_type_struct &type)
+wrapObject(void *p, const rb_data_type_struct &type,
+           VALUE underKlass = rb_cObject)
 {
-	VALUE klass = rb_const_get(rb_cObject, rb_intern(type.wrap_struct_name));
+	VALUE klass = rb_const_get(underKlass, rb_intern(type.wrap_struct_name));
 	VALUE obj = rb_obj_alloc(klass);
 
 	setPrivateData(obj, p);
@@ -138,9 +139,10 @@ wrapObject(void *p, const rb_data_type_struct &type)
 
 inline VALUE
 wrapProperty(VALUE self, void *prop, const char *iv,
-             const rb_data_type_struct &type)
+             const rb_data_type_struct &type,
+             VALUE underKlass = rb_cObject)
 {
-	VALUE propObj = wrapObject(prop, type);
+	VALUE propObj = wrapObject(prop, type, underKlass);
 
 	rb_iv_set(self, iv, propObj);
 
