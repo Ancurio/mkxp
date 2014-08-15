@@ -42,8 +42,12 @@ public:
 		Bitmap *get(int i) const;
 
 	private:
+		Autotiles() {}
+		~Autotiles() {}
+
 		TilemapPrivate *p;
 		friend class Tilemap;
+		friend struct TilemapPrivate;
 	};
 
 	Tilemap(Viewport *viewport = 0);
