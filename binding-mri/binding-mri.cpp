@@ -75,7 +75,9 @@ RB_METHOD(mriP);
 RB_METHOD(mriDataDirectory);
 RB_METHOD(mkxpPuts);
 
-#ifndef RGSS3
+#ifdef RGSS3
+RB_METHOD(mriRgssMain);
+#else
 RB_METHOD(_kernelCaller);
 #endif
 
@@ -104,8 +106,10 @@ static void mriBindingInit()
 	fileIntBindingInit();
 
 #ifdef RGSS3
-	_rb_define_module_function(rb_mKernel, "msgbox",   mriPrint);
-	_rb_define_module_function(rb_mKernel, "msgbox_p", mriP);
+	_rb_define_module_function(rb_mKernel, "rgss_main", mriRgssMain);
+
+	_rb_define_module_function(rb_mKernel, "msgbox",    mriPrint);
+	_rb_define_module_function(rb_mKernel, "msgbox_p",  mriP);
 #else
 	_rb_define_module_function(rb_mKernel, "print", mriPrint);
 	_rb_define_module_function(rb_mKernel, "p",     mriP);
@@ -196,7 +200,19 @@ RB_METHOD(mriDataDirectory)
 	return pathStr;
 }
 
-#ifndef RGSS3
+#ifdef RGSS3
+
+RB_METHOD(mriRgssMain)
+{
+	RB_UNUSED_PARAM;
+
+	// TODO: Implement F12 reset
+	rb_yield(Qnil);
+
+	return Qnil;
+}
+
+#else
 
 RB_METHOD(_kernelCaller)
 {
