@@ -45,6 +45,12 @@
 #include <errno.h>
 #include <algorithm>
 
+#ifdef RGSS2
+#define DEF_FRAMERATE 60
+#else
+#define DEF_FRAMERATE 40
+#endif
+
 struct PingPong
 {
 	TEXFBO rt[2];
@@ -404,7 +410,7 @@ struct GraphicsPrivate
 	      winSize(rtData->config.defScreenW, rtData->config.defScreenH),
 	      screen(scRes.x, scRes.y),
 	      threadData(rtData),
-	      frameRate(40),
+	      frameRate(DEF_FRAMERATE),
 	      frameCount(0),
 #ifdef RGSS2
 	      brightness(255),
