@@ -494,7 +494,7 @@ struct TilemapPrivate
 	void updatePosition()
 	{
 		dispPos.x = -(offset.x - viewpPos.x * 32) + elem.sceneOffset.x;
-		dispPos.y = -(offset.y - viewpPos.y * 32) + elem.sceneOffset.x;
+		dispPos.y = -(offset.y - viewpPos.y * 32) + elem.sceneOffset.y;
 	}
 
 	void invalidateAtlasSize()
