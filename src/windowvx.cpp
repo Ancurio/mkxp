@@ -934,6 +934,7 @@ void WindowVX::setWidth(int value)
 	p->geo.w = std::max(0, value);
 	p->base.vertDirty = true;
 	p->base.texSizeDirty = true;
+	p->clipRectDirty = true;
 	p->ctrlVertDirty = true;
 }
 
@@ -946,6 +947,7 @@ void WindowVX::setHeight(int value)
 	p->geo.h = std::max(0, value);
 	p->base.vertDirty = true;
 	p->base.texSizeDirty = true;
+	p->clipRectDirty = true;
 	p->ctrlVertDirty = true;
 }
 
