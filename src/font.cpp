@@ -198,17 +198,25 @@ struct FontPrivate
 	int size;
 	bool bold;
 	bool italic;
+	bool outline;
+	bool shadow;
 	Color *color;
+	Color *outColor;
 
 	Color colorTmp;
+	Color outColorTmp;
 
 	static std::string defaultName;
 	static int defaultSize;
 	static bool defaultBold;
 	static bool defaultItalic;
+	static bool defaultOutline;
+	static bool defaultShadow;
 	static Color *defaultColor;
+	static Color *defaultOutColor;
 
 	static Color defaultColorTmp;
+	static Color defaultOutColorTmp;
 
 	/* The actual font is opened as late as possible
 	 * (when it is queried by a Bitmap), prior it is
@@ -221,8 +229,12 @@ struct FontPrivate
 	      size(size ? size : defaultSize),
 	      bold(defaultBold),
 	      italic(defaultItalic),
+	      outline(defaultOutline),
+	      shadow(defaultShadow),
 	      color(&colorTmp),
+	      outColor(&outColorTmp),
 	      colorTmp(*defaultColor),
+	      outColorTmp(*defaultOutColor),
 	      sdlFont(0)
 	{}
 
@@ -231,19 +243,27 @@ struct FontPrivate
 	      size(other.size),
 	      bold(other.bold),
 	      italic(other.italic),
+	      outline(other.outline),
+	      shadow(other.shadow),
 	      color(&colorTmp),
+	      outColor(&outColorTmp),
 	      colorTmp(*other.color),
+	      outColorTmp(*other.outColor),
 	      sdlFont(other.sdlFont)
 	{}
 };
 
-std::string FontPrivate::defaultName   = "Arial";
-int         FontPrivate::defaultSize   = 22;
-bool        FontPrivate::defaultBold   = false;
-bool        FontPrivate::defaultItalic = false;
-Color      *FontPrivate::defaultColor  = &FontPrivate::defaultColorTmp;
+std::string FontPrivate::defaultName     = "Arial";
+int         FontPrivate::defaultSize     = 22;
+bool        FontPrivate::defaultBold     = false;
+bool        FontPrivate::defaultItalic   = false;
+bool        FontPrivate::defaultOutline  = false;
+bool        FontPrivate::defaultShadow   = true;
+Color      *FontPrivate::defaultColor    = &FontPrivate::defaultColorTmp;
+Color      *FontPrivate::defaultOutColor = &FontPrivate::defaultOutColorTmp;
 
 Color FontPrivate::defaultColorTmp(255, 255, 255, 255);
+Color FontPrivate::defaultOutColorTmp(0, 0, 0, 128);
 
 bool Font::doesExist(const char *name)
 {
@@ -299,15 +319,33 @@ void Font::setSize(int value)
 #undef CHK_DISP
 #define CHK_DISP
 
-DEF_ATTR_RD_SIMPLE(Font, Size, int, p->size)
-DEF_ATTR_SIMPLE(Font, Bold, bool, p->bold)
-DEF_ATTR_SIMPLE(Font, Italic, bool, p->italic)
-DEF_ATTR_SIMPLE(Font, Color, Color*, p->color)
+DEF_ATTR_RD_SIMPLE(Font, Size,  int,    p->size)
+DEF_ATTR_SIMPLE(Font, Bold,     bool,   p->bold)
+DEF_ATTR_SIMPLE(Font, Italic,   bool,   p->italic)
+DEF_ATTR_SIMPLE(Font, Color,    Color*, p->color)
 
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultSize, int, FontPrivate::defaultSize)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultBold, bool, FontPrivate::defaultBold)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultItalic, bool, FontPrivate::defaultItalic)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultColor, Color*, FontPrivate::defaultColor)
+#ifdef RGSS2
+DEF_ATTR_SIMPLE(Font, Shadow,   bool,   p->shadow)
+#endif
+
+#ifdef RGSS3
+DEF_ATTR_SIMPLE(Font, Outline,  bool,   p->outline)
+DEF_ATTR_SIMPLE(Font, OutColor, Color*, p->outColor)
+#endif
+
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultSize,       int,    FontPrivate::defaultSize)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultBold,       bool,   FontPrivate::defaultBold)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultItalic,     bool,   FontPrivate::defaultItalic)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultColor,      Color*, FontPrivate::defaultColor)
+
+#ifdef RGSS2
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultShadow,     bool,   FontPrivate::defaultShadow)
+#endif
+
+#ifdef RGSS3
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutline,    bool,   FontPrivate::defaultOutline)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutColor,   Color*, FontPrivate::defaultOutColor)
+#endif
 
 const char *Font::getDefaultName()
 {

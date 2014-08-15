@@ -85,16 +85,34 @@ public:
 	const char *getName() const;
 	void setName(const char *value);
 
-	DECL_ATTR( Size,   int    )
-	DECL_ATTR( Bold,   bool   )
-	DECL_ATTR( Italic, bool   )
-	DECL_ATTR( Color,  Color* )
+	DECL_ATTR( Size,     int    )
+	DECL_ATTR( Bold,     bool   )
+	DECL_ATTR( Italic,   bool   )
+	DECL_ATTR( Color,    Color* )
 
-	DECL_ATTR_STATIC( DefaultName,   const char* )
-	DECL_ATTR_STATIC( DefaultSize,   int         )
-	DECL_ATTR_STATIC( DefaultBold,   bool        )
-	DECL_ATTR_STATIC( DefaultItalic, bool        )
-	DECL_ATTR_STATIC( DefaultColor,  Color*      )
+#ifdef RGSS2
+	DECL_ATTR( Shadow,   bool   )
+#endif
+
+#ifdef RGSS3
+	DECL_ATTR( Outline,  bool   )
+	DECL_ATTR( OutColor, Color* )
+#endif
+
+	DECL_ATTR_STATIC( DefaultName,     const char* )
+	DECL_ATTR_STATIC( DefaultSize,     int         )
+	DECL_ATTR_STATIC( DefaultBold,     bool        )
+	DECL_ATTR_STATIC( DefaultItalic,   bool        )
+	DECL_ATTR_STATIC( DefaultColor,    Color*      )
+
+#ifdef RGSS2
+	DECL_ATTR_STATIC( DefaultShadow,   bool        )
+#endif
+
+#ifdef RGSS3
+	DECL_ATTR_STATIC( DefaultOutline,  bool        )
+	DECL_ATTR_STATIC( DefaultOutColor, Color*      )
+#endif
 
 	/* internal */
 	_TTF_Font *getSdlFont();

@@ -61,6 +61,11 @@ RB_METHOD(fontInitialize)
 	f->setColor(new Color(*f->getColor()));
 	wrapProperty(self, f->getColor(), "color", ColorType);
 
+#ifdef RGSS3
+	f->setOutColor(new Color(*f->getOutColor()));
+	wrapProperty(self, f->getOutColor(), "out_color", ColorType);
+#endif
+
 	if (NIL_P(name))
 		name = rb_iv_get(rb_obj_class(self), "default_name");
 
@@ -86,6 +91,11 @@ RB_METHOD(fontInitializeCopy)
 	/* Wrap property objects */
 	f->setColor(new Color(*f->getColor()));
 	wrapProperty(self, f->getColor(), "color", ColorType);
+
+#ifdef RGSS3
+	f->setOutColor(new Color(*f->getOutColor()));
+	wrapProperty(self, f->getOutColor(), "out_color", ColorType);
+#endif
 
 	return self;
 }
@@ -158,6 +168,15 @@ DEF_PROP_B(Font, Bold)
 DEF_PROP_B(Font, Italic)
 DEF_PROP_OBJ(Font, Color, Color, "color")
 
+#ifdef RGSS2
+DEF_PROP_B(Font, Shadow)
+#endif
+
+#ifdef RGSS3
+DEF_PROP_B(Font, Outline)
+DEF_PROP_OBJ(Font, Color, OutColor, "out_color")
+#endif
+
 #define DEF_KLASS_PROP(Klass, type, PropName, param_t_s, value_fun) \
 	RB_METHOD(Klass##Get##PropName) \
 	{ \
@@ -176,6 +195,16 @@ DEF_PROP_OBJ(Font, Color, Color, "color")
 DEF_KLASS_PROP(Font, int, DefaultSize, "i", rb_fix_new)
 DEF_KLASS_PROP(Font, bool, DefaultBold, "b", rb_bool_new)
 DEF_KLASS_PROP(Font, bool, DefaultItalic, "b", rb_bool_new)
+
+#ifdef RGSS2
+DEF_KLASS_PROP(Font, bool, DefaultShadow, "b", rb_bool_new)
+#endif
+
+#ifdef RGSS3
+DEF_KLASS_PROP(Font, bool, DefaultOutline, "b", rb_bool_new)
+
+// TODO: impl Get/SetDefaultOutColor
+#endif
 
 RB_METHOD(FontGetDefaultName)
 {
@@ -239,6 +268,14 @@ fontBindingInit()
 	INIT_KLASS_PROP_BIND(Font, DefaultItalic, "default_italic");
 	INIT_KLASS_PROP_BIND(Font, DefaultColor, "default_color");
 
+#ifdef RGSS2
+	INIT_KLASS_PROP_BIND(Font, DefaultShadow, "default_shadow");
+#endif
+
+#ifdef RGSS3
+	INIT_KLASS_PROP_BIND(Font, DefaultOutline, "default_outline");
+#endif
+
 	rb_define_class_method(klass, "exist?", fontDoesExist);
 
 	_rb_define_method(klass, "initialize",      fontInitialize);
@@ -249,4 +286,13 @@ fontBindingInit()
 	INIT_PROP_BIND(Font, Bold, "bold");
 	INIT_PROP_BIND(Font, Italic, "italic");
 	INIT_PROP_BIND(Font, Color, "color");
+
+#ifdef RGSS2
+	INIT_PROP_BIND(Font, Shadow, "shadow");
+#endif
+
+#ifdef RGSS3
+	INIT_PROP_BIND(Font, Outline, "outline");
+	INIT_PROP_BIND(Font, OutColor, "out_color");
+#endif
 }
