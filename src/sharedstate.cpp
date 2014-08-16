@@ -50,6 +50,8 @@ static GlobalIBO *_globalIBO = 0;
 
 #ifdef RGSS3
 #define GAME_ARCHIVE "Game.rgss3a"
+#elif RGSS2
+#define GAME_ARCHIVE "Game.rgss2a"
 #else
 #define GAME_ARCHIVE "Game.rgssad"
 #endif
