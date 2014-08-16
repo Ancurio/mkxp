@@ -114,6 +114,7 @@ struct SpritePrivate
 		wave.length = 180;
 		wave.speed = 360;
 		wave.phase = 0.0;
+		wave.dirty = false;
 #endif
 	}
 

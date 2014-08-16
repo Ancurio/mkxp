@@ -85,6 +85,7 @@ void EventThread::process(RGSSThreadData &rtData)
 	int toggleFSMod = rtData.config.anyAltToggleFS ? KMOD_ALT : KMOD_LALT;
 
 	fps.lastFrame = SDL_GetPerformanceCounter();
+	fps.displayCounter = 0;
 	fps.displaying = false;
 	fps.immInitFlag = false;
 	fps.immFiniFlag = false;
