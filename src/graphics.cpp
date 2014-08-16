@@ -46,9 +46,9 @@
 #include <algorithm>
 
 #ifdef RGSS2
-#define DEF_FRAMERATE 60
+# define DEF_FRAMERATE 60
 #else
-#define DEF_FRAMERATE 40
+# define DEF_FRAMERATE 40
 #endif
 
 struct PingPong
