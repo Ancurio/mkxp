@@ -176,7 +176,8 @@ SOURCES += \
 	src/sdlsoundsource.cpp \
 	src/alstream.cpp \
 	src/audiostream.cpp \
-	src/rgssad.cpp
+	src/rgssad.cpp \
+	src/bundledfont.cpp
 
 EMBED = \
 	shader/transSimple.frag \

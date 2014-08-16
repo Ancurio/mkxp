@@ -184,6 +184,7 @@ set(MAIN_SOURCE
 	src/alstream.cpp
 	src/audiostream.cpp
 	src/rgssad.cpp
+	src/bundledfont.cpp
 )
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})

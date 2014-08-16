@@ -31,11 +31,15 @@
 #include <string>
 #include <utility>
 
-#include "../liberation.ttf.xxd"
-
 #include <SDL_ttf.h>
 
 #define BUNDLED_FONT liberation
+
+#define BUNDLED_FONT_DECL(FONT) \
+	extern unsigned char assets_##FONT##_ttf[]; \
+	extern unsigned int assets_##FONT##_ttf_len;
+
+BUNDLED_FONT_DECL(liberation)
 
 #define BUNDLED_FONT_D(f) assets_## f ##_ttf
 #define BUNDLED_FONT_L(f) assets_## f ##_ttf_len
