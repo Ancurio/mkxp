@@ -48,6 +48,14 @@ BUNDLED_FONT_DECL(liberation)
 #define BNDL_F_D(f) BUNDLED_FONT_D(f)
 #define BNDL_F_L(f) BUNDLED_FONT_L(f)
 
+#ifdef RGSS3
+# define DEF_SHADOW false
+# define DEF_OUTLINE true
+#else
+# define DEF_SHADOW true
+# define DEF_OUTLINE false
+#endif
+
 typedef std::pair<std::string, int> FontKey;
 
 static SDL_RWops *openBundledFont()
@@ -261,8 +269,8 @@ std::string FontPrivate::defaultName     = "Arial";
 int         FontPrivate::defaultSize     = 22;
 bool        FontPrivate::defaultBold     = false;
 bool        FontPrivate::defaultItalic   = false;
-bool        FontPrivate::defaultOutline  = false;
-bool        FontPrivate::defaultShadow   = true;
+bool        FontPrivate::defaultOutline  = DEF_OUTLINE;
+bool        FontPrivate::defaultShadow   = DEF_SHADOW;
 Color      *FontPrivate::defaultColor    = &FontPrivate::defaultColorTmp;
 Color      *FontPrivate::defaultOutColor = &FontPrivate::defaultOutColorTmp;
 
