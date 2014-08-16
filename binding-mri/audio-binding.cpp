@@ -24,6 +24,30 @@
 #include "binding-util.h"
 #include "exception.h"
 
+#define DEF_PLAY_STOP_POS(entity) \
+	RB_METHOD(audio_##entity##Play) \
+	{ \
+		RB_UNUSED_PARAM; \
+		const char *filename; \
+		int volume = 100; \
+		int pitch = 100; \
+		double pos = 0.0; \
+		rb_get_args(argc, argv, "z|iif", &filename, &volume, &pitch, &pos RB_ARG_END); \
+		GUARD_EXC( shState->audio().entity##Play(filename, volume, pitch, pos); ) \
+		return Qnil; \
+	} \
+	RB_METHOD(audio_##entity##Stop) \
+	{ \
+		RB_UNUSED_PARAM; \
+		shState->audio().entity##Stop(); \
+		return Qnil; \
+	} \
+	RB_METHOD(audio_##entity##Pos) \
+	{ \
+		RB_UNUSED_PARAM; \
+		return rb_float_new(shState->audio().entity##Pos()); \
+	}
+
 #define DEF_PLAY_STOP(entity) \
 	RB_METHOD(audio_##entity##Play) \
 	{ \
@@ -52,15 +76,28 @@ RB_METHOD(audio_##entity##Fade) \
 	return Qnil; \
 }
 
-#define DEF_PLAY_STOP_FADE(entity) \
-	DEF_PLAY_STOP(entity) \
-	DEF_FADE(entity)
+#define DEF_POS(entity) \
+	RB_METHOD(audio_##entity##Pos) \
+	{ \
+		RB_UNUSED_PARAM; \
+		return rb_float_new(shState->audio().entity##Pos()); \
+	}
 
-DEF_PLAY_STOP_FADE( bgm )
-DEF_PLAY_STOP_FADE( bgs )
-DEF_PLAY_STOP_FADE( me  )
+#ifdef RGSS3
+DEF_PLAY_STOP_POS( bgm )
+DEF_PLAY_STOP_POS( bgs )
+#else
+DEF_PLAY_STOP( bgm )
+DEF_PLAY_STOP( bgs )
+#endif
 
-DEF_PLAY_STOP( se  )
+DEF_PLAY_STOP( me )
+
+DEF_FADE( bgm )
+DEF_FADE( bgs )
+DEF_FADE( me )
+
+DEF_PLAY_STOP( se )
 
 
 #define BIND_PLAY_STOP(entity) \
@@ -74,15 +111,23 @@ DEF_PLAY_STOP( se  )
 	BIND_PLAY_STOP(entity) \
 	BIND_FADE(entity)
 
+#define BIND_POS(entity) \
+	_rb_define_module_function(module, #entity "_pos", audio_##entity##Pos);
+
 
 void
 audioBindingInit()
 {
 	VALUE module = rb_define_module("Audio");
 
-	BIND_PLAY_STOP_FADE( bgm )
-	BIND_PLAY_STOP_FADE( bgs )
-	BIND_PLAY_STOP_FADE( me  )
+	BIND_PLAY_STOP_FADE( bgm );
+	BIND_PLAY_STOP_FADE( bgs );
+	BIND_PLAY_STOP_FADE( me  );
+
+#ifdef RGSS3
+	BIND_POS( bgm );
+	BIND_POS( bgs );
+#endif
 
 	BIND_PLAY_STOP( se )
 }
