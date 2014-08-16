@@ -35,6 +35,16 @@
 #include <algorithm>
 #include <sigc++/connection.h>
 
+#ifdef RGSS3
+# define DEF_Z 100
+# define DEF_PADDING 12
+# define DEF_BACK_OPAC 192
+#else
+# define DEF_Z 0
+# define DEF_PADDING 16
+# define DEF_BACK_OPAC 255
+#endif
+
 template<typename T>
 struct Sides
 {
@@ -231,10 +241,10 @@ struct WindowVXPrivate
 	      width(w),
 	      height(h),
 	      geo(x, y, w, h),
-	      padding(12),
+	      padding(DEF_PADDING),
 	      paddingBottom(padding),
 	      opacity(255),
-	      backOpacity(192),
+	      backOpacity(DEF_BACK_OPAC),
 	      contentsOpacity(255),
 	      openness(255),
 	      tone(&tmp.tone),
@@ -754,8 +764,12 @@ struct WindowVXPrivate
 
 			glState.scissorBox.push();
 			glState.scissorTest.pushSet(true);
-			glState.scissorBox.setIntersect(clip);
 
+#ifdef RGSS3
+			glState.scissorBox.setIntersect(clip);
+#else
+			glState.scissorBox.setIntersect(IntRect(trans.x, trans.y, geo.w, geo.h));
+#endif
 			IntRect pad = padRect;
 			pad.x += trans.x;
 			pad.y += trans.y;
@@ -763,8 +777,12 @@ struct WindowVXPrivate
 			if (drawCursor)
 			{
 				Vec2i contTrans = pad.pos();
-				contTrans.x += -contentsOff.x + cursorRect->x;
-				contTrans.y += -contentsOff.y + cursorRect->y;
+				contTrans.x += cursorRect->x;
+				contTrans.y += cursorRect->y;
+#ifdef RGSS3
+				contTrans.x -= contentsOff.x;
+				contTrans.y -= contentsOff.y;
+#endif
 				shader.setTranslation(contTrans);
 
 				TEX::setSmooth(true);
@@ -774,6 +792,9 @@ struct WindowVXPrivate
 
 			if (contents)
 			{
+#ifndef RGSS3
+				glState.scissorBox.setIntersect(clip);
+#endif
 				Vec2i contTrans = pad.pos();
 				contTrans.x -= contentsOff.x;
 				contTrans.y -= contentsOff.y;
@@ -793,14 +814,14 @@ struct WindowVXPrivate
 };
 
 WindowVX::WindowVX(Viewport *viewport)
-	: ViewportElement(viewport, 100)
+	: ViewportElement(viewport, DEF_Z)
 {
 	p = new WindowVXPrivate(0, 0, 0, 0);
 	onGeometryChange(scene->getGeometry());
 }
 
 WindowVX::WindowVX(int x, int y, int width, int height)
-    : ViewportElement(0, 100)
+    : ViewportElement(0, DEF_Z)
 {
 	p = new WindowVXPrivate(x, y, width, height);
 	onGeometryChange(scene->getGeometry());
