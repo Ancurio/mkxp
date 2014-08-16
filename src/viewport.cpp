@@ -218,8 +218,8 @@ void Viewport::onGeometryChange(const Geometry &geo)
 }
 
 
-ViewportElement::ViewportElement(Viewport *viewport, int z)
-    : SceneElement(viewport ? *viewport : *shState->screen(), z),
+ViewportElement::ViewportElement(Viewport *viewport, int z, bool isSprite)
+    : SceneElement(viewport ? *viewport : *shState->screen(), z, isSprite),
       m_viewport(viewport)
 {}
 

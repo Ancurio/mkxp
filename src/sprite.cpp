@@ -302,7 +302,7 @@ struct SpritePrivate
 };
 
 Sprite::Sprite(Viewport *viewport)
-	: ViewportElement(viewport)
+	: ViewportElement(viewport, 0, true)
 {
 	p = new SpritePrivate;
 	onGeometryChange(scene->getGeometry());
@@ -393,6 +393,8 @@ void Sprite::setY(int value)
 
 #ifdef RGSS2
 	p->wave.dirty = true;
+
+	setSpriteY(value);
 #endif
 }
 

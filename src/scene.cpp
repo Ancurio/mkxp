@@ -105,12 +105,14 @@ void Scene::composite()
 }
 
 
-SceneElement::SceneElement(Scene &scene, int z)
+SceneElement::SceneElement(Scene &scene, int z, bool isSprite)
     : link(this),
       creationStamp(shState->genTimeStamp()),
       z(z),
       visible(true),
-      scene(&scene)
+      scene(&scene),
+      spriteY(0),
+      isSprite(isSprite)
 {
 	scene.insert(*this);
 }
@@ -120,7 +122,9 @@ SceneElement::SceneElement(Scene &scene, int z, unsigned int cStamp)
       creationStamp(cStamp),
       z(z),
       visible(true),
-      scene(&scene)
+      scene(&scene),
+      spriteY(0),
+      isSprite(false)
 {
 	scene.insert(*this);
 }
@@ -167,16 +171,34 @@ void SceneElement::setVisible(bool value)
 
 bool SceneElement::operator<(const SceneElement &o) const
 {
+	/* Element draw order is decided by their Z value.
+	 * If two Z values are equal, the later created object
+	 * has priority */
+
 	if (z <= o.z)
 	{
 		if (z == o.z)
-			if (creationStamp > o.creationStamp)
-				return false;
+		{
+#ifdef RGSS2
+			/* RGSS2: If two sprites' Z values collide,
+			 * their Y coordinates decide draw order. Only
+			 * on equal Y does the creation time take effect */
+			if (isSprite && o.isSprite && spriteY != o.spriteY)
+				return (spriteY < o.spriteY);
+#endif
+			return (creationStamp <= o.creationStamp);
+		}
 
 		return true;
 	}
 
 	return false;
+}
+
+void SceneElement::setSpriteY(int value)
+{
+	spriteY = value;
+	scene->reinsert(*this);
 }
 
 void SceneElement::unlink()

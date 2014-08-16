@@ -71,7 +71,7 @@ protected:
 class SceneElement
 {
 public:
-	SceneElement(Scene &scene, int z = 0);
+	SceneElement(Scene &scene, int z = 0, bool isSprite = false);
 	SceneElement(Scene &scene, int z, unsigned int cStamp);
 	virtual ~SceneElement();
 
@@ -108,6 +108,7 @@ protected:
 	 * elements with lower priority are drawn earlier */
 	bool operator<(const SceneElement &o) const;
 
+	void setSpriteY(int value);
 	void unlink();
 
 	IntruListLink<SceneElement> link;
@@ -119,6 +120,10 @@ protected:
 	friend class Scene;
 	friend class Viewport;
 	friend struct TilemapPrivate;
+
+private:
+	int spriteY;
+	const bool isSprite;
 };
 
 #endif // SCENE_H
