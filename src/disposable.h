@@ -30,6 +30,11 @@
 class Disposable
 {
 public:
+	~Disposable()
+	{
+		wasDisposed();
+	}
+
 	sigc::signal<void> wasDisposed;
 };
 

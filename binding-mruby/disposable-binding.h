@@ -72,9 +72,6 @@ MRB_METHOD(disposableDispose)
 	if (!c)
 		return mrb_nil_value();
 
-	/* Inform core */
-	c->wasDisposed();
-
 	disposableDisposeChildren(mrb, self);
 
 	delete c;

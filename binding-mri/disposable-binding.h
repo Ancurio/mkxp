@@ -70,9 +70,6 @@ RB_METHOD(disposableDispose)
 	if (!c)
 		return Qnil;
 
-	/* Inform core */
-	c->wasDisposed();
-
 	disposableDisposeChildren(self);
 
 	delete c;
