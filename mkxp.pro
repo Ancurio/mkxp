@@ -45,13 +45,34 @@ contains(BINDING, NULL) {
 	CONFIG += BINDING_NULL
 }
 
-RGSS2 {
-	DEFINES += RGSS2
+# TODO: Use RGSS_VER macro instead of RGSSN in C++ sources
+isEmpty(RGSS_VER) {
+	RGSS_VER = 1
 }
 
-# Requires RGSS2
-RGSS3 {
-	DEFINES += RGSS3
+contains(RGSS_VER, 1) {
+	_HAVE_RGSS_VER = YES
+	DEFINES += "RGSS_VER=1"
+}
+
+contains(RGSS_VER, 2) {
+	contains(_HAVE_RGSS_VER, YES) {
+		error("Only one RGSS version may be selected")
+	}
+	_HAVE_RGSS_VER = YES
+
+	CONFIG += RGSS2
+	DEFINES += RGSS2 "RGSS_VER=2"
+}
+
+contains(RGSS_VER, 3) {
+	contains(_HAVE_RGSS_VER, YES) {
+		error("Only one RGSS version may be selected")
+	}
+	_HAVE_RGSS_VER = YES
+
+	CONFIG += RGSS2 RGSS3
+	DEFINES += RGSS2 RGSS3 "RGSS_VER=3"
 }
 
 unix {
