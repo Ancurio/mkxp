@@ -256,6 +256,7 @@ struct WindowVXPrivate
 			(sigc::mem_fun(this, &WindowVXPrivate::prepare));
 
 		refreshCursorRectCon();
+		updateBaseQuad();
 	}
 
 	~WindowVXPrivate()
@@ -311,8 +312,6 @@ struct WindowVXPrivate
 		base.tex = shState->texPool().request(geo.w, geo.h);
 		TEX::bind(base.tex.tex);
 		TEX::setSmooth(true);
-
-		updateBaseQuad();
 	}
 
 	void rebuildBaseVert()
@@ -470,7 +469,7 @@ struct WindowVXPrivate
 
 	void updateBaseQuad()
 	{
-		const FloatRect tex(0, 0, base.tex.width, base.tex.height);
+		const FloatRect tex(0, 0, geo.w, geo.h);
 		const FloatRect pos(0, (geo.h / 2.0) * (1 - openness.norm),
 		                    geo.w, geo.h * openness.norm);
 
@@ -833,6 +832,7 @@ void WindowVX::move(int x, int y, int width, int height)
 		p->base.texSizeDirty = true;
 
 	p->geo = IntRect(x, y, size.x, size.y);
+	p->updateBaseQuad();
 }
 
 bool WindowVX::isOpen() const
@@ -939,6 +939,7 @@ void WindowVX::setWidth(int value)
 	p->base.texSizeDirty = true;
 	p->clipRectDirty = true;
 	p->ctrlVertDirty = true;
+	p->updateBaseQuad();
 }
 
 void WindowVX::setHeight(int value)
@@ -952,6 +953,7 @@ void WindowVX::setHeight(int value)
 	p->base.texSizeDirty = true;
 	p->clipRectDirty = true;
 	p->ctrlVertDirty = true;
+	p->updateBaseQuad();
 }
 
 void WindowVX::setOX(int value)
