@@ -239,7 +239,8 @@ struct WindowVXPrivate
 	      openness(255),
 	      tone(&tmp.tone),
 	      pauseAlphaIdx(0),
-	      pauseQuadIdx(0)
+	      pauseQuadIdx(0),
+	      cursorAlphaIdx(0)
 	{
 		/* 4 scroll arrows + pause */
 		ctrlVert.resize(4 + 1);
