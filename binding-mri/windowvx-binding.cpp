@@ -24,7 +24,11 @@
 #include "viewportelement-binding.h"
 #include "binding-util.h"
 
+#include "bitmap.h"
+
 DEF_TYPE(WindowVX);
+
+void bitmapInitProps(Bitmap *b, VALUE self);
 
 RB_METHOD(windowVXInitialize)
 {
@@ -41,9 +45,15 @@ RB_METHOD(windowVXInitialize)
 	w->setCursorRect(new Rect);
 	w->setTone(new Tone);
 	wrapNilProperty(self, "windowskin");
-	wrapNilProperty(self, "contents");
 	wrapProperty(self, w->getTone(), "tone", ToneType);
 	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
+
+#ifdef RGSS2
+	Bitmap *contents = new Bitmap(1, 1);
+	VALUE contentsObj = wrapObject(contents, BitmapType);
+	bitmapInitProps(contents, contentsObj);
+	rb_iv_set(self, "contents", contentsObj);
+#endif
 
 	return self;
 }
