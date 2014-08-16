@@ -34,14 +34,15 @@
 #include <assert.h>
 #include <vector>
 
-/* Regular autotile patterns */
+/* Regular (A) autotile patterns */
 extern const StaticRect autotileVXRectsA[];
 extern const int autotileVXRectsAN;
 
-/* Wall autotile patterns */
+/* Wall (B) autotile patterns */
 extern const StaticRect autotileVXRectsB[];
 extern const int autotileVXRectsBN;
 
+/* Waterfall (C) autotile patterns */
 static const StaticRect autotileVXRectsC[] =
 {
 	{ 32.5, 0.5, 15, 31 },
