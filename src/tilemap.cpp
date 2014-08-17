@@ -66,7 +66,7 @@ static const int tsLaneW = tilesetW / 2;
 static const int viewpW = 21;
 static const int viewpH = 16;
 
-static const size_t scanrowsMax = viewpH + 5;
+static const size_t zlayersMax = viewpH + 5;
 
 /* Vocabulary:
  *
@@ -91,7 +91,7 @@ static const size_t scanrowsMax = viewpH + 5;
  *                  Tile atlas
  *   *-----------------------*--------------*
  *   |     |     |     |     |       ¦       |
- *   | AT1 | AT1 | AT1 | AT1 |       ¦       |
+ *   | AT0 | AT0 | AT0 | AT0 |       ¦       |
  *   | FR0 | FR1 | FR2 | FR3 |   |   ¦   |   |
  *   |-----|-----|-----|-----|   v   ¦   v   |
  *   |     |     |     |     |       ¦       |
@@ -101,7 +101,7 @@ static const size_t scanrowsMax = viewpH + 5;
  *   |[...]|     |     |     |       ¦       |
  *   |-----|-----|-----|-----|       ¦       |
  *   |     |     |     |     |   |   ¦   |   |
- *   | AT7 |     |     |     |   v   ¦   v   |
+ *   | AT6 |     |     |     |   v   ¦   v   |
  *   |     |     |     |     |       ¦       |
  *   |-----|-----|-----|-----|       ¦       |
  *   |      Empty space      |       |       |
@@ -128,21 +128,21 @@ static const size_t scanrowsMax = viewpH + 5;
  * Elements:
  *   Even though the Tilemap carries similarities with other
  *   SceneElements, it is not one itself but composed of multiple
- *   such elements (GroundLayer and ScanRows).
+ *   such elements (GroundLayer and ZLayers).
  *
  * GroundLayer:
  *   Every tile with priority=0 is drawn at z=0, so we
  *   collect all such tiles in one big quad array and
  *   draw them at once.
  *
- * ScanRow:
+ * ZLayer:
  *   Each tile in row n with priority=m is drawn at the same
  *   z as every tile in row n-1 with priority=m-1. This means
  *   we can collect all tiles sharing the same z in one quad
  *   array and draw them at once. I call these collections
- *   'scanrows', as they're drawn from the top part of the map
+ *   'zlayers'. They're drawn from the top part of the map
  *   (lowest z) to the bottom part (highest z).
- *   Objects that would end up on the same scanrow are eg. trees.
+ *   Objects that would end up on the same zlayer are eg. trees.
  *
  * Map viewport:
  *   This rectangle describes the subregion of the map that is
@@ -206,22 +206,22 @@ struct GroundLayer : public ViewportElement
 	void onGeometryChange(const Scene::Geometry &geo);
 };
 
-struct ScanRow : public ViewportElement
+struct ZLayer : public ViewportElement
 {
 	size_t index;
 	GLintptr vboOffset;
 	GLsizei vboCount;
 	TilemapPrivate *p;
 
-	/* If this row is part of a batch and not
+	/* If this layer is part of a batch and not
 	 * the head, it is 'muted' via this flag */
 	bool batchedFlag;
 
-	/* If this row is a batch head, this variable
+	/* If this layer is a batch head, this variable
 	 * holds the element count of the entire batch */
 	GLsizei vboBatchCount;
 
-	ScanRow(TilemapPrivate *p, Viewport *viewport);
+	ZLayer(TilemapPrivate *p, Viewport *viewport);
 
 	void setIndex(int value);
 
@@ -231,7 +231,7 @@ struct ScanRow : public ViewportElement
 	static int calculateZ(TilemapPrivate *p, int index);
 
 	void initUpdateZ();
-	void finiUpdateZ(ScanRow *prev);
+	void finiUpdateZ(ZLayer *prev);
 };
 
 struct TilemapPrivate
@@ -276,12 +276,12 @@ struct TilemapPrivate
 	/* Ground layer vertices */
 	SVVector groundVert;
 
-	/* Scanrow vertices */
-	SVVector scanrowVert[scanrowsMax];
+	/* ZLayer vertices */
+	SVVector zlayerVert[zlayersMax];
 
-	/* Base quad indices of each scanrow
+	/* Base quad indices of each zlayer
 	 * in the shared buffer */
-	size_t scanrowBases[scanrowsMax+1];
+	size_t zlayerBases[zlayersMax+1];
 
 	/* Shared buffers for all tiles */
 	struct
@@ -308,19 +308,19 @@ struct TilemapPrivate
 	struct
 	{
 		GroundLayer *ground;
-		ScanRow* scanrows[scanrowsMax];
-		/* Used rows out of 'scanrows' (rest is hidden) */
-		size_t activeRows;
+		ZLayer* zlayers[zlayersMax];
+		/* Used layers out of 'zlayers' (rest is hidden) */
+		size_t activeLayers;
 		Scene::Geometry sceneGeo;
 		Vec2i sceneOffset;
 
-		/* The ground and scanrow elements' creationStamp
+		/* The ground and zlayer elements' creationStamp
 		 * should be aquired once (at Tilemap construction)
 		 * instead of regenerated everytime the elements are
-		 * (re)created. Scanrows can share one stamp because
+		 * (re)created. ZLayers can share one stamp because
 		 * their z always differs anway */
 		unsigned int groundStamp;
-		unsigned int scanrowStamp;
+		unsigned int zlayerStamp;
 	} elem;
 
 	/* Affected by: autotiles, tileset */
@@ -399,12 +399,12 @@ struct TilemapPrivate
 		flash.alphaIdx = 0;
 
 		elem.groundStamp = shState->genTimeStamp();
-		elem.scanrowStamp = shState->genTimeStamp();
+		elem.zlayerStamp = shState->genTimeStamp();
 
 		elem.ground = new GroundLayer(this, viewport);
 
-		for (size_t i = 0; i < scanrowsMax; ++i)
-			elem.scanrows[i] = new ScanRow(this, viewport);
+		for (size_t i = 0; i < zlayersMax; ++i)
+			elem.zlayers[i] = new ZLayer(this, viewport);
 
 		prepareCon = shState->prepareDraw.connect
 		        (sigc::mem_fun(this, &TilemapPrivate::prepare));
@@ -414,8 +414,8 @@ struct TilemapPrivate
 	{
 		/* Destroy elements */
 		delete elem.ground;
-		for (size_t i = 0; i < scanrowsMax; ++i)
-			delete elem.scanrows[i];
+		for (size_t i = 0; i < zlayersMax; ++i)
+			delete elem.zlayers[i];
 
 		shState->releaseAtlasTex(atlas.gl);
 
@@ -716,8 +716,8 @@ struct TilemapPrivate
 		}
 		else
 		{
-			int scanInd = y + prio;
-			targetArray = &scanrowVert[scanInd];
+			int layerInd = y + prio;
+			targetArray = &zlayerVert[layerInd];
 		}
 
 		/* Check for autotile */
@@ -746,8 +746,8 @@ struct TilemapPrivate
 	{
 		groundVert.clear();
 
-		for (size_t i = 0; i < scanrowsMax; ++i)
-			scanrowVert[i].clear();
+		for (size_t i = 0; i < zlayersMax; ++i)
+			zlayerVert[i].clear();
 	}
 
 	void buildQuadArray()
@@ -765,9 +765,9 @@ struct TilemapPrivate
 		return quadCount * sizeof(SVertex) * 4;
 	}
 
-	size_t scanrowSize(size_t index)
+	size_t zlayerSize(size_t index)
 	{
-		return scanrowBases[index+1] - scanrowBases[index];
+		return zlayerBases[index+1] - zlayerBases[index];
 	}
 
 	void uploadBuffers()
@@ -776,26 +776,26 @@ struct TilemapPrivate
 		size_t groundQuadCount = groundVert.size() / 4;
 		size_t quadCount = groundQuadCount;
 
-		for (size_t i = 0; i < scanrowsMax; ++i)
+		for (size_t i = 0; i < zlayersMax; ++i)
 		{
-			scanrowBases[i] = quadCount;
-			quadCount += scanrowVert[i].size() / 4;
+			zlayerBases[i] = quadCount;
+			quadCount += zlayerVert[i].size() / 4;
 		}
 
-		scanrowBases[scanrowsMax] = quadCount;
+		zlayerBases[zlayersMax] = quadCount;
 
 		VBO::bind(tiles.vbo);
 		VBO::allocEmpty(quadDataSize(quadCount));
 
 		VBO::uploadSubData(0, quadDataSize(groundQuadCount), &groundVert[0]);
 
-		for (size_t i = 0; i < scanrowsMax; ++i)
+		for (size_t i = 0; i < zlayersMax; ++i)
 		{
-			if (scanrowVert[i].empty())
+			if (zlayerVert[i].empty())
 				continue;
 
-			VBO::uploadSubData(quadDataSize(scanrowBases[i]),
-			                   quadDataSize(scanrowSize(i)), &scanrowVert[i][0]);
+			VBO::uploadSubData(quadDataSize(zlayerBases[i]),
+			                   quadDataSize(zlayerSize(i)), &zlayerVert[i][0]);
 		}
 
 		VBO::unbind();
@@ -883,37 +883,37 @@ struct TilemapPrivate
 		shState->ensureQuadIBO(flash.quadCount);
 	}
 
-	void updateActiveElements(std::vector<int> &scanrowInd)
+	void updateActiveElements(std::vector<int> &zlayerInd)
 	{
 		elem.ground->updateVboCount();
 
-		for (size_t i = 0; i < scanrowsMax; ++i)
+		for (size_t i = 0; i < zlayersMax; ++i)
 		{
-			if (i < scanrowInd.size())
+			if (i < zlayerInd.size())
 			{
-				int index = scanrowInd[i];
-				elem.scanrows[i]->setVisible(visible);
-				elem.scanrows[i]->setIndex(index);
+				int index = zlayerInd[i];
+				elem.zlayers[i]->setVisible(visible);
+				elem.zlayers[i]->setIndex(index);
 			}
 			else
 			{
-				/* Hide unused rows */
-				elem.scanrows[i]->setVisible(false);
+				/* Hide unused layers */
+				elem.zlayers[i]->setVisible(false);
 			}
 		}
 	}
 
 	void updateSceneElements()
 	{
-		/* Only allocate elements for non-emtpy scanrows */
-		std::vector<int> scanrowInd;
+		/* Only allocate elements for non-emtpy zlayers */
+		std::vector<int> zlayerInd;
 
-		for (size_t i = 0; i < scanrowsMax; ++i)
-			if (scanrowVert[i].size() > 0)
-				scanrowInd.push_back(i);
+		for (size_t i = 0; i < zlayersMax; ++i)
+			if (zlayerVert[i].size() > 0)
+				zlayerInd.push_back(i);
 
-		updateActiveElements(scanrowInd);
-		elem.activeRows = scanrowInd.size();
+		updateActiveElements(zlayerInd);
+		elem.activeLayers = zlayerInd.size();
 		zOrderDirty = false;
 	}
 
@@ -921,63 +921,63 @@ struct TilemapPrivate
 	{
 		elem.ground->setVisible(false);
 
-		for (size_t i = 0; i < scanrowsMax; ++i)
-			elem.scanrows[i]->setVisible(false);
+		for (size_t i = 0; i < zlayersMax; ++i)
+			elem.zlayers[i]->setVisible(false);
 	}
 
 	void updateZOrder()
 	{
-		if (elem.activeRows == 0)
+		if (elem.activeLayers == 0)
 			return;
 
-		for (size_t i = 0; i < elem.activeRows; ++i)
-			elem.scanrows[i]->initUpdateZ();
+		for (size_t i = 0; i < elem.activeLayers; ++i)
+			elem.zlayers[i]->initUpdateZ();
 
-		ScanRow *prev = elem.scanrows[0];
+		ZLayer *prev = elem.zlayers[0];
 		prev->finiUpdateZ(0);
 
-		for (size_t i = 1; i < elem.activeRows; ++i)
+		for (size_t i = 1; i < elem.activeLayers; ++i)
 		{
-			ScanRow *row = elem.scanrows[i];
-			row->finiUpdateZ(prev);
-			prev = row;
+			ZLayer *layer = elem.zlayers[i];
+			layer->finiUpdateZ(prev);
+			prev = layer;
 		}
 	}
 
-	/* When there are two or more scanrows with no other
+	/* When there are two or more zlayers with no other
 	 * elements between them in the scene list, we can
-	 * render them in a batch (as the scanrow data itself
+	 * render them in a batch (as the zlayer data itself
 	 * is ordered sequentially in VRAM). Every frame, we
-	 * scan the scene list for such sequential rows and
-	 * batch them up for drawing. The first row of the batch
+	 * scan the scene list for such sequential layers and
+	 * batch them up for drawing. The first layer of the batch
 	 * (the "batch head") executes the draw call, all others
 	 * are muted via the 'batchedFlag'. For simplicity,
 	 * single sized batches are possible. */
-	void prepareScanrowBatches()
+	void prepareZLayerBatches()
 	{
-		ScanRow *const *scanrows = elem.scanrows;
+		ZLayer *const *zlayers = elem.zlayers;
 
-		for (size_t i = 0; i < elem.activeRows; ++i)
+		for (size_t i = 0; i < elem.activeLayers; ++i)
 		{
-			ScanRow *batchHead = scanrows[i];
+			ZLayer *batchHead = zlayers[i];
 			batchHead->batchedFlag = false;
 
 			GLsizei vboBatchCount = batchHead->vboCount;
 			IntruListLink<SceneElement> *iter = &batchHead->link;
 
-			for (i = i+1; i < elem.activeRows; ++i)
+			for (i = i+1; i < elem.activeLayers; ++i)
 			{
 				iter = iter->next;
-				ScanRow *row = scanrows[i];
+				ZLayer *layer = zlayers[i];
 
 				/* Check if the next SceneElement is also
-				 * the next scanrow in our list. If not,
+				 * the next zlayer in our list. If not,
 				 * the current batch is complete */
-				if (iter != &row->link)
+				if (iter != &layer->link)
 					break;
 
-				vboBatchCount += row->vboCount;
-				row->batchedFlag = true;
+				vboBatchCount += layer->vboCount;
+				layer->batchedFlag = true;
 			}
 
 			batchHead->vboBatchCount = vboBatchCount;
@@ -1070,7 +1070,7 @@ struct TilemapPrivate
 			zOrderDirty = false;
 		}
 
-		prepareScanrowBatches();
+		prepareZLayerBatches();
 
 		tilemapReady = true;
 	}
@@ -1086,7 +1086,7 @@ GroundLayer::GroundLayer(TilemapPrivate *p, Viewport *viewport)
 
 void GroundLayer::updateVboCount()
 {
-	vboCount = p->scanrowBases[0] * 6;
+	vboCount = p->zlayerBases[0] * 6;
 }
 
 void GroundLayer::draw()
@@ -1138,8 +1138,8 @@ void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
 	p->updatePosition();
 }
 
-ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport)
-    : ViewportElement(viewport, 0, p->elem.scanrowStamp),
+ZLayer::ZLayer(TilemapPrivate *p, Viewport *viewport)
+    : ViewportElement(viewport, 0, p->elem.zlayerStamp),
       index(0),
       vboOffset(0),
       vboCount(0),
@@ -1147,18 +1147,18 @@ ScanRow::ScanRow(TilemapPrivate *p, Viewport *viewport)
       vboBatchCount(0)
 {}
 
-void ScanRow::setIndex(int value)
+void ZLayer::setIndex(int value)
 {
 	index = value;
 
 	z = calculateZ(p, index);
 	scene->reinsert(*this);
 
-	vboOffset = p->scanrowBases[index] * sizeof(index_t) * 6;
-	vboCount = p->scanrowSize(index) * 6;
+	vboOffset = p->zlayerBases[index] * sizeof(index_t) * 6;
+	vboCount = p->zlayerSize(index) * 6;
 }
 
-void ScanRow::draw()
+void ZLayer::draw()
 {
 	if (batchedFlag)
 		return;
@@ -1176,22 +1176,22 @@ void ScanRow::draw()
 	GLMeta::vaoUnbind(p->tiles.vao);
 }
 
-void ScanRow::drawInt()
+void ZLayer::drawInt()
 {
 	gl.DrawElements(GL_TRIANGLES, vboBatchCount, _GL_INDEX_TYPE, (GLvoid*) vboOffset);
 }
 
-int ScanRow::calculateZ(TilemapPrivate *p, int index)
+int ZLayer::calculateZ(TilemapPrivate *p, int index)
 {
 	return 32 * (index + p->viewpPos.y + 1) - p->offset.y;
 }
 
-void ScanRow::initUpdateZ()
+void ZLayer::initUpdateZ()
 {
 	unlink();
 }
 
-void ScanRow::finiUpdateZ(ScanRow *prev)
+void ZLayer::finiUpdateZ(ZLayer *prev)
 {
 	z = calculateZ(p, index);
 
@@ -1290,8 +1290,8 @@ void Tilemap::setViewport(Viewport *value)
 
 	p->elem.ground->setViewport(value);
 
-	for (size_t i = 0; i < scanrowsMax; ++i)
-		p->elem.scanrows[i]->setViewport(value);
+	for (size_t i = 0; i < zlayersMax; ++i)
+		p->elem.zlayers[i]->setViewport(value);
 }
 
 #endif
@@ -1374,8 +1374,8 @@ void Tilemap::setVisible(bool value)
 		return;
 
 	p->elem.ground->setVisible(value);
-	for (size_t i = 0; i < p->elem.activeRows; ++i)
-		p->elem.scanrows[i]->setVisible(value);
+	for (size_t i = 0; i < p->elem.activeLayers; ++i)
+		p->elem.zlayers[i]->setVisible(value);
 }
 
 void Tilemap::setOX(int value)

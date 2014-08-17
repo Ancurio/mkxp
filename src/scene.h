@@ -65,7 +65,7 @@ protected:
 	friend class SceneElement;
 	friend class Window;
 	friend class WindowVX;
-	friend struct ScanRow;
+	friend struct ZLayer;
 };
 
 class SceneElement
