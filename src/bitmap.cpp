@@ -798,9 +798,27 @@ void Bitmap::drawText(int x, int y,
 	drawText(IntRect(x, y, width, height), str, align);
 }
 
+static std::string fixupString(const char *str)
+{
+	std::string s(str);
+
+	/* RMXP actually draws LF as a "missing gylph" box,
+	 * but since we might have accidentally converted CRs
+	 * to LFs when editing scripts on a Unix OS, treat them
+	 * as white space too */
+	for (size_t i = 0; i < s.size(); ++i)
+		if (s[i] == '\r' || s[i] == '\n')
+			s[i] = ' ';
+
+	return s;
+}
+
 void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 {
 	GUARD_MEGA;
+
+	std::string fixed = fixupString(str);
+	str = fixed.c_str();
 
 	if (*str == '\0')
 		return;
@@ -1028,6 +1046,9 @@ IntRect Bitmap::textSize(const char *str)
 	GUARD_MEGA;
 
 	TTF_Font *font = p->font->getSdlFont();
+
+	std::string fixed = fixupString(str);
+	str = fixed.c_str();
 
 	int w, h;
 	TTF_SizeUTF8(font, str, &w, &h);
