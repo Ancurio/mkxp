@@ -51,6 +51,27 @@
                             "Operation not supported for mega surfaces"); \
 	}
 
+/* Normalize (= ensure width and
+ * height are positive) */
+static IntRect normalizedRect(const IntRect &rect)
+{
+	IntRect norm = rect;
+
+	if (norm.w < 0)
+	{
+		norm.w = -norm.w;
+		norm.x -= norm.w;
+	}
+
+	if (norm.h < 0)
+	{
+		norm.h = -norm.h;
+		norm.y -= norm.h;
+	}
+
+	return norm;
+}
+
 struct BitmapPrivate
 {
 	Bitmap *self;
@@ -108,23 +129,8 @@ struct BitmapPrivate
 	}
 
 	void addTaintedArea(const IntRect &rect)
-	{
-		/* Normalize (= ensure width and
-		 * height are positive) */
-		IntRect norm = rect;
-
-		if (norm.w < 0)
-		{
-			norm.x += norm.w;
-			norm.w = -norm.w;
-		}
-
-		if (norm.h < 0)
-		{
-			norm.y += norm.h;
-			norm.h = -norm.h;
-		}
-
+	{	
+		IntRect norm = normalizedRect(rect);
 		pixman_region_union_rect
 		        (&tainted, &tainted, norm.x, norm.y, norm.w, norm.h);
 	}
@@ -191,7 +197,7 @@ struct BitmapPrivate
 		bindFBO();
 
 		glState.scissorTest.pushSet(true);
-		glState.scissorBox.pushSet(rect);
+		glState.scissorBox.pushSet(normalizedRect(rect));
 		glState.clearColor.pushSet(color);
 
 		FBO::clear();
