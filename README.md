@@ -1,8 +1,26 @@
 # mkxp
 
-mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file.
+mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file. Experimental support for RPG Maker VX / VX Ace games is present.
 
 It is licensed under the GNU General Public License v2+.
+
+## RGSS2 / RGSS3
+Support for these RGSS versions is experimental. A lot is implemented (to the point that you can play the VX Ace sample game, with caveats), but not everything is in place yet. Note that there is no cmake support for building these at the moment.
+
+Missing RGSS2 functionality:
+
+* Text shadow
+
+Missing RGSS3 functionality:
+
+* Text outline
+* Movie playback
+* F12 reset
+* Audio fade-in
+
+Some other things might be implemented, but simply not bound yet.
+
+RGSS2 might work a little bit less than 3 because I don't have a VX license and as such am unable to experiment thoroughly on it.
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. Currently there are three bindings:
@@ -54,6 +72,8 @@ The exception is boost, which is weird in that it still hasn't managed to pull o
 Midi support is enabled by default; you can disable it via `qmake CONFIG+=DISABLE_MIDI`, in which case the fluidsynth dependency is dropped. When building fluidsynth yourself, you can disable almost all options (audio drivers etc.) as they are not used. Note that upstream fluidsynth has support for sharing soundfont data between synthesizers (mkxp uses multiple synths), so if your memory usage is very high, you might want to try compiling fluidsynth from git master.
 
 By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `DEFINES+=WORKDIR_CURRENT` to qmake's arguments.
+
+**RGSS Version**: Add `RGSS_VER=<version>`, with `<version>` being either 1, 2 or 3, to the parameter list to select the desired version. The default is 1.
 
 **MRI-Binding**: pkg-config will look for `ruby-2.1.pc`, but you can modify mkxp.pro to use 2.0 instead. This is the default binding, so no arguments to qmake needed (`BINDING=MRI` to be explicit).
 
