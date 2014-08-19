@@ -37,6 +37,10 @@
 #include <algorithm>
 #include <vector>
 
+#ifdef __APPLE__
+#include <iconv.h>
+#endif
+
 static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)
 {
 	return static_cast<PHYSFS_File*>(ops->hidden.unknown.data1);
@@ -364,10 +368,48 @@ void FileSystem::addPath(const char *path)
 	PHYSFS_mount(path, 0, 1);
 }
 
+#ifdef __APPLE__
+struct CacheEnumCBData
+{
+	FileSystemPrivate *p;
+	iconv_t nfd2nfc;
+
+	CacheEnumCBData(FileSystemPrivate *fsp)
+	{
+		p = fsp;
+		nfd2nfc = iconv_open("utf-8", "utf-8-mac");
+	}
+
+	~CacheEnumCBData()
+	{
+		iconv_close(nfd2nfc);
+	}
+
+	void nfcFromNfd(char *dst, const char *src, size_t dstSize)
+	{
+		size_t srcSize = strlen(src);
+		/* Reserve room for null terminator */
+		--dstSize;
+		/* iconv takes a char** instead of a const char**, even though
+		 * the string data isn't written to. */
+		iconv(nfd2nfc,
+			  const_cast<char**>(&src), &srcSize,
+			  &dst, &dstSize);
+		/* Null-terminate */
+		*dst = 0;
+	}
+};
+#endif
+
 static void cacheEnumCB(void *d, const char *origdir,
                         const char *fname)
 {
+#ifdef __APPLE__
+	CacheEnumCBData *data = static_cast<CacheEnumCBData*>(d);
+	FileSystemPrivate *p = data->p;
+#else
 	FileSystemPrivate *p = static_cast<FileSystemPrivate*>(d);
+#endif
 
 	char buf[512];
 
@@ -376,7 +418,14 @@ static void cacheEnumCB(void *d, const char *origdir,
 	else
 		snprintf(buf, sizeof(buf), "%s/%s", origdir, fname);
 
-	char *ptr = buf;
+#ifdef __APPLE__
+	char bufNfc[sizeof(buf)];
+	data->nfcFromNfd(bufNfc, buf, sizeof(bufNfc));
+#else
+	char *const bufNfc = buf;
+#endif
+
+	char *ptr = bufNfc;
 
 	/* Trim leading slash */
 	if (*ptr == '/')
@@ -384,19 +433,24 @@ static void cacheEnumCB(void *d, const char *origdir,
 
 	std::string mixedCase(ptr);
 
-	for (char *p = buf; *p; ++p)
+	for (char *p = bufNfc; *p; ++p)
 		*p = tolower(*p);
 
 	std::string lowerCase(ptr);
 
 	p->pathCache.insert(lowerCase, mixedCase);
 
-	PHYSFS_enumerateFilesCallback(mixedCase.c_str(), cacheEnumCB, p);
+	PHYSFS_enumerateFilesCallback(mixedCase.c_str(), cacheEnumCB, d);
 }
 
 void FileSystem::createPathCache()
 {
+#ifdef __APPLE__
+	CacheEnumCBData data(p);
+	PHYSFS_enumerateFilesCallback("", cacheEnumCB, &data);
+#else
 	PHYSFS_enumerateFilesCallback("", cacheEnumCB, p);
+#endif
 
 	p->havePathCache = true;
 }
