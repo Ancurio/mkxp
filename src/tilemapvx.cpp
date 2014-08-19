@@ -405,7 +405,6 @@ Bitmap *TilemapVX::BitmapArray::get(int i) const
 
 TilemapVX::TilemapVX(Viewport *viewport)
 {
-	(void) viewport;
 	p = new TilemapVXPrivate(viewport);
 	p->bitmapsProxy.p = p;
 }
