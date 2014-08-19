@@ -37,6 +37,10 @@
 #include <algorithm>
 #include <vector>
 
+#ifdef __APPLE__
+#include <iconv.h>
+#endif
+
 static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)
 {
 	return static_cast<PHYSFS_File*>(ops->hidden.unknown.data1);
@@ -136,6 +140,35 @@ struct FileSystemPrivate
 	bool havePathCache;
 
 	std::vector<std::string> extensions[FileSystem::Undefined+1];
+
+#ifdef __APPLE__
+	/* Convert NFD UTF-8 filenames to NFC UTF-8 filenames */
+	iconv_t nfd2nfc;
+
+	FileSystemPrivate()
+	{
+		nfd2nfc = iconv_open("utf-8", "utf-8-mac");
+	}
+
+	~FileSystemPrivate()
+	{
+		iconv_close(nfd2nfc);
+	}
+
+	void nfcFromNfd(char *dst, const char *src, size_t dstSize)
+	{
+		size_t srcSize = strlen(src);
+		/* Reserve room for null terminator */
+		--dstSize;
+		/* iconv takes a char** instead of a const char**, even though
+		 * the string data isn't written to. */
+		iconv(nfd2nfc,
+			  const_cast<char**>(&src), &srcSize,
+			  &dst, &dstSize);
+		/* Null-terminate */
+		*dst = 0;
+	}
+#endif
 
 	/* Attempt to locate an extension string in a filename.
 	 * Either a pointer into the input string pointing at the
@@ -376,7 +409,14 @@ static void cacheEnumCB(void *d, const char *origdir,
 	else
 		snprintf(buf, sizeof(buf), "%s/%s", origdir, fname);
 
-	char *ptr = buf;
+#ifdef __APPLE__
+	char bufNfc[sizeof(buf)];
+	p->nfcFromNfd(bufNfc, buf, sizeof(bufNfc));
+#else
+	char *const bufNfc = buf;
+#endif
+
+	char *ptr = bufNfc;
 
 	/* Trim leading slash */
 	if (*ptr == '/')
@@ -384,7 +424,7 @@ static void cacheEnumCB(void *d, const char *origdir,
 
 	std::string mixedCase(ptr);
 
-	for (char *p = buf; *p; ++p)
+	for (char *p = bufNfc; *p; ++p)
 		*p = tolower(*p);
 
 	std::string lowerCase(ptr);

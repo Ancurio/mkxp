@@ -59,7 +59,7 @@ typedef void (APIENTRYP PFNGLACTIVETEXTUREPROC) (GLenum texture);
 typedef void (APIENTRY * _GLDEBUGPROC) (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *userParam);
 typedef void (APIENTRYP _PFNGLDEBUGMESSAGECALLBACKPROC) (_GLDEBUGPROC callback, const void *userParam);
 
-#ifdef GLES2_HEADER
+#if defined GLES2_HEADER || defined __APPLE__
 #define GL_NUM_EXTENSIONS 0x821D
 
 /* Buffer object */

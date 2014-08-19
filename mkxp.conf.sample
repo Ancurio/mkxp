@@ -163,3 +163,6 @@
 # Activate "reverb" effect for midi playback
 #
 # midi.reverb=false
+
+# Specify character encoding of Game.ini
+# iniCodec=UTF-8

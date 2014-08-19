@@ -66,6 +66,8 @@ struct Config
 	} midi;
 
 	bool useScriptNames;
+    
+    std::string iniCodec;
 
 	std::string customScript;
 	std::vector<std::string> rtps;
