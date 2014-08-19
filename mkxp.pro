@@ -8,10 +8,14 @@ INCLUDEPATH += . src
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
-CONFIG += MIDI
+CONFIG += MIDI INI_CODEC
 
 DISABLE_MIDI {
 	CONFIG -= MIDI
+}
+
+DISABLE_INI_CODEC {
+	CONFIG -= INI_CODEC
 }
 
 isEmpty(BINDING) {
@@ -77,8 +81,9 @@ contains(RGSS_VER, 3) {
 
 unix {
 	CONFIG += link_pkgconfig
-	PKGCONFIG += sigc++-2.0 pixman-1 zlib physfs \
-	             sdl2 SDL2_image SDL2_ttf SDL_sound openal
+	PKGCONFIG += sigc++-2.0 pixman-1 physfs \
+		     sdl2 SDL2_image SDL2_ttf SDL_sound
+	LIBS += -lz
 
 	RGSS2 {
 		PKGCONFIG += vorbisfile
@@ -110,6 +115,17 @@ unix {
 	}
 
 	LIBS += -lboost_program_options$$BOOST_LIB_SUFFIX
+}
+
+unix:!macx {
+	PKGCONFIG += openal
+}
+
+macx {
+	CONFIG -= app_bundle
+	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.6
+	INCLUDEPATH += /System/Library/Frameworks/OpenAL.framework/Headers
+	LIBS += -liconv -framework OpenAL
 }
 
 # Input
@@ -246,6 +262,13 @@ MIDI {
 	src/midisource.cpp
 
 	DEFINES += MIDI
+}
+
+INI_CODEC {
+	DEFINES += INI_CODEC
+	win32 {
+		LIBS += -liconv
+	}
 }
 
 defineReplace(xxdOutput) {

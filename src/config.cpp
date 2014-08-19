@@ -27,6 +27,10 @@
 
 #include <fstream>
 
+#ifdef INI_CODEC
+#include <iconv.h>
+#endif
+
 #include "debugwriter.h"
 #include "util.h"
 
@@ -78,7 +82,8 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(midi.reverb, bool) \
 	PO_DESC(customScript, std::string) \
 	PO_DESC(pathCache, bool) \
-	PO_DESC(useScriptNames, bool)
+	PO_DESC(useScriptNames, bool) \
+	PO_DESC(iniCodec, std::string)
 
 // Not gonna take your shit boost
 #define GUARD_ALL( exp ) try { exp } catch(...) {}
@@ -141,6 +146,44 @@ static std::string baseName(const std::string &path)
 	return path.substr(pos + 1);
 }
 
+static std::string iconvString(iconv_t cd, const std::string &srcStr)
+{
+	size_t srcSize = srcStr.length();
+	/* iconv unnecessarily requires a char** instead of const char** */
+	char *src = const_cast<char*>(srcStr.c_str());
+
+	size_t dstBuffSize = srcSize;
+	char *dstBuff = static_cast<char*>(malloc(dstBuffSize));
+
+	/* These will be changed by iconv */
+	size_t dstSize = dstBuffSize;
+	char *dst = dstBuff;
+
+	/* Continue to convert/realloc until we've converted everything */
+	while (iconv(cd, &src, &srcSize, &dst, &dstSize) == (size_t) -1)
+	{
+		if (errno == E2BIG)
+		{
+			/* Grow buffer and retry */
+			size_t total = dstBuffSize - dstSize;
+			dstSize += dstBuffSize;
+			dstBuffSize *= 2;
+			dstBuff = static_cast<char*>(realloc(dstBuff, dstBuffSize));
+			dst = dstBuff + total;
+		}
+		else
+		{
+			free(dstBuff);
+			return std::string();
+		}
+	}
+
+	/* Create std::string and return */
+	std::string dstStr(dstBuff, dstBuff + (dstBuffSize - dstSize));
+	free(dstBuff);
+	return dstStr;
+}
+
 void Config::readGameINI()
 {
 	if (!customScript.empty())
@@ -170,6 +213,16 @@ void Config::readGameINI()
 	GUARD_ALL( game.scripts = vm["Game.Scripts"].as<std::string>(); );
 
 	strReplace(game.scripts, '\\', '/');
+
+#ifdef INI_CODEC
+	if (!iniCodec.empty())
+	{
+		iconv_t cd = iconv_open("utf-8", iniCodec.c_str());
+		game.title = iconvString(cd, game.title);
+		game.scripts = iconvString(cd, game.scripts);
+		iconv_close(cd);
+	}
+#endif
 
 	if (game.title.empty())
 		game.title = baseName(gameFolder);
