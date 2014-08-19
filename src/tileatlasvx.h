@@ -52,10 +52,8 @@ namespace TileAtlasVX
 {
 struct Reader
 {
-	virtual void onQuads1(const FloatRect &t, const FloatRect &p,
-	                      bool overPlayer) = 0;
-	virtual void onQuads2(const FloatRect t[2], const FloatRect p[2]) = 0;
-	virtual void onQuads4(const FloatRect t[4], const FloatRect p[4]) = 0;
+	virtual void onQuads(const FloatRect *t, const FloatRect *p,
+	                     size_t n, bool overPlayer) = 0;
 };
 
 void build(TEXFBO &tf, Bitmap *bitmaps[BM_COUNT]);

@@ -343,35 +343,13 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	}
 
 	/* TileAtlasVX::Reader */
-	void onQuads1(const FloatRect &t1, const FloatRect &p1,
-	              bool overPlayer)
+	void onQuads(const FloatRect *t, const FloatRect *p,
+	              size_t n, bool overPlayer)
 	{
-		SVertex *vert;
+		SVertex *vert = allocVert(overPlayer ? aboveVert : groundVert, n*4);
 
-		if (overPlayer)
-			vert = allocVert(aboveVert, 4);
-		else
-			vert = allocVert(groundVert, 4);
-
-		Quad::setTexPosRect(vert, t1, p1);
-	}
-
-	void onQuads2(const FloatRect t[2], const FloatRect p[2])
-	{
-		SVertex *vert = allocVert(groundVert, 8);
-
-		Quad::setTexPosRect(&vert[0], t[0], p[0]);
-		Quad::setTexPosRect(&vert[4], t[1], p[1]);
-	}
-
-	void onQuads4(const FloatRect t[4], const FloatRect p[4])
-	{
-		SVertex *vert = allocVert(groundVert, 16);
-
-		Quad::setTexPosRect(&vert[ 0], t[0], p[0]);
-		Quad::setTexPosRect(&vert[ 4], t[1], p[1]);
-		Quad::setTexPosRect(&vert[ 8], t[2], p[2]);
-		Quad::setTexPosRect(&vert[12], t[3], p[3]);
+		for (size_t i = 0; i < n; ++i)
+			Quad::setTexPosRect(&vert[i*4], t[i], p[i]);
 	}
 };
 

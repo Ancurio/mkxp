@@ -38,6 +38,11 @@
 extern const StaticRect autotileVXRectsA[];
 extern const int autotileVXRectsAN;
 
+/* Table (A2) autotile patterns */
+extern const StaticRect autotileVXRectsA2[];
+extern const int autotileVXRectsA2N;
+extern const float autotileVXRectsA2Sizes[];
+
 /* Wall (B) autotile patterns */
 extern const StaticRect autotileVXRectsB[];
 extern const int autotileVXRectsBN;
@@ -314,6 +319,7 @@ void build(TEXFBO &tf, Bitmap *bitmaps[BM_COUNT])
 }
 
 #define OVER_PLAYER_FLAG (1 << 4)
+#define TABLE_FLAG       (1 << 7)
 
 static void
 atSelectSubPos(FloatRect &pos, int i)
@@ -331,6 +337,13 @@ atSelectSubPos(FloatRect &pos, int i)
 	case 3:
 		pos.x += 16;
 		pos.y += 16;
+		return;
+	case 4:
+		pos.y += 24;
+		return;
+	case 5:
+		pos.x += 16;
+		pos.y += 24;
 		return;
 	default:
 		assert(!"Unreachable");
@@ -358,7 +371,7 @@ readAutotile(Reader &reader, int patternID,
 		atSelectSubPos(pos[i], i);
 	}
 
-	reader.onQuads4(tex, pos);
+	reader.onQuads(tex, pos, 4, false);
 }
 
 static void
@@ -367,6 +380,29 @@ readAutotileA(Reader &reader, int patternID,
 {
 	readAutotile(reader, patternID, orig, x, y,
 	             autotileVXRectsA, autotileVXRectsAN);
+}
+
+static void
+readAutotileA2(Reader &reader, int patternID,
+               const Vec2i &orig, int x, int y)
+{
+	FloatRect tex[6], pos[6];
+
+	for (int i = 0; i < 6; ++i)
+	{
+		assert((patternID*6 + i) < autotileVXRectsA2N);
+
+		tex[i] = FloatRect(autotileVXRectsA2[patternID*6 + i]);
+		tex[i].x += orig.x*32;
+		tex[i].y += orig.y*32;
+
+		float size = autotileVXRectsA2Sizes[patternID*6 + i];
+
+		pos[i] = FloatRect(x*32, y*32, size, size);
+		atSelectSubPos(pos[i], i);
+	}
+
+	reader.onQuads(tex, pos, 6, false);
 }
 
 static void
@@ -399,7 +435,7 @@ readAutotileC(Reader &reader, int patternID,
 		pos[i].x += i*16;
 	}
 
-	reader.onQuads2(tex, pos);
+	reader.onQuads(tex, pos, 2, false);
 }
 
 static void
@@ -449,7 +485,7 @@ onTileA1(Reader &reader, int16_t tileID,
 
 static void
 onTileA2(Reader &reader, int16_t tileID,
-         int x, int y)
+         int x, int y, bool isTable)
 {
 	Vec2i orig = blitsA2[0].dst;
 	tileID -= 0x0B00;
@@ -460,7 +496,15 @@ onTileA2(Reader &reader, int16_t tileID,
 	orig.x += (autotileID % 8) * 2;
 	orig.y += (autotileID / 8) * 3;
 
-	readAutotileA(reader, patternID, orig, x, y);
+	/* The table autotile handling isn't 100% accurate;
+	 * for that, we'd need to prerender layer 1 into a separate
+	 * temp texture with blending turned off and render that
+	 * to the screen. But in 99% of cases it shouldn't matter */
+
+	if (isTable)
+		readAutotileA2(reader, patternID, orig, x, y);
+	else
+		readAutotileA(reader, patternID, orig, x, y);
 }
 
 static void
@@ -514,7 +558,7 @@ onTileA5(Reader &reader, int16_t tileID,
 	FloatRect tex((orig.x+ox)*32+0.5, (orig.y+oy)*32+0.5, 31, 31);
 	FloatRect pos(x*32, y*32, 32, 32);
 
-	reader.onQuads1(tex, pos, overPlayer);
+	reader.onQuads(&tex, &pos, 1, overPlayer);
 }
 
 static void
@@ -531,13 +575,22 @@ onTileBCDE(Reader &reader, int16_t tileID,
 	FloatRect tex((CDEArea.x+ox)*32+0.5, (CDEArea.y+oy)*32+0.5, 31, 31);
 	FloatRect pos(x*32, y*32, 32, 32);
 
-	reader.onQuads1(tex, pos, overPlayer);
+	reader.onQuads(&tex, &pos, 1, overPlayer);
 }
 
 static void
 onTile(Reader &reader, int16_t tileID,
-       int x, int y, bool overPlayer)
+       int x, int y, const Table *flags)
 {
+	int16_t flag = tableGetSafe(flags, tileID);
+	bool overPlayer = flag & OVER_PLAYER_FLAG;
+
+#if RGSS_VER == 3
+	bool isTable = flag & TABLE_FLAG;
+#elif RGSS_VER == 2
+	bool isTable = (tileID - 0x0B00) % (8 * 0x30) >= (7 * 0x30);
+#endif
+
 	/* B ~ E */
 	if (tileID < 0x0400)
 	{
@@ -561,7 +614,7 @@ onTile(Reader &reader, int16_t tileID,
 	/* A2 */
 	if (tileID >= 0x0B00 && tileID < 0x1100)
 	{
-		onTileA2(reader, tileID, x, y);
+		onTileA2(reader, tileID, x, y, isTable);
 		return;
 	}
 
@@ -588,12 +641,11 @@ readLayer(Reader &reader, const Table &data,
 		for (int x = 0; x < w; ++x)
 		{
 			int16_t tileID = tableGetWrapped(data, x+ox, y+oy, z);
-			bool overPlayer = tableGetSafe(flags, tileID) & OVER_PLAYER_FLAG;
 
 			if (tileID <= 0)
 				continue;
 
-			onTile(reader, tileID, x, y, overPlayer);
+			onTile(reader, tileID, x, y, flags);
 		}
 }
 
@@ -609,7 +661,7 @@ onShadowTile(Reader &reader, int8_t value,
 	FloatRect tex((shadowArea.x)*32+0.5, (shadowArea.y+oy)*32+0.5, 31, 31);
 	FloatRect pos(x*32, y*32, 32, 32);
 
-	reader.onQuads1(tex, pos, false);
+	reader.onQuads(&tex, &pos, 1, false);
 }
 
 static void
