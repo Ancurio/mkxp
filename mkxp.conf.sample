@@ -163,3 +163,12 @@
 # Activate "reverb" effect for midi playback
 #
 # midi.reverb=false
+
+
+# Give a hint on which language the game title as
+# specified in the Game.ini is, useful if the encoding
+# is being falsely detected. Relevant only if mkxp was
+# built with automatic encoding conversion (INI_ENCODING).
+# (default: none)
+#
+# titleLanguage=japanese

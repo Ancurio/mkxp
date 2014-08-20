@@ -26,9 +26,97 @@
 #include <boost/program_options/variables_map.hpp>
 
 #include <fstream>
+#include <stdint.h>
 
 #include "debugwriter.h"
 #include "util.h"
+
+#ifdef INI_ENCODING
+extern "C" {
+#include <libguess.h>
+}
+#include <iconv.h>
+#include <errno.h>
+#endif
+
+/* http://stackoverflow.com/a/1031773 */
+static bool validUtf8(const char *string)
+{
+	const uint8_t *bytes = (uint8_t*) string;
+
+	while(*bytes)
+	{
+		if( (/* ASCII
+			  * use bytes[0] <= 0x7F to allow ASCII control characters */
+				bytes[0] == 0x09 ||
+				bytes[0] == 0x0A ||
+				bytes[0] == 0x0D ||
+				(0x20 <= bytes[0] && bytes[0] <= 0x7E)
+			)
+		) {
+			bytes += 1;
+			continue;
+		}
+
+		if( (/* non-overlong 2-byte */
+				(0xC2 <= bytes[0] && bytes[0] <= 0xDF) &&
+				(0x80 <= bytes[1] && bytes[1] <= 0xBF)
+			)
+		) {
+			bytes += 2;
+			continue;
+		}
+
+		if( (/* excluding overlongs */
+				bytes[0] == 0xE0 &&
+				(0xA0 <= bytes[1] && bytes[1] <= 0xBF) &&
+				(0x80 <= bytes[2] && bytes[2] <= 0xBF)
+			) ||
+			(/* straight 3-byte */
+				((0xE1 <= bytes[0] && bytes[0] <= 0xEC) ||
+					bytes[0] == 0xEE ||
+					bytes[0] == 0xEF) &&
+				(0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
+				(0x80 <= bytes[2] && bytes[2] <= 0xBF)
+			) ||
+			(/* excluding surrogates */
+				bytes[0] == 0xED &&
+				(0x80 <= bytes[1] && bytes[1] <= 0x9F) &&
+				(0x80 <= bytes[2] && bytes[2] <= 0xBF)
+			)
+		) {
+			bytes += 3;
+			continue;
+		}
+
+		if( (/* planes 1-3 */
+				bytes[0] == 0xF0 &&
+				(0x90 <= bytes[1] && bytes[1] <= 0xBF) &&
+				(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+				(0x80 <= bytes[3] && bytes[3] <= 0xBF)
+			) ||
+			(/* planes 4-15 */
+				(0xF1 <= bytes[0] && bytes[0] <= 0xF3) &&
+				(0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
+				(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+				(0x80 <= bytes[3] && bytes[3] <= 0xBF)
+			) ||
+			(/* plane 16 */
+				bytes[0] == 0xF4 &&
+				(0x80 <= bytes[1] && bytes[1] <= 0x8F) &&
+				(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+				(0x80 <= bytes[3] && bytes[3] <= 0xBF)
+			)
+		) {
+			bytes += 4;
+			continue;
+		}
+
+		return false;
+	}
+
+	return true;
+}
 
 typedef std::vector<std::string> StringVec;
 namespace po = boost::program_options;
@@ -73,6 +161,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(anyAltToggleFS, bool) \
 	PO_DESC(allowSymlinks, bool) \
 	PO_DESC(iconPath, std::string) \
+	PO_DESC(titleLanguage, std::string) \
 	PO_DESC(midi.soundFont, std::string) \
 	PO_DESC(midi.chorus, bool) \
 	PO_DESC(midi.reverb, bool) \
@@ -170,6 +259,66 @@ void Config::readGameINI()
 	GUARD_ALL( game.scripts = vm["Game.Scripts"].as<std::string>(); );
 
 	strReplace(game.scripts, '\\', '/');
+
+#ifdef INI_ENCODING
+	/* Can add more later */
+	const char *languages[] =
+	{
+		titleLanguage.c_str(),
+		GUESS_REGION_JP, /* Japanese */
+		GUESS_REGION_KR, /* Korean */
+		GUESS_REGION_CN, /* Chinese */
+		0
+	};
+
+	bool convSuccess = true;
+
+	/* Verify that the game title is UTF-8, and if not,
+	 * try to determine the encoding and convert to UTF-8 */
+	if (!validUtf8(game.title.c_str()))
+	{
+		const char *encoding = 0;
+		convSuccess = false;
+
+		for (size_t i = 0; languages[i]; ++i)
+		{
+			encoding = libguess_determine_encoding(game.title.c_str(),
+			                                       game.title.size(),
+			                                       languages[i]);
+			if (encoding)
+				break;
+		}
+
+		if (encoding)
+		{
+			iconv_t cd = iconv_open("UTF-8", encoding);
+
+			size_t inLen = game.title.size();
+			size_t outLen = inLen * 4;
+			std::string buf(outLen, '\0');
+			char *inPtr = const_cast<char*>(game.title.c_str());
+			char *outPtr = const_cast<char*>(buf.c_str());
+
+			errno = 0;
+			size_t result = iconv(cd, &inPtr, &inLen, &outPtr, &outLen);
+
+			iconv_close(cd);
+
+			if (result != (size_t) -1 && errno == 0)
+			{
+				buf.resize(buf.size()-outLen);
+				game.title = buf;
+				convSuccess = true;
+			}
+		}
+	}
+
+	if (!convSuccess)
+		game.title.clear();
+#else
+	if (!validUtf8(game.title.c_str()))
+		game.title.clear();
+#endif
 
 	if (game.title.empty())
 		game.title = baseName(gameFolder);

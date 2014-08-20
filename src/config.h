@@ -57,6 +57,7 @@ struct Config
 	bool pathCache;
 
 	std::string iconPath;
+	std::string titleLanguage;
 
 	struct
 	{

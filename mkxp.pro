@@ -88,6 +88,10 @@ unix {
 		PKGCONFIG += fluidsynth
 	}
 
+	INI_ENCODING {
+		PKGCONFIG += libguess
+	}
+
 	# Deal with boost paths...
 	isEmpty(BOOST_I) {
 		BOOST_I = $$(BOOST_I)
@@ -246,6 +250,10 @@ MIDI {
 	src/midisource.cpp
 
 	DEFINES += MIDI
+}
+
+INI_ENCODING {
+	DEFINES += INI_ENCODING
 }
 
 defineReplace(xxdOutput) {
