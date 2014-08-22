@@ -809,8 +809,6 @@ void Graphics::resizeScreen(int width, int height)
 	if (p->scRes == size)
 		return;
 
-	shState->eThread().requestWindowResize(width, height);
-
 	p->scRes = size;
 
 	p->screen.setResolution(width, height);
@@ -826,7 +824,7 @@ void Graphics::resizeScreen(int width, int height)
 	TEX::bind(p->transBuffer.tex);
 	TEX::allocEmpty(width, height);
 
-	p->updateScreenResoRatio(p->threadData);
+	shState->eThread().requestWindowResize(width, height);
 }
 
 DEF_ATTR_RD_SIMPLE(Graphics, Brightness, int, p->brightness)

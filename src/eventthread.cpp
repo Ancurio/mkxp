@@ -119,7 +119,7 @@ void EventThread::process(RGSSThreadData &rtData)
 		case SDL_WINDOWEVENT :
 			switch (event.window.event)
 			{
-			case SDL_WINDOWEVENT_RESIZED :
+			case SDL_WINDOWEVENT_SIZE_CHANGED :
 				windowSizeMsg.notifyChange(event.window.data1,
 				                           event.window.data2);
 				break;
