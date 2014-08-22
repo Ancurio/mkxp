@@ -727,9 +727,12 @@ void Graphics::fadeout(int duration)
 {
 	FBO::unbind();
 
+	float curr = p->brightness;
+	float diff = 255.0 - curr;
+
 	for (int i = duration-1; i > -1; --i)
 	{
-		setBrightness((255.0 / duration) * i);
+		setBrightness(diff + (curr / duration) * i);
 
 		if (p->frozen)
 		{
@@ -754,9 +757,12 @@ void Graphics::fadein(int duration)
 {
 	FBO::unbind();
 
-	for (int i = 0; i < duration; ++i)
+	float curr = p->brightness;
+	float diff = 255.0 - curr;
+
+	for (int i = 1; i <= duration; ++i)
 	{
-		setBrightness((255.0 / duration) * i);
+		setBrightness(curr + (diff / duration) * i);
 
 		if (p->frozen)
 		{
