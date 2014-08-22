@@ -203,7 +203,25 @@ DEF_KLASS_PROP(Font, bool, DefaultShadow, "b", rb_bool_new)
 #ifdef RGSS3
 DEF_KLASS_PROP(Font, bool, DefaultOutline, "b", rb_bool_new)
 
-// TODO: impl Get/SetDefaultOutColor
+RB_METHOD(FontGetDefaultOutColor)
+{
+	RB_UNUSED_PARAM;
+	return rb_iv_get(self, "default_out_color");
+}
+
+
+RB_METHOD(FontSetDefaultOutColor)
+{
+	VALUE colorObj;
+	rb_get_args(argc, argv, "o", &colorObj RB_ARG_END);
+
+	Color *c = getPrivateDataCheck<Color>(colorObj, ColorType);
+
+	Font::setDefaultOutColor(c);
+	rb_iv_set(self, "default_out_color", colorObj);
+
+	return colorObj;
+}
 #endif
 
 RB_METHOD(FontGetDefaultName)
@@ -274,6 +292,7 @@ fontBindingInit()
 
 #ifdef RGSS3
 	INIT_KLASS_PROP_BIND(Font, DefaultOutline, "default_outline");
+	INIT_KLASS_PROP_BIND(Font, DefaultOutColor, "default_out_color");
 #endif
 
 	rb_define_class_method(klass, "exist?", fontDoesExist);
