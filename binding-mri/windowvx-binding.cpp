@@ -32,13 +32,19 @@ void bitmapInitProps(Bitmap *b, VALUE self);
 
 RB_METHOD(windowVXInitialize)
 {
+	WindowVX *w;
+
+#if RGSS_VER == 3
 	int x, y, width, height;
 	x = y = width = height = 0;
 
 	if (argc == 4)
 		rb_get_args(argc, argv, "iiii", &x, &y, &width, &height RB_ARG_END);
 
-	WindowVX *w = new WindowVX(x, y, width, height);
+	w = new WindowVX(x, y, width, height);
+#else
+	w = viewportElementInitialize<WindowVX>(argc, argv, self);
+#endif
 
 	setPrivateData(self, w);
 
