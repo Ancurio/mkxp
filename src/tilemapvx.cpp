@@ -38,14 +38,6 @@
 #include <sigc++/connection.h>
 #include <sigc++/bind.h>
 
-/* Map viewport size */
-// FIXME: This will be wrong if resolution is changed
-static const int viewpW = 18;
-static const int viewpH = 14;
-
-/* How many tiles are max visible on screen at once */
-static const Vec2i screenTiles(18, 14);
-
 // FIXME: Implement flash
 
 struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
@@ -60,7 +52,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 	Vec2i dispPos;
 	/* Map viewport position */
-	Vec2i viewpPos;
+	IntRect mapViewp;
 	Vec2i sceneOffset;
 	Scene::Geometry sceneGeo;
 
@@ -136,6 +128,8 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		vao.ibo = shState->globalIBO().ibo;
 		GLMeta::vaoInit(vao);
 
+		onGeometryChange(scene->getGeometry());
+
 		prepareCon = shState->prepareDraw.connect
 			(sigc::mem_fun(this, &TilemapVXPrivate::prepare));
 	}
@@ -185,8 +179,8 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 	void updatePosition()
 	{
-		dispPos.x = -(offset.x - viewpPos.x * 32) + sceneOffset.x;
-		dispPos.y = -(offset.y - viewpPos.y * 32) + sceneOffset.y;
+		dispPos.x = -(offset.x - mapViewp.x * 32) + sceneOffset.x;
+		dispPos.y = -(offset.y - mapViewp.y * 32) + sceneOffset.y;
 	}
 
 	void updateMapViewport()
@@ -207,15 +201,15 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 		bool dirty = false;
 
-		if (tileOX < viewpPos.x || tileOX + screenTiles.x > viewpPos.x + viewpW)
+		if (tileOX < mapViewp.x || tileOX > mapViewp.x)
 		{
-			viewpPos.x = tileOX;
+			mapViewp.x = tileOX;
 			dirty = true;
 		}
 
-		if (tileOY < viewpPos.y || tileOY + screenTiles.y > viewpPos.y + viewpH)
+		if (tileOY < mapViewp.y || tileOY > mapViewp.y)
 		{
-			viewpPos.y = tileOY;
+			mapViewp.y = tileOY;
 			dirty = true;
 		}
 
@@ -241,7 +235,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		aboveVert.clear();
 
 		TileAtlasVX::readTiles(*this, *mapData, flags,
-		                       viewpPos.x, viewpPos.y, viewpW, viewpH);
+		                       mapViewp.x, mapViewp.y, mapViewp.w, mapViewp.h);
 
 		groundQuads = groundVert.size() / 4;
 		aboveQuads = aboveVert.size() / 4;
@@ -335,10 +329,14 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 	void onGeometryChange(const Scene::Geometry &geo)
 	{
+		mapViewp.w = (geo.rect.w / 32) + !!(geo.rect.w % 32) + 1;
+		mapViewp.h = (geo.rect.h / 32) + !!(geo.rect.h % 32) + 1;
+
 		sceneOffset.x = geo.rect.x - geo.xOrigin;
 		sceneOffset.y = geo.rect.y - geo.yOrigin;
 		sceneGeo = geo;
 
+		buffersDirty = true;
 		mapViewportDirty = true;
 	}
 
