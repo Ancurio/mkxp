@@ -188,7 +188,8 @@ SoundBuffer *SoundEmitter::allocateBuffer(const std::string &filename)
 		if (!sampleHandle)
 		{
 			SDL_RWclose(&dataSource);
-			throw Exception(Exception::SDLError, "SDL_sound: %s", Sound_GetError());
+			throw Exception(Exception::SDLError, "%s.%s: %s",
+			                filename.c_str(), extension, Sound_GetError());
 		}
 
 		uint32_t decBytes = Sound_DecodeAll(sampleHandle);
