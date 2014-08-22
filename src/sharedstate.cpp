@@ -118,8 +118,6 @@ struct SharedStatePrivate
 				throw Exception(Exception::MKXPError,
 			                    "Unable to switch into gameFolder '%s'",
 			                    config.gameFolder.c_str());
-
-			fileSystem.addPath(".");
 		}
 
 		// FIXME find out correct archive filename
@@ -132,6 +130,8 @@ struct SharedStatePrivate
 			fileSystem.addPath(archPath.c_str());
 			fclose(tmp);
 		}
+
+		fileSystem.addPath(".");
 
 		for (size_t i = 0; i < config.rtps.size(); ++i)
 			fileSystem.addPath(config.rtps[i].c_str());
