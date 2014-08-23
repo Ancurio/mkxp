@@ -600,6 +600,9 @@ void Graphics::transition(int duration,
                           const char *filename,
                           int vague)
 {
+	if (!p->frozen)
+		return;
+
 	vague = clamp(vague, 0, 512);
 	Bitmap *transMap = filename ? new Bitmap(filename) : 0;
 
