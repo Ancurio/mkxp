@@ -209,7 +209,6 @@ RB_METHOD(FontGetDefaultOutColor)
 	return rb_iv_get(self, "default_out_color");
 }
 
-
 RB_METHOD(FontSetDefaultOutColor)
 {
 	VALUE colorObj;
