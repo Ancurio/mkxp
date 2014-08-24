@@ -194,22 +194,31 @@ static elementsN(staticKbBindings);
 /* Rebindable */
 static const KbBindingData defaultKbBindings[] =
 {
-	{ SDL_SCANCODE_SPACE,  Input::C    },
-	{ SDL_SCANCODE_RETURN, Input::C    },
-	{ SDL_SCANCODE_ESCAPE, Input::B    },
-	{ SDL_SCANCODE_KP_0,   Input::B    },
-	{ SDL_SCANCODE_LSHIFT, Input::A    },
-	{ SDL_SCANCODE_RSHIFT, Input::A    },
-	{ SDL_SCANCODE_Z,      Input::A    },
-	{ SDL_SCANCODE_X,      Input::B    },
-	{ SDL_SCANCODE_C,      Input::C    },
-	{ SDL_SCANCODE_V,      Input::None },
-	{ SDL_SCANCODE_B,      Input::None },
-	{ SDL_SCANCODE_A,      Input::X    },
-	{ SDL_SCANCODE_S,      Input::Y    },
-	{ SDL_SCANCODE_D,      Input::Z    },
-	{ SDL_SCANCODE_Q,      Input::L    },
-	{ SDL_SCANCODE_W,      Input::R    }
+	{ SDL_SCANCODE_SPACE,    Input::C    },
+	{ SDL_SCANCODE_RETURN,   Input::C    },
+    { SDL_SCANCODE_KP_ENTER, Input::C    }, /* Treated as alias of RETURN */
+	{ SDL_SCANCODE_ESCAPE,   Input::B    },
+	{ SDL_SCANCODE_KP_0,     Input::B    },
+	{ SDL_SCANCODE_LSHIFT,   Input::A    },
+	{ SDL_SCANCODE_RSHIFT,   Input::A    },
+	{ SDL_SCANCODE_X,        Input::B    },
+	{ SDL_SCANCODE_B,        Input::None },
+	{ SDL_SCANCODE_D,        Input::Z    },
+	{ SDL_SCANCODE_Q,        Input::L    },
+	{ SDL_SCANCODE_W,        Input::R    },
+#if RGSS_VER == 1
+	{ SDL_SCANCODE_Z,        Input::A    },
+	{ SDL_SCANCODE_C,        Input::C    },
+	{ SDL_SCANCODE_V,        Input::Z    },
+	{ SDL_SCANCODE_A,        Input::Y    },
+	{ SDL_SCANCODE_S,        Input::X    }
+#else
+	{ SDL_SCANCODE_Z,        Input::C    },
+	{ SDL_SCANCODE_C,        Input::None },
+	{ SDL_SCANCODE_V,        Input::None },
+	{ SDL_SCANCODE_A,        Input::X    },
+	{ SDL_SCANCODE_S,        Input::Y    }
+#endif
 };
 
 static elementsN(defaultKbBindings);
