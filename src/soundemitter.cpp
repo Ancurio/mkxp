@@ -128,6 +128,13 @@ void SoundEmitter::play(const std::string &filename,
 		if (AL::Source::getState(alSrcs[srcPrio[i]]) != AL_PLAYING)
 			break;
 
+	/* If we didn't find any, try to find the lowest priority source
+	 * with the same buffer to overtake */
+	if (i == SE_SOURCES)
+		for (size_t j = 0; j < SE_SOURCES; ++j)
+			if (atchBufs[srcPrio[j]] == buffer)
+				i = j;
+
 	/* If we didn't find any, overtake the one with lowest priority */
 	if (i == SE_SOURCES)
 		i = 0;
