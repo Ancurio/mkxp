@@ -177,6 +177,7 @@ void Config::read(int argc, char *argv[])
 	po::options_description podesc;
 	podesc.add_options()
 	        PO_DESC_ALL
+	        ("preloadScript", po::value<StringVec>()->composing())
 	        ("RTP", po::value<StringVec>()->composing())
 	        ("fontSub", po::value<StringVec>()->composing())
 	        ("rubyLoadpath", po::value<StringVec>()->composing())
@@ -209,6 +210,8 @@ void Config::read(int argc, char *argv[])
 #define PO_DESC(key, type) GUARD_ALL( key = vm[#key].as< type >(); )
 
 	PO_DESC_ALL;
+
+	GUARD_ALL( preloadScripts = vm["preloadScript"].as<StringVec>(); );
 
 	GUARD_ALL( rtps = vm["RTP"].as<StringVec>(); );
 

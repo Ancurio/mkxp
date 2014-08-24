@@ -100,6 +100,14 @@
 # customScript=/path/to/script.rb
 
 
+# Define raw scripts to be executed before the
+# actual Scripts.rxdata execution starts
+# (default: none)
+#
+# preloadScript=my_win32_wrapper.rb
+# preloadScript=ruby18_fixes.rb
+
+
 # Index all accesible assets via their lower case path
 # (emulates windows case insensitivity)
 # (default: enabled)

@@ -295,7 +295,8 @@ VALUE kernelLoadDataInt(const char *filename);
 
 static void runRMXPScripts()
 {
-	const std::string &scriptPack = shState->rtData().config.game.scripts;
+	const Config &conf = shState->rtData().config;
+	const std::string &scriptPack = conf.game.scripts;
 
 	if (scriptPack.empty())
 	{
@@ -371,6 +372,10 @@ static void runRMXPScripts()
 		rb_ary_store(script, 3, rb_str_new_cstr(decodeBuffer.c_str()));
 	}
 
+	/* Execute preloaded scripts */
+	for (size_t i = 0; i < conf.preloadScripts.size(); ++i)
+		runCustomScript(conf.preloadScripts[i]);
+
 	for (long i = 0; i < scriptCount; ++i)
 	{
 		VALUE script = rb_ary_entry(scriptArray, i);
@@ -379,7 +384,7 @@ static void runRMXPScripts()
 		                             RSTRING_LEN(scriptDecoded));
 
 		VALUE fname;
-		if (shState->rtData().config.useScriptNames)
+		if (conf.useScriptNames)
 		{
 			fname = rb_ary_entry(script, 1);
 		}

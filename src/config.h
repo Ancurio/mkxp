@@ -69,6 +69,7 @@ struct Config
 	bool useScriptNames;
 
 	std::string customScript;
+	std::vector<std::string> preloadScripts;
 	std::vector<std::string> rtps;
 
 	std::vector<std::string> fontSubs;
