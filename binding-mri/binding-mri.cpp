@@ -126,7 +126,7 @@ static void mriBindingInit()
 	_rb_define_module_function(rb_mKernel, "caller", _kernelCaller);
 #endif
 
-	rb_define_global_const("MKXP", Qtrue);
+	rb_gv_set("MKXP", Qtrue);
 }
 
 static void
