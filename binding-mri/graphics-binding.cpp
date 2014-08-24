@@ -167,6 +167,18 @@ RB_METHOD(graphicsSnapToBitmap)
 	return obj;
 }
 
+RB_METHOD(graphicsResizeScreen)
+{
+	RB_UNUSED_PARAM;
+
+	int width, height;
+	rb_get_args(argc, argv, "ii", &width, &height RB_ARG_END);
+
+	shState->graphics().resizeScreen(width, height);
+
+	return Qnil;
+}
+
 DEF_GRA_PROP_I(Brightness)
 
 #endif
@@ -199,6 +211,7 @@ void graphicsBindingInit()
 	_rb_define_module_function(module, "fadeout", graphicsFadeout);
 	_rb_define_module_function(module, "fadein", graphicsFadein);
 	_rb_define_module_function(module, "snap_to_bitmap", graphicsSnapToBitmap);
+	_rb_define_module_function(module, "resize_screen", graphicsResizeScreen);
 
 	INIT_GRA_PROP_BIND( Brightness, "brightness" );
 #endif
