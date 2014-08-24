@@ -29,6 +29,7 @@
 enum RbException
 {
 	RGSS = 0,
+	Reset,
 	PHYSFS,
 	SDL,
 	MKXP,

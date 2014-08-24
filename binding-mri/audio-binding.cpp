@@ -97,6 +97,15 @@ DEF_FADE( me )
 
 DEF_PLAY_STOP( se )
 
+RB_METHOD(audioReset)
+{
+	RB_UNUSED_PARAM;
+
+	shState->audio().reset();
+
+	return Qnil;
+}
+
 
 #define BIND_PLAY_STOP(entity) \
 	_rb_define_module_function(module, #entity "_play", audio_##entity##Play); \
@@ -129,4 +138,6 @@ audioBindingInit()
 	}
 
 	BIND_PLAY_STOP( se )
+
+	_rb_define_module_function(module, "__reset__", audioReset);
 }

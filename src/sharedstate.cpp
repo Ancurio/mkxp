@@ -330,9 +330,18 @@ void SharedState::checkShutdown()
 	if (!p->rtData.rqTerm)
 		return;
 
-	p->rtData.rqTermAck = true;
+	p->rtData.rqTermAck.set();
 	p->texPool.disable();
 	scriptBinding->terminate();
+}
+
+void SharedState::checkReset()
+{
+	if (!p->rtData.rqReset)
+		return;
+
+	p->rtData.rqReset.clear();
+	scriptBinding->reset();
 }
 
 Font &SharedState::defaultFont() const

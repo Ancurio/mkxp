@@ -47,6 +47,7 @@ struct Config
 
 	std::string gameFolder;
 	bool anyAltToggleFS;
+	bool enableReset;
 	bool allowSymlinks;
 	bool pathCache;
 

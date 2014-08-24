@@ -105,6 +105,15 @@ public:
 		size--;
 	}
 
+	void clear()
+	{
+		remove(root);
+		root.prev = &root;
+		root.next = &root;
+
+		size = 0;
+	}
+
 	T *tail() const
 	{
 		IntruListLink<T> *node = root.prev;

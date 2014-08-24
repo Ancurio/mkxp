@@ -33,6 +33,8 @@
 #include "texpool.h"
 #include "bitmap.h"
 #include "etc-internal.h"
+#include "disposable.h"
+#include "intrulist.h"
 #include "binding.h"
 #include "debugwriter.h"
 
@@ -107,6 +109,19 @@ struct PingPong
 		std::swap(srcInd, dstInd);
 
 		bind();
+	}
+
+	void clearBuffers()
+	{
+		glState.clearColor.pushSet(Vec4(0, 0, 0, 1));
+
+		for (int i = 0; i < 2; ++i)
+		{
+			FBO::bind(rt[i].fbo);
+			FBO::clear();
+		}
+
+		glState.clearColor.pop();
 	}
 
 private:
@@ -388,6 +403,10 @@ struct GraphicsPrivate
 	Quad screenQuad;
 	TEXFBO transBuffer;
 
+	/* Global list of all live Disposables
+	 * (disposed on reset) */
+	IntruList<Disposable> dispList;
+
 	GraphicsPrivate(RGSSThreadData *rtData)
 	    : scRes(DEF_SCREEN_W, DEF_SCREEN_H),
 	      scSize(scRes),
@@ -472,9 +491,15 @@ struct GraphicsPrivate
 		}
 	}
 
+	void checkShutDownReset()
+	{
+		shState->checkShutdown();
+		shState->checkReset();
+	}
+
 	void shutdown()
 	{
-		threadData->rqTermAck = true;
+		threadData->rqTermAck.set();
 		shState->texPool().disable();
 
 		scriptBinding->terminate();
@@ -540,7 +565,7 @@ Graphics::~Graphics()
 
 void Graphics::update()
 {
-	shState->checkShutdown();
+	p->checkShutDownReset();
 
 	if (p->frozen)
 		return;
@@ -571,7 +596,7 @@ void Graphics::freeze()
 {
 	p->frozen = true;
 
-	shState->checkShutdown();
+	p->checkShutDownReset();
 	p->checkResize();
 
 	/* Capture scene into frozen buffer */
@@ -623,10 +648,23 @@ void Graphics::transition(int duration,
 
 	for (int i = 0; i < duration; ++i)
 	{
+		/* We need to clean up transMap properly before
+		 * a possible longjmp, so we manually test for
+		 * shutdown/reset here */
 		if (p->threadData->rqTerm)
 		{
+			glState.blend.pop();
 			delete transMap;
 			p->shutdown();
+			return;
+		}
+
+		if (p->threadData->rqReset)
+		{
+			glState.blend.pop();
+			delete transMap;
+			scriptBinding->reset();
+			return;
 		}
 
 		const float prog = i * (1.0 / duration);
@@ -694,8 +732,7 @@ void Graphics::wait(int duration)
 {
 	for (int i = 0; i < duration; ++i)
 	{
-		shState->checkShutdown();
-		p->checkResize();
+		p->checkShutDownReset();
 		p->redrawScreen();
 	}
 }
@@ -823,6 +860,29 @@ void Graphics::setBrightness(int value)
 	p->screen.setBrightness(value / 255.0);
 }
 
+void Graphics::reset()
+{
+	/* Dispose all live Disposables */
+	IntruListLink<Disposable> *iter;
+
+	for (iter = p->dispList.begin();
+	     iter != p->dispList.end();
+	     iter = iter->next)
+	{
+		iter->data->dispose();
+	}
+
+	p->dispList.clear();
+
+	/* Reset attributes (frame count not included) */
+	p->fpsLimiter.resetFrameAdjust();
+	p->frozen = false;
+	p->screen.getPP().clearBuffers();
+
+	setFrameRate(DEF_FRAMERATE);
+	setBrightness(255);
+}
+
 bool Graphics::getFullscreen() const
 {
 	return p->threadData->ethread->getFullscreen();
@@ -848,9 +908,9 @@ Scene *Graphics::getScreen() const
 	return &p->screen;
 }
 
-void Graphics::repaintWait(volatile bool *exitCond)
+void Graphics::repaintWait(const AtomicFlag &exitCond, bool checkReset)
 {
-	if (*exitCond)
+	if (exitCond)
 		return;
 
 	/* Repaint the screen with the last good frame we drew */
@@ -858,9 +918,12 @@ void Graphics::repaintWait(volatile bool *exitCond)
 	GLMeta::blitBeginScreen(p->winSize);
 	GLMeta::blitSource(lastFrame);
 
-	while (!*exitCond)
+	while (!exitCond)
 	{
 		shState->checkShutdown();
+
+		if (checkReset)
+			shState->checkReset();
 
 		FBO::clear();
 		p->metaBlitBufferFlippedScaled();
@@ -871,4 +934,14 @@ void Graphics::repaintWait(volatile bool *exitCond)
 	}
 
 	GLMeta::blitEnd();
+}
+
+void Graphics::addDisposable(Disposable *d)
+{
+	p->dispList.append(d->link);
+}
+
+void Graphics::remDisposable(Disposable *d)
+{
+	p->dispList.remove(d->link);
 }

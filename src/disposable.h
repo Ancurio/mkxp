@@ -22,7 +22,10 @@
 #ifndef DISPOSABLE_H
 #define DISPOSABLE_H
 
+#include "intrulist.h"
 #include "exception.h"
+#include "sharedstate.h"
+#include "graphics.h"
 
 #include <assert.h>
 #include <sigc++/signal.h>
@@ -32,12 +35,15 @@ class Disposable
 {
 public:
 	Disposable()
-	    : disposed(false)
-	{}
+	    : disposed(false),
+	      link(this)
+	{
+		shState->graphics().addDisposable(this);
+	}
 
 	virtual ~Disposable()
 	{
-		assert(disposed);
+		shState->graphics().remDisposable(this);
 	}
 
 	void dispose()
@@ -69,7 +75,10 @@ private:
 	virtual void releaseResources() = 0;
 	virtual const char *klassName() const = 0;
 
+	friend class Graphics;
+
 	bool disposed;
+	IntruListLink<Disposable> link;
 };
 
 template<class C>

@@ -67,6 +67,8 @@ public:
 	float bgmPos();
 	float bgsPos();
 
+	void reset();
+
 private:
 	Audio(const Config &conf);
 	~Audio();

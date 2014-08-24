@@ -46,7 +46,7 @@ rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
 {
 	rtData->rgssErrorMsg = msg;
 	rtData->ethread->requestTerminate();
-	rtData->rqTermAck = true;
+	rtData->rqTermAck.set();
 }
 
 static inline const char*
@@ -147,7 +147,7 @@ int rgssThreadFun(void *userdata)
 	/* Start script execution */
 	scriptBinding->execute();
 
-	threadData->rqTermAck = true;
+	threadData->rqTermAck.set();
 	threadData->ethread->requestTerminate();
 
 	SharedState::finiInstance();
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 	eventThread.process(rtData);
 
 	/* Request RGSS thread to stop */
-	rtData.rqTerm = true;
+	rtData.rqTerm.set();
 
 	/* Wait for RGSS thread response */
 	for (int i = 0; i < 1000; ++i)

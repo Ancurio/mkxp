@@ -35,6 +35,10 @@ struct ScriptBinding
 	 * function will perform a longjmp instead of returning,
 	 * so be careful about any variables with local storage */
 	void (*terminate) (void);
+
+	/* Instructs the binding to issue a game reset.
+	 * Same conditions as for terminate apply */
+	void (*reset) (void);
 };
 
 /* VTable defined in the binding source */

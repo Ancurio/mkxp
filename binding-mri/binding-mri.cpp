@@ -27,6 +27,7 @@
 #include "util.h"
 #include "debugwriter.h"
 #include "graphics.h"
+#include "audio.h"
 #include "boost-hash.h"
 
 #include <ruby.h>
@@ -44,11 +45,13 @@ extern const char module_rpg3[];
 
 static void mriBindingExecute();
 static void mriBindingTerminate();
+static void mriBindingReset();
 
 ScriptBinding scriptBindingImpl =
 {
 	mriBindingExecute,
-	mriBindingTerminate
+	mriBindingTerminate,
+	mriBindingReset
 };
 
 ScriptBinding *scriptBinding = &scriptBindingImpl;
@@ -213,12 +216,51 @@ RB_METHOD(mriDataDirectory)
 	return pathStr;
 }
 
+static VALUE rgssMainCb(VALUE block)
+{
+	rb_funcall2(block, rb_intern("call"), 0, 0);
+	return Qnil;
+}
+
+static VALUE rgssMainRescue(VALUE arg, VALUE exc)
+{
+	VALUE *excRet = (VALUE*) arg;
+
+	*excRet = exc;
+
+	return Qnil;
+}
+
+static void processReset()
+{
+	shState->graphics().reset();
+	shState->audio().reset();
+
+	shState->rtData().rqReset.clear();
+	shState->graphics().repaintWait(shState->rtData().rqResetFinish,
+	                                false);
+}
+
 RB_METHOD(mriRgssMain)
 {
 	RB_UNUSED_PARAM;
 
-	// TODO: Implement F12 reset
-	rb_yield(Qnil);
+	while (true)
+	{
+		VALUE exc = Qnil;
+
+		rb_rescue2((VALUE(*)(ANYARGS)) rgssMainCb, rb_block_proc(),
+		           (VALUE(*)(ANYARGS)) rgssMainRescue, (VALUE) &exc,
+		           rb_eException, (VALUE) 0);
+
+		if (NIL_P(exc))
+			break;
+
+		if (rb_obj_class(exc) == getRbData()->exc[Reset])
+			processReset();
+		else
+			rb_exc_raise(exc);
+	}
 
 	return Qnil;
 }
@@ -395,30 +437,39 @@ static void runRMXPScripts(BacktraceData &btData)
 	for (size_t i = 0; i < conf.preloadScripts.size(); ++i)
 		runCustomScript(conf.preloadScripts[i]);
 
-	for (long i = 0; i < scriptCount; ++i)
+	while (true)
 	{
-		VALUE script = rb_ary_entry(scriptArray, i);
-		VALUE scriptDecoded = rb_ary_entry(script, 3);
-		VALUE string = newStringUTF8(RSTRING_PTR(scriptDecoded),
-		                             RSTRING_LEN(scriptDecoded));
+		for (long i = 0; i < scriptCount; ++i)
+		{
+			VALUE script = rb_ary_entry(scriptArray, i);
+			VALUE scriptDecoded = rb_ary_entry(script, 3);
+			VALUE string = newStringUTF8(RSTRING_PTR(scriptDecoded),
+			                             RSTRING_LEN(scriptDecoded));
 
-		VALUE fname;
-		const char *scriptName = RSTRING_PTR(rb_ary_entry(script, 1));
-		char buf[512];
-		int len;
+			VALUE fname;
+			const char *scriptName = RSTRING_PTR(rb_ary_entry(script, 1));
+			char buf[512];
+			int len;
 
-		if (conf.useScriptNames)
-			len = snprintf(buf, sizeof(buf), "%03ld:%s", i, scriptName);
-		else
-			len = snprintf(buf, sizeof(buf), SCRIPT_SECTION_FMT, i);
+			if (conf.useScriptNames)
+				len = snprintf(buf, sizeof(buf), "%03ld:%s", i, scriptName);
+			else
+				len = snprintf(buf, sizeof(buf), SCRIPT_SECTION_FMT, i);
 
-		fname = newStringUTF8(buf, len);
-		btData.scriptNames.insert(buf, scriptName);
+			fname = newStringUTF8(buf, len);
+			btData.scriptNames.insert(buf, scriptName);
 
-		int state;
-		evalString(string, fname, &state);
-		if (state)
+			int state;
+			evalString(string, fname, &state);
+			if (state)
+				break;
+		}
+
+		VALUE exc = rb_gv_get("$!");
+		if (rb_obj_class(exc) != getRbData()->exc[Reset])
 			break;
+
+		processReset();
 	}
 }
 
@@ -520,10 +571,15 @@ static void mriBindingExecute()
 
 	ruby_cleanup(0);
 
-	shState->rtData().rqTermAck = true;
+	shState->rtData().rqTermAck.set();
 }
 
 static void mriBindingTerminate()
 {
 	rb_raise(rb_eSystemExit, " ");
+}
+
+static void mriBindingReset()
+{
+	rb_raise(getRbData()->exc[Reset], " ");
 }

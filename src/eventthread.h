@@ -29,6 +29,7 @@
 #include <SDL_joystick.h>
 #include <SDL_mouse.h>
 #include <SDL_mutex.h>
+#include <SDL_atomic.h>
 
 #include <string>
 
@@ -37,6 +38,32 @@
 struct RGSSThreadData;
 struct SDL_Thread;
 struct SDL_Window;
+
+struct AtomicFlag
+{
+	AtomicFlag()
+	{
+		clear();
+	}
+
+	void set()
+	{
+		SDL_AtomicSet(&atom, 1);
+	}
+
+	void clear()
+	{
+		SDL_AtomicSet(&atom, 0);
+	}
+
+	operator bool() const
+	{
+		return SDL_AtomicGet(&atom);
+	}
+
+private:
+	mutable SDL_atomic_t atom;
+};
 
 class EventThread
 {
@@ -91,7 +118,7 @@ private:
 
 	bool fullscreen;
 	bool showCursor;
-	volatile bool msgBoxDone;
+	AtomicFlag msgBoxDone;
 
 	struct
 	{
@@ -111,13 +138,12 @@ struct WindowSizeNotify
 {
 	SDL_mutex *mutex;
 
-	volatile bool changedFlag;
-	volatile int w, h;
+	AtomicFlag changed;
+	int w, h;
 
 	WindowSizeNotify()
 	{
 		mutex = SDL_CreateMutex();
-		changedFlag = false;
 		w = h = 0;
 	}
 
@@ -133,7 +159,7 @@ struct WindowSizeNotify
 
 		this->w = w;
 		this->h = h;
-		changedFlag = true;
+		changed.set();
 
 		SDL_UnlockMutex(mutex);
 	}
@@ -141,14 +167,14 @@ struct WindowSizeNotify
 	/* Done from the receiving side */
 	bool pollChange(int *w, int *h)
 	{
-		if (!changedFlag)
+		if (!changed)
 			return false;
 
 		SDL_LockMutex(mutex);
 
 		*w = this->w;
 		*h = this->h;
-		changedFlag = false;
+		changed.clear();
 
 		SDL_UnlockMutex(mutex);
 
@@ -159,10 +185,16 @@ struct WindowSizeNotify
 struct RGSSThreadData
 {
 	/* Main thread sets this to request RGSS thread to terminate */
-	volatile bool rqTerm;
+	AtomicFlag rqTerm;
 	/* In response, RGSS thread sets this to confirm
 	 * that it received the request and isn't stuck */
-	volatile bool rqTermAck;
+	AtomicFlag rqTermAck;
+
+	/* Set when F12 is pressed */
+	AtomicFlag rqReset;
+
+	/* Set when F12 is released */
+	AtomicFlag rqResetFinish;
 
 	EventThread *ethread;
 	WindowSizeNotify windowSizeMsg;
@@ -182,9 +214,7 @@ struct RGSSThreadData
 	               const char *argv0,
 	               SDL_Window *window,
 	               const Config& newconf)
-	    : rqTerm(false),
-	      rqTermAck(false),
-	      ethread(ethread),
+	    : ethread(ethread),
 	      argv0(argv0),
 	      window(window),
 	      sizeResoRatio(1, 1),

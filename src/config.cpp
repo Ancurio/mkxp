@@ -138,6 +138,7 @@ Config::Config()
       solidFonts(false),
       gameFolder("."),
       anyAltToggleFS(false),
+      enableReset(true),
       allowSymlinks(false),
       pathCache(true),
       useScriptNames(false)
@@ -164,6 +165,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(solidFonts, bool) \
 	PO_DESC(gameFolder, std::string) \
 	PO_DESC(anyAltToggleFS, bool) \
+	PO_DESC(enableReset, bool) \
 	PO_DESC(allowSymlinks, bool) \
 	PO_DESC(iconPath, std::string) \
 	PO_DESC(titleLanguage, std::string) \

@@ -174,6 +174,15 @@ RB_METHOD(graphicsResizeScreen)
 	return Qnil;
 }
 
+RB_METHOD(graphicsReset)
+{
+	RB_UNUSED_PARAM;
+
+	shState->graphics().reset();
+
+	return Qnil;
+}
+
 DEF_GRA_PROP_I(FrameRate)
 DEF_GRA_PROP_I(FrameCount)
 DEF_GRA_PROP_I(Brightness)
@@ -195,6 +204,8 @@ void graphicsBindingInit()
 	_rb_define_module_function(module, "freeze", graphicsFreeze);
 	_rb_define_module_function(module, "transition", graphicsTransition);
 	_rb_define_module_function(module, "frame_reset", graphicsFrameReset);
+
+	_rb_define_module_function(module, "__reset__", graphicsReset);
 
 	INIT_GRA_PROP_BIND( FrameRate,  "frame_rate"  );
 	INIT_GRA_PROP_BIND( FrameCount, "frame_count" );

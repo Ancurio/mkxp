@@ -26,8 +26,10 @@
 
 class Scene;
 class Bitmap;
+class Disposable;
 struct RGSSThreadData;
 struct GraphicsPrivate;
+struct AtomicFlag;
 
 class Graphics
 {
@@ -53,6 +55,8 @@ public:
 	int height() const;
 	void resizeScreen(int width, int height);
 
+	void reset();
+
 	/* Non-standard extension */
 	DECL_ATTR( Fullscreen, bool )
 	DECL_ATTR( ShowCursor, bool )
@@ -60,14 +64,20 @@ public:
 	/* <internal> */
 	Scene *getScreen() const;
 	/* Repaint screen with static image until exitCond
-	 * turns true. Used in EThread::showMessageBox() */
-	void repaintWait(volatile bool *exitCond);
+	 * is set. Observes reset flag on top of shutdown
+	 * if "checkReset" */
+	void repaintWait(const AtomicFlag &exitCond,
+	                 bool checkReset = true);
 
 private:
 	Graphics(RGSSThreadData *data);
 	~Graphics();
 
+	void addDisposable(Disposable *);
+	void remDisposable(Disposable *);
+
 	friend struct SharedStatePrivate;
+	friend class Disposable;
 
 	GraphicsPrivate *p;
 };

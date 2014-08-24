@@ -109,6 +109,8 @@ struct SharedState
 	 * function will most likely not return */
 	void checkShutdown();
 
+	void checkReset();
+
 	static SharedState *instance;
 	static int rgssVersion;
 

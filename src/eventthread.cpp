@@ -106,6 +106,8 @@ void EventThread::process(RGSSThreadData &rtData)
 	char pendingTitle[128];
 	bool havePendingTitle = false;
 
+	bool resetting = false;
+
 	while (true)
 	{
 		if (!SDL_WaitEvent(&event))
@@ -206,10 +208,34 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
 			}
 
+			if (event.key.keysym.scancode == SDL_SCANCODE_F12)
+			{
+				if (!rtData.config.enableReset)
+					break;
+
+				if (resetting)
+					break;
+
+				resetting = true;
+				rtData.rqResetFinish.clear();
+				rtData.rqReset.set();
+				break;
+			}
+
 			keyStates[event.key.keysym.scancode] = true;
 			break;
 
 		case SDL_KEYUP :
+			if (event.key.keysym.scancode == SDL_SCANCODE_F12)
+			{
+				if (!rtData.config.enableReset)
+					break;
+
+				resetting = false;
+				rtData.rqResetFinish.set();
+				break;
+			}
+
 			keyStates[event.key.keysym.scancode] = false;
 			break;
 
@@ -271,7 +297,7 @@ void EventThread::process(RGSSThreadData &rtData)
 				                         rtData.config.game.title.c_str(),
 				                         (const char*) event.user.data1, win);
 				free(event.user.data1);
-				msgBoxDone = true;
+				msgBoxDone.set();
 				break;
 
 			case REQUEST_SETCURSORVISIBLE :
@@ -377,7 +403,7 @@ void EventThread::requestShowCursor(bool mode)
 
 void EventThread::showMessageBox(const char *body, int flags)
 {
-	msgBoxDone = false;
+	msgBoxDone.clear();
 
 	SDL_Event event;
 	event.user.code = flags;
@@ -386,7 +412,7 @@ void EventThread::showMessageBox(const char *body, int flags)
 	SDL_PushEvent(&event);
 
 	/* Keep repainting screen while box is open */
-	shState->graphics().repaintWait(&msgBoxDone);
+	shState->graphics().repaintWait(msgBoxDone);
 	/* Prevent endless loops */
 	resetInputStates();
 }

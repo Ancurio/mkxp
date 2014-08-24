@@ -327,4 +327,12 @@ float Audio::bgsPos()
 	return p->bgs.playingOffset();
 }
 
+void Audio::reset()
+{
+	p->bgm.stop();
+	p->bgs.stop();
+	p->me.stop();
+	p->se.stop();
+}
+
 Audio::~Audio() { delete p; }

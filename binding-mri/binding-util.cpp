@@ -51,6 +51,8 @@ RbData::RbData()
 	for (size_t i = 0; i < ARRAY_SIZE(customExc); ++i)
 		exc[customExc[i].id] = rb_define_class(customExc[i].name, rb_eException);
 
+	exc[Reset] = rb_define_class(rgssVer >= 3 ? "RGSSReset" : "Reset", rb_eException);
+
 	exc[ErrnoENOENT] = rb_const_get(rb_const_get(rb_cObject, rb_intern("Errno")), rb_intern("ENOENT"));
 	exc[IOError] = rb_eIOError;
 	exc[TypeError] = rb_eTypeError;

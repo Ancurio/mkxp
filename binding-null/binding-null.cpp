@@ -27,7 +27,7 @@
 static void nullBindingExecute()
 {
 	Debug() << "The null binding doesn't do anything, so we're done!";
-	shState->rtData().rqTermAck = true;
+	shState->rtData().rqTermAck.set();
 }
 
 static void nullBindingTerminate()
@@ -35,10 +35,16 @@ static void nullBindingTerminate()
 
 }
 
+static void nullBindingReset()
+{
+
+}
+
 ScriptBinding scriptBindingImpl =
 {
     nullBindingExecute,
-    nullBindingTerminate
+    nullBindingTerminate,
+    nullBindingReset
 };
 
 ScriptBinding *scriptBinding = &scriptBindingImpl;

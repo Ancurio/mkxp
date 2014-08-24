@@ -51,11 +51,13 @@
 
 static void mrbBindingExecute();
 static void mrbBindingTerminate();
+static void mrbBindingReset();
 
 ScriptBinding scriptBindingImpl =
 {
     mrbBindingExecute,
-    mrbBindingTerminate
+    mrbBindingTerminate,
+    mrbBindingReset
 };
 
 ScriptBinding *scriptBinding = &scriptBindingImpl;
@@ -384,7 +386,7 @@ static void mrbBindingExecute()
 
 	checkException(mrb);
 
-	shState->rtData().rqTermAck = true;
+	shState->rtData().rqTermAck.set();
 	shState->texPool().disable();
 
 	mrbc_context_free(mrb, ctx);
@@ -397,4 +399,9 @@ static void mrbBindingTerminate()
 	MrbData *data = static_cast<MrbData*>(mrb->ud);
 
 	mrb_raise(mrb, data->exc[Shutdown], "");
+}
+
+static void mrbBindingReset()
+{
+	// No idea how to do this with mruby yet
 }
