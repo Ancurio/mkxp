@@ -66,6 +66,11 @@ struct Config
 		bool reverb;
 	} midi;
 
+	struct
+	{
+		int sourceCount;
+	} SE;
+
 	bool useScriptNames;
 
 	std::string customScript;

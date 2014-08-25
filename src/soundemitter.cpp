@@ -24,6 +24,7 @@
 #include "sharedstate.h"
 #include "filesystem.h"
 #include "exception.h"
+#include "config.h"
 #include "util.h"
 
 #include <SDL_sound.h>
@@ -76,7 +77,7 @@ private:
 
 /* Before: [a][b][c][d], After (index=1): [a][c][d][b] */
 static void
-arrayPushBack(size_t array[], size_t size, size_t index)
+arrayPushBack(std::vector<size_t> &array, size_t size, size_t index)
 {
 	size_t v = array[index];
 
@@ -86,10 +87,14 @@ arrayPushBack(size_t array[], size_t size, size_t index)
 	array[size-1] = v;
 }
 
-SoundEmitter::SoundEmitter()
-	: bufferBytes(0)
+SoundEmitter::SoundEmitter(const Config &conf)
+    : bufferBytes(0),
+      srcCount(conf.SE.sourceCount),
+      alSrcs(srcCount),
+      atchBufs(srcCount),
+      srcPrio(srcCount)
 {
-	for (int i = 0; i < SE_SOURCES; ++i)
+	for (size_t i = 0; i < srcCount; ++i)
 	{
 		alSrcs[i] = AL::Source::gen();
 		atchBufs[i] = 0;
@@ -99,7 +104,7 @@ SoundEmitter::SoundEmitter()
 
 SoundEmitter::~SoundEmitter()
 {
-	for (int i = 0; i < SE_SOURCES; ++i)
+	for (size_t i = 0; i < srcCount; ++i)
 	{
 		AL::Source::stop(alSrcs[i]);
 		AL::Source::del(alSrcs[i]);
@@ -124,24 +129,24 @@ void SoundEmitter::play(const std::string &filename,
 
 	/* Try to find first free source */
 	size_t i;
-	for (i = 0; i < SE_SOURCES; ++i)
+	for (i = 0; i < srcCount; ++i)
 		if (AL::Source::getState(alSrcs[srcPrio[i]]) != AL_PLAYING)
 			break;
 
 	/* If we didn't find any, try to find the lowest priority source
 	 * with the same buffer to overtake */
-	if (i == SE_SOURCES)
-		for (size_t j = 0; j < SE_SOURCES; ++j)
+	if (i == srcCount)
+		for (size_t j = 0; j < srcCount; ++j)
 			if (atchBufs[srcPrio[j]] == buffer)
 				i = j;
 
 	/* If we didn't find any, overtake the one with lowest priority */
-	if (i == SE_SOURCES)
+	if (i == srcCount)
 		i = 0;
 
 	/* Push the used source to the back of the priority list */
 	size_t srcIndex = srcPrio[i];
-	arrayPushBack(srcPrio, SE_SOURCES, i);
+	arrayPushBack(srcPrio, srcCount, i);
 
 	AL::Source::ID src = alSrcs[srcIndex];
 	AL::Source::stop(src);
@@ -164,7 +169,7 @@ void SoundEmitter::play(const std::string &filename,
 
 void SoundEmitter::stop()
 {
-	for (int i = 0; i < SE_SOURCES; i++)
+	for (size_t i = 0; i < srcCount; i++)
 		AL::Source::stop(alSrcs[i]);
 }
 

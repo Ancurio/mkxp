@@ -33,6 +33,7 @@
  *   quite make out their meaning yet) */
 
 struct AudioPrivate;
+struct Config;
 
 class Audio
 {
@@ -75,7 +76,7 @@ public:
 #endif
 
 private:
-	Audio();
+	Audio(const Config &conf);
 	~Audio();
 
 	friend struct SharedStatePrivate;

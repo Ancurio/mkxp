@@ -173,6 +173,14 @@
 # midi.reverb=false
 
 
+# Number of OpenAL sources to allocate for SE playback.
+# If there are a lot of sounds playing at the same time
+# and audibly cutting each other off, try increasing
+# this number. Maximum: 64.
+#
+# SE.sourceCount=6
+
+
 # Give a hint on which language the game title as
 # specified in the Game.ini is, useful if the encoding
 # is being falsely detected. Relevant only if mkxp was

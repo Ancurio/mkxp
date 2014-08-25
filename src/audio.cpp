@@ -60,10 +60,11 @@ struct AudioPrivate
 		MeWatchState state;
 	} meWatch;
 
-	AudioPrivate()
+	AudioPrivate(const Config &conf)
 	    : bgm(ALStream::Looped, "bgm"),
 	      bgs(ALStream::Looped, "bgs"),
-	      me(ALStream::NotLooped, "me")
+	      me(ALStream::NotLooped, "me"),
+	      se(conf)
 	{
 		meWatch.active = false;
 		meWatch.termReq = false;
@@ -238,8 +239,8 @@ struct AudioPrivate
 	}
 };
 
-Audio::Audio()
-	: p(new AudioPrivate)
+Audio::Audio(const Config &conf)
+	: p(new AudioPrivate(conf))
 {}
 
 

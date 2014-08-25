@@ -27,10 +27,10 @@
 #include "boost-hash.h"
 
 #include <string>
-
-#define SE_SOURCES 6
+#include <vector>
 
 struct SoundBuffer;
+struct Config;
 
 struct SoundEmitter
 {
@@ -42,13 +42,14 @@ struct SoundEmitter
 	/* Byte count sum of all cached / playing buffers */
 	uint32_t bufferBytes;
 
-	AL::Source::ID alSrcs[SE_SOURCES];
-	SoundBuffer *atchBufs[SE_SOURCES];
+	const size_t srcCount;
+	std::vector<AL::Source::ID> alSrcs;
+	std::vector<SoundBuffer*> atchBufs;
 
 	/* Indices of sources, sorted by priority (lowest first) */
-	size_t srcPrio[SE_SOURCES];
+	std::vector<size_t> srcPrio;
 
-	SoundEmitter();
+	SoundEmitter(const Config &conf);
 	~SoundEmitter();
 
 	void play(const std::string &filename,

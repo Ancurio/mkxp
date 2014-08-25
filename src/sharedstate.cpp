@@ -107,6 +107,7 @@ struct SharedStatePrivate
 	      midiState(threadData->config),
 #endif
 	      graphics(threadData),
+	      audio(threadData->config),
 	      fontState(threadData->config),
 	      stampCounter(0)
 	{

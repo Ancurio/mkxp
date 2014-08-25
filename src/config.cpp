@@ -141,6 +141,7 @@ Config::Config()
 {
 	midi.chorus = false;
 	midi.reverb = false;
+	SE.sourceCount = 6;
 }
 
 void Config::read(int argc, char *argv[])
@@ -165,6 +166,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(midi.soundFont, std::string) \
 	PO_DESC(midi.chorus, bool) \
 	PO_DESC(midi.reverb, bool) \
+	PO_DESC(SE.sourceCount, int) \
 	PO_DESC(customScript, std::string) \
 	PO_DESC(pathCache, bool) \
 	PO_DESC(useScriptNames, bool)
@@ -221,6 +223,8 @@ void Config::read(int argc, char *argv[])
 
 #undef PO_DESC
 #undef PO_DESC_ALL
+
+	SE.sourceCount = clamp(SE.sourceCount, 1, 64);
 }
 
 static std::string baseName(const std::string &path)
