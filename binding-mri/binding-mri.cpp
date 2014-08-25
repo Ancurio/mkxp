@@ -223,7 +223,7 @@ RB_METHOD(_kernelCaller)
 
 	VALUE trace = rb_funcall2(rb_mKernel, rb_intern("_mkxp_kernel_caller_alias"), 0, 0);
 
-	if (rb_type(trace) != RUBY_T_ARRAY)
+	if (!RB_TYPE_P(trace, RUBY_T_ARRAY))
 		return trace;
 
 	long len = RARRAY_LEN(trace);
@@ -307,7 +307,7 @@ static void runRMXPScripts()
 
 	VALUE scriptArray = kernelLoadDataInt(scriptPack.c_str());
 
-	if (rb_type(scriptArray) != RUBY_T_ARRAY)
+	if (!RB_TYPE_P(scriptArray, RUBY_T_ARRAY))
 	{
 		showMsg("Failed to read script data");
 		return;
@@ -324,7 +324,7 @@ static void runRMXPScripts()
 	{
 		VALUE script = rb_ary_entry(scriptArray, i);
 
-		if (rb_type(script) != RUBY_T_ARRAY)
+		if (!RB_TYPE_P(script, RUBY_T_ARRAY))
 			continue;
 
 		VALUE scriptName   = rb_ary_entry(script, 1);

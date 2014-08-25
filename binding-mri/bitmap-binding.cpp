@@ -258,7 +258,7 @@ RB_METHOD(bitmapDrawText)
 			VALUE strObj;
 			rb_get_args(argc, argv, "oo|i", &rectObj, &strObj, &align RB_ARG_END);
 
-			if (rb_type(strObj) != RUBY_T_STRING)
+			if (!RB_TYPE_P(strObj, RUBY_T_STRING))
 				strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
 
 			str = RSTRING_PTR(strObj);
@@ -281,7 +281,7 @@ RB_METHOD(bitmapDrawText)
 			VALUE strObj;
 			rb_get_args(argc, argv, "iiiio|i", &x, &y, &width, &height, &strObj, &align RB_ARG_END);
 
-			if (rb_type(strObj) != RUBY_T_STRING)
+			if (!RB_TYPE_P(strObj, RUBY_T_STRING))
 				strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
 
 			str = RSTRING_PTR(strObj);
@@ -308,7 +308,7 @@ RB_METHOD(bitmapTextSize)
 		VALUE strObj;
 		rb_get_args(argc, argv, "o", &strObj RB_ARG_END);
 
-		if (rb_type(strObj) != RUBY_T_STRING)
+		if (!RB_TYPE_P(strObj, RUBY_T_STRING))
 			strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
 
 		str = RSTRING_PTR(strObj);

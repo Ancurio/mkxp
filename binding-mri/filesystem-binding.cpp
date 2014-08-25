@@ -159,7 +159,7 @@ RB_METHOD(kernelSaveData)
 
 static VALUE stringForceUTF8(VALUE arg)
 {
-	if (rb_type(arg) == RUBY_T_STRING && ENCODING_IS_ASCII8BIT(arg))
+	if (RB_TYPE_P(arg, RUBY_T_STRING) && ENCODING_IS_ASCII8BIT(arg))
 		rb_enc_associate_index(arg, rb_utf8_encindex());
 
 	return arg;
