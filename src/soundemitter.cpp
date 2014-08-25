@@ -144,13 +144,19 @@ void SoundEmitter::play(const std::string &filename,
 	if (i == srcCount)
 		i = 0;
 
-	/* Push the used source to the back of the priority list */
 	size_t srcIndex = srcPrio[i];
+
+	/* Only detach/reattach if it's actually a different buffer */
+	bool switchBuffer = (atchBufs[srcIndex] != buffer);
+
+	/* Push the used source to the back of the priority list */
 	arrayPushBack(srcPrio, srcCount, i);
 
 	AL::Source::ID src = alSrcs[srcIndex];
 	AL::Source::stop(src);
-	AL::Source::detachBuffer(src);
+
+	if (switchBuffer)
+		AL::Source::detachBuffer(src);
 
 	SoundBuffer *old = atchBufs[srcIndex];
 
@@ -159,7 +165,8 @@ void SoundEmitter::play(const std::string &filename,
 
 	atchBufs[srcIndex] = SoundBuffer::ref(buffer);
 
-	AL::Source::attachBuffer(src, buffer->alBuffer);
+	if (switchBuffer)
+		AL::Source::attachBuffer(src, buffer->alBuffer);
 
 	AL::Source::setVolume(src, _volume);
 	AL::Source::setPitch(src, _pitch);
