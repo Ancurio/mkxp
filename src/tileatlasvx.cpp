@@ -358,6 +358,7 @@ readAutotile(Reader &reader, int patternID,
              const StaticRect rectSource[], int rectSourceN)
 {
 	FloatRect tex[4], pos[4];
+	(void) rectSourceN;
 
 	for (int i = 0; i < 4; ++i)
 	{
