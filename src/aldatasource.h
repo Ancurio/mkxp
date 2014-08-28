@@ -58,10 +58,8 @@ ALDataSource *createSDLSource(SDL_RWops &ops,
 			                  uint32_t maxBufSize,
 			                  bool looped);
 
-#ifdef RGSS2
 ALDataSource *createVorbisSource(SDL_RWops &ops,
                                  bool looped);
-#endif
 
 #ifdef MIDI
 ALDataSource *createMidiSource(SDL_RWops &ops,

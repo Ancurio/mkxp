@@ -59,14 +59,16 @@ DEF_PROP_I(Sprite, OY)
 DEF_PROP_I(Sprite, BushDepth)
 DEF_PROP_I(Sprite, Opacity)
 DEF_PROP_I(Sprite, BlendType)
+DEF_PROP_I(Sprite, WaveAmp)
+DEF_PROP_I(Sprite, WaveLength)
+DEF_PROP_I(Sprite, WaveSpeed)
 
 DEF_PROP_F(Sprite, ZoomX)
 DEF_PROP_F(Sprite, ZoomY)
 DEF_PROP_F(Sprite, Angle)
+DEF_PROP_F(Sprite, WavePhase)
 
 DEF_PROP_B(Sprite, Mirror)
-
-#ifdef RGSS2
 
 MRB_METHOD(spriteWidth)
 {
@@ -87,13 +89,6 @@ MRB_METHOD(spriteHeight)
 
 	return mrb_fixnum_value(value);
 }
-
-DEF_PROP_I(Sprite, WaveAmp)
-DEF_PROP_I(Sprite, WaveLength)
-DEF_PROP_I(Sprite, WaveSpeed)
-DEF_PROP_F(Sprite, WavePhase)
-
-#endif
 
 void
 spriteBindingInit(mrb_state *mrb)
@@ -122,7 +117,8 @@ spriteBindingInit(mrb_state *mrb)
 	INIT_PROP_BIND( Sprite, Color,     "color"      );
 	INIT_PROP_BIND( Sprite, Tone,      "tone"       );
 
-#ifdef RGSS2
+	if (rgssVer >= 2)
+	{
 	mrb_define_method(mrb, klass, "width",  spriteWidth,  MRB_ARGS_NONE());
 	mrb_define_method(mrb, klass, "height", spriteHeight, MRB_ARGS_NONE());
 
@@ -130,7 +126,7 @@ spriteBindingInit(mrb_state *mrb)
 	INIT_PROP_BIND( Sprite, WaveLength, "wave_length" );
 	INIT_PROP_BIND( Sprite, WaveSpeed,  "wave_speed"  );
 	INIT_PROP_BIND( Sprite, WavePhase,  "wave_phase"  );
-#endif
+	}
 
 	mrb_define_method(mrb, klass, "inspect", inspectObject, MRB_ARGS_NONE());
 }

@@ -122,14 +122,15 @@ typedef std::vector<std::string> StringVec;
 namespace po = boost::program_options;
 
 Config::Config()
-    : debugMode(false),
+    : rgssVersion(0),
+      debugMode(false),
       winResizable(false),
       fullscreen(false),
       fixedAspectRatio(true),
       smoothScaling(false),
       vsync(false),
-      defScreenW(DEF_SCREEN_W),
-      defScreenH(DEF_SCREEN_H),
+      defScreenW(0),
+      defScreenH(0),
       fixedFramerate(0),
       frameSkip(true),
       solidFonts(false),
@@ -147,6 +148,7 @@ Config::Config()
 void Config::read(int argc, char *argv[])
 {
 #define PO_DESC_ALL \
+	PO_DESC(rgssVersion, int) \
 	PO_DESC(debugMode, bool) \
 	PO_DESC(winResizable, bool) \
 	PO_DESC(fullscreen, bool) \
@@ -219,7 +221,7 @@ void Config::read(int argc, char *argv[])
 
 	GUARD_ALL( fontSubs = vm["fontSub"].as<StringVec>(); );
 
-	GUARD_ALL( rubyLoadpaths = vm["rubyLoadpath"].as<StringVec>(); )
+	GUARD_ALL( rubyLoadpaths = vm["rubyLoadpath"].as<StringVec>(); );
 
 #undef PO_DESC
 #undef PO_DESC_ALL
@@ -329,4 +331,31 @@ void Config::readGameINI()
 
 	if (game.title.empty())
 		game.title = baseName(gameFolder);
+
+	if (rgssVersion == 0)
+	{
+		/* Try to guess RGSS version based on Data/Scripts extension */
+		rgssVersion = 1;
+
+		if (!game.scripts.empty())
+		{
+			const char *p = &game.scripts[game.scripts.size()];
+			const char *head = &game.scripts[0];
+
+			while (--p != head)
+				if (*p == '.')
+					break;
+
+			if (!strcmp(p, ".rvdata"))
+				rgssVersion = 2;
+			else if (!strcmp(p, ".rvdata2"))
+				rgssVersion = 3;
+		}
+	}
+
+	if (defScreenW <= 0)
+		defScreenW = (rgssVersion == 1 ? 640 : 544);
+
+	if (defScreenH <= 0)
+		defScreenH = (rgssVersion == 1 ? 480 : 416);
 }

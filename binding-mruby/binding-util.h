@@ -98,9 +98,7 @@ struct MrbData
 	 * so I can measure how much of a speed difference they make */
 	mrb_sym symbols[CommonSymbolsMax];
 
-#ifdef RGSS3
 	mrb_value buttoncodeHash;
-#endif
 
 	MrbData(mrb_state *mrb);
 };

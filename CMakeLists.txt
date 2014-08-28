@@ -3,7 +3,6 @@ Project(mkxp)
 
 ## Setup options ##
 
-option(RGSS2 "Enable RGSS2" OFF)
 option(MIDI "Enable midi support" ON)
 option(WORKDIR_CURRENT "Keep current directory on startup" OFF)
 option(FORCE32 "Force 32bit compile on 64bit OS" OFF)
@@ -87,6 +86,7 @@ endif()
 pkg_check_modules(SIGCXX        REQUIRED sigc++-2.0)
 pkg_check_modules(PIXMAN        REQUIRED pixman-1)
 pkg_check_modules(PHYSFS        REQUIRED physfs>=2.1)
+pkg_check_modules(VORBISFILE    REQUIRED vorbisfile)
 pkg_check_modules(SDL2          REQUIRED sdl2)
 pkg_check_modules(SDL2_TTF      REQUIRED SDL2_ttf)
 pkg_check_modules(SDL2_IMAGE    REQUIRED SDL2_image)
@@ -148,6 +148,9 @@ set(MAIN_HEADERS
 	src/alstream.h
 	src/audiostream.h
 	src/rgssad.h
+	src/windowvx.h
+	src/tilemapvx.h
+	src/tileatlasvx.h
 )
 
 set(MAIN_SOURCE
@@ -185,6 +188,11 @@ set(MAIN_SOURCE
 	src/audiostream.cpp
 	src/rgssad.cpp
 	src/bundledfont.cpp
+	src/vorbissource.cpp
+	src/windowvx.cpp
+	src/tilemapvx.cpp
+	src/tileatlasvx.cpp
+	src/autotilesvx.cpp
 )
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
@@ -206,22 +214,16 @@ set(EMBEDDED_INPUT
 	shader/simpleColor.vert
 	shader/sprite.vert
 	shader/tilemap.vert
+	shader/blur.frag
+	shader/blurH.vert
+	shader/blurV.vert
+	shader/simpleMatrix.vert
 	assets/liberation.ttf
 )
 
 if (RGSS2)
-	pkg_check_modules(RGSS2 REQUIRED vorbisfile)
 	list(APPEND DEFINES
 		RGSS2
-	)
-	list(APPEND MAIN_SOURCE
-		src/vorbissource.cpp
-	)
-	list(APPEND EMBEDDED_INPUT
-		shader/blur.frag
-		shader/blurH.vert
-		shader/blurV.vert
-		shader/simpleMatrix.vert
 	)
 endif()
 
@@ -305,6 +307,8 @@ if (BINDING STREQUAL "MRI")
 		binding-mri/audio-binding.cpp
 		binding-mri/module_rpg.cpp
 		binding-mri/filesystem-binding.cpp
+		binding-mri/windowvx-binding.cpp
+		binding-mri/tilemapvx-binding.cpp
 	)
 elseif(BINDING STREQUAL "MRUBY")
 	message(FATAL_ERROR "Mruby support in CMake needs to be finished")
@@ -395,7 +399,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	${SDL2_INCLUDE_DIRS} # Blindly assume other SDL bits are in same directory
 	${Boost_INCLUDE_DIR}
 	${MRI_INCLUDE_DIRS}
-	${RGSS2_INCLUDE_DIRS}
+	${VORBISFILE_INCLUDE_DIRS}
 	${MIDI_INCLUDE_DIRS}
 	${OPENAL_INCLUDE_DIR}
 )
@@ -410,7 +414,7 @@ target_link_libraries(${PROJECT_NAME}
 	${PIXMAN_LIBRARIES}
 	${Boost_LIBRARIES}
 	${MRI_LIBRARIES}
-	${RGSS2_LIBRARIES}
+	${VORBISFILE_LIBRARIES}
 	${MIDI_LIBRARIES}
 	${OPENAL_LIBRARY}
 	${ZLIB_LIBRARY}

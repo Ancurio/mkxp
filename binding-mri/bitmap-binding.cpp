@@ -22,6 +22,7 @@
 #include "bitmap.h"
 #include "font.h"
 #include "exception.h"
+#include "sharedstate.h"
 #include "disposable-binding.h"
 #include "binding-util.h"
 #include "binding-types.h"
@@ -252,17 +253,20 @@ RB_METHOD(bitmapDrawText)
 		VALUE rectObj;
 		Rect *rect;
 
-#ifdef RGSS2
-		VALUE strObj;
-		rb_get_args(argc, argv, "oo|i", &rectObj, &strObj, &align RB_ARG_END);
+		if (rgssVer >= 2)
+		{
+			VALUE strObj;
+			rb_get_args(argc, argv, "oo|i", &rectObj, &strObj, &align RB_ARG_END);
 
-		if (rb_type(strObj) != RUBY_T_STRING)
-			strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
+			if (rb_type(strObj) != RUBY_T_STRING)
+				strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
 
-		str = RSTRING_PTR(strObj);
-#else
-		rb_get_args(argc, argv, "oz|i", &rectObj, &str, &align RB_ARG_END);
-#endif
+			str = RSTRING_PTR(strObj);
+		}
+		else
+		{
+			rb_get_args(argc, argv, "oz|i", &rectObj, &str, &align RB_ARG_END);
+		}
 
 		rect = getPrivateDataCheck<Rect>(rectObj, RectType);
 
@@ -272,17 +276,20 @@ RB_METHOD(bitmapDrawText)
 	{
 		int x, y, width, height;
 
-#ifdef RGSS2
-		VALUE strObj;
-		rb_get_args(argc, argv, "iiiio|i", &x, &y, &width, &height, &strObj, &align RB_ARG_END);
+		if (rgssVer >= 2)
+		{
+			VALUE strObj;
+			rb_get_args(argc, argv, "iiiio|i", &x, &y, &width, &height, &strObj, &align RB_ARG_END);
 
-		if (rb_type(strObj) != RUBY_T_STRING)
-			strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
+			if (rb_type(strObj) != RUBY_T_STRING)
+				strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
 
-		str = RSTRING_PTR(strObj);
-#else
-		rb_get_args(argc, argv, "iiiiz|i", &x, &y, &width, &height, &str, &align RB_ARG_END);
-#endif
+			str = RSTRING_PTR(strObj);
+		}
+		else
+		{
+			rb_get_args(argc, argv, "iiiiz|i", &x, &y, &width, &height, &str, &align RB_ARG_END);
+		}
 
 		GUARD_EXC( b->drawText(x, y, width, height, str, align); );
 	}
@@ -296,17 +303,20 @@ RB_METHOD(bitmapTextSize)
 
 	const char *str;
 
-#ifdef RGSS2
-	VALUE strObj;
-	rb_get_args(argc, argv, "o", &strObj RB_ARG_END);
+	if (rgssVer >= 2)
+	{
+		VALUE strObj;
+		rb_get_args(argc, argv, "o", &strObj RB_ARG_END);
 
-	if (rb_type(strObj) != RUBY_T_STRING)
-		strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
+		if (rb_type(strObj) != RUBY_T_STRING)
+			strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
 
-	str = RSTRING_PTR(strObj);
-#else
-	rb_get_args(argc, argv, "z", &str RB_ARG_END);
-#endif
+		str = RSTRING_PTR(strObj);
+	}
+	else
+	{
+		rb_get_args(argc, argv, "z", &str RB_ARG_END);
+	}
 
 	IntRect value;
 	GUARD_EXC( value = b->textSize(str); );
@@ -317,8 +327,6 @@ RB_METHOD(bitmapTextSize)
 }
 
 DEF_PROP_OBJ(Bitmap, Font, Font, "font")
-
-#ifdef RGSS2
 
 RB_METHOD(bitmapGradientFillRect)
 {
@@ -408,8 +416,6 @@ RB_METHOD(bitmapRadialBlur)
 	return Qnil;
 }
 
-#endif
-
 // FIXME: This isn't entire correct as the cloned bitmap
 // does not get a cloned version of the original bitmap's 'font'
 // attribute (the internal font attrb is the default one, whereas
@@ -444,12 +450,13 @@ bitmapBindingInit()
 	_rb_define_method(klass, "draw_text",   bitmapDrawText);
 	_rb_define_method(klass, "text_size",   bitmapTextSize);
 
-#ifdef RGSS2
+	if (rgssVer >= 2)
+	{
 	_rb_define_method(klass, "gradient_fill_rect", bitmapGradientFillRect);
 	_rb_define_method(klass, "clear_rect",         bitmapClearRect);
 	_rb_define_method(klass, "blur",               bitmapBlur);
 	_rb_define_method(klass, "radial_blur",        bitmapRadialBlur);
-#endif
+	}
 
 	INIT_PROP_BIND(Bitmap, Font, "font");
 }

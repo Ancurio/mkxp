@@ -23,16 +23,11 @@
 #include "viewport.h"
 #include "bitmap.h"
 #include "table.h"
+#include "sharedstate.h"
 
 #include "disposable-binding.h"
 #include "binding-util.h"
 #include "binding-types.h"
-
-#ifdef RGSS3
-# define FLAGS_PROP "flags"
-#else
-# define FLAGS_PROP "passages"
-#endif
 
 DEF_TYPE(TilemapVX);
 rb_data_type_struct BitmapArrayType;
@@ -93,7 +88,7 @@ DEF_PROP_OBJ_NIL(TilemapVX, Viewport, Viewport, "viewport")
 
 DEF_PROP_OBJ(TilemapVX, Table, MapData,   "map_data")
 DEF_PROP_OBJ(TilemapVX, Table, FlashData, "flash_data")
-DEF_PROP_OBJ(TilemapVX, Table, Flags,     FLAGS_PROP)
+DEF_PROP_OBJ(TilemapVX, Table, Flags,     "flags")
 
 DEF_PROP_B(TilemapVX, Visible)
 
@@ -149,10 +144,18 @@ tilemapVXBindingInit()
 	INIT_PROP_BIND( TilemapVX, Viewport,  "viewport"   );
 	INIT_PROP_BIND( TilemapVX, MapData,   "map_data"   );
 	INIT_PROP_BIND( TilemapVX, FlashData, "flash_data" );
-	INIT_PROP_BIND( TilemapVX, Flags,     FLAGS_PROP   );
 	INIT_PROP_BIND( TilemapVX, Visible,   "visible"    );
 	INIT_PROP_BIND( TilemapVX, OX,        "ox"         );
 	INIT_PROP_BIND( TilemapVX, OY,        "oy"         );
+
+	if (rgssVer == 3)
+	{
+	INIT_PROP_BIND( TilemapVX, Flags,     "flags"      );
+	}
+	else
+	{
+	INIT_PROP_BIND( TilemapVX, Flags,     "passages"   );
+	}
 
 	initType(BitmapArrayType, "BitmapArray", 0);
 

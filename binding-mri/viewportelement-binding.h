@@ -23,6 +23,7 @@
 #define VIEWPORTELEMENTBINDING_H
 
 #include "viewport.h"
+#include "sharedstate.h"
 #include "binding-util.h"
 #include "binding-types.h"
 
@@ -38,8 +39,6 @@ RB_METHOD(viewportElementGetViewport)
 
 	return rb_iv_get(self, "viewport");
 }
-
-#ifdef RGSS2
 
 template<class C>
 RB_METHOD(viewportElementSetViewport)
@@ -62,8 +61,6 @@ RB_METHOD(viewportElementSetViewport)
 
 	return viewportObj;
 }
-
-#endif
 
 template<class C>
 static C *
@@ -98,9 +95,10 @@ viewportElementBindingInit(VALUE klass)
 
 	_rb_define_method(klass, "viewport", viewportElementGetViewport<C>);
 
-#ifdef RGSS2
+	if (rgssVer >= 2)
+	{
 	_rb_define_method(klass, "viewport=", viewportElementSetViewport<C>);
-#endif
+	}
 }
 
 #endif // VIEWPORTELEMENTBINDING_H

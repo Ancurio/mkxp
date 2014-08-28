@@ -205,23 +205,32 @@ static const KbBindingData defaultKbBindings[] =
 	{ SDL_SCANCODE_B,        Input::None },
 	{ SDL_SCANCODE_D,        Input::Z    },
 	{ SDL_SCANCODE_Q,        Input::L    },
-	{ SDL_SCANCODE_W,        Input::R    },
-#if RGSS_VER == 1
+	{ SDL_SCANCODE_W,        Input::R    }
+};
+
+/* RGSS1 */
+static const KbBindingData defaultKbBindings1[] =
+{
 	{ SDL_SCANCODE_Z,        Input::A    },
 	{ SDL_SCANCODE_C,        Input::C    },
 	{ SDL_SCANCODE_V,        Input::Z    },
 	{ SDL_SCANCODE_A,        Input::Y    },
 	{ SDL_SCANCODE_S,        Input::X    }
-#else
+};
+
+/* RGSS2 and higher */
+static const KbBindingData defaultKbBindings2[] =
+{
 	{ SDL_SCANCODE_Z,        Input::C    },
 	{ SDL_SCANCODE_C,        Input::None },
 	{ SDL_SCANCODE_V,        Input::None },
 	{ SDL_SCANCODE_A,        Input::X    },
 	{ SDL_SCANCODE_S,        Input::Y    }
-#endif
 };
 
 static elementsN(defaultKbBindings);
+static elementsN(defaultKbBindings1);
+static elementsN(defaultKbBindings2);
 
 /* Rebindable */
 static const JsBindingData defaultJsBindings[] =
@@ -374,15 +383,20 @@ struct InputPrivate
 
 	void initKbBindings()
 	{
-		kbBindings.resize(staticKbBindingsN+defaultKbBindingsN);
-
-		size_t n = 0;
+		kbBindings.clear();
 
 		for (size_t i = 0; i < staticKbBindingsN; ++i)
-			kbBindings[n++] = KbBinding(staticKbBindings[i]);
+			kbBindings.push_back(KbBinding(staticKbBindings[i]));
 
 		for (size_t i = 0; i < defaultKbBindingsN; ++i)
-			kbBindings[n++] = KbBinding(defaultKbBindings[i]);
+			kbBindings.push_back(KbBinding(defaultKbBindings[i]));
+
+		if (rgssVer == 1)
+			for (size_t i = 0; i < defaultKbBindings1N; ++i)
+				kbBindings.push_back(KbBinding(defaultKbBindings1[i]));
+		else
+			for (size_t i = 0; i < defaultKbBindings2N; ++i)
+				kbBindings.push_back(KbBinding(defaultKbBindings2[i]));
 
 		/* Add to binging array */
 		for (size_t i = 0; i < kbBindings.size(); ++i)

@@ -35,15 +35,9 @@
 #include <algorithm>
 #include <sigc++/connection.h>
 
-#ifdef RGSS3
-# define DEF_Z 100
-# define DEF_PADDING 12
-# define DEF_BACK_OPAC 192
-#else
-# define DEF_Z 0
-# define DEF_PADDING 16
-# define DEF_BACK_OPAC 255
-#endif
+#define DEF_Z         (rgssVer >= 3 ? 100 :   0)
+#define DEF_PADDING   (rgssVer >= 3 ?  12 :  16)
+#define DEF_BACK_OPAC (rgssVer >= 3 ? 192 : 255)
 
 template<typename T>
 struct Sides
@@ -765,11 +759,11 @@ struct WindowVXPrivate
 			glState.scissorBox.push();
 			glState.scissorTest.pushSet(true);
 
-#ifdef RGSS3
-			glState.scissorBox.setIntersect(clip);
-#else
-			glState.scissorBox.setIntersect(IntRect(trans.x, trans.y, geo.w, geo.h));
-#endif
+			if (rgssVer >= 3)
+				glState.scissorBox.setIntersect(clip);
+			else
+				glState.scissorBox.setIntersect(IntRect(trans.x, trans.y, geo.w, geo.h));
+
 			IntRect pad = padRect;
 			pad.x += trans.x;
 			pad.y += trans.y;
@@ -779,10 +773,13 @@ struct WindowVXPrivate
 				Vec2i contTrans = pad.pos();
 				contTrans.x += cursorRect->x;
 				contTrans.y += cursorRect->y;
-#ifdef RGSS3
-				contTrans.x -= contentsOff.x;
-				contTrans.y -= contentsOff.y;
-#endif
+
+				if (rgssVer >= 3)
+				{
+					contTrans.x -= contentsOff.x;
+					contTrans.y -= contentsOff.y;
+				}
+
 				shader.setTranslation(contTrans);
 
 				TEX::setSmooth(true);
@@ -792,9 +789,9 @@ struct WindowVXPrivate
 
 			if (contents)
 			{
-#ifndef RGSS3
-				glState.scissorBox.setIntersect(clip);
-#endif
+				if (rgssVer <= 2)
+					glState.scissorBox.setIntersect(clip);
+
 				Vec2i contTrans = pad.pos();
 				contTrans.x -= contentsOff.x;
 				contTrans.y -= contentsOff.y;

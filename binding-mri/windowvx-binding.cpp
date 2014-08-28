@@ -34,17 +34,20 @@ RB_METHOD(windowVXInitialize)
 {
 	WindowVX *w;
 
-#if RGSS_VER == 3
-	int x, y, width, height;
-	x = y = width = height = 0;
+	if (rgssVer >= 3)
+	{
+		int x, y, width, height;
+		x = y = width = height = 0;
 
-	if (argc == 4)
-		rb_get_args(argc, argv, "iiii", &x, &y, &width, &height RB_ARG_END);
+		if (argc == 4)
+			rb_get_args(argc, argv, "iiii", &x, &y, &width, &height RB_ARG_END);
 
-	w = new WindowVX(x, y, width, height);
-#else
-	w = viewportElementInitialize<WindowVX>(argc, argv, self);
-#endif
+		w = new WindowVX(x, y, width, height);
+	}
+	else
+	{
+		w = viewportElementInitialize<WindowVX>(argc, argv, self);
+	}
 
 	setPrivateData(self, w);
 
@@ -54,12 +57,13 @@ RB_METHOD(windowVXInitialize)
 	wrapProperty(self, w->getTone(), "tone", ToneType);
 	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
 
-#ifdef RGSS2
-	Bitmap *contents = new Bitmap(1, 1);
-	VALUE contentsObj = wrapObject(contents, BitmapType);
-	bitmapInitProps(contents, contentsObj);
-	rb_iv_set(self, "contents", contentsObj);
-#endif
+	if (rgssVer >= 2)
+	{
+		Bitmap *contents = new Bitmap(1, 1);
+		VALUE contentsObj = wrapObject(contents, BitmapType);
+		bitmapInitProps(contents, contentsObj);
+		rb_iv_set(self, "contents", contentsObj);
+	}
 
 	return self;
 }

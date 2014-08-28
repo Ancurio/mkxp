@@ -30,13 +30,15 @@
 #include <ruby.h>
 #include <ruby/encoding.h>
 
+#include <assert.h>
 #include <string>
-
 #include <zlib.h>
 
 #include <SDL_filesystem.h>
 
-extern const char module_rpg[];
+extern const char module_rpg1[];
+extern const char module_rpg2[];
+extern const char module_rpg3[];
 
 static void mriBindingExecute();
 static void mriBindingTerminate();
@@ -58,11 +60,8 @@ void viewportBindingInit();
 void planeBindingInit();
 void windowBindingInit();
 void tilemapBindingInit();
-
-#ifdef RGSS2
 void windowVXBindingInit();
 void tilemapVXBindingInit();
-#endif
 
 void inputBindingInit();
 void audioBindingInit();
@@ -75,11 +74,8 @@ RB_METHOD(mriP);
 RB_METHOD(mriDataDirectory);
 RB_METHOD(mkxpPuts);
 
-#ifdef RGSS3
 RB_METHOD(mriRgssMain);
-#else
 RB_METHOD(_kernelCaller);
-#endif
 
 static void mriBindingInit()
 {
@@ -91,13 +87,16 @@ static void mriBindingInit()
 	viewportBindingInit();
 	planeBindingInit();
 
-#ifdef RGSS2
-	windowVXBindingInit();
-	tilemapVXBindingInit();
-#else
-	windowBindingInit();
-	tilemapBindingInit();
-#endif
+	if (rgssVer == 1)
+	{
+		windowBindingInit();
+		tilemapBindingInit();
+	}
+	else
+	{
+		windowVXBindingInit();
+		tilemapVXBindingInit();
+	}
 
 	inputBindingInit();
 	audioBindingInit();
@@ -105,26 +104,34 @@ static void mriBindingInit()
 
 	fileIntBindingInit();
 
-#ifdef RGSS3
-	_rb_define_module_function(rb_mKernel, "rgss_main", mriRgssMain);
+	if (rgssVer >= 3)
+	{
+		_rb_define_module_function(rb_mKernel, "rgss_main", mriRgssMain);
 
-	_rb_define_module_function(rb_mKernel, "msgbox",    mriPrint);
-	_rb_define_module_function(rb_mKernel, "msgbox_p",  mriP);
-#else
-	_rb_define_module_function(rb_mKernel, "print", mriPrint);
-	_rb_define_module_function(rb_mKernel, "p",     mriP);
-#endif
+		_rb_define_module_function(rb_mKernel, "msgbox",    mriPrint);
+		_rb_define_module_function(rb_mKernel, "msgbox_p",  mriP);
+	}
+	else
+	{
+		_rb_define_module_function(rb_mKernel, "print", mriPrint);
+		_rb_define_module_function(rb_mKernel, "p",     mriP);
 
-	rb_eval_string(module_rpg);
+		rb_define_alias(rb_singleton_class(rb_mKernel), "_mkxp_kernel_caller_alias", "caller");
+		_rb_define_module_function(rb_mKernel, "caller", _kernelCaller);
+	}
+
+	if (rgssVer == 1)
+		rb_eval_string(module_rpg1);
+	else if (rgssVer == 2)
+		rb_eval_string(module_rpg2);
+	else if (rgssVer == 3)
+		rb_eval_string(module_rpg3);
+	else
+		assert(!"unreachable");
 
 	VALUE mod = rb_define_module("System");
 	_rb_define_module_function(mod, "data_directory", mriDataDirectory);
 	_rb_define_module_function(mod, "puts", mkxpPuts);
-
-#ifndef RGSS3
-	rb_define_alias(rb_singleton_class(rb_mKernel), "_mkxp_kernel_caller_alias", "caller");
-	_rb_define_module_function(rb_mKernel, "caller", _kernelCaller);
-#endif
 
 	rb_gv_set("MKXP", Qtrue);
 }
@@ -200,8 +207,6 @@ RB_METHOD(mriDataDirectory)
 	return pathStr;
 }
 
-#ifdef RGSS3
-
 RB_METHOD(mriRgssMain)
 {
 	RB_UNUSED_PARAM;
@@ -211,8 +216,6 @@ RB_METHOD(mriRgssMain)
 
 	return Qnil;
 }
-
-#else
 
 RB_METHOD(_kernelCaller)
 {
@@ -245,8 +248,6 @@ RB_METHOD(_kernelCaller)
 
 	return trace;
 }
-
-#endif
 
 static VALUE newStringUTF8(const char *string, long length)
 {
@@ -286,12 +287,6 @@ static void runCustomScript(const std::string &filename)
 }
 
 VALUE kernelLoadDataInt(const char *filename);
-
-#ifdef RGSS3
-#define RGSS_SECTION_STR "{%04ld}"
-#else
-#define RGSS_SECTION_STR "Section%03ld"
-#endif
 
 static void runRMXPScripts()
 {
@@ -391,7 +386,8 @@ static void runRMXPScripts()
 		else
 		{
 			char buf[32];
-			int len = snprintf(buf, sizeof(buf), RGSS_SECTION_STR, i);
+			const char *format = rgssVer >= 3 ? "{%04ld}" : "Section%03ld";
+			int len = snprintf(buf, sizeof(buf), format, i);
 			fname = newStringUTF8(buf, len);
 		}
 

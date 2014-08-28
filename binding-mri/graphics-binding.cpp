@@ -97,11 +97,6 @@ RB_METHOD(graphicsFrameReset)
 		return rb_bool_new(value); \
 	}
 
-DEF_GRA_PROP_I(FrameRate)
-DEF_GRA_PROP_I(FrameCount)
-
-#ifdef RGSS2
-
 RB_METHOD(graphicsWidth)
 {
 	RB_UNUSED_PARAM;
@@ -179,9 +174,9 @@ RB_METHOD(graphicsResizeScreen)
 	return Qnil;
 }
 
+DEF_GRA_PROP_I(FrameRate)
+DEF_GRA_PROP_I(FrameCount)
 DEF_GRA_PROP_I(Brightness)
-
-#endif
 
 DEF_GRA_PROP_B(Fullscreen)
 DEF_GRA_PROP_B(ShowCursor)
@@ -204,7 +199,8 @@ void graphicsBindingInit()
 	INIT_GRA_PROP_BIND( FrameRate,  "frame_rate"  );
 	INIT_GRA_PROP_BIND( FrameCount, "frame_count" );
 
-#ifdef RGSS2
+	if (rgssVer >= 2)
+	{
 	_rb_define_module_function(module, "width", graphicsWidth);
 	_rb_define_module_function(module, "height", graphicsHeight);
 	_rb_define_module_function(module, "wait", graphicsWait);
@@ -214,7 +210,7 @@ void graphicsBindingInit()
 	_rb_define_module_function(module, "resize_screen", graphicsResizeScreen);
 
 	INIT_GRA_PROP_BIND( Brightness, "brightness" );
-#endif
+	}
 
 	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
 	INIT_GRA_PROP_BIND( ShowCursor, "show_cursor" );

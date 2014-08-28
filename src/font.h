@@ -102,6 +102,8 @@ public:
 	DECL_ATTR_STATIC( DefaultOutline,  bool        )
 	DECL_ATTR_STATIC( DefaultOutColor, Color*      )
 
+	static void initDefaults();
+
 	/* internal */
 	_TTF_Font *getSdlFont();
 

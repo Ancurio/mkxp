@@ -213,7 +213,6 @@ private:
 	GLint u_hueAdjust, u_inputTexture;
 };
 
-#ifdef RGSS2
 class SimpleMatrixShader : public ShaderBase
 {
 public:
@@ -255,8 +254,6 @@ private:
 	GLint u_aniOffset;
 };
 
-#endif
-
 /* Bitmap blit */
 class BltShader : public ShaderBase
 {
@@ -288,12 +285,9 @@ struct ShaderSet
 	SimpleTransShader simpleTrans;
 	HueShader hue;
 	BltShader blt;
-
-#ifdef RGSS2
 	SimpleMatrixShader simpleMatrix;
 	BlurShader blur;
 	TilemapVXShader tilemapVX;
-#endif
 };
 
 #endif // SHADER_H

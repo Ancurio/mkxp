@@ -1,5 +1,15 @@
 # Lines starting with '#' are comments
 
+# Specify the RGSS version to run under.
+# Possible values are 0, 1, 2, 3. If set to 0,
+# mkxp will try to guess the required version
+# based on the game files found in gameFolder.
+# If this fails, the version defaults to 1.
+# (default: 0)
+#
+# rgssVersion=1
+
+
 # Create a debug context and log
 # OpenGL debug information to the console
 # (default: disabled)
@@ -40,12 +50,20 @@
 # vsync=false
 
 
-# Create the window with 640 in width at startup
+# Specify the window width on startup. If set to 0,
+# it will default to the default resolution width
+# specific to  the RGSS version (640 in RGSS1, 544
+# in RGSS2 or higher).
+# (default: 0)
 #
 # defScreenW=640
 
 
-# Create the window with 480 in height at startup
+# Specify the window height on startup. If set to 0,
+# it will default to the default resolution height
+# specific to the RGSS version (480 in RGSS1, 416
+# in RGSS2 or higher).
+# (default: 0)
 #
 # defScreenH=480
 

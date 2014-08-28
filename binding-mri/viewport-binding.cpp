@@ -20,6 +20,7 @@
 */
 
 #include "viewport.h"
+#include "sharedstate.h"
 #include "disposable-binding.h"
 #include "flashable-binding.h"
 #include "sceneelement-binding.h"
@@ -32,14 +33,11 @@ RB_METHOD(viewportInitialize)
 {
 	Viewport *v;
 
-#ifdef RGSS3
-	if (argc == 0)
+	if (argc == 0 && rgssVer >= 3)
 	{
 		v = new Viewport();
 	}
-	else
-#endif
-	if (argc == 1)
+	else if (argc == 1)
 	{
 		/* The rect arg is only used to init the viewport,
 		 * and does NOT replace its 'rect' property */

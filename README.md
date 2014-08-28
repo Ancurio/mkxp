@@ -58,6 +58,7 @@ This binding only exists for testing purposes and does nothing (the engine quits
 * SDL2_image
 * SDL2_ttf
 * SDL_sound (latest hg, apply provided patches!)
+* vorbisfile
 * pixman
 * fluidsynth (if midi enabled)
 * zlib (only ruby bindings)
@@ -76,8 +77,6 @@ Midi support is enabled by default; you can disable it via `qmake CONFIG+=DISABL
 By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `DEFINES+=WORKDIR_CURRENT` to qmake's arguments.
 
 To auto detect the encoding of the game title in `Game.ini` and auto convert it to UTF-8, build with `CONFIG+=INI_ENCODING`. Requires iconv implementation and libguess. If the encoding is wrongly detected, you can set the "titleLanguage" hint in mkxp.conf.
-
-**RGSS Version**: Add `RGSS_VER=<version>`, with `<version>` being either 1, 2 or 3, to the parameter list to select the desired version. The default is 1.
 
 **MRI-Binding**: pkg-config will look for `ruby-2.1.pc`, but you can modify mkxp.pro to use 2.0 instead. This is the default binding, so no arguments to qmake needed (`BINDING=MRI` to be explicit).
 

@@ -46,15 +46,21 @@
 #include <string>
 
 SharedState *SharedState::instance = 0;
+int SharedState::rgssVersion = 0;
 static GlobalIBO *_globalIBO = 0;
 
-#ifdef RGSS3
-#define GAME_ARCHIVE "Game.rgss3a"
-#elif RGSS2
-#define GAME_ARCHIVE "Game.rgss2a"
-#else
-#define GAME_ARCHIVE "Game.rgssad"
-#endif
+static const char *defGameArchive()
+{
+	if (rgssVer == 1)
+		return "Game.rgssad";
+	else if (rgssVer == 2)
+		return "Game.rgss2a";
+	else if (rgssVer == 3)
+		return "Game.rgss3a";
+
+	assert(!"unreachable");
+	return 0;
+}
 
 struct SharedStatePrivate
 {
@@ -122,7 +128,7 @@ struct SharedStatePrivate
 		}
 
 		// FIXME find out correct archive filename
-		std::string archPath = GAME_ARCHIVE;
+		std::string archPath = defGameArchive();
 
 		/* Check if a game archive exists */
 		FILE *tmp = fopen(archPath.c_str(), "r");
@@ -158,8 +164,9 @@ struct SharedStatePrivate
 
 		/* RGSS3 games will call setup_midi, so there's
 		 * no need to do it on startup */
-#if MIDI && !RGSS3
-		midiState.initDefaultSynths();
+#if MIDI
+		if (rgssVer <= 2)
+			midiState.initDefaultSynths();
 #endif
 	}
 
@@ -176,6 +183,9 @@ void SharedState::initInstance(RGSSThreadData *threadData)
 	/* This section is tricky because of dependencies:
 	 * SharedState depends on GlobalIBO existing,
 	 * Font depends on SharedState existing */
+
+	rgssVersion = threadData->config.rgssVersion;
+	Font::initDefaults();
 
 	_globalIBO = new GlobalIBO();
 	_globalIBO->ensureSize(1);

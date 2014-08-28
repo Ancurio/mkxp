@@ -41,17 +41,20 @@ static mrb_int getButtonArg(mrb_state *mrb)
 {
 	mrb_int num;
 
-#ifdef RGSS3
-	mrb_sym sym;
-	mrb_get_args(mrb, "n", &sym);
+	if (rgssVer >= 3)
+	{
+		mrb_sym sym;
+		mrb_get_args(mrb, "n", &sym);
 
-	mrb_value symHash = getMrbData(mrb)->buttoncodeHash;
-	mrb_value numVal = mrb_hash_fetch(mrb, symHash, mrb_symbol_value(sym),
-	                                  mrb_fixnum_value(Input::None));
-	num = mrb_fixnum(numVal);
-#else
-	mrb_get_args(mrb, "i", &num);
-#endif
+		mrb_value symHash = getMrbData(mrb)->buttoncodeHash;
+		mrb_value numVal = mrb_hash_fetch(mrb, symHash, mrb_symbol_value(sym),
+										  mrb_fixnum_value(Input::None));
+		num = mrb_fixnum(numVal);
+	}
+	else
+	{
+		mrb_get_args(mrb, "i", &num);
+	}
 
 	return num;
 }
@@ -167,32 +170,35 @@ inputBindingInit(mrb_state *mrb)
 
 	mrb_value modVal = mrb_obj_value(module);
 
-#ifndef RGSS3
-	for (size_t i = 0; i < buttonCodesN; ++i)
+	if (rgssVer >= 3)
 	{
-		const char *str = buttonCodes[i].str;
-		mrb_sym sym = mrb_intern_static(mrb, str, strlen(str));
-		mrb_value val = mrb_fixnum_value(buttonCodes[i].val);
+		mrb_value symHash = mrb_hash_new_capa(mrb, buttonCodesN);
 
-		mrb_const_set(mrb, modVal, sym, val);
+		for (size_t i = 0; i < buttonCodesN; ++i)
+		{
+			const char *str = buttonCodes[i].str;
+			mrb_sym sym = mrb_intern_static(mrb, str, strlen(str));
+			mrb_value symVal = mrb_symbol_value(sym);
+			mrb_value val = mrb_fixnum_value(buttonCodes[i].val);
+
+			/* In RGSS3 all Input::XYZ constants are equal to :XYZ symbols,
+			 * to be compatible with the previous convention */
+			mrb_const_set(mrb, modVal, sym, symVal);
+			mrb_hash_set(mrb, symHash, symVal, val);
+		}
+
+		mrb_iv_set(mrb, modVal, mrb_intern_lit(mrb, "buttoncodes"), symHash);
+		getMrbData(mrb)->buttoncodeHash = symHash;
 	}
-#else
-	mrb_value symHash = mrb_hash_new_capa(mrb, buttonCodesN);
-
-	for (size_t i = 0; i < buttonCodesN; ++i)
+	else
 	{
-		const char *str = buttonCodes[i].str;
-		mrb_sym sym = mrb_intern_static(mrb, str, strlen(str));
-		mrb_value symVal = mrb_symbol_value(sym);
-		mrb_value val = mrb_fixnum_value(buttonCodes[i].val);
+		for (size_t i = 0; i < buttonCodesN; ++i)
+		{
+			const char *str = buttonCodes[i].str;
+			mrb_sym sym = mrb_intern_static(mrb, str, strlen(str));
+			mrb_value val = mrb_fixnum_value(buttonCodes[i].val);
 
-		/* In RGSS3 all Input::XYZ constants are equal to :XYZ symbols,
-		 * to be compatible with the previous convention */
-		mrb_const_set(mrb, modVal, sym, symVal);
-		mrb_hash_set(mrb, symHash, symVal, val);
+			mrb_const_set(mrb, modVal, sym, val);
+		}
 	}
-
-	mrb_iv_set(mrb, modVal, mrb_intern_lit(mrb, "buttoncodes"), symHash);
-	getMrbData(mrb)->buttoncodeHash = symHash;
-#endif
 }

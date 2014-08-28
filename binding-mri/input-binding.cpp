@@ -38,15 +38,18 @@ static int getButtonArg(int argc, VALUE *argv)
 {
 	int num;
 
-#ifdef RGSS3
-	ID sym;
-	rb_get_args(argc, argv, "n", &sym RB_ARG_END);
+	if (rgssVer >= 3)
+	{
+		ID sym;
+		rb_get_args(argc, argv, "n", &sym RB_ARG_END);
 
-	VALUE symHash = getRbData()->buttoncodeHash;
-	num = FIX2INT(rb_hash_lookup2(symHash, ID2SYM(sym), INT2FIX(Input::None)));
-#else
-	rb_get_args(argc, argv, "i", &num RB_ARG_END);
-#endif
+		VALUE symHash = getRbData()->buttoncodeHash;
+		num = FIX2INT(rb_hash_lookup2(symHash, ID2SYM(sym), INT2FIX(Input::None)));
+	}
+	else
+	{
+		rb_get_args(argc, argv, "i", &num RB_ARG_END);
+	}
 
 	return num;
 }
@@ -161,29 +164,32 @@ inputBindingInit()
 	_rb_define_module_function(module, "mouse_x", inputMouseX);
 	_rb_define_module_function(module, "mouse_y", inputMouseY);
 
-#ifndef RGSS3
-	for (size_t i = 0; i < buttonCodesN; ++i)
+	if (rgssVer >= 3)
 	{
-		ID sym = rb_intern(buttonCodes[i].str);
-		VALUE val = INT2FIX(buttonCodes[i].val);
+		VALUE symHash = rb_hash_new();
 
-		rb_const_set(module, sym, val);
+		for (size_t i = 0; i < buttonCodesN; ++i)
+		{
+			ID sym = rb_intern(buttonCodes[i].str);
+			VALUE val = INT2FIX(buttonCodes[i].val);
+
+			/* In RGSS3 all Input::XYZ constants are equal to :XYZ symbols,
+			 * to be compatible with the previous convention */
+			rb_const_set(module, sym, ID2SYM(sym));
+			rb_hash_aset(symHash, ID2SYM(sym), val);
+		}
+
+		rb_iv_set(module, "buttoncodes", symHash);
+		getRbData()->buttoncodeHash = symHash;
 	}
-#else
-	VALUE symHash = rb_hash_new();
-
-	for (size_t i = 0; i < buttonCodesN; ++i)
+	else
 	{
-		ID sym = rb_intern(buttonCodes[i].str);
-		VALUE val = INT2FIX(buttonCodes[i].val);
+		for (size_t i = 0; i < buttonCodesN; ++i)
+		{
+			ID sym = rb_intern(buttonCodes[i].str);
+			VALUE val = INT2FIX(buttonCodes[i].val);
 
-		/* In RGSS3 all Input::XYZ constants are equal to :XYZ symbols,
-		 * to be compatible with the previous convention */
-		rb_const_set(module, sym, ID2SYM(sym));
-		rb_hash_aset(symHash, ID2SYM(sym), val);
+			rb_const_set(module, sym, val);
+		}
 	}
-
-	rb_iv_set(module, "buttoncodes", symHash);
-	getRbData()->buttoncodeHash = symHash;
-#endif
 }

@@ -551,8 +551,6 @@ void Bitmap::clearRect(const IntRect &rect)
 	p->onModified();
 }
 
-#ifdef RGSS2
-
 void Bitmap::blur()
 {
 	GUARD_MEGA;
@@ -688,8 +686,6 @@ void Bitmap::radialBlur(int angle, int divisions)
 
 	p->onModified();
 }
-
-#endif
 
 void Bitmap::clear()
 {

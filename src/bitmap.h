@@ -73,10 +73,8 @@ public:
 	               int width, int height);
 	void clearRect(const IntRect &rect);
 
-#ifdef RGSS2
 	void blur();
 	void radialBlur(int angle, int divisions);
-#endif
 
 	void clear();
 

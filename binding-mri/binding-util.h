@@ -47,10 +47,8 @@ struct RbData
 {
 	VALUE exc[RbExceptionsMax];
 
-#ifdef RGSS3
-	/* Input module */
+	/* Input module (RGSS3) */
 	VALUE buttoncodeHash;
-#endif
 
 	RbData();
 	~RbData();

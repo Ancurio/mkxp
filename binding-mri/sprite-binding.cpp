@@ -20,6 +20,7 @@
 */
 
 #include "sprite.h"
+#include "sharedstate.h"
 #include "disposable-binding.h"
 #include "flashable-binding.h"
 #include "sceneelement-binding.h"
@@ -60,14 +61,16 @@ DEF_PROP_I(Sprite, OY)
 DEF_PROP_I(Sprite, BushDepth)
 DEF_PROP_I(Sprite, Opacity)
 DEF_PROP_I(Sprite, BlendType)
+DEF_PROP_I(Sprite, WaveAmp)
+DEF_PROP_I(Sprite, WaveLength)
+DEF_PROP_I(Sprite, WaveSpeed)
 
 DEF_PROP_F(Sprite, ZoomX)
 DEF_PROP_F(Sprite, ZoomY)
 DEF_PROP_F(Sprite, Angle)
+DEF_PROP_F(Sprite, WavePhase)
 
 DEF_PROP_B(Sprite, Mirror)
-
-#ifdef RGSS2
 
 RB_METHOD(spriteWidth)
 {
@@ -92,13 +95,6 @@ RB_METHOD(spriteHeight)
 
 	return rb_fix_new(value);
 }
-
-DEF_PROP_I(Sprite, WaveAmp)
-DEF_PROP_I(Sprite, WaveLength)
-DEF_PROP_I(Sprite, WaveSpeed)
-DEF_PROP_F(Sprite, WavePhase)
-
-#endif
 
 void
 spriteBindingInit()
@@ -130,7 +126,8 @@ spriteBindingInit()
 	INIT_PROP_BIND( Sprite, Color,     "color"      );
 	INIT_PROP_BIND( Sprite, Tone,      "tone"       );
 
-#ifdef RGSS2
+	if (rgssVer >= 2)
+	{
 	_rb_define_method(klass, "width", spriteWidth);
 	_rb_define_method(klass, "height", spriteHeight);
 
@@ -138,5 +135,5 @@ spriteBindingInit()
 	INIT_PROP_BIND( Sprite, WaveLength, "wave_length" );
 	INIT_PROP_BIND( Sprite, WaveSpeed,  "wave_speed"  );
 	INIT_PROP_BIND( Sprite, WavePhase,  "wave_phase"  );
-#endif
+	}
 }

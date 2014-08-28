@@ -42,14 +42,11 @@
 #include "../simpleColor.vert.xxd"
 #include "../sprite.vert.xxd"
 #include "../tilemap.vert.xxd"
-
-#ifdef RGSS2
 #include "../blur.frag.xxd"
 #include "../simpleMatrix.vert.xxd"
 #include "../blurH.vert.xxd"
 #include "../blurV.vert.xxd"
 #include "../tilemapvx.vert.xxd"
-#endif
 
 
 #define INIT_SHADER(vert, frag, name) \
@@ -505,8 +502,6 @@ void HueShader::setInputTexture(TEX::ID tex)
 }
 
 
-#ifdef RGSS2
-
 SimpleMatrixShader::SimpleMatrixShader()
 {
 	INIT_SHADER(simpleMatrix, simpleAlpha, SimpleMatrixShader);
@@ -550,8 +545,6 @@ void TilemapVXShader::setAniOffset(const Vec2 &value)
 {
 	gl.Uniform2f(u_aniOffset, value.x, value.y);
 }
-
-#endif
 
 
 BltShader::BltShader()

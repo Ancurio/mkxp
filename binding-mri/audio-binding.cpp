@@ -32,7 +32,10 @@
 		int volume = 100; \
 		int pitch = 100; \
 		double pos = 0.0; \
-		rb_get_args(argc, argv, "z|iif", &filename, &volume, &pitch, &pos RB_ARG_END); \
+		if (rgssVer >= 3) \
+			rb_get_args(argc, argv, "z|iif", &filename, &volume, &pitch, &pos RB_ARG_END); \
+		else \
+			rb_get_args(argc, argv, "z|ii", &filename, &volume, &pitch RB_ARG_END); \
 		GUARD_EXC( shState->audio().entity##Play(filename, volume, pitch, pos); ) \
 		return Qnil; \
 	} \
@@ -83,13 +86,8 @@ RB_METHOD(audio_##entity##Fade) \
 		return rb_float_new(shState->audio().entity##Pos()); \
 	}
 
-#ifdef RGSS3
 DEF_PLAY_STOP_POS( bgm )
 DEF_PLAY_STOP_POS( bgs )
-#else
-DEF_PLAY_STOP( bgm )
-DEF_PLAY_STOP( bgs )
-#endif
 
 DEF_PLAY_STOP( me )
 
@@ -124,10 +122,11 @@ audioBindingInit()
 	BIND_PLAY_STOP_FADE( bgs );
 	BIND_PLAY_STOP_FADE( me  );
 
-#ifdef RGSS3
+	if (rgssVer >= 3)
+	{
 	BIND_POS( bgm );
 	BIND_POS( bgs );
-#endif
+	}
 
 	BIND_PLAY_STOP( se )
 }

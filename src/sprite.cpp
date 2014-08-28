@@ -374,11 +374,11 @@ void Sprite::setY(int value)
 
 	p->trans.setPosition(Vec2(getX(), value));
 
-#ifdef RGSS2
-	p->wave.dirty = true;
-
-	setSpriteY(value);
-#endif
+	if (rgssVer >= 2)
+	{
+		p->wave.dirty = true;
+		setSpriteY(value);
+	}
 }
 
 void Sprite::setOX(int value)
@@ -413,9 +413,8 @@ void Sprite::setZoomY(float value)
 	p->trans.setScale(Vec2(getZoomX(), value));
 	p->recomputeBushDepth();
 
-#ifdef RGSS2
-	p->wave.dirty = true;
-#endif
+	if (rgssVer >= 2)
+		p->wave.dirty = true;
 }
 
 void Sprite::setAngle(float value)

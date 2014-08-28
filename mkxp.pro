@@ -45,44 +45,10 @@ contains(BINDING, NULL) {
 	CONFIG += BINDING_NULL
 }
 
-# TODO: Use RGSS_VER macro instead of RGSSN in C++ sources
-isEmpty(RGSS_VER) {
-	RGSS_VER = 1
-}
-
-contains(RGSS_VER, 1) {
-	_HAVE_RGSS_VER = YES
-	DEFINES += "RGSS_VER=1"
-}
-
-contains(RGSS_VER, 2) {
-	contains(_HAVE_RGSS_VER, YES) {
-		error("Only one RGSS version may be selected")
-	}
-	_HAVE_RGSS_VER = YES
-
-	CONFIG += RGSS2
-	DEFINES += RGSS2 "RGSS_VER=2"
-}
-
-contains(RGSS_VER, 3) {
-	contains(_HAVE_RGSS_VER, YES) {
-		error("Only one RGSS version may be selected")
-	}
-	_HAVE_RGSS_VER = YES
-
-	CONFIG += RGSS2 RGSS3
-	DEFINES += RGSS2 RGSS3 "RGSS_VER=3"
-}
-
 unix {
 	CONFIG += link_pkgconfig
-	PKGCONFIG += sigc++-2.0 pixman-1 zlib physfs \
+	PKGCONFIG += sigc++-2.0 pixman-1 zlib physfs vorbisfile \
 	             sdl2 SDL2_image SDL2_ttf SDL_sound openal
-
-	RGSS2 {
-		PKGCONFIG += vorbisfile
-	}
 
 	MIDI {
 		PKGCONFIG += fluidsynth
@@ -166,7 +132,10 @@ HEADERS += \
 	src/aldatasource.h \
 	src/alstream.h \
 	src/audiostream.h \
-	src/rgssad.h
+	src/rgssad.h \
+	src/windowvx.h \
+	src/tilemapvx.h \
+	src/tileatlasvx.h
 
 SOURCES += \
 	src/main.cpp \
@@ -202,7 +171,12 @@ SOURCES += \
 	src/alstream.cpp \
 	src/audiostream.cpp \
 	src/rgssad.cpp \
-	src/bundledfont.cpp
+	src/bundledfont.cpp \
+	src/vorbissource.cpp \
+	src/windowvx.cpp \
+	src/tilemapvx.cpp \
+	src/tileatlasvx.cpp \
+	src/autotilesvx.cpp
 
 EMBED = \
 	shader/transSimple.frag \
@@ -219,28 +193,12 @@ EMBED = \
 	shader/simpleColor.vert \
 	shader/sprite.vert \
 	shader/tilemap.vert \
-	assets/liberation.ttf
-
-RGSS2 {
-	HEADERS += \
-	src/windowvx.h \
-	src/tilemapvx.h \
-	src/tileatlasvx.h
-
-	SOURCES += \
-	src/vorbissource.cpp \
-	src/windowvx.cpp \
-	src/tilemapvx.cpp \
-	src/tileatlasvx.cpp \
-	src/autotilesvx.cpp
-
-	EMBED += \
 	shader/blur.frag \
 	shader/blurH.vert \
 	shader/blurV.vert \
 	shader/simpleMatrix.vert \
-	shader/tilemapvx.vert
-}
+	shader/tilemapvx.vert \
+	assets/liberation.ttf
 
 MIDI {
 	HEADERS += \
@@ -352,13 +310,9 @@ BINDING_MRI {
 	binding-mri/tilemap-binding.cpp \
 	binding-mri/audio-binding.cpp \
 	binding-mri/module_rpg.cpp \
-	binding-mri/filesystem-binding.cpp
-
-	RGSS2 {
-		SOURCES += \
-		binding-mri/windowvx-binding.cpp \
-		binding-mri/tilemapvx-binding.cpp
-	}
+	binding-mri/filesystem-binding.cpp \
+	binding-mri/windowvx-binding.cpp \
+	binding-mri/tilemapvx-binding.cpp
 }
 
 OTHER_FILES += $$EMBED
