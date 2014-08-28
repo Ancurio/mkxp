@@ -1276,26 +1276,6 @@ DEF_ATTR_RD_SIMPLE(Tilemap, Visible, bool, p->visible)
 DEF_ATTR_RD_SIMPLE(Tilemap, OX, int, p->offset.x)
 DEF_ATTR_RD_SIMPLE(Tilemap, OY, int, p->offset.y)
 
-#ifdef RGSS2
-
-void Tilemap::setViewport(Viewport *value)
-{
-	if (p->viewport == value)
-		return;
-
-	p->viewport = value;
-
-	if (!p->tilemapReady)
-		return;
-
-	p->elem.ground->setViewport(value);
-
-	for (size_t i = 0; i < zlayersMax; ++i)
-		p->elem.zlayers[i]->setViewport(value);
-}
-
-#endif
-
 void Tilemap::setTileset(Bitmap *value)
 {
 	if (p->tileset == value)
