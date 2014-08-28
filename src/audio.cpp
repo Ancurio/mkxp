@@ -24,7 +24,10 @@
 #include "audiostream.h"
 #include "soundemitter.h"
 #include "sharedstate.h"
+
+#ifdef MIDI
 #include "sharedmidistate.h"
+#endif
 
 #include <string>
 
