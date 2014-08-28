@@ -126,10 +126,8 @@ public:
 	{
 		updateReso(width, height);
 
-#ifdef RGSS2
 		brightEffect = false;
 		brightnessQuad.setColor(Vec4());
-#endif
 	}
 
 	void composite()
@@ -147,7 +145,6 @@ public:
 
 		Scene::composite();
 
-#ifdef RGSS2
 		if (brightEffect)
 		{
 			SimpleColorShader &shader = shState->shaders().simpleColor;
@@ -157,7 +154,6 @@ public:
 
 			brightnessQuad.draw();
 		}
-#endif
 	}
 
 	void requestViewportRender(Vec4 &c, Vec4 &f, Vec4 &t)
@@ -194,14 +190,12 @@ public:
 		glState.blend.pop();
 	}
 
-#ifdef RGSS2
 	void setBrightness(float norm)
 	{
 		brightnessQuad.setColor(Vec4(0, 0, 0, 1.0 - norm));
 
 		brightEffect = norm < 1.0;
 	}
-#endif
 
 	void updateReso(int width, int height)
 	{
@@ -209,10 +203,7 @@ public:
 		geometry.rect.h = height;
 
 		screenQuad.setTexPosRect(geometry.rect, geometry.rect);
-
-#ifdef RGSS2
 		brightnessQuad.setTexPosRect(geometry.rect, geometry.rect);
-#endif
 
 		notifyGeometryChange();
 	}
@@ -232,10 +223,8 @@ private:
 	PingPong pp;
 	Quad screenQuad;
 
-#ifdef RGSS2
 	Quad brightnessQuad;
 	bool brightEffect;
-#endif
 };
 
 /* Nanoseconds per second */
@@ -391,10 +380,7 @@ struct GraphicsPrivate
 
 	int frameRate;
 	int frameCount;
-
-#ifdef RGSS2
 	int brightness;
-#endif
 
 	FPSLimiter fpsLimiter;
 
@@ -412,9 +398,7 @@ struct GraphicsPrivate
 	      threadData(rtData),
 	      frameRate(DEF_FRAMERATE),
 	      frameCount(0),
-#ifdef RGSS2
 	      brightness(255),
-#endif
 	      fpsLimiter(frameRate),
 	      frozen(false)
 	{
@@ -606,9 +590,7 @@ void Graphics::transition(int duration,
 	vague = clamp(vague, 0, 512);
 	Bitmap *transMap = filename ? new Bitmap(filename) : 0;
 
-#ifdef RGSS2
 	setBrightness(255);
-#endif
 
 	/* Capture new scene */
 	p->compositeToBuffer(p->currentScene);
@@ -713,8 +695,6 @@ void Graphics::setFrameRate(int value)
 
 	p->fpsLimiter.setDesiredFPS(p->frameRate);
 }
-
-#ifdef RGSS2
 
 void Graphics::wait(int duration)
 {
@@ -848,8 +828,6 @@ void Graphics::setBrightness(int value)
 	p->brightness = value;
 	p->screen.setBrightness(value / 255.0);
 }
-
-#endif
 
 bool Graphics::getFullscreen() const
 {

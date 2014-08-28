@@ -113,8 +113,6 @@ Viewport::Viewport(Rect *rect)
 	initViewport(rect->x, rect->y, rect->width, rect->height);
 }
 
-#ifdef RGSS3
-
 Viewport::Viewport()
     : SceneElement(*shState->screen()),
       sceneLink(this)
@@ -122,8 +120,6 @@ Viewport::Viewport()
 	const Graphics &graphics = shState->graphics();
 	initViewport(0, 0, graphics.width(), graphics.height());
 }
-
-#endif
 
 void Viewport::initViewport(int x, int y, int width, int height)
 {
@@ -232,8 +228,6 @@ Viewport *ViewportElement::getViewport() const
 	return m_viewport;
 }
 
-#ifdef RGSS2
-
 void ViewportElement::setViewport(Viewport *viewport)
 {
 	m_viewport = viewport;
@@ -241,5 +235,3 @@ void ViewportElement::setViewport(Viewport *viewport)
 	onViewportChange();
 	onGeometryChange(scene->getGeometry());
 }
-
-#endif

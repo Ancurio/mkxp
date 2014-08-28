@@ -488,8 +488,6 @@ void Bitmap::fillRect(const IntRect &rect, const Vec4 &color)
 	p->onModified();
 }
 
-#ifdef RGSS2
-
 void Bitmap::gradientFillRect(int x, int y,
                               int width, int height,
                               const Vec4 &color1, const Vec4 &color2,
@@ -552,6 +550,8 @@ void Bitmap::clearRect(const IntRect &rect)
 
 	p->onModified();
 }
+
+#ifdef RGSS2
 
 void Bitmap::blur()
 {

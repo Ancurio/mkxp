@@ -249,17 +249,10 @@ Audio::Audio(const Config &conf)
 
 void Audio::bgmPlay(const char *filename,
                     int volume,
-                    int pitch
-                    #ifdef RGSS3
-                    ,float pos
-                    #endif
-                    )
+                    int pitch,
+                    float pos)
 {
-#ifdef RGSS3
 	p->bgm.play(filename, volume, pitch, pos);
-#else
-	p->bgm.play(filename, volume, pitch);
-#endif
 }
 
 void Audio::bgmStop()
@@ -275,17 +268,10 @@ void Audio::bgmFade(int time)
 
 void Audio::bgsPlay(const char *filename,
                     int volume,
-                    int pitch
-                    #ifdef RGSS3
-                    ,float pos
-                    #endif
-                    )
+                    int pitch,
+                    float pos)
 {
-#ifdef RGSS3
 	p->bgs.play(filename, volume, pitch, pos);
-#else
-	p->bgs.play(filename, volume, pitch);
-#endif
 }
 
 void Audio::bgsStop()
@@ -329,8 +315,6 @@ void Audio::seStop()
 	p->se.stop();
 }
 
-#ifdef RGSS3
-
 void Audio::setupMidi()
 {
 #ifdef MIDI
@@ -347,7 +331,5 @@ float Audio::bgsPos()
 {
 	return p->bgs.playingOffset();
 }
-
-#endif
 
 Audio::~Audio() { delete p; }

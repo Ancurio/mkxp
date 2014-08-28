@@ -67,7 +67,6 @@ struct SpritePrivate
 	Color *color;
 	Tone *tone;
 
-#ifdef RGSS2
 	struct
 	{
 		int amp;
@@ -81,7 +80,6 @@ struct SpritePrivate
 		bool dirty;
 		SimpleQuadArray qArray;
 	} wave;
-#endif
 
 	EtcTemps tmp;
 
@@ -109,13 +107,11 @@ struct SpritePrivate
 		prepareCon = shState->prepareDraw.connect
 		        (sigc::mem_fun(this, &SpritePrivate::prepare));
 
-#ifdef RGSS2
 		wave.amp = 0;
 		wave.length = 180;
 		wave.speed = 360;
 		wave.phase = 0.0;
 		wave.dirty = false;
-#endif
 	}
 
 	~SpritePrivate()
@@ -147,9 +143,7 @@ struct SpritePrivate
 		quad.setPosRect(IntRect(0, 0, srcRect->width, srcRect->height));
 		recomputeBushDepth();
 
-#ifdef RGSS2
 		wave.dirty = true;
-#endif
 	}
 
 	void updateSrcRectCon()
@@ -171,7 +165,6 @@ struct SpritePrivate
 		if (!opacity)
 			return;
 
-#ifdef RGSS2
 		if (wave.active)
 		{
 			/* Don't do expensive wave bounding box
@@ -179,7 +172,6 @@ struct SpritePrivate
 			isVisible = true;
 			return;
 		}
-#endif
 
 		/* Compare sprite bounding box against the scene */
 
@@ -201,7 +193,6 @@ struct SpritePrivate
 		isVisible = SDL_HasIntersection(&self, &sceneRect);
 	}
 
-#ifdef RGSS2
 	void emitWaveChunk(SVertex *&vert, float phase, int width,
 	                   float zoomY, int chunkY, int chunkLength)
 	{
@@ -285,17 +276,14 @@ struct SpritePrivate
 
 		wave.qArray.commit();
 	}
-#endif
 
 	void prepare()
 	{
-#ifdef RGSS2
 		if (wave.dirty)
 		{
 			updateWave();
 			wave.dirty = false;
 		}
-#endif
 
 		updateVisibility();
 	}
@@ -315,32 +303,29 @@ Sprite::~Sprite()
 	delete p;
 }
 
-DEF_ATTR_RD_SIMPLE(Sprite, Bitmap,    Bitmap*, p->bitmap)
-DEF_ATTR_RD_SIMPLE(Sprite, SrcRect,   Rect*,   p->srcRect)
-DEF_ATTR_RD_SIMPLE(Sprite, X,         int,     p->trans.getPosition().x)
-DEF_ATTR_RD_SIMPLE(Sprite, Y,         int,     p->trans.getPosition().y)
-DEF_ATTR_RD_SIMPLE(Sprite, OX,        int,     p->trans.getOrigin().x)
-DEF_ATTR_RD_SIMPLE(Sprite, OY,        int,     p->trans.getOrigin().y)
-DEF_ATTR_RD_SIMPLE(Sprite, ZoomX,     float,   p->trans.getScale().x)
-DEF_ATTR_RD_SIMPLE(Sprite, ZoomY,     float,   p->trans.getScale().y)
-DEF_ATTR_RD_SIMPLE(Sprite, Angle,     float,   p->trans.getRotation())
-DEF_ATTR_RD_SIMPLE(Sprite, Mirror,    bool,    p->mirrored)
-DEF_ATTR_RD_SIMPLE(Sprite, BushDepth, int,     p->bushDepth)
-DEF_ATTR_RD_SIMPLE(Sprite, BlendType, int,     p->blendType)
+DEF_ATTR_RD_SIMPLE(Sprite, Bitmap,     Bitmap*, p->bitmap)
+DEF_ATTR_RD_SIMPLE(Sprite, SrcRect,    Rect*,   p->srcRect)
+DEF_ATTR_RD_SIMPLE(Sprite, X,          int,     p->trans.getPosition().x)
+DEF_ATTR_RD_SIMPLE(Sprite, Y,          int,     p->trans.getPosition().y)
+DEF_ATTR_RD_SIMPLE(Sprite, OX,         int,     p->trans.getOrigin().x)
+DEF_ATTR_RD_SIMPLE(Sprite, OY,         int,     p->trans.getOrigin().y)
+DEF_ATTR_RD_SIMPLE(Sprite, ZoomX,      float,   p->trans.getScale().x)
+DEF_ATTR_RD_SIMPLE(Sprite, ZoomY,      float,   p->trans.getScale().y)
+DEF_ATTR_RD_SIMPLE(Sprite, Angle,      float,   p->trans.getRotation())
+DEF_ATTR_RD_SIMPLE(Sprite, Mirror,     bool,    p->mirrored)
+DEF_ATTR_RD_SIMPLE(Sprite, BushDepth,  int,     p->bushDepth)
+DEF_ATTR_RD_SIMPLE(Sprite, BlendType,  int,     p->blendType)
+DEF_ATTR_RD_SIMPLE(Sprite, Width,      int,     p->srcRect->width)
+DEF_ATTR_RD_SIMPLE(Sprite, Height,     int,     p->srcRect->height)
+DEF_ATTR_RD_SIMPLE(Sprite, WaveAmp,    int,     p->wave.amp)
+DEF_ATTR_RD_SIMPLE(Sprite, WaveLength, int,     p->wave.length)
+DEF_ATTR_RD_SIMPLE(Sprite, WaveSpeed,  int,     p->wave.speed)
+DEF_ATTR_RD_SIMPLE(Sprite, WavePhase,  float,   p->wave.phase)
 
 DEF_ATTR_SIMPLE(Sprite, BushOpacity, int,    p->bushOpacity)
 DEF_ATTR_SIMPLE(Sprite, Opacity,     int,    p->opacity)
 DEF_ATTR_SIMPLE(Sprite, Color,       Color*, p->color)
 DEF_ATTR_SIMPLE(Sprite, Tone,        Tone*,  p->tone)
-
-#ifdef RGSS2
-DEF_ATTR_RD_SIMPLE(Sprite, Width,      int,   p->srcRect->width)
-DEF_ATTR_RD_SIMPLE(Sprite, Height,     int,   p->srcRect->height)
-DEF_ATTR_RD_SIMPLE(Sprite, WaveAmp,    int,   p->wave.amp)
-DEF_ATTR_RD_SIMPLE(Sprite, WaveLength, int,   p->wave.length)
-DEF_ATTR_RD_SIMPLE(Sprite, WaveSpeed,  int,   p->wave.speed)
-DEF_ATTR_RD_SIMPLE(Sprite, WavePhase,  float, p->wave.phase)
-#endif
 
 void Sprite::setBitmap(Bitmap *bitmap)
 {
@@ -359,9 +344,7 @@ void Sprite::setBitmap(Bitmap *bitmap)
 	p->onSrcRectChange();
 	p->quad.setPosRect(p->srcRect->toFloatRect());
 
-#ifdef RGSS2
 	p->wave.dirty = true;
-#endif
 }
 
 void Sprite::setSrcRect(Rect *rect)
@@ -478,8 +461,6 @@ void Sprite::setBlendType(int type)
 	}
 }
 
-#ifdef RGSS2
-
 #define DEF_WAVE_SETTER(Name, name, type) \
 	void Sprite::setWave##Name(type value) \
 	{ \
@@ -504,8 +485,6 @@ void Sprite::update()
 	p->wave.phase += p->wave.speed / 180;
 	p->wave.dirty = true;
 }
-
-#endif
 
 /* SceneElement */
 void Sprite::draw()
@@ -560,14 +539,10 @@ void Sprite::draw()
 
 	p->bitmap->bindTex(*base);
 
-#ifdef RGSS2
 	if (p->wave.active)
 		p->wave.qArray.draw();
 	else
 		p->quad.draw();
-#else
-	p->quad.draw();
-#endif
 
 	glState.blendMode.pop();
 }

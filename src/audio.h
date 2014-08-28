@@ -40,21 +40,15 @@ class Audio
 public:
 	void bgmPlay(const char *filename,
 	             int volume = 100,
-	             int pitch = 100
-#ifdef RGSS3
-	             ,float pos = 0
-#endif
-	             );
+	             int pitch = 100,
+	             float pos = 0);
 	void bgmStop();
 	void bgmFade(int time);
 
 	void bgsPlay(const char *filename,
 	             int volume = 100,
-	             int pitch = 100
-#ifdef RGSS3
-	             ,float pos = 0
-#endif
-	             );
+	             int pitch = 100,
+	             float pos = 0);
 	void bgsStop();
 	void bgsFade(int time);
 
@@ -69,11 +63,9 @@ public:
 	            int pitch = 100);
 	void seStop();
 
-#ifdef RGSS3
 	void setupMidi();
 	float bgmPos();
 	float bgsPos();
-#endif
 
 private:
 	Audio(const Config &conf);

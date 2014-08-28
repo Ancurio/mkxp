@@ -34,11 +34,7 @@ class Viewport : public Scene, public SceneElement, public Flashable, public Dis
 public:
 	Viewport(int x, int y, int width, int height);
 	Viewport(Rect *rect);
-
-#ifdef RGSS3
 	Viewport();
-#endif
-
 	~Viewport();
 
 	DECL_ATTR( Rect,  Rect*  )
@@ -68,11 +64,7 @@ public:
 	ViewportElement(Viewport *viewport = 0, int z = 0, bool isSprite = false);
 	ViewportElement(Viewport *viewport, int z, unsigned int cStamp);
 
-	Viewport *getViewport() const;
-
-#ifdef RGSS2
-	void setViewport(Viewport *viewport = 0);
-#endif
+	DECL_ATTR( Viewport,  Viewport* )
 
 protected:
 	virtual void onViewportChange() {}

@@ -335,29 +335,17 @@ DEF_ATTR_RD_SIMPLE(Font, Size,  int,    p->size)
 DEF_ATTR_SIMPLE(Font, Bold,     bool,   p->bold)
 DEF_ATTR_SIMPLE(Font, Italic,   bool,   p->italic)
 DEF_ATTR_SIMPLE(Font, Color,    Color*, p->color)
-
-#ifdef RGSS2
 DEF_ATTR_SIMPLE(Font, Shadow,   bool,   p->shadow)
-#endif
-
-#ifdef RGSS3
 DEF_ATTR_SIMPLE(Font, Outline,  bool,   p->outline)
 DEF_ATTR_SIMPLE(Font, OutColor, Color*, p->outColor)
-#endif
 
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultSize,       int,    FontPrivate::defaultSize)
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultBold,       bool,   FontPrivate::defaultBold)
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultItalic,     bool,   FontPrivate::defaultItalic)
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultColor,      Color*, FontPrivate::defaultColor)
-
-#ifdef RGSS2
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultShadow,     bool,   FontPrivate::defaultShadow)
-#endif
-
-#ifdef RGSS3
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutline,    bool,   FontPrivate::defaultOutline)
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutColor,   Color*, FontPrivate::defaultOutColor)
-#endif
 
 const char *Font::getDefaultName()
 {

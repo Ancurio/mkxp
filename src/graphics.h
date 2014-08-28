@@ -41,8 +41,8 @@ public:
 
 	DECL_ATTR( FrameRate,  int )
 	DECL_ATTR( FrameCount, int )
+	DECL_ATTR( Brightness, int )
 
-#ifdef RGSS2
 	void wait(int duration);
 	void fadeout(int duration);
 	void fadein(int duration);
@@ -52,9 +52,6 @@ public:
 	int width() const;
 	int height() const;
 	void resizeScreen(int width, int height);
-
-	DECL_ATTR( Brightness, int )
-#endif
 
 	/* Non-standard extension */
 	DECL_ATTR( Fullscreen, bool )
