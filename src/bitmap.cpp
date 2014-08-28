@@ -970,7 +970,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		GLMeta::blitEnd();
 
 		FloatRect bltRect(0, 0,
-		                  (float) gpTexSize.x / gpTex2.width,
+		                  (float) (gpTexSize.x * squeeze) / gpTex2.width,
 		                  (float) gpTexSize.y / gpTex2.height);
 
 		BltShader &shader = shState->shaders().blt;
