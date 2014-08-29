@@ -28,7 +28,7 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
-rb_data_type_struct TilemapAutotilesType;
+rb_data_type_t TilemapAutotilesType;
 
 RB_METHOD(tilemapAutotilesSet)
 {

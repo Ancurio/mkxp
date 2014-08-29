@@ -30,7 +30,7 @@
 #include "binding-types.h"
 
 DEF_TYPE(TilemapVX);
-rb_data_type_struct BitmapArrayType;
+rb_data_type_t BitmapArrayType;
 
 RB_METHOD(tilemapVXInitialize)
 {

@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-void initType(rb_data_type_struct &type,
+void initType(rb_data_type_t &type,
               const char *name,
               void (*freeInst)(void *))
 {

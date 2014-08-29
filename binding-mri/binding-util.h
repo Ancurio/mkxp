@@ -62,12 +62,12 @@ void
 raiseRbExc(const Exception &exc);
 
 #define DECL_TYPE(Klass) \
-	extern rb_data_type_struct Klass##Type
+	extern rb_data_type_t Klass##Type
 
 #define DEF_TYPE(Klass) \
-	rb_data_type_struct Klass##Type
+	rb_data_type_t Klass##Type
 
-void initType(rb_data_type_struct &type,
+void initType(rb_data_type_t &type,
               const char *name,
               void (*freeInst)(void*));
 
@@ -109,7 +109,7 @@ getPrivateData(VALUE self)
 
 template<class C>
 static inline C *
-getPrivateDataCheck(VALUE self, const rb_data_type_struct &type)
+getPrivateDataCheck(VALUE self, const rb_data_type_t &type)
 {
 	/* We don't check for disposed here because any disposable
 	 * property is always also nullable */
@@ -124,7 +124,7 @@ setPrivateData(VALUE self, void *p)
 }
 
 inline VALUE
-wrapObject(void *p, const rb_data_type_struct &type,
+wrapObject(void *p, const rb_data_type_t &type,
            VALUE underKlass = rb_cObject)
 {
 	VALUE klass = rb_const_get(underKlass, rb_intern(type.wrap_struct_name));
@@ -137,7 +137,7 @@ wrapObject(void *p, const rb_data_type_struct &type,
 
 inline VALUE
 wrapProperty(VALUE self, void *prop, const char *iv,
-             const rb_data_type_struct &type,
+             const rb_data_type_t &type,
              VALUE underKlass = rb_cObject)
 {
 	VALUE propObj = wrapObject(prop, type, underKlass);
