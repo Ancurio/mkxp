@@ -28,7 +28,16 @@
 #include "ruby/encoding.h"
 #include "ruby/intern.h"
 
-DEF_TYPE(FileInt);
+static void
+fileIntFreeInstance(void *inst)
+{
+	SDL_RWops *ops = static_cast<SDL_RWops*>(inst);
+
+	SDL_RWclose(ops);
+	SDL_FreeRW(ops);
+}
+
+DEF_TYPE_CUSTOMFREE(FileInt, fileIntFreeInstance);
 
 static VALUE
 fileIntForPath(const char *path)
@@ -98,15 +107,6 @@ RB_METHOD(fileIntBinmode)
 	RB_UNUSED_PARAM;
 
 	return Qnil;
-}
-
-static void
-fileIntFreeInstance(void *inst)
-{
-	SDL_RWops *ops = static_cast<SDL_RWops*>(inst);
-
-	SDL_RWclose(ops);
-	SDL_FreeRW(ops);
 }
 
 VALUE
@@ -196,8 +196,6 @@ RB_METHOD(_marshalLoad)
 void
 fileIntBindingInit()
 {
-	initType(FileIntType, "FileInt", fileIntFreeInstance);
-
 	VALUE klass = rb_define_class("FileInt", rb_cIO);
 	rb_define_alloc_func(klass, classAllocate<&FileIntType>);
 

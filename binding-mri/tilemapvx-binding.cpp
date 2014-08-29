@@ -29,8 +29,9 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
-DEF_TYPE(TilemapVX);
-rb_data_type_struct BitmapArrayType;
+DEF_TYPE_CUSTOMNAME(TilemapVX, "Tilemap");
+
+DEF_TYPE_CUSTOMFREE(BitmapArray, RUBY_TYPED_NEVER_FREE);
 
 RB_METHOD(tilemapVXInitialize)
 {
@@ -130,8 +131,6 @@ RB_METHOD(tilemapVXBitmapsGet)
 void
 tilemapVXBindingInit()
 {
-	initType(TilemapVXType, "Tilemap", freeInstance<TilemapVX>);
-
 	VALUE klass = rb_define_class("Tilemap", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&TilemapVXType>);
 
@@ -156,8 +155,6 @@ tilemapVXBindingInit()
 	{
 	INIT_PROP_BIND( TilemapVX, Flags,     "passages"   );
 	}
-
-	initType(BitmapArrayType, "BitmapArray", 0);
 
 	klass = rb_define_class_under(klass, "BitmapArray", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&BitmapArrayType>);

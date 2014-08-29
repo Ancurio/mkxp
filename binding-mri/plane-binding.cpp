@@ -59,8 +59,6 @@ DEF_PROP_F(Plane, ZoomY)
 void
 planeBindingInit()
 {
-	INIT_TYPE(Plane);
-
 	VALUE klass = rb_define_class("Plane", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&PlaneType>);
 

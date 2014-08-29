@@ -169,7 +169,6 @@ INITCOPY_FUN(Rect)
 
 #define INIT_BIND(Klass) \
 { \
-	INIT_TYPE(Klass); \
 	klass = rb_define_class(#Klass, rb_cObject); \
 	rb_define_alloc_func(klass, classAllocate<&Klass##Type>); \
 	rb_define_class_method(klass, "_load", Klass##Load); \

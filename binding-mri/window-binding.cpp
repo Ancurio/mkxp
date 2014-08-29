@@ -73,8 +73,6 @@ DEF_PROP_I(Window, ContentsOpacity)
 void
 windowBindingInit()
 {
-	INIT_TYPE(Window);
-
 	VALUE klass = rb_define_class("Window", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&WindowType>);
 

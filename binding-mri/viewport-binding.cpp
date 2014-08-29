@@ -89,8 +89,6 @@ DEF_PROP_I(Viewport, OY)
 void
 viewportBindingInit()
 {
-	INIT_TYPE(Viewport);
-
 	VALUE klass = rb_define_class("Viewport", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&ViewportType>);
 
