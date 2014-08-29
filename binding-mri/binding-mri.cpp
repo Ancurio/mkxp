@@ -26,6 +26,7 @@
 #include "filesystem.h"
 #include "util.h"
 #include "debugwriter.h"
+#include "graphics.h"
 
 #include <ruby.h>
 #include <ruby/encoding.h>
@@ -75,6 +76,7 @@ RB_METHOD(mriDataDirectory);
 RB_METHOD(mkxpPuts);
 
 RB_METHOD(mriRgssMain);
+RB_METHOD(mriRgssStop);
 RB_METHOD(_kernelCaller);
 
 static void mriBindingInit()
@@ -107,6 +109,7 @@ static void mriBindingInit()
 	if (rgssVer >= 3)
 	{
 		_rb_define_module_function(rb_mKernel, "rgss_main", mriRgssMain);
+		_rb_define_module_function(rb_mKernel, "rgss_stop", mriRgssStop);
 
 		_rb_define_module_function(rb_mKernel, "msgbox",    mriPrint);
 		_rb_define_module_function(rb_mKernel, "msgbox_p",  mriP);
@@ -213,6 +216,16 @@ RB_METHOD(mriRgssMain)
 
 	// TODO: Implement F12 reset
 	rb_yield(Qnil);
+
+	return Qnil;
+}
+
+RB_METHOD(mriRgssStop)
+{
+	RB_UNUSED_PARAM;
+
+	while (true)
+		shState->graphics().update();
 
 	return Qnil;
 }
