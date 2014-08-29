@@ -226,6 +226,8 @@ void Config::read(int argc, char *argv[])
 #undef PO_DESC
 #undef PO_DESC_ALL
 
+	rgssVersion = clamp(rgssVersion, 0, 3);
+
 	SE.sourceCount = clamp(SE.sourceCount, 1, 64);
 }
 
