@@ -25,6 +25,7 @@
 #include "font.h"
 #include "util.h"
 #include "exception.h"
+#include "sharedstate.h"
 #include "boost-hash.h"
 #include "debugwriter.h"
 
@@ -335,6 +336,9 @@ FileSystem::FileSystem(const char *argv0,
 			p->extensions[Audio].push_back(buf);
 		}
 	}
+
+	if (rgssVer >= 2 && !contains(p->extensions[Audio], std::string("ogg")))
+		p->extensions[Audio].push_back("ogg");
 
 #if MIDI
 	p->extensions[Audio].push_back("mid");
