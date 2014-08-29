@@ -38,6 +38,8 @@
 #include "binding.h"
 
 #include <unistd.h>
+#include <string.h>
+#include <assert.h>
 
 static void
 rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
@@ -158,6 +160,17 @@ int rgssThreadFun(void *userdata)
 	return 0;
 }
 
+static void printRgssVersion(int ver)
+{
+	const char *const makers[] =
+		{ "", "XP", "VX", "VX Ace" };
+
+	char buf[128];
+	snprintf(buf, sizeof(buf), "RGSS version %d (%s)", ver, makers[ver]);
+
+	Debug() << buf;
+}
+
 int main(int argc, char *argv[])
 {
 	/* initialize SDL first */
@@ -191,6 +204,8 @@ int main(int argc, char *argv[])
 
 	conf.read(argc, argv);
 	conf.readGameINI();
+
+	printRgssVersion(conf.rgssVersion);
 
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 	if (IMG_Init(imgFlags) != imgFlags)
