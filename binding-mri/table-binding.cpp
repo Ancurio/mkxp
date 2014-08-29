@@ -147,8 +147,6 @@ INITCOPY_FUN(Table)
 void
 tableBindingInit()
 {
-	INIT_TYPE(Table);
-
 	VALUE klass = rb_define_class("Table", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&TableType>);
 

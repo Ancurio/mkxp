@@ -427,8 +427,6 @@ INITCOPY_FUN(Bitmap)
 void
 bitmapBindingInit()
 {
-	INIT_TYPE(Bitmap);
-
 	VALUE klass = rb_define_class("Bitmap", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&BitmapType>);
 

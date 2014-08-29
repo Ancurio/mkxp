@@ -29,19 +29,6 @@
 #include <string.h>
 #include <assert.h>
 
-void initType(rb_data_type_t &type,
-              const char *name,
-              void (*freeInst)(void *))
-{
-	type.wrap_struct_name = name;
-	type.function.dmark = 0;
-	type.function.dsize = 0;
-	type.function.dfree = freeInst;
-	type.function.reserved[0] =
-	type.function.reserved[1] = 0;
-	type.parent = 0;
-}
-
 RbData *getRbData()
 {
 	return static_cast<RbData*>(shState->bindingData());

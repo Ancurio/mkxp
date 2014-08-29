@@ -99,8 +99,6 @@ RB_METHOD(spriteHeight)
 void
 spriteBindingInit()
 {
-	INIT_TYPE(Sprite);
-
 	VALUE klass = rb_define_class("Sprite", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&SpriteType>);
 

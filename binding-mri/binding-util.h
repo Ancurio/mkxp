@@ -64,12 +64,27 @@ raiseRbExc(const Exception &exc);
 #define DECL_TYPE(Klass) \
 	extern rb_data_type_t Klass##Type
 
-#define DEF_TYPE(Klass) \
-	rb_data_type_t Klass##Type
+/* 2.1 has added a new field (flags) to rb_data_type_t */
+#include <ruby/version.h>
+#if RUBY_API_VERSION_MINOR > 0
+/* TODO: can mkxp use RUBY_TYPED_FREE_IMMEDIATELY here? */
+#define DEF_TYPE_FLAGS 0
+#else
+#define DEF_TYPE_FLAGS
+#endif
 
-void initType(rb_data_type_t &type,
-              const char *name,
-              void (*freeInst)(void*));
+#define DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, Free) \
+	rb_data_type_t Klass##Type = { \
+		Name, { 0, Free, 0, { 0, 0 } }, 0, 0, DEF_TYPE_FLAGS \
+	}
+
+#define DEF_TYPE_CUSTOMFREE(Klass, Free) \
+	DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, #Klass, Free)
+
+#define DEF_TYPE_CUSTOMNAME(Klass, Name) \
+	DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, freeInstance<Klass>)
+
+#define DEF_TYPE(Klass) DEF_TYPE_CUSTOMNAME(Klass, #Klass)
 
 template<rb_data_type_t *rbType>
 static VALUE classAllocate(VALUE klass)
@@ -82,8 +97,6 @@ static void freeInstance(void *inst)
 {
 	delete static_cast<C*>(inst);
 }
-
-#define INIT_TYPE(Klass) initType(Klass##Type, #Klass, freeInstance<Klass>)
 
 void
 raiseDisposedAccess(VALUE self);

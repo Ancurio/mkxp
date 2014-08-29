@@ -26,7 +26,7 @@
 
 #include "bitmap.h"
 
-DEF_TYPE(WindowVX);
+DEF_TYPE_CUSTOMNAME(WindowVX, "Window");
 
 void bitmapInitProps(Bitmap *b, VALUE self);
 
@@ -135,9 +135,6 @@ DEF_PROP_B(WindowVX, Pause)
 void
 windowVXBindingInit()
 {
-	// FIXME: data type name will end up as "WindowVX"
-	INIT_TYPE(WindowVX);
-
 	VALUE klass = rb_define_class("Window", rb_cObject);
 	rb_define_alloc_func(klass, classAllocate<&WindowVXType>);
 
