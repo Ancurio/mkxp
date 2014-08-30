@@ -38,7 +38,7 @@ RB_METHOD(fontDoesExist)
 
 	rb_get_args(argc, argv, "o", &nameObj RB_ARG_END);
 
-	if (rb_type(nameObj) == RUBY_T_STRING)
+	if (RB_TYPE_P(nameObj, RUBY_T_STRING))
 		name = rb_string_value_cstr(&nameObj);
 
 	return rb_bool_new(Font::doesExist(name));
@@ -116,24 +116,23 @@ fontSetNameHelper(VALUE self, int argc, VALUE *argv,
 	rb_check_argc(argc, 1);
 
 	VALUE arg = argv[0];
-	int type = rb_type(arg);
 
 	// Fixme: in RGSS3, specifying "" (and only that) as font name results in
 	// no text being drawn (everything else is substituted with Arial I think)
 	strncpy(outBuf, "", outLen);
 
-	if (type == RUBY_T_STRING)
+	if (RB_TYPE_P(arg, RUBY_T_STRING))
 	{
 		strncpy(outBuf, RSTRING_PTR(arg), outLen);
 	}
-	else if (type == RUBY_T_ARRAY)
+	else if (RB_TYPE_P(arg, RUBY_T_ARRAY))
 	{
 		for (long i = 0; i < RARRAY_LEN(arg); ++i)
 		{
 			VALUE str = rb_ary_entry(arg, i);
 
 			/* Non-string objects are tolerated (ignored) */
-			if (rb_type(str) != RUBY_T_STRING)
+			if (!RB_TYPE_P(str, RUBY_T_STRING))
 				continue;
 
 			const char *family = RSTRING_PTR(str);
