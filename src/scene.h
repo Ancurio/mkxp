@@ -71,8 +71,7 @@ protected:
 class SceneElement
 {
 public:
-	SceneElement(Scene &scene, int z = 0, bool isSprite = false);
-	SceneElement(Scene &scene, int z, unsigned int cStamp);
+	SceneElement(Scene &scene, int z = 0, int spriteY = 0);
 	virtual ~SceneElement();
 
 	void setScene(Scene &scene);
@@ -122,8 +121,17 @@ protected:
 	friend struct TilemapPrivate;
 
 private:
+
+	/* RGSS2 introduced an enhanced type of Z ordering: sprites with
+	 * the same Z are first ordered by their Y value (higher Y = closer
+	 * to player) and then by creation time. However, the Enterbrain devs
+	 * botched their implementation, and now every other scene element
+	 * subclass is sorted as if it was a sprite with a fixed Y of 0.
+	 * In RGSS3, they tried to fix this for the Window class, badly. It
+	 * now behaves as if it was a sprite with fixed Y of infinity. This
+	 * means that sprites created _after_ a window with the same Z will
+	 * still always be displayed below said window. */
 	int spriteY;
-	const bool isSprite;
 };
 
 #endif // SCENE_H

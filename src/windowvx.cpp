@@ -32,12 +32,14 @@
 #include "glstate.h"
 #include "shader.h"
 
+#include <limits>
 #include <algorithm>
 #include <sigc++/connection.h>
 
 #define DEF_Z         (rgssVer >= 3 ? 100 :   0)
 #define DEF_PADDING   (rgssVer >= 3 ?  12 :  16)
 #define DEF_BACK_OPAC (rgssVer >= 3 ? 192 : 255)
+#define DEF_SPRITE_Y  (rgssVer >= 3 ? std::numeric_limits<int>::max() : 0) /* See scene.h */
 
 template<typename T>
 struct Sides
@@ -811,14 +813,14 @@ struct WindowVXPrivate
 };
 
 WindowVX::WindowVX(Viewport *viewport)
-	: ViewportElement(viewport, DEF_Z)
+    : ViewportElement(viewport, DEF_Z, DEF_SPRITE_Y)
 {
 	p = new WindowVXPrivate(0, 0, 0, 0);
 	onGeometryChange(scene->getGeometry());
 }
 
 WindowVX::WindowVX(int x, int y, int width, int height)
-    : ViewportElement(0, DEF_Z)
+    : ViewportElement(0, DEF_Z, DEF_SPRITE_Y)
 {
 	p = new WindowVXPrivate(x, y, width, height);
 	onGeometryChange(scene->getGeometry());

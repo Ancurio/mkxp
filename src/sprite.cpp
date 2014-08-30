@@ -290,7 +290,7 @@ struct SpritePrivate
 };
 
 Sprite::Sprite(Viewport *viewport)
-	: ViewportElement(viewport, 0, true)
+    : ViewportElement(viewport)
 {
 	p = new SpritePrivate;
 	onGeometryChange(scene->getGeometry());

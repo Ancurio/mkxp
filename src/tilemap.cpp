@@ -313,14 +313,6 @@ struct TilemapPrivate
 		size_t activeLayers;
 		Scene::Geometry sceneGeo;
 		Vec2i sceneOffset;
-
-		/* The ground and zlayer elements' creationStamp
-		 * should be aquired once (at Tilemap construction)
-		 * instead of regenerated everytime the elements are
-		 * (re)created. ZLayers can share one stamp because
-		 * their z always differs anway */
-		unsigned int groundStamp;
-		unsigned int zlayerStamp;
 	} elem;
 
 	/* Affected by: autotiles, tileset */
@@ -397,9 +389,6 @@ struct TilemapPrivate
 
 		flash.quadCount = 0;
 		flash.alphaIdx = 0;
-
-		elem.groundStamp = shState->genTimeStamp();
-		elem.zlayerStamp = shState->genTimeStamp();
 
 		elem.ground = new GroundLayer(this, viewport);
 
@@ -1077,7 +1066,7 @@ struct TilemapPrivate
 };
 
 GroundLayer::GroundLayer(TilemapPrivate *p, Viewport *viewport)
-    : ViewportElement(viewport, 0, p->elem.groundStamp),
+    : ViewportElement(viewport, 0),
       vboCount(0),
       p(p)
 {
@@ -1139,7 +1128,7 @@ void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
 }
 
 ZLayer::ZLayer(TilemapPrivate *p, Viewport *viewport)
-    : ViewportElement(viewport, 0, p->elem.zlayerStamp),
+    : ViewportElement(viewport, 0),
       index(0),
       vboOffset(0),
       vboCount(0),

@@ -214,13 +214,9 @@ void Viewport::onGeometryChange(const Geometry &geo)
 }
 
 
-ViewportElement::ViewportElement(Viewport *viewport, int z, bool isSprite)
-    : SceneElement(viewport ? *viewport : *shState->screen(), z, isSprite),
+ViewportElement::ViewportElement(Viewport *viewport, int z, int spriteY)
+    : SceneElement(viewport ? *viewport : *shState->screen(), z, spriteY),
       m_viewport(viewport)
-{}
-
-ViewportElement::ViewportElement(Viewport *viewport, int z, unsigned int cStamp)
-    : SceneElement(viewport ? *viewport : *shState->screen(), z, cStamp)
 {}
 
 Viewport *ViewportElement::getViewport() const

@@ -61,8 +61,7 @@ private:
 class ViewportElement : public SceneElement
 {
 public:
-	ViewportElement(Viewport *viewport = 0, int z = 0, bool isSprite = false);
-	ViewportElement(Viewport *viewport, int z, unsigned int cStamp);
+	ViewportElement(Viewport *viewport = 0, int z = 0, int spriteY = 0);
 
 	DECL_ATTR( Viewport,  Viewport* )
 

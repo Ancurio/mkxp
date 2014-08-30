@@ -105,26 +105,13 @@ void Scene::composite()
 }
 
 
-SceneElement::SceneElement(Scene &scene, int z, bool isSprite)
+SceneElement::SceneElement(Scene &scene, int z, int spriteY)
     : link(this),
       creationStamp(shState->genTimeStamp()),
       z(z),
       visible(true),
       scene(&scene),
-      spriteY(0),
-      isSprite(isSprite)
-{
-	scene.insert(*this);
-}
-
-SceneElement::SceneElement(Scene &scene, int z, unsigned int cStamp)
-    : link(this),
-      creationStamp(cStamp),
-      z(z),
-      visible(true),
-      scene(&scene),
-      spriteY(0),
-      isSprite(false)
+      spriteY(spriteY)
 {
 	scene.insert(*this);
 }
@@ -184,11 +171,11 @@ bool SceneElement::operator<(const SceneElement &o) const
 				/* RGSS2: If two sprites' Z values collide,
 				 * their Y coordinates decide draw order. Only
 				 * on equal Y does the creation time take effect */
-				if (isSprite && o.isSprite && spriteY != o.spriteY)
+				if (spriteY != o.spriteY)
 					return (spriteY < o.spriteY);
 			}
 
-			return (creationStamp <= o.creationStamp);
+			return (creationStamp < o.creationStamp);
 		}
 
 		return true;
