@@ -19,6 +19,7 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "table.h"
 #include "binding-util.h"
 #include "serializable-binding.h"
@@ -26,7 +27,7 @@
 static int num2TableSize(VALUE v)
 {
 	int i = NUM2INT(v);
-	return i >= 0 ? i : 0;
+	return std::max(0, i);
 }
 
 static void parseArgsTableSizes(int argc, VALUE *argv, int *x, int *y, int *z)
