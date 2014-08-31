@@ -19,18 +19,44 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "table.h"
 #include "binding-util.h"
 #include "serializable-binding.h"
+
+static int num2TableSize(VALUE v)
+{
+	int i = NUM2INT(v);
+	return std::max(0, i);
+}
+
+static void parseArgsTableSizes(int argc, VALUE *argv, int *x, int *y, int *z)
+{
+	*y = *z = 1;
+
+	switch (argc)
+	{
+	case 3:
+		*z = num2TableSize(argv[2]);
+		/* fall through */
+	case 2:
+		*y = num2TableSize(argv[1]);
+		/* fall through */
+	case 1:
+		*x = num2TableSize(argv[0]);
+		break;
+	default:
+		rb_error_arity(argc, 1, 3);
+	}
+}
 
 DEF_TYPE(Table);
 
 RB_METHOD(tableInitialize)
 {
 	int x, y, z;
-	x = y = z = 1;
 
-	rb_get_args(argc, argv, "i|ii", &x, &y, &z RB_ARG_END);
+	parseArgsTableSizes(argc, argv, &x, &y, &z);
 
 	Table *t = new Table(x, y, z);
 
@@ -43,24 +69,12 @@ RB_METHOD(tableResize)
 {
 	Table *t = getPrivateData<Table>(self);
 
-	switch (argc)
-	{
-	default:
-	case 1:
-		t->resize(FIX2INT(argv[0]));
-		return Qnil;
+	int x, y, z;
+	parseArgsTableSizes(argc, argv, &x, &y, &z);
 
-	case 2:
-		t->resize(FIX2INT(argv[0]),
-		          FIX2INT(argv[1]));
-		return Qnil;
+	t->resize(x, y, z);
 
-	case 3:
-		t->resize(FIX2INT(argv[0]),
-		          FIX2INT(argv[1]),
-		          FIX2INT(argv[2]));
-		return Qnil;
-	}
+	return Qnil;
 }
 
 #define TABLE_SIZE(d, D) \
@@ -68,7 +82,7 @@ RB_METHOD(tableResize)
 	{ \
 		RB_UNUSED_PARAM \
 		Table *t = getPrivateData<Table>(self); \
-		return rb_int2inum(t->d##Size()); \
+		return INT2NUM(t->d##Size()); \
 	}
 
 TABLE_SIZE(x, X)
@@ -98,9 +112,9 @@ RB_METHOD(tableGetAt)
 		return Qnil;
 	}
 
-	int result = t->get(x, y, z);
+	short result = t->get(x, y, z);
 
-	return rb_int2inum(result);
+	return INT2FIX(result); /* short always fits in a Fixnum */
 }
 
 RB_METHOD(tableSetAt)
@@ -117,28 +131,28 @@ RB_METHOD(tableSetAt)
 	{
 	default:
 	case 2 :
-		x = FIX2INT(argv[0]);
-		value = FIX2INT(argv[1]);
+		x = NUM2INT(argv[0]);
+		value = NUM2INT(argv[1]);
 
 		break;
 	case 3 :
-		x = FIX2INT(argv[0]);
-		y = FIX2INT(argv[1]);
-		value = FIX2INT(argv[2]);
+		x = NUM2INT(argv[0]);
+		y = NUM2INT(argv[1]);
+		value = NUM2INT(argv[2]);
 
 		break;
 	case 4 :
-		x = FIX2INT(argv[0]);
-		y = FIX2INT(argv[1]);
-		z = FIX2INT(argv[2]);
-		value = FIX2INT(argv[3]);
+		x = NUM2INT(argv[0]);
+		y = NUM2INT(argv[1]);
+		z = NUM2INT(argv[2]);
+		value = NUM2INT(argv[3]);
 
 		break;
 	}
 
 	t->set(value, x, y, z);
 
-	return rb_int2inum(value);
+	return argv[argc - 1];
 }
 
 MARSH_LOAD_FUN(Table)
