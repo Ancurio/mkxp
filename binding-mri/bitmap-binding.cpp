@@ -29,6 +29,12 @@
 
 DEF_TYPE(Bitmap);
 
+static const char *objAsStringPtr(VALUE obj)
+{
+	VALUE str = rb_obj_as_string(obj);
+	return RSTRING_PTR(str);
+}
+
 void bitmapInitProps(Bitmap *b, VALUE self)
 {
 	/* Wrap properties */
@@ -258,10 +264,7 @@ RB_METHOD(bitmapDrawText)
 			VALUE strObj;
 			rb_get_args(argc, argv, "oo|i", &rectObj, &strObj, &align RB_ARG_END);
 
-			if (!RB_TYPE_P(strObj, RUBY_T_STRING))
-				strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
-
-			str = RSTRING_PTR(strObj);
+			str = objAsStringPtr(strObj);
 		}
 		else
 		{
@@ -281,10 +284,7 @@ RB_METHOD(bitmapDrawText)
 			VALUE strObj;
 			rb_get_args(argc, argv, "iiiio|i", &x, &y, &width, &height, &strObj, &align RB_ARG_END);
 
-			if (!RB_TYPE_P(strObj, RUBY_T_STRING))
-				strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
-
-			str = RSTRING_PTR(strObj);
+			str = objAsStringPtr(strObj);
 		}
 		else
 		{
@@ -308,10 +308,7 @@ RB_METHOD(bitmapTextSize)
 		VALUE strObj;
 		rb_get_args(argc, argv, "o", &strObj RB_ARG_END);
 
-		if (!RB_TYPE_P(strObj, RUBY_T_STRING))
-			strObj = rb_funcallv(strObj, rb_intern("to_s"), 0, 0);
-
-		str = RSTRING_PTR(strObj);
+		str = objAsStringPtr(strObj);
 	}
 	else
 	{
