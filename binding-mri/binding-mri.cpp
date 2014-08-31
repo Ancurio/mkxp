@@ -113,6 +113,8 @@ static void mriBindingInit()
 
 		_rb_define_module_function(rb_mKernel, "msgbox",    mriPrint);
 		_rb_define_module_function(rb_mKernel, "msgbox_p",  mriP);
+
+		rb_define_global_const("RGSS_VERSION", rb_str_new_cstr("3.0.0"));
 	}
 	else
 	{
