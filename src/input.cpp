@@ -599,8 +599,13 @@ void Input::update()
 	{
 		p->repeatCount++;
 
-		/* Repeatsequence is [r...............(r...)+] */
-		if (p->repeatCount > 15 && ((p->repeatCount % 4) == 0))
+		bool repeated;
+		if (rgssVer >= 2)
+			repeated = p->repeatCount >= 24 && (p->repeatCount % 6) == 0;
+		else
+			repeated = p->repeatCount >= 16 && (p->repeatCount % 4) == 0;
+
+		if (repeated)
 			p->getState(p->repeating).repeated = true;
 
 		return;
