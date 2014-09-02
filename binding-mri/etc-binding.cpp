@@ -177,6 +177,8 @@ INITCOPY_FUN(Rect)
 	_rb_define_method(klass, "initialize_copy", Klass##InitializeCopy); \
 	_rb_define_method(klass, "set", Klass##Set); \
 	_rb_define_method(klass, "==", Klass##Equal); \
+	_rb_define_method(klass, "===", Klass##Equal); \
+	_rb_define_method(klass, "eql?", Klass##Equal); \
 	_rb_define_method(klass, "to_s", Klass##Stringify); \
 	_rb_define_method(klass, "inspect", Klass##Stringify); \
 }
