@@ -32,7 +32,7 @@ DEF_TYPE(Bitmap);
 static const char *objAsStringPtr(VALUE obj)
 {
 	VALUE str = rb_obj_as_string(obj);
-	return RSTRING_PTR(str);
+	return StringValueCStr(str);
 }
 
 void bitmapInitProps(Bitmap *b, VALUE self)
