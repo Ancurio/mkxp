@@ -27,6 +27,7 @@
 #include "util.h"
 #include "debugwriter.h"
 #include "graphics.h"
+#include "boost-hash.h"
 
 #include <ruby.h>
 #include <ruby/encoding.h>
@@ -303,7 +304,15 @@ static void runCustomScript(const std::string &filename)
 
 VALUE kernelLoadDataInt(const char *filename);
 
-static void runRMXPScripts()
+struct BacktraceData
+{
+	/* Maps: Ruby visible filename, To: Actual script name */
+	BoostHash<std::string, std::string> scriptNames;
+};
+
+#define SCRIPT_SECTION_FMT (rgssVer >= 3 ? "{%04ld}" : "Section%03ld")
+
+static void runRMXPScripts(BacktraceData &btData)
 {
 	const Config &conf = shState->rtData().config;
 	const std::string &scriptPack = conf.game.scripts;
@@ -394,17 +403,17 @@ static void runRMXPScripts()
 		                             RSTRING_LEN(scriptDecoded));
 
 		VALUE fname;
+		const char *scriptName = RSTRING_PTR(rb_ary_entry(script, 1));
+		char buf[512];
+		int len;
+
 		if (conf.useScriptNames)
-		{
-			fname = rb_ary_entry(script, 1);
-		}
+			len = snprintf(buf, sizeof(buf), "%03ld:%s", i, scriptName);
 		else
-		{
-			char buf[32];
-			const char *format = rgssVer >= 3 ? "{%04ld}" : "Section%03ld";
-			int len = snprintf(buf, sizeof(buf), format, i);
-			fname = newStringUTF8(buf, len);
-		}
+			len = snprintf(buf, sizeof(buf), SCRIPT_SECTION_FMT, i);
+
+		fname = newStringUTF8(buf, len);
+		btData.scriptNames.insert(buf, scriptName);
 
 		int state;
 		evalString(string, fname, &state);
@@ -413,9 +422,10 @@ static void runRMXPScripts()
 	}
 }
 
-static void showExc(VALUE exc)
+static void showExc(VALUE exc, const BacktraceData &btData)
 {
 	VALUE bt = rb_funcall2(exc, rb_intern("backtrace"), 0, NULL);
+	VALUE msg = rb_funcall2(exc, rb_intern("message"), 0, NULL);
 	VALUE bt0 = rb_ary_entry(bt, 0);
 	VALUE name = rb_class_path(rb_obj_class(exc));
 
@@ -426,19 +436,49 @@ static void showExc(VALUE exc)
 		rb_str_catf(ds, "\n\tfrom %" PRIsVALUE, rb_ary_entry(bt, i));
 	Debug() << StringValueCStr(ds);
 
-	ID id_index = rb_intern("index");
-	/* an "offset" argument is not needed for the first time */
-	VALUE argv[2] = { rb_str_new_cstr(":") };
-	long filelen = NUM2LONG(rb_funcall2(bt0, id_index, 1, argv));
-	argv[1] = LONG2NUM(filelen + 1);
-	VALUE tmp = rb_funcall2(bt0, id_index, ARRAY_SIZE(argv), argv);
-	long linelen = NUM2LONG(tmp) - filelen - 1;
-	VALUE file = rb_str_subseq(bt0, 0, filelen);
-	VALUE line = rb_str_subseq(bt0, filelen + 1, linelen);
-	VALUE ms = rb_sprintf("Script '%" PRIsVALUE "' line %" PRIsVALUE
-	                      ": %" PRIsVALUE " occured.\n\n%" PRIsVALUE,
-	                      file, line, name, exc);
-	showMsg(StringValueCStr(ms));
+	char *s = RSTRING_PTR(bt0);
+
+	char line[16];
+	std::string file(512, '\0');
+
+	char *p = s + strlen(s);
+	char *e;
+
+	while (p != s)
+		if (*--p == ':')
+			break;
+
+	e = p;
+
+	while (p != s)
+		if (*--p == ':')
+			break;
+
+	/* s         p  e
+	 * SectionXXX:YY: in 'blabla' */
+
+	*e = '\0';
+	strncpy(line, *p ? p+1 : p, sizeof(line));
+	line[sizeof(line)-1] = '\0';
+	*e = ':';
+	e = p;
+
+	/* s         e
+	 * SectionXXX:YY: in 'blabla' */
+
+	*e = '\0';
+	strncpy(&file[0], s, file.size());
+	*e = ':';
+
+	/* Shrink to fit */
+	file.resize(strlen(file.c_str()));
+	file = btData.scriptNames.value(file, file);
+
+	std::string ms(640, '\0');
+	snprintf(&ms[0], ms.size(), "Script '%s' line %s: %s occured.\n\n%s",
+	         file.c_str(), line, RSTRING_PTR(name), RSTRING_PTR(msg));
+
+	showMsg(ms);
 }
 
 static void mriBindingExecute()
@@ -464,6 +504,7 @@ static void mriBindingExecute()
 
 	RbData rbData;
 	shState->setBindingData(&rbData);
+	BacktraceData btData;
 
 	mriBindingInit();
 
@@ -471,11 +512,11 @@ static void mriBindingExecute()
 	if (!customScript.empty())
 		runCustomScript(customScript);
 	else
-		runRMXPScripts();
+		runRMXPScripts(btData);
 
 	VALUE exc = rb_errinfo();
 	if (!NIL_P(exc) && !rb_obj_is_kind_of(exc, rb_eSystemExit))
-		showExc(exc);
+		showExc(exc, btData);
 
 	ruby_cleanup(0);
 
