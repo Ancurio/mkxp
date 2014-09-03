@@ -601,12 +601,11 @@ void Input::update()
 
 		bool repeated;
 		if (rgssVer >= 2)
-			repeated = p->repeatCount >= 24 && (p->repeatCount % 6) == 0;
+			repeated = p->repeatCount >= 23 && ((p->repeatCount+1) % 6) == 0;
 		else
-			repeated = p->repeatCount >= 16 && (p->repeatCount % 4) == 0;
+			repeated = p->repeatCount >= 15 && ((p->repeatCount+1) % 4) == 0;
 
-		if (repeated)
-			p->getState(p->repeating).repeated = true;
+		p->getState(p->repeating).repeated |= repeated;
 
 		return;
 	}
