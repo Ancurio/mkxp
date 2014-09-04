@@ -711,7 +711,6 @@ DEF_ATTR_SIMPLE(Window, Y,          int,     p->position.y)
 DEF_ATTR_RD_SIMPLE(Window, Windowskin,      Bitmap*, p->windowskin)
 DEF_ATTR_RD_SIMPLE(Window, Contents,        Bitmap*, p->contents)
 DEF_ATTR_RD_SIMPLE(Window, Stretch,         bool,    p->bgStretch)
-DEF_ATTR_RD_SIMPLE(Window, CursorRect,      Rect*,   p->cursorRect)
 DEF_ATTR_RD_SIMPLE(Window, Active,          bool,    p->active)
 DEF_ATTR_RD_SIMPLE(Window, Pause,           bool,    p->pause)
 DEF_ATTR_RD_SIMPLE(Window, Width,           int,     p->size.x)
@@ -721,6 +720,8 @@ DEF_ATTR_RD_SIMPLE(Window, OY,              int,     p->contentsOffset.y)
 DEF_ATTR_RD_SIMPLE(Window, Opacity,         int,     p->opacity)
 DEF_ATTR_RD_SIMPLE(Window, BackOpacity,     int,     p->backOpacity)
 DEF_ATTR_RD_SIMPLE(Window, ContentsOpacity, int,     p->contentsOpacity)
+
+DEF_ATTR_OBJ_VALUE(Window, CursorRect,      Rect*,   p->cursorRect)
 
 void Window::setWindowskin(Bitmap *value)
 {
@@ -756,17 +757,6 @@ void Window::setStretch(bool value)
 
 	p->bgStretch = value;
 	p->baseVertDirty = true;
-}
-
-void Window::setCursorRect(Rect *value)
-{
-	if (p->cursorRect == value)
-		return;
-
-	p->cursorRect = value;
-
-	p->refreshCursorRectCon();
-	p->markControlVertDirty();
 }
 
 void Window::setActive(bool value)
@@ -850,6 +840,13 @@ void Window::setContentsOpacity(int value)
 
 	p->contentsOpacity = value;
 	p->contentsQuad.setColor(Vec4(1, 1, 1, p->contentsOpacity.norm));
+}
+
+void Window::initDynAttribs()
+{
+	p->cursorRect = new Rect;
+
+	p->refreshCursorRectCon();
 }
 
 void Window::draw()

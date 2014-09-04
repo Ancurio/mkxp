@@ -870,7 +870,6 @@ DEF_ATTR_SIMPLE(WindowVX, Y,          int,     p->geo.y)
 
 DEF_ATTR_RD_SIMPLE(WindowVX, Windowskin,      Bitmap*, p->windowskin)
 DEF_ATTR_RD_SIMPLE(WindowVX, Contents,        Bitmap*, p->contents)
-DEF_ATTR_RD_SIMPLE(WindowVX, CursorRect,      Rect*,   p->cursorRect)
 DEF_ATTR_RD_SIMPLE(WindowVX, Active,          bool,    p->active)
 DEF_ATTR_RD_SIMPLE(WindowVX, ArrowsVisible,   bool,    p->arrowsVisible)
 DEF_ATTR_RD_SIMPLE(WindowVX, Pause,           bool,    p->pause)
@@ -884,7 +883,9 @@ DEF_ATTR_RD_SIMPLE(WindowVX, Opacity,         int,     p->opacity)
 DEF_ATTR_RD_SIMPLE(WindowVX, BackOpacity,     int,     p->backOpacity)
 DEF_ATTR_RD_SIMPLE(WindowVX, ContentsOpacity, int,     p->contentsOpacity)
 DEF_ATTR_RD_SIMPLE(WindowVX, Openness,        int,     p->openness)
-DEF_ATTR_RD_SIMPLE(WindowVX, Tone,            Tone*,   p->tone)
+
+DEF_ATTR_OBJ_VALUE(WindowVX, CursorRect,      Rect*,   p->cursorRect)
+DEF_ATTR_OBJ_VALUE(WindowVX, Tone,            Tone*,   p->tone)
 
 void WindowVX::setWindowskin(Bitmap *value)
 {
@@ -907,16 +908,6 @@ void WindowVX::setContents(Bitmap *value)
 	FloatRect rect = p->contents->rect();
 	p->contentsQuad.setTexPosRect(rect, rect);
 	p->ctrlVertDirty = true;
-}
-
-void WindowVX::setCursorRect(Rect *value)
-{
-	if (p->cursorRect == value)
-		return;
-
-	p->cursorRect = value;
-	p->cursorVertDirty = true;
-	p->refreshCursorRectCon();
 }
 
 void WindowVX::setActive(bool value)
@@ -1050,12 +1041,12 @@ void WindowVX::setOpenness(int value)
 	p->updateBaseQuad();
 }
 
-void WindowVX::setTone(Tone *value)
+void WindowVX::initDynAttribs()
 {
-	if (p->tone == value)
-		return;
+	p->cursorRect = new Rect;
+	p->tone = new Tone;
 
-	p->tone = value;
+	p->refreshCursorRectCon();
 	p->refreshToneCon();
 }
 

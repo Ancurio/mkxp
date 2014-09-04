@@ -82,6 +82,8 @@ public:
 	Font(const Font &other);
 	~Font();
 
+	const Font &operator=(const Font &o);
+
 	const char *getName() const;
 	void setName(const char *value);
 
@@ -101,6 +103,12 @@ public:
 	DECL_ATTR_STATIC( DefaultShadow,   bool        )
 	DECL_ATTR_STATIC( DefaultOutline,  bool        )
 	DECL_ATTR_STATIC( DefaultOutColor, Color*      )
+
+	/* Assigns heap allocated objects to object properties;
+	 * using this in pure C++ will cause memory leaks
+	 * (ie. only to be used in GCed language bindings */
+	void initDynAttribs();
+	static void initDefaultDynAttribs();
 
 	static void initDefaults();
 

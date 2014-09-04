@@ -52,20 +52,15 @@ bool Color::operator==(const Color &o) const
 	       alpha == o.alpha;
 }
 
-void Color::updateInternal()
+const Color &Color::operator=(const Color &o)
 {
-	norm.x = red   / 255;
-	norm.y = green / 255;
-	norm.z = blue  / 255;
-	norm.w = alpha / 255;
-}
+	red   = o.red;
+	green = o.green;
+	blue  = o.blue;
+	alpha = o.alpha;
+	norm  = o.norm;
 
-void Color::updateExternal()
-{
-	red   = norm.x * 255;
-	green = norm.y * 255;
-	blue  = norm.z * 255;
-	alpha = norm.w * 255;
+	return o;
 }
 
 void Color::set(double red, double green, double blue, double alpha)
@@ -76,15 +71,6 @@ void Color::set(double red, double green, double blue, double alpha)
 	this->alpha = alpha;
 
 	updateInternal();
-}
-
-void Color::set(const Color &other)
-{
-	red   = other.red;
-	green = other.green;
-	blue  = other.blue;
-	alpha = other.alpha;
-	norm  = other.norm;
 }
 
 void Color::setRed(double value)
@@ -109,15 +95,6 @@ void Color::setAlpha(double value)
 {
 	alpha = value;
 	norm.w = clamp<double>(value, 0, 255) / 255;
-}
-
-void Color::toSDLColor(SDL_Color &c) const
-{
-	c.r = clamp<double>(red, 0, 255);
-	c.g = clamp<double>(green, 0, 255);
-	c.b = clamp<double>(blue, 0, 255);
-//	c.a = clamp<double>(alpha, 0, 255);
-	c.a = 255;
 }
 
 /* Serializable */
@@ -153,6 +130,31 @@ Color *Color::deserialize(const char *data, int len)
 	return c;
 }
 
+void Color::updateInternal()
+{
+	norm.x = red   / 255;
+	norm.y = green / 255;
+	norm.z = blue  / 255;
+	norm.w = alpha / 255;
+}
+
+void Color::updateExternal()
+{
+	red   = norm.x * 255;
+	green = norm.y * 255;
+	blue  = norm.z * 255;
+	alpha = norm.w * 255;
+}
+
+void Color::toSDLColor(SDL_Color &c) const
+{
+	c.r = clamp<double>(red, 0, 255);
+	c.g = clamp<double>(green, 0, 255);
+	c.b = clamp<double>(blue, 0, 255);
+//	c.a = clamp<double>(alpha, 0, 255);
+	c.a = 255;
+}
+
 
 Tone::Tone(double red, double green, double blue, double gray)
 	: red(red), green(green), blue(blue), gray(gray)
@@ -173,14 +175,6 @@ bool Tone::operator==(const Tone &o) const
 	       gray  == o.gray;
 }
 
-void Tone::updateInternal()
-{
-	norm.x = (float) clamp<double>(red,   -255, 255) / 255;
-	norm.y = (float) clamp<double>(green, -255, 255) / 255;
-	norm.z = (float) clamp<double>(blue,  -255, 255) / 255;
-	norm.w = (float) clamp<double>(gray,     0, 255) / 255;
-}
-
 void Tone::set(double red, double green, double blue, double gray)
 {
 	this->red   = red;
@@ -192,15 +186,17 @@ void Tone::set(double red, double green, double blue, double gray)
 	valueChanged();
 }
 
-void Tone::set(const Tone &other)
+const Tone& Tone::operator=(const Tone &o)
 {
-	red  = other.red;
-	green= other.green;
-	blue = other.blue;
-	gray = other.gray;
-	norm = other.norm;
+	red   = o.red;
+	green = o.green;
+	blue  = o.blue;
+	gray  = o.gray;
+	norm  = o.norm;
 
 	valueChanged();
+
+	return o;
 }
 
 void Tone::setRed(double value)
@@ -268,6 +264,14 @@ Tone *Tone::deserialize(const char *data, int len)
 	return t;
 }
 
+void Tone::updateInternal()
+{
+	norm.x = (float) clamp<double>(red,   -255, 255) / 255;
+	norm.y = (float) clamp<double>(green, -255, 255) / 255;
+	norm.z = (float) clamp<double>(blue,  -255, 255) / 255;
+	norm.w = (float) clamp<double>(gray,     0, 255) / 255;
+}
+
 
 Rect::Rect(int x, int y, int width, int height)
     : x(x), y(y), width(width), height(height)
@@ -315,14 +319,16 @@ void Rect::set(int x, int y, int w, int h)
 	valueChanged();
 }
 
-void Rect::set(const Rect &other)
+const Rect &Rect::operator=(const Rect &o)
 {
-	x      = other.x;
-	y      = other.y;
-	width  = other.width;
-	height = other.height;
+	x      = o.x;
+	y      = o.y;
+	width  = o.width;
+	height = o.height;
 
 	valueChanged();
+
+	return o;
 }
 
 void Rect::empty()

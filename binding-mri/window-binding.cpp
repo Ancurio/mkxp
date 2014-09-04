@@ -32,7 +32,8 @@ RB_METHOD(windowInitialize)
 
 	setPrivateData(self, w);
 
-	w->setCursorRect(new Rect);
+	w->initDynAttribs();
+
 	wrapNilProperty(self, "windowskin");
 	wrapNilProperty(self, "contents");
 	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
@@ -51,9 +52,9 @@ RB_METHOD(windowUpdate)
 	return Qnil;
 }
 
-DEF_PROP_OBJ_NIL(Window, Bitmap, Windowskin, "windowskin")
-DEF_PROP_OBJ_NIL(Window, Bitmap, Contents,   "contents")
-DEF_PROP_OBJ(Window, Rect, CursorRect, "cursor_rect")
+DEF_PROP_OBJ_REF(Window, Bitmap, Windowskin, "windowskin")
+DEF_PROP_OBJ_REF(Window, Bitmap, Contents,   "contents")
+DEF_PROP_OBJ_VAL(Window, Rect,   CursorRect, "cursor_rect")
 
 DEF_PROP_B(Window, Stretch)
 DEF_PROP_B(Window, Active)

@@ -101,6 +101,10 @@ public:
 
 	DECL_ATTR(Font, Font*)
 
+	/* Sets initial reference without copying by value,
+	 * use at construction */
+	void setInitFont(Font *value);
+
 	/* <internal> */
 	TEXFBO &getGLTypes();
 	SDL_Surface *megaSurface() const;

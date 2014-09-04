@@ -316,30 +316,11 @@ rb_check_argc(int actual, int expected)
 		return self; \
 	}
 
-#define DEF_PROP_OBJ(Klass, PropKlass, PropName, prop_iv) \
-	RB_METHOD(Klass##Get##PropName) \
-	{ \
-		RB_UNUSED_PARAM; \
-		checkDisposed(self); \
-		return rb_iv_get(self, prop_iv); \
-	} \
-	RB_METHOD(Klass##Set##PropName) \
-	{ \
-		rb_check_argc(argc, 1); \
-		Klass *k = getPrivateData<Klass>(self); \
-		VALUE propObj = *argv; \
-		PropKlass *prop; \
-		prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type); \
-		GUARD_EXC( k->set##PropName(prop); ) \
-		rb_iv_set(self, prop_iv, propObj); \
-		return propObj; \
-	}
-
-/* Object property with allowed NIL
+/* Object property which is copied by reference, with allowed NIL
  * FIXME: Getter assumes prop is disposable,
  * because self.disposed? is not checked in this case.
  * Should make this more clear */
-#define DEF_PROP_OBJ_NIL(Klass, PropKlass, PropName, prop_iv) \
+#define DEF_PROP_OBJ_REF(Klass, PropKlass, PropName, prop_iv) \
 	RB_METHOD(Klass##Get##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
@@ -358,6 +339,25 @@ rb_check_argc(int actual, int expected)
 			prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type); \
 		GUARD_EXC( k->set##PropName(prop); ) \
 		rb_iv_set(self, prop_iv, propObj); \
+		return propObj; \
+	}
+
+/* Object property which is copied by value, not reference */
+#define DEF_PROP_OBJ_VAL(Klass, PropKlass, PropName, prop_iv) \
+	RB_METHOD(Klass##Get##PropName) \
+	{ \
+		RB_UNUSED_PARAM; \
+		checkDisposed(self); \
+		return rb_iv_get(self, prop_iv); \
+	} \
+	RB_METHOD(Klass##Set##PropName) \
+	{ \
+		rb_check_argc(argc, 1); \
+		Klass *k = getPrivateData<Klass>(self); \
+		VALUE propObj = *argv; \
+		PropKlass *prop; \
+		prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type); \
+		GUARD_EXC( k->set##PropName(prop); ) \
 		return propObj; \
 	}
 

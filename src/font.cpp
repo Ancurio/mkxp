@@ -255,6 +255,20 @@ struct FontPrivate
 	      outColorTmp(*other.outColor),
 	      sdlFont(other.sdlFont)
 	{}
+
+	void operator=(const FontPrivate &o)
+	{
+		 name     =  o.name;
+		 size     =  o.size;
+		 bold     =  o.bold;
+		 italic   =  o.italic;
+		 outline  =  o.outline;
+		 shadow   =  o.shadow;
+		*color    = *o.color;
+		*outColor = *o.outColor;
+
+		sdlFont = 0;
+	}
 };
 
 std::string FontPrivate::defaultName     = "Arial";
@@ -268,12 +282,6 @@ Color      *FontPrivate::defaultOutColor = &FontPrivate::defaultOutColorTmp;
 
 Color FontPrivate::defaultColorTmp(255, 255, 255, 255);
 Color FontPrivate::defaultOutColorTmp(0, 0, 0, 128);
-
-void Font::initDefaults()
-{
-	FontPrivate::defaultOutline = (rgssVer >= 3 ? true  : false);
-	FontPrivate::defaultShadow  = (rgssVer >= 3 ? false : true );
-}
 
 bool Font::doesExist(const char *name)
 {
@@ -297,6 +305,13 @@ Font::Font(const Font &other)
 Font::~Font()
 {
 	delete p;
+}
+
+const Font &Font::operator=(const Font &o)
+{
+	*p = *o.p;
+
+	return o;
 }
 
 const char *Font::getName() const
@@ -329,21 +344,21 @@ void Font::setSize(int value)
 #undef CHK_DISP
 #define CHK_DISP
 
-DEF_ATTR_RD_SIMPLE(Font, Size,  int,    p->size)
-DEF_ATTR_SIMPLE(Font, Bold,     bool,   p->bold)
-DEF_ATTR_SIMPLE(Font, Italic,   bool,   p->italic)
-DEF_ATTR_SIMPLE(Font, Color,    Color*, p->color)
-DEF_ATTR_SIMPLE(Font, Shadow,   bool,   p->shadow)
-DEF_ATTR_SIMPLE(Font, Outline,  bool,   p->outline)
-DEF_ATTR_SIMPLE(Font, OutColor, Color*, p->outColor)
+DEF_ATTR_RD_SIMPLE(Font, Size,     int,    p->size)
+DEF_ATTR_SIMPLE   (Font, Bold,     bool,   p->bold)
+DEF_ATTR_SIMPLE   (Font, Italic,   bool,   p->italic)
+DEF_ATTR_SIMPLE   (Font, Shadow,   bool,   p->shadow)
+DEF_ATTR_SIMPLE   (Font, Outline,  bool,   p->outline)
+DEF_ATTR_OBJ_VALUE(Font, Color,    Color*, p->color)
+DEF_ATTR_OBJ_VALUE(Font, OutColor, Color*, p->outColor)
 
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultSize,       int,    FontPrivate::defaultSize)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultBold,       bool,   FontPrivate::defaultBold)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultItalic,     bool,   FontPrivate::defaultItalic)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultColor,      Color*, FontPrivate::defaultColor)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultShadow,     bool,   FontPrivate::defaultShadow)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutline,    bool,   FontPrivate::defaultOutline)
-DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutColor,   Color*, FontPrivate::defaultOutColor)
+DEF_ATTR_SIMPLE_STATIC   (Font, DefaultSize,       int,    FontPrivate::defaultSize)
+DEF_ATTR_SIMPLE_STATIC   (Font, DefaultBold,       bool,   FontPrivate::defaultBold)
+DEF_ATTR_SIMPLE_STATIC   (Font, DefaultItalic,     bool,   FontPrivate::defaultItalic)
+DEF_ATTR_SIMPLE_STATIC   (Font, DefaultShadow,     bool,   FontPrivate::defaultShadow)
+DEF_ATTR_SIMPLE_STATIC   (Font, DefaultOutline,    bool,   FontPrivate::defaultOutline)
+DEF_ATTR_OBJ_VALUE_STATIC(Font, DefaultColor,      Color*, FontPrivate::defaultColor)
+DEF_ATTR_OBJ_VALUE_STATIC(Font, DefaultOutColor,   Color*, FontPrivate::defaultOutColor)
 
 const char *Font::getDefaultName()
 {
@@ -353,6 +368,28 @@ const char *Font::getDefaultName()
 void Font::setDefaultName(const char *value)
 {
 	FontPrivate::defaultName = value;
+}
+
+void Font::initDynAttribs()
+{
+	p->color = new Color(p->colorTmp);
+
+	if (rgssVer >= 3)
+		p->outColor = new Color(p->outColorTmp);;
+}
+
+void Font::initDefaultDynAttribs()
+{
+	FontPrivate::defaultColor = new Color(FontPrivate::defaultColorTmp);
+
+	if (rgssVer >= 3)
+		FontPrivate::defaultOutColor = new Color(FontPrivate::defaultOutColorTmp);
+}
+
+void Font::initDefaults()
+{
+	FontPrivate::defaultOutline = (rgssVer >= 3 ? true  : false);
+	FontPrivate::defaultShadow  = (rgssVer >= 3 ? false : true );
 }
 
 _TTF_Font *Font::getSdlFont()

@@ -163,9 +163,9 @@ DEF_ATTR_RD_SIMPLE(Plane, ZoomX,     float,   p->zoomX)
 DEF_ATTR_RD_SIMPLE(Plane, ZoomY,     float,   p->zoomY)
 DEF_ATTR_RD_SIMPLE(Plane, BlendType, int,     p->blendType)
 
-DEF_ATTR_SIMPLE(Plane, Opacity, int,     p->opacity)
-DEF_ATTR_SIMPLE(Plane, Color,   Color*,  p->color)
-DEF_ATTR_SIMPLE(Plane, Tone,    Tone*,   p->tone)
+DEF_ATTR_SIMPLE   (Plane, Opacity,   int,     p->opacity)
+DEF_ATTR_OBJ_VALUE(Plane, Color,     Color*,  p->color)
+DEF_ATTR_OBJ_VALUE(Plane, Tone,      Tone*,   p->tone)
 
 Plane::~Plane()
 {
@@ -238,6 +238,11 @@ void Plane::setBlendType(int value)
 	}
 }
 
+void Plane::initDynAttribs()
+{
+	p->color = new Color;
+	p->tone = new Tone;
+}
 
 void Plane::draw()
 {

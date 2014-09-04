@@ -47,6 +47,8 @@ public:
 	DECL_ATTR( Color,     Color*  )
 	DECL_ATTR( Tone,      Tone*   )
 
+	void initDynAttribs();
+
 private:
 	PlanePrivate *p;
 

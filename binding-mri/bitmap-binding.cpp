@@ -43,7 +43,7 @@ void bitmapInitProps(Bitmap *b, VALUE self)
 	rb_obj_call_init(fontObj, 0, 0);
 
 	Font *font = getPrivateData<Font>(fontObj);
-	b->setFont(font);
+	b->setInitFont(font);
 
 	rb_iv_set(self, "font", fontObj);
 }
@@ -323,7 +323,7 @@ RB_METHOD(bitmapTextSize)
 	return wrapObject(rect, RectType);
 }
 
-DEF_PROP_OBJ(Bitmap, Font, Font, "font")
+DEF_PROP_OBJ_VAL(Bitmap, Font, Font, "font")
 
 RB_METHOD(bitmapGradientFillRect)
 {
@@ -413,12 +413,25 @@ RB_METHOD(bitmapRadialBlur)
 	return Qnil;
 }
 
-// FIXME: This isn't entire correct as the cloned bitmap
-// does not get a cloned version of the original bitmap's 'font'
-// attribute (the internal font attrb is the default one, whereas
-// the stored iv visible to ruby would still be the same as the original)
-// Not sure if this needs fixing though
-INITCOPY_FUN(Bitmap)
+RB_METHOD(bitmapInitializeCopy)
+{
+	rb_check_argc(argc, 1);
+	VALUE origObj = argv[0];
+
+	if (!OBJ_INIT_COPY(self, origObj))
+		return self;
+
+	Bitmap *orig = getPrivateData<Bitmap>(origObj);
+	Bitmap *b = 0;
+	GUARD_EXC( b = new Bitmap(*orig); );
+
+	bitmapInitProps(b, self);
+	b->setFont(orig->getFont());
+
+	setPrivateData(self, b);
+
+	return self;
+}
 
 
 void
@@ -430,7 +443,7 @@ bitmapBindingInit()
 	disposableBindingInit<Bitmap>(klass);
 
 	_rb_define_method(klass, "initialize",      bitmapInitialize);
-	_rb_define_method(klass, "initialize_copy", BitmapInitializeCopy);
+	_rb_define_method(klass, "initialize_copy", bitmapInitializeCopy);
 
 	_rb_define_method(klass, "width",       bitmapWidth);
 	_rb_define_method(klass, "height",      bitmapHeight);

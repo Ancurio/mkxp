@@ -304,7 +304,6 @@ Sprite::~Sprite()
 }
 
 DEF_ATTR_RD_SIMPLE(Sprite, Bitmap,     Bitmap*, p->bitmap)
-DEF_ATTR_RD_SIMPLE(Sprite, SrcRect,    Rect*,   p->srcRect)
 DEF_ATTR_RD_SIMPLE(Sprite, X,          int,     p->trans.getPosition().x)
 DEF_ATTR_RD_SIMPLE(Sprite, Y,          int,     p->trans.getPosition().y)
 DEF_ATTR_RD_SIMPLE(Sprite, OX,         int,     p->trans.getOrigin().x)
@@ -322,10 +321,12 @@ DEF_ATTR_RD_SIMPLE(Sprite, WaveLength, int,     p->wave.length)
 DEF_ATTR_RD_SIMPLE(Sprite, WaveSpeed,  int,     p->wave.speed)
 DEF_ATTR_RD_SIMPLE(Sprite, WavePhase,  float,   p->wave.phase)
 
-DEF_ATTR_SIMPLE(Sprite, BushOpacity, int,    p->bushOpacity)
-DEF_ATTR_SIMPLE(Sprite, Opacity,     int,    p->opacity)
-DEF_ATTR_SIMPLE(Sprite, Color,       Color*, p->color)
-DEF_ATTR_SIMPLE(Sprite, Tone,        Tone*,  p->tone)
+DEF_ATTR_SIMPLE   (Sprite, BushOpacity, int,    p->bushOpacity)
+DEF_ATTR_SIMPLE   (Sprite, Opacity,     int,    p->opacity)
+
+DEF_ATTR_OBJ_VALUE(Sprite, SrcRect,     Rect*,  p->srcRect)
+DEF_ATTR_OBJ_VALUE(Sprite, Color,       Color*, p->color)
+DEF_ATTR_OBJ_VALUE(Sprite, Tone,        Tone*,  p->tone)
 
 void Sprite::setBitmap(Bitmap *bitmap)
 {
@@ -345,18 +346,6 @@ void Sprite::setBitmap(Bitmap *bitmap)
 	p->quad.setPosRect(p->srcRect->toFloatRect());
 
 	p->wave.dirty = true;
-}
-
-void Sprite::setSrcRect(Rect *rect)
-{
-	if (p->srcRect == rect)
-		return;
-
-	p->srcRect = rect;
-	p->updateSrcRectCon();
-
-	if (p->bitmap)
-		p->onSrcRectChange();
 }
 
 void Sprite::setX(int value)
@@ -475,6 +464,15 @@ DEF_WAVE_SETTER(Speed,  speed,  int)
 DEF_WAVE_SETTER(Phase,  phase,  float)
 
 #undef DEF_WAVE_SETTER
+
+void Sprite::initDynAttribs()
+{
+	p->srcRect = new Rect;
+	p->color = new Color;
+	p->tone = new Tone;
+
+	p->updateSrcRectCon();
+}
 
 /* Flashable */
 void Sprite::update()

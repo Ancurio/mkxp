@@ -56,6 +56,8 @@ public:
 	DECL_ATTR( BackOpacity,     int     )
 	DECL_ATTR( ContentsOpacity, int     )
 
+	void initDynAttribs();
+
 private:
 	WindowPrivate *p;
 

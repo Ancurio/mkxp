@@ -33,8 +33,7 @@ RB_METHOD(planeInitialize)
 
 	setPrivateData(self, p);
 
-	p->setColor(new Color);
-	p->setTone(new Tone);
+	p->initDynAttribs();
 
 	wrapNilProperty(self, "bitmap");
 	wrapProperty(self, p->getColor(), "color", ColorType);
@@ -43,9 +42,9 @@ RB_METHOD(planeInitialize)
 	return self;
 }
 
-DEF_PROP_OBJ_NIL(Plane, Bitmap, Bitmap, "bitmap")
-DEF_PROP_OBJ(Plane, Color, Color, "color")
-DEF_PROP_OBJ(Plane, Tone, Tone, "tone")
+DEF_PROP_OBJ_REF(Plane, Bitmap, Bitmap, "bitmap")
+DEF_PROP_OBJ_VAL(Plane, Color,  Color,  "color")
+DEF_PROP_OBJ_VAL(Plane, Tone,   Tone,   "tone")
 
 DEF_PROP_I(Plane, OX)
 DEF_PROP_I(Plane, OY)

@@ -124,10 +124,10 @@ RB_METHOD(tilemapGetViewport)
 	return rb_iv_get(self, "viewport");
 }
 
-DEF_PROP_OBJ(Tilemap, Bitmap,   Tileset,    "tileset")
-DEF_PROP_OBJ(Tilemap, Table,    MapData,    "map_data")
-DEF_PROP_OBJ(Tilemap, Table,    FlashData,  "flash_data")
-DEF_PROP_OBJ(Tilemap, Table,    Priorities, "priorities")
+DEF_PROP_OBJ_REF(Tilemap, Bitmap,   Tileset,    "tileset")
+DEF_PROP_OBJ_REF(Tilemap, Table,    MapData,    "map_data")
+DEF_PROP_OBJ_REF(Tilemap, Table,    FlashData,  "flash_data")
+DEF_PROP_OBJ_REF(Tilemap, Table,    Priorities, "priorities")
 
 DEF_PROP_B(Tilemap, Visible)
 

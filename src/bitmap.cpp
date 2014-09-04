@@ -1067,7 +1067,17 @@ IntRect Bitmap::textSize(const char *str)
 	return IntRect(0, 0, w, h);
 }
 
-DEF_ATTR_SIMPLE(Bitmap, Font, Font*, p->font)
+DEF_ATTR_RD_SIMPLE(Bitmap, Font, Font*, p->font)
+
+void Bitmap::setFont(Font *value)
+{
+	*p->font = *value;
+}
+
+void Bitmap::setInitFont(Font *value)
+{
+	p->font = value;
+}
 
 TEXFBO &Bitmap::getGLTypes()
 {

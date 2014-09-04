@@ -137,4 +137,18 @@ inline bool contains(const C &c, const V &v)
 #define DEF_ATTR_SIMPLE_STATIC(klass, name, type, location) \
 	DEF_ATTR_SIMPLE_DETAILED(klass, name, type, location, )
 
+#define DEF_ATTR_OBJ_VALUE(klass, name, type, location) \
+	DEF_ATTR_RD_SIMPLE_DETAILED(klass, name, type, location, const) \
+	void klass :: set##name(type value) \
+	{ \
+		*location = *value; \
+	}
+
+#define DEF_ATTR_OBJ_VALUE_STATIC(klass, name, type, location) \
+	DEF_ATTR_RD_SIMPLE_DETAILED(klass, name, type, location, ) \
+	void klass :: set##name(type value) \
+	{ \
+		*location = *value; \
+	}
+
 #endif // UTIL_H

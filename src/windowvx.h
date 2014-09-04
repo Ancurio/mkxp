@@ -66,6 +66,8 @@ public:
 	DECL_ATTR( Openness,        int     )
 	DECL_ATTR( Tone,            Tone*   )
 
+	void initDynAttribs();
+
 private:
 	WindowVXPrivate *p;
 

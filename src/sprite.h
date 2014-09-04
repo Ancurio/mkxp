@@ -67,6 +67,8 @@ public:
 	DECL_ATTR( WaveSpeed,   int     )
 	DECL_ATTR( WavePhase,   float   )
 
+	void initDynAttribs();
+
 private:
 	SpritePrivate *p;
 

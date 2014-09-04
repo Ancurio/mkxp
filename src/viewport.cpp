@@ -141,10 +141,10 @@ Viewport::~Viewport()
 
 DEF_ATTR_RD_SIMPLE(Viewport, OX,   int,   geometry.xOrigin)
 DEF_ATTR_RD_SIMPLE(Viewport, OY,   int,   geometry.yOrigin)
-DEF_ATTR_RD_SIMPLE(Viewport, Rect, Rect*, p->rect)
 
-DEF_ATTR_SIMPLE(Viewport, Color, Color*, p->color)
-DEF_ATTR_SIMPLE(Viewport, Tone, Tone*, p->tone)
+DEF_ATTR_OBJ_VALUE(Viewport, Rect,  Rect*,  p->rect)
+DEF_ATTR_OBJ_VALUE(Viewport, Color, Color*, p->color)
+DEF_ATTR_OBJ_VALUE(Viewport, Tone,  Tone*,  p->tone)
 
 void Viewport::setOX(int value)
 {
@@ -164,14 +164,13 @@ void Viewport::setOY(int value)
 	notifyGeometryChange();
 }
 
-void Viewport::setRect(Rect *value)
+void Viewport::initDynAttribs()
 {
-	if (p->rect == value)
-		return;
+	p->rect = new Rect(*p->rect);
+	p->color = new Color;
+	p->tone = new Tone;
 
-	p->rect = value;
 	p->updateRectCon();
-	p->onRectChange();
 }
 
 /* Scene */

@@ -110,7 +110,7 @@ INIT_FUN(Rect, int, "iiii", 0)
 		{ \
 			VALUE otherObj = argv[0]; \
 			Klass *other = getPrivateDataCheck<Klass>(otherObj, Klass##Type); \
-			k->set(*other); \
+			*k = *other; \
 		} \
 		else \
 		{ \

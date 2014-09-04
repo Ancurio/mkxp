@@ -85,11 +85,10 @@ RB_METHOD(tilemapVXUpdate)
 	return Qnil;
 }
 
-DEF_PROP_OBJ_NIL(TilemapVX, Viewport, Viewport, "viewport")
-
-DEF_PROP_OBJ(TilemapVX, Table, MapData,   "map_data")
-DEF_PROP_OBJ(TilemapVX, Table, FlashData, "flash_data")
-DEF_PROP_OBJ(TilemapVX, Table, Flags,     "flags")
+DEF_PROP_OBJ_REF(TilemapVX, Viewport, Viewport,  "viewport")
+DEF_PROP_OBJ_REF(TilemapVX, Table,    MapData,   "map_data")
+DEF_PROP_OBJ_REF(TilemapVX, Table,    FlashData, "flash_data")
+DEF_PROP_OBJ_REF(TilemapVX, Table,    Flags,     "flags")
 
 DEF_PROP_B(TilemapVX, Visible)
 

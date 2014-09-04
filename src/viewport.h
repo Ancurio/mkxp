@@ -43,6 +43,8 @@ public:
 	DECL_ATTR( Color, Color* )
 	DECL_ATTR( Tone,  Tone*  )
 
+	void initDynAttribs();
+
 private:
 	void initViewport(int x, int y, int width, int height);
 	void geometryChanged();

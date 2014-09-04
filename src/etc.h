@@ -50,13 +50,10 @@ struct Color : public Serializable
 
 	virtual ~Color() {}
 
-	bool operator==(const Color &o) const;
-
-	void updateInternal();
-	void updateExternal();
-
+	const Color &operator=(const Color &o);
 	void set(double red, double green, double blue, double alpha);
-	void set(const Color &other);
+
+	bool operator==(const Color &o) const;
 
 	void setRed(double value);
 	void setGreen(double value);
@@ -68,17 +65,21 @@ struct Color : public Serializable
 	double getBlue()  const { return blue;  }
 	double getAlpha() const { return alpha; }
 
+	/* Serializable */
+	int serialSize() const;
+	void serialize(char *buffer) const;
+	static Color *deserialize(const char *data, int len);
+
+	/* Internal */
+	void updateInternal();
+	void updateExternal();
+
 	bool hasEffect() const
 	{
 		return (alpha != 0);
 	}
 
 	void toSDLColor(SDL_Color &c) const;
-
-	/* Serializable */
-	int serialSize() const;
-	void serialize(char *buffer) const;
-	static Color *deserialize(const char *data, int len);
 
 	/* Range (0.0 ~ 255.0) */
 	double red;
@@ -103,10 +104,8 @@ struct Tone : public Serializable
 
 	bool operator==(const Tone &o) const;
 
-	void updateInternal();
-
 	void set(double red, double green, double blue, double gray);
-	void set(const Tone &other);
+	const Tone &operator=(const Tone &o);
 
 	void setRed(double value);
 	void setGreen(double value);
@@ -118,6 +117,14 @@ struct Tone : public Serializable
 	double getBlue()  const { return blue;  }
 	double getGray()  const { return gray;  }
 
+	/* Serializable */
+	int serialSize() const;
+	void serialize(char *buffer) const;
+	static Tone *deserialize(const char *data, int len);
+
+	/* Internal */
+	void updateInternal();
+
 	bool hasEffect() const
 	{
 		return ((int)red   != 0 ||
@@ -125,11 +132,6 @@ struct Tone : public Serializable
 				(int)blue  != 0 ||
 				(int)gray  != 0);
 	}
-
-	/* Serializable */
-	int serialSize() const;
-	void serialize(char *buffer) const;
-	static Tone *deserialize(const char *data, int len);
 
 	/* Range (-255.0 ~ 255.0) */
 	double red;
@@ -159,17 +161,7 @@ struct Rect : public Serializable
 	bool operator==(const Rect &o) const;
 	void operator=(const IntRect &rect);
 	void set(int x, int y, int w, int h);
-	void set(const Rect &other);
-
-	FloatRect toFloatRect() const
-	{
-		return FloatRect(x, y, width, height);
-	}
-
-	IntRect toIntRect()
-	{
-		return IntRect(x, y, width, height);
-	}
+	const Rect &operator=(const Rect &o);
 
 	void empty();
 	bool isEmpty() const;
@@ -184,9 +176,21 @@ struct Rect : public Serializable
 	int getWidth() const { return width; }
 	int getHeight() const { return height; }
 
+	/* Serializable */
 	int serialSize() const;
 	void serialize(char *buffer) const;
 	static Rect *deserialize(const char *data, int len);
+
+	/* Internal */
+	FloatRect toFloatRect() const
+	{
+		return FloatRect(x, y, width, height);
+	}
+
+	IntRect toIntRect()
+	{
+		return IntRect(x, y, width, height);
+	}
 
 	int x;
 	int y;

@@ -51,8 +51,8 @@ RB_METHOD(windowVXInitialize)
 
 	setPrivateData(self, w);
 
-	w->setCursorRect(new Rect);
-	w->setTone(new Tone);
+	w->initDynAttribs();
+
 	wrapNilProperty(self, "windowskin");
 	wrapProperty(self, w->getTone(), "tone", ToneType);
 	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
@@ -109,11 +109,11 @@ RB_METHOD(windowVXIsClosed)
 	return rb_bool_new(w->isClosed());
 }
 
-DEF_PROP_OBJ_NIL(WindowVX, Bitmap, Windowskin, "windowskin")
-DEF_PROP_OBJ_NIL(WindowVX, Bitmap, Contents, "contents")
+DEF_PROP_OBJ_REF(WindowVX, Bitmap, Windowskin, "windowskin")
+DEF_PROP_OBJ_REF(WindowVX, Bitmap, Contents, "contents")
 
-DEF_PROP_OBJ(WindowVX, Rect, CursorRect, "cursor_rect")
-DEF_PROP_OBJ(WindowVX, Tone, Tone, "tone")
+DEF_PROP_OBJ_VAL(WindowVX, Rect, CursorRect, "cursor_rect")
+DEF_PROP_OBJ_VAL(WindowVX, Tone, Tone,       "tone")
 
 DEF_PROP_I(WindowVX, X)
 DEF_PROP_I(WindowVX, Y)

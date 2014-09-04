@@ -62,9 +62,7 @@ RB_METHOD(viewportInitialize)
 	setPrivateData(self, v);
 
 	/* Wrap property objects */
-	v->setRect(new Rect(*v->getRect()));
-	v->setColor(new Color);
-	v->setTone(new Tone);
+	v->initDynAttribs();
 
 	wrapProperty(self, v->getRect(),  "rect",  RectType);
 	wrapProperty(self, v->getColor(), "color", ColorType);
@@ -78,9 +76,9 @@ RB_METHOD(viewportInitialize)
 	return self;
 }
 
-DEF_PROP_OBJ(Viewport, Rect, Rect, "rect")
-DEF_PROP_OBJ(Viewport, Color, Color, "color")
-DEF_PROP_OBJ(Viewport, Tone, Tone, "tone")
+DEF_PROP_OBJ_VAL(Viewport, Rect,  Rect,  "rect")
+DEF_PROP_OBJ_VAL(Viewport, Color, Color, "color")
+DEF_PROP_OBJ_VAL(Viewport, Tone,  Tone,  "tone")
 
 DEF_PROP_I(Viewport, OX)
 DEF_PROP_I(Viewport, OY)
