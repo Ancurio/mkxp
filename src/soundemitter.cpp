@@ -233,7 +233,7 @@ SoundBuffer *SoundEmitter::allocateBuffer(const std::string &filename)
 		while (wouldBeBytes > SE_CACHE_MEM && !buffers.isEmpty())
 		{
 			SoundBuffer *last = buffers.tail();
-			bufferHash.erase(last->key);
+			bufferHash.remove(last->key);
 			buffers.remove(last->link);
 
 			wouldBeBytes -= last->bytes;

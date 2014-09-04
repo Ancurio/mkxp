@@ -53,7 +53,7 @@ public:
 		p.insert(PairType(key, value));
 	}
 
-	inline void erase(const K &key)
+	inline void remove(const K &key)
 	{
 		p.erase(key);
 	}
@@ -114,6 +114,11 @@ public:
 	inline void insert(const K &key)
 	{
 		p.insert(key);
+	}
+
+	inline void remove(const K &key)
+	{
+		p.erase(key);
 	}
 
 	inline const_iterator cbegin() const
