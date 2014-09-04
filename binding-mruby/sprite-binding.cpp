@@ -20,6 +20,7 @@
 */
 
 #include "sprite.h"
+#include "sharedstate.h"
 #include "disposable-binding.h"
 #include "flashable-binding.h"
 #include "sceneelement-binding.h"
