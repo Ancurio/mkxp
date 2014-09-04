@@ -39,7 +39,6 @@ MRB_METHOD(spriteInitialize)
 	s->setColor(new Color);
 	s->setTone(new Tone);
 
-	wrapNilProperty(mrb, self, CSbitmap);
 	wrapProperty(mrb, self, s->getSrcRect(), CSsrc_rect, RectType);
 	wrapProperty(mrb, self, s->getColor(), CScolor, ColorType);
 	wrapProperty(mrb, self, s->getTone(), CStone, ToneType);

@@ -312,15 +312,6 @@ wrapProperty(mrb_state *mrb, mrb_value self,
 	               propObj);
 }
 
-inline void
-wrapNilProperty(mrb_state *mrb, mrb_value self, CommonSymbol iv)
-{
-	mrb_obj_iv_set(mrb,
-	               mrb_obj_ptr(self),
-	               getSym(mrb, iv),
-	               mrb_nil_value());
-}
-
 inline mrb_value
 getProperty(mrb_state *mrb, mrb_value self, CommonSymbol iv)
 {

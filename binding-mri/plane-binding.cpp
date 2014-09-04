@@ -35,7 +35,6 @@ RB_METHOD(planeInitialize)
 
 	p->initDynAttribs();
 
-	wrapNilProperty(self, "bitmap");
 	wrapProperty(self, p->getColor(), "color", ColorType);
 	wrapProperty(self, p->getTone(), "tone", ToneType);
 

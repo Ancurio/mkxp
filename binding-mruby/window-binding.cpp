@@ -33,8 +33,6 @@ MRB_METHOD(windowInitialize)
 	setPrivateData(self, w, WindowType);
 
 	w->setCursorRect(new Rect);
-	wrapNilProperty(mrb, self, CSwindowskin);
-	wrapNilProperty(mrb, self, CScontents);
 	wrapProperty(mrb, self, w->getCursorRect(), CScursor_rect, RectType);
 
 	return self;

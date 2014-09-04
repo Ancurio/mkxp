@@ -36,7 +36,6 @@ MRB_METHOD(planeInitialize)
 	p->setColor(new Color);
 	p->setTone(new Tone);
 
-	wrapNilProperty(mrb, self, CSbitmap);
 	wrapProperty(mrb, self, p->getColor(), CScolor, ColorType);
 	wrapProperty(mrb, self, p->getTone(), CStone, ToneType);
 

@@ -39,7 +39,6 @@ RB_METHOD(spriteInitialize)
 	/* Wrap property objects */
 	s->initDynAttribs();
 
-	wrapNilProperty(self, "bitmap");
 	wrapProperty(self, s->getSrcRect(), "src_rect", RectType);
 	wrapProperty(self, s->getColor(), "color", ColorType);
 	wrapProperty(self, s->getTone(), "tone", ToneType);

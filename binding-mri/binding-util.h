@@ -160,12 +160,6 @@ wrapProperty(VALUE self, void *prop, const char *iv,
 	return propObj;
 }
 
-inline void
-wrapNilProperty(VALUE self, const char *iv)
-{
-	rb_iv_set(self, iv, Qnil);
-}
-
 /* Implemented: oSszfibn| */
 int
 rb_get_args(int argc, VALUE *argv, const char *format, ...);

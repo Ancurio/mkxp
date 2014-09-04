@@ -34,8 +34,6 @@ RB_METHOD(windowInitialize)
 
 	w->initDynAttribs();
 
-	wrapNilProperty(self, "windowskin");
-	wrapNilProperty(self, "contents");
 	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
 
 	return self;

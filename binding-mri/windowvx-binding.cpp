@@ -53,7 +53,6 @@ RB_METHOD(windowVXInitialize)
 
 	w->initDynAttribs();
 
-	wrapNilProperty(self, "windowskin");
 	wrapProperty(self, w->getTone(), "tone", ToneType);
 	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
 
