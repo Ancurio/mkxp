@@ -37,6 +37,7 @@ struct
 	SYMD(viewport),
 	SYMD(bitmap),
 	SYMD(color),
+	SYMD(out_color),
 	SYMD(tone),
 	SYMD(rect),
 	SYMD(src_rect),
@@ -51,6 +52,7 @@ struct
 	SYMD(path),
 	SYMD(array),
 	SYMD(default_color),
+	SYMD(default_out_color),
 	SYMD(children),
 	SYMD(dispose)
 };

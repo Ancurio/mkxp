@@ -36,9 +36,7 @@ MRB_METHOD(spriteInitialize)
 	setPrivateData(self, s, SpriteType);
 
 	/* Wrap property objects */
-	s->setSrcRect(new Rect);
-	s->setColor(new Color);
-	s->setTone(new Tone);
+	s->initDynAttribs();
 
 	wrapProperty(mrb, self, s->getSrcRect(), CSsrc_rect, RectType);
 	wrapProperty(mrb, self, s->getColor(), CScolor, ColorType);
@@ -47,10 +45,10 @@ MRB_METHOD(spriteInitialize)
 	return self;
 }
 
-DEF_PROP_OBJ_NIL(Sprite, Bitmap, Bitmap,  CSbitmap)
-DEF_PROP_OBJ(Sprite, Rect,   SrcRect, CSsrc_rect)
-DEF_PROP_OBJ(Sprite, Color,  Color,   CScolor)
-DEF_PROP_OBJ(Sprite, Tone,   Tone,    CStone)
+DEF_PROP_OBJ_REF(Sprite, Bitmap, Bitmap,  CSbitmap)
+DEF_PROP_OBJ_VAL(Sprite, Rect,   SrcRect, CSsrc_rect)
+DEF_PROP_OBJ_VAL(Sprite, Color,  Color,   CScolor)
+DEF_PROP_OBJ_VAL(Sprite, Tone,   Tone,    CStone)
 
 DEF_PROP_I(Sprite, X)
 DEF_PROP_I(Sprite, Y)

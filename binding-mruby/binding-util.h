@@ -38,6 +38,7 @@ enum CommonSymbol
 	CSviewport,
 	CSbitmap,
 	CScolor,
+	CSout_color,
 	CStone,
 	CSrect,
 	CSsrc_rect,
@@ -52,6 +53,7 @@ enum CommonSymbol
 	CSpath,
 	CSarray,
 	CSdefault_color,
+	CSdefault_out_color,
 	CSchildren,
 	CSdispose,
 
@@ -149,7 +151,8 @@ defineClass(mrb_state *mrb, const char *name)
 
 #define MRB_FUN_UNUSED_PARAM { (void) mrb; }
 
-#define DEF_PROP_OBJ(Klass, PropKlass, PropName, prop_iv) \
+/* Object property which is copied by value, not reference */
+#define DEF_PROP_OBJ_VAL(Klass, PropKlass, PropName, prop_iv) \
 	MRB_METHOD(Klass##Get##PropName) \
 	{ \
 		checkDisposed(mrb, self); \
@@ -163,12 +166,11 @@ defineClass(mrb_state *mrb, const char *name)
 		mrb_get_args(mrb, "o", &propObj); \
 		prop = getPrivateDataCheck<PropKlass>(mrb, propObj, PropKlass##Type); \
 		GUARD_EXC( k->set##PropName(prop); ) \
-		setProperty(mrb, self, prop_iv, propObj); \
 		return propObj; \
 	}
 
-/* Object property with allowed NIL */
-#define DEF_PROP_OBJ_NIL(Klass, PropKlass, PropName, prop_iv) \
+/* Object property which is copied by reference, with allowed NIL */
+#define DEF_PROP_OBJ_REF(Klass, PropKlass, PropName, prop_iv) \
 	MRB_METHOD(Klass##Get##PropName) \
 	{ \
 		return getProperty(mrb, self, prop_iv); \
@@ -300,7 +302,7 @@ wrapObject(mrb_state *mrb, void *p, const mrb_data_type &type)
 	return obj;
 }
 
-inline void
+inline mrb_value
 wrapProperty(mrb_state *mrb, mrb_value self,
              void *prop, CommonSymbol iv, const mrb_data_type &type)
 {
@@ -310,6 +312,8 @@ wrapProperty(mrb_state *mrb, mrb_value self,
 	               mrb_obj_ptr(self),
 	               getSym(mrb, iv),
 	               propObj);
+
+	return propObj;
 }
 
 inline mrb_value

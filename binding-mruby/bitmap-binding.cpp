@@ -22,6 +22,7 @@
 #include "bitmap.h"
 #include "font.h"
 #include "exception.h"
+#include "sharedstate.h"
 #include "disposable-binding.h"
 #include "binding-util.h"
 #include "binding-types.h"
@@ -51,11 +52,15 @@ MRB_METHOD(bitmapInitialize)
 
 	/* Wrap properties */
 	Font *font = new Font();
-	b->setFont(font);
-	font->setColor(new Color(*font->getColor()));
+	b->setInitFont(font);
+	font->initDynAttribs();
 
-	wrapProperty(mrb, self, font, CSfont, FontType);
-	wrapProperty(mrb, getProperty(mrb, self, CSfont), font->getColor(), CScolor, ColorType);
+	mrb_value fontProp = wrapProperty(mrb, self, font, CSfont, FontType);
+
+	wrapProperty(mrb, fontProp, font->getColor(), CScolor, ColorType);
+
+	if (rgssVer >= 3)
+		wrapProperty(mrb, fontProp, font->getOutColor(), CSout_color, ColorType);
 
 	return self;
 }
@@ -292,7 +297,6 @@ MRB_METHOD(bitmapSetFont)
 	font = getPrivateDataCheck<Font>(mrb, fontObj, FontType);
 
 	GUARD_EXC( b->setFont(font); )
-	setProperty(mrb, self, CSfont, fontObj);
 
 	return mrb_nil_value();
 }

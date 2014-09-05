@@ -125,10 +125,10 @@ MRB_METHOD(tilemapGetViewport)
 	return getProperty(mrb, self, CSviewport);
 }
 
-DEF_PROP_OBJ(Tilemap, Bitmap,   Tileset,    CStileset)
-DEF_PROP_OBJ(Tilemap, Table,    MapData,    CSmap_data)
-DEF_PROP_OBJ(Tilemap, Table,    FlashData,  CSflash_data)
-DEF_PROP_OBJ(Tilemap, Table,    Priorities, CSpriorities)
+DEF_PROP_OBJ_REF(Tilemap, Bitmap,   Tileset,    CStileset)
+DEF_PROP_OBJ_REF(Tilemap, Table,    MapData,    CSmap_data)
+DEF_PROP_OBJ_REF(Tilemap, Table,    FlashData,  CSflash_data)
+DEF_PROP_OBJ_REF(Tilemap, Table,    Priorities, CSpriorities)
 
 DEF_PROP_B(Tilemap, Visible)
 

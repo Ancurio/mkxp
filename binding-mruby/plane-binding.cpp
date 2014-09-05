@@ -33,18 +33,17 @@ MRB_METHOD(planeInitialize)
 
 	setPrivateData(self, p, PlaneType);
 
-	p->setColor(new Color);
-	p->setTone(new Tone);
+	p->initDynAttribs();
 
 	wrapProperty(mrb, self, p->getColor(), CScolor, ColorType);
-	wrapProperty(mrb, self, p->getTone(), CStone, ToneType);
+	wrapProperty(mrb, self, p->getTone(),  CStone,  ToneType);
 
 	return self;
 }
 
-DEF_PROP_OBJ(Plane, Bitmap, Bitmap, CSbitmap)
-DEF_PROP_OBJ(Plane, Color, Color, CScolor)
-DEF_PROP_OBJ(Plane, Tone, Tone, CStone)
+DEF_PROP_OBJ_REF(Plane, Bitmap, Bitmap, CSbitmap)
+DEF_PROP_OBJ_VAL(Plane, Color,  Color,  CScolor)
+DEF_PROP_OBJ_VAL(Plane, Tone,   Tone,   CStone)
 
 DEF_PROP_I(Plane, OX)
 DEF_PROP_I(Plane, OY)

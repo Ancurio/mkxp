@@ -32,7 +32,7 @@ MRB_METHOD(windowInitialize)
 
 	setPrivateData(self, w, WindowType);
 
-	w->setCursorRect(new Rect);
+	w->initDynAttribs();
 	wrapProperty(mrb, self, w->getCursorRect(), CScursor_rect, RectType);
 
 	return self;
@@ -47,9 +47,9 @@ MRB_METHOD(windowUpdate)
 	return mrb_nil_value();
 }
 
-DEF_PROP_OBJ_NIL(Window, Bitmap, Windowskin, CSwindowskin)
-DEF_PROP_OBJ_NIL(Window, Bitmap, Contents,   CScontents)
-DEF_PROP_OBJ(Window, Rect, CursorRect, CScursor_rect)
+DEF_PROP_OBJ_REF(Window, Bitmap, Windowskin, CSwindowskin)
+DEF_PROP_OBJ_REF(Window, Bitmap, Contents,   CScontents)
+DEF_PROP_OBJ_VAL(Window, Rect,   CursorRect, CScursor_rect)
 
 DEF_PROP_B(Window, Stretch)
 DEF_PROP_B(Window, Active)
