@@ -241,11 +241,26 @@ static std::string baseName(const std::string &path)
 	return path.substr(pos + 1);
 }
 
+static void setupScreenSize(Config &conf)
+{
+	if (conf.defScreenW <= 0)
+		conf.defScreenW = (conf.rgssVersion == 1 ? 640 : 544);
+
+	if (conf.defScreenH <= 0)
+		conf.defScreenH = (conf.rgssVersion == 1 ? 480 : 416);
+}
+
 void Config::readGameINI()
 {
 	if (!customScript.empty())
 	{
 		game.title = baseName(customScript);
+
+		if (rgssVersion == 0)
+			rgssVersion = 1;
+
+		setupScreenSize(*this);
+
 		return;
 	}
 
@@ -355,9 +370,5 @@ void Config::readGameINI()
 		}
 	}
 
-	if (defScreenW <= 0)
-		defScreenW = (rgssVersion == 1 ? 640 : 544);
-
-	if (defScreenH <= 0)
-		defScreenH = (rgssVersion == 1 ? 480 : 416);
+	setupScreenSize(*this);
 }
