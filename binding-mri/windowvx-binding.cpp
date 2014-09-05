@@ -56,13 +56,10 @@ RB_METHOD(windowVXInitialize)
 	wrapProperty(self, w->getTone(), "tone", ToneType);
 	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
 
-	if (rgssVer >= 2)
-	{
-		Bitmap *contents = new Bitmap(1, 1);
-		VALUE contentsObj = wrapObject(contents, BitmapType);
-		bitmapInitProps(contents, contentsObj);
-		rb_iv_set(self, "contents", contentsObj);
-	}
+	Bitmap *contents = new Bitmap(1, 1);
+	VALUE contentsObj = wrapObject(contents, BitmapType);
+	bitmapInitProps(contents, contentsObj);
+	rb_iv_set(self, "contents", contentsObj);
 
 	return self;
 }
