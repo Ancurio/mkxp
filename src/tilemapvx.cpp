@@ -69,8 +69,6 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	size_t aboveQuads;
 
 	uint16_t frameIdx;
-	uint8_t aniIdxA;
-	uint8_t aniIdxC;
 	Vec2 aniOffset;
 
 	bool atlasDirty;
@@ -110,8 +108,6 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	      groundQuads(0),
 	      aboveQuads(0),
 	      frameIdx(0),
-	      aniIdxA(0),
-	      aniIdxC(0),
 	      atlasDirty(true),
 	      buffersDirty(false),
 	      mapViewportDirty(false),
@@ -292,12 +288,27 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	/* SceneElement */
 	void draw()
 	{
-		TilemapVXShader &shader = shState->shaders().tilemapVX;
-		shader.bind();
-		shader.setTexSize(Vec2i(atlas.width, atlas.height));
-		shader.applyViewportProj();
-		shader.setTranslation(dispPos);
-		shader.setAniOffset(aniOffset);
+		ShaderBase *shader;
+
+		if (bitmaps[BM_A1] != 0)
+		{
+			/* Animated tileset */
+			TilemapVXShader &tmShader = shState->shaders().tilemapVX;
+			tmShader.bind();
+			tmShader.setAniOffset(aniOffset);
+
+			shader = &tmShader;
+		}
+		else
+		{
+			/* Static tileset */
+			shader = &shState->shaders().simple;
+			shader->bind();
+		}
+
+		shader->setTexSize(Vec2i(atlas.width, atlas.height));
+		shader->applyViewportProj();
+		shader->setTranslation(dispPos);
 
 		TEX::bind(atlas.tex);
 		GLMeta::vaoBind(vao);
@@ -400,10 +411,10 @@ void TilemapVX::update()
 	const uint8_t aniIndicesC[3*4] =
 		{ 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 };
 
-	p->aniIdxA = aniIndicesA[p->frameIdx / 30];
-	p->aniIdxC = aniIndicesC[p->frameIdx / 30];
+	uint8_t aniIdxA = aniIndicesA[p->frameIdx / 30];
+	uint8_t aniIdxC = aniIndicesC[p->frameIdx / 30];
 
-	p->aniOffset = Vec2(p->aniIdxA * 2 * 32, p->aniIdxC * 32);
+	p->aniOffset = Vec2(aniIdxA * 2 * 32, aniIdxC * 32);
 }
 
 TilemapVX::BitmapArray &TilemapVX::getBitmapArray() const
