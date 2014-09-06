@@ -53,8 +53,10 @@ RB_METHOD(windowVXInitialize)
 
 	w->initDynAttribs();
 
-	wrapProperty(self, w->getTone(), "tone", ToneType);
 	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
+
+	if (rgssVer >= 3)
+		wrapProperty(self, w->getTone(), "tone", ToneType);
 
 	Bitmap *contents = new Bitmap(1, 1);
 	VALUE contentsObj = wrapObject(contents, BitmapType);
@@ -138,17 +140,12 @@ windowVXBindingInit()
 	viewportElementBindingInit<WindowVX>(klass);
 
 	_rb_define_method(klass, "initialize", windowVXInitialize);
-
 	_rb_define_method(klass, "update",     windowVXUpdate);
-	_rb_define_method(klass, "move",       windowVXMove);
-	_rb_define_method(klass, "open?",      windowVXIsOpen);
-	_rb_define_method(klass, "close?",     windowVXIsClosed);
 
 	INIT_PROP_BIND( WindowVX, Windowskin,      "windowskin"       );
 	INIT_PROP_BIND( WindowVX, Contents,        "contents"         );
 	INIT_PROP_BIND( WindowVX, CursorRect,      "cursor_rect"      );
 	INIT_PROP_BIND( WindowVX, Active,          "active"           );
-	INIT_PROP_BIND( WindowVX, ArrowsVisible,   "arrows_visible"   );
 	INIT_PROP_BIND( WindowVX, Pause,           "pause"            );
 	INIT_PROP_BIND( WindowVX, X,               "x"                );
 	INIT_PROP_BIND( WindowVX, Y,               "y"                );
@@ -156,11 +153,20 @@ windowVXBindingInit()
 	INIT_PROP_BIND( WindowVX, Height,          "height"           );
 	INIT_PROP_BIND( WindowVX, OX,              "ox"               );
 	INIT_PROP_BIND( WindowVX, OY,              "oy"               );
-	INIT_PROP_BIND( WindowVX, Padding,         "padding"          );
-	INIT_PROP_BIND( WindowVX, PaddingBottom,   "padding_bottom"   );
 	INIT_PROP_BIND( WindowVX, Opacity,         "opacity"          );
 	INIT_PROP_BIND( WindowVX, BackOpacity,     "back_opacity"     );
 	INIT_PROP_BIND( WindowVX, ContentsOpacity, "contents_opacity" );
 	INIT_PROP_BIND( WindowVX, Openness,        "openness"         );
+
+	if (rgssVer >= 3)
+	{
+	_rb_define_method(klass, "move",       windowVXMove);
+	_rb_define_method(klass, "open?",      windowVXIsOpen);
+	_rb_define_method(klass, "close?",     windowVXIsClosed);
+
+	INIT_PROP_BIND( WindowVX, ArrowsVisible,   "arrows_visible"   );
+	INIT_PROP_BIND( WindowVX, Padding,         "padding"          );
+	INIT_PROP_BIND( WindowVX, PaddingBottom,   "padding_bottom"   );
 	INIT_PROP_BIND( WindowVX, Tone,            "tone"             );
+	}
 }

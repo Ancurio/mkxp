@@ -1044,10 +1044,13 @@ void WindowVX::setOpenness(int value)
 void WindowVX::initDynAttribs()
 {
 	p->cursorRect = new Rect;
-	p->tone = new Tone;
-
 	p->refreshCursorRectCon();
-	p->refreshToneCon();
+
+	if (rgssVer >= 3)
+	{
+		p->tone = new Tone;
+		p->refreshToneCon();
+	}
 }
 
 void WindowVX::draw()
