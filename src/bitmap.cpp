@@ -125,7 +125,8 @@ struct BitmapPrivate
 
 	void clearTaintedArea()
 	{
-		pixman_region_clear(&tainted);
+		pixman_region_fini(&tainted);
+		pixman_region_init(&tainted);
 	}
 
 	void addTaintedArea(const IntRect &rect)
