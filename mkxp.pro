@@ -8,12 +8,6 @@ INCLUDEPATH += . src
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
-CONFIG += MIDI
-
-DISABLE_MIDI {
-	CONFIG -= MIDI
-}
-
 isEmpty(BINDING) {
 	BINDING = MRI
 }
@@ -50,7 +44,7 @@ unix {
 	PKGCONFIG += sigc++-2.0 pixman-1 zlib physfs vorbisfile \
 	             sdl2 SDL2_image SDL2_ttf SDL_sound openal
 
-	MIDI {
+	SHARED_FLUID {
 		PKGCONFIG += fluidsynth
 	}
 
@@ -135,7 +129,9 @@ HEADERS += \
 	src/rgssad.h \
 	src/windowvx.h \
 	src/tilemapvx.h \
-	src/tileatlasvx.h
+	src/tileatlasvx.h \
+	src/sharedmidistate.h \
+	src/fluid-fun.h
 
 SOURCES += \
 	src/main.cpp \
@@ -176,7 +172,9 @@ SOURCES += \
 	src/windowvx.cpp \
 	src/tilemapvx.cpp \
 	src/tileatlasvx.cpp \
-	src/autotilesvx.cpp
+	src/autotilesvx.cpp \
+	src/midisource.cpp \
+	src/fluid-fun.cpp
 
 EMBED = \
 	shader/transSimple.frag \
@@ -200,14 +198,8 @@ EMBED = \
 	shader/tilemapvx.vert \
 	assets/liberation.ttf
 
-MIDI {
-	HEADERS += \
-	src/sharedmidistate.h
-
-	SOURCES += \
-	src/midisource.cpp
-
-	DEFINES += MIDI
+SHARED_FLUID {
+	DEFINES += SHARED_FLUID
 }
 
 INI_ENCODING {

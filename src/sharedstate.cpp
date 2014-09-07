@@ -36,10 +36,7 @@
 #include "quad.h"
 #include "binding.h"
 #include "exception.h"
-
-#ifdef MIDI
 #include "sharedmidistate.h"
-#endif
 
 #include <unistd.h>
 #include <stdio.h>
@@ -74,9 +71,7 @@ struct SharedStatePrivate
 	RGSSThreadData &rtData;
 	Config &config;
 
-#ifdef MIDI
 	SharedMidiState midiState;
-#endif
 
 	Graphics graphics;
 	Input input;
@@ -109,9 +104,7 @@ struct SharedStatePrivate
 	      eThread(*threadData->ethread),
 	      rtData(*threadData),
 	      config(threadData->config),
-#ifdef MIDI
 	      midiState(threadData->config),
-#endif
 	      graphics(threadData),
 	      audio(threadData->config),
 	      fontState(threadData->config),
@@ -164,10 +157,8 @@ struct SharedStatePrivate
 
 		/* RGSS3 games will call setup_midi, so there's
 		 * no need to do it on startup */
-#if MIDI
 		if (rgssVer <= 2)
-			midiState.initDefaultSynths();
-#endif
+			midiState.initIfNeeded(threadData->config);
 	}
 
 	~SharedStatePrivate()
@@ -245,10 +236,7 @@ GSATT(ShaderSet&, shaders)
 GSATT(TexPool&, texPool)
 GSATT(Quad&, gpQuad)
 GSATT(SharedFontState&, fontState)
-
-#ifdef MIDI
 GSATT(SharedMidiState&, midiState)
-#endif
 
 void SharedState::setBindingData(void *data)
 {

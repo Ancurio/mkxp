@@ -24,8 +24,7 @@
 
 #include "config.h"
 #include "debugwriter.h"
-
-#include <fluidsynth.h>
+#include "fluid-fun.h"
 
 #include <assert.h>
 #include <vector>
@@ -50,58 +49,52 @@ struct SharedMidiState
 	SharedMidiState(const Config &conf)
 	    : inited(false),
 	      soundFont(conf.midi.soundFont)
-	{
-		flSettings = new_fluid_settings();
-		fluid_settings_setnum(flSettings, "synth.gain", 1.0);
-		fluid_settings_setnum(flSettings, "synth.sample-rate", SYNTH_SAMPLERATE);
-		fluid_settings_setstr(flSettings, "synth.chorus.active", conf.midi.chorus ? "yes" : "no");
-		fluid_settings_setstr(flSettings, "synth.reverb.active", conf.midi.reverb ? "yes" : "no");
-	}
+	{}
 
 	~SharedMidiState()
 	{
-		delete_fluid_settings(flSettings);
+		if (!HAVE_FLUID || !inited)
+			return;
+
+		fluid.delete_settings(flSettings);
 
 		for (size_t i = 0; i < synths.size(); ++i)
 		{
 			assert(!synths[i].inUse);
-			delete_fluid_synth(synths[i].synth);
+			fluid.delete_synth(synths[i].synth);
 		}
+
+		finiFluidFunctions();
 	}
 
-	fluid_synth_t *addSynth(bool usedNow)
-	{
-		fluid_synth_t *syn = new_fluid_synth(flSettings);
-
-		if (!soundFont.empty())
-			fluid_synth_sfload(syn, soundFont.c_str(), 1);
-		else
-			Debug() << "Warning: No soundfont specified, sound might be mute";
-
-		Synth synth;
-		synth.inUse = usedNow;
-		synth.synth = syn;
-		synths.push_back(synth);
-
-		return syn;
-	}
-
-	void initDefaultSynths()
+	void initIfNeeded(const Config &conf)
 	{
 		if (inited)
 			return;
 
+		inited = true;
+
+		initFluidFunctions();
+
+		if (!HAVE_FLUID)
+			return;
+
+		flSettings = fluid.new_settings();
+		fluid.settings_setnum(flSettings, "synth.gain", 1.0);
+		fluid.settings_setnum(flSettings, "synth.sample-rate", SYNTH_SAMPLERATE);
+		fluid.settings_setstr(flSettings, "synth.chorus.active", conf.midi.chorus ? "yes" : "no");
+		fluid.settings_setstr(flSettings, "synth.reverb.active", conf.midi.reverb ? "yes" : "no");
+
 		for (size_t i = 0; i < SYNTH_INIT_COUNT; ++i)
 			addSynth(false);
-
-		inited = true;
 	}
 
 	fluid_synth_t *allocateSynth()
 	{
-		size_t i;
+		assert(HAVE_FLUID);
+		assert(inited);
 
-		initDefaultSynths();
+		size_t i;
 
 		for (i = 0; i < synths.size(); ++i)
 			if (!synths[i].inUse)
@@ -110,7 +103,7 @@ struct SharedMidiState
 		if (i < synths.size())
 		{
 			fluid_synth_t *syn = synths[i].synth;
-			fluid_synth_system_reset(syn);
+			fluid.synth_system_reset(syn);
 			synths[i].inUse = true;
 
 			return syn;
@@ -132,6 +125,24 @@ struct SharedMidiState
 		assert(i < synths.size());
 
 		synths[i].inUse = false;
+	}
+
+private:
+	fluid_synth_t *addSynth(bool usedNow)
+	{
+		fluid_synth_t *syn = fluid.new_synth(flSettings);
+
+		if (!soundFont.empty())
+			fluid.synth_sfload(syn, soundFont.c_str(), 1);
+		else
+			Debug() << "Warning: No soundfont specified, sound might be mute";
+
+		Synth synth;
+		synth.inUse = usedNow;
+		synth.synth = syn;
+		synths.push_back(synth);
+
+		return syn;
 	}
 };
 

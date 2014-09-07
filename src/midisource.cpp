@@ -27,8 +27,8 @@
 #include "sharedmidistate.h"
 #include "util.h"
 #include "debugwriter.h"
+#include "fluid-fun.h"
 
-#include <fluidsynth.h>
 #include <SDL_rwops.h>
 
 #include <assert.h>
@@ -648,22 +648,22 @@ struct MidiSource : ALDataSource, MidiReadHandler
 		switch (e.type)
 		{
 		case NoteOn:
-			fluid_synth_noteon(synth, e.e.note.chan, key, e.e.note.vel);
+			fluid.synth_noteon(synth, e.e.note.chan, key, e.e.note.vel);
 			break;
 		case NoteOff:
-			fluid_synth_noteoff(synth, e.e.note.chan, key);
+			fluid.synth_noteoff(synth, e.e.note.chan, key);
 			break;
 		case ChanTouch:
-			fluid_synth_channel_pressure(synth, e.e.chanTouch.chan, e.e.chanTouch.val);
+			fluid.synth_channel_pressure(synth, e.e.chanTouch.chan, e.e.chanTouch.val);
 			break;
 		case PitchBend:
-			fluid_synth_pitch_bend(synth, e.e.pitchBend.chan, e.e.pitchBend.val);
+			fluid.synth_pitch_bend(synth, e.e.pitchBend.chan, e.e.pitchBend.val);
 			break;
 		case CC:
-			fluid_synth_cc(synth, e.e.cc.chan, e.e.cc.ctrl, e.e.cc.val);
+			fluid.synth_cc(synth, e.e.cc.chan, e.e.cc.ctrl, e.e.cc.val);
 			break;
 		case PC:
-			fluid_synth_program_change(synth, e.e.pc.chan, e.e.pc.prog);
+			fluid.synth_program_change(synth, e.e.pc.chan, e.e.pc.prog);
 			break;
 		case Tempo:
 			updatePlaybackSpeed(e.e.tempo.bpm);
@@ -679,7 +679,7 @@ struct MidiSource : ALDataSource, MidiReadHandler
 		int len = count * TICK_FRAMES;
 		void *buffer = &synthBuf[bufOffset];
 
-		fluid_synth_write_s16(synth, len, buffer, 0, 2, buffer, 1, 2);
+		fluid.synth_write_s16(synth, len, buffer, 0, 2, buffer, 1, 2);
 	}
 
 	/* MidiReadHandler */
@@ -817,7 +817,7 @@ struct MidiSource : ALDataSource, MidiReadHandler
 	void seekToOffset(float)
 	{
 		/* Reset synth */
-		fluid_synth_system_reset(synth);
+		fluid.synth_system_reset(synth);
 
 		/* Reset runtime variables */
 		genDeltasCarry = 0;

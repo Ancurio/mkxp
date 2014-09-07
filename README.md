@@ -60,7 +60,6 @@ This binding only exists for testing purposes and does nothing (the engine quits
 * SDL_sound (latest hg, apply provided patches!)
 * vorbisfile
 * pixman
-* fluidsynth (if midi enabled)
 * zlib (only ruby bindings)
 * OpenGL header (alternatively GLES2 with `DEFINES+=GLES2_HEADER`)
 * libiconv (on Windows, optional with INI_ENCODING)
@@ -72,7 +71,7 @@ qmake will use pkg-config to locate the respective include/library paths. If you
 
 The exception is boost, which is weird in that it still hasn't managed to pull off pkg-config support (seriously?). *If you installed boost in a non-standard prefix*, you will need to pass its include path via `BOOST_I` and library path via `BOOST_L`, either as direct arguments to qmake (`qmake BOOST_I="/usr/include" ...`) or via environment variables. You can specify a library suffix (eg. "-mt") via `BOOST_LIB_SUFFIX` if needed.
 
-Midi support is enabled by default; you can disable it via `qmake CONFIG+=DISABLE_MIDI`, in which case the fluidsynth dependency is dropped. When building fluidsynth yourself, you can disable almost all options (audio drivers etc.) as they are not used. Note that upstream fluidsynth has support for sharing soundfont data between synthesizers (mkxp uses multiple synths), so if your memory usage is very high, you might want to try compiling fluidsynth from git master.
+Midi support is enabled by default and requires fluidsynth to be present at runtime (not needed for building); if mkxp can't find it at runtime, midi playback is disabled. It looks for `libfluidsynth.so.1` on Linux, `libfluidsynth.dylib.1` on OSX and `fluidsynth.dll` on Windows, so make sure to have one of these in your link path. If you still need fluidsynth to be hard linked at buildtime, use `CONFIG+=SHARED_FLUID`. When building fluidsynth yourself, you can disable almost all options (audio drivers etc.) as they are not used. Note that upstream fluidsynth has support for sharing soundfont data between synthesizers (mkxp uses multiple synths), so if your memory usage is very high, you might want to try compiling fluidsynth from git master.
 
 By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `DEFINES+=WORKDIR_CURRENT` to qmake's arguments.
 

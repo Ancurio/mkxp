@@ -3,7 +3,7 @@ Project(mkxp)
 
 ## Setup options ##
 
-option(MIDI "Enable midi support" ON)
+option(SHARED_FLUID "Dynamically link fluidsynth at build time" OFF)
 option(WORKDIR_CURRENT "Keep current directory on startup" OFF)
 option(FORCE32 "Force 32bit compile on 64bit OS" OFF)
 set(BINDING "MRI" CACHE STRING "The Binding Type (MRI, MRUBY, NULL)")
@@ -151,6 +151,8 @@ set(MAIN_HEADERS
 	src/windowvx.h
 	src/tilemapvx.h
 	src/tileatlasvx.h
+	src/sharedmidistate.h
+	src/fluid-fun.h
 )
 
 set(MAIN_SOURCE
@@ -193,6 +195,8 @@ set(MAIN_SOURCE
 	src/tilemapvx.cpp
 	src/tileatlasvx.cpp
 	src/autotilesvx.cpp
+	src/midisource.cpp
+	src/fluid-fun.cpp
 )
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
@@ -227,16 +231,10 @@ if (RGSS2)
 	)
 endif()
 
-if (MIDI)
-	pkg_check_modules(MIDI REQUIRED fluidsynth)
+if (SHARED_FLUID)
+	pkg_check_modules(FLUID REQUIRED fluidsynth)
 	list(APPEND DEFINES
-		MIDI
-	)
-	list(APPEND MAIN_HEADERS
-		src/sharedmidistate.h
-	)
-	list(APPEND MAIN_SOURCE
-		src/midisource.cpp
+		SHARED_FLUID
 	)
 endif()
 
@@ -400,7 +398,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	${Boost_INCLUDE_DIR}
 	${MRI_INCLUDE_DIRS}
 	${VORBISFILE_INCLUDE_DIRS}
-	${MIDI_INCLUDE_DIRS}
+	${FLUID_INCLUDE_DIRS}
 	${OPENAL_INCLUDE_DIR}
 )
 
@@ -415,7 +413,7 @@ target_link_libraries(${PROJECT_NAME}
 	${Boost_LIBRARIES}
 	${MRI_LIBRARIES}
 	${VORBISFILE_LIBRARIES}
-	${MIDI_LIBRARIES}
+	${FLUID_LIBRARIES}
 	${OPENAL_LIBRARY}
 	${ZLIB_LIBRARY}
 

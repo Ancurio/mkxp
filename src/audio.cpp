@@ -24,10 +24,7 @@
 #include "audiostream.h"
 #include "soundemitter.h"
 #include "sharedstate.h"
-
-#ifdef MIDI
 #include "sharedmidistate.h"
-#endif
 
 #include <string>
 
@@ -317,9 +314,7 @@ void Audio::seStop()
 
 void Audio::setupMidi()
 {
-#ifdef MIDI
-	shState->midiState().initDefaultSynths();
-#endif
+	shState->midiState().initIfNeeded(shState->config());
 }
 
 float Audio::bgmPos()

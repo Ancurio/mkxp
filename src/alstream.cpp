@@ -22,8 +22,10 @@
 #include "alstream.h"
 
 #include "sharedstate.h"
+#include "sharedmidistate.h"
 #include "filesystem.h"
 #include "aldatasource.h"
+#include "fluid-fun.h"
 
 #include <SDL_mutex.h>
 #include <SDL_thread.h>
@@ -198,32 +200,26 @@ void ALStream::openSource(const std::string &filename)
 	shState->fileSystem().openRead(srcOps, filename.c_str(), FileSystem::Audio, false, &ext);
 	needsRewind = false;
 
-	bool readSig = rgssVer >= 2;
+	/* Try to read ogg file signature */
+	char sig[5] = { 0 };
+	SDL_RWread(&srcOps, sig, 1, 4);
+	SDL_RWseek(&srcOps, 0, RW_SEEK_SET);
 
-#ifdef MIDI
-	readSig = true;
-#endif
-
-	if (readSig)
+	if (!strcmp(sig, "OggS"))
 	{
-		/* Try to read ogg file signature */
-		char sig[5] = { 0 };
-		SDL_RWread(&srcOps, sig, 1, 4);
-		SDL_RWseek(&srcOps, 0, RW_SEEK_SET);
+		source = createVorbisSource(srcOps, looped);
+		return;
+	}
 
-		if (!strcmp(sig, "OggS"))
-		{
-			source = createVorbisSource(srcOps, looped);
-			return;
-		}
+	if (!strcmp(sig, "MThd"))
+	{
+		shState->midiState().initIfNeeded(shState->config());
 
-#ifdef MIDI
-		if (!strcmp(sig, "MThd"))
+		if (HAVE_FLUID)
 		{
 			source = createMidiSource(srcOps, looped);
 			return;
 		}
-#endif
 	}
 
 	source = createSDLSource(srcOps, ext, STREAM_BUF_SIZE, looped);
