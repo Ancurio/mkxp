@@ -189,7 +189,7 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 			if (!RB_TYPE_P(tmp, RUBY_T_STRING))
 				rb_raise(rb_eTypeError, "Argument %d: Expected string", argI);
 
-			*s = RSTRING_PTR(tmp);
+			*s = StringValueCStr(tmp);
 			++argI;
 
 			break;
