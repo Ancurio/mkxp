@@ -1,6 +1,6 @@
 diff -r 719dade41745 decoders/wav.c
 --- a/decoders/wav.c	Wed Aug 15 23:52:18 2012 -0400
-+++ b/decoders/wav.c	Fri Sep 12 06:37:52 2014 +0200
++++ b/decoders/wav.c	Fri Sep 12 06:42:05 2014 +0200
 @@ -113,8 +113,9 @@
  
  #define fmtID  0x20746D66  /* "fmt ", in ascii. */
@@ -52,7 +52,7 @@ diff -r 719dade41745 decoders/wav.c
          /* put other format-specific data here... */
      } fmt;
  } fmt_t;
-@@ -614,6 +640,284 @@
+@@ -614,6 +640,288 @@
  
  
  /*****************************************************************************
@@ -161,6 +161,7 @@ diff -r 719dade41745 decoders/wav.c
 +    return(1);
 +} /* read_ima_frameset */
 +
++
 +static Uint32 read_sample_fmt_ima(Sound_Sample *sample)
 +{
 +    Sound_SampleInternal *internal = (Sound_SampleInternal *) sample->opaque;
@@ -219,11 +220,13 @@ diff -r 719dade41745 decoders/wav.c
 +    return(bw);
 +} /* read_sample_fmt_ima */
 +
++
 +static void free_fmt_ima(fmt_t *fmt)
 +{
 +    free(fmt->fmt.ima.d);
 +    free(fmt->fmt.ima.buf);
 +} /* free_fmt_ima */
++
 +
 +static int rewind_sample_fmt_ima(Sound_Sample *sample)
 +{
@@ -296,6 +299,7 @@ diff -r 719dade41745 decoders/wav.c
 +    return(1);  /* success. */
 +} /* seek_sample_fmt_ima */
 +
++
 +static int read_fmt_ima(SDL_RWops *rw, fmt_t *fmt)
 +{
 +    Uint16 chan = fmt->wChannels;
@@ -337,7 +341,7 @@ diff -r 719dade41745 decoders/wav.c
   * Everything else...                                                        *
   *****************************************************************************/
  
-@@ -642,6 +946,13 @@
+@@ -642,6 +950,13 @@
              SNDDBG(("WAV: Appears to be ADPCM compressed audio.\n"));
              return(read_fmt_adpcm(rw, fmt));
  
