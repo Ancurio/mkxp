@@ -58,8 +58,8 @@ RB_METHOD(tilemapVXInitialize)
 
 	VALUE autotilesObj = rb_iv_get(self, "bitmap_array");
 
-	VALUE ary = rb_ary_new2(7);
-	for (int i = 0; i < 7; ++i)
+	VALUE ary = rb_ary_new2(9);
+	for (int i = 0; i < 9; ++i)
 		rb_ary_push(ary, Qnil);
 
 	rb_iv_set(autotilesObj, "array", ary);
@@ -119,7 +119,7 @@ RB_METHOD(tilemapVXBitmapsGet)
 	int i;
 	rb_get_args (argc, argv, "i", &i RB_ARG_END);
 
-	if (i < 0 || i > 6)
+	if (i < 0 || i > 8)
 		return Qnil;
 
 	VALUE ary = rb_iv_get(self, "array");
