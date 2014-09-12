@@ -1,6 +1,6 @@
 diff -r 719dade41745 decoders/wav.c
 --- a/decoders/wav.c	Wed Aug 15 23:52:18 2012 -0400
-+++ b/decoders/wav.c	Fri Sep 12 06:42:05 2014 +0200
++++ b/decoders/wav.c	Fri Sep 12 06:50:35 2014 +0200
 @@ -113,8 +113,9 @@
  
  #define fmtID  0x20746D66  /* "fmt ", in ascii. */
@@ -52,7 +52,7 @@ diff -r 719dade41745 decoders/wav.c
          /* put other format-specific data here... */
      } fmt;
  } fmt_t;
-@@ -614,6 +640,288 @@
+@@ -614,6 +640,296 @@
  
  
  /*****************************************************************************
@@ -105,6 +105,7 @@ diff -r 719dade41745 decoders/wav.c
 +{
 +    int step = ima_step_table[state->iStepIndex];
 +    int diff = 0;
++    int samp, index;
 +
 +    if (nibble & 0x4)
 +        diff += step >> 0;
@@ -118,11 +119,11 @@ diff -r 719dade41745 decoders/wav.c
 +    if (nibble & 0x8)
 +        diff = -diff;
 +
-+    int samp = state->iPrevSamp + diff;
++    samp = state->iPrevSamp + diff;
 +    samp = SDL_max(SDL_min(samp, 32767), -32768);
 +    state->iPrevSamp = samp;
 +
-+    int index = state->iStepIndex + ima_index_table[nibble];
++    index = state->iStepIndex + ima_index_table[nibble];
 +    state->iStepIndex = SDL_max(SDL_min(index, 88), 0);
 +
 +    return samp;
@@ -169,6 +170,7 @@ diff -r 719dade41745 decoders/wav.c
 +    fmt_t *fmt = w->fmt;
 +    void *const out_buf = internal->buffer;
 +    Uint32 bw = 0;
++    int rc;
 +
 +    while (1)
 +    {
@@ -183,8 +185,14 @@ diff -r 719dade41745 decoders/wav.c
 +            if (bw+fmt->fmt.ima.dec_frame_size > internal->buffer_size)
 +                break;
 +
-+            read_ima_block_headers(internal->rw, fmt->fmt.ima.d,
-+                                   fmt->wChannels, (Sint16*) (out_buf+bw));
++            rc = read_ima_block_headers(internal->rw, fmt->fmt.ima.d,
++                                        fmt->wChannels, (Sint16*) (out_buf+bw));
++                                        
++            if (!rc)
++            {
++                sample->flags |= SOUND_SAMPLEFLAG_ERROR;
++                return 0;
++            } /* if */
 +
 +            w->bytesLeft -= fmt->fmt.ima.headerset_size;
 +            bw += fmt->fmt.ima.dec_frame_size;
@@ -202,7 +210,7 @@ diff -r 719dade41745 decoders/wav.c
 +        if (bw+fmt->fmt.ima.dec_frameset_size > internal->buffer_size)
 +            break;
 +
-+        int rc = read_ima_frameset(internal->rw, w, (Sint16*) (out_buf+bw));
++        rc = read_ima_frameset(internal->rw, w, (Sint16*) (out_buf+bw));
 +
 +        if (!rc)
 +        {
@@ -303,6 +311,7 @@ diff -r 719dade41745 decoders/wav.c
 +static int read_fmt_ima(SDL_RWops *rw, fmt_t *fmt)
 +{
 +    Uint16 chan = fmt->wChannels;
++    Sint16 extraBytes;
 +    int rc;
 +
 +    /* setup function pointers */
@@ -311,7 +320,6 @@ diff -r 719dade41745 decoders/wav.c
 +    fmt->rewind_sample = rewind_sample_fmt_ima;
 +    fmt->seek_sample = seek_sample_fmt_ima;
 +
-+    Sint16 extraBytes;
 +    BAIL_IF_MACRO(!read_le16(rw, &extraBytes), NULL, 0);
 +    BAIL_IF_MACRO(!read_le16(rw, &fmt->fmt.ima.block_frames), NULL, 0);
 +
@@ -341,7 +349,7 @@ diff -r 719dade41745 decoders/wav.c
   * Everything else...                                                        *
   *****************************************************************************/
  
-@@ -642,6 +950,13 @@
+@@ -642,6 +958,13 @@
              SNDDBG(("WAV: Appears to be ADPCM compressed audio.\n"));
              return(read_fmt_adpcm(rw, fmt));
  
