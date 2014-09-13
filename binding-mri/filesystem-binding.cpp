@@ -43,7 +43,16 @@ static VALUE
 fileIntForPath(const char *path)
 {
 	SDL_RWops *ops = SDL_AllocRW();
-	shState->fileSystem().openRead(*ops, path);
+
+	try
+	{
+		shState->fileSystem().openRead(*ops, path);
+	}
+	catch (const Exception &e)
+	{
+		SDL_FreeRW(ops);
+		raiseRbExc(e);
+	}
 
 	VALUE klass = rb_const_get(rb_cObject, rb_intern("FileInt"));
 
