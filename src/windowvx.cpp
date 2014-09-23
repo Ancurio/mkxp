@@ -238,6 +238,11 @@ struct WindowVXPrivate
 	      contentsOpacity(255),
 	      openness(255),
 	      tone(&tmp.tone),
+	      ctrlVertDirty(false),
+	      ctrlVertArrayDirty(false),
+	      clipRectDirty(false),
+	      cursorVertDirty(false),
+	      cursorVertArrayDirty(false),
 	      pauseAlphaIdx(0),
 	      pauseQuadIdx(0),
 	      cursorAlphaIdx(0)
@@ -246,16 +251,23 @@ struct WindowVXPrivate
 		ctrlVert.resize(4 + 1);
 		pauseVert = &ctrlVert.vertices[4*4];
 
-		base.vertDirty = true;
-		base.texSizeDirty = true;
-		base.texDirty = true;
-		ctrlVertDirty = true;
-		clipRectDirty = true;
+		base.vertDirty = false;
+		base.texSizeDirty = false;
+		base.texDirty = false;
+
+		if (w > 0 || h > 0)
+		{
+			base.vertDirty = true;
+			base.texSizeDirty = true;
+			clipRectDirty = true;
+			ctrlVertDirty = true;
+		}
 
 		prepareCon = shState->prepareDraw.connect
 			(sigc::mem_fun(this, &WindowVXPrivate::prepare));
 
 		refreshCursorRectCon();
+		refreshToneCon();
 		updateBaseQuad();
 	}
 
