@@ -121,6 +121,8 @@ static bool validUtf8(const char *string)
 typedef std::vector<std::string> StringVec;
 namespace po = boost::program_options;
 
+#define CONF_FILE "mkxp.conf"
+
 Config::Config()
     : rgssVersion(0),
       debugMode(false),
@@ -190,25 +192,35 @@ void Config::read(int argc, char *argv[])
 	po::variables_map vm;
 
 	/* Parse command line options */
-	po::parsed_options cmdPo =
-	    po::command_line_parser(argc, argv).options(podesc)
-	                                       .allow_unregistered()
-	                                       .run();
+	try
+	{
+		po::parsed_options cmdPo =
+			po::command_line_parser(argc, argv).options(podesc).run();
+		po::store(cmdPo, vm);
+	}
+	catch (po::error &error)
+	{
+		Debug() << "Command line:" << error.what();
+	}
 
-	GUARD_ALL( po::store(cmdPo, vm); )
-
-	/* Parse configuration file (mkxp.conf) */
+	/* Parse configuration file */
 	std::ifstream confFile;
-	confFile.open("mkxp.conf");
+	confFile.open(CONF_FILE);
 
 	if (confFile)
 	{
-		GUARD_ALL( po::store(po::parse_config_file(confFile, podesc, true), vm); )
+		try
+		{
+			po::store(po::parse_config_file(confFile, podesc, true), vm);
+			po::notify(vm);
+		}
+		catch (po::error &error)
+		{
+			Debug() << CONF_FILE":" << error.what();
+		}
+
+		confFile.close();
 	}
-
-	confFile.close();
-
-	po::notify(vm);
 
 #undef PO_DESC
 #define PO_DESC(key, type) GUARD_ALL( key = vm[#key].as< type >(); )
@@ -276,7 +288,7 @@ void Config::readGameINI()
 	iniFile.open((iniPath).c_str());
 
 	po::variables_map vm;
-	GUARD_ALL( po::store(po::parse_config_file(iniFile, podesc, true), vm); )
+	po::store(po::parse_config_file(iniFile, podesc, true), vm);
 	po::notify(vm);
 
 	iniFile.close();
