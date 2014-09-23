@@ -114,7 +114,7 @@ MRB_METHOD(bitmapBlt)
 	src = getPrivateDataCheck<Bitmap>(mrb, srcObj, BitmapType);
 	srcRect = getPrivateDataCheck<Rect>(mrb, srcRectObj, RectType);
 
-	GUARD_EXC( b->blt(x, y, src, srcRect->toIntRect(), opacity); )
+	GUARD_EXC( b->blt(x, y, *src, srcRect->toIntRect(), opacity); )
 
 	return mrb_nil_value();
 }
@@ -137,7 +137,7 @@ MRB_METHOD(bitmapStretchBlt)
 	destRect = getPrivateDataCheck<Rect>(mrb, destRectObj, RectType);
 	srcRect = getPrivateDataCheck<Rect>(mrb, srcRectObj, RectType);
 
-	GUARD_EXC( b->stretchBlt(destRect->toIntRect(), src, srcRect->toIntRect(), opacity); )
+	GUARD_EXC( b->stretchBlt(destRect->toIntRect(), *src, srcRect->toIntRect(), opacity); )
 
 	return mrb_nil_value();
 }
@@ -280,7 +280,7 @@ MRB_METHOD(bitmapTextSize)
 
 MRB_METHOD(bitmapGetFont)
 {
-	checkDisposed(mrb, self);
+	checkDisposed<Bitmap>(mrb, self);
 
 	return getProperty(mrb, self, CSfont);
 }

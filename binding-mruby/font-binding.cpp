@@ -103,6 +103,9 @@ MRB_METHOD(FontSetName)
 	return name;
 }
 
+template<class C>
+static void checkDisposed(mrb_state *, mrb_value) {}
+
 DEF_PROP_I(Font, Size)
 DEF_PROP_B(Font, Bold)
 DEF_PROP_B(Font, Italic)

@@ -37,6 +37,8 @@ public:
 	Viewport();
 	~Viewport();
 
+	void update();
+
 	DECL_ATTR( Rect,  Rect*  )
 	DECL_ATTR( OX,    int    )
 	DECL_ATTR( OY,    int    )
@@ -53,6 +55,11 @@ private:
 	void draw();
 	void onGeometryChange(const Geometry &);
 	bool isEffectiveViewport(Rect *&, Color *&, Tone *&) const;
+
+	void releaseResources();
+	const char *klassName() const { return "viewport"; }
+
+	ABOUT_TO_ACCESS_DISP
 
 	ViewportPrivate *p;
 	friend struct ViewportPrivate;

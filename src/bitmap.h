@@ -49,11 +49,11 @@ public:
 	IntRect rect() const;
 
 	void blt(int x, int y,
-	         const Bitmap *source, IntRect rect,
+	         const Bitmap &source, IntRect rect,
 	         int opacity = 255);
 
 	void stretchBlt(const IntRect &destRect,
-	                const Bitmap *source, const IntRect &sourceRect,
+	                const Bitmap &source, const IntRect &sourceRect,
 	                int opacity = 255);
 
 	void fillRect(int x, int y,
@@ -120,6 +120,9 @@ public:
 	sigc::signal<void> modified;
 
 private:
+	void releaseResources();
+	const char *klassName() const { return "bitmap"; }
+
 	BitmapPrivate *p;
 };
 

@@ -341,8 +341,7 @@ void Font::setSize(int value)
 	p->sdlFont = 0;
 }
 
-#undef CHK_DISP
-#define CHK_DISP
+static void guardDisposed() {}
 
 DEF_ATTR_RD_SIMPLE(Font, Size,     int,    p->size)
 DEF_ATTR_SIMPLE   (Font, Bold,     bool,   p->bold)

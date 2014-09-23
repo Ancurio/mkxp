@@ -79,6 +79,8 @@ public:
 	DECL_ATTR_VIRT( Z,       int  )
 	DECL_ATTR_VIRT( Visible, bool )
 
+	virtual void aboutToAccess() const = 0;
+
 protected:
 	/* A bit about OpenGL state:
 	 *
@@ -133,5 +135,11 @@ private:
 	 * still always be displayed below said window. */
 	int spriteY;
 };
+
+#define ABOUT_TO_ACCESS_NOOP \
+	void aboutToAccess() const {}
+
+#define ABOUT_TO_ACCESS_DISP \
+	void aboutToAccess() const { guardDisposed(); }
 
 #endif // SCENE_H

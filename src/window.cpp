@@ -169,10 +169,8 @@ struct QuadChunk
 struct WindowPrivate
 {
 	Bitmap *windowskin;
-	DisposeWatch<WindowPrivate, Bitmap> windowskinWatch;
 
 	Bitmap *contents;
-	DisposeWatch<WindowPrivate, Bitmap> contentsWatch;
 
 	bool bgStretch;
 	Rect *cursorRect;
@@ -226,6 +224,8 @@ struct WindowPrivate
 		{
 			unlink();
 		}
+
+		ABOUT_TO_ACCESS_NOOP
 	};
 
 	WindowControls controlsElement;
@@ -250,9 +250,7 @@ struct WindowPrivate
 
 	WindowPrivate(Viewport *viewport = 0)
 	    : windowskin(0),
-	      windowskinWatch(*this, windowskin),
 	      contents(0),
-	      contentsWatch(*this, contents, &WindowPrivate::markControlVertDirty),
 	      bgStretch(true),
 	      cursorRect(&tmp.rect),
 	      active(true),
@@ -550,7 +548,7 @@ struct WindowPrivate
 
 	void drawBase()
 	{
-		if (!windowskin)
+		if (nullOrDisposed(windowskin))
 			return;
 
 		if (size == Vec2i(0, 0))
@@ -584,7 +582,7 @@ struct WindowPrivate
 
 	void drawControls()
 	{
-		if (!windowskin && !contents)
+		if (nullOrDisposed(windowskin) && nullOrDisposed(contents))
 			return;
 
 		if (size == Vec2i(0, 0))
@@ -612,7 +610,7 @@ struct WindowPrivate
 		shader.bind();
 		shader.applyViewportProj();
 
-		if (windowskin)
+		if (!nullOrDisposed(windowskin))
 		{
 			shader.setTranslation(Vec2i(effectX, effectY));
 
@@ -625,7 +623,7 @@ struct WindowPrivate
 			TEX::setSmooth(false);
 		}
 
-		if (contents)
+		if (!nullOrDisposed(contents))
 		{
 			/* Draw contents bitmap */
 			glState.scissorBox.setIntersect(contentsRect);
@@ -692,15 +690,13 @@ Window::Window(Viewport *viewport)
 
 Window::~Window()
 {
-	p->controlsElement.release();
-
-	unlink();
-
-	delete p;
+	dispose();
 }
 
 void Window::update()
 {
+	guardDisposed();
+
 	p->updateControls();
 	p->stepAnimations();
 }
@@ -725,8 +721,9 @@ DEF_ATTR_OBJ_VALUE(Window, CursorRect,      Rect*,   p->cursorRect)
 
 void Window::setWindowskin(Bitmap *value)
 {
+	guardDisposed();
+
 	p->windowskin = value;
-	p->windowskinWatch.update(value);
 
 	if (!value)
 		return;
@@ -736,11 +733,12 @@ void Window::setWindowskin(Bitmap *value)
 
 void Window::setContents(Bitmap *value)
 {
+	guardDisposed();
+
 	if (p->contents == value)
 		return;
 
 	p->contents = value;
-	p->contentsWatch.update(value);
 	p->controlsVertDirty = true;
 
 	if (!value)
@@ -752,6 +750,8 @@ void Window::setContents(Bitmap *value)
 
 void Window::setStretch(bool value)
 {
+	guardDisposed();
+
 	if (value == p->bgStretch)
 		return;
 
@@ -761,6 +761,8 @@ void Window::setStretch(bool value)
 
 void Window::setActive(bool value)
 {
+	guardDisposed();
+
 	if (p->active == value)
 		return;
 
@@ -770,6 +772,8 @@ void Window::setActive(bool value)
 
 void Window::setPause(bool value)
 {
+	guardDisposed();
+
 	if (p->pause == value)
 		return;
 
@@ -781,6 +785,8 @@ void Window::setPause(bool value)
 
 void Window::setWidth(int value)
 {
+	guardDisposed();
+
 	if (p->size.x == value)
 		return;
 
@@ -790,6 +796,8 @@ void Window::setWidth(int value)
 
 void Window::setHeight(int value)
 {
+	guardDisposed();
+
 	if (p->size.y == value)
 		return;
 
@@ -799,6 +807,8 @@ void Window::setHeight(int value)
 
 void Window::setOX(int value)
 {
+	guardDisposed();
+
 	if (p->contentsOffset.x == value)
 		return;
 
@@ -808,6 +818,8 @@ void Window::setOX(int value)
 
 void Window::setOY(int value)
 {
+	guardDisposed();
+
 	if (p->contentsOffset.y == value)
 		return;
 
@@ -817,6 +829,8 @@ void Window::setOY(int value)
 
 void Window::setOpacity(int value)
 {
+	guardDisposed();
+
 	if (p->opacity == value)
 		return;
 
@@ -826,6 +840,8 @@ void Window::setOpacity(int value)
 
 void Window::setBackOpacity(int value)
 {
+	guardDisposed();
+
 	if (p->backOpacity == value)
 		return;
 
@@ -835,6 +851,8 @@ void Window::setBackOpacity(int value)
 
 void Window::setContentsOpacity(int value)
 {
+	guardDisposed();
+
 	if (p->contentsOpacity == value)
 		return;
 
@@ -877,4 +895,13 @@ void Window::setVisible(bool value)
 void Window::onViewportChange()
 {
 	p->controlsElement.setScene(*this->scene);
+}
+
+void Window::releaseResources()
+{
+	p->controlsElement.release();
+
+	unlink();
+
+	delete p;
 }

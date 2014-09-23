@@ -73,6 +73,11 @@ private:
 
 	void draw();
 	void onGeometryChange(const Scene::Geometry &);
+
+	void releaseResources();
+	const char *klassName() const { return "window"; }
+
+	ABOUT_TO_ACCESS_DISP
 };
 
 #endif // WINDOWVX_H

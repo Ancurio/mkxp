@@ -67,6 +67,11 @@ private:
 	void setVisible(bool value);
 
 	void onViewportChange();
+
+	void releaseResources();
+	const char *klassName() const { return "window"; }
+
+	ABOUT_TO_ACCESS_DISP
 };
 
 #endif // WINDOW_H

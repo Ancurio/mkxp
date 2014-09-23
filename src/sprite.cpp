@@ -43,7 +43,6 @@
 struct SpritePrivate
 {
 	Bitmap *bitmap;
-	DisposeWatch<SpritePrivate, Bitmap> bitmapWatch;
 
 	Quad quad;
 	Transform trans;
@@ -87,7 +86,6 @@ struct SpritePrivate
 
 	SpritePrivate()
 	    : bitmap(0),
-	      bitmapWatch(*this, bitmap),
 	      srcRect(&tmp.rect),
 	      mirrored(false),
 	      bushDepth(0),
@@ -159,7 +157,7 @@ struct SpritePrivate
 	{
 		isVisible = false;
 
-		if (!bitmap)
+		if (nullOrDisposed(bitmap))
 			return;
 
 		if (!opacity)
@@ -209,7 +207,7 @@ struct SpritePrivate
 
 	void updateWave()
 	{
-		if (!bitmap)
+		if (nullOrDisposed(bitmap))
 			return;
 
 		if (wave.amp == 0)
@@ -298,9 +296,7 @@ Sprite::Sprite(Viewport *viewport)
 
 Sprite::~Sprite()
 {
-	unlink();
-
-	delete p;
+	dispose();
 }
 
 DEF_ATTR_RD_SIMPLE(Sprite, Bitmap,     Bitmap*, p->bitmap)
@@ -330,11 +326,12 @@ DEF_ATTR_OBJ_VALUE(Sprite, Tone,        Tone*,  p->tone)
 
 void Sprite::setBitmap(Bitmap *bitmap)
 {
+	guardDisposed();
+
 	if (p->bitmap == bitmap)
 		return;
 
 	p->bitmap = bitmap;
-	p->bitmapWatch.update(bitmap);
 
 	if (!bitmap)
 		return;
@@ -350,6 +347,8 @@ void Sprite::setBitmap(Bitmap *bitmap)
 
 void Sprite::setX(int value)
 {
+	guardDisposed();
+
 	if (p->trans.getPosition().x == value)
 		return;
 
@@ -358,6 +357,8 @@ void Sprite::setX(int value)
 
 void Sprite::setY(int value)
 {
+	guardDisposed();
+
 	if (p->trans.getPosition().y == value)
 		return;
 
@@ -372,6 +373,8 @@ void Sprite::setY(int value)
 
 void Sprite::setOX(int value)
 {
+	guardDisposed();
+
 	if (p->trans.getOrigin().x == value)
 		return;
 
@@ -380,6 +383,8 @@ void Sprite::setOX(int value)
 
 void Sprite::setOY(int value)
 {
+	guardDisposed();
+
 	if (p->trans.getOrigin().y == value)
 		return;
 
@@ -388,6 +393,8 @@ void Sprite::setOY(int value)
 
 void Sprite::setZoomX(float value)
 {
+	guardDisposed();
+
 	if (p->trans.getScale().x == value)
 		return;
 
@@ -396,6 +403,8 @@ void Sprite::setZoomX(float value)
 
 void Sprite::setZoomY(float value)
 {
+	guardDisposed();
+
 	if (p->trans.getScale().y == value)
 		return;
 
@@ -408,6 +417,8 @@ void Sprite::setZoomY(float value)
 
 void Sprite::setAngle(float value)
 {
+	guardDisposed();
+
 	if (p->trans.getRotation() == value)
 		return;
 
@@ -416,6 +427,8 @@ void Sprite::setAngle(float value)
 
 void Sprite::setMirror(bool mirrored)
 {
+	guardDisposed();
+
 	if (p->mirrored == mirrored)
 		return;
 
@@ -425,6 +438,8 @@ void Sprite::setMirror(bool mirrored)
 
 void Sprite::setBushDepth(int value)
 {
+	guardDisposed();
+
 	if (p->bushDepth == value)
 		return;
 
@@ -434,6 +449,8 @@ void Sprite::setBushDepth(int value)
 
 void Sprite::setBlendType(int type)
 {
+	guardDisposed();
+
 	switch (type)
 	{
 	default :
@@ -452,6 +469,7 @@ void Sprite::setBlendType(int type)
 #define DEF_WAVE_SETTER(Name, name, type) \
 	void Sprite::setWave##Name(type value) \
 	{ \
+		guardDisposed(); \
 		if (p->wave.name == value) \
 			return; \
 		p->wave.name = value; \
@@ -477,6 +495,8 @@ void Sprite::initDynAttribs()
 /* Flashable */
 void Sprite::update()
 {
+	guardDisposed();
+
 	Flashable::update();
 
 	p->wave.phase += p->wave.speed / 180;
@@ -555,4 +575,11 @@ void Sprite::onGeometryChange(const Scene::Geometry &geo)
 
 	p->sceneRect.w = geo.rect.w;
 	p->sceneRect.h = geo.rect.h;
+}
+
+void Sprite::releaseResources()
+{
+	unlink();
+
+	delete p;
 }

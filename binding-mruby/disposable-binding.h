@@ -66,33 +66,47 @@ disposableDisposeChildren(mrb_state *mrb, mrb_value disp)
 template<class C>
 MRB_METHOD(disposableDispose)
 {
-	C *c = static_cast<C*>(DATA_PTR(self));
+	C *d = static_cast<C*>(DATA_PTR(self));
 
-	/* Nothing to do if already disposed */
-	if (!c)
+	if (!d)
+		return mrb_nil_value();
+
+	if (d->isDisposed())
 		return mrb_nil_value();
 
 	disposableDisposeChildren(mrb, self);
 
-	delete c;
-	DATA_PTR(self) = 0;
+	d->dispose();
 
 	return mrb_nil_value();
 }
 
 template<class C>
-MRB_METHOD(disposableDisposed)
+MRB_METHOD(disposableIsDisposed)
 {
 	MRB_UNUSED_PARAM;
 
-	return mrb_bool_value(DATA_PTR(self) == 0);
+	C *d = static_cast<C*>(DATA_PTR(self));
+
+	if (!d)
+		return mrb_true_value();
+
+	return mrb_bool_value(d->isDisposed());
 }
 
 template<class C>
 static void disposableBindingInit(mrb_state *mrb, RClass *klass)
 {
 	mrb_define_method(mrb, klass, "dispose", disposableDispose<C>, MRB_ARGS_NONE());
-	mrb_define_method(mrb, klass, "disposed?", disposableDisposed<C>, MRB_ARGS_NONE());
+	mrb_define_method(mrb, klass, "disposed?", disposableIsDisposed<C>, MRB_ARGS_NONE());
+}
+
+template<class C>
+inline void
+checkDisposed(mrb_state *mrb, mrb_value self)
+{
+	if (mrb_test(disposableIsDisposed<C>(0, self)))
+		raiseDisposedAccess(mrb, self);
 }
 
 #endif // DISPOSABLEBINDING_H

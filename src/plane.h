@@ -54,6 +54,11 @@ private:
 
 	void draw();
 	void onGeometryChange(const Scene::Geometry &);
+
+	void releaseResources();
+	const char *klassName() const { return "plane"; }
+
+	ABOUT_TO_ACCESS_DISP
 };
 
 #endif // PLANE_H

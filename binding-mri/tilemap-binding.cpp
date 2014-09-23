@@ -101,6 +101,8 @@ RB_METHOD(tilemapGetAutotiles)
 {
 	RB_UNUSED_PARAM;
 
+	checkDisposed<Tilemap>(self);
+
 	return rb_iv_get(self, "autotiles");
 }
 
@@ -119,7 +121,7 @@ RB_METHOD(tilemapGetViewport)
 {
 	RB_UNUSED_PARAM;
 
-	checkDisposed(self);
+	checkDisposed<Tilemap>(self);
 
 	return rb_iv_get(self, "viewport");
 }

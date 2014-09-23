@@ -160,6 +160,9 @@ RB_METHOD(FontSetName)
 	return argv[0];
 }
 
+template<class C>
+static void checkDisposed(VALUE) {}
+
 DEF_PROP_OBJ_VAL(Font, Color, Color,    "color")
 DEF_PROP_OBJ_VAL(Font, Color, OutColor, "out_color")
 

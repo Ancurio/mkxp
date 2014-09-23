@@ -134,11 +134,15 @@ void SceneElement::setScene(Scene &scene)
 
 int SceneElement::getZ() const
 {
+	aboutToAccess();
+
 	return z;
 }
 
 void SceneElement::setZ(int value)
 {
+	aboutToAccess();
+
 	if (z == value)
 		return;
 
@@ -148,11 +152,15 @@ void SceneElement::setZ(int value)
 
 bool SceneElement::getVisible() const
 {
+	aboutToAccess();
+
 	return visible;
 }
 
 void SceneElement::setVisible(bool value)
 {
+	aboutToAccess();
+
 	visible = value;
 }
 

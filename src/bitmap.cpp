@@ -297,21 +297,18 @@ Bitmap::Bitmap(const Bitmap &other)
 
 	p->gl = shState->texPool().request(other.width(), other.height());
 
-	blt(0, 0, &other, rect());
+	blt(0, 0, other, rect());
 }
 
 Bitmap::~Bitmap()
 {
-	if (p->megaSurface)
-		SDL_FreeSurface(p->megaSurface);
-	else
-		shState->texPool().release(p->gl);
-
-	delete p;
+	dispose();
 }
 
 int Bitmap::width() const
 {
+	guardDisposed();
+
 	if (p->megaSurface)
 		return p->megaSurface->w;
 
@@ -320,6 +317,8 @@ int Bitmap::width() const
 
 int Bitmap::height() const
 {
+	guardDisposed();
+
 	if (p->megaSurface)
 		return p->megaSurface->h;
 
@@ -328,14 +327,16 @@ int Bitmap::height() const
 
 IntRect Bitmap::rect() const
 {
+	guardDisposed();
+
 	return IntRect(0, 0, width(), height());
 }
 
 void Bitmap::blt(int x, int y,
-                  const Bitmap *source, IntRect rect,
+                  const Bitmap &source, IntRect rect,
                   int opacity)
 {
-	if (!source)
+	if (source.isDisposed())
 		return;
 
 	// FIXME: RGSS allows the source rect to both lie outside
@@ -344,23 +345,25 @@ void Bitmap::blt(int x, int y,
 	// doesn't fix anything for a direct stretch_blt call).
 
 	/* Clamp rect to source bitmap size */
-	if (rect.x + rect.w > source->width())
-		rect.w = source->width() - rect.x;
+	if (rect.x + rect.w > source.width())
+		rect.w = source.width() - rect.x;
 
-	if (rect.y + rect.h > source->height())
-		rect.h = source->height() - rect.y;
+	if (rect.y + rect.h > source.height())
+		rect.h = source.height() - rect.y;
 
 	stretchBlt(IntRect(x, y, rect.w, rect.h),
 	           source, rect, opacity);
 }
 
 void Bitmap::stretchBlt(const IntRect &destRect,
-                        const Bitmap *source, const IntRect &sourceRect,
+                        const Bitmap &source, const IntRect &sourceRect,
                         int opacity)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
-	if (!source)
+	if (source.isDisposed())
 		return;
 
 	opacity = clamp(opacity, 0, 255);
@@ -368,13 +371,13 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	if (opacity == 0)
 		return;
 
-	if (source->megaSurface())
+	if (source.megaSurface())
 	{
 		/* Don't do transparent blits for now */
 		if (opacity < 255)
-			source->ensureNonMega();
+			source.ensureNonMega();
 
-		SDL_Surface *srcSurf = source->megaSurface();
+		SDL_Surface *srcSurf = source.megaSurface();
 
 		SDL_Rect srcRect = sourceRect;
 		SDL_Rect dstRect = destRect;
@@ -421,7 +424,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	{
 		/* Fast blit */
 		GLMeta::blitBegin(p->gl);
-		GLMeta::blitSource(source->p->gl);
+		GLMeta::blitSource(source.p->gl);
 		GLMeta::blitRectangle(sourceRect, destRect);
 		GLMeta::blitEnd();
 	}
@@ -437,10 +440,10 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		GLMeta::blitRectangle(destRect, Vec2i());
 		GLMeta::blitEnd();
 
-		FloatRect bltSubRect((float) sourceRect.x / source->width(),
-		                     (float) sourceRect.y / source->height(),
-		                     ((float) source->width() / sourceRect.w) * ((float) destRect.w / gpTex.width),
-		                     ((float) source->height() / sourceRect.h) * ((float) destRect.h / gpTex.height));
+		FloatRect bltSubRect((float) sourceRect.x / source.width(),
+		                     (float) sourceRect.y / source.height(),
+		                     ((float) source.width() / sourceRect.w) * ((float) destRect.w / gpTex.width),
+		                     ((float) source.height() / sourceRect.h) * ((float) destRect.h / gpTex.height));
 
 		BltShader &shader = shState->shaders().blt;
 		shader.bind();
@@ -452,7 +455,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		quad.setTexPosRect(sourceRect, destRect);
 		quad.setColor(Vec4(1, 1, 1, normOpacity));
 
-		source->p->bindTexture(shader);
+		source.p->bindTexture(shader);
 		p->bindFBO();
 		p->pushSetViewport(shader);
 
@@ -475,6 +478,8 @@ void Bitmap::fillRect(int x, int y,
 
 void Bitmap::fillRect(const IntRect &rect, const Vec4 &color)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	p->fillRect(rect, color);
@@ -501,6 +506,8 @@ void Bitmap::gradientFillRect(const IntRect &rect,
                               const Vec4 &color1, const Vec4 &color2,
                               bool vertical)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	SimpleColorShader &shader = shState->shaders().simpleColor;
@@ -545,6 +552,8 @@ void Bitmap::clearRect(int x, int y, int width, int height)
 
 void Bitmap::clearRect(const IntRect &rect)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	p->fillRect(rect, Vec4());
@@ -554,6 +563,8 @@ void Bitmap::clearRect(const IntRect &rect)
 
 void Bitmap::blur()
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	Quad &quad = shState->gpQuad();
@@ -597,6 +608,8 @@ void Bitmap::blur()
 
 void Bitmap::radialBlur(int angle, int divisions)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	angle     = clamp<int>(angle, 0, 359);
@@ -690,6 +703,8 @@ void Bitmap::radialBlur(int angle, int divisions)
 
 void Bitmap::clear()
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	p->bindFBO();
@@ -707,6 +722,8 @@ void Bitmap::clear()
 
 Color Bitmap::getPixel(int x, int y) const
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	if (x < 0 || y < 0 || x >= width() || y >= height())
@@ -737,6 +754,8 @@ Color Bitmap::getPixel(int x, int y) const
 
 void Bitmap::setPixel(int x, int y, const Color &color)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	uint8_t pixel[] =
@@ -757,6 +776,8 @@ void Bitmap::setPixel(int x, int y, const Color &color)
 
 void Bitmap::hueChange(int hue)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	if ((hue % 360) == 0)
@@ -818,6 +839,8 @@ static std::string fixupString(const char *str)
 
 void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	std::string fixed = fixupString(str);
@@ -1046,6 +1069,8 @@ static uint16_t utf8_to_ucs2(const char *_input,
 
 IntRect Bitmap::textSize(const char *str)
 {
+	guardDisposed();
+
 	GUARD_MEGA;
 
 	TTF_Font *font = p->font->getSdlFont();
@@ -1092,6 +1117,9 @@ SDL_Surface *Bitmap::megaSurface() const
 
 void Bitmap::ensureNonMega() const
 {
+	if (isDisposed())
+		return;
+
 	GUARD_MEGA;
 }
 
@@ -1103,4 +1131,14 @@ void Bitmap::bindTex(ShaderBase &shader)
 void Bitmap::taintArea(const IntRect &rect)
 {
 	p->addTaintedArea(rect);
+}
+
+void Bitmap::releaseResources()
+{
+	if (p->megaSurface)
+		SDL_FreeSurface(p->megaSurface);
+	else
+		shState->texPool().release(p->gl);
+
+	delete p;
 }

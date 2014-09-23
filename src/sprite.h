@@ -74,6 +74,11 @@ private:
 
 	void draw();
 	void onGeometryChange(const Scene::Geometry &);
+
+	void releaseResources();
+	const char *klassName() const { return "sprite"; }
+
+	ABOUT_TO_ACCESS_DISP
 };
 
 #endif // SPRITE_H

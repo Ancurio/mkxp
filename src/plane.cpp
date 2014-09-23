@@ -45,7 +45,6 @@ static float fwrap(float value, float range)
 struct PlanePrivate
 {
 	Bitmap *bitmap;
-	DisposeWatch<PlanePrivate, Bitmap> bitmapWatch;
 
 	NormValue opacity;
 	BlendType blendType;
@@ -67,7 +66,6 @@ struct PlanePrivate
 
 	PlanePrivate()
 	    : bitmap(0),
-	      bitmapWatch(*this, bitmap),
 	      opacity(255),
 	      blendType(BlendNormal),
 	      color(&tmp.color),
@@ -103,7 +101,7 @@ struct PlanePrivate
 			return;
 		}
 
-		if (!bitmap)
+		if (nullOrDisposed(bitmap))
 			return;
 
 		/* Scaled (zoomed) bitmap dimensions */
@@ -169,15 +167,14 @@ DEF_ATTR_OBJ_VALUE(Plane, Tone,      Tone*,   p->tone)
 
 Plane::~Plane()
 {
-	unlink();
-
-	delete p;
+	dispose();
 }
 
 void Plane::setBitmap(Bitmap *value)
 {
+	guardDisposed();
+
 	p->bitmap = value;
-	p->bitmapWatch.update(value);
 
 	if (!value)
 		return;
@@ -187,6 +184,8 @@ void Plane::setBitmap(Bitmap *value)
 
 void Plane::setOX(int value)
 {
+	guardDisposed();
+
 	if (p->ox == value)
 	        return;
 
@@ -196,6 +195,8 @@ void Plane::setOX(int value)
 
 void Plane::setOY(int value)
 {
+	guardDisposed();
+
 	if (p->oy == value)
 	        return;
 
@@ -205,6 +206,8 @@ void Plane::setOY(int value)
 
 void Plane::setZoomX(float value)
 {
+	guardDisposed();
+
 	if (p->zoomX == value)
 	        return;
 
@@ -214,6 +217,8 @@ void Plane::setZoomX(float value)
 
 void Plane::setZoomY(float value)
 {
+	guardDisposed();
+
 	if (p->zoomY == value)
 	        return;
 
@@ -223,6 +228,8 @@ void Plane::setZoomY(float value)
 
 void Plane::setBlendType(int value)
 {
+	guardDisposed();
+
 	switch (value)
 	{
 	default :
@@ -246,7 +253,7 @@ void Plane::initDynAttribs()
 
 void Plane::draw()
 {
-	if (!p->bitmap)
+	if (nullOrDisposed(p->bitmap))
 		return;
 
 	if (!p->opacity)
@@ -300,4 +307,11 @@ void Plane::onGeometryChange(const Scene::Geometry &geo)
 
 	p->sceneGeo = geo;
 	p->quadSourceDirty = true;
+}
+
+void Plane::releaseResources()
+{
+	unlink();
+
+	delete p;
 }

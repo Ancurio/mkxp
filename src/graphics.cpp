@@ -674,11 +674,7 @@ void Graphics::frameReset()
 	p->fpsLimiter.resetFrameAdjust();
 }
 
-#undef RET_IF_DISP
-#define RET_IF_DISP(x)
-
-#undef CHK_DISP
-#define CHK_DISP
+static void guardDisposed() {}
 
 DEF_ATTR_RD_SIMPLE(Graphics, FrameRate, int, p->frameRate)
 

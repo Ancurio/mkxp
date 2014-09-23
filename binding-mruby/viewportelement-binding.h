@@ -32,7 +32,7 @@
 template<class C>
 MRB_METHOD(viewportElementGetViewport)
 {
-	checkDisposed(mrb, self);
+	checkDisposed<C>(mrb, self);
 
 	return getProperty(mrb, self, CSviewport);
 }

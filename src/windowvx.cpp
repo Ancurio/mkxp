@@ -148,15 +148,11 @@ static const uint8_t pauseQuad[] =
 
 static elementsN(pauseQuad);
 
-typedef DisposeWatch<WindowVXPrivate, Bitmap> BitmapWatch;
-
 struct WindowVXPrivate
 {
 	Bitmap *windowskin;
-	BitmapWatch windowskinWatch;
 
 	Bitmap *contents;
-	BitmapWatch contentsWatch;
 
 	Rect *cursorRect;
 	bool active;
@@ -227,9 +223,7 @@ struct WindowVXPrivate
 
 	WindowVXPrivate(int x, int y, int w, int h)
 	    : windowskin(0),
-	      windowskinWatch(*this, windowskin),
 	      contents(0),
-	      contentsWatch(*this, contents),
 	      cursorRect(&tmp.rect),
 	      active(true),
 	      arrowsVisible(true),
@@ -401,7 +395,7 @@ struct WindowVXPrivate
 
 	void redrawBaseTex()
 	{
-		if (!windowskin)
+		if (nullOrDisposed(windowskin))
 			return;
 
 		if (base.tex.tex == TEX::ID(0))
@@ -514,7 +508,7 @@ struct WindowVXPrivate
 		size_t i = 0;
 		Vertex *vert = &ctrlVert.vertices[0];
 
-		if (contents && arrowsVisible)
+		if (!nullOrDisposed(contents) && arrowsVisible)
 		{
 			if (contentsOff.x > 0)
 				i += Quad::setTexPosRect(&vert[i*4], scrollArrowSrc.l, arrowPos.l);
@@ -721,6 +715,9 @@ struct WindowVXPrivate
 		if (base.tex.tex == TEX::ID(0))
 			return;
 
+		bool windowskinValid = !nullOrDisposed(windowskin);
+		bool contentsValid = !nullOrDisposed(contents);
+
 		Vec2i trans(geo.x + sceneOffset.x,
 		            geo.y + sceneOffset.y);
 
@@ -728,7 +725,7 @@ struct WindowVXPrivate
 		shader.bind();
 		shader.applyViewportProj();
 
-		if (windowskin)
+		if (windowskinValid)
 		{
 			shader.setTranslation(trans);
 			shader.setTexSize(Vec2i(base.tex.width, base.tex.height));
@@ -749,9 +746,9 @@ struct WindowVXPrivate
 		if (openness < 255)
 			return;
 
-		bool drawCursor = cursorVert.count() > 0 && windowskin;
+		bool drawCursor = cursorVert.count() > 0 && windowskinValid;
 
-		if (drawCursor || contents)
+		if (drawCursor || contentsValid)
 		{
 			/* Translate cliprect from local into screen space */
 			IntRect clip = clipRect;
@@ -789,7 +786,7 @@ struct WindowVXPrivate
 				TEX::setSmooth(false);
 			}
 
-			if (contents)
+			if (contentsValid)
 			{
 				if (rgssVer <= 2)
 					glState.scissorBox.setIntersect(clip);
@@ -828,13 +825,13 @@ WindowVX::WindowVX(int x, int y, int width, int height)
 
 WindowVX::~WindowVX()
 {
-	unlink();
-
-	delete p;
+	dispose();
 }
 
 void WindowVX::update()
 {
+	guardDisposed();
+
 	p->stepAnimations();
 
 	p->updatePauseQuad();
@@ -843,6 +840,8 @@ void WindowVX::update()
 
 void WindowVX::move(int x, int y, int width, int height)
 {
+	guardDisposed();
+
 	p->width = width;
 	p->height = height;
 
@@ -857,11 +856,15 @@ void WindowVX::move(int x, int y, int width, int height)
 
 bool WindowVX::isOpen() const
 {
+	guardDisposed();
+
 	return p->openness == 255;
 }
 
 bool WindowVX::isClosed() const
 {
+	guardDisposed();
+
 	return p->openness == 0;
 }
 
@@ -889,21 +892,23 @@ DEF_ATTR_OBJ_VALUE(WindowVX, Tone,            Tone*,   p->tone)
 
 void WindowVX::setWindowskin(Bitmap *value)
 {
+	guardDisposed();
+
 	if (p->windowskin == value)
 		return;
 
 	p->windowskin = value;
-	p->windowskinWatch.update(value);
 	p->base.texDirty = true;
 }
 
 void WindowVX::setContents(Bitmap *value)
 {
+	guardDisposed();
+
 	if (p->contents == value)
 		return;
 
 	p->contents = value;
-	p->contentsWatch.update(value);
 
 	FloatRect rect = p->contents->rect();
 	p->contentsQuad.setTexPosRect(rect, rect);
@@ -912,6 +917,8 @@ void WindowVX::setContents(Bitmap *value)
 
 void WindowVX::setActive(bool value)
 {
+	guardDisposed();
+
 	if (p->active == value)
 		return;
 
@@ -922,6 +929,8 @@ void WindowVX::setActive(bool value)
 
 void WindowVX::setArrowsVisible(bool value)
 {
+	guardDisposed();
+
 	if (p->arrowsVisible == value)
 		return;
 
@@ -931,6 +940,8 @@ void WindowVX::setArrowsVisible(bool value)
 
 void WindowVX::setPause(bool value)
 {
+	guardDisposed();
+
 	if (p->pause == value)
 		return;
 
@@ -942,6 +953,8 @@ void WindowVX::setPause(bool value)
 
 void WindowVX::setWidth(int value)
 {
+	guardDisposed();
+
 	if (p->width == value)
 		return;
 
@@ -956,6 +969,8 @@ void WindowVX::setWidth(int value)
 
 void WindowVX::setHeight(int value)
 {
+	guardDisposed();
+
 	if (p->height == value)
 		return;
 
@@ -970,6 +985,8 @@ void WindowVX::setHeight(int value)
 
 void WindowVX::setOX(int value)
 {
+	guardDisposed();
+
 	if (p->contentsOff.x == value)
 		return;
 
@@ -979,6 +996,8 @@ void WindowVX::setOX(int value)
 
 void WindowVX::setOY(int value)
 {
+	guardDisposed();
+
 	if (p->contentsOff.y == value)
 		return;
 
@@ -988,6 +1007,8 @@ void WindowVX::setOY(int value)
 
 void WindowVX::setPadding(int value)
 {
+	guardDisposed();
+
 	if (p->padding == value)
 		return;
 
@@ -998,6 +1019,8 @@ void WindowVX::setPadding(int value)
 
 void WindowVX::setPaddingBottom(int value)
 {
+	guardDisposed();
+
 	if (p->paddingBottom == value)
 		return;
 
@@ -1007,6 +1030,8 @@ void WindowVX::setPaddingBottom(int value)
 
 void WindowVX::setOpacity(int value)
 {
+	guardDisposed();
+
 	if (p->opacity == value)
 		return;
 
@@ -1016,6 +1041,8 @@ void WindowVX::setOpacity(int value)
 
 void WindowVX::setBackOpacity(int value)
 {
+	guardDisposed();
+
 	if (p->backOpacity == value)
 		return;
 
@@ -1025,6 +1052,8 @@ void WindowVX::setBackOpacity(int value)
 
 void WindowVX::setContentsOpacity(int value)
 {
+	guardDisposed();
+
 	if (p->contentsOpacity == value)
 		return;
 
@@ -1034,6 +1063,8 @@ void WindowVX::setContentsOpacity(int value)
 
 void WindowVX::setOpenness(int value)
 {
+	guardDisposed();
+
 	if (p->openness == value)
 		return;
 
@@ -1062,4 +1093,11 @@ void WindowVX::onGeometryChange(const Scene::Geometry &geo)
 {
 	p->sceneOffset.x = geo.rect.x - geo.xOrigin;
 	p->sceneOffset.y = geo.rect.y - geo.yOrigin;
+}
+
+void WindowVX::releaseResources()
+{
+	unlink();
+
+	delete p;
 }

@@ -24,69 +24,65 @@
 
 #include "exception.h"
 
+#include <assert.h>
 #include <sigc++/signal.h>
 #include <sigc++/connection.h>
 
 class Disposable
 {
 public:
-	~Disposable()
+	Disposable()
+	    : disposed(false)
+	{}
+
+	virtual ~Disposable()
 	{
+		assert(disposed);
+	}
+
+	void dispose()
+	{
+		if (disposed)
+			return;
+
+		releaseResources();
+		disposed = true;
 		wasDisposed();
 	}
 
-	sigc::signal<void> wasDisposed;
-};
-
-/* A helper struct which monitors the dispose signal of
- * properties, and automatically sets the prop pointer to
- * null. Can call an optional notify method when prop is
- * nulled */
-template<class C, typename P>
-struct DisposeWatch
-{
-	typedef void (C::*NotifyFun)();
-
-	DisposeWatch(C &owner, P *&propLocation, NotifyFun notify = 0)
-	    : owner(owner),
-	      notify(notify),
-	      propLocation(propLocation)
-	{}
-
-	~DisposeWatch()
+	bool isDisposed() const
 	{
-		dispCon.disconnect();
+		return disposed;
 	}
 
-	/* Call this when a new object was set for the prop */
-	void update(Disposable *prop)
+	sigc::signal<void> wasDisposed;
+
+protected:
+	void guardDisposed() const
 	{
-		dispCon.disconnect();
-
-		if (!prop)
-			return;
-
-		dispCon = prop->wasDisposed.connect
-			(sigc::mem_fun(this, &DisposeWatch::onDisposed));
+		if (isDisposed())
+			throw Exception(Exception::RGSSError,
+		                    "disposed %s", klassName());
 	}
 
 private:
-	/* The object owning the prop (and this helper) */
-	C  &owner;
-	/* Optional notify method */
-	const NotifyFun notify;
-	/* Location of the prop pointer inside the owner */
-	P * &propLocation;
-	sigc::connection dispCon;
+	virtual void releaseResources() = 0;
+	virtual const char *klassName() const = 0;
 
-	void onDisposed()
-	{
-		dispCon.disconnect();
-		propLocation = 0;
-
-		if (notify)
-			(owner.*notify)();
-	}
+	bool disposed;
 };
+
+template<class C>
+inline bool
+nullOrDisposed(const C *d)
+{
+	if (!d)
+		return true;
+
+	if (d->isDisposed())
+		return true;
+
+	return false;
+}
 
 #endif // DISPOSABLE_H

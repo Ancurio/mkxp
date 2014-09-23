@@ -119,6 +119,7 @@ inline bool contains(const C &c, const V &v)
 #define DEF_ATTR_RD_SIMPLE_DETAILED(klass, name, type, location, keyword1) \
 	type klass :: get##name() keyword1 \
 	{ \
+		guardDisposed(); \
 		return location; \
 	}
 
@@ -126,6 +127,7 @@ inline bool contains(const C &c, const V &v)
 	DEF_ATTR_RD_SIMPLE_DETAILED(klass, name, type, location, keyword1) \
 	void klass :: set##name(type value) \
 { \
+	guardDisposed(); \
 	location = value; \
 }
 
@@ -141,6 +143,7 @@ inline bool contains(const C &c, const V &v)
 	DEF_ATTR_RD_SIMPLE_DETAILED(klass, name, type, location, const) \
 	void klass :: set##name(type value) \
 	{ \
+		guardDisposed(); \
 		*location = *value; \
 	}
 
@@ -148,6 +151,7 @@ inline bool contains(const C &c, const V &v)
 	DEF_ATTR_RD_SIMPLE_DETAILED(klass, name, type, location, ) \
 	void klass :: set##name(type value) \
 	{ \
+		guardDisposed(); \
 		*location = *value; \
 	}
 

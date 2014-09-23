@@ -66,6 +66,9 @@ public:
 
 private:
 	TilemapVXPrivate *p;
+
+	void releaseResources();
+	const char *klassName() const { return "tilemap"; }
 };
 
 #endif // TILEMAPVX_H

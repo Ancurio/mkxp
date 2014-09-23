@@ -35,7 +35,7 @@ RB_METHOD(viewportElementGetViewport)
 {
 	RB_UNUSED_PARAM;
 
-	checkDisposed(self);
+	checkDisposed<C>(self);
 
 	return rb_iv_get(self, "viewport");
 }

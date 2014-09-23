@@ -68,6 +68,9 @@ public:
 
 private:
 	TilemapPrivate *p;
+
+	void releaseResources();
+	const char *klassName() const { return "tilemap"; }
 };
 
 #endif // TILEMAP_H

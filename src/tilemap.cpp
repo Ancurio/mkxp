@@ -38,7 +38,6 @@
 #include "tileatlas.h"
 
 #include <sigc++/connection.h>
-#include <sigc++/bind.h>
 
 #include <string.h>
 #include <stdint.h>
@@ -204,6 +203,8 @@ struct GroundLayer : public ViewportElement
 	void drawFlashInt();
 
 	void onGeometryChange(const Scene::Geometry &geo);
+
+	ABOUT_TO_ACCESS_NOOP
 };
 
 struct ZLayer : public ViewportElement
@@ -232,6 +233,8 @@ struct ZLayer : public ViewportElement
 
 	void initUpdateZ();
 	void finiUpdateZ(ZLayer *prev);
+
+	ABOUT_TO_ACCESS_NOOP
 };
 
 struct TilemapPrivate
@@ -242,7 +245,6 @@ struct TilemapPrivate
 	Bitmap *autotiles[autotileCount];
 
 	Bitmap *tileset;
-	DisposeWatch<TilemapPrivate, Bitmap> tilesetWatch;
 
 	Table *mapData;
 	Table *flashData;
@@ -347,7 +349,6 @@ struct TilemapPrivate
 	TilemapPrivate(Viewport *viewport)
 	    : viewport(viewport),
 	      tileset(0),
-	      tilesetWatch(*this, tileset),
 	      mapData(0),
 	      flashData(0),
 	      priorities(0),
@@ -432,7 +433,7 @@ struct TilemapPrivate
 
 	void updateAtlasInfo()
 	{
-		if (!tileset)
+		if (nullOrDisposed(tileset))
 		{
 			atlas.size = Vec2i();
 			return;
@@ -458,7 +459,7 @@ struct TilemapPrivate
 
 		for (int i = 0; i < autotileCount; ++i)
 		{
-			if (!autotiles[i])
+			if (nullOrDisposed(autotiles[i]))
 				continue;
 
 			if (autotiles[i]->megaSurface())
@@ -506,20 +507,10 @@ struct TilemapPrivate
 		flashDirty = true;
 	}
 
-	void onAutotileDisposed(int i)
-	{
-		/* RMXP actually crashes if an active autotile bitmap is disposed..
-		 * let's not crash ourselves, for consistency's sake */
-		autotiles[i] = 0;
-		autotilesCon[i].disconnect();
-		autotilesDispCon[i].disconnect();
-		atlasDirty = true;
-	}
-
 	/* Checks for the minimum amount of data needed to display */
 	bool verifyResources()
 	{
-		if (!tileset)
+		if (nullOrDisposed(tileset))
 			return false;
 
 		if (!mapData)
@@ -1208,7 +1199,7 @@ void Tilemap::Autotiles::set(int i, Bitmap *bitmap)
 
 	p->autotilesDispCon[i].disconnect();
 	p->autotilesDispCon[i] = bitmap->wasDisposed.connect
-	        (sigc::bind(sigc::mem_fun(p, &TilemapPrivate::onAutotileDisposed), i));
+	        (sigc::mem_fun(p, &TilemapPrivate::invalidateAtlasContents));
 
 	p->updateAutotileInfo();
 }
@@ -1229,11 +1220,13 @@ Tilemap::Tilemap(Viewport *viewport)
 
 Tilemap::~Tilemap()
 {
-	delete p;
+	dispose();
 }
 
 void Tilemap::update()
 {
+	guardDisposed();
+
 	if (!p->tilemapReady)
 		return;
 
@@ -1253,6 +1246,8 @@ void Tilemap::update()
 
 Tilemap::Autotiles &Tilemap::getAutotiles() const
 {
+	guardDisposed();
+
 	return p->autotilesProxy;
 }
 
@@ -1267,11 +1262,12 @@ DEF_ATTR_RD_SIMPLE(Tilemap, OY, int, p->offset.y)
 
 void Tilemap::setTileset(Bitmap *value)
 {
+	guardDisposed();
+
 	if (p->tileset == value)
 		return;
 
 	p->tileset = value;
-	p->tilesetWatch.update(value);
 
 	if (!value)
 		return;
@@ -1286,6 +1282,8 @@ void Tilemap::setTileset(Bitmap *value)
 
 void Tilemap::setMapData(Table *value)
 {
+	guardDisposed();
+
 	if (p->mapData == value)
 		return;
 
@@ -1302,6 +1300,8 @@ void Tilemap::setMapData(Table *value)
 
 void Tilemap::setFlashData(Table *value)
 {
+	guardDisposed();
+
 	if (p->flashData == value)
 		return;
 
@@ -1318,6 +1318,8 @@ void Tilemap::setFlashData(Table *value)
 
 void Tilemap::setPriorities(Table *value)
 {
+	guardDisposed();
+
 	if (p->priorities == value)
 		return;
 
@@ -1334,6 +1336,8 @@ void Tilemap::setPriorities(Table *value)
 
 void Tilemap::setVisible(bool value)
 {
+	guardDisposed();
+
 	if (p->visible == value)
 		return;
 
@@ -1349,6 +1353,8 @@ void Tilemap::setVisible(bool value)
 
 void Tilemap::setOX(int value)
 {
+	guardDisposed();
+
 	if (p->offset.x == value)
 		return;
 
@@ -1359,6 +1365,8 @@ void Tilemap::setOX(int value)
 
 void Tilemap::setOY(int value)
 {
+	guardDisposed();
+
 	if (p->offset.y == value)
 		return;
 
@@ -1366,4 +1374,9 @@ void Tilemap::setOY(int value)
 	p->updatePosition();
 	p->zOrderDirty = true;
 	p->mapViewportDirty = true;
+}
+
+void Tilemap::releaseResources()
+{
+	delete p;
 }

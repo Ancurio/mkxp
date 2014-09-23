@@ -128,7 +128,7 @@ RB_METHOD(bitmapBlt)
 	src = getPrivateDataCheck<Bitmap>(srcObj, BitmapType);
 	srcRect = getPrivateDataCheck<Rect>(srcRectObj, RectType);
 
-	GUARD_EXC( b->blt(x, y, src, srcRect->toIntRect(), opacity); );
+	GUARD_EXC( b->blt(x, y, *src, srcRect->toIntRect(), opacity); );
 
 	return self;
 }
@@ -151,7 +151,7 @@ RB_METHOD(bitmapStretchBlt)
 	destRect = getPrivateDataCheck<Rect>(destRectObj, RectType);
 	srcRect = getPrivateDataCheck<Rect>(srcRectObj, RectType);
 
-	GUARD_EXC( b->stretchBlt(destRect->toIntRect(), src, srcRect->toIntRect(), opacity); );
+	GUARD_EXC( b->stretchBlt(destRect->toIntRect(), *src, srcRect->toIntRect(), opacity); );
 
 	return self;
 }

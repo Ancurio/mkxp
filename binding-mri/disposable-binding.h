@@ -64,32 +64,48 @@ RB_METHOD(disposableDispose)
 {
 	RB_UNUSED_PARAM;
 
-	C *c = static_cast<C*>(RTYPEDDATA_DATA(self));
+	C *d = getPrivateData<C>(self);
+
+	if (!d)
+		return Qnil;
 
 	/* Nothing to do if already disposed */
-	if (!c)
+	if (d->isDisposed())
 		return Qnil;
 
 	disposableDisposeChildren(self);
 
-	delete c;
-	setPrivateData(self, 0);
+	d->dispose();
 
 	return Qnil;
 }
 
+template<class C>
 RB_METHOD(disposableIsDisposed)
 {
 	RB_UNUSED_PARAM;
 
-	return rb_bool_new(RTYPEDDATA_DATA(self) == 0);
+	C *d = getPrivateData<C>(self);
+
+	if (!d)
+		return Qtrue;
+
+	return rb_bool_new(d->isDisposed());
 }
 
 template<class C>
 static void disposableBindingInit(VALUE klass)
 {
 	_rb_define_method(klass, "dispose", disposableDispose<C>);
-	_rb_define_method(klass, "disposed?", disposableIsDisposed);
+	_rb_define_method(klass, "disposed?", disposableIsDisposed<C>);
+}
+
+template<class C>
+inline void
+checkDisposed(VALUE self)
+{
+	if (disposableIsDisposed<C>(0, 0, self) == Qtrue)
+		raiseDisposedAccess(self);
 }
 
 #endif // DISPOSABLEBINDING_H

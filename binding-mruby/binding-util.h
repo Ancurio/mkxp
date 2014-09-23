@@ -155,7 +155,7 @@ defineClass(mrb_state *mrb, const char *name)
 #define DEF_PROP_OBJ_VAL(Klass, PropKlass, PropName, prop_iv) \
 	MRB_METHOD(Klass##Get##PropName) \
 	{ \
-		checkDisposed(mrb, self); \
+		checkDisposed<Klass>(mrb, self); \
 		return getProperty(mrb, self, prop_iv); \
 	} \
 	MRB_METHOD(Klass##Set##PropName) \
@@ -194,7 +194,9 @@ defineClass(mrb_state *mrb, const char *name)
 	MRB_METHOD(Klass##Get##PropName) \
 	{ \
 		Klass *k = getPrivateData<Klass>(mrb, self); \
-		return mrb_##conv_t##_value(k->get##PropName()); \
+		mrb_type value; \
+		GUARD_EXC( value = k->get##PropName(); ) \
+		return mrb_##conv_t##_value(value); \
 	} \
 	MRB_METHOD(Klass##Set##PropName) \
 	{ \
@@ -256,20 +258,11 @@ getSym(mrb_state *mrb, CommonSymbol sym)
 void
 raiseDisposedAccess(mrb_state *mrb, mrb_value self);
 
-inline void checkDisposed(mrb_state *mrb, mrb_value self)
-{
-	if (!DATA_PTR(self))
-		raiseDisposedAccess(mrb, self);
-}
-
 template<class C>
 inline C *
-getPrivateData(mrb_state *mrb, mrb_value self)
+getPrivateData(mrb_state *, mrb_value self)
 {
 	C *c = static_cast<C*>(DATA_PTR(self));
-
-	if (!c)
-		raiseDisposedAccess(mrb, self);
 
 	return c;
 }

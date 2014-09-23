@@ -134,9 +134,14 @@ void Viewport::initViewport(int x, int y, int width, int height)
 
 Viewport::~Viewport()
 {
-	unlink();
+	dispose();
+}
 
-	delete p;
+void Viewport::update()
+{
+	guardDisposed();
+
+	Flashable::update();
 }
 
 DEF_ATTR_RD_SIMPLE(Viewport, OX,   int,   geometry.xOrigin)
@@ -148,6 +153,8 @@ DEF_ATTR_OBJ_VALUE(Viewport, Tone,  Tone*,  p->tone)
 
 void Viewport::setOX(int value)
 {
+	guardDisposed();
+
 	if (geometry.xOrigin == value)
 		return;
 
@@ -157,6 +164,8 @@ void Viewport::setOX(int value)
 
 void Viewport::setOY(int value)
 {
+	guardDisposed();
+
 	if (geometry.yOrigin == value)
 		return;
 
@@ -210,6 +219,13 @@ void Viewport::onGeometryChange(const Geometry &geo)
 {
 	p->screenRect = geo.rect;
 	p->recomputeOnScreen();
+}
+
+void Viewport::releaseResources()
+{
+	unlink();
+
+	delete p;
 }
 
 

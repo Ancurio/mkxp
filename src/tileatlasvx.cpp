@@ -291,7 +291,7 @@ void build(TEXFBO &tf, Bitmap *bitmaps[BM_COUNT])
 
 	Bitmap *bm;
 #define EXEC_BLITS(part) \
-	if ((bm = bitmaps[BM_##part])) \
+	if (!nullOrDisposed(bm = bitmaps[BM_##part])) \
 	{ \
 		GLMeta::blitSource(bm->getGLTypes()); \
 		for (size_t i = 0; i < blits##part##N; ++i) \

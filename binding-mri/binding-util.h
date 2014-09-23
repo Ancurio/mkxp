@@ -101,21 +101,11 @@ static void freeInstance(void *inst)
 void
 raiseDisposedAccess(VALUE self);
 
-inline void
-checkDisposed(VALUE self)
-{
-	if (!RTYPEDDATA_DATA(self))
-		raiseDisposedAccess(self);
-}
-
 template<class C>
 inline C *
 getPrivateData(VALUE self)
 {
 	C *c = static_cast<C*>(RTYPEDDATA_DATA(self));
-
-	if (!c)
-		raiseDisposedAccess(self);
 
 	return c;
 }
@@ -124,8 +114,6 @@ template<class C>
 static inline C *
 getPrivateDataCheck(VALUE self, const rb_data_type_t &type)
 {
-	/* We don't check for disposed here because any disposable
-	 * property is always also nullable */
 	void *obj = Check_TypedStruct(self, &type);
 	return static_cast<C*>(obj);
 }
@@ -341,7 +329,7 @@ rb_check_argc(int actual, int expected)
 	RB_METHOD(Klass##Get##PropName) \
 	{ \
 		RB_UNUSED_PARAM; \
-		checkDisposed(self); \
+		checkDisposed<Klass>(self); \
 		return rb_iv_get(self, prop_iv); \
 	} \
 	RB_METHOD(Klass##Set##PropName) \
@@ -360,7 +348,9 @@ rb_check_argc(int actual, int expected)
 	{ \
 		RB_UNUSED_PARAM; \
 		Klass *k = getPrivateData<Klass>(self); \
-		return value_fun(k->get##PropName()); \
+		type value; \
+		GUARD_EXC( value = k->get##PropName(); ) \
+		return value_fun(value); \
 	} \
 	RB_METHOD(Klass##Set##PropName) \
 	{ \

@@ -106,6 +106,8 @@ MRB_METHOD(tilemapInitialize)
 
 MRB_METHOD(tilemapGetAutotiles)
 {
+	checkDisposed<Tilemap>(mrb, self);
+
 	return getProperty(mrb, self, CSautotiles);
 }
 
@@ -120,7 +122,7 @@ MRB_METHOD(tilemapUpdate)
 
 MRB_METHOD(tilemapGetViewport)
 {
-	checkDisposed(mrb, self);
+	checkDisposed<Tilemap>(mrb, self);
 
 	return getProperty(mrb, self, CSviewport);
 }

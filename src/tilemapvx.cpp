@@ -36,7 +36,6 @@
 
 #include <vector>
 #include <sigc++/connection.h>
-#include <sigc++/bind.h>
 
 // FIXME: Implement flash
 
@@ -95,6 +94,8 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		{
 			p->drawAbove();
 		}
+
+		ABOUT_TO_ACCESS_NOOP
 	};
 
 	AboveLayer above;
@@ -151,15 +152,6 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 	void invalidateAtlas()
 	{
-		atlasDirty = true;
-	}
-
-	void onBitmapDisposed(int i)
-	{
-		bitmaps[i] = 0;
-		bmChangedCons[i].disconnect();
-		bmDisposedCons[i].disconnect();
-
 		atlasDirty = true;
 	}
 
@@ -290,7 +282,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	{
 		ShaderBase *shader;
 
-		if (bitmaps[BM_A1] != 0)
+		if (!nullOrDisposed(bitmaps[BM_A1]))
 		{
 			/* Animated tileset */
 			TilemapVXShader &tmShader = shState->shaders().tilemapVX;
@@ -351,6 +343,8 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		mapViewportDirty = true;
 	}
 
+	ABOUT_TO_ACCESS_NOOP
+
 	/* TileAtlasVX::Reader */
 	void onQuads(const FloatRect *t, const FloatRect *p,
 	              size_t n, bool overPlayer)
@@ -379,7 +373,7 @@ void TilemapVX::BitmapArray::set(int i, Bitmap *bitmap)
 
 	p->bmDisposedCons[i].disconnect();
 	p->bmDisposedCons[i] = bitmap->wasDisposed.connect
-		(sigc::bind(sigc::mem_fun(p, &TilemapVXPrivate::onBitmapDisposed), i));
+		(sigc::mem_fun(p, &TilemapVXPrivate::invalidateAtlas));
 }
 
 Bitmap *TilemapVX::BitmapArray::get(int i) const
@@ -398,11 +392,13 @@ TilemapVX::TilemapVX(Viewport *viewport)
 
 TilemapVX::~TilemapVX()
 {
-	delete p;
+	dispose();
 }
 
 void TilemapVX::update()
 {
+	guardDisposed();
+
 	if (++p->frameIdx >= 30*3*4)
 		p->frameIdx = 0;
 
@@ -419,6 +415,8 @@ void TilemapVX::update()
 
 TilemapVX::BitmapArray &TilemapVX::getBitmapArray() const
 {
+	guardDisposed();
+
 	return p->bitmapsProxy;
 }
 
@@ -430,22 +428,30 @@ DEF_ATTR_RD_SIMPLE(TilemapVX, OY, int, p->offset.y)
 
 Viewport *TilemapVX::getViewport() const
 {
+	guardDisposed();
+
 	return p->getViewport();
 }
 
 bool TilemapVX::getVisible() const
 {
+	guardDisposed();
+
 	return p->getVisible();
 }
 
 void TilemapVX::setViewport(Viewport *value)
 {
+	guardDisposed();
+
 	p->setViewport(value);
 	p->above.setViewport(value);
 }
 
 void TilemapVX::setMapData(Table *value)
 {
+	guardDisposed();
+
 	if (p->mapData == value)
 		return;
 
@@ -459,6 +465,8 @@ void TilemapVX::setMapData(Table *value)
 
 void TilemapVX::setFlashData(Table *value)
 {
+	guardDisposed();
+
 	if (p->flashData == value)
 		return;
 
@@ -467,6 +475,8 @@ void TilemapVX::setFlashData(Table *value)
 
 void TilemapVX::setFlags(Table *value)
 {
+	guardDisposed();
+
 	if (p->flags == value)
 		return;
 
@@ -480,12 +490,16 @@ void TilemapVX::setFlags(Table *value)
 
 void TilemapVX::setVisible(bool value)
 {
+	guardDisposed();
+
 	p->setVisible(value);
 	p->above.setVisible(value);
 }
 
 void TilemapVX::setOX(int value)
 {
+	guardDisposed();
+
 	if (p->offset.x == value)
 		return;
 
@@ -495,9 +509,16 @@ void TilemapVX::setOX(int value)
 
 void TilemapVX::setOY(int value)
 {
+	guardDisposed();
+
 	if (p->offset.y == value)
 		return;
 
 	p->offset.y = value;
 	p->mapViewportDirty = true;
+}
+
+void TilemapVX::releaseResources()
+{
+	delete p;
 }
