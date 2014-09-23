@@ -117,6 +117,7 @@ static int SDL_RWopsClose(SDL_RWops *ops)
 		return -1;
 
 	int result = PHYSFS_close(f);
+	ops->hidden.unknown.data1 = 0;
 
 	return (result != 0) ? 0 : -1;
 }
