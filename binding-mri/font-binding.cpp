@@ -307,4 +307,14 @@ fontBindingInit()
 	INIT_PROP_BIND(Font, Outline, "outline");
 	INIT_PROP_BIND(Font, OutColor, "out_color");
 	}
+
+	if (rgssVer >= 2)
+	{
+		VALUE defNames = rb_ary_new_capa(3);
+		rb_ary_push(defNames, rb_str_new2("Verdana"));
+		rb_ary_push(defNames, rb_str_new2("Arial"));
+		rb_ary_push(defNames, rb_str_new2("Courier New"));
+
+		FontSetDefaultName(1, &defNames, klass);
+	}
 }
