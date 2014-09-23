@@ -205,7 +205,10 @@ static const KbBindingData defaultKbBindings[] =
 	{ SDL_SCANCODE_B,        Input::None },
 	{ SDL_SCANCODE_D,        Input::Z    },
 	{ SDL_SCANCODE_Q,        Input::L    },
-	{ SDL_SCANCODE_W,        Input::R    }
+	{ SDL_SCANCODE_W,        Input::R    },
+    { SDL_SCANCODE_V,        Input::None },
+	{ SDL_SCANCODE_A,        Input::X    },
+	{ SDL_SCANCODE_S,        Input::Y    }
 };
 
 /* RGSS1 */
@@ -213,9 +216,6 @@ static const KbBindingData defaultKbBindings1[] =
 {
 	{ SDL_SCANCODE_Z,        Input::A    },
 	{ SDL_SCANCODE_C,        Input::C    },
-	{ SDL_SCANCODE_V,        Input::Z    },
-	{ SDL_SCANCODE_A,        Input::Y    },
-	{ SDL_SCANCODE_S,        Input::X    }
 };
 
 /* RGSS2 and higher */
@@ -223,9 +223,6 @@ static const KbBindingData defaultKbBindings2[] =
 {
 	{ SDL_SCANCODE_Z,        Input::C    },
 	{ SDL_SCANCODE_C,        Input::None },
-	{ SDL_SCANCODE_V,        Input::None },
-	{ SDL_SCANCODE_A,        Input::X    },
-	{ SDL_SCANCODE_S,        Input::Y    }
 };
 
 static elementsN(defaultKbBindings);
