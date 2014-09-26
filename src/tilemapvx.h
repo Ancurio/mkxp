@@ -54,7 +54,7 @@ public:
 
 	void update();
 
-	BitmapArray &getBitmapArray() const;
+	BitmapArray &getBitmapArray();
 
 	DECL_ATTR( Viewport,   Viewport* )
 	DECL_ATTR( MapData,    Table*    )
@@ -66,6 +66,7 @@ public:
 
 private:
 	TilemapVXPrivate *p;
+	BitmapArray bmProxy;
 
 	void releaseResources();
 	const char *klassName() const { return "tilemap"; }

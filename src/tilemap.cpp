@@ -241,7 +241,6 @@ struct TilemapPrivate
 {
 	Viewport *viewport;
 
-	Tilemap::Autotiles autotilesProxy;
 	Bitmap *autotiles[autotileCount];
 
 	Bitmap *tileset;
@@ -1183,6 +1182,9 @@ void ZLayer::finiUpdateZ(ZLayer *prev)
 
 void Tilemap::Autotiles::set(int i, Bitmap *bitmap)
 {
+	if (!p)
+		return;
+
 	if (i < 0 || i > autotileCount-1)
 		return;
 
@@ -1206,6 +1208,9 @@ void Tilemap::Autotiles::set(int i, Bitmap *bitmap)
 
 Bitmap *Tilemap::Autotiles::get(int i) const
 {
+	if (!p)
+		return 0;
+
 	if (i < 0 || i > autotileCount-1)
 		return 0;
 
@@ -1215,7 +1220,7 @@ Bitmap *Tilemap::Autotiles::get(int i) const
 Tilemap::Tilemap(Viewport *viewport)
 {
 	p = new TilemapPrivate(viewport);
-	p->autotilesProxy.p = p;
+	atProxy.p = p;
 }
 
 Tilemap::~Tilemap()
@@ -1244,11 +1249,11 @@ void Tilemap::update()
 		p->tiles.aniIdx = 0;
 }
 
-Tilemap::Autotiles &Tilemap::getAutotiles() const
+Tilemap::Autotiles &Tilemap::getAutotiles()
 {
 	guardDisposed();
 
-	return p->autotilesProxy;
+	return atProxy;
 }
 
 DEF_ATTR_RD_SIMPLE(Tilemap, Viewport, Viewport*, p->viewport)
@@ -1379,4 +1384,5 @@ void Tilemap::setOY(int value)
 void Tilemap::releaseResources()
 {
 	delete p;
+	atProxy.p = 0;
 }

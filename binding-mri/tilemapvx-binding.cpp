@@ -64,6 +64,10 @@ RB_METHOD(tilemapVXInitialize)
 
 	rb_iv_set(autotilesObj, "array", ary);
 
+	/* Circular reference so both objects are always
+	 * alive at the same time */
+	rb_iv_set(autotilesObj, "tilemap", self);
+
 	return self;
 }
 

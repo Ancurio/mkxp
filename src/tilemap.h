@@ -55,7 +55,7 @@ public:
 
 	void update();
 
-	Autotiles &getAutotiles() const;
+	Autotiles &getAutotiles();
 	Viewport *getViewport() const;
 
 	DECL_ATTR( Tileset,    Bitmap*   )
@@ -68,6 +68,7 @@ public:
 
 private:
 	TilemapPrivate *p;
+	Autotiles atProxy;
 
 	void releaseResources();
 	const char *klassName() const { return "tilemap"; }

@@ -41,7 +41,6 @@
 
 struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 {
-	TilemapVX::BitmapArray bitmapsProxy;
 	Bitmap *bitmaps[BM_COUNT];
 
 	Table *mapData;
@@ -358,6 +357,9 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 void TilemapVX::BitmapArray::set(int i, Bitmap *bitmap)
 {
+	if (!p)
+		return;
+
 	if (i < 0 || i >= BM_COUNT)
 		return;
 
@@ -378,6 +380,9 @@ void TilemapVX::BitmapArray::set(int i, Bitmap *bitmap)
 
 Bitmap *TilemapVX::BitmapArray::get(int i) const
 {
+	if (!p)
+		return 0;
+
 	if (i < 0 || i >= BM_COUNT)
 		return 0;
 
@@ -387,7 +392,7 @@ Bitmap *TilemapVX::BitmapArray::get(int i) const
 TilemapVX::TilemapVX(Viewport *viewport)
 {
 	p = new TilemapVXPrivate(viewport);
-	p->bitmapsProxy.p = p;
+	bmProxy.p = p;
 }
 
 TilemapVX::~TilemapVX()
@@ -413,11 +418,11 @@ void TilemapVX::update()
 	p->aniOffset = Vec2(aniIdxA * 2 * 32, aniIdxC * 32);
 }
 
-TilemapVX::BitmapArray &TilemapVX::getBitmapArray() const
+TilemapVX::BitmapArray &TilemapVX::getBitmapArray()
 {
 	guardDisposed();
 
-	return p->bitmapsProxy;
+	return bmProxy;
 }
 
 DEF_ATTR_RD_SIMPLE(TilemapVX, MapData, Table*, p->mapData)
@@ -521,4 +526,5 @@ void TilemapVX::setOY(int value)
 void TilemapVX::releaseResources()
 {
 	delete p;
+	bmProxy.p = 0;
 }

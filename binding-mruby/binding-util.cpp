@@ -41,6 +41,7 @@ struct
 	SYMD(tone),
 	SYMD(rect),
 	SYMD(src_rect),
+	SYMD(tilemap),
 	SYMD(tileset),
 	SYMD(autotiles),
 	SYMD(map_data),

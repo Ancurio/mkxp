@@ -42,6 +42,7 @@ enum CommonSymbol
 	CStone,
 	CSrect,
 	CSsrc_rect,
+	CStilemap,
 	CStileset,
 	CSautotiles,
 	CSmap_data,

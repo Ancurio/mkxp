@@ -93,13 +93,18 @@ MRB_METHOD(tilemapInitialize)
 
 	wrapProperty(mrb, self, &t->getAutotiles(), CSautotiles, TilemapAutotilesType);
 
-	mrb_value autotilesObj = mrb_iv_get(mrb, self, getMrbData(mrb)->symbols[CSautotiles]);
+	MrbData &mrbData = *getMrbData(mrb);
+	mrb_value autotilesObj = mrb_iv_get(mrb, self, mrbData.symbols[CSautotiles]);
 
 	mrb_value ary = mrb_ary_new_capa(mrb, 7);
 	for (int i = 0; i < 7; ++i)
 		mrb_ary_push(mrb, ary, mrb_nil_value());
 
-	mrb_iv_set(mrb, autotilesObj, getMrbData(mrb)->symbols[CSarray], ary);
+	mrb_iv_set(mrb, autotilesObj, mrbData.symbols[CSarray], ary);
+
+	/* Circular reference so both objects are always
+	 * alive at the same time */
+	mrb_iv_set(mrb, autotilesObj, mrbData.symbols[CStilemap], self);
 
 	return self;
 }
