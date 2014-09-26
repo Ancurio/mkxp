@@ -68,7 +68,6 @@ struct MrbExcData
 static const MrbExcData excData[] =
 {
 	{ Shutdown, "SystemExit"  },
-	{ RGSS,     "RGSSError"   },
 	{ PHYSFS,   "PHYSFSError" },
 	{ SDL,      "SDLError"    },
 	{ MKXP,     "MKXPError"   },
@@ -107,6 +106,8 @@ MrbData::MrbData(mrb_state *mrb)
 
 	for (size_t i = 0; i < excDataN; ++i)
 		exc[excData[i].ind] = mrb_define_class(mrb, excData[i].str, mrb->eException_class);
+
+	exc[RGSS] = mrb_define_class(mrb, "RGSSError", mrb->eStandardError_class);
 
 	RClass *errnoMod = mrb_define_module(mrb, "Errno");
 
