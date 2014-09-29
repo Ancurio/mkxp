@@ -218,6 +218,7 @@ set(EMBEDDED_INPUT
 	shader/simpleColor.vert
 	shader/sprite.vert
 	shader/tilemap.vert
+	shader/tilemapvx.vert
 	shader/blur.frag
 	shader/blurH.vert
 	shader/blurV.vert
