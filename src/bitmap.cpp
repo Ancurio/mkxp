@@ -113,6 +113,7 @@ struct BitmapPrivate
 
 	~BitmapPrivate()
 	{
+		SDL_FreeFormat(format);
 		pixman_region_fini(&tainted);
 	}
 
