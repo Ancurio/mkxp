@@ -838,6 +838,93 @@ static std::string fixupString(const char *str)
 	return s;
 }
 
+static void applyShadow(SDL_Surface *&in, const SDL_PixelFormat &fm, const SDL_Color &c)
+{
+	SDL_Surface *out = SDL_CreateRGBSurface
+		(0, in->w+1, in->h+1, fm.BitsPerPixel, fm.Rmask, fm.Gmask, fm.Bmask, fm.Amask);
+
+	float fr = c.r / 255.0;
+	float fg = c.g / 255.0;
+	float fb = c.b / 255.0;
+
+	/* We allocate an output surface one pixel wider and higher than the input,
+	 * (implicitly) blit a copy of the input with RGB values set to black into
+	 * it with x/y offset by 1, then blend the input surface over it at origin
+	 * (0,0) using the bitmap blit equation (see shader/bitmapBlit.frag) */
+
+	for (int y = 0; y < in->h+1; ++y)
+		for (int x = 0; x < in->w+1; ++x)
+		{
+			/* src: input pixel, shd: shadow pixel */
+			uint32_t src = 0, shd = 0;
+
+			/* Output pixel location */
+			uint32_t *outP = ((uint32_t*) ((uint8_t*) out->pixels + y*out->pitch)) + x;
+
+			if (y < in->h && x < in->w)
+				src = ((uint32_t*) ((uint8_t*) in->pixels + y*in->pitch))[x];
+
+			if (y > 0 && x > 0)
+				shd = ((uint32_t*) ((uint8_t*) in->pixels + (y-1)*in->pitch))[x-1];
+
+			/* Set shadow pixel RGB values to 0 (black) */
+			shd &= fm.Amask;
+
+			if (x == 0 || y == 0)
+			{
+				*outP = src;
+				continue;
+			}
+
+			if (x == in->w || y == in->h)
+			{
+				*outP = shd;
+				continue;
+			}
+
+			/* Input and shadow alpha values */
+			uint8_t srcA, shdA;
+			srcA = (src & fm.Amask) >> fm.Ashift;
+			shdA = (shd & fm.Amask) >> fm.Ashift;
+
+			if (srcA == 255 || shdA == 0)
+			{
+				*outP = src;
+				continue;
+			}
+
+			if (srcA == 0 && shdA == 0)
+			{
+				*outP = 0;
+				continue;
+			}
+
+			float fSrcA = srcA / 255.0;
+			float fShdA = shdA / 255.0;
+
+			/* Because opacity == 1, co1 == fSrcA */
+			float co2 = fShdA * (1.0 - fSrcA);
+			/* Result alpha */
+			float fa = fSrcA + co2;
+			/* Temp value to simplify arithmetic below */
+			float co3 = fSrcA / fa;
+
+			/* Result colors */
+			uint8_t r, g, b, a;
+
+			r = clamp<float>(fr * co3, 0, 1) * 255;
+			g = clamp<float>(fg * co3, 0, 1) * 255;
+			b = clamp<float>(fb * co3, 0, 1) * 255;
+			a = clamp<float>(fa, 0, 1) * 255;
+
+			*outP = SDL_MapRGBA(&fm, r, g, b, a);
+		}
+
+	/* Store new surface in the input pointer */
+	SDL_FreeSurface(in);
+	in = out;
+}
+
 void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 {
 	guardDisposed();
@@ -869,6 +956,11 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		txtSurf = TTF_RenderUTF8_Blended(font, str, c);
 
 	p->ensureFormat(txtSurf, SDL_PIXELFORMAT_ABGR8888);
+
+	// While real outlining is not yet here, use shadow
+	// as a replacement to at least make text legible
+	if (p->font->getShadow() || p->font->getOutline())
+		applyShadow(txtSurf, *p->format, c);
 
 	int alignX = rect.x;
 
