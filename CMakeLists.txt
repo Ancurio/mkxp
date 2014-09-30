@@ -368,6 +368,7 @@ if(APPLE)
 	list(APPEND PLATFORM_LIBRARIES
 		${CARBON_LIBRARY}
 		${IOKIT_LIBRARY}
+		"-liconv"
 	)
 endif()
 
