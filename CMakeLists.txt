@@ -153,6 +153,7 @@ set(MAIN_HEADERS
 	src/tileatlasvx.h
 	src/sharedmidistate.h
 	src/fluid-fun.h
+	src/sdl-util.h
 )
 
 set(MAIN_SOURCE

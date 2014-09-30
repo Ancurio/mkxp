@@ -25,6 +25,7 @@
 #include "soundemitter.h"
 #include "sharedstate.h"
 #include "sharedmidistate.h"
+#include "sdl-util.h"
 
 #include <string>
 
@@ -55,8 +56,7 @@ struct AudioPrivate
 	struct
 	{
 		SDL_Thread *thread;
-		bool active;
-		bool termReq;
+		AtomicFlag termReq;
 		MeWatchState state;
 	} meWatch;
 
@@ -66,19 +66,18 @@ struct AudioPrivate
 	      me(ALStream::NotLooped, "me"),
 	      se(conf)
 	{
-		meWatch.active = false;
-		meWatch.termReq = false;
 		meWatch.state = MeNotPlaying;
-		meWatch.thread = SDL_CreateThread(meWatchFun, "audio_mewatch", this);
+		meWatch.thread = createSDLThread
+			<AudioPrivate, &AudioPrivate::meWatchFun>(this, "audio_mewatch");
 	}
 
 	~AudioPrivate()
 	{
-		meWatch.termReq = true;
+		meWatch.termReq.set();
 		SDL_WaitThread(meWatch.thread, 0);
 	}
 
-	void meWatchFunInt()
+	void meWatchFun()
 	{
 		const float fadeOutStep = 1.f / (200  / AUDIO_SLEEP);
 		const float fadeInStep  = 1.f / (1000 / AUDIO_SLEEP);
@@ -121,13 +120,13 @@ struct AudioPrivate
 
 				bgm.lockStream();
 
-				float vol = bgm.extVolume;
+				float vol = bgm.getVolume(AudioStream::External);
 				vol -= fadeOutStep;
 
 				if (vol < 0 || bgm.stream.queryState() != ALStream::Playing)
 				{
 					/* Either BGM has fully faded out, or stopped midway. -> MePlaying */
-					bgm.setExtVolume1(0);
+					bgm.setVolume(AudioStream::External, 0);
 					bgm.stream.pause();
 					meWatch.state = MePlaying;
 					bgm.unlockStream();
@@ -136,7 +135,7 @@ struct AudioPrivate
 					break;
 				}
 
-				bgm.setExtVolume1(vol);
+				bgm.setVolume(AudioStream::External, vol);
 				bgm.unlockStream();
 				me.unlockStream();
 
@@ -165,7 +164,7 @@ struct AudioPrivate
 					else
 					{
 						/* BGM is stopped. -> MeNotPlaying */
-						bgm.setExtVolume1(1.0);
+						bgm.setVolume(AudioStream::External, 1.0);
 
 						if (!bgm.noResumeStop)
 							bgm.stream.play();
@@ -188,7 +187,7 @@ struct AudioPrivate
 				if (bgm.stream.queryState() == ALStream::Stopped)
 				{
 					/* BGM stopped midway fade in. -> MeNotPlaying */
-					bgm.setExtVolume1(1.0);
+					bgm.setVolume(AudioStream::External, 1.0);
 					meWatch.state = MeNotPlaying;
 					bgm.unlockStream();
 
@@ -208,7 +207,7 @@ struct AudioPrivate
 					break;
 				}
 
-				float vol = bgm.extVolume;
+				float vol = bgm.getVolume(AudioStream::External);
 				vol += fadeInStep;
 
 				if (vol >= 1)
@@ -218,7 +217,7 @@ struct AudioPrivate
 					meWatch.state = MeNotPlaying;
 				}
 
-				bgm.setExtVolume1(vol);
+				bgm.setVolume(AudioStream::External, vol);
 
 				me.unlockStream();
 				bgm.unlockStream();
@@ -229,13 +228,6 @@ struct AudioPrivate
 
 			SDL_Delay(AUDIO_SLEEP);
 		}
-	}
-
-	static int meWatchFun(void *self)
-	{
-		static_cast<AudioPrivate*>(self)->meWatchFunInt();
-
-		return 0;
 	}
 };
 

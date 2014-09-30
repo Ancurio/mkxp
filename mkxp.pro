@@ -131,7 +131,8 @@ HEADERS += \
 	src/tilemapvx.h \
 	src/tileatlasvx.h \
 	src/sharedmidistate.h \
-	src/fluid-fun.h
+	src/fluid-fun.h \
+	src/sdl-util.h
 
 SOURCES += \
 	src/main.cpp \

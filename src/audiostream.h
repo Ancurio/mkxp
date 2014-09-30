@@ -24,11 +24,9 @@
 
 #include "al-util.h"
 #include "alstream.h"
+#include "sdl-util.h"
 
 #include <string>
-
-struct SDL_mutex;
-struct SDL_Thread;
 
 struct AudioStream
 {
@@ -39,17 +37,21 @@ struct AudioStream
 		float pitch;
 	} current;
 
-	/* Volume set with 'play()' */
-	float baseVolume;
-
-	/* Volume set by external threads,
+	/* Volumes set by external threads,
 	 * such as for fade-in/out.
-	 * Multiplied with intVolume for final
-	 * playback volume.
-	 * fadeVolume: used by fade-out thread.
-	 * extVolume: used by MeWatch. */
-	float fadeVolume;
-	float extVolume;
+	 * Multiplied together for final
+	 * playback volume. Used with setVolume().
+	 * Base is set by play().
+	 * External is used by MeWatch */
+	enum VolumeType
+	{
+		Base = 0,
+		FadeOut,
+		FadeIn,
+		External,
+
+		VolumeTypeCount
+	};
 
 	/* Note that 'extPaused' and 'noResumeStop' are
 	 * effectively only used with the AudioStream
@@ -76,18 +78,19 @@ struct AudioStream
 	ALStream stream;
 	SDL_mutex *streamMut;
 
+	/* Fade out */
 	struct
 	{
-		/* Fade is in progress */
-		bool active;
+		/* Fade out is in progress */
+		AtomicFlag active;
 
 		/* Request fade thread to finish and
 		 * cleanup (like it normally would) */
-		bool reqFini;
+		AtomicFlag reqFini;
 
 		/* Request fade thread to terminate
 		 * immediately */
-		bool reqTerm;
+		AtomicFlag reqTerm;
 
 		SDL_Thread *thread;
 		std::string threadName;
@@ -99,6 +102,18 @@ struct AudioStream
 		/* Ticks at start of fade */
 		uint32_t startTicks;
 	} fade;
+
+	/* Fade in */
+	struct
+	{
+		AtomicFlag rqFini;
+		AtomicFlag rqTerm;
+
+		SDL_Thread *thread;
+		std::string threadName;
+
+		uint32_t startTicks;
+	} fadeIn;
 
 	AudioStream(ALStream::LoopMode loopMode,
 	            const std::string &threadId);
@@ -117,19 +132,20 @@ struct AudioStream
 	void lockStream();
 	void unlockStream();
 
-	void setFadeVolume(float value);
-	void setExtVolume1(float value);
+	void setVolume(VolumeType type, float value);
+	float getVolume(VolumeType type);
 
 	float playingOffset();
 
 private:
-	void finiFadeInt();
-
+	float volumes[VolumeTypeCount];
 	void updateVolume();
-	void setBaseVolume(float value);
 
-	void fadeThread();
-	static int fadeThreadFun(void *);
+	void finiFadeOutInt();
+	void startFadeIn();
+
+	void fadeOutThread();
+	void fadeInThread();
 };
 
 #endif // AUDIOSTREAM_H

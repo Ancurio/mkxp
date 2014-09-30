@@ -11,7 +11,6 @@ Missing RGSS3 functionality:
 
 * Text outline
 * Movie playback
-* Audio fade-in
 
 Some other things might be implemented, but simply not bound yet.
 

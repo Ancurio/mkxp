@@ -23,12 +23,11 @@
 #define ALSTREAM_H
 
 #include "al-util.h"
+#include "sdl-util.h"
 
 #include <string>
 #include <SDL_rwops.h>
 
-struct SDL_mutex;
-struct SDL_thread;
 struct ALDataSource;
 
 #define STREAM_BUFS 3
@@ -59,12 +58,12 @@ struct ALStream
 	/* When this flag isn't set and alSrc is
 	 * in 'STOPPED' state, stream isn't over
 	 * (it just hasn't started yet) */
-	bool streamInited;
-	bool sourceExhausted;
+	AtomicFlag streamInited;
+	AtomicFlag sourceExhausted;
 
-	bool threadTermReq;
+	AtomicFlag threadTermReq;
 
-	bool needsRewind;
+	AtomicFlag needsRewind;
 	float startOffset;
 
 	float pitch;
@@ -118,7 +117,6 @@ private:
 
 	/* thread func */
 	void streamData();
-	static int streamDataFun(void *);
 };
 
 #endif // ALSTREAM_H

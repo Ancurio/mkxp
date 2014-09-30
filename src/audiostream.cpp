@@ -30,19 +30,21 @@
 
 AudioStream::AudioStream(ALStream::LoopMode loopMode,
                          const std::string &threadId)
-	: baseVolume(1.0),
-	  fadeVolume(1.0),
-	  extVolume(1.0),
-	  extPaused(false),
+	: extPaused(false),
 	  noResumeStop(false),
 	  stream(loopMode, threadId)
 {
 	current.volume = 1.0;
 	current.pitch = 1.0;
 
-	fade.active = false;
+	for (size_t i = 0; i < VolumeTypeCount; ++i)
+		volumes[i] = 1.0;
+
 	fade.thread = 0;
-	fade.threadName = std::string("audio_fade (") + threadId + ")";
+	fade.threadName = std::string("audio_fadeout (") + threadId + ")";
+
+	fadeIn.thread = 0;
+	fadeIn.threadName = std::string("audio_fadein (") + threadId + ")";
 
 	streamMut = SDL_CreateMutex();
 }
@@ -51,8 +53,14 @@ AudioStream::~AudioStream()
 {
 	if (fade.thread)
 	{
-		fade.reqTerm = true;
+		fade.reqTerm.set();
 		SDL_WaitThread(fade.thread, 0);
+	}
+
+	if (fadeIn.thread)
+	{
+		fadeIn.rqTerm.set();
+		SDL_WaitThread(fadeIn.thread, 0);
 	}
 
 	lockStream();
@@ -70,7 +78,7 @@ void AudioStream::play(const std::string &filename,
                        int pitch,
                        float offset)
 {
-	finiFadeInt();
+	finiFadeOutInt();
 
 	lockStream();
 
@@ -96,7 +104,7 @@ void AudioStream::play(const std::string &filename,
 	&&  _pitch   == current.pitch
 	&&  (sState == ALStream::Playing || sState == ALStream::Paused))
 	{
-		setBaseVolume(_volume);
+		setVolume(Base, _volume);
 		current.volume = _volume;
 		unlockStream();
 		return;
@@ -132,8 +140,14 @@ void AudioStream::play(const std::string &filename,
 		break;
 	}
 
-	setBaseVolume(_volume);
+	setVolume(Base, _volume);
 	stream.setPitch(_pitch);
+
+	if (offset > 0)
+	{
+		setVolume(FadeIn, 0);
+		startFadeIn();
+	}
 
 	current.filename = filename;
 	current.volume = _volume;
@@ -149,7 +163,7 @@ void AudioStream::play(const std::string &filename,
 
 void AudioStream::stop()
 {
-	finiFadeInt();
+	finiFadeOutInt();
 
 	lockStream();
 
@@ -190,18 +204,19 @@ void AudioStream::fadeOut(int duration)
 
 	if (fade.thread)
 	{
-		fade.reqFini = true;
+		fade.reqFini.set();
 		SDL_WaitThread(fade.thread, 0);
 		fade.thread = 0;
 	}
 
-	fade.active = true;
+	fade.active.set();
 	fade.msStep = (1.0) / duration;
-	fade.reqFini = false;
-	fade.reqTerm = false;
+	fade.reqFini.clear();
+	fade.reqTerm.clear();
 	fade.startTicks = SDL_GetTicks();
 
-	fade.thread = SDL_CreateThread(fadeThreadFun, fade.threadName.c_str(), this);
+	fade.thread = createSDLThread
+		<AudioStream, &AudioStream::fadeOutThread>(this, fade.threadName);
 
 	unlockStream();
 }
@@ -219,16 +234,15 @@ void AudioStream::unlockStream()
 	SDL_UnlockMutex(streamMut);
 }
 
-void AudioStream::setFadeVolume(float value)
+void AudioStream::setVolume(VolumeType type, float value)
 {
-	fadeVolume = value;
+	volumes[type] = value;
 	updateVolume();
 }
 
-void AudioStream::setExtVolume1(float value)
+float AudioStream::getVolume(VolumeType type)
 {
-	extVolume = value;
-	updateVolume();
+	return volumes[type];
 }
 
 float AudioStream::playingOffset()
@@ -236,28 +250,47 @@ float AudioStream::playingOffset()
 	return stream.queryOffset();
 }
 
-void AudioStream::finiFadeInt()
-{
-	if (!fade.thread)
-		return;
-
-	fade.reqFini = true;
-	SDL_WaitThread(fade.thread, 0);
-	fade.thread = 0;
-}
-
 void AudioStream::updateVolume()
 {
-	stream.setVolume(baseVolume * fadeVolume * extVolume);
+	float vol = 1.0;
+
+	for (size_t i = 0; i < VolumeTypeCount; ++i)
+		vol *= volumes[i];
+
+	stream.setVolume(vol);
 }
 
-void AudioStream::setBaseVolume(float value)
+void AudioStream::finiFadeOutInt()
 {
-	baseVolume = value;
-	updateVolume();
+	if (fade.thread)
+	{
+		fade.reqFini.set();
+		SDL_WaitThread(fade.thread, 0);
+		fade.thread = 0;
+	}
+
+	if (fadeIn.thread)
+	{
+		fadeIn.rqFini.set();
+		SDL_WaitThread(fadeIn.thread, 0);
+		fadeIn.thread = 0;
+	}
 }
 
-void AudioStream::fadeThread()
+void AudioStream::startFadeIn()
+{
+	/* Previous fadein should always be terminated in play() */
+	assert(!fadeIn.thread);
+
+	fadeIn.rqFini.clear();
+	fadeIn.rqTerm.clear();
+	fadeIn.startTicks = SDL_GetTicks();
+
+	fadeIn.thread = createSDLThread
+		<AudioStream, &AudioStream::fadeInThread>(this, fadeIn.threadName);
+}
+
+void AudioStream::fadeOutThread()
 {
 	while (true)
 	{
@@ -273,31 +306,59 @@ void AudioStream::fadeThread()
 		ALStream::State state = stream.queryState();
 
 		if (state != ALStream::Playing
-		||  resVol < 0
-		||  fade.reqFini)
+		|| resVol < 0
+		|| fade.reqFini)
 		{
 			if (state != ALStream::Paused)
 				stream.stop();
 
-			setFadeVolume(1.0);
+			setVolume(FadeOut, 1.0);
 			unlockStream();
 
 			break;
 		}
 
-		setFadeVolume(resVol);
+		setVolume(FadeOut, resVol);
 
 		unlockStream();
 
 		SDL_Delay(AUDIO_SLEEP);
 	}
 
-	fade.active = false;
+	fade.active.clear();
 }
 
-int AudioStream::fadeThreadFun(void *self)
+void AudioStream::fadeInThread()
 {
-	static_cast<AudioStream*>(self)->fadeThread();
+	while (true)
+	{
+		if (fadeIn.rqTerm)
+			break;
 
-	return 0;
+		lockStream();
+
+		/* Fade in duration is always 1 second */
+		uint32_t cur = SDL_GetTicks() - fadeIn.startTicks;
+		float prog = cur / 1000.0;
+
+		ALStream::State state = stream.queryState();
+
+		if (state != ALStream::Playing
+		||  prog >= 1.0
+		||  fadeIn.rqFini)
+		{
+			setVolume(FadeIn, 1.0);
+			unlockStream();
+
+			break;
+		}
+
+		/* Quadratic increase (not really the same as
+		 * in RMVXA, but close enough) */
+		setVolume(FadeIn, prog*prog);
+
+		unlockStream();
+
+		SDL_Delay(AUDIO_SLEEP);
+	}
 }

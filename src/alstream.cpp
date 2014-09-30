@@ -26,6 +26,7 @@
 #include "filesystem.h"
 #include "aldatasource.h"
 #include "fluid-fun.h"
+#include "sdl-util.h"
 
 #include <SDL_mutex.h>
 #include <SDL_thread.h>
@@ -38,8 +39,6 @@ ALStream::ALStream(LoopMode loopMode,
 	  source(0),
 	  thread(0),
 	  preemptPause(false),
-	  streamInited(false),
-	  needsRewind(false),
       pitch(1.0)
 {
 	alSrc = AL::Source::gen();
@@ -198,7 +197,7 @@ void ALStream::openSource(const std::string &filename)
 {
 	const char *ext;
 	shState->fileSystem().openRead(srcOps, filename.c_str(), FileSystem::Audio, false, &ext);
-	needsRewind = false;
+	needsRewind.clear();
 
 	/* Try to read ogg file signature */
 	char sig[5] = { 0 };
@@ -227,13 +226,13 @@ void ALStream::openSource(const std::string &filename)
 
 void ALStream::stopStream()
 {
-	threadTermReq = true;
+	threadTermReq.set();
 
 	if (thread)
 	{
 		SDL_WaitThread(thread, 0);
 		thread = 0;
-		needsRewind = true;
+		needsRewind.set();
 	}
 
 	/* Need to stop the source _after_ the thread has terminated,
@@ -249,14 +248,15 @@ void ALStream::startStream(float offset)
 	AL::Source::clearQueue(alSrc);
 
 	preemptPause = false;
-	streamInited = false;
-	sourceExhausted = false;
-	threadTermReq = false;
+	streamInited.clear();
+	sourceExhausted.clear();
+	threadTermReq.clear();
 
 	startOffset = offset;
 	procFrames = offset * source->sampleRate();
 
-	thread = SDL_CreateThread(streamDataFun, threadName.c_str(), this);
+	thread = createSDLThread
+		<ALStream, &ALStream::streamData>(this, threadName);
 }
 
 void ALStream::pauseStream()
@@ -344,7 +344,7 @@ void ALStream::streamData()
 			resumeStream();
 
 			firstBuffer = false;
-			streamInited = true;
+			streamInited.set();
 		}
 
 		if (threadTermReq)
@@ -352,7 +352,7 @@ void ALStream::streamData()
 
 		if (status == ALDataSource::EndOfStream)
 		{
-			sourceExhausted = true;
+			sourceExhausted.set();
 			break;
 		}
 	}
@@ -400,7 +400,7 @@ void ALStream::streamData()
 
 			if (status == ALDataSource::Error)
 			{
-				sourceExhausted = true;
+				sourceExhausted.set();
 				return;
 			}
 
@@ -419,7 +419,7 @@ void ALStream::streamData()
 				lastBuf = buf;
 
 			if (status == ALDataSource::EndOfStream)
-				sourceExhausted = true;
+				sourceExhausted.set();
 		}
 
 		if (threadTermReq)
@@ -427,11 +427,4 @@ void ALStream::streamData()
 
 		SDL_Delay(AUDIO_SLEEP);
 	}
-}
-
-int ALStream::streamDataFun(void *_self)
-{
-	ALStream &self = *static_cast<ALStream*>(_self);
-	self.streamData();
-	return 0;
 }

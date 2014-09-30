@@ -24,46 +24,19 @@
 
 #include "config.h"
 #include "etc-internal.h"
+#include "sdl-util.h"
 
 #include <SDL_scancode.h>
 #include <SDL_joystick.h>
 #include <SDL_mouse.h>
 #include <SDL_mutex.h>
-#include <SDL_atomic.h>
 
 #include <string>
 
 #include <stdint.h>
 
 struct RGSSThreadData;
-struct SDL_Thread;
 struct SDL_Window;
-
-struct AtomicFlag
-{
-	AtomicFlag()
-	{
-		clear();
-	}
-
-	void set()
-	{
-		SDL_AtomicSet(&atom, 1);
-	}
-
-	void clear()
-	{
-		SDL_AtomicSet(&atom, 0);
-	}
-
-	operator bool() const
-	{
-		return SDL_AtomicGet(&atom);
-	}
-
-private:
-	mutable SDL_atomic_t atom;
-};
 
 class EventThread
 {
