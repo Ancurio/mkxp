@@ -13,7 +13,7 @@
 #ifdef __LINUX__
 #define FLUID_LIB "libfluidsynth.so.1"
 #elif __MACOSX__
-#define FLUID_LIB "libfluidsynth.dylib.1"
+#define FLUID_LIB "libfluidsynth.1.dylib"
 #elif __WINDOWS__
 #define FLUID_LIB "fluidsynth.dll"
 #else
