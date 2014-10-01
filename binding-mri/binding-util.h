@@ -349,7 +349,7 @@ rb_check_argc(int actual, int expected)
 	{ \
 		RB_UNUSED_PARAM; \
 		Klass *k = getPrivateData<Klass>(self); \
-		type value; \
+		type value = 0; \
 		GUARD_EXC( value = k->get##PropName(); ) \
 		return value_fun(value); \
 	} \

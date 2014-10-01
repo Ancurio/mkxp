@@ -195,7 +195,7 @@ defineClass(mrb_state *mrb, const char *name)
 	MRB_METHOD(Klass##Get##PropName) \
 	{ \
 		Klass *k = getPrivateData<Klass>(mrb, self); \
-		mrb_type value; \
+		mrb_type value = 0; \
 		GUARD_EXC( value = k->get##PropName(); ) \
 		return mrb_##conv_t##_value(value); \
 	} \
