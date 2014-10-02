@@ -297,7 +297,9 @@ void build(TEXFBO &tf, Bitmap *bitmaps[BM_COUNT])
 		for (size_t i = 0; i < blits##part##N; ++i) \
 		{\
 			IntRect src = blits##part[i].src; \
-			src = IntRect(src.x*32, src.y*32, src.w*32, src.h*32); \
+			int w = std::min(bm->width(), src.w*32); \
+			int h = std::min(bm->height(), src.h*32); \
+			src = IntRect(src.x*32, src.y*32, w, h); \
 			Vec2i dst = blits##part[i].dst; \
 			dst = Vec2i(dst.x*32, dst.y*32); \
 			GLMeta::blitRectangle(src, dst); \
