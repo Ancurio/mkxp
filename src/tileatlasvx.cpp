@@ -277,7 +277,6 @@ static void doBlit(Bitmap *bm, const IntRect &src, const Vec2i &dst)
 	Vec2i _dst(dst.x*32, dst.y*32);
 	IntRect bmr(0, 0, bm->width(), bm->height());
 
-	/* Drop blit if source rect lies outside bitmap rect */
 	if (!SDL_IntersectRect(&_src, &bmr, &_src))
 		return;
 
