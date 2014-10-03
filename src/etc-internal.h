@@ -93,17 +93,20 @@ struct Vec2i
 	}
 };
 
-struct IntRect
+struct IntRect : SDL_Rect
 {
-	int x, y, w, h;
-
 	IntRect()
-	    : x(0), y(0), w(0), h(0)
-	{}
+	{
+		x = y = w = h = 0;
+	}
 
 	IntRect(int x, int y, int w, int h)
-	    : x(x), y(y), w(w), h(h)
-	{}
+	{
+		this->x = x;
+		this->y = y;
+		this->w = w;
+		this->h = h;
+	}
 
 	bool operator==(const IntRect &other) const
 	{
