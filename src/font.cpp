@@ -387,8 +387,8 @@ void Font::initDefaultDynAttribs()
 
 void Font::initDefaults()
 {
-	FontPrivate::defaultOutline = (rgssVer >= 3 ? true  : false);
-	FontPrivate::defaultShadow  = (rgssVer >= 3 ? false : true );
+	FontPrivate::defaultOutline = (rgssVer >= 3 ? true : false);
+	FontPrivate::defaultShadow  = (rgssVer == 2 ? true : false);
 }
 
 _TTF_Font *Font::getSdlFont()
