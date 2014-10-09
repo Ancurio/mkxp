@@ -67,7 +67,7 @@ struct GlobalIBO
 		}
 
 		IBO::bind(ibo);
-		IBO::uploadData(buffer.size() * sizeof(index_t), &buffer[0]);
+		IBO::uploadData(buffer.size() * sizeof(index_t), dataPtr(buffer));
 		IBO::unbind();
 	}
 };

@@ -86,7 +86,7 @@ struct QuadArray
 		{
 			/* New data exceeds already allocated size.
 			 * Reallocate VBO. */
-			VBO::uploadData(size, &vertices[0], GL_DYNAMIC_DRAW);
+			VBO::uploadData(size, dataPtr(vertices), GL_DYNAMIC_DRAW);
 			vboSize = size;
 
 			shState->ensureQuadIBO(quadCount);
@@ -94,7 +94,7 @@ struct QuadArray
 		else
 		{
 			/* New data fits in allocated size */
-			VBO::uploadSubData(0, size, &vertices[0]);
+			VBO::uploadSubData(0, size, dataPtr(vertices));
 		}
 
 		VBO::unbind();

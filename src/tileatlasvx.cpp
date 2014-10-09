@@ -265,7 +265,7 @@ createShadowSet()
 
 	/* Fill rects with half opacity black */
 	uint32_t color = (0x80808080 & am);
-	SDL_FillRects(surf, &rects[0], rects.size(), color);
+	SDL_FillRects(surf, dataPtr(rects), rects.size(), color);
 
 	return surf;
 }

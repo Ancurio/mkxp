@@ -101,7 +101,7 @@ int RWMemGetData(SDL_RWops *ops, void *buffer)
 	ByteVec *v = getRWPrivate(ops);
 
 	if (buffer)
-		memcpy(buffer, &(*v)[0], v->size());
+		memcpy(buffer, dataPtr(*v), v->size());
 
 	return v->size();
 }

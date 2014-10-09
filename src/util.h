@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <string>
 #include <algorithm>
+#include <vector>
 
 static inline int
 wrapRange(int value, int min, int max)
@@ -99,6 +100,18 @@ template<typename C, typename V>
 inline bool contains(const C &c, const V &v)
 {
 	return std::find(c.begin(), c.end(), v) != c.end();
+}
+
+template<typename C>
+inline const C *dataPtr(const std::vector<C> &v)
+{
+	return v.empty() ? (C*)0 : &v[0];
+}
+
+template<typename C>
+inline C *dataPtr(std::vector<C> &v)
+{
+	return v.empty() ? (C*)0 : &v[0];
 }
 
 #define ARRAY_SIZE(obj) (sizeof(obj) / sizeof((obj)[0]))

@@ -374,7 +374,7 @@ struct WindowVXPrivate
 
 		base.vert.resize(count);
 
-		Vertex *vert = &base.vert.vertices[0];
+		Vertex *vert = dataPtr(base.vert.vertices);
 		size_t i = 0;
 
 		/* Stretched background */
@@ -518,7 +518,7 @@ struct WindowVXPrivate
 		};
 
 		size_t i = 0;
-		Vertex *vert = &ctrlVert.vertices[0];
+		Vertex *vert = dataPtr(ctrlVert.vertices);
 
 		if (!nullOrDisposed(contents) && arrowsVisible)
 		{
@@ -600,7 +600,7 @@ struct WindowVXPrivate
 			quads += 1;
 
 		cursorVert.resize(quads);
-		Vertex *vert = &cursorVert.vertices[0];
+		Vertex *vert = dataPtr(cursorVert.vertices);
 		size_t i = 0;
 
 		i += Quad::setTexPosRect(&vert[i*4], src.corners.tl, cornerPos.tl);

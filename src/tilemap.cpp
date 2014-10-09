@@ -766,7 +766,7 @@ struct TilemapPrivate
 		VBO::bind(tiles.vbo);
 		VBO::allocEmpty(quadDataSize(quadCount));
 
-		VBO::uploadSubData(0, quadDataSize(groundQuadCount), &groundVert[0]);
+		VBO::uploadSubData(0, quadDataSize(groundQuadCount), dataPtr(groundVert));
 
 		for (size_t i = 0; i < zlayersMax; ++i)
 		{
@@ -774,7 +774,7 @@ struct TilemapPrivate
 				continue;
 
 			VBO::uploadSubData(quadDataSize(zlayerBases[i]),
-			                   quadDataSize(zlayerSize(i)), &zlayerVert[i][0]);
+			                   quadDataSize(zlayerSize(i)), dataPtr(zlayerVert[i]));
 		}
 
 		VBO::unbind();
@@ -855,7 +855,7 @@ struct TilemapPrivate
 			return;
 
 		VBO::bind(flash.vbo);
-		VBO::uploadData(sizeof(CVertex) * vertices.size(), &vertices[0]);
+		VBO::uploadData(sizeof(CVertex) * vertices.size(), dataPtr(vertices));
 		VBO::unbind();
 
 		/* Ensure global IBO size */

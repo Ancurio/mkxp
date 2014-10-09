@@ -236,8 +236,8 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 			allocQuads = totalQuads;
 		}
 
-		VBO::uploadSubData(0, quadBytes(groundQuads), &groundVert[0]);
-		VBO::uploadSubData(quadBytes(groundQuads), quadBytes(aboveQuads), &aboveVert[0]);
+		VBO::uploadSubData(0, quadBytes(groundQuads), dataPtr(groundVert));
+		VBO::uploadSubData(quadBytes(groundQuads), quadBytes(aboveQuads), dataPtr(aboveVert));
 
 		VBO::unbind();
 
