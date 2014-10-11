@@ -267,7 +267,11 @@ BINDING_MRUBY {
 }
 
 BINDING_MRI {
-	PKGCONFIG += ruby-2.1
+	isEmpty(MRIVERSION) {
+		MRIVERSION = 2.1
+	}
+
+	PKGCONFIG += ruby-$$MRIVERSION
 	DEFINES += BINDING_MRI
 
 #	EMBED2 = binding-mri/module_rpg.rb
