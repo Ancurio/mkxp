@@ -4,6 +4,8 @@ mkxp is a project that seeks to provide a fully open source implementation of th
 
 It is licensed under the GNU General Public License v2+.
 
+[**Prebuilt binaries for Linux (32/64)**](http://ancurio.bplaced.net/mkxp/generic/)
+
 ## RGSS2 / RGSS3
 Support for these RGSS versions is experimental. A lot is implemented (to the point that you can play the VX Ace sample game, with caveats), but not everything is in place yet.
 
