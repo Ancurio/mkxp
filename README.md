@@ -50,7 +50,7 @@ This binding only exists for testing purposes and does nothing (the engine quits
 * libsigc++ 2.0
 * PhysFS (latest hg)
 * OpenAL
-* SDL2
+* SDL2*
 * SDL2_image
 * SDL2_ttf
 * SDL_sound (latest hg, apply provided patches!)
@@ -60,6 +60,8 @@ This binding only exists for testing purposes and does nothing (the engine quits
 * OpenGL header (alternatively GLES2 with `DEFINES+=GLES2_HEADER`)
 * libiconv (on Windows, optional with INI_ENCODING)
 * libguess (optional with INI_ENCODING)
+
+(* For the F1 menu to work correctly, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
 
 mkxp employs Qt's qmake build system, so you'll need to install that beforehand. Alternatively, you can build with cmake (FIXME: add cmake instructions).
 
