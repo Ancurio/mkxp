@@ -437,6 +437,10 @@ static void runRMXPScripts(BacktraceData &btData)
 	for (size_t i = 0; i < conf.preloadScripts.size(); ++i)
 		runCustomScript(conf.preloadScripts[i]);
 
+	VALUE exc = rb_gv_get("$!");
+	if (exc != Qnil)
+		return;
+
 	while (true)
 	{
 		for (long i = 0; i < scriptCount; ++i)
