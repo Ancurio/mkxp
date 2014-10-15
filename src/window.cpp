@@ -511,6 +511,9 @@ struct WindowPrivate
 
 	void prepare()
 	{
+		if (size.x <= 0 || size.y <= 0)
+			return;
+
 		bool updateBaseQuadArray = false;
 
 		if (baseVertDirty)
