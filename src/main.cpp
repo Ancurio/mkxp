@@ -205,6 +205,7 @@ int main(int argc, char *argv[])
 	conf.read(argc, argv);
 	conf.readGameINI();
 
+	assert(conf.rgssVersion >= 1 && conf.rgssVersion <= 3);
 	printRgssVersion(conf.rgssVersion);
 
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
