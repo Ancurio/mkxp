@@ -4,7 +4,8 @@ mkxp is a project that seeks to provide a fully open source implementation of th
 
 It is licensed under the GNU General Public License v2+.
 
-[**Prebuilt binaries for Linux (32/64)**](http://ancurio.bplaced.net/mkxp/generic/)
+[**Prebuilt binaries for Linux (32/64)**](http://ancurio.bplaced.net/mkxp/generic/)  
+[**Prebuilt binaries for OSX by Ali**](https://app.box.com/mkxpmacbuilds)
 
 ## RGSS2 / RGSS3
 Support for these RGSS versions is experimental. A lot is implemented (to the point that you can play the VX Ace sample game, with caveats), but not everything is in place yet.
@@ -61,7 +62,7 @@ This binding only exists for testing purposes and does nothing (the engine quits
 * libiconv (on Windows, optional with INI_ENCODING)
 * libguess (optional with INI_ENCODING)
 
-(* For the F1 menu to work correctly, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
+(* For the F1 menu to work correctly under Linux/X11, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
 
 mkxp employs Qt's qmake build system, so you'll need to install that beforehand. Alternatively, you can build with cmake (FIXME: add cmake instructions).
 
