@@ -1,23 +1,11 @@
 # mkxp
 
-mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file. Experimental support for RPG Maker VX / VX Ace games is present.
+mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP", "RPG Maker VX" and "RPG Maker VX Ace" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file.
 
 It is licensed under the GNU General Public License v2+.
 
 [**Prebuilt binaries for Linux (32/64)**](http://ancurio.bplaced.net/mkxp/generic/)  
 [**Prebuilt binaries for OSX by Ali**](https://app.box.com/mkxpmacbuilds)
-
-## RGSS2 / RGSS3
-Support for these RGSS versions is experimental. A lot is implemented (to the point that you can play the VX Ace sample game, with caveats), but not everything is in place yet.
-
-Missing RGSS3 functionality:
-
-* Text outline
-* Movie playback
-
-Some other things might be implemented, but simply not bound yet.
-
-RGSS2 might work a little bit less than 3 because I don't have a VX license and as such am unable to experiment thoroughly on it.
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. Currently there are three bindings:
@@ -113,6 +101,8 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 ## What doesn't work (yet)
 
+* Text outline
+* Movie playback
 * wma audio files
 * The Win32API ruby class (for obvious reasons)
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)*
