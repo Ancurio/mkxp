@@ -34,7 +34,7 @@
 
 #include <string.h>
 
-bool EventThread::keyStates[] = { false };
+uint8_t EventThread::keyStates[] = { false };
 
 EventThread::JoyState EventThread::joyState =
 {

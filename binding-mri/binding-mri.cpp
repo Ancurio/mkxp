@@ -76,8 +76,9 @@ void fileIntBindingInit();
 
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
-RB_METHOD(mriDataDirectory);
+RB_METHOD(mkxpDataDirectory);
 RB_METHOD(mkxpPuts);
+RB_METHOD(mkxpRawKeyStates);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -139,8 +140,9 @@ static void mriBindingInit()
 		assert(!"unreachable");
 
 	VALUE mod = rb_define_module("System");
-	_rb_define_module_function(mod, "data_directory", mriDataDirectory);
+	_rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
 	_rb_define_module_function(mod, "puts", mkxpPuts);
+	_rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
 
 	rb_gv_set("MKXP", Qtrue);
 }
@@ -149,18 +151,6 @@ static void
 showMsg(const std::string &msg)
 {
 	shState->eThread().showMessageBox(msg.c_str());
-}
-
-RB_METHOD(mkxpPuts)
-{
-	RB_UNUSED_PARAM;
-
-	const char *str;
-	rb_get_args(argc, argv, "z", &str RB_ARG_END);
-
-	Debug() << str;
-
-	return Qnil;
 }
 
 static void printP(int argc, VALUE *argv,
@@ -199,7 +189,7 @@ RB_METHOD(mriP)
 	return Qnil;
 }
 
-RB_METHOD(mriDataDirectory)
+RB_METHOD(mkxpDataDirectory)
 {
 	RB_UNUSED_PARAM;
 
@@ -214,6 +204,28 @@ RB_METHOD(mriDataDirectory)
 	SDL_free(path);
 
 	return pathStr;
+}
+
+RB_METHOD(mkxpPuts)
+{
+	RB_UNUSED_PARAM;
+
+	const char *str;
+	rb_get_args(argc, argv, "z", &str RB_ARG_END);
+
+	Debug() << str;
+
+	return Qnil;
+}
+
+RB_METHOD(mkxpRawKeyStates)
+{
+	RB_UNUSED_PARAM;
+
+	VALUE str = rb_str_new(0, sizeof(EventThread::keyStates));
+	memcpy(RSTRING_PTR(str), EventThread::keyStates, sizeof(EventThread::keyStates));
+
+	return str;
 }
 
 static VALUE rgssMainCb(VALUE block)

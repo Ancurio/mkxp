@@ -42,7 +42,7 @@ struct SDL_Window;
 class EventThread
 {
 public:
-	static bool keyStates[SDL_NUM_SCANCODES];
+	static uint8_t keyStates[SDL_NUM_SCANCODES];
 
 	struct JoyState
 	{
