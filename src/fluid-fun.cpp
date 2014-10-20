@@ -61,13 +61,7 @@ fail:
 	Debug() << "Failed to load " FLUID_LIB ". Midi playback is disabled.";
 
 	memset(&fluid, 0, sizeof(fluid));
-	finiFluidFunctions();
-#endif
-}
-
-void finiFluidFunctions()
-{
-#ifndef SHARED_FLUID
 	SDL_UnloadObject(so);
+	so = 0;
 #endif
 }

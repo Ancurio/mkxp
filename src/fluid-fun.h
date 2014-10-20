@@ -55,6 +55,5 @@ struct FluidFunctions
 extern FluidFunctions fluid;
 
 void initFluidFunctions();
-void finiFluidFunctions();
 
 #endif // FLUIDFUN_H

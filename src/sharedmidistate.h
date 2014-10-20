@@ -53,7 +53,9 @@ struct SharedMidiState
 
 	~SharedMidiState()
 	{
-		if (!HAVE_FLUID || !inited)
+		/* We might have initialized, but if the consecutive libfluidsynth
+		 * load failed, no resources will have been allocated */
+		if (!inited || !HAVE_FLUID)
 			return;
 
 		fluid.delete_settings(flSettings);
@@ -63,8 +65,6 @@ struct SharedMidiState
 			assert(!synths[i].inUse);
 			fluid.delete_synth(synths[i].synth);
 		}
-
-		finiFluidFunctions();
 	}
 
 	void initIfNeeded(const Config &conf)
