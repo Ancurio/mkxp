@@ -4,12 +4,8 @@
 typedef struct _fluid_hashtable_t fluid_settings_t;
 typedef struct _fluid_synth_t fluid_synth_t;
 
-typedef fluid_settings_t* (*NEWFLUIDSETTINGSPROC)(void);
 typedef int (*FLUIDSETTINGSSETNUMPROC)(fluid_settings_t* settings, const char *name, double val);
 typedef int (*FLUIDSETTINGSSETSTRPROC)(fluid_settings_t* settings, const char *name, const char *str);
-typedef void (*DELETEFLUIDSETTINGSPROC)(fluid_settings_t* settings);
-typedef fluid_synth_t* (*NEWFLUIDSYNTHPROC)(fluid_settings_t* settings);
-typedef int (*DELETEFLUIDSYNTHPROC)(fluid_synth_t* synth);
 typedef int (*FLUIDSYNTHSFLOADPROC)(fluid_synth_t* synth, const char* filename, int reset_presets);
 typedef int (*FLUIDSYNTHSYSTEMRESETPROC)(fluid_synth_t* synth);
 typedef int (*FLUIDSYNTHWRITES16PROC)(fluid_synth_t* synth, int len, void* lout, int loff, int lincr, void* rout, int roff, int rincr);
@@ -19,6 +15,11 @@ typedef int (*FLUIDSYNTHCHANNELPRESSUREPROC)(fluid_synth_t* synth, int chan, int
 typedef int (*FLUIDSYNTHPITCHBENDPROC)(fluid_synth_t* synth, int chan, int val);
 typedef int (*FLUIDSYNTHCCPROC)(fluid_synth_t* synth, int chan, int ctrl, int val);
 typedef int (*FLUIDSYNTHPROGRAMCHANGEPROC)(fluid_synth_t* synth, int chan, int program);
+
+typedef fluid_settings_t* (*NEWFLUIDSETTINGSPROC)(void);
+typedef fluid_synth_t* (*NEWFLUIDSYNTHPROC)(fluid_settings_t* settings);
+typedef void (*DELETEFLUIDSETTINGSPROC)(fluid_settings_t* settings);
+typedef int (*DELETEFLUIDSYNTHPROC)(fluid_synth_t* synth);
 
 #define FLUID_FUNCS \
 	FLUID_FUN(settings_setnum, FLUIDSETTINGSSETNUMPROC) \
