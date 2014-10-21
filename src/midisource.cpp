@@ -843,6 +843,4 @@ ALDataSource *createMidiSource(SDL_RWops &ops,
                                bool looped)
 {
 	return new MidiSource(ops, looped);
-
-	return 0;
 }
