@@ -139,7 +139,7 @@ static void mriBindingInit()
 	else
 		assert(!"unreachable");
 
-	VALUE mod = rb_define_module("System");
+	VALUE mod = rb_define_module("MKXP");
 	_rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
 	_rb_define_module_function(mod, "puts", mkxpPuts);
 	_rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
