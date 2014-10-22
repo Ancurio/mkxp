@@ -193,17 +193,7 @@ RB_METHOD(mkxpDataDirectory)
 {
 	RB_UNUSED_PARAM;
 
-	const char *org, *app;
-
-	rb_get_args(argc, argv, "zz", &org, &app RB_ARG_END);
-
-	char *path = SDL_GetPrefPath(org, app);
-
-	VALUE pathStr = rb_str_new_cstr(path);
-
-	SDL_free(path);
-
-	return pathStr;
+	return rb_str_new_cstr(shState->config().customDataPath.c_str());
 }
 
 RB_METHOD(mkxpPuts)
