@@ -74,7 +74,8 @@ MRB_METHOD(disposableDispose)
 	if (d->isDisposed())
 		return mrb_nil_value();
 
-	disposableDisposeChildren(mrb, self);
+	if (rgssVer == 1)
+		disposableDisposeChildren(mrb, self);
 
 	d->dispose();
 
@@ -100,8 +101,9 @@ static void disposableBindingInit(mrb_state *mrb, RClass *klass)
 	mrb_define_method(mrb, klass, "dispose", disposableDispose<C>, MRB_ARGS_NONE());
 	mrb_define_method(mrb, klass, "disposed?", disposableIsDisposed<C>, MRB_ARGS_NONE());
 
-	mrb_alias_method(mrb, klass, getMrbData(mrb)->symbols[CS_mkxp_dispose_alias],
-	                 mrb_intern_lit(mrb, "dispose"));
+	if (rgssVer == 1)
+		mrb_alias_method(mrb, klass, getMrbData(mrb)->symbols[CS_mkxp_dispose_alias],
+		                 mrb_intern_lit(mrb, "dispose"));
 }
 
 template<class C>

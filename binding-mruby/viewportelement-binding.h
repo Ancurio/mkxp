@@ -50,7 +50,9 @@ viewportElementInitialize(mrb_state *mrb, mrb_value self)
 	if (!mrb_nil_p(viewportObj))
 	{
 		viewport = getPrivateDataCheck<Viewport>(mrb, viewportObj, ViewportType);
-		disposableAddChild(mrb, viewportObj, self);
+
+		if (rgssVer == 1)
+			disposableAddChild(mrb, viewportObj, self);
 	}
 
 	/* Construct object */

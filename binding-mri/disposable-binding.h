@@ -27,8 +27,7 @@
 
 /* 'Children' are disposables that are disposed together
  * with their parent. Currently this is only used by Viewport
- * in RGSS1.
- * FIXME: Disable this behavior when RGSS2 or 3 */
+ * in RGSS1. */
 inline void
 disposableAddChild(VALUE disp, VALUE child)
 {
@@ -72,7 +71,8 @@ RB_METHOD(disposableDispose)
 	if (d->isDisposed())
 		return Qnil;
 
-	disposableDisposeChildren(self);
+	if (rgssVer == 1)
+		disposableDisposeChildren(self);
 
 	d->dispose();
 
@@ -100,7 +100,8 @@ static void disposableBindingInit(VALUE klass)
 
 	/* Make sure we always have access to the original method, even
 	 * if it is overridden by user scripts */
-	rb_define_alias(klass, "_mkxp_dispose_alias", "dispose");
+	if (rgssVer == 1)
+		rb_define_alias(klass, "_mkxp_dispose_alias", "dispose");
 }
 
 template<class C>
