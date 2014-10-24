@@ -60,7 +60,7 @@ disposableDisposeChildren(mrb_state *mrb, mrb_value disp)
 
 	for (mrb_int i = 0; i < RARRAY_LEN(children); ++i)
 		mrb_funcall_argv(mrb, mrb_ary_entry(children, i),
-						 mrbData->symbols[CSdispose], 0, 0);
+		                 mrbData->symbols[CS_mkxp_dispose_alias], 0, 0);
 }
 
 template<class C>
@@ -99,6 +99,9 @@ static void disposableBindingInit(mrb_state *mrb, RClass *klass)
 {
 	mrb_define_method(mrb, klass, "dispose", disposableDispose<C>, MRB_ARGS_NONE());
 	mrb_define_method(mrb, klass, "disposed?", disposableIsDisposed<C>, MRB_ARGS_NONE());
+
+	mrb_alias_method(mrb, klass, getMrbData(mrb)->symbols[CS_mkxp_dispose_alias],
+	                 mrb_intern_lit(mrb, "dispose"));
 }
 
 template<class C>

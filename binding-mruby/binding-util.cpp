@@ -55,7 +55,7 @@ struct
 	SYMD(default_color),
 	SYMD(default_out_color),
 	SYMD(children),
-	SYMD(dispose)
+	SYMD(_mkxp_dispose_alias)
 };
 
 static elementsN(symData);

@@ -56,7 +56,7 @@ enum CommonSymbol
 	CSdefault_color,
 	CSdefault_out_color,
 	CSchildren,
-	CSdispose,
+	CS_mkxp_dispose_alias,
 
 	CommonSymbolsMax
 };

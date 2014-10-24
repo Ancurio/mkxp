@@ -52,9 +52,8 @@ disposableDisposeChildren(VALUE disp)
 	if (NIL_P(children))
 		return;
 
-	ID dispFun = rb_intern("dispose");
+	ID dispFun = rb_intern("_mkxp_dispose_alias");
 
-	/* Note: RMXP doesn't call overridden 'dispose' methods here */
 	for (long i = 0; i < RARRAY_LEN(children); ++i)
 		rb_funcall2(rb_ary_entry(children, i), dispFun, 0, 0);
 }
@@ -98,6 +97,10 @@ static void disposableBindingInit(VALUE klass)
 {
 	_rb_define_method(klass, "dispose", disposableDispose<C>);
 	_rb_define_method(klass, "disposed?", disposableIsDisposed<C>);
+
+	/* Make sure we always have access to the original method, even
+	 * if it is overridden by user scripts */
+	rb_define_alias(klass, "_mkxp_dispose_alias", "dispose");
 }
 
 template<class C>
