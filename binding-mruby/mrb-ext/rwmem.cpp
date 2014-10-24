@@ -20,6 +20,7 @@
 */
 
 #include "rwmem.h"
+#include "util.h"
 
 #include <SDL_rwops.h>
 
