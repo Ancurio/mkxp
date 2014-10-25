@@ -882,6 +882,8 @@ bool WindowVX::isClosed() const
 
 DEF_ATTR_SIMPLE(WindowVX, X,          int,     p->geo.x)
 DEF_ATTR_SIMPLE(WindowVX, Y,          int,     p->geo.y)
+DEF_ATTR_SIMPLE(WindowVX, CursorRect, Rect&,  *p->cursorRect)
+DEF_ATTR_SIMPLE(WindowVX, Tone,       Tone&,  *p->tone)
 
 DEF_ATTR_RD_SIMPLE(WindowVX, Windowskin,      Bitmap*, p->windowskin)
 DEF_ATTR_RD_SIMPLE(WindowVX, Contents,        Bitmap*, p->contents)
@@ -898,9 +900,6 @@ DEF_ATTR_RD_SIMPLE(WindowVX, Opacity,         int,     p->opacity)
 DEF_ATTR_RD_SIMPLE(WindowVX, BackOpacity,     int,     p->backOpacity)
 DEF_ATTR_RD_SIMPLE(WindowVX, ContentsOpacity, int,     p->contentsOpacity)
 DEF_ATTR_RD_SIMPLE(WindowVX, Openness,        int,     p->openness)
-
-DEF_ATTR_OBJ_VALUE(WindowVX, CursorRect,      Rect*,   p->cursorRect)
-DEF_ATTR_OBJ_VALUE(WindowVX, Tone,            Tone*,   p->tone)
 
 void WindowVX::setWindowskin(Bitmap *value)
 {

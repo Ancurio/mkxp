@@ -56,10 +56,10 @@ MRB_METHOD(fontInitialize)
 	/* Wrap property objects */
 	f->initDynAttribs();
 
-	wrapProperty(mrb, self, f->getColor(), CScolor, ColorType);
+	wrapProperty(mrb, self, &f->getColor(), CScolor, ColorType);
 
 	if (rgssVer >= 3)
-		wrapProperty(mrb, self, f->getOutColor(), CSout_color, ColorType);
+		wrapProperty(mrb, self, &f->getOutColor(), CSout_color, ColorType);
 
 	return self;
 }
@@ -76,10 +76,10 @@ MRB_METHOD(fontInitializeCopy)
 	/* Wrap property objects */
 	f->initDynAttribs();
 
-	wrapProperty(mrb, self, f->getColor(), CScolor, ColorType);
+	wrapProperty(mrb, self, &f->getColor(), CScolor, ColorType);
 
 	if (rgssVer >= 3)
-		wrapProperty(mrb, self, f->getOutColor(), CSout_color, ColorType);
+		wrapProperty(mrb, self, &f->getOutColor(), CSout_color, ColorType);
 
 	return self;
 }
@@ -164,7 +164,7 @@ MRB_METHOD(FontSetDefaultColor)
 
 	Color *c = getPrivateDataCheck<Color>(mrb, colorObj, ColorType);
 
-	Font::setDefaultColor(c);
+	Font::setDefaultColor(*c);
 
 	return colorObj;
 }
@@ -183,7 +183,7 @@ MRB_METHOD(FontSetDefaultOutColor)
 
 	Color *c = getPrivateDataCheck<Color>(mrb, colorObj, ColorType);
 
-	Font::setDefaultOutColor(c);
+	Font::setDefaultOutColor(*c);
 
 	return colorObj;
 }
@@ -200,7 +200,7 @@ fontBindingInit(mrb_state *mrb)
 	RClass *klass = defineClass(mrb, "Font");
 
 	Font::initDefaultDynAttribs();
-	wrapProperty(mrb, mrb_obj_value(klass), Font::getDefaultColor(), CSdefault_color, ColorType);
+	wrapProperty(mrb, mrb_obj_value(klass), &Font::getDefaultColor(), CSdefault_color, ColorType);
 
 	mrb_define_class_method(mrb, klass, "exist?", fontDoesExist, MRB_ARGS_REQ(1));
 
@@ -219,7 +219,7 @@ fontBindingInit(mrb_state *mrb)
 	{
 	INIT_KLASS_PROP_BIND(Font, DefaultOutline,  "default_outline");
 	INIT_KLASS_PROP_BIND(Font, DefaultOutColor, "default_out_color");
-	wrapProperty(mrb, mrb_obj_value(klass), Font::getDefaultOutColor(), CSdefault_out_color, ColorType);
+	wrapProperty(mrb, mrb_obj_value(klass), &Font::getDefaultOutColor(), CSdefault_out_color, ColorType);
 	}
 
 	mrb_define_method(mrb, klass, "initialize",      fontInitialize,     MRB_ARGS_OPT(2));

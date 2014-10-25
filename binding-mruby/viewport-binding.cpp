@@ -59,9 +59,9 @@ MRB_METHOD(viewportInitialize)
 	/* Wrap property objects */
 	v->initDynAttribs();
 
-	wrapProperty(mrb, self, v->getRect(),  CSrect,  RectType);
-	wrapProperty(mrb, self, v->getColor(), CScolor, ColorType);
-	wrapProperty(mrb, self, v->getTone(),  CStone,  ToneType);
+	wrapProperty(mrb, self, &v->getRect(),  CSrect,  RectType);
+	wrapProperty(mrb, self, &v->getColor(), CScolor, ColorType);
+	wrapProperty(mrb, self, &v->getTone(),  CStone,  ToneType);
 
 	return self;
 }

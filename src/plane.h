@@ -44,8 +44,8 @@ public:
 	DECL_ATTR( ZoomY,     float   )
 	DECL_ATTR( Opacity,   int     )
 	DECL_ATTR( BlendType, int     )
-	DECL_ATTR( Color,     Color*  )
-	DECL_ATTR( Tone,      Tone*   )
+	DECL_ATTR( Color,     Color&  )
+	DECL_ATTR( Tone,      Tone&   )
 
 	void initDynAttribs();
 

@@ -92,19 +92,19 @@ public:
 	DECL_ATTR( Size,     int    )
 	DECL_ATTR( Bold,     bool   )
 	DECL_ATTR( Italic,   bool   )
-	DECL_ATTR( Color,    Color* )
+	DECL_ATTR( Color,    Color& )
 	DECL_ATTR( Shadow,   bool   )
 	DECL_ATTR( Outline,  bool   )
-	DECL_ATTR( OutColor, Color* )
+	DECL_ATTR( OutColor, Color& )
 
 	DECL_ATTR_STATIC( DefaultName,     const char* )
 	DECL_ATTR_STATIC( DefaultSize,     int         )
 	DECL_ATTR_STATIC( DefaultBold,     bool        )
 	DECL_ATTR_STATIC( DefaultItalic,   bool        )
-	DECL_ATTR_STATIC( DefaultColor,    Color*      )
+	DECL_ATTR_STATIC( DefaultColor,    Color&      )
 	DECL_ATTR_STATIC( DefaultShadow,   bool        )
 	DECL_ATTR_STATIC( DefaultOutline,  bool        )
-	DECL_ATTR_STATIC( DefaultOutColor, Color*      )
+	DECL_ATTR_STATIC( DefaultOutColor, Color&      )
 
 	/* Assigns heap allocated objects to object properties;
 	 * using this in pure C++ will cause memory leaks

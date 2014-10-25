@@ -350,21 +350,22 @@ void Font::setSize(int value)
 
 static void guardDisposed() {}
 
-DEF_ATTR_RD_SIMPLE(Font, Size,     int,    p->size)
-DEF_ATTR_SIMPLE   (Font, Bold,     bool,   p->bold)
-DEF_ATTR_SIMPLE   (Font, Italic,   bool,   p->italic)
-DEF_ATTR_SIMPLE   (Font, Shadow,   bool,   p->shadow)
-DEF_ATTR_SIMPLE   (Font, Outline,  bool,   p->outline)
-DEF_ATTR_OBJ_VALUE(Font, Color,    Color*, p->color)
-DEF_ATTR_OBJ_VALUE(Font, OutColor, Color*, p->outColor)
+DEF_ATTR_RD_SIMPLE(Font, Size, int, p->size)
 
-DEF_ATTR_SIMPLE_STATIC   (Font, DefaultSize,       int,    FontPrivate::defaultSize)
-DEF_ATTR_SIMPLE_STATIC   (Font, DefaultBold,       bool,   FontPrivate::defaultBold)
-DEF_ATTR_SIMPLE_STATIC   (Font, DefaultItalic,     bool,   FontPrivate::defaultItalic)
-DEF_ATTR_SIMPLE_STATIC   (Font, DefaultShadow,     bool,   FontPrivate::defaultShadow)
-DEF_ATTR_SIMPLE_STATIC   (Font, DefaultOutline,    bool,   FontPrivate::defaultOutline)
-DEF_ATTR_OBJ_VALUE_STATIC(Font, DefaultColor,      Color*, FontPrivate::defaultColor)
-DEF_ATTR_OBJ_VALUE_STATIC(Font, DefaultOutColor,   Color*, FontPrivate::defaultOutColor)
+DEF_ATTR_SIMPLE(Font, Bold,     bool,    p->bold)
+DEF_ATTR_SIMPLE(Font, Italic,   bool,    p->italic)
+DEF_ATTR_SIMPLE(Font, Shadow,   bool,    p->shadow)
+DEF_ATTR_SIMPLE(Font, Outline,  bool,    p->outline)
+DEF_ATTR_SIMPLE(Font, Color,    Color&, *p->color)
+DEF_ATTR_SIMPLE(Font, OutColor, Color&, *p->outColor)
+
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultSize,     int,     FontPrivate::defaultSize)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultBold,     bool,    FontPrivate::defaultBold)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultItalic,   bool,    FontPrivate::defaultItalic)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultShadow,   bool,    FontPrivate::defaultShadow)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutline,  bool,    FontPrivate::defaultOutline)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultColor,    Color&, *FontPrivate::defaultColor)
+DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutColor, Color&, *FontPrivate::defaultOutColor)
 
 const char *Font::getDefaultName()
 {

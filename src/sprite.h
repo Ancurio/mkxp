@@ -47,7 +47,7 @@ public:
 	void update();
 
 	DECL_ATTR( Bitmap,      Bitmap* )
-	DECL_ATTR( SrcRect,     Rect*   )
+	DECL_ATTR( SrcRect,     Rect&   )
 	DECL_ATTR( X,           int     )
 	DECL_ATTR( Y,           int     )
 	DECL_ATTR( OX,          int     )
@@ -60,8 +60,8 @@ public:
 	DECL_ATTR( BushOpacity, int     )
 	DECL_ATTR( Opacity,     int     )
 	DECL_ATTR( BlendType,   int     )
-	DECL_ATTR( Color,       Color*  )
-	DECL_ATTR( Tone,        Tone*   )
+	DECL_ATTR( Color,       Color&  )
+	DECL_ATTR( Tone,        Tone&   )
 	DECL_ATTR( WaveAmp,     int     )
 	DECL_ATTR( WaveLength,  int     )
 	DECL_ATTR( WaveSpeed,   int     )

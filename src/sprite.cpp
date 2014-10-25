@@ -317,12 +317,11 @@ DEF_ATTR_RD_SIMPLE(Sprite, WaveLength, int,     p->wave.length)
 DEF_ATTR_RD_SIMPLE(Sprite, WaveSpeed,  int,     p->wave.speed)
 DEF_ATTR_RD_SIMPLE(Sprite, WavePhase,  float,   p->wave.phase)
 
-DEF_ATTR_SIMPLE   (Sprite, BushOpacity, int,    p->bushOpacity)
-DEF_ATTR_SIMPLE   (Sprite, Opacity,     int,    p->opacity)
-
-DEF_ATTR_OBJ_VALUE(Sprite, SrcRect,     Rect*,  p->srcRect)
-DEF_ATTR_OBJ_VALUE(Sprite, Color,       Color*, p->color)
-DEF_ATTR_OBJ_VALUE(Sprite, Tone,        Tone*,  p->tone)
+DEF_ATTR_SIMPLE(Sprite, BushOpacity, int,     p->bushOpacity)
+DEF_ATTR_SIMPLE(Sprite, Opacity,     int,     p->opacity)
+DEF_ATTR_SIMPLE(Sprite, SrcRect,     Rect&,  *p->srcRect)
+DEF_ATTR_SIMPLE(Sprite, Color,       Color&, *p->color)
+DEF_ATTR_SIMPLE(Sprite, Tone,        Tone&,  *p->tone)
 
 void Sprite::setBitmap(Bitmap *bitmap)
 {

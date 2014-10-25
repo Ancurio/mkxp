@@ -147,9 +147,9 @@ void Viewport::update()
 DEF_ATTR_RD_SIMPLE(Viewport, OX,   int,   geometry.xOrigin)
 DEF_ATTR_RD_SIMPLE(Viewport, OY,   int,   geometry.yOrigin)
 
-DEF_ATTR_OBJ_VALUE(Viewport, Rect,  Rect*,  p->rect)
-DEF_ATTR_OBJ_VALUE(Viewport, Color, Color*, p->color)
-DEF_ATTR_OBJ_VALUE(Viewport, Tone,  Tone*,  p->tone)
+DEF_ATTR_SIMPLE(Viewport, Rect,  Rect&,  *p->rect)
+DEF_ATTR_SIMPLE(Viewport, Color, Color&, *p->color)
+DEF_ATTR_SIMPLE(Viewport, Tone,  Tone&,  *p->tone)
 
 void Viewport::setOX(int value)
 {

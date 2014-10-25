@@ -43,7 +43,7 @@ public:
 	DECL_ATTR( Windowskin,      Bitmap* )
 	DECL_ATTR( Contents,        Bitmap* )
 	DECL_ATTR( Stretch,         bool    )
-	DECL_ATTR( CursorRect,      Rect*   )
+	DECL_ATTR( CursorRect,      Rect&   )
 	DECL_ATTR( Active,          bool    )
 	DECL_ATTR( Pause,           bool    )
 	DECL_ATTR( X,               int     )

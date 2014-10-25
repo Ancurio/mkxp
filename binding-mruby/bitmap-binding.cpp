@@ -57,10 +57,10 @@ MRB_METHOD(bitmapInitialize)
 
 	mrb_value fontProp = wrapProperty(mrb, self, font, CSfont, FontType);
 
-	wrapProperty(mrb, fontProp, font->getColor(), CScolor, ColorType);
+	wrapProperty(mrb, fontProp, &font->getColor(), CScolor, ColorType);
 
 	if (rgssVer >= 3)
-		wrapProperty(mrb, fontProp, font->getOutColor(), CSout_color, ColorType);
+		wrapProperty(mrb, fontProp, &font->getOutColor(), CSout_color, ColorType);
 
 	return self;
 }
@@ -296,7 +296,7 @@ MRB_METHOD(bitmapSetFont)
 
 	font = getPrivateDataCheck<Font>(mrb, fontObj, FontType);
 
-	GUARD_EXC( b->setFont(font); )
+	GUARD_EXC( b->setFont(*font); )
 
 	return mrb_nil_value();
 }

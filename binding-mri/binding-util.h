@@ -340,7 +340,7 @@ rb_check_argc(int actual, int expected)
 		VALUE propObj = *argv; \
 		PropKlass *prop; \
 		prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type); \
-		GUARD_EXC( k->set##PropName(prop); ) \
+		GUARD_EXC( k->set##PropName(*prop); ) \
 		return propObj; \
 	}
 

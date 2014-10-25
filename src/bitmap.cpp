@@ -941,12 +941,12 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 		return;
 
 	TTF_Font *font = p->font->getSdlFont();
-	Color *fontColor = p->font->getColor();
+	const Color &fontColor = p->font->getColor();
 
 	SDL_Color c;
-	fontColor->toSDLColor(c);
+	fontColor.toSDLColor(c);
 
-	float txtAlpha = fontColor->norm.w;
+	float txtAlpha = fontColor.norm.w;
 
 	SDL_Surface *txtSurf;
 
@@ -1186,11 +1186,11 @@ IntRect Bitmap::textSize(const char *str)
 	return IntRect(0, 0, w, h);
 }
 
-DEF_ATTR_RD_SIMPLE(Bitmap, Font, Font*, p->font)
+DEF_ATTR_RD_SIMPLE(Bitmap, Font, Font&, *p->font)
 
-void Bitmap::setFont(Font *value)
+void Bitmap::setFont(Font &value)
 {
-	*p->font = *value;
+	*p->font = value;
 }
 
 void Bitmap::setInitFont(Font *value)

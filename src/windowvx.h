@@ -48,7 +48,7 @@ public:
 
 	DECL_ATTR( Windowskin,      Bitmap* )
 	DECL_ATTR( Contents,        Bitmap* )
-	DECL_ATTR( CursorRect,      Rect*   )
+	DECL_ATTR( CursorRect,      Rect&   )
 	DECL_ATTR( Active,          bool    )
 	DECL_ATTR( ArrowsVisible,   bool    )
 	DECL_ATTR( Pause,           bool    )
@@ -64,7 +64,7 @@ public:
 	DECL_ATTR( BackOpacity,     int     )
 	DECL_ATTR( ContentsOpacity, int     )
 	DECL_ATTR( Openness,        int     )
-	DECL_ATTR( Tone,            Tone*   )
+	DECL_ATTR( Tone,            Tone&   )
 
 	void initDynAttribs();
 

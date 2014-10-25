@@ -166,7 +166,7 @@ defineClass(mrb_state *mrb, const char *name)
 		PropKlass *prop; \
 		mrb_get_args(mrb, "o", &propObj); \
 		prop = getPrivateDataCheck<PropKlass>(mrb, propObj, PropKlass##Type); \
-		GUARD_EXC( k->set##PropName(prop); ) \
+		GUARD_EXC( k->set##PropName(*prop); ) \
 		return propObj; \
 	}
 

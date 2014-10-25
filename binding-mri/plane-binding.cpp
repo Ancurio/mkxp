@@ -35,8 +35,8 @@ RB_METHOD(planeInitialize)
 
 	p->initDynAttribs();
 
-	wrapProperty(self, p->getColor(), "color", ColorType);
-	wrapProperty(self, p->getTone(), "tone", ToneType);
+	wrapProperty(self, &p->getColor(), "color", ColorType);
+	wrapProperty(self, &p->getTone(), "tone", ToneType);
 
 	return self;
 }

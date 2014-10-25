@@ -35,8 +35,8 @@ MRB_METHOD(planeInitialize)
 
 	p->initDynAttribs();
 
-	wrapProperty(mrb, self, p->getColor(), CScolor, ColorType);
-	wrapProperty(mrb, self, p->getTone(),  CStone,  ToneType);
+	wrapProperty(mrb, self, &p->getColor(), CScolor, ColorType);
+	wrapProperty(mrb, self, &p->getTone(),  CStone,  ToneType);
 
 	return self;
 }

@@ -60,10 +60,10 @@ RB_METHOD(fontInitialize)
 	/* Wrap property objects */
 	f->initDynAttribs();
 
-	wrapProperty(self, f->getColor(), "color", ColorType);
+	wrapProperty(self, &f->getColor(), "color", ColorType);
 
 	if (rgssVer >= 3)
-		wrapProperty(self, f->getOutColor(), "out_color", ColorType);
+		wrapProperty(self, &f->getOutColor(), "out_color", ColorType);
 
 	if (NIL_P(name))
 		name = rb_iv_get(rb_obj_class(self), "default_name");
@@ -90,10 +90,10 @@ RB_METHOD(fontInitializeCopy)
 	/* Wrap property objects */
 	f->initDynAttribs();
 
-	wrapProperty(self, f->getColor(), "color", ColorType);
+	wrapProperty(self, &f->getColor(), "color", ColorType);
 
 	if (rgssVer >= 3)
-		wrapProperty(self, f->getOutColor(), "out_color", ColorType);
+		wrapProperty(self, &f->getOutColor(), "out_color", ColorType);
 
 	return self;
 }
@@ -209,7 +209,7 @@ RB_METHOD(FontSetDefaultOutColor)
 
 	Color *c = getPrivateDataCheck<Color>(colorObj, ColorType);
 
-	Font::setDefaultOutColor(c);
+	Font::setDefaultOutColor(*c);
 
 	return colorObj;
 }
@@ -248,7 +248,7 @@ RB_METHOD(FontSetDefaultColor)
 
 	Color *c = getPrivateDataCheck<Color>(colorObj, ColorType);
 
-	Font::setDefaultColor(c);
+	Font::setDefaultColor(*c);
 
 	return colorObj;
 }
@@ -266,11 +266,11 @@ fontBindingInit()
 	rb_define_alloc_func(klass, classAllocate<&FontType>);
 
 	Font::initDefaultDynAttribs();
-	wrapProperty(klass, Font::getDefaultColor(), "default_color", ColorType);
+	wrapProperty(klass, &Font::getDefaultColor(), "default_color", ColorType);
 	rb_iv_set(klass, "default_name", rb_str_new_cstr(Font::getDefaultName()));
 
 	if (rgssVer >= 3)
-		wrapProperty(klass, Font::getDefaultOutColor(), "default_out_color", ColorType);
+		wrapProperty(klass, &Font::getDefaultOutColor(), "default_out_color", ColorType);
 
 	INIT_KLASS_PROP_BIND(Font, DefaultName, "default_name");
 	INIT_KLASS_PROP_BIND(Font, DefaultSize, "default_size");

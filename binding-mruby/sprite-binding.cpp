@@ -38,9 +38,9 @@ MRB_METHOD(spriteInitialize)
 	/* Wrap property objects */
 	s->initDynAttribs();
 
-	wrapProperty(mrb, self, s->getSrcRect(), CSsrc_rect, RectType);
-	wrapProperty(mrb, self, s->getColor(), CScolor, ColorType);
-	wrapProperty(mrb, self, s->getTone(), CStone, ToneType);
+	wrapProperty(mrb, self, &s->getSrcRect(), CSsrc_rect, RectType);
+	wrapProperty(mrb, self, &s->getColor(), CScolor, ColorType);
+	wrapProperty(mrb, self, &s->getTone(), CStone, ToneType);
 
 	return self;
 }

@@ -34,7 +34,7 @@ RB_METHOD(windowInitialize)
 
 	w->initDynAttribs();
 
-	wrapProperty(self, w->getCursorRect(), "cursor_rect", RectType);
+	wrapProperty(self, &w->getCursorRect(), "cursor_rect", RectType);
 
 	return self;
 }

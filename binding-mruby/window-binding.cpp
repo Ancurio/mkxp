@@ -33,7 +33,7 @@ MRB_METHOD(windowInitialize)
 	setPrivateData(self, w, WindowType);
 
 	w->initDynAttribs();
-	wrapProperty(mrb, self, w->getCursorRect(), CScursor_rect, RectType);
+	wrapProperty(mrb, self, &w->getCursorRect(), CScursor_rect, RectType);
 
 	return self;
 }

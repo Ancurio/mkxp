@@ -39,11 +39,11 @@ public:
 
 	void update();
 
-	DECL_ATTR( Rect,  Rect*  )
+	DECL_ATTR( Rect,  Rect&  )
 	DECL_ATTR( OX,    int    )
 	DECL_ATTR( OY,    int    )
-	DECL_ATTR( Color, Color* )
-	DECL_ATTR( Tone,  Tone*  )
+	DECL_ATTR( Color, Color& )
+	DECL_ATTR( Tone,  Tone&  )
 
 	void initDynAttribs();
 

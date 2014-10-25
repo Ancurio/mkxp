@@ -99,7 +99,7 @@ public:
 
 	IntRect textSize(const char *str);
 
-	DECL_ATTR(Font, Font*)
+	DECL_ATTR(Font, Font&)
 
 	/* Sets initial reference without copying by value,
 	 * use at construction */

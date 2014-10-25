@@ -706,6 +706,7 @@ void Window::update()
 
 DEF_ATTR_SIMPLE(Window, X,          int,     p->position.x)
 DEF_ATTR_SIMPLE(Window, Y,          int,     p->position.y)
+DEF_ATTR_SIMPLE(Window, CursorRect, Rect&,  *p->cursorRect)
 
 DEF_ATTR_RD_SIMPLE(Window, Windowskin,      Bitmap*, p->windowskin)
 DEF_ATTR_RD_SIMPLE(Window, Contents,        Bitmap*, p->contents)
@@ -719,8 +720,6 @@ DEF_ATTR_RD_SIMPLE(Window, OY,              int,     p->contentsOffset.y)
 DEF_ATTR_RD_SIMPLE(Window, Opacity,         int,     p->opacity)
 DEF_ATTR_RD_SIMPLE(Window, BackOpacity,     int,     p->backOpacity)
 DEF_ATTR_RD_SIMPLE(Window, ContentsOpacity, int,     p->contentsOpacity)
-
-DEF_ATTR_OBJ_VALUE(Window, CursorRect,      Rect*,   p->cursorRect)
 
 void Window::setWindowskin(Bitmap *value)
 {
