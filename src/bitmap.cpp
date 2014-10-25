@@ -943,8 +943,8 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	TTF_Font *font = p->font->getSdlFont();
 	const Color &fontColor = p->font->getColor();
 
-	SDL_Color c;
-	fontColor.toSDLColor(c);
+	SDL_Color c = fontColor.toSDLColor();
+	c.a = 255;
 
 	float txtAlpha = fontColor.norm.w;
 

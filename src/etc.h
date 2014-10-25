@@ -79,7 +79,7 @@ struct Color : public Serializable
 		return (alpha != 0);
 	}
 
-	void toSDLColor(SDL_Color &c) const;
+	SDL_Color toSDLColor() const;
 
 	/* Range (0.0 ~ 255.0) */
 	double red;

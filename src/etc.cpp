@@ -146,13 +146,15 @@ void Color::updateExternal()
 	alpha = norm.w * 255;
 }
 
-void Color::toSDLColor(SDL_Color &c) const
+SDL_Color Color::toSDLColor() const
 {
+	SDL_Color c;
 	c.r = clamp<double>(red, 0, 255);
 	c.g = clamp<double>(green, 0, 255);
 	c.b = clamp<double>(blue, 0, 255);
-//	c.a = clamp<double>(alpha, 0, 255);
-	c.a = 255;
+	c.a = clamp<double>(alpha, 0, 255);
+
+	return c;
 }
 
 
