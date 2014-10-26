@@ -36,6 +36,7 @@
 #include "quad.h"
 #include "vertex.h"
 #include "tileatlas.h"
+#include "flashmap.h"
 
 #include <sigc++/connection.h>
 
@@ -152,19 +153,6 @@ static const size_t zlayersMax = viewpH + 5;
  *
  */
 
-static int wrap(int value, int range)
-{
-	int res = value % range;
-	return res < 0 ? res + range : res;
-}
-
-static int16_t tableGetWrapped(const Table *t, int x, int y, int z = 0)
-{
-	return t->get(wrap(x, t->xSize()),
-	              wrap(y, t->ySize()),
-	              z);
-}
-
 /* Autotile animation */
 static const uint8_t atAnimation[16*4] =
 {
@@ -200,7 +188,6 @@ struct GroundLayer : public ViewportElement
 
 	void draw();
 	void drawInt();
-	void drawFlashInt();
 
 	void onGeometryChange(const Scene::Geometry &geo);
 
@@ -246,7 +233,6 @@ struct TilemapPrivate
 	Bitmap *tileset;
 
 	Table *mapData;
-	Table *flashData;
 	Table *priorities;
 	bool visible;
 	Vec2i offset;
@@ -296,14 +282,8 @@ struct TilemapPrivate
 		uint8_t aniIdx;
 	} tiles;
 
-	/* Flash buffers */
-	struct
-	{
-		GLMeta::VAO vao;
-		VBO::ID vbo;
-		size_t quadCount;
-		uint8_t alphaIdx;
-	} flash;
+	FlashMap flashMap;
+	uint8_t flashAlphaIdx;
 
 	/* Scene elements */
 	struct
@@ -326,8 +306,6 @@ struct TilemapPrivate
 	bool mapViewportDirty;
 	/* Affected by: oy */
 	bool zOrderDirty;
-	/* Affected by: flashData, buffersDirty */
-	bool flashDirty;
 
 	/* Resources are sufficient and tilemap is ready to be drawn */
 	bool tilemapReady;
@@ -337,7 +315,6 @@ struct TilemapPrivate
 	sigc::connection autotilesCon[autotileCount];
 	sigc::connection mapDataCon;
 	sigc::connection prioritiesCon;
-	sigc::connection flashDataCon;
 
 	/* Dispose watches */
 	sigc::connection autotilesDispCon[autotileCount];
@@ -349,15 +326,14 @@ struct TilemapPrivate
 	    : viewport(viewport),
 	      tileset(0),
 	      mapData(0),
-	      flashData(0),
 	      priorities(0),
 	      visible(true),
+	      flashAlphaIdx(0),
 	      atlasSizeDirty(false),
 	      atlasDirty(false),
 	      buffersDirty(false),
 	      mapViewportDirty(false),
 	      zOrderDirty(false),
-	      flashDirty(false),
 	      tilemapReady(false)
 	{
 		memset(autotiles, 0, sizeof(autotiles));
@@ -378,18 +354,6 @@ struct TilemapPrivate
 
 		GLMeta::vaoInit(tiles.vao);
 
-		/* Init flash buffers */
-		flash.vbo = VBO::gen();
-
-		GLMeta::vaoFillInVertexData<CVertex>(flash.vao);
-		flash.vao.vbo = flash.vbo;
-		flash.vao.ibo = shState->globalIBO().ibo;
-
-		GLMeta::vaoInit(flash.vao);
-
-		flash.quadCount = 0;
-		flash.alphaIdx = 0;
-
 		elem.ground = new GroundLayer(this, viewport);
 
 		for (size_t i = 0; i < zlayersMax; ++i)
@@ -397,6 +361,8 @@ struct TilemapPrivate
 
 		prepareCon = shState->prepareDraw.connect
 		        (sigc::mem_fun(this, &TilemapPrivate::prepare));
+
+		updateFlashMapViewport();
 	}
 
 	~TilemapPrivate()
@@ -412,10 +378,6 @@ struct TilemapPrivate
 		GLMeta::vaoFini(tiles.vao);
 		VBO::del(tiles.vbo);
 
-		/* Destroy flash buffers */
-		GLMeta::vaoFini(flash.vao);
-		VBO::del(flash.vbo);
-
 		/* Disconnect signal handlers */
 		tilesetCon.disconnect();
 		for (int i = 0; i < autotileCount; ++i)
@@ -425,9 +387,13 @@ struct TilemapPrivate
 		}
 		mapDataCon.disconnect();
 		prioritiesCon.disconnect();
-		flashDataCon.disconnect();
 
 		prepareCon.disconnect();
+	}
+
+	void updateFlashMapViewport()
+	{
+		flashMap.setViewport(IntRect(viewpPos.x, viewpPos.y, viewpW, viewpH));
 	}
 
 	void updateAtlasInfo()
@@ -499,11 +465,6 @@ struct TilemapPrivate
 	void invalidateBuffers()
 	{
 		buffersDirty = true;
-	}
-
-	void invalidateFlash()
-	{
-		flashDirty = true;
 	}
 
 	/* Checks for the minimum amount of data needed to display */
@@ -807,61 +768,6 @@ struct TilemapPrivate
 		shader.setTexSize(atlas.size);
 	}
 
-	bool sampleFlashColor(Vec4 &out, int x, int y)
-	{
-		int16_t packed = tableGetWrapped(flashData, x, y);
-
-		if (packed == 0)
-			return false;
-
-		const float max = 0xF;
-
-		float b = ((packed & 0x000F) >> 0) / max;
-		float g = ((packed & 0x00F0) >> 4) / max;
-		float r = ((packed & 0x0F00) >> 8) / max;
-
-		out = Vec4(r, g, b, 1);
-
-		return true;
-	}
-
-	void updateFlash()
-	{
-		if (!flashData)
-			return;
-
-		std::vector<CVertex> vertices;
-
-		for (int x = 0; x < viewpW; ++x)
-			for (int y = 0; y < viewpH; ++y)
-			{
-				Vec4 color;
-				if (!sampleFlashColor(color, x+viewpPos.x, y+viewpPos.y))
-					continue;
-
-				FloatRect posRect(x*32, y*32, 32, 32);
-
-				CVertex v[4];
-				Quad::setPosRect(v, posRect);
-				Quad::setColor(v, color);
-
-				for (size_t i = 0; i < 4; ++i)
-					vertices.push_back(v[i]);
-			}
-
-		flash.quadCount = vertices.size() / 4;
-
-		if (flash.quadCount == 0)
-			return;
-
-		VBO::bind(flash.vbo);
-		VBO::uploadData(sizeof(CVertex) * vertices.size(), dataPtr(vertices));
-		VBO::unbind();
-
-		/* Ensure global IBO size */
-		shState->ensureQuadIBO(flash.quadCount);
-	}
-
 	void updateActiveElements(std::vector<int> &zlayerInd)
 	{
 		elem.ground->updateVboCount();
@@ -995,7 +901,7 @@ struct TilemapPrivate
 		if (dirty)
 		{
 			buffersDirty = true;
-			flashDirty = true;
+			updateFlashMapViewport();
 			updatePosition();
 		}
 	}
@@ -1037,11 +943,7 @@ struct TilemapPrivate
 			buffersDirty = false;
 		}
 
-		if (flashDirty)
-		{
-			updateFlash();
-			flashDirty = false;
-		}
+		flashMap.prepare();
 
 		if (zOrderDirty)
 		{
@@ -1082,33 +984,12 @@ void GroundLayer::draw()
 
 	GLMeta::vaoUnbind(p->tiles.vao);
 
-	if (p->flash.quadCount > 0)
-	{
-		GLMeta::vaoBind(p->flash.vao);
-		glState.blendMode.pushSet(BlendAddition);
-
-		FlashMapShader &shader = shState->shaders().flashMap;
-		shader.bind();
-		shader.applyViewportProj();
-		shader.setAlpha(flashAlpha[p->flash.alphaIdx] / 255.f);
-		shader.setTranslation(p->dispPos);
-
-		drawFlashInt();
-
-		glState.blendMode.pop();
-
-		GLMeta::vaoUnbind(p->flash.vao);
-	}
+	p->flashMap.draw(flashAlpha[p->flashAlphaIdx] / 255.f, p->dispPos);
 }
 
 void GroundLayer::drawInt()
 {
 	gl.DrawElements(GL_TRIANGLES, vboCount, _GL_INDEX_TYPE, (GLvoid*) 0);
-}
-
-void GroundLayer::drawFlashInt()
-{
-	gl.DrawElements(GL_TRIANGLES, p->flash.quadCount * 6, _GL_INDEX_TYPE, 0);
 }
 
 void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
@@ -1236,8 +1117,8 @@ void Tilemap::update()
 		return;
 
 	/* Animate flash */
-	if (++p->flash.alphaIdx >= flashAlphaN)
-		p->flash.alphaIdx = 0;
+	if (++p->flashAlphaIdx >= flashAlphaN)
+		p->flashAlphaIdx = 0;
 
 	/* Animate autotiles */
 	if (!p->tiles.animated)
@@ -1259,7 +1140,7 @@ Tilemap::Autotiles &Tilemap::getAutotiles()
 DEF_ATTR_RD_SIMPLE(Tilemap, Viewport, Viewport*, p->viewport)
 DEF_ATTR_RD_SIMPLE(Tilemap, Tileset, Bitmap*, p->tileset)
 DEF_ATTR_RD_SIMPLE(Tilemap, MapData, Table*, p->mapData)
-DEF_ATTR_RD_SIMPLE(Tilemap, FlashData, Table*, p->flashData)
+DEF_ATTR_RD_SIMPLE(Tilemap, FlashData, Table*, p->flashMap.getData())
 DEF_ATTR_RD_SIMPLE(Tilemap, Priorities, Table*, p->priorities)
 DEF_ATTR_RD_SIMPLE(Tilemap, Visible, bool, p->visible)
 DEF_ATTR_RD_SIMPLE(Tilemap, OX, int, p->offset.x)
@@ -1307,18 +1188,7 @@ void Tilemap::setFlashData(Table *value)
 {
 	guardDisposed();
 
-	if (p->flashData == value)
-		return;
-
-	p->flashData = value;
-
-	if (!value)
-		return;
-
-	p->invalidateFlash();
-	p->flashDataCon.disconnect();
-	p->flashDataCon = value->modified.connect
-	        (sigc::mem_fun(p, &TilemapPrivate::invalidateFlash));
+	p->flashMap.setData(value);
 }
 
 void Tilemap::setPriorities(Table *value)

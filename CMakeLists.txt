@@ -124,6 +124,7 @@ set(MAIN_HEADERS
 	src/glstate.h
 	src/quad.h
 	src/tilemap.h
+	src/flashmap.h
 	src/graphics.h
 	src/debuglogger.h
 	src/global-ibo.h
