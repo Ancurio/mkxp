@@ -33,18 +33,29 @@
 #include "quad.h"
 #include "quadarray.h"
 #include "shader.h"
+#include "flashmap.h"
 
 #include <vector>
 #include <sigc++/connection.h>
 
-// FIXME: Implement flash
+/* Flash tiles pulsing opacity */
+static const uint8_t flashAlpha[] =
+{
+	/* Fade in */
+	0x78, 0x78, 0x78, 0x78, 0x96, 0x96, 0x96, 0x96,
+	0xB4, 0xB4, 0xB4, 0xB4, 0xD2, 0xD2, 0xD2, 0xD2,
+	/* Fade out */
+	0xF0, 0xF0, 0xF0, 0xF0, 0xD2, 0xD2, 0xD2, 0xD2,
+	0xB4, 0xB4, 0xB4, 0xB4, 0x96, 0x96, 0x96, 0x96
+};
+
+static elementsN(flashAlpha);
 
 struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 {
 	Bitmap *bitmaps[BM_COUNT];
 
 	Table *mapData;
-	Table *flashData;
 	Table *flags;
 	Vec2i offset;
 
@@ -69,6 +80,9 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	uint16_t frameIdx;
 	Vec2 aniOffset;
 
+	FlashMap flashMap;
+	uint8_t flashAlphaIdx;
+
 	bool atlasDirty;
 	bool buffersDirty;
 	bool mapViewportDirty;
@@ -92,6 +106,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		void draw()
 		{
 			p->drawAbove();
+			p->drawFlashLayer();
 		}
 
 		ABOUT_TO_ACCESS_NOOP
@@ -102,12 +117,12 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	TilemapVXPrivate(Viewport *viewport)
 	    : ViewportElement(viewport),
 	      mapData(0),
-	      flashData(0),
 	      flags(0),
 	      allocQuads(0),
 	      groundQuads(0),
 	      aboveQuads(0),
 	      frameIdx(0),
+	      flashAlphaIdx(0),
 	      atlasDirty(true),
 	      buffersDirty(false),
 	      mapViewportDirty(false),
@@ -206,6 +221,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		}
 
 		updatePosition();
+		flashMap.setViewport(mapViewp);
 	}
 
 	static size_t quadBytes(size_t quads)
@@ -266,6 +282,8 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 			rebuildBuffers();
 			buffersDirty = false;
 		}
+
+		flashMap.prepare();
 	}
 
 	SVertex *allocVert(std::vector<SVertex> &vec, size_t count)
@@ -279,6 +297,15 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	/* SceneElement */
 	void draw()
 	{
+		drawGround();
+		drawFlashLayer();
+	}
+
+	void drawGround()
+	{
+		if (groundQuads == 0)
+			return;
+
 		ShaderBase *shader;
 
 		if (!nullOrDisposed(bitmaps[BM_A1]))
@@ -327,6 +354,14 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		                (GLvoid*) (groundQuads*6*sizeof(index_t)));
 
 		GLMeta::vaoUnbind(vao);
+	}
+
+	void drawFlashLayer()
+	{
+		/* Flash tiles are drawn twice at half opacity, once over the
+		 * ground layer, and once over the above layer */
+		float alpha = (flashAlpha[flashAlphaIdx] / 255.f) / 2;
+		flashMap.draw(alpha, dispPos);
 	}
 
 	void onGeometryChange(const Scene::Geometry &geo)
@@ -404,6 +439,7 @@ void TilemapVX::update()
 {
 	guardDisposed();
 
+	/* Animate tiles */
 	if (++p->frameIdx >= 30*3*4)
 		p->frameIdx = 0;
 
@@ -416,6 +452,10 @@ void TilemapVX::update()
 	uint8_t aniIdxC = aniIndicesC[p->frameIdx / 30];
 
 	p->aniOffset = Vec2(aniIdxA * 2 * 32, aniIdxC * 32);
+
+	/* Animate flash */
+	if (++p->flashAlphaIdx >= flashAlphaN)
+		p->flashAlphaIdx = 0;
 }
 
 TilemapVX::BitmapArray &TilemapVX::getBitmapArray()
@@ -426,7 +466,7 @@ TilemapVX::BitmapArray &TilemapVX::getBitmapArray()
 }
 
 DEF_ATTR_RD_SIMPLE(TilemapVX, MapData, Table*, p->mapData)
-DEF_ATTR_RD_SIMPLE(TilemapVX, FlashData, Table*, p->flashData)
+DEF_ATTR_RD_SIMPLE(TilemapVX, FlashData, Table*, p->flashMap.getData())
 DEF_ATTR_RD_SIMPLE(TilemapVX, Flags, Table*, p->flags)
 DEF_ATTR_RD_SIMPLE(TilemapVX, OX, int, p->offset.x)
 DEF_ATTR_RD_SIMPLE(TilemapVX, OY, int, p->offset.y)
@@ -472,10 +512,7 @@ void TilemapVX::setFlashData(Table *value)
 {
 	guardDisposed();
 
-	if (p->flashData == value)
-		return;
-
-	p->flashData = value;
+	p->flashMap.setData(value);
 }
 
 void TilemapVX::setFlags(Table *value)
