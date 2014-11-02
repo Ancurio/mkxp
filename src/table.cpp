@@ -21,7 +21,6 @@
 
 #include "table.h"
 
-#include <stdlib.h>
 #include <string.h>
 #include <algorithm>
 
@@ -31,23 +30,14 @@
 
 /* Init normally */
 Table::Table(int x, int y /*= 1*/, int z /*= 1*/)
-	:m_x(x), m_y(y), m_z(z)
-{
-	data = static_cast<int16_t*>(calloc(x * y * z, sizeof(int16_t)));
-}
+	: m_x(x), m_y(y), m_z(z),
+      data(x*y*z)
+{}
 
 Table::Table(const Table &other)
-    :m_x(other.m_x), m_y(other.m_y), m_z(other.m_z)
-{
-	const size_t size = m_x * m_y * m_z * sizeof(int16_t);;
-	data = static_cast<int16_t*>(malloc(size));
-	memcpy(data, other.data, size);
-}
-
-Table::~Table()
-{
-	free(data);
-}
+    : m_x(other.m_x), m_y(other.m_y), m_z(other.m_z),
+      data(other.data)
+{}
 
 int16_t Table::get(int x, int y, int z) const
 {
@@ -73,32 +63,15 @@ void Table::resize(int x, int y, int z)
 	if (x == m_x && y == m_y && z == m_z)
 		return;
 
-	/* Fastpath: only z changed */
-	if (x == m_x && y == m_y)
-	{
-		data = static_cast<int16_t*>(realloc(data, m_x * m_y * z * sizeof(int16_t)));
-		int diff = z - m_z;
-		if (diff > 0)
-			memset(data + (m_x * m_y * m_z), 0, diff * m_x * m_y * sizeof(int16_t));
-		goto done;
-	}
-	else
-	{
-		int16_t *newData = static_cast<int16_t*>(calloc(x * y * z, sizeof(int16_t)));
+	std::vector<int16_t> newData(x*y*z);
 
-		for (int i = 0; i < std::min(x, m_x); ++i)
-			for (int j = 0; j < std::min(y, m_y); ++j)
-				for (int k = 0; k < std::min(z, m_z); k++)
-				{
-					int index = x*y*k + x*j + i;
-					newData[index] = at(i, j, k);
-				}
+	for (int k = 0; k < std::min(z, m_z); ++k)
+		for (int j = 0; j < std::min(y, m_y); ++j)
+			for (int i = 0; i < std::min(x, m_x); ++i)
+				newData[x*y*k + x*j + i] = at(i, j, k);
 
-		free(data);
-		data = newData;
-	}
+	data.swap(newData);
 
-	done:
 	m_x = x;
 	m_y = y;
 	m_z = z;
@@ -108,66 +81,12 @@ void Table::resize(int x, int y, int z)
 
 void Table::resize(int x, int y)
 {
-	if (x == m_x && y == m_y)
-		return;
-
-	/* Fastpath: treat table as two dimensional */
-	if (m_z == 1)
-	{
-		/* Fastpath: only y changed */
-		if (x == m_x)
-		{
-			data = static_cast<int16_t*>(realloc(data, m_x * y * sizeof(int16_t)));
-			int diff = y - m_y;
-			if (diff > 0)
-				memset(data + (m_x * m_y), 0, diff * m_x * sizeof(int16_t));
-			goto done;
-		}
-		else
-		{
-			int16_t *newData = static_cast<int16_t*>(calloc(x * y, sizeof(int16_t)));
-
-			for (int i = 0; i < std::min(x, m_x); ++i)
-				for (int j = 0; j < std::min(y, m_y); ++j)
-				{
-					int index = x*j + i;
-					newData[index] = at(i, j);
-				}
-
-			free(data);
-			data = newData;
-		}
-
-		done:
-		m_x = x;
-		m_y = y;
-
-		return;
-	}
-	else
-	{
-		resize(x, y, m_z);
-	}
+	resize(x, y, m_z);
 }
 
 void Table::resize(int x)
 {
-	if (x == m_x)
-		return;
-
-	/* Fastpath: treat table as one dimensional */
-	if (m_y == 1 && m_z == 1)
-	{
-		data = static_cast<int16_t*>(realloc(data, x * sizeof(int16_t)));
-		int diff = x - m_x;
-		if (diff > 0)
-			memset(data + (m_x), 0, diff * sizeof(int16_t));
-
-		m_x = x;
-		return;
-	}
-
-	resize(x, m_y);
+	resize(x, m_y, m_z);
 }
 
 /* Serializable */
@@ -184,6 +103,7 @@ void Table::serialize(char *buffer) const
 	/* Table dimensions: we don't care
 	 * about them but RMXP needs them */
 	int dim = 1;
+	int size = m_x * m_y * m_z;
 
 	if (m_y > 1)
 		dim = 2;
@@ -195,12 +115,9 @@ void Table::serialize(char *buffer) const
 	write_int32(&buff_p, m_x);
 	write_int32(&buff_p, m_y);
 	write_int32(&buff_p, m_z);
-	write_int32(&buff_p, m_x * m_y * m_z);
+	write_int32(&buff_p, size);
 
-	for (int i = 0; i < m_z; ++i)
-		for (int j = 0; j < m_y; ++j)
-			for (int k = 0; k < m_x; k++)
-				write_int16(&buff_p, at(k, j, i));
+	memcpy(buff_p, dataPtr(data), sizeof(int16_t)*size);
 }
 
 
@@ -224,11 +141,7 @@ Table *Table::deserialize(const char *data, int len)
 		throw Exception(Exception::RGSSError, "Marshal: Table: bad file format");
 
 	Table *t = new Table(x, y, z);
-
-	for (int i = 0; i < z; ++i)
-		for (int j = 0; j < y; ++j)
-			for (int k = 0; k < x; k++)
-				t->at(k, j, i) = read_int16(data, idx);
+	memcpy(dataPtr(t->data), &data[idx], sizeof(int16_t)*size);
 
 	return t;
 }
