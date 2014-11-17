@@ -66,7 +66,7 @@ findNextPow2(int start)
 inline bool readFile(const char *path,
                      std::string &out)
 {
-	FILE *f = fopen(path, "r");
+	FILE *f = fopen(path, "rb");
 
 	if (!f)
 		return false;

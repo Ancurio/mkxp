@@ -125,7 +125,7 @@ struct SharedStatePrivate
 		std::string archPath = defGameArchive();
 
 		/* Check if a game archive exists */
-		FILE *tmp = fopen(archPath.c_str(), "r");
+		FILE *tmp = fopen(archPath.c_str(), "rb");
 		if (tmp)
 		{
 			fileSystem.addPath(archPath.c_str());

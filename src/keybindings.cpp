@@ -178,7 +178,7 @@ static bool writeBindings(const BDescVec &d, const std::string &dir,
 	char path[1024];
 	buildPath(dir, rgssVersion, path, sizeof(path));
 
-	FILE *f = fopen(path, "w");
+	FILE *f = fopen(path, "wb");
 
 	if (!f)
 		return false;
@@ -263,7 +263,7 @@ static bool readBindings(BDescVec &out, const std::string &dir,
 	char path[1024];
 	buildPath(dir, rgssVersion, path, sizeof(path));
 
-	FILE *f = fopen(path, "r");
+	FILE *f = fopen(path, "rb");
 
 	if (!f)
 		return false;

@@ -192,7 +192,7 @@ static void
 runCustomScript(mrb_state *mrb, mrbc_context *ctx, const char *filename)
 {
 	/* Execute custom script */
-	FILE *f = fopen(filename, "r");
+	FILE *f = fopen(filename, "rb");
 
 	if (!f)
 	{
@@ -217,7 +217,7 @@ static void
 runMrbFile(mrb_state *mrb, const char *filename)
 {
 	/* Execute compiled script */
-	FILE *f = fopen(filename, "r");
+	FILE *f = fopen(filename, "rb");
 
 	if (!f)
 	{
