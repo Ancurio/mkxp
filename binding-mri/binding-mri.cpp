@@ -540,6 +540,13 @@ static void showExc(VALUE exc, const BacktraceData &btData)
 
 static void mriBindingExecute()
 {
+	/* Normally only a ruby executable would do a sysinit,
+	 * but not doing it will lead to crashes due to closed
+	 * stdio streams on some platforms (eg. Windows) */
+	int argc = 0;
+	char **argv = 0;
+	ruby_sysinit(&argc, &argv);
+
 	ruby_setup();
 	rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
 
