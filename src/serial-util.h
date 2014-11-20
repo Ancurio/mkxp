@@ -27,67 +27,44 @@
 
 #include <SDL_endian.h>
 
-typedef unsigned uint;
-
 #if SDL_BYTEORDER != SDL_LIL_ENDIAN
 #error "Non little endian systems not supported"
 #endif
 
-static inline int16_t
-read_int16(const char *data, uint &i)
-{
-	int16_t result;
-
-	memcpy(&result, &data[i], 2);
-	i += 2;
-
-	return result;
-}
-
 static inline int32_t
-read_int32(const char *data, uint &i)
+readInt32(const char **dataP)
 {
 	int32_t result;
 
-	memcpy(&result, &data[i], 4);
-	i += 4;
+	memcpy(&result, *dataP, 4);
+	*dataP += 4;
 
 	return result;
 }
 
 static inline double
-read_double(const char *data, uint &i)
+readDouble(const char **dataP)
 {
 	double result;
 
-	memcpy(&result, &data[i], 8);
-	i += 8;
+	memcpy(&result, *dataP, 8);
+	*dataP += 8;
 
 	return result;
 }
 
 static inline void
-write_int16(char **data, int16_t value)
+writeInt32(char **dataP, int32_t value)
 {
-	memcpy(*data, &value, 2);
-
-	*data += 2;
+	memcpy(*dataP, &value, 4);
+	*dataP += 4;
 }
 
 static inline void
-write_int32(char **data, int32_t value)
+writeDouble(char **dataP, double value)
 {
-	memcpy(*data, &value, 4);
-
-	*data += 4;
-}
-
-static inline void
-write_double(char **data, double value)
-{
-	memcpy(*data, &value, 8);
-
-	*data += 8;
+	memcpy(*dataP, &value, 8);
+	*dataP += 8;
 }
 
 #endif // SERIALUTIL_H

@@ -105,12 +105,10 @@ int Color::serialSize() const
 
 void Color::serialize(char *buffer) const
 {
-	char *buf = buffer;
-
-	write_double(&buf, red);
-	write_double(&buf, green);
-	write_double(&buf, blue);
-	write_double(&buf, alpha);
+	writeDouble(&buffer, red);
+	writeDouble(&buffer, green);
+	writeDouble(&buffer, blue);
+	writeDouble(&buffer, alpha);
 }
 
 Color *Color::deserialize(const char *data, int len)
@@ -119,12 +117,11 @@ Color *Color::deserialize(const char *data, int len)
 		throw Exception(Exception::ArgumentError, "Color: Serialized data invalid");
 
 	Color *c = new Color();
-	uint i = 0;
 
-	c->red   = read_double(data, i);
-	c->green = read_double(data, i);
-	c->blue  = read_double(data, i);
-	c->alpha = read_double(data, i);
+	c->red   = readDouble(&data);
+	c->green = readDouble(&data);
+	c->blue  = readDouble(&data);
+	c->alpha = readDouble(&data);
 	c->updateInternal();
 
 	return c;
@@ -241,12 +238,10 @@ int Tone::serialSize() const
 
 void Tone::serialize(char *buffer) const
 {
-	char *buf = buffer;
-
-	write_double(&buf, red);
-	write_double(&buf, green);
-	write_double(&buf, blue);
-	write_double(&buf, gray);
+	writeDouble(&buffer, red);
+	writeDouble(&buffer, green);
+	writeDouble(&buffer, blue);
+	writeDouble(&buffer, gray);
 }
 
 Tone *Tone::deserialize(const char *data, int len)
@@ -255,12 +250,11 @@ Tone *Tone::deserialize(const char *data, int len)
 		throw Exception(Exception::ArgumentError, "Tone: Serialized data invalid");
 
 	Tone *t = new Tone();
-	uint i = 0;
 
-	t->red   = read_double(data, i);
-	t->green = read_double(data, i);
-	t->blue  = read_double(data, i);
-	t->gray  = read_double(data, i);
+	t->red   = readDouble(&data);
+	t->green = readDouble(&data);
+	t->blue  = readDouble(&data);
+	t->gray  = readDouble(&data);
 	t->updateInternal();
 
 	return t;
@@ -390,12 +384,10 @@ int Rect::serialSize() const
 
 void Rect::serialize(char *buffer) const
 {
-	char *buf = buffer;
-
-	write_int32(&buf, x);
-	write_int32(&buf, y);
-	write_int32(&buf, width);
-	write_int32(&buf, height);
+	writeInt32(&buffer, x);
+	writeInt32(&buffer, y);
+	writeInt32(&buffer, width);
+	writeInt32(&buffer, height);
 }
 
 Rect *Rect::deserialize(const char *data, int len)
@@ -404,12 +396,11 @@ Rect *Rect::deserialize(const char *data, int len)
 		throw Exception(Exception::ArgumentError, "Rect: Serialized data invalid");
 
 	Rect *r = new Rect();
-	uint i = 0;
 
-	r->x      = read_int32(data, i);
-	r->y      = read_int32(data, i);
-	r->width  = read_int32(data, i);
-	r->height = read_int32(data, i);
+	r->x      = readInt32(&data);
+	r->y      = readInt32(&data);
+	r->width  = readInt32(&data);
+	r->height = readInt32(&data);
 
 	return r;
 }

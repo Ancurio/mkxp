@@ -30,94 +30,92 @@
 
 /* Init normally */
 Table::Table(int x, int y /*= 1*/, int z /*= 1*/)
-	: m_x(x), m_y(y), m_z(z),
+    : xs(x), ys(y), zs(z),
       data(x*y*z)
 {}
 
 Table::Table(const Table &other)
-    : m_x(other.m_x), m_y(other.m_y), m_z(other.m_z),
+    : xs(other.xs), ys(other.ys), zs(other.zs),
       data(other.data)
 {}
 
 int16_t Table::get(int x, int y, int z) const
 {
-	return data[m_x*m_y*z + m_x*y + x];
+	return data[xs*ys*z + xs*y + x];
 }
 
 void Table::set(int16_t value, int x, int y, int z)
 {
-	if (x < 0 || x >= m_x
-	||  y < 0 || y >= m_y
-	||  z < 0 || z >= m_z)
+	if (x < 0 || x >= xs
+	||  y < 0 || y >= ys
+	||  z < 0 || z >= zs)
 	{
 		return;
 	}
 
-	data[m_x*m_y*z + m_x*y + x] = value;
+	data[xs*ys*z + xs*y + x] = value;
 
 	modified();
 }
 
 void Table::resize(int x, int y, int z)
 {
-	if (x == m_x && y == m_y && z == m_z)
+	if (x == xs && y == ys && z == zs)
 		return;
 
 	std::vector<int16_t> newData(x*y*z);
 
-	for (int k = 0; k < std::min(z, m_z); ++k)
-		for (int j = 0; j < std::min(y, m_y); ++j)
-			for (int i = 0; i < std::min(x, m_x); ++i)
+	for (int k = 0; k < std::min(z, zs); ++k)
+		for (int j = 0; j < std::min(y, ys); ++j)
+			for (int i = 0; i < std::min(x, xs); ++i)
 				newData[x*y*k + x*j + i] = at(i, j, k);
 
 	data.swap(newData);
 
-	m_x = x;
-	m_y = y;
-	m_z = z;
+	xs = x;
+	ys = y;
+	zs = z;
 
 	return;
 }
 
 void Table::resize(int x, int y)
 {
-	resize(x, y, m_z);
+	resize(x, y, zs);
 }
 
 void Table::resize(int x)
 {
-	resize(x, m_y, m_z);
+	resize(x, ys, zs);
 }
 
 /* Serializable */
 int Table::serialSize() const
 {
 	/* header + data */
-	return 20 + (m_x * m_y * m_z) * 2;
+	return 20 + (xs * ys * zs) * 2;
 }
 
 void Table::serialize(char *buffer) const
 {
-	char *buff_p = buffer;
-
 	/* Table dimensions: we don't care
 	 * about them but RMXP needs them */
 	int dim = 1;
-	int size = m_x * m_y * m_z;
+	int size = xs * ys * zs;
 
-	if (m_y > 1)
+	if (ys > 1)
 		dim = 2;
 
-	if (m_z > 1)
+	if (zs > 1)
 		dim = 3;
 
-	write_int32(&buff_p, dim);
-	write_int32(&buff_p, m_x);
-	write_int32(&buff_p, m_y);
-	write_int32(&buff_p, m_z);
-	write_int32(&buff_p, size);
+	writeInt32(&buffer, dim);
+	writeInt32(&buffer, xs);
+	writeInt32(&buffer, ys);
+	writeInt32(&buffer, zs);
+	writeInt32(&buffer, size);
 
-	memcpy(buff_p, dataPtr(data), sizeof(int16_t)*size);
+	memcpy(buffer, dataPtr(data), sizeof(int16_t)*size);
 }
 
 
@@ -126,13 +124,11 @@ Table *Table::deserialize(const char *data, int len)
 	if (len < 20)
 		throw Exception(Exception::RGSSError, "Marshal: Table: bad file format");
 
-	uint idx = 0;
-
-	read_int32(data, idx);
-	int x = read_int32(data, idx);
-	int y = read_int32(data, idx);
-	int z = read_int32(data, idx);
-	int size = read_int32(data, idx);
+	readInt32(&data);
+	int x = readInt32(&data);
+	int y = readInt32(&data);
+	int z = readInt32(&data);
+	int size = readInt32(&data);
 
 	if (size != x*y*z)
 		throw Exception(Exception::RGSSError, "Marshal: Table: bad file format");
@@ -141,7 +137,7 @@ Table *Table::deserialize(const char *data, int len)
 		throw Exception(Exception::RGSSError, "Marshal: Table: bad file format");
 
 	Table *t = new Table(x, y, z);
-	memcpy(dataPtr(t->data), &data[idx], sizeof(int16_t)*size);
+	memcpy(dataPtr(t->data), data, sizeof(int16_t)*size);
 
 	return t;
 }

@@ -36,9 +36,9 @@ public:
 	Table(const Table &other);
 	virtual ~Table() {}
 
-	int xSize() const { return m_x; }
-	int ySize() const { return m_y; }
-	int zSize() const { return m_z; }
+	int xSize() const { return xs; }
+	int ySize() const { return ys; }
+	int zSize() const { return zs; }
 
 	int16_t get(int x, int y = 0, int z = 0) const;
 	void set(int16_t value, int x, int y = 0, int z = 0);
@@ -54,18 +54,18 @@ public:
 	/* <internal */
 	inline int16_t &at(int x, int y = 0, int z = 0)
 	{
-		return data[m_x*m_y*z + m_x*y + x];
+		return data[xs*ys*z + xs*y + x];
 	}
 
 	inline const int16_t &at(int x, int y = 0, int z = 0) const
 	{
-		return data[m_x*m_y*z + m_x*y + x];
+		return data[xs*ys*z + xs*y + x];
 	}
 
 	sigc::signal<void> modified;
 
 private:
-	int m_x, m_y, m_z;
+	int xs, ys, zs;
 	std::vector<int16_t> data;
 };
 
