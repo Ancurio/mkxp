@@ -29,12 +29,12 @@
 
 GLFunctions gl;
 
-typedef const GLubyte* (APIENTRYP PFNGLGETSTRINGIPROC) (GLenum, GLuint);
+typedef const GLubyte* (APIENTRYP _PFNGLGETSTRINGIPROC) (GLenum, GLuint);
 
-static void parseExtensionsCore(PFNGLGETINTEGERVPROC GetIntegerv, BoostSet<std::string> &out)
+static void parseExtensionsCore(_PFNGLGETINTEGERVPROC GetIntegerv, BoostSet<std::string> &out)
 {
-	PFNGLGETSTRINGIPROC GetStringi =
-		(PFNGLGETSTRINGIPROC) SDL_GL_GetProcAddress("glGetStringi");
+	_PFNGLGETSTRINGIPROC GetStringi =
+		(_PFNGLGETSTRINGIPROC) SDL_GL_GetProcAddress("glGetStringi");
 
 	GLint extCount = 0;
 	GetIntegerv(GL_NUM_EXTENSIONS, &extCount);
@@ -43,7 +43,7 @@ static void parseExtensionsCore(PFNGLGETINTEGERVPROC GetIntegerv, BoostSet<std::
 		out.insert((const char*) GetStringi(GL_EXTENSIONS, i));
 }
 
-static void parseExtensionsCompat(PFNGLGETSTRINGPROC GetString, BoostSet<std::string> &out)
+static void parseExtensionsCompat(_PFNGLGETSTRINGPROC GetString, BoostSet<std::string> &out)
 {
 	const char *ext = (const char*) GetString(GL_EXTENSIONS);
 
