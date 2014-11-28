@@ -204,7 +204,8 @@ struct Label : Widget
 	Label(SMP *p, const IntRect &rect,
 	      const char *str, uint8_t r, uint8_t g, uint8_t b)
 	    : Widget(p, rect),
-	      str(str)
+	      str(str),
+	      visible(true)
 	{
 		c.r = r;
 		c.g = g;
