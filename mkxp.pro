@@ -202,7 +202,8 @@ EMBED = \
 	shader/blurV.vert \
 	shader/simpleMatrix.vert \
 	shader/tilemapvx.vert \
-	assets/liberation.ttf
+	assets/liberation.ttf \
+	assets/icon.png
 
 SHARED_FLUID {
 	DEFINES += SHARED_FLUID

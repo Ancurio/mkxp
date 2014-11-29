@@ -230,6 +230,7 @@ set(EMBEDDED_INPUT
 	shader/blurV.vert
 	shader/simpleMatrix.vert
 	assets/liberation.ttf
+	assets/icon.png
 )
 
 if (RGSS2)

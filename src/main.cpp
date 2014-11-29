@@ -26,6 +26,9 @@
 #include <SDL_ttf.h>
 #include <SDL_sound.h>
 
+#include <unistd.h>
+#include <string.h>
+#include <assert.h>
 #include <string>
 
 #include "sharedstate.h"
@@ -37,9 +40,7 @@
 
 #include "binding.h"
 
-#include <unistd.h>
-#include <string.h>
-#include <assert.h>
+#include "icon.png.xxd"
 
 static void
 rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
@@ -236,6 +237,16 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+	/* Setup application icon */
+	SDL_RWops *iconSrc;
+
+	if (conf.iconPath.empty())
+		iconSrc = SDL_RWFromConstMem(assets_icon_png, assets_icon_png_len);
+	else
+		iconSrc = SDL_RWFromFile(conf.iconPath.c_str(), "rb");
+
+	SDL_Surface *iconImg = IMG_Load_RW(iconSrc, SDL_TRUE);
+
 	SDL_SetHint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0");
 
 	SDL_Window *win;
@@ -256,14 +267,10 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	if (!conf.iconPath.empty())
+	if (iconImg)
 	{
-		SDL_Surface *iconImg = IMG_Load(conf.iconPath.c_str());
-		if (iconImg)
-		{
-			SDL_SetWindowIcon(win, iconImg);
-			SDL_FreeSurface(iconImg);
-		}
+		SDL_SetWindowIcon(win, iconImg);
+		SDL_FreeSurface(iconImg);
 	}
 
 	EventThread eventThread;
