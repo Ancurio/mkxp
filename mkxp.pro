@@ -105,7 +105,7 @@ HEADERS += \
 	src/tilemap.h \
 	src/flashmap.h \
 	src/graphics.h \
-	src/debuglogger.h \
+	src/gl-debug.h \
 	src/global-ibo.h \
 	src/exception.h \
 	src/filesystem.h \
@@ -158,7 +158,7 @@ SOURCES += \
 	src/tilemap.cpp \
 	src/autotiles.cpp \
 	src/graphics.cpp \
-	src/debuglogger.cpp \
+	src/gl-debug.cpp \
 	src/etc.cpp \
 	src/config.cpp \
 	src/settingsmenu.cpp \

@@ -33,7 +33,7 @@
 
 #include "sharedstate.h"
 #include "eventthread.h"
-#include "debuglogger.h"
+#include "gl-debug.h"
 #include "debugwriter.h"
 #include "exception.h"
 #include "gl-fun.h"
@@ -105,7 +105,7 @@ int rgssThreadFun(void *userdata)
 
 	SDL_GL_SetSwapInterval(threadData->config.vsync ? 1 : 0);
 
-	DebugLogger dLogger;
+	GLDebugLogger dLogger;
 
 	/* Setup AL context */
 	ALCdevice *alcDev = alcOpenDevice(0);

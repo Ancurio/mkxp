@@ -1,5 +1,5 @@
 /*
-** debuglogger.cpp
+** gl-debug.cpp
 **
 ** This file is part of mkxp.
 **
@@ -19,25 +19,25 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "debuglogger.h"
+#include "gl-debug.h"
 #include "debugwriter.h"
 
 #include <iostream>
 
 #include "gl-fun.h"
 
-struct DebugLoggerPrivate
+struct GLDebugLoggerPrivate
 {
 	std::ostream *stream;
 
-	DebugLoggerPrivate(const char *logFilename)
+	GLDebugLoggerPrivate(const char *logFilename)
 	{
 		(void) logFilename;
 
 		stream = &std::clog;
 	}
 
-	~DebugLoggerPrivate()
+	~GLDebugLoggerPrivate()
 	{
 	}
 
@@ -62,8 +62,8 @@ static void APIENTRY arbDebugFunc(GLenum source,
                                   const GLchar* message,
                                   const void* userParam)
 {
-	DebugLoggerPrivate *p =
-		static_cast<DebugLoggerPrivate*>(const_cast<void*>(userParam));
+	GLDebugLoggerPrivate *p =
+		static_cast<GLDebugLoggerPrivate*>(const_cast<void*>(userParam));
 
 	(void) source;
 	(void) type;
@@ -75,9 +75,9 @@ static void APIENTRY arbDebugFunc(GLenum source,
 	p->writeLine(message);
 }
 
-DebugLogger::DebugLogger(const char *filename)
+GLDebugLogger::GLDebugLogger(const char *filename)
 {
-	p = new DebugLoggerPrivate(filename);
+	p = new GLDebugLoggerPrivate(filename);
 
 	if (gl.DebugMessageCallback)
 		gl.DebugMessageCallback(arbDebugFunc, p);
@@ -85,7 +85,7 @@ DebugLogger::DebugLogger(const char *filename)
 		Debug() << "DebugLogger: no debug extensions found";
 }
 
-DebugLogger::~DebugLogger()
+GLDebugLogger::~GLDebugLogger()
 {
 	delete p;
 }
