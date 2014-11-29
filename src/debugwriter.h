@@ -56,7 +56,7 @@ public:
 
 	~Debug()
 	{
-		std::clog << buf.str() << std::endl;
+		std::cerr << buf.str() << std::endl;
 	}
 
 private:
