@@ -22,6 +22,11 @@
 #ifndef DEBUGLOGGER_H
 #define DEBUGLOGGER_H
 
+#include "gl-fun.h"
+
+#include <stdio.h>
+#include <algorithm>
+
 struct DebugLoggerPrivate;
 
 class DebugLogger
@@ -33,5 +38,14 @@ public:
 private:
 	DebugLoggerPrivate *p;
 };
+
+#define GL_MARKER(format, ...) \
+	if (gl.StringMarker) \
+	{ \
+		char buf[128]; \
+		int len = snprintf(buf, sizeof(buf), format, ##__VA_ARGS__); \
+		gl.StringMarker(std::min<size_t>(len, sizeof(buf)), buf); \
+	}
+
 
 #endif // DEBUGLOGGER_H

@@ -55,9 +55,10 @@ typedef void (APIENTRYP _PFNGLTEXSUBIMAGE2DPROC) (GLenum target, GLint level, GL
 typedef void (APIENTRYP _PFNGLTEXPARAMETERIPROC) (GLenum target, GLenum pname, GLint param);
 typedef void (APIENTRYP _PFNGLACTIVETEXTUREPROC) (GLenum texture);
 
-/* Debug callback */
+/* Debugging */
 typedef void (APIENTRY * _GLDEBUGPROC) (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *userParam);
 typedef void (APIENTRYP _PFNGLDEBUGMESSAGECALLBACKPROC) (_GLDEBUGPROC callback, const void *userParam);
+typedef void (APIENTRYP _PFNGLSTRINGMARKERPROC) (GLsizei len, const GLvoid *string);
 
 /* Buffer object */
 typedef void (APIENTRYP _PFNGLGENBUFFERSPROC) (GLsizei n, GLuint* buffers);
@@ -193,6 +194,9 @@ typedef void (APIENTRYP _PFNGLBINDVERTEXARRAYPROC) (GLuint array);
 #define GL_DEBUG_KHR_FUN \
 	GL_FUN(DebugMessageCallback, _PFNGLDEBUGMESSAGECALLBACKPROC)
 
+#define GL_GREMEMDY_FUN \
+	GL_FUN(StringMarker, _PFNGLSTRINGMARKERPROC)
+
 
 struct GLFunctions
 {
@@ -203,6 +207,7 @@ struct GLFunctions
 	GL_FBO_BLIT_FUN
 	GL_VAO_FUN
 	GL_DEBUG_KHR_FUN
+	GL_GREMEMDY_FUN
 
 	bool glsles;
 	bool unpack_subimage;

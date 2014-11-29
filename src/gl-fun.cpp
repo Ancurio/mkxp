@@ -172,6 +172,13 @@ void initGLFunctions()
 		GL_DEBUG_KHR_FUN;
 	}
 
+	if (HAVE_EXT(GREMEDY_string_marker))
+	{
+#undef EXT_SUFFIX
+#define EXT_SUFFIX "GREMEDY"
+		GL_GREMEMDY_FUN;
+	}
+
 	/* Misc caps */
 	if (!gles || glMajor >= 3 || HAVE_EXT(EXT_unpack_subimage))
 		gl.unpack_subimage = true;
