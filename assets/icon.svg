@@ -7,49 +7,25 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
-   id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="icon.svg"
-   inkscape:export-filename="/home/Ancurio/programming/C++/mkxp/assets/icon.png"
-   inkscape:export-xdpi="13.53801"
-   inkscape:export-ydpi="13.53801">
+   width="744.09448"
+   height="1052.3622"
+   id="svg2">
   <defs
      id="defs4">
     <linearGradient
        id="linearGradient3821">
       <stop
-         style="stop-color:#00ff88;stop-opacity:1;"
-         offset="0"
-         id="stop3823" />
+         id="stop3823"
+         style="stop-color:#00ff88;stop-opacity:1"
+         offset="0" />
       <stop
-         style="stop-color:#00ff86;stop-opacity:1;"
-         offset="1"
-         id="stop3825" />
+         id="stop3825"
+         style="stop-color:#00ff86;stop-opacity:1"
+         offset="1" />
     </linearGradient>
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="313.90532"
-     inkscape:cy="517.4865"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="978"
-     inkscape:window-height="599"
-     inkscape:window-x="264"
-     inkscape:window-y="516"
-     inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -58,19 +34,16 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:#00ff87;fill-opacity:1;stroke:#000000;stroke-width:24;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       d="M 373.75 285.9375 C 262.88803 285.9375 173.03125 375.82553 173.03125 486.6875 C 173.03125 597.54947 262.88803 687.40625 373.75 687.40625 C 484.61197 687.40625 574.5 597.54947 574.5 486.6875 C 574.5 375.82553 484.61197 285.9375 373.75 285.9375 z M 373.75 400 C 421.61925 400 460.4375 438.81825 460.4375 486.6875 C 460.4375 534.55675 421.61925 573.34375 373.75 573.34375 C 325.88075 573.34375 287.09375 534.55675 287.09375 486.6875 C 287.09375 438.81825 325.88075 400 373.75 400 z "
+       d="m 373.75,285.9375 c -110.86197,0 -200.71875,89.88803 -200.71875,200.75 0,110.86197 89.85678,200.71875 200.71875,200.71875 110.86197,0 200.75,-89.85678 200.75,-200.71875 0,-110.86197 -89.88803,-200.75 -200.75,-200.75 z m 0,114.0625 c 47.86925,0 86.6875,38.81825 86.6875,86.6875 0,47.86925 -38.81825,86.65625 -86.6875,86.65625 -47.86925,0 -86.65625,-38.787 -86.65625,-86.65625 0,-47.86925 38.787,-86.6875 86.65625,-86.6875 z"
+       inkscape:connector-curvature="0"
        id="path2985"
-       inkscape:export-xdpi="13.79744"
-       inkscape:export-ydpi="13.79744" />
+       style="fill:#00ff87;fill-opacity:1;stroke:#000000;stroke-width:24;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
   </g>
 </svg>
