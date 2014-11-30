@@ -4,8 +4,10 @@ mkxp is a project that seeks to provide a fully open source implementation of th
 
 It is licensed under the GNU General Public License v2+.
 
-[**Prebuilt binaries for Linux (32/64)**](http://ancurio.bplaced.net/mkxp/generic/)  
-[**Prebuilt binaries for OSX by Ali**](https://app.box.com/mkxpmacbuilds)
+## Prebuilt binaries
+[**Linux (32bit/64bit)**](http://ancurio.bplaced.net/mkxp/generic/)  
+[**OSX**](https://app.box.com/mkxpmacbuilds) by Ali  
+[**Windows (mingw-w64 32bit)**](http://ancurio.bplaced.net/mkxp/mingw32/)
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. Currently there are three bindings:
