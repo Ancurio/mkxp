@@ -1,1 +1,1 @@
-#include "../liberation.ttf.xxd"
+#include "liberation.ttf.xxd"
