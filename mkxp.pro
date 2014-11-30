@@ -103,7 +103,7 @@ HEADERS += \
 	src/glstate.h \
 	src/quad.h \
 	src/tilemap.h \
-	src/flashmap.h \
+	src/tilemap-common.h \
 	src/graphics.h \
 	src/gl-debug.h \
 	src/global-ibo.h \

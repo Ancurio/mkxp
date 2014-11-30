@@ -1,5 +1,5 @@
 /*
-** flashmap.h
+** tilemap-common.h
 **
 ** This file is part of mkxp.
 **
@@ -19,8 +19,8 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FLASHMAP_H
-#define FLASHMAP_H
+#ifndef TILEMAPCOMMON_H
+#define TILEMAPCOMMON_H
 
 #include "table.h"
 #include "gl-util.h"
@@ -30,8 +30,11 @@
 #include "glstate.h"
 #include "shader.h"
 #include "vertex.h"
+#include "quad.h"
+#include "etc-internal.h"
 
 #include <stdint.h>
+#include <assert.h>
 #include <vector>
 
 #include <sigc++/connection.h>
@@ -44,11 +47,50 @@ wrap(int value, int range)
 }
 
 static inline int16_t
-tableGetWrapped(const Table *t, int x, int y, int z = 0)
+tableGetWrapped(const Table &t, int x, int y, int z = 0)
 {
-	return t->get(wrap(x, t->xSize()),
-	              wrap(y, t->ySize()),
-	              z);
+	return t.get(wrap(x, t.xSize()),
+	             wrap(y, t.ySize()),
+	             z);
+}
+
+enum AtSubPos
+{
+	TopLeft          = 0,
+	TopRight         = 1,
+	BottomLeft       = 2,
+	BottomRight      = 3,
+	BottomLeftTable  = 4,
+	BottomRightTable = 5
+};
+
+static inline void
+atSelectSubPos(FloatRect &pos, int i)
+{
+	switch (i)
+	{
+	case TopLeft:
+		return;
+	case TopRight:
+		pos.x += 16;
+		return;
+	case BottomLeft:
+		pos.y += 16;
+		return;
+	case BottomRight:
+		pos.x += 16;
+		pos.y += 16;
+		return;
+	case BottomLeftTable:
+		pos.y += 24;
+		return;
+	case BottomRightTable:
+		pos.x += 16;
+		pos.y += 24;
+		return;
+	default:
+		assert(!"Unreachable");
+	}
 }
 
 struct FlashMap
@@ -144,7 +186,7 @@ private:
 
 	bool sampleFlashColor(Vec4 &out, int x, int y) const
 	{
-		int16_t packed = tableGetWrapped(data, x, y);
+		int16_t packed = tableGetWrapped(*data, x, y);
 
 		if (packed == 0)
 			return false;
@@ -216,4 +258,4 @@ private:
 	std::vector<CVertex> vertices;
 };
 
-#endif // FLASHMAP_H
+#endif // TILEMAPCOMMON_H

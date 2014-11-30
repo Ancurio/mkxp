@@ -33,7 +33,7 @@
 #include "quad.h"
 #include "quadarray.h"
 #include "shader.h"
-#include "flashmap.h"
+#include "tilemap-common.h"
 
 #include <vector>
 #include <sigc++/connection.h>

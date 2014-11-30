@@ -21,6 +21,7 @@
 
 #include "tileatlasvx.h"
 
+#include "tilemap-common.h"
 #include "bitmap.h"
 #include "table.h"
 #include "etc-internal.h"
@@ -64,21 +65,6 @@ static elementsN(autotileVXRectsC);
 
 namespace TileAtlasVX
 {
-
-static int
-wrap(int value, int range)
-{
-	int res = value % range;
-	return res < 0 ? res + range : res;
-}
-
-static int16_t
-tableGetWrapped(const Table &t, int x, int y, int z = 0)
-{
-	return t.at(wrap(x, t.xSize()),
-	            wrap(y, t.ySize()),
-	            z);
-}
 
 static int16_t
 tableGetSafe(const Table *t, int x)
@@ -332,35 +318,6 @@ void build(TEXFBO &tf, Bitmap *bitmaps[BM_COUNT])
 
 #define OVER_PLAYER_FLAG (1 << 4)
 #define TABLE_FLAG       (1 << 7)
-
-static void
-atSelectSubPos(FloatRect &pos, int i)
-{
-	switch (i)
-	{
-	case 0:
-		return;
-	case 1:
-		pos.x += 16;
-		return;
-	case 2:
-		pos.y += 16;
-		return;
-	case 3:
-		pos.x += 16;
-		pos.y += 16;
-		return;
-	case 4:
-		pos.y += 24;
-		return;
-	case 5:
-		pos.x += 16;
-		pos.y += 24;
-		return;
-	default:
-		assert(!"Unreachable");
-	}
-}
 
 /* Reference: http://www.tktkgame.com/tkool/memo/vx/tile_id.html */
 

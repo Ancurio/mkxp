@@ -36,7 +36,7 @@
 #include "quad.h"
 #include "vertex.h"
 #include "tileatlas.h"
-#include "flashmap.h"
+#include "tilemap-common.h"
 
 #include <sigc++/connection.h>
 
@@ -590,21 +590,6 @@ struct TilemapPrivate
 		return value;
 	}
 
-	FloatRect getAutotilePieceRect(int x, int y, /* in pixel coords */
-	                               int corner)
-	{
-		switch (corner)
-		{
-		case 0 : break;
-		case 1 : x += 16; break;
-		case 2 : x += 16; y += 16; break;
-		case 3 : y += 16; break;
-		default: abort();
-		}
-
-		return FloatRect(x, y, 16, 16);
-	}
-
 	void handleAutotile(int x, int y, int tileInd, SVVector *array)
 	{
 		/* Which autotile [0-7] */
@@ -617,7 +602,9 @@ struct TilemapPrivate
 		/* Iterate over the 4 tile pieces */
 		for (int i = 0; i < 4; ++i)
 		{
-			FloatRect posRect = getAutotilePieceRect(x*32, y*32, i);
+			FloatRect posRect(x*32, y*32, 16, 16);
+			atSelectSubPos(posRect, i);
+
 			FloatRect texRect = pieceRect[i];
 
 			/* Adjust to atlas coordinates */
@@ -635,7 +622,7 @@ struct TilemapPrivate
 	void handleTile(int x, int y, int z)
 	{
 		int tileInd =
-			tableGetWrapped(mapData, x + viewpPos.x, y + viewpPos.y, z);
+			tableGetWrapped(*mapData, x + viewpPos.x, y + viewpPos.y, z);
 
 		/* Check for empty space */
 		if (tileInd < 48)
