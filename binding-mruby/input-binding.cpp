@@ -40,20 +40,26 @@ MRB_FUNCTION(inputUpdate)
 static mrb_int getButtonArg(mrb_state *mrb)
 {
 	mrb_int num;
+	mrb_value arg;
 
-	if (rgssVer >= 3)
+	mrb_get_args(mrb, "o", &arg);
+
+	if (mrb_fixnum_p(arg))
 	{
-		mrb_sym sym;
-		mrb_get_args(mrb, "n", &sym);
-
+		num = mrb_fixnum(arg);
+	}
+	else if (mrb_symbol_p(arg) && rgssVer >= 3)
+	{
 		mrb_value symHash = getMrbData(mrb)->buttoncodeHash;
-		mrb_value numVal = mrb_hash_fetch(mrb, symHash, mrb_symbol_value(sym),
+		mrb_value numVal = mrb_hash_fetch(mrb, symHash, arg,
 										  mrb_fixnum_value(Input::None));
 		num = mrb_fixnum(numVal);
 	}
 	else
 	{
-		mrb_get_args(mrb, "i", &num);
+		// FIXME: RMXP allows only few more types that
+		// don't make sense (symbols in pre 3, floats)
+		num = 0;
 	}
 
 	return num;

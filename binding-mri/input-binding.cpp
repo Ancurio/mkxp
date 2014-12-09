@@ -38,17 +38,22 @@ static int getButtonArg(int argc, VALUE *argv)
 {
 	int num;
 
-	if (rgssVer >= 3)
-	{
-		ID sym;
-		rb_get_args(argc, argv, "n", &sym RB_ARG_END);
+	rb_check_argc(argc, 1);
 
+	if (FIXNUM_P(argv[0]))
+	{
+		num = FIX2INT(argv[0]);
+	}
+	else if (SYMBOL_P(argv[0]) && rgssVer >= 3)
+	{
 		VALUE symHash = getRbData()->buttoncodeHash;
-		num = FIX2INT(rb_hash_lookup2(symHash, ID2SYM(sym), INT2FIX(Input::None)));
+		num = FIX2INT(rb_hash_lookup2(symHash, argv[0], INT2FIX(Input::None)));
 	}
 	else
 	{
-		rb_get_args(argc, argv, "i", &num RB_ARG_END);
+		// FIXME: RMXP allows only few more types that
+		// don't make sense (symbols in pre 3, floats)
+		num = 0;
 	}
 
 	return num;
