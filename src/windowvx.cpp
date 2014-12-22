@@ -921,6 +921,9 @@ void WindowVX::setContents(Bitmap *value)
 
 	p->contents = value;
 
+	if (nullOrDisposed(value))
+		return;
+
 	FloatRect rect = p->contents->rect();
 	p->contentsQuad.setTexPosRect(rect, rect);
 	p->ctrlVertDirty = true;

@@ -727,7 +727,7 @@ void Window::setWindowskin(Bitmap *value)
 
 	p->windowskin = value;
 
-	if (!value)
+	if (nullOrDisposed(value))
 		return;
 
 	value->ensureNonMega();
@@ -743,7 +743,7 @@ void Window::setContents(Bitmap *value)
 	p->contents = value;
 	p->controlsVertDirty = true;
 
-	if (!value)
+	if (nullOrDisposed(value))
 		return;
 
 	value->ensureNonMega();

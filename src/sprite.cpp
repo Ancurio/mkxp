@@ -332,7 +332,7 @@ void Sprite::setBitmap(Bitmap *bitmap)
 
 	p->bitmap = bitmap;
 
-	if (!bitmap)
+	if (nullOrDisposed(bitmap))
 		return;
 
 	bitmap->ensureNonMega();
