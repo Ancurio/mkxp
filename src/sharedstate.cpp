@@ -88,6 +88,7 @@ struct SharedStatePrivate
 
 	TEX::ID globalTex;
 	int globalTexW, globalTexH;
+	bool globalTexDirty;
 
 	TEXFBO gpTexFBO;
 
@@ -144,6 +145,7 @@ struct SharedStatePrivate
 		TEX::setRepeat(false);
 		TEX::setSmooth(false);
 		TEX::allocEmpty(globalTexW, globalTexH);
+		globalTexDirty = false;
 
 		TEXFBO::init(gpTexFBO);
 		/* Reuse starting values */
@@ -251,16 +253,27 @@ GlobalIBO &SharedState::globalIBO()
 void SharedState::bindTex()
 {
 	TEX::bind(p->globalTex);
-	TEX::allocEmpty(p->globalTexW, p->globalTexH);
+
+	if (p->globalTexDirty)
+	{
+		TEX::allocEmpty(p->globalTexW, p->globalTexH);
+		p->globalTexDirty = false;
+	}
 }
 
 void SharedState::ensureTexSize(int minW, int minH, Vec2i &currentSizeOut)
 {
 	if (minW > p->globalTexW)
+	{
+		p->globalTexDirty = true;
 		p->globalTexW = findNextPow2(minW);
+	}
 
 	if (minH > p->globalTexH)
+	{
+		p->globalTexDirty = true;
 		p->globalTexH = findNextPow2(minH);
+	}
 
 	currentSizeOut = Vec2i(p->globalTexW, p->globalTexH);
 }
