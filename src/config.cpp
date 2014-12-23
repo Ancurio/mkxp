@@ -123,6 +123,10 @@ static bool validUtf8(const char *string)
 static std::string prefPath(const char *org, const char *app)
 {
 	char *path = SDL_GetPrefPath(org, app);
+
+	if (!path)
+		return std::string();
+
 	std::string str(path);
 	SDL_free(path);
 
