@@ -192,8 +192,11 @@ RB_METHOD(mriP)
 RB_METHOD(mkxpDataDirectory)
 {
 	RB_UNUSED_PARAM;
+	
+	const std::string &path = shState->config().customDataPath;
+	const char *s = path.empty() ? "." : path.c_str();
 
-	return rb_str_new_cstr(shState->config().customDataPath.c_str());
+	return rb_str_new_cstr(s);
 }
 
 RB_METHOD(mkxpPuts)
