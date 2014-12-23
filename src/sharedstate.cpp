@@ -111,6 +111,10 @@ struct SharedStatePrivate
 	      fontState(threadData->config),
 	      stampCounter(0)
 	{
+		/* Shaders have been compiled in ShaderSet's constructor */
+		if (gl.ReleaseShaderCompiler)
+			gl.ReleaseShaderCompiler();
+
 		// FIXME find out correct archive filename
 		std::string archPath = defGameArchive();
 

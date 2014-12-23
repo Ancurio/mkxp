@@ -101,6 +101,11 @@ void initGLFunctions()
 	if (glMajor < 2)
 		throw EXC("At least OpenGL (ES) 2.0 is required");
 
+	if (gles)
+	{
+		GL_ES_FUN;
+	}
+
 	BoostSet<std::string> ext;
 
 	if (glMajor >= 3)

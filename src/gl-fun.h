@@ -110,6 +110,9 @@ typedef void (APIENTRYP _PFNGLGENVERTEXARRAYSPROC) (GLsizei n, GLuint* arrays);
 typedef void (APIENTRYP _PFNGLDELETEVERTEXARRAYSPROC) (GLsizei n, const GLuint* arrays);
 typedef void (APIENTRYP _PFNGLBINDVERTEXARRAYPROC) (GLuint array);
 
+/* GLES only */
+typedef void (APIENTRYP _PFNGLRELEASESHADERCOMPILERPROC) (void);
+
 #ifdef GLES2_HEADER
 #define GL_NUM_EXTENSIONS 0x821D
 #define GL_READ_FRAMEBUFFER 0x8CA8
@@ -178,6 +181,9 @@ typedef void (APIENTRYP _PFNGLBINDVERTEXARRAYPROC) (GLuint array);
 	GL_FUN(DisableVertexAttribArray, _PFNGLDISABLEVERTEXATTRIBARRAYPROC) \
 	GL_FUN(VertexAttribPointer, _PFNGLVERTEXATTRIBPOINTERPROC)
 
+#define GL_ES_FUN \
+	GL_FUN(ReleaseShaderCompiler, _PFNGLRELEASESHADERCOMPILERPROC)
+
 #define GL_FBO_FUN \
 	/* Framebuffer object */ \
 	GL_FUN(GenFramebuffers, _PFNGLGENFRAMEBUFFERSPROC) \
@@ -206,6 +212,7 @@ struct GLFunctions
 #define GL_FUN(name, type) type name;
 
 	GL_20_FUN
+	GL_ES_FUN
 	GL_FBO_FUN
 	GL_FBO_BLIT_FUN
 	GL_VAO_FUN
