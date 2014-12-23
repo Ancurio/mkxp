@@ -172,20 +172,24 @@ static void printRgssVersion(int ver)
 	Debug() << buf;
 }
 
+static void showInitError(const std::string &msg)
+{
+	Debug() << msg;
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "mkxp", msg.c_str(), 0);
+}
+
 int main(int argc, char *argv[])
 {
 	/* initialize SDL first */
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
-		Debug() << "Error initializing SDL:" << SDL_GetError();
-
+		showInitError(std::string("Error initializing SDL: ") + SDL_GetError());
 		return 0;
 	}
 
 	if (!EventThread::allocUserEvents())
 	{
-		Debug() << "Error allocating SDL user events";
-
+		showInitError("Error allocating SDL user events");
 		return 0;
 	}
 
@@ -212,7 +216,7 @@ int main(int argc, char *argv[])
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 	if (IMG_Init(imgFlags) != imgFlags)
 	{
-		Debug() << "Error initializing SDL_image:" << SDL_GetError();
+		showInitError(std::string("Error initializing SDL_image: ") + SDL_GetError());
 		SDL_Quit();
 
 		return 0;
@@ -220,7 +224,7 @@ int main(int argc, char *argv[])
 
 	if (TTF_Init() < 0)
 	{
-		Debug() << "Error initializing SDL_ttf:" << SDL_GetError();
+		showInitError(std::string("Error initializing SDL_ttf: ") + SDL_GetError());
 		IMG_Quit();
 		SDL_Quit();
 
@@ -229,7 +233,7 @@ int main(int argc, char *argv[])
 
 	if (Sound_Init() == 0)
 	{
-		Debug() << "Error initializing SDL_sound:" << Sound_GetError();
+		showInitError(std::string("Error initializing SDL_sound: ") + Sound_GetError());
 		TTF_Quit();
 		IMG_Quit();
 		SDL_Quit();
@@ -263,7 +267,7 @@ int main(int argc, char *argv[])
 
 	if (!win)
 	{
-		Debug() << "Error creating window:" << SDL_GetError();
+		showInitError(std::string("Error creating window: ") + SDL_GetError());
 		return 0;
 	}
 
