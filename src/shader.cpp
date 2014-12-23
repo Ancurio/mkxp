@@ -38,6 +38,7 @@
 #include "simple.frag.xxd"
 #include "simpleColor.frag.xxd"
 #include "simpleAlpha.frag.xxd"
+#include "simpleAlphaUni.frag.xxd"
 #include "flashMap.frag.xxd"
 #include "simple.vert.xxd"
 #include "simpleColor.vert.xxd"
@@ -311,6 +312,27 @@ SimpleSpriteShader::SimpleSpriteShader()
 void SimpleSpriteShader::setSpriteMat(const float value[16])
 {
 	gl.UniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
+}
+
+
+AlphaSpriteShader::AlphaSpriteShader()
+{
+	INIT_SHADER(sprite, simpleAlphaUni, AlphaSpriteShader);
+
+	ShaderBase::init();
+
+	GET_U(spriteMat);
+	GET_U(alpha);
+}
+
+void AlphaSpriteShader::setSpriteMat(const float value[16])
+{
+	gl.UniformMatrix4fv(u_spriteMat, 1, GL_FALSE, value);
+}
+
+void AlphaSpriteShader::setAlpha(float value)
+{
+	gl.Uniform1f(u_alpha, value);
 }
 
 

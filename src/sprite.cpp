@@ -515,7 +515,6 @@ void Sprite::draw()
 
 	bool renderEffect = p->color->hasEffect() ||
 	                    p->tone->hasEffect()  ||
-	                    p->opacity != 255     ||
 	                    flashing              ||
 	                    p->bushDepth != 0;
 
@@ -539,6 +538,16 @@ void Sprite::draw()
 
 		shader.setColor(*blend);
 
+		base = &shader;
+	}
+	else if (p->opacity != 255)
+	{
+		AlphaSpriteShader &shader = shState->shaders().alphaSprite;
+		shader.bind();
+
+		shader.setSpriteMat(p->trans.getMatrix());
+		shader.setAlpha(p->opacity.norm);
+		shader.applyViewportProj();
 		base = &shader;
 	}
 	else

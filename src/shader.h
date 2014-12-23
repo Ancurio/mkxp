@@ -121,6 +121,18 @@ private:
 	GLint u_spriteMat;
 };
 
+class AlphaSpriteShader : public ShaderBase
+{
+public:
+	AlphaSpriteShader();
+
+	void setSpriteMat(const float value[16]);
+	void setAlpha(float value);
+
+private:
+	GLint u_spriteMat, u_alpha;
+};
+
 class TransShader : public ShaderBase
 {
 public:
@@ -277,6 +289,7 @@ struct ShaderSet
 	SimpleColorShader simpleColor;
 	SimpleAlphaShader simpleAlpha;
 	SimpleSpriteShader simpleSprite;
+	AlphaSpriteShader alphaSprite;
 	SpriteShader sprite;
 	PlaneShader plane;
 	TilemapShader tilemap;

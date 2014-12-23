@@ -220,6 +220,7 @@ set(EMBEDDED_INPUT
 	shader/simple.frag
 	shader/simpleColor.frag
 	shader/simpleAlpha.frag
+	shader/simpleAlphaUni.frag
 	shader/flashMap.frag
 	shader/simple.vert
 	shader/simpleColor.vert
