@@ -18,8 +18,9 @@ const float atAniOffset = 32.0*3.0;
 void main()
 {
 	vec2 tex = texCoord;
-	if (tex.x <= atAreaW && tex.y <= atAreaH)
-		tex.x += aniIndex * atAniOffset;
+
+	lowp float pred = float(tex.x <= atAreaW && tex.y <= atAreaH);
+	tex.x += aniIndex * atAniOffset * pred;
 
 	gl_Position = projMat * vec4(position + translation, 0, 1);
 

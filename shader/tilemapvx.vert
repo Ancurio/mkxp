@@ -18,14 +18,15 @@ const float atAreaCW = 4.0*32.0;
 void main()
 {
 	vec2 tex = texCoord;
+	lowp float pred;
 
 	/* Type A autotiles shift horizontally */
-	if (tex.x <= atAreaA.x && tex.y <= atAreaA.y)
-		tex.x += aniOffset.x;
+	pred = float(tex.x <= atAreaA.x && tex.y <= atAreaA.y);
+	tex.x += aniOffset.x * pred;
 
 	/* Type C autotiles shift vertically */
-	if (tex.x >= atAreaCX && tex.x <= (atAreaCX+atAreaCW) && tex.y <= atAreaA.y)
-		tex.y += aniOffset.y;
+	pred = float(tex.x >= atAreaCX && tex.x <= (atAreaCX+atAreaCW) && tex.y <= atAreaA.y);
+	tex.y += aniOffset.y * pred;
 
 	gl_Position = projMat * vec4(position + translation, 0, 1);
 
