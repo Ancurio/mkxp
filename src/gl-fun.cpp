@@ -82,8 +82,8 @@ void initGLFunctions()
 	/* Determine GL version */
 	const char *ver = (const char*) gl.GetString(GL_VERSION);
 
-	const char *glesPrefix = "OpenGL ES ";
-	size_t glesPrefixN = strlen(glesPrefix);
+	const char glesPrefix[] = "OpenGL ES ";
+	const size_t glesPrefixN = sizeof(glesPrefix)-1;
 
 	bool gles = false;
 
