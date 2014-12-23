@@ -287,6 +287,10 @@ int main(int argc, char *argv[])
 	EventThread eventThread;
 	RGSSThreadData rtData(&eventThread, argv[0], win, conf);
 
+	int winW, winH;
+	SDL_GetWindowSize(win, &winW, &winH);
+	rtData.windowSizeMsg.notifyChange(winW, winH);
+
 	/* Load and post key bindings */
 	rtData.bindingUpdateMsg.post(loadBindings(conf));
 
