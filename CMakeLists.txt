@@ -210,6 +210,7 @@ source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
 ## Setup embedded source ##
 
 set(EMBEDDED_INPUT
+	shader/common.h
 	shader/transSimple.frag
 	shader/trans.frag
 	shader/hue.frag

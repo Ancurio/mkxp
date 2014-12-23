@@ -6,7 +6,7 @@ uniform sampler2D destination;
 
 uniform vec4 subRect;
 
-uniform float opacity;
+uniform lowp float opacity;
 
 varying vec2 v_texCoord;
 

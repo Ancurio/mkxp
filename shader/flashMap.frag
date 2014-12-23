@@ -1,7 +1,7 @@
 
-uniform float alpha;
+uniform lowp float alpha;
 
-varying vec4 v_color;
+varying lowp vec4 v_color;
 
 void main()
 {

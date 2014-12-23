@@ -183,6 +183,7 @@ SOURCES += \
 	src/fluid-fun.cpp
 
 EMBED = \
+	shader/common.h \
 	shader/transSimple.frag \
 	shader/trans.frag \
 	shader/hue.frag \

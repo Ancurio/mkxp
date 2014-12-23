@@ -28,6 +28,7 @@
 #include <string.h>
 #include <iostream>
 
+#include "common.h.xxd"
 #include "sprite.frag.xxd"
 #include "hue.frag.xxd"
 #include "trans.frag.xxd"
@@ -106,32 +107,39 @@ void Shader::unbind()
 	glState.program.set(0);
 }
 
-static const char *glesHeader = "precision mediump float;\n";
-static const size_t glesHeaderSize = strlen(glesHeader);
-
-static void setupShaderSource(GLuint shader,
-                              const unsigned char *src, int srcSize)
+static void setupShaderSource(GLuint shader, GLenum type,
+                              const unsigned char *body, int bodySize)
 {
-	GLuint shaderSrcN;
-	const GLchar *shaderSrc[2];
-	GLint shaderSrcSize[2];
+	static const char glesDefine[] = "#define GLSLES\n";
+	static const char fragDefine[] = "#define FRAGMENT_SHADER\n";
+
+	const GLchar *shaderSrc[4];
+	GLint shaderSrcSize[4];
+	size_t i = 0;
 
 	if (gl.glsles)
 	{
-		shaderSrcN = 2;
-		shaderSrc[0] = glesHeader;
-		shaderSrc[1] = (const GLchar*) src;
-		shaderSrcSize[0] = glesHeaderSize;
-		shaderSrcSize[1] = srcSize;
-	}
-	else
-	{
-		shaderSrcN = 1;
-		shaderSrc[0] = (const GLchar*) src;
-		shaderSrcSize[0] = srcSize;
+		shaderSrc[i] = glesDefine;
+		shaderSrcSize[i] = sizeof(glesDefine)-1;
+		++i;
 	}
 
-	gl.ShaderSource(shader, shaderSrcN, shaderSrc, shaderSrcSize);
+	if (type == GL_FRAGMENT_SHADER)
+	{
+		shaderSrc[i] = fragDefine;
+		shaderSrcSize[i] = sizeof(fragDefine)-1;
+		++i;
+	}
+
+	shaderSrc[i] = (const GLchar*) shader_common_h;
+	shaderSrcSize[i] = shader_common_h_len;
+	++i;
+
+	shaderSrc[i] = (const GLchar*) body;
+	shaderSrcSize[i] = bodySize;
+	++i;
+
+	gl.ShaderSource(shader, i, shaderSrc, shaderSrcSize);
 }
 
 void Shader::init(const unsigned char *vert, int vertSize,
@@ -142,7 +150,7 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	GLint success;
 
 	/* Compile vertex shader */
-	setupShaderSource(vertShader, vert, vertSize);
+	setupShaderSource(vertShader, GL_VERTEX_SHADER, vert, vertSize);
 	gl.CompileShader(vertShader);
 
 	gl.GetShaderiv(vertShader, GL_COMPILE_STATUS, &success);
@@ -156,7 +164,7 @@ void Shader::init(const unsigned char *vert, int vertSize,
 	}
 
 	/* Compile fragment shader */
-	setupShaderSource(fragShader, frag, fragSize);
+	setupShaderSource(fragShader, GL_FRAGMENT_SHADER, frag, fragSize);
 	gl.CompileShader(fragShader);
 
 	gl.GetShaderiv(fragShader, GL_COMPILE_STATUS, &success);

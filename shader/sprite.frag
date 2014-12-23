@@ -1,13 +1,13 @@
 
 uniform sampler2D texture;
 
-uniform vec4 tone;
+uniform lowp vec4 tone;
 
-uniform float opacity;
-uniform vec4 color;
+uniform lowp float opacity;
+uniform lowp vec4 color;
 
 uniform float bushDepth;
-uniform float bushOpacity;
+uniform lowp float bushOpacity;
 
 varying vec2 v_texCoord;
 
@@ -32,7 +32,7 @@ void main()
 	frag.rgb = mix(frag.rgb, color.rgb, color.a);
 
 	/* Apply bush alpha by mathematical if */
-	float underBush = float(v_texCoord.y < bushDepth);
+	lowp float underBush = float(v_texCoord.y < bushDepth);
 	frag.a *= clamp(bushOpacity + underBush, 0.0, 1.0);
 	
 	gl_FragColor = frag;

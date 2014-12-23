@@ -1,11 +1,11 @@
 
 uniform sampler2D texture;
 
-uniform vec4 tone;
+uniform lowp vec4 tone;
 
-uniform float opacity;
-uniform vec4 color;
-uniform vec4 flash;
+uniform lowp float opacity;
+uniform lowp vec4 color;
+uniform lowp vec4 flash;
 
 varying vec2 v_texCoord;
 

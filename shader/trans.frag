@@ -14,7 +14,7 @@ void main()
 {
     float transV = texture2D(transMap, v_texCoord).r;
     float cTransV = clamp(transV, prog, prog+vague);
-    float alpha = (cTransV - prog) / vague;
+    lowp float alpha = (cTransV - prog) / vague;
     
     vec4 newFrag = texture2D(currentScene, v_texCoord);
     vec4 oldFrag = texture2D(frozenScene, v_texCoord);
