@@ -189,12 +189,15 @@ EMBED = \
 	shader/hue.frag \
 	shader/sprite.frag \
 	shader/plane.frag \
+	shader/gray.frag \
 	shader/bitmapBlit.frag \
+	shader/flatColor.frag \
 	shader/simple.frag \
 	shader/simpleColor.frag \
 	shader/simpleAlpha.frag \
 	shader/simpleAlphaUni.frag \
 	shader/flashMap.frag \
+	shader/minimal.vert \
 	shader/simple.vert \
 	shader/simpleColor.vert \
 	shader/sprite.vert \

@@ -87,6 +87,17 @@ protected:
 	GLint u_texSizeInv, u_translation;
 };
 
+class FlatColorShader : public ShaderBase
+{
+public:
+	FlatColorShader();
+
+	void setColor(const Vec4 &value);
+
+private:
+	GLint u_color;
+};
+
 class SimpleShader : public ShaderBase
 {
 public:
@@ -191,6 +202,17 @@ private:
 	GLint u_tone, u_color, u_flash, u_opacity;
 };
 
+class GrayShader : public ShaderBase
+{
+public:
+	GrayShader();
+
+	void setGray(float value);
+
+private:
+	GLint u_gray;
+};
+
 class TilemapShader : public ShaderBase
 {
 public:
@@ -285,6 +307,7 @@ private:
 /* Global object containing all available shaders */
 struct ShaderSet
 {
+	FlatColorShader flatColor;
 	SimpleShader simple;
 	SimpleColorShader simpleColor;
 	SimpleAlphaShader simpleAlpha;
@@ -292,6 +315,7 @@ struct ShaderSet
 	AlphaSpriteShader alphaSprite;
 	SpriteShader sprite;
 	PlaneShader plane;
+	GrayShader gray;
 	TilemapShader tilemap;
 	FlashMapShader flashMap;
 	TransShader trans;

@@ -60,6 +60,11 @@ struct Vec4
 	{
 		return (x == other.x && y == other.y && z == other.z && w == other.w);
 	}
+
+	bool xyzHasEffect() const
+	{
+		return (x != 0.0 || y != 0.0 || z != 0.0);
+	}
 };
 
 struct Vec2i
@@ -128,6 +133,14 @@ struct IntRect : SDL_Rect
 	{
 		SDL_Rect r = { x, y, w, h };
 		return r;
+	}
+
+	bool encloses(const IntRect &o) const
+	{
+		return (x   <= o.x &&
+		        y   <= o.y &&
+		        x+w >= o.x+o.w &&
+		        y+h >= o.y+o.h);
 	}
 };
 

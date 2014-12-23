@@ -171,36 +171,112 @@ public:
 
 	void requestViewportRender(Vec4 &c, Vec4 &f, Vec4 &t)
 	{
-		pp.swapRender();
+		const IntRect &viewpRect = glState.scissorBox.get();
+		const IntRect &screenRect = geometry.rect;
 
-		/* Scissor test _does_ affect FBO blit operations,
-		 * and since we're inside the draw cycle, it will
-		 * be turned on, so turn it off temporarily */
-		glState.scissorTest.pushSet(false);
+		if (t.w != 0.0)
+		{
+			pp.swapRender();
 
-		GLMeta::blitBegin(pp.frontBuffer());
-		GLMeta::blitSource(pp.backBuffer());
-		GLMeta::blitRectangle(geometry.rect, Vec2i());
-		GLMeta::blitEnd();
+			if (!viewpRect.encloses(screenRect))
+			{
+				/* Scissor test _does_ affect FBO blit operations,
+				 * and since we're inside the draw cycle, it will
+				 * be turned on, so turn it off temporarily */
+				glState.scissorTest.pushSet(false);
 
-		glState.scissorTest.pop();
+				GLMeta::blitBegin(pp.frontBuffer());
+				GLMeta::blitSource(pp.backBuffer());
+				GLMeta::blitRectangle(geometry.rect, Vec2i());
+				GLMeta::blitEnd();
 
-		PlaneShader &shader = shState->shaders().plane;
+				glState.scissorTest.pop();
+			}
+
+			GrayShader &shader = shState->shaders().gray;
+			shader.bind();
+			shader.setGray(t.w);
+			shader.applyViewportProj();
+			shader.setTexSize(screenRect.size());
+
+			TEX::bind(pp.backBuffer().tex);
+
+			glState.blend.pushSet(false);
+			screenQuad.draw();
+			glState.blend.pop();
+		}
+
+		bool toneEffect = t.xyzHasEffect();
+		bool colorEffect = c.xyzHasEffect();
+		bool flashEffect = f.xyzHasEffect();
+
+		if (!toneEffect && !colorEffect && !flashEffect)
+			return;
+
+		FlatColorShader &shader = shState->shaders().flatColor;
 		shader.bind();
-		shader.setColor(c);
-		shader.setFlash(f);
-		shader.setTone(t);
-		shader.setOpacity(1.0);
 		shader.applyViewportProj();
-		shader.setTexSize(geometry.rect.size());
 
-		TEX::bind(pp.backBuffer().tex);
+		/* Apply tone */
+		if (toneEffect)
+		{
+			/* First split up additive / substractive components */
+			Vec4 add, sub;
 
-		glState.blend.pushSet(false);
+			if (t.x > 0)
+				add.x = t.x;
+			if (t.y > 0)
+				add.y = t.y;
+			if (t.z > 0)
+				add.z = t.z;
 
-		screenQuad.draw();
+			if (t.x < 0)
+				sub.x = -t.x;
+			if (t.y < 0)
+				sub.y = -t.y;
+			if (t.z < 0)
+				sub.z = -t.z;
 
-		glState.blend.pop();
+			/* Then apply them using hardware blending */
+			gl.BlendFuncSeparate(GL_ONE, GL_ONE, GL_ZERO, GL_ONE);
+
+			if (add.xyzHasEffect())
+			{
+				gl.BlendEquation(GL_FUNC_ADD);
+				shader.setColor(add);
+
+				screenQuad.draw();
+			}
+
+			if (sub.xyzHasEffect())
+			{
+				gl.BlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+				shader.setColor(sub);
+
+				screenQuad.draw();
+			}
+		}
+
+		if (colorEffect || flashEffect)
+		{
+			gl.BlendEquation(GL_FUNC_ADD);
+			gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+			                     GL_ZERO, GL_ONE);
+		}
+
+		if (colorEffect)
+		{
+			shader.setColor(c);
+			screenQuad.draw();
+		}
+
+		if (flashEffect)
+		{
+			shader.setColor(f);
+			screenQuad.draw();
+		}
+
+		glState.blendMode.refresh();
 	}
 
 	void setBrightness(float norm)

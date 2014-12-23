@@ -35,11 +35,14 @@
 #include "transSimple.frag.xxd"
 #include "bitmapBlit.frag.xxd"
 #include "plane.frag.xxd"
+#include "gray.frag.xxd"
+#include "flatColor.frag.xxd"
 #include "simple.frag.xxd"
 #include "simpleColor.frag.xxd"
 #include "simpleAlpha.frag.xxd"
 #include "simpleAlphaUni.frag.xxd"
 #include "flashMap.frag.xxd"
+#include "minimal.vert.xxd"
 #include "simple.vert.xxd"
 #include "simpleColor.vert.xxd"
 #include "sprite.vert.xxd"
@@ -269,6 +272,21 @@ void ShaderBase::setTranslation(const Vec2i &value)
 }
 
 
+FlatColorShader::FlatColorShader()
+{
+	INIT_SHADER(minimal, flatColor, FlatColorShader);
+
+	ShaderBase::init();
+
+	GET_U(color);
+}
+
+void FlatColorShader::setColor(const Vec4 &value)
+{
+	setVec4Uniform(u_color, value);
+}
+
+
 SimpleShader::SimpleShader()
 {
 	INIT_SHADER(simple, simple, SimpleShader);
@@ -477,6 +495,21 @@ void PlaneShader::setFlash(const Vec4 &flash)
 void PlaneShader::setOpacity(float value)
 {
 	gl.Uniform1f(u_opacity, value);
+}
+
+
+GrayShader::GrayShader()
+{
+	INIT_SHADER(simple, gray, GrayShader);
+
+	ShaderBase::init();
+
+	GET_U(gray);
+}
+
+void GrayShader::setGray(float value)
+{
+	gl.Uniform1f(u_gray, value);
 }
 
 
