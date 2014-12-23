@@ -108,22 +108,11 @@ int rgssThreadFun(void *userdata)
 	GLDebugLogger dLogger;
 
 	/* Setup AL context */
-	ALCdevice *alcDev = alcOpenDevice(0);
-
-	if (!alcDev)
-	{
-		rgssThreadError(threadData, "Error opening OpenAL device");
-		SDL_GL_DeleteContext(glCtx);
-
-		return 0;
-	}
-
-	ALCcontext *alcCtx = alcCreateContext(alcDev, 0);
+	ALCcontext *alcCtx = alcCreateContext(threadData->alcDev, 0);
 
 	if (!alcCtx)
 	{
 		rgssThreadError(threadData, "Error creating OpenAL context");
-		alcCloseDevice(alcDev);
 		SDL_GL_DeleteContext(glCtx);
 
 		return 0;
@@ -139,7 +128,6 @@ int rgssThreadFun(void *userdata)
 	{
 		rgssThreadError(threadData, exc.msg);
 		alcDestroyContext(alcCtx);
-		alcCloseDevice(alcDev);
 		SDL_GL_DeleteContext(glCtx);
 
 		return 0;
@@ -154,8 +142,6 @@ int rgssThreadFun(void *userdata)
 	SharedState::finiInstance();
 
 	alcDestroyContext(alcCtx);
-	alcCloseDevice(alcDev);
-
 	SDL_GL_DeleteContext(glCtx);
 
 	return 0;
@@ -284,8 +270,22 @@ int main(int argc, char *argv[])
 		SDL_FreeSurface(iconImg);
 	}
 
+	ALCdevice *alcDev = alcOpenDevice(0);
+
+	if (!alcDev)
+	{
+		showInitError("Error opening OpenAL device");
+		SDL_DestroyWindow(win);
+		TTF_Quit();
+		IMG_Quit();
+		SDL_Quit();
+
+		return 0;
+	}
+
 	EventThread eventThread;
-	RGSSThreadData rtData(&eventThread, argv[0], win, conf);
+	RGSSThreadData rtData(&eventThread, argv[0], win,
+	                      alcDev, conf);
 
 	int winW, winH;
 	SDL_GetWindowSize(win, &winW, &winH);
@@ -338,6 +338,7 @@ int main(int argc, char *argv[])
 
 	Debug() << "Shutting down.";
 
+	alcCloseDevice(alcDev);
 	SDL_DestroyWindow(win);
 
 	Sound_Quit();

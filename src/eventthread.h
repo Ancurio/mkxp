@@ -37,6 +37,7 @@
 #include <stdint.h>
 
 struct RGSSThreadData;
+typedef struct ALCdevice_struct ALCdevice;
 struct SDL_Window;
 
 class EventThread
@@ -225,6 +226,7 @@ struct RGSSThreadData
 	const char *argv0;
 
 	SDL_Window *window;
+	ALCdevice *alcDev;
 
 	Vec2 sizeResoRatio;
 	Vec2i screenOffset;
@@ -236,10 +238,12 @@ struct RGSSThreadData
 	RGSSThreadData(EventThread *ethread,
 	               const char *argv0,
 	               SDL_Window *window,
+	               ALCdevice *alcDev,
 	               const Config& newconf)
 	    : ethread(ethread),
 	      argv0(argv0),
 	      window(window),
+	      alcDev(alcDev),
 	      sizeResoRatio(1, 1),
 	      config(newconf)
 	{}
