@@ -206,8 +206,15 @@ int main(int argc, char *argv[])
 
 	/* now we load the config */
 	Config conf;
-
 	conf.read(argc, argv);
+
+	if (!conf.gameFolder.empty())
+		if (chdir(conf.gameFolder.c_str()) != 0)
+		{
+			showInitError(std::string("Unable to switch into gameFolder ") + conf.gameFolder);
+			return 0;
+		}
+
 	conf.readGameINI();
 
 	assert(conf.rgssVersion >= 1 && conf.rgssVersion <= 3);

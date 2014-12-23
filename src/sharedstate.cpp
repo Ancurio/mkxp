@@ -111,16 +111,6 @@ struct SharedStatePrivate
 	      fontState(threadData->config),
 	      stampCounter(0)
 	{
-		if (!config.gameFolder.empty())
-		{
-			int result = chdir(config.gameFolder.c_str());
-
-			if (result != 0)
-				throw Exception(Exception::MKXPError,
-			                    "Unable to switch into gameFolder '%s'",
-			                    config.gameFolder.c_str());
-		}
-
 		// FIXME find out correct archive filename
 		std::string archPath = defGameArchive();
 
