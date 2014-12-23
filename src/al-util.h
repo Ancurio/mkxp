@@ -238,5 +238,6 @@ inline ALenum chooseALFormat(int sampleSize, int channelCount)
 
 #define AUDIO_SLEEP 10
 #define STREAM_BUF_SIZE 32768
+#define GLOBAL_VOLUME 0.8
 
 #endif // ALUTIL_H
