@@ -40,7 +40,7 @@ fileIntFreeInstance(void *inst)
 DEF_TYPE_CUSTOMFREE(FileInt, fileIntFreeInstance);
 
 static VALUE
-fileIntForPath(const char *path)
+fileIntForPath(const char *path, bool rubyExc)
 {
 	SDL_RWops *ops = SDL_AllocRW();
 
@@ -51,7 +51,11 @@ fileIntForPath(const char *path)
 	catch (const Exception &e)
 	{
 		SDL_FreeRW(ops);
-		raiseRbExc(e);
+
+		if (rubyExc)
+			raiseRbExc(e);
+		else
+			throw e;
 	}
 
 	VALUE klass = rb_const_get(rb_cObject, rb_intern("FileInt"));
@@ -119,11 +123,11 @@ RB_METHOD(fileIntBinmode)
 }
 
 VALUE
-kernelLoadDataInt(const char *filename)
+kernelLoadDataInt(const char *filename, bool rubyExc)
 {
 	rb_gc_start();
 
-	VALUE port = fileIntForPath(filename);
+	VALUE port = fileIntForPath(filename, rubyExc);
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
@@ -142,7 +146,7 @@ RB_METHOD(kernelLoadData)
 	const char *filename;
 	rb_get_args(argc, argv, "z", &filename RB_ARG_END);
 
-	return kernelLoadDataInt(filename);
+	return kernelLoadDataInt(filename, true);
 }
 
 RB_METHOD(kernelSaveData)

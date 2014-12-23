@@ -346,7 +346,7 @@ static void runCustomScript(const std::string &filename)
 	           newStringUTF8(filename.c_str(), filename.size()), NULL);
 }
 
-VALUE kernelLoadDataInt(const char *filename);
+VALUE kernelLoadDataInt(const char *filename, bool rubyExc);
 
 struct BacktraceData
 {
@@ -373,7 +373,19 @@ static void runRMXPScripts(BacktraceData &btData)
 		return;
 	}
 
-	VALUE scriptArray = kernelLoadDataInt(scriptPack.c_str());
+	VALUE scriptArray;
+
+	/* We checked if Scripts.rxdata exists, but something might
+	 * still go wrong */
+	try
+	{
+		scriptArray = kernelLoadDataInt(scriptPack.c_str(), false);
+	}
+	catch (const Exception &e)
+	{
+		showMsg(std::string("Failed to read script data: ") + e.msg);
+		return;
+	}
 
 	if (!RB_TYPE_P(scriptArray, RUBY_T_ARRAY))
 	{
