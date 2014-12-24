@@ -142,6 +142,7 @@ namespace po = boost::program_options;
 Config::Config()
     : rgssVersion(0),
       debugMode(false),
+      printFPS(false),
       winResizable(false),
       fullscreen(false),
       fixedAspectRatio(true),
@@ -169,6 +170,7 @@ void Config::read(int argc, char *argv[])
 #define PO_DESC_ALL \
 	PO_DESC(rgssVersion, int) \
 	PO_DESC(debugMode, bool) \
+	PO_DESC(printFPS, bool) \
 	PO_DESC(winResizable, bool) \
 	PO_DESC(fullscreen, bool) \
 	PO_DESC(fixedAspectRatio, bool) \

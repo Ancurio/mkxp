@@ -87,11 +87,13 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	fps.lastFrame = SDL_GetPerformanceCounter();
 	fps.displayCounter = 0;
-	fps.displaying = false;
-	fps.immInitFlag = false;
-	fps.immFiniFlag = false;
 	fps.acc = 0;
 	fps.accDiv = 0;
+
+	if (rtData.config.printFPS)
+		fps.sendUpdates.set();
+
+	bool displayingFPS = false;
 
 	bool cursorInWindow = false;
 	bool windowFocused = false;
@@ -210,14 +212,18 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			if (event.key.keysym.scancode == SDL_SCANCODE_F2)
 			{
-				if (!fps.displaying)
+				if (!displayingFPS)
 				{
-					fps.immInitFlag = true;
-					fps.displaying = true;
+					fps.immInitFlag.set();
+					fps.sendUpdates.set();
+					displayingFPS = true;
 				}
 				else
 				{
-					fps.displaying = false;
+					displayingFPS = false;
+
+					if (!rtData.config.printFPS)
+						fps.sendUpdates.clear();
 
 					if (fullscreen)
 					{
@@ -333,7 +339,10 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
 
 			case UPDATE_FPS :
-				if (!fps.displaying)
+				if (rtData.config.printFPS)
+					Debug() << "FPS:" << event.user.code;
+
+				if (!fps.sendUpdates)
 					break;
 
 				snprintf(buffer, sizeof(buffer), "%s - %d FPS",
@@ -458,7 +467,7 @@ bool EventThread::getShowCursor() const
 
 void EventThread::notifyFrame()
 {
-	if (!fps.displaying)
+	if (!fps.sendUpdates)
 		return;
 
 	uint64_t current = SDL_GetPerformanceCounter();
@@ -467,8 +476,8 @@ void EventThread::notifyFrame()
 
 	if (fps.immInitFlag)
 	{
-		fps.immInitFlag = false;
-		fps.immFiniFlag = true;
+		fps.immInitFlag.clear();
+		fps.immFiniFlag.set();
 
 		return;
 	}
@@ -484,7 +493,7 @@ void EventThread::notifyFrame()
 		return;
 
 	fps.displayCounter = 0;
-	fps.immFiniFlag = false;
+	fps.immFiniFlag.clear();
 
 	int32_t avgFPS = fps.acc / fps.accDiv;
 	fps.acc = fps.accDiv = 0;

@@ -98,9 +98,9 @@ private:
 	{
 		uint64_t lastFrame;
 		uint64_t displayCounter;
-		bool displaying;
-		bool immInitFlag;
-		bool immFiniFlag;
+		AtomicFlag sendUpdates;
+		AtomicFlag immInitFlag;
+		AtomicFlag immFiniFlag;
 		double acc;
 		uint32_t accDiv;
 	} fps;

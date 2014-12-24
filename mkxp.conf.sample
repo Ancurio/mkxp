@@ -17,6 +17,14 @@
 # debugMode=false
 
 
+# Continuously print average FPS to console.
+# This setting does not affect the window title
+# FPS display toggled via F2
+# (default: disabled)
+#
+# printFPS=false
+
+
 # Game window is resizable
 # (default: disabled)
 #
