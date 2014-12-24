@@ -300,14 +300,23 @@ void EventThread::process(RGSSThreadData &rtData)
 			break;
 
 		case SDL_MOUSEBUTTONDOWN :
+			if (event.button.which == SDL_TOUCH_MOUSEID)
+				break;
+
 			mouseState.buttons[event.button.button] = true;
 			break;
 
 		case SDL_MOUSEBUTTONUP :
+			if (event.button.which == SDL_TOUCH_MOUSEID)
+				break;
+
 			mouseState.buttons[event.button.button] = false;
 			break;
 
 		case SDL_MOUSEMOTION :
+			if (event.button.which == SDL_TOUCH_MOUSEID)
+				break;
+
 			mouseState.x = event.motion.x;
 			mouseState.y = event.motion.y;
 
