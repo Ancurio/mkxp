@@ -61,43 +61,43 @@ namespace TEX
 		return id;
 	}
 
-	inline void del(ID id)
+	static inline void del(ID id)
 	{
 		gl.DeleteTextures(1, &id.gl);
 	}
 
-	inline void bind(ID id)
+	static inline void bind(ID id)
 	{
 		gl.BindTexture(GL_TEXTURE_2D, id.gl);
 	}
 
-	inline void unbind()
+	static inline void unbind()
 	{
 		bind(ID(0));
 	}
 
-	inline void uploadImage(GLsizei width, GLsizei height, const void *data, GLenum format)
+	static inline void uploadImage(GLsizei width, GLsizei height, const void *data, GLenum format)
 	{
 		gl.TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 	}
 
-	inline void uploadSubImage(GLint x, GLint y, GLsizei width, GLsizei height, const void *data, GLenum format)
+	static inline void uploadSubImage(GLint x, GLint y, GLsizei width, GLsizei height, const void *data, GLenum format)
 	{
 		gl.TexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, format, GL_UNSIGNED_BYTE, data);
 	}
 
-	inline void allocEmpty(GLsizei width, GLsizei height)
+	static inline void allocEmpty(GLsizei width, GLsizei height)
 	{
 		gl.TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	}
 
-	inline void setRepeat(bool mode)
+	static inline void setRepeat(bool mode)
 	{
 		gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 		gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 	}
 
-	inline void setSmooth(bool mode)
+	static inline void setSmooth(bool mode)
 	{
 		gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode ? GL_LINEAR : GL_NEAREST);
 		gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode ? GL_LINEAR : GL_NEAREST);
@@ -117,27 +117,27 @@ namespace FBO
 		return id;
 	}
 
-	inline void del(ID id)
+	static inline void del(ID id)
 	{
 		gl.DeleteFramebuffers(1, &id.gl);
 	}
 
-	inline void bind(ID id)
+	static inline void bind(ID id)
 	{
 		gl.BindFramebuffer(GL_FRAMEBUFFER, id.gl);
 	}
 
-	inline void unbind()
+	static inline void unbind()
 	{
 		bind(ID(0));
 	}
 
-	inline void setTarget(TEX::ID target, unsigned colorAttach = 0)
+	static inline void setTarget(TEX::ID target, unsigned colorAttach = 0)
 	{
 		gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttach, GL_TEXTURE_2D, target.gl, 0);
 	}
 
-	inline void clear()
+	static inline void clear()
 	{
 		gl.Clear(GL_COLOR_BUFFER_BIT);
 	}
@@ -148,7 +148,7 @@ struct GenericBO
 {
 	DEF_GL_ID
 
-	inline static ID gen()
+	static inline ID gen()
 	{
 		ID id;
 		gl.GenBuffers(1, &id.gl);
@@ -156,32 +156,32 @@ struct GenericBO
 		return id;
 	}
 
-	inline static void del(ID id)
+	static inline void del(ID id)
 	{
 		gl.DeleteBuffers(1, &id.gl);
 	}
 
-	inline static void bind(ID id)
+	static inline void bind(ID id)
 	{
 		gl.BindBuffer(target, id.gl);
 	}
 
-	inline static void unbind()
+	static inline void unbind()
 	{
 		bind(ID(0));
 	}
 
-	inline static void uploadData(GLsizeiptr size, const GLvoid *data, GLenum usage = GL_STATIC_DRAW)
+	static inline void uploadData(GLsizeiptr size, const GLvoid *data, GLenum usage = GL_STATIC_DRAW)
 	{
 		gl.BufferData(target, size, data, usage);
 	}
 
-	inline static void uploadSubData(GLintptr offset, GLsizeiptr size, const GLvoid *data)
+	static inline void uploadSubData(GLintptr offset, GLsizeiptr size, const GLvoid *data)
 	{
 		gl.BufferSubData(target, offset, size, data);
 	}
 
-	inline static void allocEmpty(GLsizeiptr size, GLenum usage = GL_STATIC_DRAW)
+	static inline void allocEmpty(GLsizeiptr size, GLenum usage = GL_STATIC_DRAW)
 	{
 		uploadData(size, 0, usage);
 	}
