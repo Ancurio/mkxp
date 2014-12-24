@@ -32,6 +32,7 @@
 
 #include "debugwriter.h"
 #include "util.h"
+#include "sdl-util.h"
 
 #ifdef INI_ENCODING
 extern "C" {
@@ -223,22 +224,19 @@ void Config::read(int argc, char *argv[])
 	}
 
 	/* Parse configuration file */
-	std::ifstream confFile;
-	confFile.open(CONF_FILE);
+	SDLRWStream confFile(CONF_FILE, "r");
 
 	if (confFile)
 	{
 		try
 		{
-			po::store(po::parse_config_file(confFile, podesc, true), vm);
+			po::store(po::parse_config_file(confFile.stream(), podesc, true), vm);
 			po::notify(vm);
 		}
 		catch (po::error &error)
 		{
 			Debug() << CONF_FILE":" << error.what();
 		}
-
-		confFile.close();
 	}
 
 #undef PO_DESC
@@ -306,16 +304,25 @@ void Config::readGameINI()
 	        ("Game.Scripts", po::value<std::string>())
 	        ;
 
-	std::string iniPath = gameFolder + "/Game.ini";
-
-	std::ifstream iniFile;
-	iniFile.open((iniPath).c_str());
-
 	po::variables_map vm;
-	po::store(po::parse_config_file(iniFile, podesc, true), vm);
-	po::notify(vm);
+	SDLRWStream iniFile("Game.ini", "r");
 
-	iniFile.close();
+	if (iniFile)
+	{
+		try
+		{
+			po::store(po::parse_config_file(iniFile.stream(), podesc, true), vm);
+			po::notify(vm);
+		}
+		catch (po::error &error)
+		{
+			Debug() << "Game.ini:" << error.what();
+		}
+	}
+	else
+	{
+		Debug() << "FAILED to open Game.ini";
+	}
 
 	GUARD_ALL( game.title = vm["Game.Title"].as<std::string>(); );
 	GUARD_ALL( game.scripts = vm["Game.Scripts"].as<std::string>(); );

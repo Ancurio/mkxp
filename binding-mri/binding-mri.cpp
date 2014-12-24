@@ -25,6 +25,7 @@
 #include "eventthread.h"
 #include "filesystem.h"
 #include "util.h"
+#include "sdl-util.h"
 #include "debugwriter.h"
 #include "graphics.h"
 #include "audio.h"
@@ -339,7 +340,7 @@ static void runCustomScript(const std::string &filename)
 {
 	std::string scriptData;
 
-	if (!readFile(filename.c_str(), scriptData))
+	if (!readFileSDL(filename.c_str(), scriptData))
 	{
 		showMsg(std::string("Unable to open '") + filename + "'");
 		return;
