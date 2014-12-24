@@ -43,7 +43,7 @@ struct GLProperty
 
 	void push() { stack.push(current); }
 	void pop()  { set(stack.top()); stack.pop(); }
-	T &get()    { return current; }
+	const T &get()    { return current; }
 	void set(const T &value)
 	{
 		if (value == current)

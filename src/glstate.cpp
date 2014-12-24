@@ -43,7 +43,7 @@ void GLScissorBox::apply(const IntRect &value)
 
 void GLScissorBox::setIntersect(const IntRect &value)
 {
-	IntRect &current = get();
+	const IntRect &current = get();
 
 	SDL_Rect r1 = { current.x, current.y, current.w, current.h };
 	SDL_Rect r2 = { value.x,   value.y,   value.w,   value.h };
