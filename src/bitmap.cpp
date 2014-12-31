@@ -51,6 +51,8 @@
                             "Operation not supported for mega surfaces"); \
 	}
 
+#define OUTLINE_SIZE 1
+
 /* Normalize (= ensure width and
  * height are positive) */
 static IntRect normalizedRect(const IntRect &rect)
@@ -942,6 +944,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 
 	TTF_Font *font = p->font->getSdlFont();
 	const Color &fontColor = p->font->getColor();
+	const Color &outColor = p->font->getOutColor();
 
 	SDL_Color c = fontColor.toSDLColor();
 	c.a = 255;
@@ -957,10 +960,32 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 
 	p->ensureFormat(txtSurf, SDL_PIXELFORMAT_ABGR8888);
 
-	// While real outlining is not yet here, use shadow
-	// as a replacement to at least make text legible
-	if (p->font->getShadow() || p->font->getOutline())
+	if (p->font->getShadow())
 		applyShadow(txtSurf, *p->format, c);
+
+	/* outline using TTF_Outline and blending it together with SDL_BlitSurface
+	 * FIXME: outline is forced to have the same opacity as the font color */
+	if (p->font->getOutline()) {
+		SDL_Color co = outColor.toSDLColor();
+		co.a = 255;
+		SDL_Surface *outline;
+		/* set the next font render to render the outline */
+		TTF_SetFontOutline(font, OUTLINE_SIZE);
+		if (shState->rtData().config.solidFonts)
+			outline = TTF_RenderUTF8_Solid(font, str, co);
+		else
+			outline = TTF_RenderUTF8_Blended(font, str, co);
+
+		p->ensureFormat(outline, SDL_PIXELFORMAT_ABGR8888);
+		SDL_Rect outRect = {OUTLINE_SIZE, OUTLINE_SIZE, txtSurf->w, txtSurf->h}; 
+
+		SDL_SetSurfaceBlendMode(txtSurf, SDL_BLENDMODE_BLEND);
+		SDL_BlitSurface(txtSurf, NULL, outline, &outRect);
+		SDL_FreeSurface(txtSurf);
+		txtSurf = outline;
+		/* reset outline to 0 */
+		TTF_SetFontOutline(font, 0);
+	}
 
 	int alignX = rect.x;
 
