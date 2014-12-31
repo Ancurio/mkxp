@@ -29,7 +29,11 @@ void main ()
 	/* Make the user's adjustments */
 	hue += hueAdjust;
 
-	// Convert back to YIQ
+	/* Remember old I and color */
+	float IOriginal = I;
+	vec4 coOriginal = color;
+
+	/* Convert back to YIQ */
 	Q = chroma * sin (hue);
 	I = chroma * cos (hue);
 
@@ -40,5 +44,5 @@ void main ()
 	color.b  = dot  (yIQ, kYIQToB);
 
 	/* Save the result */
-	gl_FragColor = color;
+	gl_FragColor = (IOriginal == 0.0) ? coOriginal : color;
 }
