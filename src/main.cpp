@@ -321,11 +321,6 @@ int main(int argc, char *argv[])
 	/* Clean up any remainin events */
 	eventThread.cleanup();
 
-	/* Store key bindings */
-	BDescVec keyBinds;
-	rtData.bindingUpdateMsg.get(keyBinds);
-	storeBindings(keyBinds, rtData.config);
-
 	Debug() << "Shutting down.";
 
 	SDL_DestroyWindow(win);

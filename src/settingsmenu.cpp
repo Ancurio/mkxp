@@ -678,6 +678,9 @@ struct SettingsMenuPrivate
 
 		rtData.bindingUpdateMsg.post(binds);
 
+		/* Store the key bindings to disk as well to prevent config loss */
+		storeBindings(binds, rtData.config);
+
 		destroyReq = true;
 	}
 
