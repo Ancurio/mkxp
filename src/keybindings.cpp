@@ -129,6 +129,20 @@ static void addAxisBinding(BDescVec &d, uint8_t axis, AxisDir dir, Input::Button
 	d.push_back(desc);
 }
 
+static void addHatBinding(BDescVec &d, uint8_t hat, uint8_t pos, Input::ButtonCode target)
+{
+	SourceDesc src;
+	src.type = JHat;
+	src.d.jh.hat = hat;
+	src.d.jh.pos = pos;
+
+	BindingDesc desc;
+	desc.src = src;
+	desc.target = target;
+
+	d.push_back(desc);
+}
+
 BDescVec genDefaultBindings(const Config &conf)
 {
 	BDescVec d;
@@ -150,11 +164,16 @@ BDescVec genDefaultBindings(const Config &conf)
 	addAxisBinding(d, 0, Positive, Input::Right);
 	addAxisBinding(d, 1, Negative, Input::Up   );
 	addAxisBinding(d, 1, Positive, Input::Down );
+	
+	addHatBinding(d, 0, SDL_HAT_LEFT,  Input::Left );
+	addHatBinding(d, 0, SDL_HAT_RIGHT, Input::Right);
+	addHatBinding(d, 0, SDL_HAT_UP,    Input::Up   );
+	addHatBinding(d, 0, SDL_HAT_DOWN,  Input::Down );
 
 	return d;
 }
 
-#define FORMAT_VER 1
+#define FORMAT_VER 2
 
 struct Header
 {
@@ -247,6 +266,10 @@ static bool verifyDesc(const BindingDesc &desc)
 		return src.d.scan < SDL_NUM_SCANCODES;
 	case JButton:
 		return true;
+	case JHat:
+		/* Only accept single directional binds */
+		return src.d.jh.pos == SDL_HAT_LEFT || src.d.jh.pos == SDL_HAT_RIGHT ||
+		       src.d.jh.pos == SDL_HAT_UP   || src.d.jh.pos == SDL_HAT_DOWN;
 	case JAxis:
 		return src.d.ja.dir == Negative || src.d.ja.dir == Positive;
 	default:

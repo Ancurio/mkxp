@@ -133,7 +133,7 @@ struct JsAxisBinding : public Binding
 
 	bool sourceActive() const
 	{
-		int val = EventThread::joyState.axis[source];
+		int val = EventThread::joyState.axes[source];
 
 		if (dir == Negative)
 			return val < -JAXIS_THRESHOLD;
@@ -148,6 +148,34 @@ struct JsAxisBinding : public Binding
 
 	uint8_t source;
 	AxisDir dir;
+};
+
+/* Joystick hat binding */
+struct JsHatBinding : public Binding
+{
+	JsHatBinding() {}
+
+	JsHatBinding(uint8_t source,
+	              uint8_t pos,
+	              Input::ButtonCode target)
+	    : Binding(target),
+	      source(source),
+	      pos(pos)
+	{}
+
+	bool sourceActive() const
+	{
+		/* For a diagonal input accept it as an input for both the axes */
+		return (pos & EventThread::joyState.hats[source]) != 0;
+	}
+
+	bool sourceRepeatable() const
+	{
+		return true;
+	}
+
+	uint8_t source;
+	uint8_t pos;
 };
 
 /* Mouse button binding */
@@ -241,6 +269,7 @@ struct InputPrivate
 	std::vector<KbBinding> kbStatBindings;
 	std::vector<KbBinding> kbBindings;
 	std::vector<JsAxisBinding> jsABindings;
+	std::vector<JsHatBinding> jsHBindings;
 	std::vector<JsButtonBinding> jsBBindings;
 	std::vector<MsBinding> msBindings;
 
@@ -348,6 +377,7 @@ struct InputPrivate
 	{
 		kbBindings.clear();
 		jsABindings.clear();
+		jsHBindings.clear();
 		jsBBindings.clear();
 
 		for (size_t i = 0; i < d.size(); ++i)
@@ -381,6 +411,16 @@ struct InputPrivate
 
 				break;
 			}
+			case JHat :
+			{
+				JsHatBinding bind;
+				bind.source = src.d.jh.hat;
+				bind.pos = src.d.jh.pos;
+				bind.target = desc.target;
+				jsHBindings.push_back(bind);
+
+				break;
+			}
 			case JButton :
 			{
 				JsButtonBinding bind;
@@ -402,6 +442,7 @@ struct InputPrivate
 
 		appendBindings(kbBindings);
 		appendBindings(jsABindings);
+		appendBindings(jsHBindings);
 		appendBindings(jsBBindings);
 	}
 

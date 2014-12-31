@@ -46,7 +46,8 @@ public:
 
 	struct JoyState
 	{
-		int axis[256];
+		int axes[256];
+		uint8_t hats[256];
 		bool buttons[256];
 	};
 
