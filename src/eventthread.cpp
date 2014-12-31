@@ -38,7 +38,7 @@ uint8_t EventThread::keyStates[] = { false };
 
 EventThread::JoyState EventThread::joyState =
 {
-	{ 0 }, { false }
+	{ 0 }, { 0 }, { false }
 };
 
 EventThread::MouseState EventThread::mouseState =
@@ -274,8 +274,12 @@ void EventThread::process(RGSSThreadData &rtData)
 			joyState.buttons[event.jbutton.button] = false;
 			break;
 
+		case SDL_JOYHATMOTION :
+			joyState.hats[event.jhat.hat] = event.jhat.value;
+			break;
+
 		case SDL_JOYAXISMOTION :
-			joyState.axis[event.jaxis.axis] = event.jaxis.value;
+			joyState.axes[event.jaxis.axis] = event.jaxis.value;
 			break;
 
 		case SDL_JOYDEVICEADDED :

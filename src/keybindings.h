@@ -25,6 +25,7 @@
 #include "input.h"
 
 #include <SDL_scancode.h>
+#include <SDL_joystick.h>
 #include <stdint.h>
 #include <assert.h>
 #include <vector>
@@ -40,7 +41,8 @@ enum SourceType
 	Invalid,
 	Key,
 	JButton,
-	JAxis
+	JAxis,
+	JHat
 };
 
 struct SourceDesc
@@ -60,6 +62,13 @@ struct SourceDesc
 			/* Joystick axis direction */
 			AxisDir dir;
 		} ja;
+		struct
+		{
+			/* Joystick axis index */
+			uint8_t hat;
+			/* Joystick axis direction */
+			uint8_t pos;
+		} jh;
 	} d;
 
 	bool operator==(const SourceDesc &o) const
@@ -77,6 +86,8 @@ struct SourceDesc
 			return d.jb == o.d.jb;
 		case JAxis:
 			return (d.ja.axis == o.d.ja.axis) && (d.ja.dir == o.d.ja.dir);
+		case JHat:
+			return (d.jh.hat == o.d.jh.hat) && (d.jh.pos == o.d.jh.pos);
 		default:
 			assert(!"unreachable");
 			return false;
