@@ -94,6 +94,15 @@
 # solidFonts=false
 
 
+# Work around buggy graphics drivers which don't
+# properly synchronize texture access, most
+# apparent when text doesn't show up or the map
+# tileset doesn't render at all
+# (default: disabled)
+#
+# subImageFix=false
+
+
 # Set the base path of the game to '/path/to/game'
 # (default: executable directory)
 #

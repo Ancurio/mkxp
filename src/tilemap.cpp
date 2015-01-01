@@ -26,6 +26,7 @@
 #include "table.h"
 
 #include "sharedstate.h"
+#include "config.h"
 #include "glstate.h"
 #include "gl-util.h"
 #include "gl-meta.h"
@@ -542,19 +543,59 @@ struct TilemapPrivate
 		if (tileset->megaSurface())
 		{
 			/* Mega surface tileset */
-			TEX::bind(atlas.gl.tex);
-
 			SDL_Surface *tsSurf = tileset->megaSurface();
 
-			for (size_t i = 0; i < blits.size(); ++i)
+			if (shState->config().subImageFix)
 			{
-				const TileAtlas::Blit &blitOp = blits[i];
+				/* Implementation for broken GL drivers */
+				FBO::bind(atlas.gl.fbo);
+				glState.blend.pushSet(false);
+				glState.viewport.pushSet(IntRect(0, 0, atlas.size.x, atlas.size.y));
 
-				GLMeta::subRectImageUpload(tsSurf->w, blitOp.src.x, blitOp.src.y,
-				                           blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, tsSurf, GL_RGBA);
+				SimpleShader &shader = shState->shaders().simple;
+				shader.bind();
+				shader.applyViewportProj();
+				shader.setTranslation(Vec2i());
+
+				Quad &quad = shState->gpQuad();
+
+				for (size_t i = 0; i < blits.size(); ++i)
+				{
+					const TileAtlas::Blit &blitOp = blits[i];
+
+					Vec2i texSize;
+					shState->ensureTexSize(tsLaneW, blitOp.h, texSize);
+					shState->bindTex();
+					GLMeta::subRectImageUpload(tsSurf->w, blitOp.src.x, blitOp.src.y,
+					                           0, 0, tsLaneW, blitOp.h, tsSurf, GL_RGBA);
+
+					shader.setTexSize(texSize);
+					quad.setTexRect(FloatRect(0, 0, tsLaneW, blitOp.h));
+					quad.setPosRect(FloatRect(blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h));
+
+					quad.draw();
+				}
+
+				GLMeta::subRectImageEnd();
+				glState.viewport.pop();
+				glState.blend.pop();
+			}
+			else
+			{
+				/* Clean implementation */
+				TEX::bind(atlas.gl.tex);
+
+				for (size_t i = 0; i < blits.size(); ++i)
+				{
+					const TileAtlas::Blit &blitOp = blits[i];
+
+					GLMeta::subRectImageUpload(tsSurf->w, blitOp.src.x, blitOp.src.y,
+					                           blitOp.dst.x, blitOp.dst.y, tsLaneW, blitOp.h, tsSurf, GL_RGBA);
+				}
+
+				GLMeta::subRectImageEnd();
 			}
 
-			GLMeta::subRectImageEnd();
 		}
 		else
 		{

@@ -89,6 +89,8 @@ struct Config
 
 	bool solidFonts;
 
+	bool subImageFix;
+
 	std::string gameFolder;
 	bool anyAltToggleFS;
 	bool enableReset;

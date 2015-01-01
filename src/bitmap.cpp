@@ -374,13 +374,45 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	if (opacity == 0)
 		return;
 
-	if (source.megaSurface())
+	SDL_Surface *srcSurf = source.megaSurface();
+
+	if (srcSurf && shState->config().subImageFix)
 	{
+		/* Blit from software surface, for broken GL drivers */
+		Vec2i gpTexSize;
+		shState->ensureTexSize(sourceRect.w, sourceRect.h, gpTexSize);
+		shState->bindTex();
+
+		GLMeta::subRectImageUpload(srcSurf->w, sourceRect.x, sourceRect.y, 0, 0,
+		                           sourceRect.w, sourceRect.h, srcSurf, GL_RGBA);
+		GLMeta::subRectImageEnd();
+
+		SimpleShader &shader = shState->shaders().simple;
+		shader.bind();
+		shader.setTranslation(Vec2i());
+		shader.setTexSize(gpTexSize);
+
+		p->pushSetViewport(shader);
+		p->bindFBO();
+
+		Quad &quad = shState->gpQuad();
+		quad.setTexRect(FloatRect(0, 0, sourceRect.w, sourceRect.h));
+		quad.setPosRect(destRect);
+
+		p->blitQuad(quad);
+		p->popViewport();
+
+		p->addTaintedArea(destRect);
+		p->onModified();
+
+		return;
+	}
+	else if (srcSurf)
+	{
+		/* Blit from software surface */
 		/* Don't do transparent blits for now */
 		if (opacity < 255)
 			source.ensureNonMega();
-
-		SDL_Surface *srcSurf = source.megaSurface();
 
 		SDL_Rect srcRect = sourceRect;
 		SDL_Rect dstRect = destRect;
@@ -405,17 +437,18 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 
 		if (bltRect.w == dstRect.w && bltRect.h == dstRect.h)
 		{
+			/* Dest rectangle lies within bounding box */
 			TEX::uploadSubImage(destRect.x, destRect.y,
 			                    destRect.w, destRect.h,
 			                    blitTemp->pixels, GL_RGBA);
 		}
 		else
 		{
+			/* Clipped blit */
 			GLMeta::subRectImageUpload(blitTemp->w, bltRect.x - dstRect.x, bltRect.y - dstRect.y,
 			                           bltRect.x, bltRect.y, bltRect.w, bltRect.h, blitTemp, GL_RGBA);
 			GLMeta::subRectImageEnd();
 		}
-
 
 		SDL_FreeSurface(blitTemp);
 
@@ -468,7 +501,6 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	}
 
 	p->addTaintedArea(destRect);
-
 	p->onModified();
 }
 
@@ -1023,7 +1055,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 
 	if (fastBlit)
 	{
-		if (squeeze == 1.0)
+		if (squeeze == 1.0 && !shState->config().subImageFix)
 		{
 			/* Even faster: upload directly to bitmap texture.
 			 * We have to make sure the posRect lies within the texture

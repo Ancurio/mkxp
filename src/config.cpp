@@ -153,6 +153,7 @@ Config::Config()
       fixedFramerate(0),
       frameSkip(true),
       solidFonts(false),
+      subImageFix(false),
       gameFolder("."),
       anyAltToggleFS(false),
       enableReset(true),
@@ -181,6 +182,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(fixedFramerate, int) \
 	PO_DESC(frameSkip, bool) \
 	PO_DESC(solidFonts, bool) \
+	PO_DESC(subImageFix, bool) \
 	PO_DESC(gameFolder, std::string) \
 	PO_DESC(anyAltToggleFS, bool) \
 	PO_DESC(enableReset, bool) \
