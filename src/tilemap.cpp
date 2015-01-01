@@ -1000,6 +1000,9 @@ void GroundLayer::updateVboCount()
 
 void GroundLayer::draw()
 {
+	if (p->groundVert.size() == 0)
+		return;
+
 	ShaderBase *shader;
 
 	p->bindShader(shader);
