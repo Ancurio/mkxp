@@ -42,6 +42,105 @@
 #include <iconv.h>
 #endif
 
+struct SDLRWIoContext
+{
+	SDL_RWops *ops;
+	std::string filename;
+
+	SDLRWIoContext(const char *filename)
+	    : ops(SDL_RWFromFile(filename, "r")),
+	      filename(filename)
+	{
+		if (!ops)
+			throw Exception(Exception::SDLError,
+			                "Failed to open file: %s", SDL_GetError());
+	}
+
+	~SDLRWIoContext()
+	{
+		SDL_RWclose(ops);
+	}
+};
+
+static PHYSFS_Io *createSDLRWIo(const char *filename);
+
+static SDL_RWops *getSDLRWops(PHYSFS_Io *io)
+{
+	return static_cast<SDLRWIoContext*>(io->opaque)->ops;
+}
+
+static PHYSFS_sint64 SDLRWIoRead(struct PHYSFS_Io *io, void *buf, PHYSFS_uint64 len)
+{
+	return SDL_RWread(getSDLRWops(io), buf, 1, len);
+}
+
+static int SDLRWIoSeek(struct PHYSFS_Io *io, PHYSFS_uint64 offset)
+{
+	return (SDL_RWseek(getSDLRWops(io), offset, RW_SEEK_SET) != -1);
+}
+
+static PHYSFS_sint64 SDLRWIoTell(struct PHYSFS_Io *io)
+{
+	return SDL_RWseek(getSDLRWops(io), 0, RW_SEEK_CUR);
+}
+
+static PHYSFS_sint64 SDLRWIoLength(struct PHYSFS_Io *io)
+{
+	return SDL_RWsize(getSDLRWops(io));
+}
+
+static struct PHYSFS_Io *SDLRWIoDuplicate(struct PHYSFS_Io *io)
+{
+	SDLRWIoContext *ctx = static_cast<SDLRWIoContext*>(io->opaque);
+	int64_t offset = io->tell(io);
+	PHYSFS_Io *dup = createSDLRWIo(ctx->filename.c_str());
+
+	if (dup)
+		SDLRWIoSeek(dup, offset);
+
+	return dup;
+}
+
+static void SDLRWIoDestroy(struct PHYSFS_Io *io)
+{
+	delete static_cast<SDLRWIoContext*>(io->opaque);
+	delete io;
+}
+
+static PHYSFS_Io SDLRWIoTemplate =
+{
+	0, 0, /* version, opaque */
+	SDLRWIoRead,
+	0, /* write */
+	SDLRWIoSeek,
+	SDLRWIoTell,
+	SDLRWIoLength,
+	SDLRWIoDuplicate,
+	0, /* flush */
+	SDLRWIoDestroy
+};
+
+static PHYSFS_Io *createSDLRWIo(const char *filename)
+{
+	SDLRWIoContext *ctx;
+
+	try
+	{
+		ctx = new SDLRWIoContext(filename);
+	}
+	catch (const Exception &e)
+	{
+		Debug() << "Failed mounting" << filename;
+		return 0;
+	}
+
+	PHYSFS_Io *io = new PHYSFS_Io;
+	*io = SDLRWIoTemplate;
+	io->opaque = ctx;
+
+	return io;
+}
+
 static inline PHYSFS_File *sdlPHYS(SDL_RWops *ops)
 {
 	return static_cast<PHYSFS_File*>(ops->hidden.unknown.data1);
@@ -368,7 +467,16 @@ FileSystem::~FileSystem()
 
 void FileSystem::addPath(const char *path)
 {
-	PHYSFS_mount(path, 0, 1);
+	/* Try the normal mount first */
+	if (!PHYSFS_mount(path, 0, 1))
+	{
+		/* If it didn't work, try mounting via a wrapped
+		 * SDL_RWops */
+		PHYSFS_Io *io = createSDLRWIo(path);
+
+		if (io)
+			PHYSFS_mountIo(io, path, 0, 1);
+	}
 }
 
 #ifdef __APPLE__
