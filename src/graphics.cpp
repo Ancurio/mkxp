@@ -558,7 +558,7 @@ struct GraphicsPrivate
 
 	void checkResize()
 	{
-		if (threadData->windowSizeMsg.pollChange(&winSize.x, &winSize.y))
+		if (threadData->windowSizeMsg.poll(winSize))
 		{
 			/* some GL drivers change the viewport on window resize */
 			glState.viewport.refresh();

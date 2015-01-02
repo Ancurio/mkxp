@@ -289,7 +289,7 @@ int main(int argc, char *argv[])
 
 	int winW, winH;
 	SDL_GetWindowSize(win, &winW, &winH);
-	rtData.windowSizeMsg.notifyChange(winW, winH);
+	rtData.windowSizeMsg.post(Vec2i(winW, winH));
 
 	/* Load and post key bindings */
 	rtData.bindingUpdateMsg.post(loadBindings(conf));

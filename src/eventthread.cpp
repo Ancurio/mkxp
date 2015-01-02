@@ -80,7 +80,7 @@ void EventThread::process(RGSSThreadData &rtData)
 {
 	SDL_Event event;
 	SDL_Window *win = rtData.window;
-	WindowSizeNotify &windowSizeMsg = rtData.windowSizeMsg;
+	UnidirMessage<Vec2i> &windowSizeMsg = rtData.windowSizeMsg;
 
 	fullscreen = rtData.config.fullscreen;
 	int toggleFSMod = rtData.config.anyAltToggleFS ? KMOD_ALT : KMOD_LALT;
@@ -140,8 +140,7 @@ void EventThread::process(RGSSThreadData &rtData)
 			switch (event.window.event)
 			{
 			case SDL_WINDOWEVENT_SIZE_CHANGED :
-				windowSizeMsg.notifyChange(event.window.data1,
-				                           event.window.data2);
+				windowSizeMsg.post(Vec2i(event.window.data1, event.window.data2));
 				break;
 
 			case SDL_WINDOWEVENT_ENTER :
