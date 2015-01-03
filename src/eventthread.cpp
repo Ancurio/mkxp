@@ -133,6 +133,25 @@ void EventThread::process(RGSSThreadData &rtData)
 			continue;
 		}
 
+		/* Preselect and discard unwanted events here */
+		switch (event.type)
+		{
+		case SDL_MOUSEBUTTONDOWN :
+		case SDL_MOUSEBUTTONUP :
+		case SDL_MOUSEMOTION :
+			if (event.button.which == SDL_TOUCH_MOUSEID)
+				continue;
+			break;
+
+		case SDL_FINGERDOWN :
+		case SDL_FINGERUP :
+		case SDL_FINGERMOTION :
+			if (event.tfinger.fingerId >= MAX_FINGERS)
+				continue;
+			break;
+		}
+
+		/* Now process the rest */
 		switch (event.type)
 		{
 		case SDL_WINDOWEVENT :
@@ -302,47 +321,29 @@ void EventThread::process(RGSSThreadData &rtData)
 			break;
 
 		case SDL_MOUSEBUTTONDOWN :
-			if (event.button.which == SDL_TOUCH_MOUSEID)
-				break;
-
 			mouseState.buttons[event.button.button] = true;
 			break;
 
 		case SDL_MOUSEBUTTONUP :
-			if (event.button.which == SDL_TOUCH_MOUSEID)
-				break;
-
 			mouseState.buttons[event.button.button] = false;
 			break;
 
 		case SDL_MOUSEMOTION :
-			if (event.button.which == SDL_TOUCH_MOUSEID)
-				break;
-
 			mouseState.x = event.motion.x;
 			mouseState.y = event.motion.y;
 			break;
 
 		case SDL_FINGERDOWN :
-			if (event.tfinger.fingerId >= MAX_FINGERS)
-				break;
-
 			i = event.tfinger.fingerId;
 			touchState.fingers[i].down = true;
 
 		case SDL_FINGERMOTION :
-			if (event.tfinger.fingerId >= MAX_FINGERS)
-				break;
-
 			i = event.tfinger.fingerId;
 			touchState.fingers[i].x = event.tfinger.x * winW;
 			touchState.fingers[i].y = event.tfinger.y * winH;
 			break;
 
 		case SDL_FINGERUP :
-			if (event.tfinger.fingerId >= MAX_FINGERS)
-				break;
-
 			i = event.tfinger.fingerId;
 			memset(&touchState.fingers[i], 0, sizeof(touchState.fingers[0]));
 			break;
