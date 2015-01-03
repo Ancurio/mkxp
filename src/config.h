@@ -86,6 +86,7 @@ struct Config
 
 	int fixedFramerate;
 	bool frameSkip;
+	bool syncToRefreshrate;
 
 	bool solidFonts;
 

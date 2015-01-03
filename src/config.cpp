@@ -152,6 +152,7 @@ Config::Config()
       defScreenH(0),
       fixedFramerate(0),
       frameSkip(true),
+      syncToRefreshrate(false),
       solidFonts(false),
       subImageFix(false),
       gameFolder("."),
@@ -181,6 +182,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(defScreenH, int) \
 	PO_DESC(fixedFramerate, int) \
 	PO_DESC(frameSkip, bool) \
+	PO_DESC(syncToRefreshrate, bool) \
 	PO_DESC(solidFonts, bool) \
 	PO_DESC(subImageFix, bool) \
 	PO_DESC(gameFolder, std::string) \

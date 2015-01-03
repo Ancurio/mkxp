@@ -68,13 +68,14 @@ printGLInfo()
 int rgssThreadFun(void *userdata)
 {
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
+	const Config &conf = threadData->config;
 	SDL_Window *win = threadData->window;
 	SDL_GLContext glCtx;
 
 	/* Setup GL context */
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	if (threadData->config.debugMode)
+	if (conf.debugMode)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
 	glCtx = SDL_GL_CreateContext(win);
@@ -103,7 +104,8 @@ int rgssThreadFun(void *userdata)
 
 	printGLInfo();
 
-	SDL_GL_SetSwapInterval(threadData->config.vsync ? 1 : 0);
+	bool vsync = conf.vsync || conf.syncToRefreshrate;
+	SDL_GL_SetSwapInterval(vsync ? 1 : 0);
 
 	GLDebugLogger dLogger;
 
@@ -283,9 +285,16 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+	SDL_DisplayMode mode;
+	SDL_GetDisplayMode(0, 0, &mode);
+
+	/* Can't sync to display refresh rate if its value is unknown */
+	if (!mode.refresh_rate)
+		conf.syncToRefreshrate = false;
+
 	EventThread eventThread;
 	RGSSThreadData rtData(&eventThread, argv[0], win,
-	                      alcDev, conf);
+	                      alcDev, mode.refresh_rate, conf);
 
 	int winW, winH;
 	SDL_GetWindowSize(win, &winW, &winH);

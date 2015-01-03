@@ -88,6 +88,17 @@
 # frameSkip=true
 
 
+# Use a fixed framerate that is approx. equal to the
+# native screen refresh rate. This is different from
+# "fixedFramerate" because the actual frame rate is
+# reported back to the game, ensuring correct timers.
+# If the screen refresh rate cannot be determined,
+# this option is force-disabled
+# (default: disabled)
+#
+# syncToRefreshrate=false
+
+
 # Don't use alpha blending when rendering text
 # (default: disabled)
 #
