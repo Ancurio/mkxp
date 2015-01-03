@@ -40,19 +40,17 @@ struct RGSSThreadData;
 typedef struct ALCdevice_struct ALCdevice;
 struct SDL_Window;
 
+#define MAX_FINGERS 4
+
 class EventThread
 {
 public:
-	static uint8_t keyStates[SDL_NUM_SCANCODES];
-
 	struct JoyState
 	{
 		int axes[256];
 		uint8_t hats[256];
 		bool buttons[256];
 	};
-
-	static JoyState joyState;
 
 	struct MouseState
 	{
@@ -61,7 +59,21 @@ public:
 		bool buttons[32];
 	};
 
+	struct FingerState
+	{
+		bool down;
+		int x, y;
+	};
+
+	struct TouchState
+	{
+		FingerState fingers[MAX_FINGERS];
+	};
+
+	static uint8_t keyStates[SDL_NUM_SCANCODES];
+	static JoyState joyState;
 	static MouseState mouseState;
+	static TouchState touchState;
 
 	static bool allocUserEvents();
 

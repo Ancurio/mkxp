@@ -26,6 +26,7 @@
 #include <SDL_messagebox.h>
 #include <SDL_timer.h>
 #include <SDL_thread.h>
+#include <SDL_touch.h>
 
 #include "sharedstate.h"
 #include "graphics.h"
@@ -34,17 +35,10 @@
 
 #include <string.h>
 
-uint8_t EventThread::keyStates[] = { false };
-
-EventThread::JoyState EventThread::joyState =
-{
-	{ 0 }, { 0 }, { false }
-};
-
-EventThread::MouseState EventThread::mouseState =
-{
-	0, 0, false, { false }
-};
+uint8_t EventThread::keyStates[];
+EventThread::JoyState EventThread::joyState;
+EventThread::MouseState EventThread::mouseState;
+EventThread::TouchState EventThread::touchState;
 
 /* User event codes */
 enum
@@ -111,6 +105,11 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	bool resetting = false;
 
+	int winW, winH;
+	int i;
+
+	SDL_GetWindowSize(win, &winW, &winH);
+
 	SettingsMenu *sMenu = 0;
 
 	while (true)
@@ -140,7 +139,11 @@ void EventThread::process(RGSSThreadData &rtData)
 			switch (event.window.event)
 			{
 			case SDL_WINDOWEVENT_SIZE_CHANGED :
-				windowSizeMsg.post(Vec2i(event.window.data1, event.window.data2));
+				winW = event.window.data1;
+				winH = event.window.data2;
+
+				windowSizeMsg.post(Vec2i(winW, winH));
+				resetInputStates();
 				break;
 
 			case SDL_WINDOWEVENT_ENTER :
@@ -318,7 +321,30 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			mouseState.x = event.motion.x;
 			mouseState.y = event.motion.y;
+			break;
 
+		case SDL_FINGERDOWN :
+			if (event.tfinger.fingerId >= MAX_FINGERS)
+				break;
+
+			i = event.tfinger.fingerId;
+			touchState.fingers[i].down = true;
+
+		case SDL_FINGERMOTION :
+			if (event.tfinger.fingerId >= MAX_FINGERS)
+				break;
+
+			i = event.tfinger.fingerId;
+			touchState.fingers[i].x = event.tfinger.x * winW;
+			touchState.fingers[i].y = event.tfinger.y * winH;
+			break;
+
+		case SDL_FINGERUP :
+			if (event.tfinger.fingerId >= MAX_FINGERS)
+				break;
+
+			i = event.tfinger.fingerId;
+			memset(&touchState.fingers[i], 0, sizeof(touchState.fingers[0]));
 			break;
 
 		default :
@@ -395,6 +421,7 @@ void EventThread::resetInputStates()
 	memset(&keyStates, 0, sizeof(keyStates));
 	memset(&joyState, 0, sizeof(joyState));
 	memset(&mouseState.buttons, 0, sizeof(mouseState.buttons));
+	memset(&touchState, 0, sizeof(touchState));
 }
 
 void EventThread::setFullscreen(SDL_Window *win, bool mode)
