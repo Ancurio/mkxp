@@ -140,71 +140,47 @@ namespace po = boost::program_options;
 #define CONF_FILE "mkxp.conf"
 
 Config::Config()
-    : rgssVersion(0),
-      debugMode(false),
-      printFPS(false),
-      winResizable(false),
-      fullscreen(false),
-      fixedAspectRatio(true),
-      smoothScaling(false),
-      vsync(false),
-      defScreenW(0),
-      defScreenH(0),
-      fixedFramerate(0),
-      frameSkip(true),
-      syncToRefreshrate(false),
-      solidFonts(false),
-      subImageFix(false),
-      gameFolder("."),
-      anyAltToggleFS(false),
-      enableReset(true),
-      allowSymlinks(false),
-      pathCache(true),
-      useScriptNames(false)
-{
-	midi.chorus = false;
-	midi.reverb = false;
-	SE.sourceCount = 6;
-}
+{}
 
 void Config::read(int argc, char *argv[])
 {
 #define PO_DESC_ALL \
-	PO_DESC(rgssVersion, int) \
-	PO_DESC(debugMode, bool) \
-	PO_DESC(printFPS, bool) \
-	PO_DESC(winResizable, bool) \
-	PO_DESC(fullscreen, bool) \
-	PO_DESC(fixedAspectRatio, bool) \
-	PO_DESC(smoothScaling, bool) \
-	PO_DESC(vsync, bool) \
-	PO_DESC(defScreenW, int) \
-	PO_DESC(defScreenH, int) \
-	PO_DESC(fixedFramerate, int) \
-	PO_DESC(frameSkip, bool) \
-	PO_DESC(syncToRefreshrate, bool) \
-	PO_DESC(solidFonts, bool) \
-	PO_DESC(subImageFix, bool) \
-	PO_DESC(gameFolder, std::string) \
-	PO_DESC(anyAltToggleFS, bool) \
-	PO_DESC(enableReset, bool) \
-	PO_DESC(allowSymlinks, bool) \
-	PO_DESC(dataPathOrg, std::string) \
-	PO_DESC(dataPathApp, std::string) \
-	PO_DESC(iconPath, std::string) \
-	PO_DESC(titleLanguage, std::string) \
-	PO_DESC(midi.soundFont, std::string) \
-	PO_DESC(midi.chorus, bool) \
-	PO_DESC(midi.reverb, bool) \
-	PO_DESC(SE.sourceCount, int) \
-	PO_DESC(customScript, std::string) \
-	PO_DESC(pathCache, bool) \
-	PO_DESC(useScriptNames, bool)
+	PO_DESC(rgssVersion, int, 0) \
+	PO_DESC(debugMode, bool, false) \
+	PO_DESC(printFPS, bool, false) \
+	PO_DESC(winResizable, bool, false) \
+	PO_DESC(fullscreen, bool, false) \
+	PO_DESC(fixedAspectRatio, bool, true) \
+	PO_DESC(smoothScaling, bool, false) \
+	PO_DESC(vsync, bool, false) \
+	PO_DESC(defScreenW, int, 0) \
+	PO_DESC(defScreenH, int, 0) \
+	PO_DESC(fixedFramerate, int, 0) \
+	PO_DESC(frameSkip, bool, true) \
+	PO_DESC(syncToRefreshrate, bool, false) \
+	PO_DESC(solidFonts, bool, false) \
+	PO_DESC(subImageFix, bool, false) \
+	PO_DESC(gameFolder, std::string, ".") \
+	PO_DESC(anyAltToggleFS, bool, false) \
+	PO_DESC(enableReset, bool, true) \
+	PO_DESC(allowSymlinks, bool, false) \
+	PO_DESC(dataPathOrg, std::string, "") \
+	PO_DESC(dataPathApp, std::string, "") \
+	PO_DESC(iconPath, std::string, "") \
+	PO_DESC(overlayPath, std::string, "") \
+	PO_DESC(titleLanguage, std::string, "") \
+	PO_DESC(midi.soundFont, std::string, "") \
+	PO_DESC(midi.chorus, bool, false) \
+	PO_DESC(midi.reverb, bool, false) \
+	PO_DESC(SE.sourceCount, int, 6) \
+	PO_DESC(customScript, std::string, "") \
+	PO_DESC(pathCache, bool, true) \
+	PO_DESC(useScriptNames, bool, false)
 
 // Not gonna take your shit boost
 #define GUARD_ALL( exp ) try { exp } catch(...) {}
 
-#define PO_DESC(key, type) (#key, po::value< type >()->default_value(key))
+#define PO_DESC(key, type, def) (#key, po::value< type >()->default_value(def))
 
 	po::options_description podesc;
 	podesc.add_options()
@@ -246,7 +222,7 @@ void Config::read(int argc, char *argv[])
 	}
 
 #undef PO_DESC
-#define PO_DESC(key, type) GUARD_ALL( key = vm[#key].as< type >(); )
+#define PO_DESC(key, type, def) GUARD_ALL( key = vm[#key].as< type >(); )
 
 	PO_DESC_ALL;
 
