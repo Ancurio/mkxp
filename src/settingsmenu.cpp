@@ -706,7 +706,7 @@ struct SettingsMenuPrivate
 
 	void onResetToDefault()
 	{
-		setupBindingData(genDefaultBindings(rtData.config));
+		setupBindingData(genDefaultBindings(rtData.config, rtData.gamecontroller));
 		updateDuplicateStatus();
 		redraw();
 	}

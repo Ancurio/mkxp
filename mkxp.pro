@@ -202,6 +202,7 @@ EMBED = \
 	shader/blurV.vert \
 	shader/simpleMatrix.vert \
 	shader/tilemapvx.vert \
+	assets/gamecontrollerdb.txt \
 	assets/liberation.ttf \
 	assets/icon.png
 

@@ -23,6 +23,7 @@
 
 #include <SDL_events.h>
 #include <SDL_joystick.h>
+#include <SDL_gamecontroller.h>
 #include <SDL_messagebox.h>
 #include <SDL_timer.h>
 #include <SDL_thread.h>
@@ -99,7 +100,9 @@ void EventThread::process(RGSSThreadData &rtData)
 	bool terminate = false;
 
 	SDL_Joystick *js = 0;
-	if (SDL_NumJoysticks() > 0)
+	if (rtData.gamecontroller != NULL)
+		js = SDL_GameControllerGetJoystick(rtData.gamecontroller);
+	else if (SDL_NumJoysticks() > 0)
 		js = SDL_JoystickOpen(0);
 
 	char buffer[128];
@@ -286,7 +289,19 @@ void EventThread::process(RGSSThreadData &rtData)
 			if (event.jdevice.which > 0)
 				break;
 
-			js = SDL_JoystickOpen(0);
+			if (SDL_IsGameController(0))
+				rtData.gamecontroller = SDL_GameControllerOpen(0);
+			if (rtData.gamecontroller != NULL)
+			{
+				js = SDL_GameControllerGetJoystick(rtData.gamecontroller);
+				/* generate new default bindings if a new controller is connected and
+				 * the user hasn't set a custom set of keybinds yet */
+				rtData.bindingUpdateMsg.post(loadBindings(rtData.config, rtData.gamecontroller));
+			}
+			else
+			{
+				js = SDL_JoystickOpen(0);
+			}
 			break;
 
 		case SDL_JOYDEVICEREMOVED :
@@ -358,7 +373,9 @@ void EventThread::process(RGSSThreadData &rtData)
 			break;
 	}
 
-	if (SDL_JoystickGetAttached(js))
+	if (rtData.gamecontroller != NULL && SDL_GameControllerGetAttached(rtData.gamecontroller))
+		SDL_GameControllerClose(rtData.gamecontroller);
+	else if (SDL_JoystickGetAttached(js))
 		SDL_JoystickClose(js);
 
 	delete sMenu;
