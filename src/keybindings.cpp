@@ -45,6 +45,12 @@ struct KbBindingData
 	}
 };
 
+struct GcBindingData
+{
+	SDL_GameControllerButton source;
+	Input::ButtonCode target;
+};
+
 struct JsBindingData
 {
 	int source;
@@ -101,6 +107,24 @@ static elementsN(defaultKbBindings);
 static elementsN(defaultKbBindings1);
 static elementsN(defaultKbBindings2);
 
+static const GcBindingData defaultGcBindings[] =
+{
+	{ SDL_CONTROLLER_BUTTON_DPAD_LEFT,     Input::Left  },
+	{ SDL_CONTROLLER_BUTTON_DPAD_RIGHT,    Input::Right },
+	{ SDL_CONTROLLER_BUTTON_DPAD_UP,       Input::Up    },
+	{ SDL_CONTROLLER_BUTTON_DPAD_DOWN,     Input::Down  },
+	{ SDL_CONTROLLER_BUTTON_A,             Input::C     },
+	{ SDL_CONTROLLER_BUTTON_B,             Input::B     },
+	{ SDL_CONTROLLER_BUTTON_START,         Input::A     },
+	{ SDL_CONTROLLER_BUTTON_X,             Input::X     },
+	{ SDL_CONTROLLER_BUTTON_Y,             Input::Y     },
+	{ SDL_CONTROLLER_BUTTON_BACK,          Input::Z     },
+	{ SDL_CONTROLLER_BUTTON_LEFTSHOULDER,  Input::L     },
+	{ SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, Input::R     }
+};
+
+static elementsN(defaultGcBindings);
+
 static const JsBindingData defaultJsBindings[] =
 {
 	{ 0, Input::A },
@@ -143,7 +167,38 @@ static void addHatBinding(BDescVec &d, uint8_t hat, uint8_t pos, Input::ButtonCo
 	d.push_back(desc);
 }
 
-BDescVec genDefaultBindings(const Config &conf)
+static void addGcBinding(BDescVec &d, SDL_GameController *gc, SDL_GameControllerButton but, Input::ButtonCode target)
+{
+	SDL_GameControllerButtonBind bind = SDL_GameControllerGetBindForButton(gc, but);
+
+	switch(bind.bindType)
+	{
+	case SDL_CONTROLLER_BINDTYPE_BUTTON:
+		SourceDesc src;
+		src.type = JButton;
+		src.d.jb = bind.value.button;
+
+		BindingDesc desc;
+		desc.src = src;
+		desc.target = target;
+
+		d.push_back(desc);
+		break;
+
+	case SDL_CONTROLLER_BINDTYPE_HAT:
+		addHatBinding(d, bind.value.hat.hat, bind.value.hat.hat_mask, target);
+		break;
+
+	case SDL_CONTROLLER_BINDTYPE_AXIS:
+		/* For now if a button turns out to be analog, let's assume positive is the correct direction */
+		addAxisBinding(d, bind.value.axis, Positive, target);
+
+	case SDL_CONTROLLER_BINDTYPE_NONE:
+		break;
+	}
+}
+
+BDescVec genDefaultBindings(const Config &conf, SDL_GameController *gc)
 {
 	BDescVec d;
 
@@ -157,13 +212,23 @@ BDescVec genDefaultBindings(const Config &conf)
 		for (size_t i = 0; i < defaultKbBindings2N; ++i)
 			defaultKbBindings2[i].add(d);
 
-	for (size_t i = 0; i < defaultJsBindingsN; ++i)
-		defaultJsBindings[i].add(d);
-
 	addAxisBinding(d, 0, Negative, Input::Left );
 	addAxisBinding(d, 0, Positive, Input::Right);
 	addAxisBinding(d, 1, Negative, Input::Up   );
 	addAxisBinding(d, 1, Positive, Input::Down );
+
+	/* Try to get a sane binding through SDL_GameController
+	 * if that doesn't work fall back to the default JS bindings */
+	if (gc != NULL)
+	{
+		for(size_t i = 0; i < defaultGcBindingsN; ++i)
+			addGcBinding(d, gc, defaultGcBindings[i].source, defaultGcBindings[i].target);
+
+		return d;
+	}
+
+	for (size_t i = 0; i < defaultJsBindingsN; ++i)
+		defaultJsBindings[i].add(d);
 	
 	addHatBinding(d, 0, SDL_HAT_LEFT,  Input::Left );
 	addHatBinding(d, 0, SDL_HAT_RIGHT, Input::Right);
@@ -320,7 +385,7 @@ static bool readBindings(BDescVec &out, const std::string &dir,
 	return true;
 }
 
-BDescVec loadBindings(const Config &conf)
+BDescVec loadBindings(const Config &conf, SDL_GameController *gc)
 {
 	BDescVec d;
 
@@ -330,5 +395,5 @@ BDescVec loadBindings(const Config &conf)
 	if (readBindings(d, conf.commonDataPath, conf.rgssVersion))
 		return d;
 
-	return genDefaultBindings(conf);
+	return genDefaultBindings(conf, gc);
 }

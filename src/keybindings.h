@@ -26,6 +26,7 @@
 
 #include <SDL_scancode.h>
 #include <SDL_joystick.h>
+#include <SDL_gamecontroller.h>
 #include <stdint.h>
 #include <assert.h>
 #include <vector>
@@ -111,9 +112,9 @@ struct BindingDesc
 typedef std::vector<BindingDesc> BDescVec;
 struct Config;
 
-BDescVec genDefaultBindings(const Config &conf);
+BDescVec genDefaultBindings(const Config &conf, SDL_GameController *gc);
 
 void storeBindings(const BDescVec &d, const Config &conf);
-BDescVec loadBindings(const Config &conf);
+BDescVec loadBindings(const Config &conf, SDL_GameController *gc);
 
 #endif // KEYBINDINGS_H
