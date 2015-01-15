@@ -715,7 +715,7 @@ void Graphics::transition(int duration,
 	if (!p->frozen)
 		return;
 
-	vague = clamp(vague, 0, 512);
+	vague = clamp(vague, 1, 256);
 	Bitmap *transMap = filename ? new Bitmap(filename) : 0;
 
 	setBrightness(255);
@@ -736,7 +736,7 @@ void Graphics::transition(int duration,
 		shader.setFrozenScene(p->frozenScene.tex);
 		shader.setCurrentScene(p->currentScene.tex);
 		shader.setTransMap(transMap->getGLTypes().tex);
-		shader.setVague(vague / 512.0f);
+		shader.setVague(vague / 256.0);
 		shader.setTexSize(p->scRes);
 	}
 	else
