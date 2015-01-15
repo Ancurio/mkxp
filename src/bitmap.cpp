@@ -997,7 +997,8 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 
 	/* outline using TTF_Outline and blending it together with SDL_BlitSurface
 	 * FIXME: outline is forced to have the same opacity as the font color */
-	if (p->font->getOutline()) {
+	if (p->font->getOutline())
+	{
 		SDL_Color co = outColor.toSDLColor();
 		co.a = 255;
 		SDL_Surface *outline;
