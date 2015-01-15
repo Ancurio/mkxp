@@ -47,10 +47,26 @@ SDL_Thread *createSDLThread(C *obj, const std::string &name = std::string())
 	return SDL_CreateThread(__sdlThreadFun<C, func>, name.c_str(), obj);
 }
 
+/* On Android, SDL_RWFromFile always opens files from inside
+ * the apk asset folder even when a file with same name exists
+ * on the physical filesystem. This wrapper attempts to open a
+ * real file first before falling back to the assets folder */
+static inline
+SDL_RWops *RWFromFile(const char *filename,
+                      const char *mode)
+{
+	FILE *f = fopen(filename, mode);
+
+	if (!f)
+		return SDL_RWFromFile(filename, mode);
+
+	return SDL_RWFromFP(f, SDL_TRUE);
+}
+
 inline bool readFileSDL(const char *path,
                         std::string &out)
 {
-	SDL_RWops *f = SDL_RWFromFile(path, "rb");
+	SDL_RWops *f = RWFromFile(path, "rb");
 
 	if (!f)
 		return false;
@@ -115,7 +131,7 @@ class SDLRWStream
 public:
 	SDLRWStream(const char *filename,
 	            const char *mode)
-	    : ops(SDL_RWFromFile(filename, mode)),
+	    : ops(RWFromFile(filename, mode)),
 	      buf(ops),
 	      s(&buf)
 	{}
