@@ -1,4 +1,14 @@
-# Lines starting with '#' are comments
+# Lines starting with '#' are comments.
+#
+# About filesystem paths specified in this config:
+# The "gameFolder" path is resolved either relative
+# to the directory containing the mkxp executable
+# (the default behavior), or relative to the current
+# working directory (when compiled with 
+# -DWORKDIR_CURRENT). All other paths are resolved
+# relative to gameFolder and ignoring both RTPs and
+# encrypted archives.
+
 
 # Specify the RGSS version to run under.
 # Possible values are 0, 1, 2, 3. If set to 0,
