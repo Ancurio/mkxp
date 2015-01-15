@@ -39,6 +39,7 @@
 struct RGSSThreadData;
 typedef struct ALCdevice_struct ALCdevice;
 struct SDL_Window;
+union SDL_Event;
 
 #define MAX_FINGERS 4
 
@@ -98,6 +99,8 @@ public:
 	void notifyFrame();
 
 private:
+	static int eventFilter(void *, SDL_Event*);
+
 	void resetInputStates();
 	void setFullscreen(SDL_Window *, bool mode);
 	void updateCursorState(bool inWindow);
@@ -174,6 +177,39 @@ private:
 	T current;
 };
 
+struct SyncPoint
+{
+	/* Used by eventFilter to control sleep/wakeup */
+	void haltThreads();
+	void resumeThreads();
+
+	/* Used by RGSS thread */
+	bool mainSyncLocked();
+	void waitMainSync();
+
+	/* Used by secondary (audio) threads */
+	void passSecondarySync();
+
+private:
+	struct Util
+	{
+		Util();
+		~Util();
+
+		void lock();
+		void unlock(bool multi);
+		void waitForUnlock();
+
+		AtomicFlag locked;
+		SDL_mutex *mut;
+		SDL_cond *cond;
+	};
+
+	Util mainSync;
+	Util reply;
+	Util secondSync;
+};
+
 struct RGSSThreadData
 {
 	/* Main thread sets this to request RGSS thread to terminate */
@@ -191,6 +227,7 @@ struct RGSSThreadData
 	EventThread *ethread;
 	UnidirMessage<Vec2i> windowSizeMsg;
 	UnidirMessage<BDescVec> bindingUpdateMsg;
+	SyncPoint syncPoint;
 
 	const char *argv0;
 

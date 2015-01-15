@@ -25,6 +25,7 @@
 #include "soundemitter.h"
 #include "sharedstate.h"
 #include "sharedmidistate.h"
+#include "eventthread.h"
 #include "sdl-util.h"
 
 #include <string>
@@ -39,6 +40,8 @@ struct AudioPrivate
 	AudioStream me;
 
 	SoundEmitter se;
+
+	SyncPoint &syncPoint;
 
 	/* The 'MeWatch' is responsible for detecting
 	 * a playing ME, quickly fading out the BGM and
@@ -60,11 +63,12 @@ struct AudioPrivate
 		MeWatchState state;
 	} meWatch;
 
-	AudioPrivate(const Config &conf)
+	AudioPrivate(RGSSThreadData &rtData)
 	    : bgm(ALStream::Looped, "bgm"),
 	      bgs(ALStream::Looped, "bgs"),
 	      me(ALStream::NotLooped, "me"),
-	      se(conf)
+	      se(rtData.config),
+	      syncPoint(rtData.syncPoint)
 	{
 		meWatch.state = MeNotPlaying;
 		meWatch.thread = createSDLThread
@@ -84,6 +88,8 @@ struct AudioPrivate
 
 		while (true)
 		{
+			syncPoint.passSecondarySync();
+
 			if (meWatch.termReq)
 				return;
 
@@ -231,8 +237,8 @@ struct AudioPrivate
 	}
 };
 
-Audio::Audio(const Config &conf)
-	: p(new AudioPrivate(conf))
+Audio::Audio(RGSSThreadData &rtData)
+	: p(new AudioPrivate(rtData))
 {}
 
 

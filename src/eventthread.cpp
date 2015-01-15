@@ -76,6 +76,8 @@ void EventThread::process(RGSSThreadData &rtData)
 	SDL_Window *win = rtData.window;
 	UnidirMessage<Vec2i> &windowSizeMsg = rtData.windowSizeMsg;
 
+	SDL_SetEventFilter(eventFilter, &rtData);
+
 	fullscreen = rtData.config.fullscreen;
 	int toggleFSMod = rtData.config.anyAltToggleFS ? KMOD_ALT : KMOD_LALT;
 
@@ -402,10 +404,61 @@ void EventThread::process(RGSSThreadData &rtData)
 			break;
 	}
 
+	/* Just in case */
+	rtData.syncPoint.resumeThreads();
+
 	if (SDL_JoystickGetAttached(js))
 		SDL_JoystickClose(js);
 
 	delete sMenu;
+}
+
+int EventThread::eventFilter(void *data, SDL_Event *event)
+{
+	RGSSThreadData &rtData = *static_cast<RGSSThreadData*>(data);
+
+	switch (event->type)
+	{
+	case SDL_APP_WILLENTERBACKGROUND :
+		Debug() << "SDL_APP_WILLENTERBACKGROUND";
+
+		rtData.syncPoint.haltThreads();
+
+		return 0;
+
+	case SDL_APP_DIDENTERBACKGROUND :
+		Debug() << "SDL_APP_DIDENTERBACKGROUND";
+		return 0;
+
+	case SDL_APP_WILLENTERFOREGROUND :
+		Debug() << "SDL_APP_WILLENTERFOREGROUND";
+		return 0;
+
+	case SDL_APP_DIDENTERFOREGROUND :
+		Debug() << "SDL_APP_DIDENTERFOREGROUND";
+
+		rtData.syncPoint.resumeThreads();
+
+		return 0;
+
+	case SDL_APP_TERMINATING :
+		Debug() << "SDL_APP_TERMINATING";
+		return 0;
+
+	case SDL_APP_LOWMEMORY :
+		Debug() << "SDL_APP_LOWMEMORY";
+		return 0;
+
+	case SDL_RENDER_TARGETS_RESET :
+		Debug() << "****** SDL_RENDER_TARGETS_RESET";
+		return 0;
+
+	case SDL_RENDER_DEVICE_RESET :
+		Debug() << "****** SDL_RENDER_DEVICE_RESET";
+		return 0;
+	}
+
+	return 1;
 }
 
 void EventThread::cleanup()
@@ -538,4 +591,88 @@ void EventThread::notifyFrame()
 	event.user.code = avgFPS;
 	event.user.type = usrIdStart + UPDATE_FPS;
 	SDL_PushEvent(&event);
+}
+
+void SyncPoint::haltThreads()
+{
+	if (mainSync.locked)
+		return;
+
+	/* Lock the reply sync first to avoid races */
+	reply.lock();
+
+	/* Lock main sync and sleep until RGSS thread
+	 * reports back */
+	mainSync.lock();
+	reply.waitForUnlock();
+
+	/* Now that the RGSS thread is asleep, we can
+	 * safely put the other threads to sleep as well
+	 * without causing deadlocks */
+	secondSync.lock();
+}
+
+void SyncPoint::resumeThreads()
+{
+	if (!mainSync.locked)
+		return;
+
+	mainSync.unlock(false);
+	secondSync.unlock(true);
+}
+
+bool SyncPoint::mainSyncLocked()
+{
+	return mainSync.locked;
+}
+
+void SyncPoint::waitMainSync()
+{
+	reply.unlock(false);
+	mainSync.waitForUnlock();
+}
+
+void SyncPoint::passSecondarySync()
+{
+	if (!secondSync.locked)
+		return;
+
+	secondSync.waitForUnlock();
+}
+
+SyncPoint::Util::Util()
+{
+	mut = SDL_CreateMutex();
+	cond = SDL_CreateCond();
+}
+
+SyncPoint::Util::~Util()
+{
+	SDL_DestroyCond(cond);
+	SDL_DestroyMutex(mut);
+}
+
+void SyncPoint::Util::lock()
+{
+	locked.set();
+}
+
+void SyncPoint::Util::unlock(bool multi)
+{
+	locked.clear();
+
+	if (multi)
+		SDL_CondBroadcast(cond);
+	else
+		SDL_CondSignal(cond);
+}
+
+void SyncPoint::Util::waitForUnlock()
+{
+	SDL_LockMutex(mut);
+
+	while (locked)
+		SDL_CondWait(cond, mut);
+
+	SDL_UnlockMutex(mut);
 }

@@ -466,6 +466,7 @@ struct GraphicsPrivate
 
 	ScreenScene screen;
 	RGSSThreadData *threadData;
+	SDL_GLContext glCtx;
 
 	int frameRate;
 	int frameCount;
@@ -489,6 +490,7 @@ struct GraphicsPrivate
 	      winSize(rtData->config.defScreenW, rtData->config.defScreenH),
 	      screen(scRes.x, scRes.y),
 	      threadData(rtData),
+	      glCtx(SDL_GL_GetCurrentContext()),
 	      frameRate(DEF_FRAMERATE),
 	      frameCount(0),
 	      brightness(255),
@@ -622,6 +624,21 @@ struct GraphicsPrivate
 
 		swapGLBuffer();
 	}
+
+	void checkSyncLock()
+	{
+		if (!threadData->syncPoint.mainSyncLocked())
+			return;
+
+		/* Releasing the GL context before sleeping and making it
+		 * current again on wakeup seems to avoid the context loss
+		 * when the app moves into the background on Android */
+		SDL_GL_MakeCurrent(threadData->window, 0);
+		threadData->syncPoint.waitMainSync();
+		SDL_GL_MakeCurrent(threadData->window, glCtx);
+
+		fpsLimiter.resetFrameAdjust();
+	}
 };
 
 Graphics::Graphics(RGSSThreadData *data)
@@ -651,6 +668,7 @@ Graphics::~Graphics()
 void Graphics::update()
 {
 	p->checkShutDownReset();
+	p->checkSyncLock();
 
 	if (p->frozen)
 		return;
@@ -692,6 +710,8 @@ void Graphics::transition(int duration,
                           const char *filename,
                           int vague)
 {
+	p->checkSyncLock();
+
 	if (!p->frozen)
 		return;
 
@@ -751,6 +771,8 @@ void Graphics::transition(int duration,
 			scriptBinding->reset();
 			return;
 		}
+
+		p->checkSyncLock();
 
 		const float prog = i * (1.0 / duration);
 

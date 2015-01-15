@@ -23,6 +23,7 @@
 
 #include "sharedstate.h"
 #include "sharedmidistate.h"
+#include "eventthread.h"
 #include "filesystem.h"
 #include "aldatasource.h"
 #include "fluid-fun.h"
@@ -361,6 +362,8 @@ void ALStream::streamData()
 	 * refill and queue them up again */
 	while (true)
 	{
+		shState->rtData().syncPoint.passSecondarySync();
+
 		ALint procBufs = AL::Source::getProcBufferCount(alSrc);
 
 		while (procBufs--)

@@ -33,7 +33,7 @@
  *   quite make out their meaning yet) */
 
 struct AudioPrivate;
-struct Config;
+struct RGSSThreadData;
 
 class Audio
 {
@@ -70,7 +70,7 @@ public:
 	void reset();
 
 private:
-	Audio(const Config &conf);
+	Audio(RGSSThreadData &rtData);
 	~Audio();
 
 	friend struct SharedStatePrivate;
