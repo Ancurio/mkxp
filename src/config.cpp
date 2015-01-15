@@ -167,7 +167,6 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(dataPathOrg, std::string, "") \
 	PO_DESC(dataPathApp, std::string, "") \
 	PO_DESC(iconPath, std::string, "") \
-	PO_DESC(overlayPath, std::string, "") \
 	PO_DESC(titleLanguage, std::string, "") \
 	PO_DESC(midi.soundFont, std::string, "") \
 	PO_DESC(midi.chorus, bool, false) \
