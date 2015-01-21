@@ -87,15 +87,11 @@ The syntax is: `--<option>=<value>`
 
 Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
 
-## Midi music (*ALPHA STATUS*)
+## Midi music
 
 mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
 
 You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
-
-Known issues with midi playback:
-
-* Some songs' instruments become mute after looping
 
 ## Fonts
 

@@ -55,7 +55,13 @@
 #define TICK_FRAMES 32
 #define BUF_TICKS (STREAM_BUF_SIZE / TICK_FRAMES)
 #define DEFAULT_BPM 120
-#define LOOP_MARKER 111
+#define MAX_CHANNELS 16
+
+#define CC_CTRL_VOLUME       7
+#define CC_CTRL_EXPRESSION  11
+#define CC_CTRL_LOOP       111
+
+#define CC_VAL_DEFAULT 127
 
 enum MidiEventType
 {
@@ -522,6 +528,59 @@ struct Track
 	}
 };
 
+/* Some songs use CC events for effects like fade-out,
+ * slowly decreasing a channel's volume to 0. The problem is that
+ * for looped songs, events are continuously fed into the synth
+ * without restoring those controls back to their default value.
+ * We can't reset them at the very beginning of tracks because it
+ * might cause audible interactions with notes which are still decaying
+ * past the end of the song. Therefore, we insert a fake CC event right
+ * after the first NoteOn event for each channel which resets the
+ * control to its default state while avoiding audible glitches.
+ * If there is already a CC event for this control before the first
+ * NoteOn event, we don't clobber it by not inserting our fake event. */
+template<uint8_t ctrl>
+struct CCResetter
+{
+	bool chanHandled[MAX_CHANNELS];
+
+	CCResetter()
+	{
+		memset(&chanHandled, 0, sizeof(chanHandled));
+	}
+
+	void handleEvent(const MidiEvent &e, Track &track)
+	{
+		if (e.type != NoteOn && e.type != CC)
+			return;
+
+		uint8_t chan = e.e.chan.chan;
+
+		if (chanHandled[chan])
+			return;
+
+		if (e.type == CC && e.e.cc.ctrl == ctrl)
+		{
+			/* Don't clobber the existing CC value */
+			chanHandled[chan] = true;
+			return;
+		}
+		else if (e.type == NoteOn)
+		{
+			chanHandled[chan] = true;
+
+			MidiEvent re;
+			re.delta = 0;
+			re.type = CC;
+			re.e.cc.chan = chan;
+			re.e.cc.ctrl = ctrl;
+			re.e.cc.val = CC_VAL_DEFAULT;
+
+			track.appendEvent(re);
+		}
+	}
+};
+
 struct MidiSource : ALDataSource, MidiReadHandler
 {
 	const uint16_t freq;
@@ -530,6 +589,8 @@ struct MidiSource : ALDataSource, MidiReadHandler
 	int16_t synthBuf[BUF_TICKS*TICK_FRAMES*2];
 
 	std::vector<Track> tracks;
+	CCResetter<CC_CTRL_VOLUME>     volReset;
+	CCResetter<CC_CTRL_EXPRESSION> expReset;
 
 	/* Index of longest track */
 	uint8_t longestI;
@@ -631,7 +692,7 @@ struct MidiSource : ALDataSource, MidiReadHandler
 		playbackSpeed = TICK_FRAMES / (deltaLength * freq);
 	}
 
-	void activateEvent(MidiEvent &e)
+	void activateEvent(const MidiEvent &e)
 	{
 		int16_t key = e.e.note.key;
 
@@ -705,9 +766,14 @@ struct MidiSource : ALDataSource, MidiReadHandler
 	void onMidiEvent(const MidiEvent &e, uint32_t absDelta)
 	{
 		assert(curTrack >= 0 && curTrack < (int16_t) tracks.size());
-		tracks[curTrack].appendEvent(e);
 
-		if (e.type == CC && e.e.cc.ctrl == LOOP_MARKER)
+		Track &track = tracks[curTrack];
+
+		track.appendEvent(e);
+		volReset.handleEvent(e, track);
+		expReset.handleEvent(e, track);
+
+		if (e.type == CC && e.e.cc.ctrl == CC_CTRL_LOOP)
 			loopDelta = absDelta;
 	}
 
