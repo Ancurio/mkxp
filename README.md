@@ -91,6 +91,8 @@ Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
 
 mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
 
+You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
+
 Known issues with midi playback:
 
 * Some songs' instruments become mute after looping
@@ -103,7 +105,6 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 ## What doesn't work (yet)
 
-* Text outline
 * Movie playback
 * wma audio files
 * The Win32API ruby class (for obvious reasons)
