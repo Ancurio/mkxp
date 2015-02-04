@@ -58,6 +58,7 @@ struct SpritePrivate
 	BlendType blendType;
 
 	SDL_Rect sceneRect;
+	Vec2i sceneOrig;
 
 	/* Would this sprite be visible on
 	 * the screen if drawn? */
@@ -183,8 +184,8 @@ struct SpritePrivate
 		}
 
 		SDL_Rect self;
-		self.x = trans.getPosition().x - trans.getOrigin().x;
-		self.y = trans.getPosition().y - trans.getOrigin().y;
+		self.x = trans.getPosition().x - (trans.getOrigin().x + sceneOrig.x);
+		self.y = trans.getPosition().y - (trans.getOrigin().y + sceneOrig.y);
 		self.w = bitmap->width();
 		self.h = bitmap->height();
 
@@ -583,6 +584,8 @@ void Sprite::onGeometryChange(const Scene::Geometry &geo)
 
 	p->sceneRect.w = geo.rect.w;
 	p->sceneRect.h = geo.rect.h;
+	p->sceneOrig.x = geo.xOrigin;
+	p->sceneOrig.y = geo.yOrigin;
 }
 
 void Sprite::releaseResources()
