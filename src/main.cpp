@@ -168,6 +168,9 @@ static void showInitError(const std::string &msg)
 
 int main(int argc, char *argv[])
 {
+	SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0");
+	SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
+
 	/* initialize SDL first */
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
@@ -245,9 +248,6 @@ int main(int argc, char *argv[])
 		iconSrc = SDL_RWFromFile(conf.iconPath.c_str(), "rb");
 
 	SDL_Surface *iconImg = IMG_Load_RW(iconSrc, SDL_TRUE);
-
-	SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0");
-	SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
 
 	SDL_Window *win;
 	Uint32 winFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS;
