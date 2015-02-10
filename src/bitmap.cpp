@@ -251,6 +251,7 @@ Bitmap::Bitmap(const char *filename)
 		/* Mega surface */
 		p = new BitmapPrivate(this);
 		p->megaSurface = imgSurf;
+		SDL_SetSurfaceBlendMode(p->megaSurface, SDL_BLENDMODE_NONE);
 	}
 	else
 	{
@@ -429,9 +430,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		SDL_Surface *blitTemp =
 			SDL_CreateRGBSurface(0, destRect.w, destRect.h, bpp, rMask, gMask, bMask, aMask);
 
-		// FXIME: This is supposed to be a scaled blit, put SDL2 for some reason
-		// makes the source surface unusable after BlitScaled() is called. Investigate!
-		SDL_BlitSurface(srcSurf, &srcRect, blitTemp, 0);
+		SDL_BlitScaled(srcSurf, &srcRect, blitTemp, 0);
 
 		TEX::bind(p->gl.tex);
 
