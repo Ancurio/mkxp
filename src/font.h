@@ -86,16 +86,14 @@ public:
 
 	const Font &operator=(const Font &o);
 
-	const char *getName() const;
-	void setName(const char *value);
-
-	DECL_ATTR( Size,     int    )
-	DECL_ATTR( Bold,     bool   )
-	DECL_ATTR( Italic,   bool   )
-	DECL_ATTR( Color,    Color& )
-	DECL_ATTR( Shadow,   bool   )
-	DECL_ATTR( Outline,  bool   )
-	DECL_ATTR( OutColor, Color& )
+	DECL_ATTR( Name,     const char * )
+	DECL_ATTR( Size,     int          )
+	DECL_ATTR( Bold,     bool         )
+	DECL_ATTR( Italic,   bool         )
+	DECL_ATTR( Color,    Color&       )
+	DECL_ATTR( Shadow,   bool         )
+	DECL_ATTR( Outline,  bool         )
+	DECL_ATTR( OutColor, Color&       )
 
 	DECL_ATTR_STATIC( DefaultName,     const char* )
 	DECL_ATTR_STATIC( DefaultSize,     int         )
