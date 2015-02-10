@@ -442,15 +442,13 @@ struct TilemapPrivate
 
 	void updateSceneGeometry(const Scene::Geometry &geo)
 	{
-		elem.sceneOffset.x = geo.rect.x - geo.xOrigin;
-		elem.sceneOffset.y = geo.rect.y - geo.yOrigin;
+		elem.sceneOffset = geo.offset();
 		elem.sceneGeo = geo;
 	}
 
 	void updatePosition()
 	{
-		dispPos.x = -(offset.x - viewpPos.x * 32) + elem.sceneOffset.x;
-		dispPos.y = -(offset.y - viewpPos.y * 32) + elem.sceneOffset.y;
+		dispPos = -(offset - viewpPos * 32) + elem.sceneOffset;
 	}
 
 	void invalidateAtlasSize()

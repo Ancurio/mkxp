@@ -58,7 +58,6 @@ public:
 	Transform()
 	    : scale(1, 1),
 	      rotation(0),
-	      xOffset(0), yOffset(0),
 	      dirty(true)
 	{
 		memset(matrix, 0, sizeof(matrix));
@@ -68,19 +67,23 @@ public:
 	}
 
 	Vec2 &getPosition() { return position; }
-	Vec2 &getScale()    { return scale;    }
 	Vec2 &getOrigin()   { return origin;   }
+	Vec2 &getScale()    { return scale;    }
 	float getRotation() { return rotation; }
+
+	Vec2i getPositionI() const
+	{
+		return Vec2i(position.x, position.y);
+	}
+
+	Vec2i getOriginI() const
+	{
+		return Vec2i(origin.x, origin.y);
+	}
 
 	void setPosition(const Vec2 &value)
 	{
 		position = value;
-		dirty = true;
-	}
-
-	void setScale(const Vec2 &value)
-	{
-		scale = value;
 		dirty = true;
 	}
 
@@ -90,16 +93,21 @@ public:
 		dirty = true;
 	}
 
+	void setScale(const Vec2 &value)
+	{
+		scale = value;
+		dirty = true;
+	}
+
 	void setRotation(float value)
 	{
 		rotation = value;
 		dirty = true;
 	}
 
-	void setGlobalOffset(int x, int y)
+	void setGlobalOffset(const Vec2i &value)
 	{
-		xOffset = x;
-		yOffset = y;
+		offset = value;
 		dirty = true;
 	}
 
@@ -129,8 +137,8 @@ private:
 		float syc    = scale.y * cosine;
 		float sxs    = scale.x * sine;
 		float sys    = scale.y * sine;
-		float tx     = -origin.x * sxc - origin.y * sys + position.x + xOffset;
-		float ty     =  origin.x * sxs - origin.y * syc + position.y + yOffset;
+		float tx     = -origin.x * sxc - origin.y * sys + position.x + offset.x;
+		float ty     =  origin.x * sxs - origin.y * syc + position.y + offset.y;
 
 		matrix[0]  =  sxc;
 		matrix[1]  = -sxs;
@@ -146,7 +154,7 @@ private:
 	float rotation;
 
 	/* Silently added to position */
-	int xOffset, yOffset;
+	Vec2i offset;
 
 	float matrix[16];
 

@@ -366,11 +366,10 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 	void onGeometryChange(const Scene::Geometry &geo)
 	{
-		mapViewp.w = (geo.rect.w / 32) + !!(geo.rect.w % 32) + 1;
-		mapViewp.h = (geo.rect.h / 32) + !!(geo.rect.h % 32) + 1;
+		const Vec2i geoSize = geo.rect.size();
+		mapViewp.setSize((geoSize / 32) + !!(geoSize % 32) + Vec2i(1));
 
-		sceneOffset.x = geo.rect.x - geo.xOrigin;
-		sceneOffset.y = geo.rect.y - geo.yOrigin;
+		sceneOffset = geo.offset();
 		sceneGeo = geo;
 
 		buffersDirty = true;

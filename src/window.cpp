@@ -471,16 +471,15 @@ struct WindowPrivate
 			i += TileQuads::buildFrame(effectRect, cursorVert.vert);
 		}
 
-		/* Scroll arrows */
-		int scrollLRY = (size.y - 16) / 2;
-		int scrollTBX = (size.x - 16) / 2;
+		/* Scroll arrow position: Top Bottom X, Left Right Y */
+		const Vec2i scroll = (size - Vec2i(16)) / 2;
 
 		Sides<IntRect> scrollArrows;
 
-		scrollArrows.l = IntRect(4, scrollLRY, 8, 16);
-		scrollArrows.r = IntRect(size.x - 12, scrollLRY, 8, 16);
-		scrollArrows.t = IntRect(scrollTBX, 4, 16, 8);
-		scrollArrows.b = IntRect(scrollTBX, size.y - 12, 16, 8);
+		scrollArrows.l = IntRect(4, scroll.y, 8, 16);
+		scrollArrows.r = IntRect(size.x - 12, scroll.y, 8, 16);
+		scrollArrows.t = IntRect(scroll.x, 4, 16, 8);
+		scrollArrows.b = IntRect(scroll.x, size.y - 12, 16, 8);
 
 		if (contents)
 		{
@@ -557,13 +556,10 @@ struct WindowPrivate
 		if (size == Vec2i(0, 0))
 			return;
 
-		Vec2i trans(position.x + sceneOffset.x,
-		            position.y + sceneOffset.y);
-
 		SimpleAlphaShader &shader = shState->shaders().simpleAlpha;
 		shader.bind();
 		shader.applyViewportProj();
-		shader.setTranslation(trans);
+		shader.setTranslation(position + sceneOffset);
 
 		if (useBaseTex)
 		{
@@ -598,12 +594,11 @@ struct WindowPrivate
 			controlsVertDirty = false;
 		}
 
-		/* Actual on screen coordinates */
-		int effectX = position.x + sceneOffset.x;
-		int effectY = position.y + sceneOffset.y;
+		/* Effective on screen coordinates */
+		const Vec2i efPos = position + sceneOffset;
 
-		IntRect windowRect(effectX, effectY, size.x, size.y);
-		IntRect contentsRect(effectX+16, effectY+16, size.x-32, size.y-32);
+		const IntRect windowRect(efPos, size);
+		const IntRect contentsRect(efPos + Vec2i(16), size - Vec2i(32));
 
 		glState.scissorTest.pushSet(true);
 		glState.scissorBox.push();
@@ -615,7 +610,7 @@ struct WindowPrivate
 
 		if (!nullOrDisposed(windowskin))
 		{
-			shader.setTranslation(Vec2i(effectX, effectY));
+			shader.setTranslation(efPos);
 
 			/* Draw arrows / cursors */
 			windowskin->bindTex(shader);
@@ -631,9 +626,7 @@ struct WindowPrivate
 			/* Draw contents bitmap */
 			glState.scissorBox.setIntersect(contentsRect);
 
-			effectX += 16-contentsOffset.x;
-			effectY += 16-contentsOffset.y;
-			shader.setTranslation(Vec2i(effectX, effectY));
+			shader.setTranslation(efPos + (Vec2i(16) - contentsOffset));
 
 			contents->bindTex(shader);
 			contentsQuad.draw();
@@ -876,8 +869,7 @@ void Window::draw()
 
 void Window::onGeometryChange(const Scene::Geometry &geo)
 {
-	p->sceneOffset.x = geo.rect.x - geo.xOrigin;
-	p->sceneOffset.y = geo.rect.y - geo.yOrigin;
+	p->sceneOffset = geo.offset();
 }
 
 void Window::setZ(int value)

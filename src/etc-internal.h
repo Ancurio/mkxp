@@ -79,17 +79,66 @@ struct Vec2i
 	    : x(x), y(y)
 	{}
 
+	explicit Vec2i(int xy)
+	    : x(xy), y(xy)
+	{}
+
 	bool operator==(const Vec2i &other) const
 	{
 		return x == other.x && y == other.y;
 	}
 
-	Vec2i &operator+=(const Vec2i &other)
+	Vec2i &operator+=(const Vec2i &value)
 	{
-		x += other.x;
-		y += other.y;
+		x += value.x;
+		y += value.y;
 
 		return *this;
+	}
+
+	Vec2i &operator-=(const Vec2i &value)
+	{
+		x -= value.x;
+		y -= value.y;
+
+		return *this;
+	}
+
+	Vec2i operator+(const Vec2i &value) const
+	{
+		return Vec2i(x + value.x, y + value.y);
+	}
+
+	Vec2i operator-(const Vec2i &value) const
+	{
+		return Vec2i(x - value.x, y - value.y);
+	}
+
+	template<typename T>
+	Vec2i operator*(T value) const
+	{
+		return Vec2i(x * value, y * value);
+	}
+
+	template<typename T>
+	Vec2i operator/(T value) const
+	{
+		return Vec2i(x / value, y / value);
+	}
+
+	Vec2i operator%(int value) const
+	{
+		return Vec2i(x % value, y % value);
+	}
+
+	Vec2i operator-() const
+	{
+		return Vec2i(-x, -y);
+	}
+
+	Vec2i operator!() const
+	{
+		return Vec2i(!x, !y);
 	}
 
 	operator Vec2() const
@@ -113,6 +162,14 @@ struct IntRect : SDL_Rect
 		this->h = h;
 	}
 
+	IntRect(const Vec2i &pos, const Vec2i &size)
+	{
+		x = pos.x;
+		y = pos.y;
+		w = size.x;
+		h = size.y;
+	}
+
 	bool operator==(const IntRect &other) const
 	{
 		return (x == other.x && y == other.y &&
@@ -129,10 +186,16 @@ struct IntRect : SDL_Rect
 		return Vec2i(w, h);
 	}
 
-	operator SDL_Rect() const
+	void setPos(const Vec2i &value)
 	{
-		SDL_Rect r = { x, y, w, h };
-		return r;
+		x = value.x;
+		y = value.y;
+	}
+
+	void setSize(const Vec2i &value)
+	{
+		w = value.x;
+		h = value.y;
 	}
 
 	bool encloses(const IntRect &o) const
@@ -176,34 +239,9 @@ struct FloatRect
 	Vec2 topRight() const { return Vec2(x+w, y); }
 	Vec2 bottomRight() const { return Vec2(x+w, y+h); }
 
-	void shrinkHalf()
-	{
-		x += 0.5;
-		y += 0.5;
-		w -= 1.0;
-		h -= 1.0;
-	}
-
-	FloatRect vFlipped() const
-	{
-		return FloatRect(x, y+h, w, -h);
-	}
-
 	FloatRect hFlipped() const
 	{
 		return FloatRect(x+w, y, -w, h);
-	}
-
-	Vec2 corner(int i) const
-	{
-		switch (i)
-		{
-		case 0 : return topLeft();
-		case 1 : return topRight();
-		case 2 : return bottomRight();
-		case 3 : return bottomLeft();
-		default : return Vec2();
-		}
 	}
 };
 

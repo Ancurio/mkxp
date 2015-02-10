@@ -39,8 +39,16 @@ class Scene
 public:
 	struct Geometry
 	{
-		int xOrigin, yOrigin;
+		/* Position and size relative to parent */
 		IntRect rect;
+
+		/* Origin of contents */
+		Vec2i orig;
+
+		Vec2i offset() const
+		{
+			return rect.pos() - orig;
+		}
 	};
 
 	Scene();

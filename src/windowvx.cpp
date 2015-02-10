@@ -506,15 +506,15 @@ struct WindowVXPrivate
 
 	void rebuildCtrlVert()
 	{
-		const int arrowTBX = (geo.w - 16) / 2;
-		const int arrowLRY = (geo.h - 16) / 2;
+		/* Scroll arrow position: Top Bottom X, Left Right Y */
+		const Vec2i arrow = (geo.size() - Vec2i(16)) / 2;
 
 		const Sides<FloatRect> arrowPos =
 		{
-			FloatRect(          4,   arrowLRY, 8, 16 ), /* Left */
-			FloatRect( geo.w - 12,   arrowLRY, 8, 16 ), /* Right */
-			FloatRect(   arrowTBX,          4, 16, 8 ), /* Top */
-			FloatRect(   arrowTBX, geo.h - 12, 16, 8 )  /* Bottom */
+			FloatRect(          4,    arrow.y, 8, 16 ), /* Left */
+			FloatRect( geo.w - 12,    arrow.y, 8, 16 ), /* Right */
+			FloatRect(    arrow.x,          4, 16, 8 ), /* Top */
+			FloatRect(    arrow.x, geo.h - 12, 16, 8 )  /* Bottom */
 		};
 
 		size_t i = 0;
@@ -538,7 +538,7 @@ struct WindowVXPrivate
 
 		if (pause)
 		{
-			const FloatRect pausePos(arrowTBX, geo.h - 16, 16, 16);
+			const FloatRect pausePos(arrow.x, geo.h - 16, 16, 16);
 			pauseVert = &vert[i*4];
 
 			i += Quad::setTexPosRect(&vert[i*4], pauseSrc[0], pausePos);
@@ -730,8 +730,7 @@ struct WindowVXPrivate
 		bool windowskinValid = !nullOrDisposed(windowskin);
 		bool contentsValid = !nullOrDisposed(contents);
 
-		Vec2i trans(geo.x + sceneOffset.x,
-		            geo.y + sceneOffset.y);
+		Vec2i trans = geo.pos() + sceneOffset;
 
 		SimpleAlphaShader &shader = shState->shaders().simpleAlpha;
 		shader.bind();
@@ -764,8 +763,7 @@ struct WindowVXPrivate
 		{
 			/* Translate cliprect from local into screen space */
 			IntRect clip = clipRect;
-			clip.x += trans.x;
-			clip.y += trans.y;
+			clip.setPos(clip.pos() + trans);
 
 			glState.scissorBox.push();
 			glState.scissorTest.pushSet(true);
@@ -773,11 +771,10 @@ struct WindowVXPrivate
 			if (rgssVer >= 3)
 				glState.scissorBox.setIntersect(clip);
 			else
-				glState.scissorBox.setIntersect(IntRect(trans.x, trans.y, geo.w, geo.h));
+				glState.scissorBox.setIntersect(IntRect(trans, geo.size()));
 
 			IntRect pad = padRect;
-			pad.x += trans.x;
-			pad.y += trans.y;
+			pad.setPos(pad.pos() + trans);
 
 			if (drawCursor)
 			{
@@ -786,10 +783,7 @@ struct WindowVXPrivate
 				contTrans.y += cursorRect->y;
 
 				if (rgssVer >= 3)
-				{
-					contTrans.x -= contentsOff.x;
-					contTrans.y -= contentsOff.y;
-				}
+					contTrans -= contentsOff;
 
 				shader.setTranslation(contTrans);
 
@@ -804,8 +798,7 @@ struct WindowVXPrivate
 					glState.scissorBox.setIntersect(clip);
 
 				Vec2i contTrans = pad.pos();
-				contTrans.x -= contentsOff.x;
-				contTrans.y -= contentsOff.y;
+				contTrans -= contentsOff;
 				shader.setTranslation(contTrans);
 
 				TEX::setSmooth(false); // XXX
@@ -1105,8 +1098,7 @@ void WindowVX::draw()
 
 void WindowVX::onGeometryChange(const Scene::Geometry &geo)
 {
-	p->sceneOffset.x = geo.rect.x - geo.xOrigin;
-	p->sceneOffset.y = geo.rect.y - geo.yOrigin;
+	p->sceneOffset = geo.offset();
 }
 
 void WindowVX::releaseResources()

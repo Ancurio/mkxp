@@ -90,8 +90,8 @@ struct PlanePrivate
 		if (gl.npot_repeat)
 		{
 			FloatRect srcRect;
-			srcRect.x = (sceneGeo.xOrigin + ox) / zoomX;
-			srcRect.y = (sceneGeo.yOrigin + oy) / zoomY;
+			srcRect.x = (sceneGeo.orig.x + ox) / zoomX;
+			srcRect.y = (sceneGeo.orig.y + oy) / zoomY;
 			srcRect.w = sceneGeo.rect.w / zoomX;
 			srcRect.h = sceneGeo.rect.h / zoomY;
 

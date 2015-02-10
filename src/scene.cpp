@@ -23,10 +23,7 @@
 #include "sharedstate.h"
 
 Scene::Scene()
-{
-	geometry.xOrigin = geometry.yOrigin = 0;
-	geometry.rect = IntRect();
-}
+{}
 
 Scene::~Scene()
 {
