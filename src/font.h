@@ -108,7 +108,7 @@ public:
 
 	/* Assigns heap allocated objects to object properties;
 	 * using this in pure C++ will cause memory leaks
-	 * (ie. only to be used in GCed language bindings */
+	 * (ie. only to be used in GCed language bindings) */
 	void initDynAttribs();
 	static void initDefaultDynAttribs();
 
