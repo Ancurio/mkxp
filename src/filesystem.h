@@ -43,28 +43,18 @@ public:
 	 * available font assets */
 	void initFontSets(SharedFontState &sfs);
 
-	/* For extension supplementing */
-	enum FileType
-	{
-		Image = 0,
-		Audio,
-		Font,
-		Undefined
-	};
-
 	void openRead(SDL_RWops &ops,
 	              const char *filename,
-	              FileType type = Undefined,
 	              bool freeOnClose = false,
-	              const char **foundExt = 0);
+	              char *extBuf = 0,
+	              size_t extBufN = 0);
 
 	/* Circumvents extension supplementing */
 	void openReadRaw(SDL_RWops &ops,
 	                 const char *filename,
 	                 bool freeOnClose = false);
 
-	bool exists(const char *filename,
-	            FileType type = Undefined);
+	bool exists(const char *filename);
 
 private:
 	FileSystemPrivate *p;

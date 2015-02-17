@@ -236,9 +236,10 @@ struct BitmapPrivate
 Bitmap::Bitmap(const char *filename)
 {
 	SDL_RWops ops;
-	const char *extension;
-	shState->fileSystem().openRead(ops, filename, FileSystem::Image, false, &extension);
-	SDL_Surface *imgSurf = IMG_LoadTyped_RW(&ops, 1, extension);
+	char ext[8];
+
+	shState->fileSystem().openRead(ops, filename, false, ext, sizeof(ext));
+	SDL_Surface *imgSurf = IMG_LoadTyped_RW(&ops, 1, ext);
 
 	if (!imgSurf)
 		throw Exception(Exception::SDLError, "Error loading image '%s': %s",

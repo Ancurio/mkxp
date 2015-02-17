@@ -197,12 +197,12 @@ SoundBuffer *SoundEmitter::allocateBuffer(const std::string &filename)
 	{
 		/* Buffer not in cashe, needs to be loaded */
 		SDL_RWops dataSource;
-		const char *extension;
+		char ext[8];
 
 		shState->fileSystem().openRead(dataSource, filename.c_str(),
-									   FileSystem::Audio, false, &extension);
+		                               false, ext, sizeof(ext));
 
-		Sound_Sample *sampleHandle = Sound_NewSample(&dataSource, extension, 0, STREAM_BUF_SIZE);
+		Sound_Sample *sampleHandle = Sound_NewSample(&dataSource, ext, 0, STREAM_BUF_SIZE);
 
 		if (!sampleHandle)
 		{

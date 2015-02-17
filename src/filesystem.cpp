@@ -230,17 +230,35 @@ static int SDL_RWopsCloseFree(SDL_RWops *ops)
 	return result;
 }
 
+/* Copies the first srcN characters from src into dst,
+ * or the full string if srcN == -1. Never writes more
+ * than dstMax, and guarantees dst to be null terminated.
+ * Returns copied bytes (minus terminating null) */
+static size_t
+strcpySafe(char *dst, const char *src,
+           size_t dstMax, int srcN)
+{
+	if (srcN < 0)
+		srcN = strlen(src);
+
+	size_t cpyMax = std::min<size_t>(dstMax-1, srcN);
+
+	memcpy(dst, src, cpyMax);
+	dst[cpyMax] = '\0';
+
+	return cpyMax;
+}
+
 const Uint32 SDL_RWOPS_PHYSFS = SDL_RWOPS_UNKNOWN+10;
 
 struct FileSystemPrivate
 {
-	/* Maps: lower case filename, To: actual (mixed case) filename.
+	/* Maps: lower case filepath without extension,
+	 * To:   mixed case full filepath
 	 * This is for compatibility with games that take Windows'
 	 * case insensitivity for granted */
 	BoostHash<std::string, std::string> pathCache;
 	bool havePathCache;
-
-	std::vector<std::string> extensions[FileSystem::Undefined+1];
 
 	/* Attempt to locate an extension string in a filename.
 	 * Either a pointer into the input string pointing at the
@@ -261,126 +279,150 @@ struct FileSystemPrivate
 		return 0;
 	}
 
-	/* Complete filename via regular physfs lookup */
-	bool completeFilenameReg(const char *filename,
-	                         FileSystem::FileType type,
+	struct CompleteFilenameData
+	{
+		bool found;
+		/* Contains the incomplete filename we're looking for;
+		 * when found, we write the complete filename into this
+		 * same buffer */
+		char *outBuf;
+		/* Length of incomplete file name */
+		size_t filenameLen;
+		/* Maximum we can write into outBuf */
+		size_t outBufN;
+	};
+
+	static void completeFilenameRegCB(void *data, const char *,
+	                                  const char *fname)
+	{
+		CompleteFilenameData &d = *static_cast<CompleteFilenameData*>(data);
+
+		if (d.found)
+			return;
+
+		if (strncmp(d.outBuf, fname, d.filenameLen) != 0)
+			return;
+
+		/* If fname matches up to a following '.' (meaning the rest is part
+		 * of the extension), or up to a following '\0' (full match), we've
+		 * found our file */
+		switch (fname[d.filenameLen])
+		{
+		case '.' :
+			/* Overwrite the incomplete file name we looked for with
+			 * the full version containing any extensions */
+			strcpySafe(d.outBuf, fname, d.outBufN, -1);
+		case '\0' :
+			d.found = true;
+		}
+	}
+
+	bool completeFilenameReg(const char *filepath,
 	                         char *outBuffer,
-	                         size_t outN,
-	                         const char **foundExt)
+	                         size_t outN)
 	{
-		/* Try supplementing extensions to find an existing path */
-		const std::vector<std::string> &extList = extensions[type];
+		strcpySafe(outBuffer, filepath, outN, -1);
 
-		for (size_t i = 0; i < extList.size(); ++i)
+		size_t len = strlen(outBuffer);
+		char *delim;
+
+		/* Find the deliminator separating directory and file name */
+		for (delim = outBuffer + len; delim > outBuffer; --delim)
+			if (*delim == '/')
+				break;
+
+		bool root = (delim == outBuffer);
+		CompleteFilenameData d;
+
+		if (!root)
 		{
-			const char *ext = extList[i].c_str();
+			/* If we have such a deliminator, we set it to '\0' so we
+			 * can pass the first half to PhysFS as the directory name,
+			 * and compare all filenames against the second half */
+			d.outBuf = delim+1;
+			d.filenameLen = len - (delim - outBuffer + 1);
 
-			snprintf(outBuffer, outN, "%s.%s", filename, ext);
-
-			if (PHYSFS_exists(outBuffer))
-			{
-				if (foundExt)
-					*foundExt = ext;
-
-				return true;
-			}
+			*delim = '\0';
+		}
+		else
+		{
+			/* Otherwise the file is in the root directory */
+			d.outBuf = outBuffer;
+			d.filenameLen = len - (delim - outBuffer);
 		}
 
-		/* Doing the check without supplemented extension
-		 * fits the usage pattern of RMXP games */
-		if (PHYSFS_exists(filename))
-		{
-			strncpy(outBuffer, filename, outN);
+		d.found = false;
+		d.outBufN = outN - (d.outBuf - outBuffer);
 
-			if (foundExt)
-				*foundExt = findExt(filename);
+		PHYSFS_enumerateFilesCallback(root ? "" : outBuffer, completeFilenameRegCB, &d);
 
-			return true;
-		}
+		if (!d.found)
+			return false;
 
-		return false;
+		/* Now we put the deliminator back in to form the completed
+		 * file path (if required) */
+		if (delim != outBuffer)
+			*delim = '/';
+
+		return true;
 	}
 
-	/* Complete filename via path cache */
-	bool completeFilenamePC(const char *filename,
-	                        FileSystem::FileType type,
+	bool completeFilenamePC(const char *filepath,
 	                        char *outBuffer,
-	                        size_t outN,
-	                        const char **foundExt)
+	                        size_t outN)
 	{
-		size_t i;
-		char lowCase[512];
+		std::string lowCase(filepath);
 
-		for (i = 0; i < sizeof(lowCase)-1 && filename[i]; ++i)
-			lowCase[i] = tolower(filename[i]);
+		for (size_t i = 0; i < lowCase.size(); ++i)
+			lowCase[i] = tolower(lowCase[i]);
 
-		lowCase[i] = '\0';
+		if (!pathCache.contains(lowCase))
+			return false;
 
-		std::string key;
+		const std::string &fullPath = pathCache[lowCase];
+		strcpySafe(outBuffer, fullPath.c_str(), outN, fullPath.size());
 
-		const std::vector<std::string> &extList = extensions[type];
-
-		for (size_t i = 0; i < extList.size(); ++i)
-		{
-			const char *ext = extList[i].c_str();
-
-			snprintf(outBuffer, outN, "%s.%s", lowCase, ext);
-			key = outBuffer;
-
-			if (pathCache.contains(key))
-			{
-				strncpy(outBuffer, pathCache[key].c_str(), outN);
-
-				if (foundExt)
-					*foundExt = ext;
-
-				return true;
-			}
-		}
-
-		key = lowCase;
-
-		if (pathCache.contains(key))
-		{
-			strncpy(outBuffer, pathCache[key].c_str(), outN);
-
-			if (foundExt)
-				*foundExt = findExt(filename);
-
-			return true;
-		}
-
-		return false;
+		return true;
 	}
 
-	/* Try to complete 'filename' with file extensions
-	 * based on 'type'. If no combination could be found,
-	 * returns false, and 'foundExt' is untouched */
-	bool completeFileName(const char *filename,
-	                      FileSystem::FileType type,
+	bool completeFilename(const char *filepath,
 	                      char *outBuffer,
-	                      size_t outN,
-	                      const char **foundExt)
+	                      size_t outN)
 	{
 		if (havePathCache)
-			return completeFilenamePC(filename, type, outBuffer, outN, foundExt);
+			return completeFilenamePC(filepath, outBuffer, outN);
 		else
-			return completeFilenameReg(filename, type, outBuffer, outN, foundExt);
+			return completeFilenameReg(filepath, outBuffer, outN);
 	}
 
 	PHYSFS_File *openReadHandle(const char *filename,
-	                            FileSystem::FileType type,
-	                            const char **foundExt)
+	                            char *extBuf,
+	                            size_t extBufN)
 	{
 		char found[512];
 
-		if (!completeFileName(filename, type, found, sizeof(found), foundExt))
+		if (!completeFilename(filename, found, sizeof(found)))
 			throw Exception(Exception::NoFileError, "%s", filename);
 
 		PHYSFS_File *handle = PHYSFS_openRead(found);
 
 		if (!handle)
 			throw Exception(Exception::PHYSFSError, "PhysFS: %s", PHYSFS_getLastError());
+
+		if (!extBuf)
+			return handle;
+
+		for (char *q = found+strlen(found); q > found; --q)
+		{
+			if (*q == '/')
+				break;
+
+			if (*q != '.')
+				continue;
+
+			strcpySafe(extBuf, q+1, extBufN, -1);
+			break;
+		}
 
 		return handle;
 	}
@@ -408,44 +450,7 @@ FileSystem::FileSystem(const char *argv0,
                        bool allowSymlinks)
 {
 	p = new FileSystemPrivate;
-
 	p->havePathCache = false;
-
-	/* Image extensions */
-	p->extensions[Image].push_back("jpg");
-	p->extensions[Image].push_back("png");
-
-	/* Audio extensions */
-	const Sound_DecoderInfo **di;
-	for (di = Sound_AvailableDecoders(); *di; ++di)
-	{
-		const char **ext;
-		for (ext = (*di)->extensions; *ext; ++ext)
-		{
-			/* All reported extensions are uppercase,
-			 * so we need to hammer them down first */
-			char buf[16];
-			for (size_t i = 0; i < sizeof(buf); ++i)
-			{
-				buf[i] = tolower((*ext)[i]);
-
-				if (!buf[i])
-					break;
-			}
-
-			p->extensions[Audio].push_back(buf);
-		}
-	}
-
-	if (rgssVer >= 2 && !contains(p->extensions[Audio], std::string("ogg")))
-		p->extensions[Audio].push_back("ogg");
-
-	p->extensions[Audio].push_back("mid");
-	p->extensions[Audio].push_back("midi");
-
-	/* Font extensions */
-	p->extensions[Font].push_back("ttf");
-	p->extensions[Font].push_back("otf");
 
 	PHYSFS_init(argv0);
 
@@ -544,12 +549,22 @@ static void cacheEnumCB(void *d, const char *origdir,
 
 	std::string mixedCase(ptr);
 
-	for (char *p = bufNfc; *p; ++p)
-		*p = tolower(*p);
+	for (char *q = bufNfc; *q; ++q)
+		*q = tolower(*q);
 
-	std::string lowerCase(ptr);
+	p->pathCache.insert(std::string(ptr), mixedCase);
 
-	p->pathCache.insert(lowerCase, mixedCase);
+	for (char *q = ptr+strlen(ptr); q > ptr; --q)
+	{
+		if (*q == '/')
+			break;
+
+		if (*q != '.')
+			continue;
+
+		*q = '\0';
+		p->pathCache.insert(std::string(ptr), mixedCase);
+	}
 
 	PHYSFS_enumerateFilesCallback(mixedCase.c_str(), cacheEnumCB, d);
 }
@@ -558,18 +573,12 @@ void FileSystem::createPathCache()
 {
 #ifdef __APPLE__
 	CacheEnumCBData data(p);
-	PHYSFS_enumerateFilesCallback("", cacheEnumCB, &data);
+	PHYSFS_enumerateFilesCallback("", cacheEnumCB2, &data);
 #else
 	PHYSFS_enumerateFilesCallback("", cacheEnumCB, p);
 #endif
 
 	p->havePathCache = true;
-}
-
-static void strToLower(std::string &str)
-{
-	for (size_t i = 0; i < str.size(); ++i)
-		str[i] = tolower(str[i]);
 }
 
 struct FontSetsCBData
@@ -590,16 +599,21 @@ static void fontSetEnumCB(void *data, const char *,
 	if (!ext)
 		return;
 
-	std::string lower(ext);
-	strToLower(lower);
+	char lowExt[8];
+	size_t i;
 
-	if (!contains(p->extensions[FileSystem::Font], lower))
+	for (i = 0; i < sizeof(lowExt)-1 && ext[i]; ++i)
+		lowExt[i] = tolower(ext[i]);
+	lowExt[i] = '\0';
+
+	if (strcmp(lowExt, "ttf") && strcmp(lowExt, "otf"))
 		return;
 
-	std::string filename("Fonts/");
-	filename += fname;
+	char filename[512];
+	snprintf(filename, sizeof(filename), "Fonts/%s", fname);
+	filename[sizeof(filename)-1] = '\0';
 
-	PHYSFS_File *handle = PHYSFS_openRead(filename.c_str());
+	PHYSFS_File *handle = PHYSFS_openRead(filename);
 
 	if (!handle)
 		return;
@@ -621,11 +635,11 @@ void FileSystem::initFontSets(SharedFontState &sfs)
 
 void FileSystem::openRead(SDL_RWops &ops,
                           const char *filename,
-                          FileType type,
                           bool freeOnClose,
-                          const char **foundExt)
+                          char *extBuf,
+                          size_t extBufN)
 {
-	PHYSFS_File *handle = p->openReadHandle(filename, type, foundExt);
+ 	PHYSFS_File *handle = p->openReadHandle(filename, extBuf, extBufN);
 
 	p->initReadOps(handle, ops, freeOnClose);
 }
@@ -640,9 +654,9 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
 	p->initReadOps(handle, ops, freeOnClose);
 }
 
-bool FileSystem::exists(const char *filename, FileType type)
+bool FileSystem::exists(const char *filename)
 {
 	char found[512];
 
-	return p->completeFileName(filename, type, found, sizeof(found), 0);
+	return p->completeFilename(filename, found, sizeof(found));
 }

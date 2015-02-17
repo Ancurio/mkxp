@@ -196,8 +196,8 @@ void ALStream::closeSource()
 
 void ALStream::openSource(const std::string &filename)
 {
-	const char *ext;
-	shState->fileSystem().openRead(srcOps, filename.c_str(), FileSystem::Audio, false, &ext);
+	char ext[8];
+	shState->fileSystem().openRead(srcOps, filename.c_str(), false, ext, sizeof(ext));
 	needsRewind.clear();
 
 	/* Try to read ogg file signature */
