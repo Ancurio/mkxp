@@ -120,7 +120,7 @@ SoundEmitter::~SoundEmitter()
 
 void SoundEmitter::play(const std::string &filename,
                         int volume,
-					    int pitch)
+                        int pitch)
 {
 	float _volume = clamp<int>(volume, 0, 100) / 100.f;
 	float _pitch  = clamp<int>(pitch, 50, 150) / 100.f;
