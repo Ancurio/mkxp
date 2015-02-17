@@ -26,6 +26,7 @@
 #include "exception.h"
 #include "config.h"
 #include "util.h"
+#include "debugwriter.h"
 
 #include <SDL_sound.h>
 
@@ -127,6 +128,9 @@ void SoundEmitter::play(const std::string &filename,
 
 	SoundBuffer *buffer = allocateBuffer(filename);
 
+	if (!buffer)
+		return;
+
 	/* Try to find first free source */
 	size_t i;
 	for (i = 0; i < srcCount; ++i)
@@ -206,9 +210,13 @@ SoundBuffer *SoundEmitter::allocateBuffer(const std::string &filename)
 
 		if (!sampleHandle)
 		{
-			SDL_RWclose(&dataSource);
-			throw Exception(Exception::SDLError, "%s.%s: %s",
-			                filename.c_str(), extension, Sound_GetError());
+			char buf[512];
+			snprintf(buf, sizeof(buf), "Unable to decode sound: %s.%s: %s",
+			         filename.c_str(), ext, Sound_GetError());
+			buf[sizeof(buf)-1] = '\0';
+			Debug() << buf;
+
+			return 0;
 		}
 
 		uint32_t decBytes = Sound_DecodeAll(sampleHandle);
