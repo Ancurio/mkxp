@@ -167,6 +167,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(dataPathOrg, std::string, "") \
 	PO_DESC(dataPathApp, std::string, "") \
 	PO_DESC(iconPath, std::string, "") \
+	PO_DESC(execName, std::string, "Game") \
 	PO_DESC(titleLanguage, std::string, "") \
 	PO_DESC(midi.soundFont, std::string, "") \
 	PO_DESC(midi.chorus, bool, false) \
@@ -286,7 +287,8 @@ void Config::readGameINI()
 	        ;
 
 	po::variables_map vm;
-	SDLRWStream iniFile("Game.ini", "r");
+	std::string iniFilename = execName + ".ini";
+	SDLRWStream iniFile(iniFilename.c_str(), "r");
 
 	if (iniFile)
 	{
@@ -297,12 +299,12 @@ void Config::readGameINI()
 		}
 		catch (po::error &error)
 		{
-			Debug() << "Game.ini:" << error.what();
+			Debug() << iniFilename + ":" << error.what();
 		}
 	}
 	else
 	{
-		Debug() << "FAILED to open Game.ini";
+		Debug() << "FAILED to open" << iniFilename;
 	}
 
 	GUARD_ALL( game.title = vm["Game.Title"].as<std::string>(); );

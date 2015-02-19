@@ -46,14 +46,14 @@ SharedState *SharedState::instance = 0;
 int SharedState::rgssVersion = 0;
 static GlobalIBO *_globalIBO = 0;
 
-static const char *defGameArchive()
+static const char *gameArchExt()
 {
 	if (rgssVer == 1)
-		return "Game.rgssad";
+		return ".rgssad";
 	else if (rgssVer == 2)
-		return "Game.rgss2a";
+		return ".rgss2a";
 	else if (rgssVer == 3)
-		return "Game.rgss3a";
+		return ".rgss3a";
 
 	assert(!"unreachable");
 	return 0;
@@ -116,8 +116,7 @@ struct SharedStatePrivate
 		if (gl.ReleaseShaderCompiler)
 			gl.ReleaseShaderCompiler();
 
-		// FIXME find out correct archive filename
-		std::string archPath = defGameArchive();
+		std::string archPath = config.execName + gameArchExt();
 
 		/* Check if a game archive exists */
 		FILE *tmp = fopen(archPath.c_str(), "rb");

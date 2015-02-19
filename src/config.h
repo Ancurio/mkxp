@@ -102,6 +102,7 @@ struct Config
 	std::string dataPathApp;
 
 	std::string iconPath;
+	std::string execName;
 	std::string titleLanguage;
 
 	struct
