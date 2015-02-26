@@ -573,7 +573,7 @@ void FileSystem::createPathCache()
 {
 #ifdef __APPLE__
 	CacheEnumCBData data(p);
-	PHYSFS_enumerateFilesCallback("", cacheEnumCB2, &data);
+	PHYSFS_enumerateFilesCallback("", cacheEnumCB, &data);
 #else
 	PHYSFS_enumerateFilesCallback("", cacheEnumCB, p);
 #endif
