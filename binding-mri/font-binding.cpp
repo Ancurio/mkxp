@@ -152,7 +152,7 @@ RB_METHOD(FontSetName)
 	Font *f = getPrivateData<Font>(self);
 
 	char result[256];
-	fontSetNameHelper(self, argc, argv, "default_name",
+	fontSetNameHelper(self, argc, argv, "name",
 	                  result, sizeof(result));
 
 	f->setName(result);
