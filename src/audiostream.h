@@ -55,7 +55,10 @@ struct AudioStream
 
 	/* Note that 'extPaused' and 'noResumeStop' are
 	 * effectively only used with the AudioStream
-	 * instance representing the BGM */
+	 * instance representing the BGM.
+	 * They are not AtomicFlags because they're regarded
+	 * as part of the underlying stream state, and
+	 * always accessed with the stream lock held */
 
 	/* Flag indicating that the MeWatch paused this
 	 * (BGM) stream because a ME started playing.
