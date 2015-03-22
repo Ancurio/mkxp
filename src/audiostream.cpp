@@ -179,6 +179,7 @@ void AudioStream::fadeOut(int duration)
 	lockStream();
 
 	ALStream::State sState = stream.queryState();
+	noResumeStop = true;
 
 	if (fade.active)
 	{
