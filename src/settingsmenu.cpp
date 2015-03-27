@@ -533,7 +533,6 @@ struct SettingsMenuPrivate
 		{
 			char buf[64];
 			snprintf(buf, sizeof(buf), "Press key or joystick button for \"%s\"", captureName);
-			buf[sizeof(buf)-1] = '\0';
 
 			drawOff = Vec2i();
 

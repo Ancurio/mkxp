@@ -213,7 +213,6 @@ SoundBuffer *SoundEmitter::allocateBuffer(const std::string &filename)
 			char buf[512];
 			snprintf(buf, sizeof(buf), "Unable to decode sound: %s.%s: %s",
 			         filename.c_str(), ext, Sound_GetError());
-			buf[sizeof(buf)-1] = '\0';
 			Debug() << buf;
 
 			return 0;

@@ -236,7 +236,6 @@ void ALStream::openSource(const std::string &filename)
 		char buf[512];
 		snprintf(buf, sizeof(buf), "Unable to decode audio stream: %s.%s: %s",
 		         filename.c_str(), ext, e.msg.c_str());
-		buf[sizeof(buf)-1] = '\0';
 
 		Debug() << buf;
 	}

@@ -611,7 +611,6 @@ static void fontSetEnumCB(void *data, const char *,
 
 	char filename[512];
 	snprintf(filename, sizeof(filename), "Fonts/%s", fname);
-	filename[sizeof(filename)-1] = '\0';
 
 	PHYSFS_File *handle = PHYSFS_openRead(filename);
 
