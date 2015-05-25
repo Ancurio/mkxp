@@ -28,6 +28,8 @@
 #include <SDL_thread.h>
 #include <SDL_touch.h>
 
+#include <al.h>
+#include <alc.h>
 #include <alext.h>
 
 #include "sharedstate.h"
