@@ -607,7 +607,12 @@ static void
 readLayer(Reader &reader, const Table &data,
           const Table *flags, int ox, int oy, int w, int h, int z)
 {
-	for (int y = 0; y < h; ++y)
+	/* The table autotile pattern (A2) has two quads (table
+	 * legs, etc.) which extend over the tile below. We process
+	 * the tiles in rows from bottom to top so the table extents
+	 * are added after the tile below and drawn over it. */
+
+	for (int y = h-1; y >= 0; --y)
 		for (int x = 0; x < w; ++x)
 		{
 			int16_t tileID = tableGetWrapped(data, x+ox, y+oy, z);
