@@ -37,7 +37,7 @@ public:
 	void update();
 	void freeze();
 	void transition(int duration = 8,
-	                const char *filename = 0,
+	                const char *filename = "",
 	                int vague = 40);
 	void frameReset();
 

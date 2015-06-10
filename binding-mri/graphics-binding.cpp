@@ -48,7 +48,7 @@ RB_METHOD(graphicsTransition)
 	RB_UNUSED_PARAM;
 
 	int duration = 8;
-	const char *filename = 0;
+	const char *filename = "";
 	int vague = 40;
 
 	rb_get_args(argc, argv, "|izi", &duration, &filename, &vague RB_ARG_END);

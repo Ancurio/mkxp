@@ -45,7 +45,7 @@ MRB_FUNCTION(graphicsFreeze)
 MRB_FUNCTION(graphicsTransition)
 {
 	mrb_int duration = 8;
-	const char *filename = 0;
+	const char *filename = "";
 	mrb_int vague = 40;
 
 	mrb_get_args(mrb, "|izi", &duration, &filename, &vague);
