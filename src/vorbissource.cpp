@@ -19,6 +19,9 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef _MSC_VER
+#include <algorithm>
+#endif
 #include "aldatasource.h"
 #include "exception.h"
 

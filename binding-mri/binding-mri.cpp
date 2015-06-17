@@ -20,11 +20,11 @@
 */
 
 #include "binding.h"
-#include "binding-util.h"
+#include "util.h"
+#include "binding-util.h"  //fatal error C1189 if this is before "util.h"
 #include "sharedstate.h"
 #include "eventthread.h"
 #include "filesystem.h"
-#include "util.h"
 #include "sdl-util.h"
 #include "debugwriter.h"
 #include "graphics.h"

@@ -19,11 +19,10 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "binding-util.h"
-
+#include "util.h"
+#include "binding-util.h" //fatal error C1189 if this is before "util.h"
 #include "sharedstate.h"
 #include "filesystem.h"
-#include "util.h"
 
 #include "ruby/encoding.h"
 #include "ruby/intern.h"

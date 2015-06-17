@@ -26,11 +26,14 @@
 #include <SDL_ttf.h>
 #include <SDL_sound.h>
 
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <assert.h>
 #include <string>
 
+#include "crossplatform.h"
 #include "sharedstate.h"
 #include "eventthread.h"
 #include "gl-debug.h"

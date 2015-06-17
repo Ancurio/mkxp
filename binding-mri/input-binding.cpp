@@ -19,6 +19,10 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_DEPRECATE
+#endif
+
 #include "input.h"
 #include "sharedstate.h"
 #include "exception.h"

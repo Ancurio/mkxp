@@ -186,7 +186,7 @@ diff -r 719dade41745 decoders/wav.c
 +                break;
 +
 +            rc = read_ima_block_headers(internal->rw, fmt->fmt.ima.d,
-+                                        fmt->wChannels, (Sint16*) (out_buf+bw));
++                                        fmt->wChannels, (Sint16*)out_buf+bw);
 +                                        
 +            if (!rc)
 +            {
@@ -210,7 +210,7 @@ diff -r 719dade41745 decoders/wav.c
 +        if (bw+fmt->fmt.ima.dec_frameset_size > internal->buffer_size)
 +            break;
 +
-+        rc = read_ima_frameset(internal->rw, w, (Sint16*) (out_buf+bw));
++        rc = read_ima_frameset(internal->rw, w, (Sint16*)out_buf+bw);
 +
 +        if (!rc)
 +        {
