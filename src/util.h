@@ -22,9 +22,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#ifdef _MSC_VER
-#define _CRT_SECURE_NO_DEPRECATE
-#endif
+#include "crossplatform.h"
+
 #include <stdio.h>
 #include <string>
 #include <algorithm>
