@@ -25,6 +25,7 @@
 #define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
 #include <vector>
+#include <algorithm>
 
 static size_t vfRead(void *ptr, size_t size, size_t nmemb, void *ops)
 {

@@ -44,7 +44,7 @@ int __sdlThreadFun(void *obj)
 template<class C, void (C::*func)()>
 SDL_Thread *createSDLThread(C *obj, const std::string &name = std::string())
 {
-	return SDL_CreateThread(__sdlThreadFun<C, func>, name.c_str(), obj);
+	return SDL_CreateThread((__sdlThreadFun<C, func>), name.c_str(), obj);
 }
 
 /* On Android, SDL_RWFromFile always opens files from inside
