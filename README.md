@@ -44,7 +44,7 @@ This binding only exists for testing purposes and does nothing (the engine quits
 * SDL2*
 * SDL2_image
 * SDL2_ttf
-* SDL_sound (latest hg, apply provided patches!)
+* [my SDL_sound fork](https://github.com/Ancurio/SDL_sound)
 * vorbisfile
 * pixman
 * zlib (only ruby bindings)

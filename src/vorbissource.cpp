@@ -19,15 +19,13 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef _MSC_VER
-#include <algorithm>
-#endif
 #include "aldatasource.h"
 #include "exception.h"
 
 #define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
 #include <vector>
+#include <algorithm>
 
 static size_t vfRead(void *ptr, size_t size, size_t nmemb, void *ops)
 {
