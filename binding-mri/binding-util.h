@@ -23,6 +23,7 @@
 #define BINDING_UTIL_H
 
 #include <ruby.h>
+#undef inline //ruby's config.h has #define inline __inline, which cause error in xkeycheck.h
 
 #include "exception.h"
 
