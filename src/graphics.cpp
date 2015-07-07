@@ -169,15 +169,15 @@ public:
 		}
 	}
 
-	void requestViewportRender(Vec4 &c, Vec4 &f, Vec4 &t)
+	void requestViewportRender(const Vec4 &c, const Vec4 &f, const Vec4 &t)
 	{
 		const IntRect &viewpRect = glState.scissorBox.get();
 		const IntRect &screenRect = geometry.rect;
 
-		bool toneRGBEffect  = t.xyzHasEffect();
-		bool toneGrayEffect = t.w != 0;
-		bool colorEffect    = c.w > 0;
-		bool flashEffect    = f.w > 0;
+		const bool toneRGBEffect  = t.xyzHasEffect();
+		const bool toneGrayEffect = t.w != 0;
+		const bool colorEffect    = c.w > 0;
+		const bool flashEffect    = f.w > 0;
 
 		if (toneGrayEffect)
 		{

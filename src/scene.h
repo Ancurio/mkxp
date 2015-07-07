@@ -55,7 +55,9 @@ public:
 	virtual ~Scene();
 
 	virtual void composite();
-	virtual void requestViewportRender(Vec4& /*color*/, Vec4& /*flash*/, Vec4& /*tone*/) {}
+	virtual void requestViewportRender(const Vec4& /* color */,
+	                                   const Vec4& /* flash */,
+	                                   const Vec4& /* tone */) {}
 
 	const Geometry &getGeometry() const { return geometry; }
 
