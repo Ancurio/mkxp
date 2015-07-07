@@ -175,9 +175,9 @@ void blitSource(TEXFBO &source)
 	}
 }
 
-void blitRectangle(const IntRect &src, const Vec2i &dstPos, bool smooth)
+void blitRectangle(const IntRect &src, const Vec2i &dstPos)
 {
-	blitRectangle(src, IntRect(dstPos.x, dstPos.y, src.w, src.h), smooth);
+	blitRectangle(src, IntRect(dstPos.x, dstPos.y, src.w, src.h), false);
 }
 
 void blitRectangle(const IntRect &src, const IntRect &dst, bool smooth)
