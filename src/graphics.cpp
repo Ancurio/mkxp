@@ -174,7 +174,7 @@ public:
 		const IntRect &viewpRect = glState.scissorBox.get();
 		const IntRect &screenRect = geometry.rect;
 
-		const bool toneRGBEffect  = t.xyzHasEffect();
+		const bool toneRGBEffect  = t.xyzNotNull();
 		const bool toneGrayEffect = t.w != 0;
 		const bool colorEffect    = c.w > 0;
 		const bool flashEffect    = f.w > 0;
@@ -240,7 +240,7 @@ public:
 			/* Then apply them using hardware blending */
 			gl.BlendFuncSeparate(GL_ONE, GL_ONE, GL_ZERO, GL_ONE);
 
-			if (add.xyzHasEffect())
+			if (add.xyzNotNull())
 			{
 				gl.BlendEquation(GL_FUNC_ADD);
 				shader.setColor(add);
@@ -248,7 +248,7 @@ public:
 				screenQuad.draw();
 			}
 
-			if (sub.xyzHasEffect())
+			if (sub.xyzNotNull())
 			{
 				gl.BlendEquation(GL_FUNC_REVERSE_SUBTRACT);
 				shader.setColor(sub);

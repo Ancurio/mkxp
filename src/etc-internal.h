@@ -61,7 +61,7 @@ struct Vec4
 		return (x == other.x && y == other.y && z == other.z && w == other.w);
 	}
 
-	bool xyzHasEffect() const
+	bool xyzNotNull() const
 	{
 		return (x != 0.0 || y != 0.0 || z != 0.0);
 	}
