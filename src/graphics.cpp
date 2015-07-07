@@ -174,7 +174,12 @@ public:
 		const IntRect &viewpRect = glState.scissorBox.get();
 		const IntRect &screenRect = geometry.rect;
 
-		if (t.w != 0.0)
+		bool toneRGBEffect  = t.xyzHasEffect();
+		bool toneGrayEffect = t.w != 0;
+		bool colorEffect    = c.w > 0;
+		bool flashEffect    = f.w > 0;
+
+		if (toneGrayEffect)
 		{
 			pp.swapRender();
 
@@ -206,19 +211,14 @@ public:
 			glState.blend.pop();
 		}
 
-		bool toneEffect = t.xyzHasEffect();
-		bool colorEffect = c.xyzHasEffect();
-		bool flashEffect = f.xyzHasEffect();
-
-		if (!toneEffect && !colorEffect && !flashEffect)
+		if (!toneRGBEffect && !colorEffect && !flashEffect)
 			return;
 
 		FlatColorShader &shader = shState->shaders().flatColor;
 		shader.bind();
 		shader.applyViewportProj();
 
-		/* Apply tone */
-		if (toneEffect)
+		if (toneRGBEffect)
 		{
 			/* First split up additive / substractive components */
 			Vec4 add, sub;
