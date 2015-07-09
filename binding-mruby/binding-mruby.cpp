@@ -266,7 +266,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 	mrb_state *scriptMrb = mrb_open();
 	SDL_RWops ops;
 
-	shState->fileSystem().openRead(ops, scriptPack.c_str());
+	shState->fileSystem().openReadRaw(ops, scriptPack.c_str());
 
 	mrb_value scriptArray = mrb_nil_value();
 	std::string readError;
