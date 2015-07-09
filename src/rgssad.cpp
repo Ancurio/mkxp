@@ -34,7 +34,7 @@ struct RGSS_entryData
 
 struct RGSS_entryHandle
 {
-	RGSS_entryData data;
+	const RGSS_entryData data;
 	uint32_t currentMagic;
 	uint64_t currentOffset;
 	PHYSFS_Io *io;
@@ -229,7 +229,7 @@ RGSS_ioSeek(PHYSFS_Io *self, PHYSFS_uint64 offset)
 static PHYSFS_sint64
 RGSS_ioTell(PHYSFS_Io *self)
 {
-	RGSS_entryHandle *entry = static_cast<RGSS_entryHandle*>(self->opaque);
+	const RGSS_entryHandle *entry = static_cast<RGSS_entryHandle*>(self->opaque);
 
 	return entry->currentOffset;
 }
@@ -237,7 +237,7 @@ RGSS_ioTell(PHYSFS_Io *self)
 static PHYSFS_sint64
 RGSS_ioLength(PHYSFS_Io *self)
 {
-	RGSS_entryHandle *entry = static_cast<RGSS_entryHandle*>(self->opaque);
+	const RGSS_entryHandle *entry = static_cast<RGSS_entryHandle*>(self->opaque);
 
 	return entry->data.size;
 }
@@ -245,7 +245,7 @@ RGSS_ioLength(PHYSFS_Io *self)
 static PHYSFS_Io*
 RGSS_ioDuplicate(PHYSFS_Io *self)
 {
-	RGSS_entryHandle *entry = static_cast<RGSS_entryHandle*>(self->opaque);
+	const RGSS_entryHandle *entry = static_cast<RGSS_entryHandle*>(self->opaque);
 	RGSS_entryHandle *entryDup = new RGSS_entryHandle(*entry);
 
 	PHYSFS_Io *dup = PHYSFS_ALLOC(PHYSFS_Io);
@@ -448,7 +448,7 @@ RGSS_stat(void *opaque, const char *filename, PHYSFS_Stat *stat)
 
 	if (hasFile)
 	{
-		RGSS_entryData &entry = data->entryHash[filename];
+		const RGSS_entryData &entry = data->entryHash[filename];
 
 		stat->filesize = entry.size;
 		stat->filetype = PHYSFS_FILETYPE_REGULAR;
