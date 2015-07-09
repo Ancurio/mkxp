@@ -20,6 +20,8 @@ Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version 
 For a list of differences, see:
 http://stackoverflow.com/questions/21574/what-is-the-difference-between-ruby-1-8-and-ruby-1-9
 
+This binding supports RGSS1, RGSS2 and RGSS3.
+
 ### mruby (Lightweight Ruby)
 Website: https://github.com/mruby/mruby
 
@@ -28,6 +30,8 @@ mruby is a new endeavor by Matz and others to create a more lightweight, spec-ad
 Due to heavy differences between mruby and MRI as well as lacking modules, running RPG Maker games with this binding will most likely not work correctly. It is provided as experimental code. You can eg. write your own ruby scripts and run them.
 
 Some extensions to the standard classes/modules are provided, taking the RPG Maker XP helpfile as a quasi "reference". These include Marshal, File, FileTest and Time.
+
+This binding only supports RGSS1.
 
 **Important:** If you decide to use [mattn's oniguruma regexp gem](https://github.com/mattn/mruby-onig-regexp), don't forget to add `-lonig` to the linker flags to avoid ugly symbol overlaps with libc.
 
