@@ -626,9 +626,20 @@ struct MidiSource : ALDataSource, MidiReadHandler
 		std::vector<uint8_t> data(dataLen);
 
 		if (SDL_RWread(&ops, &data[0], 1, dataLen) < dataLen)
+		{
+			SDL_RWclose(&ops);
 			throw Exception(Exception::MKXPError, "Reading midi data failed");
+		}
 
-		readMidi(this, data);
+		try
+		{
+			readMidi(this, data);
+		}
+		catch (const Exception &)
+		{
+			SDL_RWclose(&ops);
+			throw;
+		}
 
 		synth = shState->midiState().allocateSynth();
 
