@@ -184,6 +184,44 @@ void SoundEmitter::stop()
 		AL::Source::stop(alSrcs[i]);
 }
 
+struct SoundOpenHandler : FileSystem::OpenHandler
+{
+	SoundBuffer *buffer;
+
+	SoundOpenHandler()
+	    : buffer(0)
+	{}
+
+	bool tryRead(SDL_RWops &ops, const char *ext)
+	{
+		Sound_Sample *sample = Sound_NewSample(&ops, ext, 0, STREAM_BUF_SIZE);
+
+		if (!sample)
+		{
+			SDL_RWclose(&ops);
+			return false;
+		}
+
+		/* Do all of the decoding in the handler so we don't have
+		 * to keep the source ops around */
+		uint32_t decBytes = Sound_DecodeAll(sample);
+		uint8_t sampleSize = formatSampleSize(sample->actual.format);
+		uint32_t sampleCount = decBytes / sampleSize;
+
+		buffer = new SoundBuffer;
+		buffer->bytes = sampleSize * sampleCount;
+
+		ALenum alFormat = chooseALFormat(sampleSize, sample->actual.channels);
+
+		AL::Buffer::uploadData(buffer->alBuffer, alFormat, sample->buffer,
+							   buffer->bytes, sample->actual.rate);
+
+		Sound_FreeSample(sample);
+
+		return true;
+	}
+};
+
 SoundBuffer *SoundEmitter::allocateBuffer(const std::string &filename)
 {
 	SoundBuffer *buffer = bufferHash.value(filename, 0);
@@ -199,40 +237,22 @@ SoundBuffer *SoundEmitter::allocateBuffer(const std::string &filename)
 	}
 	else
 	{
-		/* Buffer not in cashe, needs to be loaded */
-		SDL_RWops dataSource;
-		char ext[8];
+		/* Buffer not in cache, needs to be loaded */
+		SoundOpenHandler handler;
+		shState->fileSystem().openRead(handler, filename.c_str());
+		buffer = handler.buffer;
 
-		shState->fileSystem().openRead(dataSource, filename.c_str(),
-		                               false, ext, sizeof(ext));
-
-		Sound_Sample *sampleHandle = Sound_NewSample(&dataSource, ext, 0, STREAM_BUF_SIZE);
-
-		if (!sampleHandle)
+		if (!buffer)
 		{
 			char buf[512];
-			snprintf(buf, sizeof(buf), "Unable to decode sound: %s.%s: %s",
-			         filename.c_str(), ext, Sound_GetError());
+			snprintf(buf, sizeof(buf), "Unable to decode sound: %s: %s",
+			         filename.c_str(), Sound_GetError());
 			Debug() << buf;
 
 			return 0;
 		}
 
-		uint32_t decBytes = Sound_DecodeAll(sampleHandle);
-		uint8_t sampleSize = formatSampleSize(sampleHandle->actual.format);
-		uint32_t sampleCount = decBytes / sampleSize;
-
-		buffer = new SoundBuffer;
 		buffer->key = filename;
-		buffer->bytes = sampleSize * sampleCount;
-
-		ALenum alFormat = chooseALFormat(sampleSize, sampleHandle->actual.channels);
-
-		AL::Buffer::uploadData(buffer->alBuffer, alFormat, sampleHandle->buffer,
-							   buffer->bytes, sampleHandle->actual.rate);
-
-		Sound_FreeSample(sampleHandle);
-
 		uint32_t wouldBeBytes = bufferBytes + buffer->bytes;
 
 		/* If memory limit is reached, delete lowest priority buffer

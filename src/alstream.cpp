@@ -199,43 +199,73 @@ void ALStream::closeSource()
 	delete source;
 }
 
+struct ALStreamOpenHandler : FileSystem::OpenHandler
+{
+	SDL_RWops *srcOps;
+	bool looped;
+	ALDataSource *source;
+	std::string errorMsg;
+
+	ALStreamOpenHandler(SDL_RWops &srcOps, bool looped)
+	    : srcOps(&srcOps), looped(looped), source(0)
+	{}
+
+	bool tryRead(SDL_RWops &ops, const char *ext)
+	{
+		/* Copy this because we need to keep it around,
+		 * as we will continue reading data from it later */
+		*srcOps = ops;
+
+		/* Try to read ogg file signature */
+		char sig[5] = { 0 };
+		SDL_RWread(srcOps, sig, 1, 4);
+		SDL_RWseek(srcOps, 0, RW_SEEK_SET);
+
+		try
+		{
+			if (!strcmp(sig, "OggS"))
+			{
+				source = createVorbisSource(*srcOps, looped);
+				return true;
+			}
+
+			if (!strcmp(sig, "MThd"))
+			{
+				shState->midiState().initIfNeeded(shState->config());
+
+				if (HAVE_FLUID)
+				{
+					source = createMidiSource(*srcOps, looped);
+					return true;
+				}
+			}
+
+			source = createSDLSource(*srcOps, ext, STREAM_BUF_SIZE, looped);
+		}
+		catch (const Exception &e)
+		{
+			/* All source constructors will close the passed ops
+			 * before throwing errors */
+			errorMsg = e.msg;
+			return false;
+		}
+
+		return true;
+	}
+};
+
 void ALStream::openSource(const std::string &filename)
 {
-	char ext[8];
-	shState->fileSystem().openRead(srcOps, filename.c_str(), false, ext, sizeof(ext));
+	ALStreamOpenHandler handler(srcOps, looped);
+	shState->fileSystem().openRead(handler, filename.c_str());
+	source = handler.source;
 	needsRewind.clear();
 
-	/* Try to read ogg file signature */
-	char sig[5] = { 0 };
-	SDL_RWread(&srcOps, sig, 1, 4);
-	SDL_RWseek(&srcOps, 0, RW_SEEK_SET);
-
-	try
-	{
-		if (!strcmp(sig, "OggS"))
-		{
-			source = createVorbisSource(srcOps, looped);
-			return;
-		}
-
-		if (!strcmp(sig, "MThd"))
-		{
-			shState->midiState().initIfNeeded(shState->config());
-
-			if (HAVE_FLUID)
-			{
-				source = createMidiSource(srcOps, looped);
-				return;
-			}
-		}
-
-		source = createSDLSource(srcOps, ext, STREAM_BUF_SIZE, looped);
-	}
-	catch (const Exception &e)
+	if (!source)
 	{
 		char buf[512];
-		snprintf(buf, sizeof(buf), "Unable to decode audio stream: %s.%s: %s",
-		         filename.c_str(), ext, e.msg.c_str());
+		snprintf(buf, sizeof(buf), "Unable to decode audio stream: %s: %s",
+		         filename.c_str(), handler.errorMsg.c_str());
 
 		Debug() << buf;
 	}

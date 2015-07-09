@@ -43,17 +43,28 @@ public:
 	 * available font assets */
 	void initFontSets(SharedFontState &sfs);
 
-	void openRead(SDL_RWops &ops,
-	              const char *filename,
-	              bool freeOnClose = false,
-	              char *extBuf = 0,
-	              size_t extBufN = 0);
+	struct OpenHandler
+	{
+		/* Try to read and interpret data provided from ops.
+		 * If data cannot be parsed, return false, otherwise true.
+		 * Can be called multiple times until a parseable file is found.
+		 * It's the handler's responsibility to close every passed
+		 * ops structure, even when data could not be parsed.
+		 * After this function returns, ops becomes invalid, so don't take
+		 * references to it. Instead, copy the structure without closing
+		 * if you need to further read from it later. */
+		virtual bool tryRead(SDL_RWops &ops, const char *ext) = 0;
+	};
+
+	void openRead(OpenHandler &handler,
+	              const char *filename);
 
 	/* Circumvents extension supplementing */
 	void openReadRaw(SDL_RWops &ops,
 	                 const char *filename,
 	                 bool freeOnClose = false);
 
+	/* Does not perform extension supplementing */
 	bool exists(const char *filename);
 
 private:

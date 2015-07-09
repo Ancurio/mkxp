@@ -233,13 +233,26 @@ struct BitmapPrivate
 	}
 };
 
+struct BitmapOpenHandler : FileSystem::OpenHandler
+{
+	SDL_Surface *surf;
+
+	BitmapOpenHandler()
+	    : surf(0)
+	{}
+
+	bool tryRead(SDL_RWops &ops, const char *ext)
+	{
+		surf = IMG_LoadTyped_RW(&ops, 1, ext);
+		return surf != 0;
+	}
+};
+
 Bitmap::Bitmap(const char *filename)
 {
-	SDL_RWops ops;
-	char ext[8];
-
-	shState->fileSystem().openRead(ops, filename, false, ext, sizeof(ext));
-	SDL_Surface *imgSurf = IMG_LoadTyped_RW(&ops, 1, ext);
+	BitmapOpenHandler handler;
+	shState->fileSystem().openRead(handler, filename);
+	SDL_Surface *imgSurf = handler.surf;
 
 	if (!imgSurf)
 		throw Exception(Exception::SDLError, "Error loading image '%s': %s",
