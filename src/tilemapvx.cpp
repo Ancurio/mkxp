@@ -188,7 +188,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	{
 		int tileOX, tileOY;
 
-		Vec2i offs(offset.x-sceneOffset.x, offset.y-sceneOffset.y);
+		Vec2i offs = offset + sceneGeo.orig;
 
 		if (offs.x >= 0)
 			tileOX = offs.x / 32;
