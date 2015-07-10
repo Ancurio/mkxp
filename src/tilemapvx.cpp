@@ -181,8 +181,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 	void updatePosition()
 	{
-		dispPos.x = -(offset.x - mapViewp.x * 32) + sceneOffset.x;
-		dispPos.y = -(offset.y - mapViewp.y * 32) + sceneOffset.y;
+		dispPos = -(offset - mapViewp.pos() * 32) + sceneOffset;
 	}
 
 	void updateMapViewport()
