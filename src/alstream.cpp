@@ -42,12 +42,12 @@ ALStream::ALStream(LoopMode loopMode,
 	  source(0),
 	  thread(0),
 	  preemptPause(false),
-      pitch(1.0)
+      pitch(1.0f)
 {
 	alSrc = AL::Source::gen();
 
-	AL::Source::setVolume(alSrc, 1.0);
-	AL::Source::setPitch(alSrc, 1.0);
+	AL::Source::setVolume(alSrc, 1.0f);
+	AL::Source::setPitch(alSrc, 1.0f);
 	AL::Source::detachBuffer(alSrc);
 
 	for (int i = 0; i < STREAM_BUFS; ++i)
@@ -172,7 +172,7 @@ void ALStream::setPitch(float value)
 	/* If the source supports setting pitch natively,
 	 * we don't have to do it via OpenAL */
 	if (source && source->setPitch(value))
-		AL::Source::setPitch(alSrc, 1.0);
+		AL::Source::setPitch(alSrc, 1.0f);
 	else
 		AL::Source::setPitch(alSrc, value);
 }

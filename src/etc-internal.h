@@ -63,7 +63,7 @@ struct Vec4
 
 	bool xyzNotNull() const
 	{
-		return (x != 0.0 || y != 0.0 || z != 0.0);
+		return (x != 0.0f || y != 0.0f || z != 0.0f);
 	}
 };
 
@@ -269,13 +269,13 @@ struct NormValue
 
 	NormValue(int unNorm)
 	    : unNorm(unNorm),
-	      norm(unNorm / 255.0)
+	      norm(unNorm / 255.0f)
 	{}
 
 	void operator =(int value)
 	{
 		unNorm = clamp(value, 0, 255);
-		norm = unNorm / 255.0;
+		norm = unNorm / 255.0f;
 	}
 
 	bool operator ==(int value) const

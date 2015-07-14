@@ -482,7 +482,7 @@ struct WindowVXPrivate
 	void updateBaseQuad()
 	{
 		const FloatRect tex(0, 0, geo.w, geo.h);
-		const FloatRect pos(0, (geo.h / 2.0) * (1 - openness.norm),
+		const FloatRect pos(0, (geo.h / 2.0f) * (1.0f - openness.norm),
 		                    geo.w, geo.h * openness.norm);
 
 		base.quad.setTexPosRect(tex, pos);
@@ -633,7 +633,7 @@ struct WindowVXPrivate
 		Quad::setTexRect(pauseVert, pauseSrc[pauseQuad[pauseQuadIdx]]);
 
 		/* Set opacity */
-		Quad::setColor(pauseVert, Vec4(1, 1, 1, pauseAlpha[pauseAlphaIdx] / 255.0));
+		Quad::setColor(pauseVert, Vec4(1, 1, 1, pauseAlpha[pauseAlphaIdx] / 255.0f));
 
 		ctrlVertArrayDirty = true;
 	}
@@ -643,7 +643,7 @@ struct WindowVXPrivate
 		if (cursorVert.count() == 0)
 			return;
 
-		Vec4 color(1, 1, 1, cursorAlpha[cursorAlphaIdx] / 255.0);
+		Vec4 color(1, 1, 1, cursorAlpha[cursorAlphaIdx] / 255.0f);
 
 		for (size_t i = 0; i < cursorVert.count(); ++i)
 			Quad::setColor(&cursorVert.vertices[i*4], color);

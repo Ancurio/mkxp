@@ -51,14 +51,14 @@ extern const int autotileVXRectsBN;
 /* Waterfall (C) autotile patterns */
 static const StaticRect autotileVXRectsC[] =
 {
-	{ 32.5, 0.5, 15, 31 },
-	{ 16.5, 0.5, 15, 31 },
-	{  0.0, 0.5, 15, 31 },
-	{ 16.5, 0.5, 15, 31 },
-	{ 32.5, 0.5, 15, 31 },
-	{ 48.5, 0.5, 15, 31 },
-	{  0.0, 0.5, 15, 31 },
-	{ 48.5, 0.5, 15, 31 }
+	{ 32.5f, 0.5f, 15.0f, 31.0f },
+	{ 16.5f, 0.5f, 15.0f, 31.0f },
+	{  0.0f, 0.5f, 15.0f, 31.0f },
+	{ 16.5f, 0.5f, 15.0f, 31.0f },
+	{ 32.5f, 0.5f, 15.0f, 31.0f },
+	{ 48.5f, 0.5f, 15.0f, 31.0f },
+	{  0.0f, 0.5f, 15.0f, 31.0f },
+	{ 48.5f, 0.5f, 15.0f, 31.0f }
 };
 
 static elementsN(autotileVXRectsC);

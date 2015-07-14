@@ -109,7 +109,7 @@ struct SpritePrivate
 		wave.amp = 0;
 		wave.length = 180;
 		wave.speed = 360;
-		wave.phase = 0.0;
+		wave.phase = 0.0f;
 		wave.dirty = false;
 	}
 
@@ -129,7 +129,7 @@ struct SpritePrivate
 		                     (srcRect->y + srcRect->height) +
 		                     bitmap->height();
 
-		efBushDepth = 1.0 - texBushDepth / bitmap->height();
+		efBushDepth = 1.0f - texBushDepth / bitmap->height();
 	}
 
 	void onSrcRectChange()
@@ -194,7 +194,7 @@ struct SpritePrivate
 	void emitWaveChunk(SVertex *&vert, float phase, int width,
 	                   float zoomY, int chunkY, int chunkLength)
 	{
-		float wavePos = phase + (chunkY / (float) wave.length) * M_PI * 2;
+		float wavePos = phase + (chunkY / (float) wave.length) * (float) (M_PI * 2);
 		float chunkX = sin(wavePos) * wave.amp;
 
 		FloatRect tex(0, chunkY / zoomY, width, chunkLength / zoomY);
@@ -261,7 +261,7 @@ struct SpritePrivate
 		wave.qArray.resize(!!firstLength + chunks + !!lastLength);
 		SVertex *vert = &wave.qArray.vertices[0];
 
-		float phase = (wave.phase * M_PI) / 180.f;
+		float phase = (wave.phase * (float) M_PI) / 180.0f;
 
 		if (firstLength > 0)
 			emitWaveChunk(vert, phase, width, zoomY, 0, firstLength);

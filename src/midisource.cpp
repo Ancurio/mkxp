@@ -320,7 +320,7 @@ readEvent(MidiReadHandler *handler, MemChunk &chunk,
 			              | (data[2] << 0x00);
 
 			e.type = Tempo;
-			e.e.tempo.bpm = 60000000.0 / mpqn;
+			e.e.tempo.bpm = 60000000 / mpqn;
 		}
 		else if (metaType == 0x2F)
 		{
@@ -699,7 +699,7 @@ struct MidiSource : ALDataSource, MidiReadHandler
 
 	void updatePlaybackSpeed(uint32_t bpm)
 	{
-		float deltaLength = 60.0 / (dpb * bpm);
+		float deltaLength = 60.0f / (dpb * bpm);
 		playbackSpeed = TICK_FRAMES / (deltaLength * freq);
 	}
 
@@ -910,7 +910,7 @@ struct MidiSource : ALDataSource, MidiReadHandler
 	bool setPitch(float value)
 	{
 		// not completely correct, but close
-		pitchShift = round((value > 1.0 ? 14 : 24) * (value - 1.0));
+		pitchShift = round((value > 1.0f ? 14 : 24) * (value - 1.0f));
 
 		return true;
 	}

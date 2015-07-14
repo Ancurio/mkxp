@@ -890,9 +890,9 @@ static void applyShadow(SDL_Surface *&in, const SDL_PixelFormat &fm, const SDL_C
 	SDL_Surface *out = SDL_CreateRGBSurface
 		(0, in->w+1, in->h+1, fm.BitsPerPixel, fm.Rmask, fm.Gmask, fm.Bmask, fm.Amask);
 
-	float fr = c.r / 255.0;
-	float fg = c.g / 255.0;
-	float fb = c.b / 255.0;
+	float fr = c.r / 255.0f;
+	float fg = c.g / 255.0f;
+	float fb = c.b / 255.0f;
 
 	/* We allocate an output surface one pixel wider and higher than the input,
 	 * (implicitly) blit a copy of the input with RGB values set to black into
@@ -946,11 +946,11 @@ static void applyShadow(SDL_Surface *&in, const SDL_PixelFormat &fm, const SDL_C
 				continue;
 			}
 
-			float fSrcA = srcA / 255.0;
-			float fShdA = shdA / 255.0;
+			float fSrcA = srcA / 255.0f;
+			float fShdA = shdA / 255.0f;
 
 			/* Because opacity == 1, co1 == fSrcA */
-			float co2 = fShdA * (1.0 - fSrcA);
+			float co2 = fShdA * (1.0f - fSrcA);
 			/* Result alpha */
 			float fa = fSrcA + co2;
 			/* Temp value to simplify arithmetic below */
@@ -959,10 +959,10 @@ static void applyShadow(SDL_Surface *&in, const SDL_PixelFormat &fm, const SDL_C
 			/* Result colors */
 			uint8_t r, g, b, a;
 
-			r = clamp<float>(fr * co3, 0, 1) * 255;
-			g = clamp<float>(fg * co3, 0, 1) * 255;
-			b = clamp<float>(fb * co3, 0, 1) * 255;
-			a = clamp<float>(fa, 0, 1) * 255;
+			r = clamp<float>(fr * co3, 0, 1) * 255.0f;
+			g = clamp<float>(fg * co3, 0, 1) * 255.0f;
+			b = clamp<float>(fb * co3, 0, 1) * 255.0f;
+			a = clamp<float>(fa, 0, 1) * 255.0f;
 
 			*outP = SDL_MapRGBA(&fm, r, g, b, a);
 		}
@@ -1067,11 +1067,11 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
 	Vec2i gpTexSize;
 	shState->ensureTexSize(txtSurf->w, txtSurf->h, gpTexSize);
 
-	bool fastBlit = !p->touchesTaintedArea(posRect) && txtAlpha == 1.0;
+	bool fastBlit = !p->touchesTaintedArea(posRect) && txtAlpha == 1.0f;
 
 	if (fastBlit)
 	{
-		if (squeeze == 1.0 && !shState->config().subImageFix)
+		if (squeeze == 1.0f && !shState->config().subImageFix)
 		{
 			/* Even faster: upload directly to bitmap texture.
 			 * We have to make sure the posRect lies within the texture

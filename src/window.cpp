@@ -642,7 +642,7 @@ struct WindowPrivate
 
 		if (active && cursorVert.vert)
 		{
-			float alpha = cursorAniAlpha[cursorAniAlphaIdx] / 255.0;
+			float alpha = cursorAniAlpha[cursorAniAlphaIdx] / 255.0f;
 
 			cursorVert.setAlpha(alpha);
 
@@ -651,7 +651,7 @@ struct WindowPrivate
 
 		if (pause && pauseAniVert.vert)
 		{
-			float alpha = pauseAniAlpha[pauseAniAlphaIdx] / 255.0;
+			float alpha = pauseAniAlpha[pauseAniAlphaIdx] / 255.0f;
 			FloatRect frameRect = pauseAniSrc[pauseAniQuad[pauseAniQuadIdx]];
 
 			pauseAniVert.setAlpha(alpha);

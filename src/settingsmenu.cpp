@@ -764,13 +764,13 @@ void Widget::click(int x, int y, uint8_t button)
 }
 
 /* Ratio of cell area to total widget width */
-#define BW_CELL_R 0.75
+#define BW_CELL_R 0.75f
 
 void BindingWidget::drawHandler(SDL_Surface *surf)
 {
 	const int cellW = (rect.w*BW_CELL_R) / 2;
 	const int cellH = rect.h / 2;
-	const int cellOffX = (1.0-BW_CELL_R) * rect.w;
+	const int cellOffX = (1.0f-BW_CELL_R) * rect.w;
 
 	const int cellOff[] =
 	{
@@ -860,7 +860,7 @@ int BindingWidget::cellIndex(int x, int y) const
 {
 	const int cellW = (rect.w*BW_CELL_R) / 2;
 	const int cellH = rect.h / 2;
-	const int cellOff = (1.0-BW_CELL_R) * rect.w;
+	const int cellOff = (1.0f-BW_CELL_R) * rect.w;
 
 	if (x < cellOff)
 		return -1;

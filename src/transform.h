@@ -130,7 +130,7 @@ private:
 		if (rotation < 0)
 			rotation += 360;
 
-		float angle  = rotation * 3.141592654f / 180.f;
+		float angle  = rotation * 3.141592654f / 180.0f;
 		float cosine = (float) cos(angle);
 		float sine   = (float) sin(angle);
 		float sxc    = scale.x * cosine;

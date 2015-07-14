@@ -105,8 +105,8 @@ struct PlanePrivate
 			return;
 
 		/* Scaled (zoomed) bitmap dimensions */
-		double sw = bitmap->width()  * zoomX;
-		double sh = bitmap->height() * zoomY;
+		float sw = bitmap->width()  * zoomX;
+		float sh = bitmap->height() * zoomY;
 
 		/* Plane offset wrapped by scaled bitmap dims */
 		float wox = fwrap(ox, sw);

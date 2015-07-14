@@ -698,7 +698,7 @@ struct TilemapPrivate
 		int tileY = tsInd / 8;
 
 		Vec2i texPos = TileAtlas::tileToAtlasCoor(tileX, tileY, atlas.efTilesetH, atlas.size.y);
-		FloatRect texRect((float) texPos.x+.5, (float) texPos.y+.5, 31, 31);
+		FloatRect texRect((float) texPos.x+0.5f, (float) texPos.y+0.5f, 31, 31);
 		FloatRect posRect(x*32, y*32, 32, 32);
 
 		SVertex v[4];

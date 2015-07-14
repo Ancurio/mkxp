@@ -281,9 +281,9 @@ public:
 
 	void setBrightness(float norm)
 	{
-		brightnessQuad.setColor(Vec4(0, 0, 0, 1.0 - norm));
+		brightnessQuad.setColor(Vec4(0, 0, 0, 1.0f - norm));
 
-		brightEffect = norm < 1.0;
+		brightEffect = norm < 1.0f;
 	}
 
 	void updateReso(int width, int height)
@@ -736,7 +736,7 @@ void Graphics::transition(int duration,
 		shader.setFrozenScene(p->frozenScene.tex);
 		shader.setCurrentScene(p->currentScene.tex);
 		shader.setTransMap(transMap->getGLTypes().tex);
-		shader.setVague(vague / 256.0);
+		shader.setVague(vague / 256.0f);
 		shader.setTexSize(p->scRes);
 	}
 	else
@@ -774,7 +774,7 @@ void Graphics::transition(int duration,
 
 		p->checkSyncLock();
 
-		const float prog = i * (1.0 / duration);
+		const float prog = i * (1.0f / duration);
 
 		if (transMap)
 		{
@@ -852,7 +852,7 @@ void Graphics::fadeout(int duration)
 	FBO::unbind();
 
 	float curr = p->brightness;
-	float diff = 255.0 - curr;
+	float diff = 255.0f - curr;
 
 	for (int i = duration-1; i > -1; --i)
 	{
@@ -882,7 +882,7 @@ void Graphics::fadein(int duration)
 	FBO::unbind();
 
 	float curr = p->brightness;
-	float diff = 255.0 - curr;
+	float diff = 255.0f - curr;
 
 	for (int i = 1; i <= duration; ++i)
 	{

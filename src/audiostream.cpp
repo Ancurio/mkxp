@@ -34,11 +34,11 @@ AudioStream::AudioStream(ALStream::LoopMode loopMode,
 	  noResumeStop(false),
 	  stream(loopMode, threadId)
 {
-	current.volume = 1.0;
-	current.pitch = 1.0;
+	current.volume = 1.0f;
+	current.pitch = 1.0f;
 
 	for (size_t i = 0; i < VolumeTypeCount; ++i)
-		volumes[i] = 1.0;
+		volumes[i] = 1.0f;
 
 	fade.thread = 0;
 	fade.threadName = std::string("audio_fadeout (") + threadId + ")";
@@ -82,8 +82,8 @@ void AudioStream::play(const std::string &filename,
 
 	lockStream();
 
-	float _volume = clamp<int>(volume, 0, 100) / 100.f;
-	float _pitch  = clamp<int>(pitch, 50, 150) / 100.f;
+	float _volume = clamp<int>(volume, 0, 100) / 100.0f;
+	float _pitch  = clamp<int>(pitch, 50, 150) / 100.0f;
 
 	ALStream::State sState = stream.queryState();
 
@@ -211,7 +211,7 @@ void AudioStream::fadeOut(int duration)
 	}
 
 	fade.active.set();
-	fade.msStep = (1.0) / duration;
+	fade.msStep = 1.0f / duration;
 	fade.reqFini.clear();
 	fade.reqTerm.clear();
 	fade.startTicks = SDL_GetTicks();
@@ -302,7 +302,7 @@ void AudioStream::fadeOutThread()
 		lockStream();
 
 		uint32_t curDur = SDL_GetTicks() - fade.startTicks;
-		float resVol = 1.0 - (curDur*fade.msStep);
+		float resVol = 1.0f - (curDur*fade.msStep);
 
 		ALStream::State state = stream.queryState();
 
@@ -313,7 +313,7 @@ void AudioStream::fadeOutThread()
 			if (state != ALStream::Paused)
 				stream.stop();
 
-			setVolume(FadeOut, 1.0);
+			setVolume(FadeOut, 1.0f);
 			unlockStream();
 
 			break;
@@ -340,15 +340,15 @@ void AudioStream::fadeInThread()
 
 		/* Fade in duration is always 1 second */
 		uint32_t cur = SDL_GetTicks() - fadeIn.startTicks;
-		float prog = cur / 1000.0;
+		float prog = cur / 1000.0f;
 
 		ALStream::State state = stream.queryState();
 
 		if (state != ALStream::Playing
-		||  prog >= 1.0
+		||  prog >= 1.0f
 		||  fadeIn.rqFini)
 		{
-			setVolume(FadeIn, 1.0);
+			setVolume(FadeIn, 1.0f);
 			unlockStream();
 
 			break;
