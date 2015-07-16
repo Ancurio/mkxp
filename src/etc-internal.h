@@ -136,6 +136,11 @@ struct Vec2i
 		return Vec2i(x % value, y % value);
 	}
 
+	Vec2i operator&(unsigned value) const
+	{
+		return Vec2i(x & value, y & value);
+	}
+
 	Vec2i operator-() const
 	{
 		return Vec2i(-x, -y);

@@ -46,6 +46,13 @@ wrap(int value, int range)
 	return res < 0 ? res + range : res;
 }
 
+static inline Vec2i
+wrap(const Vec2i &value, int range)
+{
+	return Vec2i(wrap(value.x, range),
+	             wrap(value.y, range));
+}
+
 static inline int16_t
 tableGetWrapped(const Table &t, int x, int y, int z = 0)
 {
