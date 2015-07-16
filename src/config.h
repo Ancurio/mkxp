@@ -25,49 +25,6 @@
 #include <string>
 #include <vector>
 
-struct TouchOverlay
-{
-	std::string image;
-
-	struct Button
-	{
-		enum Shape
-		{
-			Rectangle,
-			Circle,
-			Triangle
-		};
-
-		std::string id;
-		std::string target;
-		Shape shape;
-
-		int x;
-		int y;
-
-		union
-		{
-			struct
-			{
-				int width;
-				int height;
-			} r;
-
-			struct
-			{
-				int radius;
-			} c;
-			struct
-			{
-				int x1, y1;
-				int x2, y2;
-			} t;
-		} u;
-	};
-
-	std::vector<Button> buttons;
-};
-
 struct Config
 {
 	int rgssVersion;
