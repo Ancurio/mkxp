@@ -57,9 +57,9 @@
 
 # Apply linear interpolation when game screen
 # is upscaled
-# (default: disabled)
+# (default: enabled)
 #
-# smoothScaling=false
+# smoothScaling=true
 
 
 # Sync screen redraws to the monitor refresh rate
