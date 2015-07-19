@@ -61,6 +61,16 @@ tableGetWrapped(const Table &t, int x, int y, int z = 0)
 	             z);
 }
 
+/* Calculate the tile x/y on which this pixel x/y lies */
+static inline Vec2i
+getTilePos(const Vec2i &pixelPos)
+{
+	/* Round the pixel position down to the nearest top left
+	 * tile boundary, by masking off the lower 5 bits (2^5 = 32).
+	 * Then divide by 32 to convert into tile units. */
+	return (pixelPos & ~(32-1)) / 32;
+}
+
 enum AtSubPos
 {
 	TopLeft          = 0,

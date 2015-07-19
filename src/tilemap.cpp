@@ -236,7 +236,7 @@ struct TilemapPrivate
 	Table *mapData;
 	Table *priorities;
 	bool visible;
-	Vec2i offset;
+	Vec2i origin;
 
 	Vec2i dispPos;
 
@@ -294,7 +294,6 @@ struct TilemapPrivate
 		/* Used layers out of 'zlayers' (rest is hidden) */
 		size_t activeLayers;
 		Scene::Geometry sceneGeo;
-		Vec2i sceneOffset;
 	} elem;
 
 	/* Affected by: autotiles, tileset */
@@ -394,7 +393,7 @@ struct TilemapPrivate
 
 	void updateFlashMapViewport()
 	{
-		flashMap.setViewport(IntRect(viewpPos.x, viewpPos.y, viewpW, viewpH));
+		flashMap.setViewport(IntRect(viewpPos, Vec2i(viewpW, viewpH)));
 	}
 
 	void updateAtlasInfo()
@@ -442,13 +441,8 @@ struct TilemapPrivate
 
 	void updateSceneGeometry(const Scene::Geometry &geo)
 	{
-		elem.sceneOffset = geo.offset();
 		elem.sceneGeo = geo;
-	}
-
-	void updatePosition()
-	{
-		dispPos = -(offset - viewpPos * 32) + elem.sceneOffset;
+		mapViewportDirty = true;
 	}
 
 	void invalidateAtlasSize()
@@ -898,38 +892,17 @@ struct TilemapPrivate
 
 	void updateMapViewport()
 	{
-		int tileOX, tileOY;
+		const Vec2i combOrigin = origin + elem.sceneGeo.orig;
+		const Vec2i mvpPos = getTilePos(combOrigin);
 
-		if (offset.x >= 0)
-			tileOX = offset.x / 32;
-		else
-			tileOX = -(-(offset.x-31) / 32);
-
-		if (offset.y >= 0)
-			tileOY = offset.y / 32;
-		else
-			tileOY = -(-(offset.y-31) / 32);
-
-		bool dirty = false;
-
-		if (tileOX < viewpPos.x || tileOX + 21 > viewpPos.x + viewpW)
+		if (mvpPos != viewpPos)
 		{
-			viewpPos.x = tileOX;
-			dirty = true;
-		}
-
-		if (tileOY < viewpPos.y || tileOY + 16 > viewpPos.y + viewpH)
-		{
-			viewpPos.y = tileOY;
-			dirty = true;
-		}
-
-		if (dirty)
-		{
+			viewpPos = mvpPos;
 			buffersDirty = true;
 			updateFlashMapViewport();
-			updatePosition();
 		}
+
+		dispPos = elem.sceneGeo.rect.pos() - wrap(combOrigin, 32);
 	}
 
 	void prepare()
@@ -1024,7 +997,6 @@ void GroundLayer::drawInt()
 void GroundLayer::onGeometryChange(const Scene::Geometry &geo)
 {
 	p->updateSceneGeometry(geo);
-	p->updatePosition();
 }
 
 ZLayer::ZLayer(TilemapPrivate *p, Viewport *viewport)
@@ -1072,7 +1044,7 @@ void ZLayer::drawInt()
 
 int ZLayer::calculateZ(TilemapPrivate *p, int index)
 {
-	return 32 * (index + p->viewpPos.y + 1) - p->offset.y;
+	return 32 * (index + p->viewpPos.y + 1) - p->origin.y;
 }
 
 void ZLayer::initUpdateZ()
@@ -1172,8 +1144,8 @@ DEF_ATTR_RD_SIMPLE(Tilemap, MapData, Table*, p->mapData)
 DEF_ATTR_RD_SIMPLE(Tilemap, FlashData, Table*, p->flashMap.getData())
 DEF_ATTR_RD_SIMPLE(Tilemap, Priorities, Table*, p->priorities)
 DEF_ATTR_RD_SIMPLE(Tilemap, Visible, bool, p->visible)
-DEF_ATTR_RD_SIMPLE(Tilemap, OX, int, p->offset.x)
-DEF_ATTR_RD_SIMPLE(Tilemap, OY, int, p->offset.y)
+DEF_ATTR_RD_SIMPLE(Tilemap, OX, int, p->origin.x)
+DEF_ATTR_RD_SIMPLE(Tilemap, OY, int, p->origin.y)
 
 void Tilemap::setTileset(Bitmap *value)
 {
@@ -1259,11 +1231,10 @@ void Tilemap::setOX(int value)
 {
 	guardDisposed();
 
-	if (p->offset.x == value)
+	if (p->origin.x == value)
 		return;
 
-	p->offset.x = value;
-	p->updatePosition();
+	p->origin.x = value;
 	p->mapViewportDirty = true;
 }
 
@@ -1271,11 +1242,10 @@ void Tilemap::setOY(int value)
 {
 	guardDisposed();
 
-	if (p->offset.y == value)
+	if (p->origin.y == value)
 		return;
 
-	p->offset.y = value;
-	p->updatePosition();
+	p->origin.y = value;
 	p->zOrderDirty = true;
 	p->mapViewportDirty = true;
 }

@@ -186,9 +186,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		const Vec2i combOrigin = origin + sceneGeo.orig;
 		const Vec2i geoSize = sceneGeo.rect.size();
 
-		/* Round the combined origin (which is in pixels) down to the nearest
-		 * top left tile boundary, by masking off the lower 5 bits (2^5 = 32) */
-		newMvp.setPos((combOrigin & ~(32-1)) / 32);
+		newMvp.setPos(getTilePos(combOrigin));
 
 		/* Ensure that the size is big enough to cover the whole viewport,
 		 * and add one tile row/column as a buffer for scrolling */
