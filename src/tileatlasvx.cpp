@@ -500,7 +500,7 @@ onTileA4(Reader &reader, int16_t tileID,
 	Vec2i orig = blitsA4[0].dst;
 	tileID -= 0x1700;
 
-	const int offY[] = { 0, 3, 5, 8, 10, 13 };
+	static const int offY[] = { 0, 3, 5, 8, 10, 13 };
 
 	int patternID  = tileID % 0x30;
 	int autotileID = tileID / 0x30;
