@@ -181,16 +181,20 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 
 	void updateMapViewport()
 	{
+		/* Note: We include one extra row at the top above
+		 * the normal map viewport to ensure the legs of table
+		 * tiles off screen are properly drawn */
+
 		IntRect newMvp;
 
 		const Vec2i combOrigin = origin + sceneGeo.orig;
 		const Vec2i geoSize = sceneGeo.rect.size();
 
-		newMvp.setPos(getTilePos(combOrigin));
+		newMvp.setPos(getTilePos(combOrigin) - Vec2i(0, 1));
 
 		/* Ensure that the size is big enough to cover the whole viewport,
 		 * and add one tile row/column as a buffer for scrolling */
-		newMvp.setSize((geoSize / 32) + !!(geoSize % 32) + Vec2i(1));
+		newMvp.setSize((geoSize / 32) + !!(geoSize % 32) + Vec2i(1, 2));
 
 		if (newMvp != mapViewp)
 		{
@@ -199,7 +203,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 			buffersDirty = true;
 		}
 
-		dispPos = sceneGeo.rect.pos() - wrap(combOrigin, 32);
+		dispPos = sceneGeo.rect.pos() - wrap(combOrigin, 32) - Vec2i(0, 32);
 	}
 
 	static size_t quadBytes(size_t quads)
