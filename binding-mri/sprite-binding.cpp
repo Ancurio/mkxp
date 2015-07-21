@@ -56,6 +56,7 @@ DEF_PROP_I(Sprite, Y)
 DEF_PROP_I(Sprite, OX)
 DEF_PROP_I(Sprite, OY)
 DEF_PROP_I(Sprite, BushDepth)
+DEF_PROP_I(Sprite, BushOpacity)
 DEF_PROP_I(Sprite, Opacity)
 DEF_PROP_I(Sprite, BlendType)
 DEF_PROP_I(Sprite, WaveAmp)
@@ -125,6 +126,8 @@ spriteBindingInit()
 	{
 	_rb_define_method(klass, "width", spriteWidth);
 	_rb_define_method(klass, "height", spriteHeight);
+
+	INIT_PROP_BIND( Sprite, BushOpacity, "bush_opacity" );
 
 	INIT_PROP_BIND( Sprite, WaveAmp,    "wave_amp"    );
 	INIT_PROP_BIND( Sprite, WaveLength, "wave_length" );
