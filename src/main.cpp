@@ -206,8 +206,6 @@ int main(int argc, char *argv[])
 			return 0;
 		}
 
-	conf.readGameINI();
-
 	assert(conf.rgssVersion >= 1 && conf.rgssVersion <= 3);
 	printRgssVersion(conf.rgssVersion);
 

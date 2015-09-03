@@ -60,7 +60,6 @@ struct Config
 
 	std::string iconPath;
 	std::string execName;
-	std::string titleLanguage;
 
 	struct
 	{
@@ -74,9 +73,6 @@ struct Config
 		int sourceCount;
 	} SE;
 
-	bool useScriptNames;
-
-	std::string customScript;
 	std::vector<std::string> preloadScripts;
 	std::vector<std::string> rtps;
 
@@ -97,7 +93,6 @@ struct Config
 	Config();
 
 	void read(int argc, char *argv[]);
-	void readGameINI();
 };
 
 #endif // CONFIG_H

@@ -145,13 +145,12 @@ Config::Config()
 void Config::read(int argc, char *argv[])
 {
 #define PO_DESC_ALL \
-	PO_DESC(rgssVersion, int, 0) \
 	PO_DESC(debugMode, bool, false) \
 	PO_DESC(printFPS, bool, false) \
-	PO_DESC(winResizable, bool, false) \
+	PO_DESC(winResizable, bool, true) \
 	PO_DESC(fullscreen, bool, false) \
 	PO_DESC(fixedAspectRatio, bool, true) \
-	PO_DESC(smoothScaling, bool, true) \
+	PO_DESC(smoothScaling, bool, false) \
 	PO_DESC(vsync, bool, false) \
 	PO_DESC(defScreenW, int, 0) \
 	PO_DESC(defScreenH, int, 0) \
@@ -162,20 +161,17 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(subImageFix, bool, false) \
 	PO_DESC(gameFolder, std::string, ".") \
 	PO_DESC(anyAltToggleFS, bool, false) \
-	PO_DESC(enableReset, bool, true) \
+	PO_DESC(enableReset, bool, false) \
 	PO_DESC(allowSymlinks, bool, false) \
 	PO_DESC(dataPathOrg, std::string, "") \
 	PO_DESC(dataPathApp, std::string, "") \
 	PO_DESC(iconPath, std::string, "") \
 	PO_DESC(execName, std::string, "Game") \
-	PO_DESC(titleLanguage, std::string, "") \
 	PO_DESC(midi.soundFont, std::string, "") \
 	PO_DESC(midi.chorus, bool, false) \
 	PO_DESC(midi.reverb, bool, false) \
 	PO_DESC(SE.sourceCount, int, 6) \
-	PO_DESC(customScript, std::string, "") \
-	PO_DESC(pathCache, bool, true) \
-	PO_DESC(useScriptNames, bool, false)
+	PO_DESC(pathCache, bool, true)
 
 // Not gonna take your shit boost
 #define GUARD_ALL( exp ) try { exp } catch(...) {}
@@ -244,7 +240,16 @@ void Config::read(int argc, char *argv[])
 	if (!dataPathOrg.empty() && !dataPathApp.empty())
 		customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
 
-	commonDataPath = prefPath(".", "mkxp");
+	commonDataPath = prefPath(".", "Oneshot");
+
+	//Hardcode some ini/version settings
+	rgssVersion = 1;
+	game.title = "Oneshot";
+	game.scripts = "Data/Scripts.rxdata";
+	if (defScreenW <= 0)
+		defScreenW = 640;
+	if (defScreenH <= 0)
+		defScreenH = 480;
 }
 
 static std::string baseName(const std::string &path)
@@ -255,146 +260,4 @@ static std::string baseName(const std::string &path)
 		return path;
 
 	return path.substr(pos + 1);
-}
-
-static void setupScreenSize(Config &conf)
-{
-	if (conf.defScreenW <= 0)
-		conf.defScreenW = (conf.rgssVersion == 1 ? 640 : 544);
-
-	if (conf.defScreenH <= 0)
-		conf.defScreenH = (conf.rgssVersion == 1 ? 480 : 416);
-}
-
-void Config::readGameINI()
-{
-	if (!customScript.empty())
-	{
-		game.title = baseName(customScript);
-
-		if (rgssVersion == 0)
-			rgssVersion = 1;
-
-		setupScreenSize(*this);
-
-		return;
-	}
-
-	po::options_description podesc;
-	podesc.add_options()
-	        ("Game.Title", po::value<std::string>())
-	        ("Game.Scripts", po::value<std::string>())
-	        ;
-
-	po::variables_map vm;
-	std::string iniFilename = execName + ".ini";
-	SDLRWStream iniFile(iniFilename.c_str(), "r");
-
-	if (iniFile)
-	{
-		try
-		{
-			po::store(po::parse_config_file(iniFile.stream(), podesc, true), vm);
-			po::notify(vm);
-		}
-		catch (po::error &error)
-		{
-			Debug() << iniFilename + ":" << error.what();
-		}
-	}
-	else
-	{
-		Debug() << "FAILED to open" << iniFilename;
-	}
-
-	GUARD_ALL( game.title = vm["Game.Title"].as<std::string>(); );
-	GUARD_ALL( game.scripts = vm["Game.Scripts"].as<std::string>(); );
-
-	strReplace(game.scripts, '\\', '/');
-
-#ifdef INI_ENCODING
-	/* Can add more later */
-	const char *languages[] =
-	{
-		titleLanguage.c_str(),
-		GUESS_REGION_JP, /* Japanese */
-		GUESS_REGION_KR, /* Korean */
-		GUESS_REGION_CN, /* Chinese */
-		0
-	};
-
-	bool convSuccess = true;
-
-	/* Verify that the game title is UTF-8, and if not,
-	 * try to determine the encoding and convert to UTF-8 */
-	if (!validUtf8(game.title.c_str()))
-	{
-		const char *encoding = 0;
-		convSuccess = false;
-
-		for (size_t i = 0; languages[i]; ++i)
-		{
-			encoding = libguess_determine_encoding(game.title.c_str(),
-			                                       game.title.size(),
-			                                       languages[i]);
-			if (encoding)
-				break;
-		}
-
-		if (encoding)
-		{
-			iconv_t cd = iconv_open("UTF-8", encoding);
-
-			size_t inLen = game.title.size();
-			size_t outLen = inLen * 4;
-			std::string buf(outLen, '\0');
-			char *inPtr = const_cast<char*>(game.title.c_str());
-			char *outPtr = const_cast<char*>(buf.c_str());
-
-			errno = 0;
-			size_t result = iconv(cd, &inPtr, &inLen, &outPtr, &outLen);
-
-			iconv_close(cd);
-
-			if (result != (size_t) -1 && errno == 0)
-			{
-				buf.resize(buf.size()-outLen);
-				game.title = buf;
-				convSuccess = true;
-			}
-		}
-	}
-
-	if (!convSuccess)
-		game.title.clear();
-#else
-	if (!validUtf8(game.title.c_str()))
-		game.title.clear();
-#endif
-
-	if (game.title.empty())
-		game.title = baseName(gameFolder);
-
-	if (rgssVersion == 0)
-	{
-		/* Try to guess RGSS version based on Data/Scripts extension */
-		rgssVersion = 1;
-
-		if (!game.scripts.empty())
-		{
-			const char *p = &game.scripts[game.scripts.size()];
-			const char *head = &game.scripts[0];
-
-			while (--p != head)
-				if (*p == '.')
-					break;
-
-			if (!strcmp(p, ".rvdata"))
-				rgssVersion = 2;
-			else if (!strcmp(p, ".rvdata2"))
-				rgssVersion = 3;
-		}
-	}
-
-	setupScreenSize(*this);
 }

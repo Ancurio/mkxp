@@ -75,6 +75,8 @@ void graphicsBindingInit();
 
 void fileIntBindingInit();
 
+void oneshotBindingInit();
+
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
 RB_METHOD(mkxpDataDirectory);
@@ -111,6 +113,7 @@ static void mriBindingInit()
 	graphicsBindingInit();
 
 	fileIntBindingInit();
+	oneshotBindingInit();
 
 	if (rgssVer >= 3)
 	{
@@ -151,7 +154,11 @@ static void mriBindingInit()
 static void
 showMsg(const std::string &msg)
 {
+#ifdef NDEBUG
 	shState->eThread().showMessageBox(msg.c_str());
+#else
+	Debug() << msg.c_str();
+#endif
 }
 
 static void printP(int argc, VALUE *argv,
@@ -193,7 +200,7 @@ RB_METHOD(mriP)
 RB_METHOD(mkxpDataDirectory)
 {
 	RB_UNUSED_PARAM;
-	
+
 	const std::string &path = shState->config().customDataPath;
 	const char *s = path.empty() ? "." : path.c_str();
 
@@ -473,10 +480,7 @@ static void runRMXPScripts(BacktraceData &btData)
 			char buf[512];
 			int len;
 
-			if (conf.useScriptNames)
-				len = snprintf(buf, sizeof(buf), "%03ld:%s", i, scriptName);
-			else
-				len = snprintf(buf, sizeof(buf), SCRIPT_SECTION_FMT, i);
+			len = snprintf(buf, sizeof(buf), "%03ld:%s", i, scriptName);
 
 			fname = newStringUTF8(buf, len);
 			btData.scriptNames.insert(buf, scriptName);
@@ -588,11 +592,7 @@ static void mriBindingExecute()
 
 	mriBindingInit();
 
-	std::string &customScript = conf.customScript;
-	if (!customScript.empty())
-		runCustomScript(customScript);
-	else
-		runRMXPScripts(btData);
+	runRMXPScripts(btData);
 
 	VALUE exc = rb_errinfo();
 	if (!NIL_P(exc) && !rb_obj_is_kind_of(exc, rb_eSystemExit))

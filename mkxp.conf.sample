@@ -2,22 +2,12 @@
 #
 # About filesystem paths specified in this config:
 # The "gameFolder" path is resolved either relative
-# to the directory containing the mkxp executable
+# to the directory containing the Oneshot executable
 # (the default behavior), or relative to the current
-# working directory (when compiled with 
+# working directory (when compiled with
 # -DWORKDIR_CURRENT). All other paths are resolved
 # relative to gameFolder and ignoring both RTPs and
 # encrypted archives.
-
-
-# Specify the RGSS version to run under.
-# Possible values are 0, 1, 2, 3. If set to 0,
-# mkxp will try to guess the required version
-# based on the game files found in gameFolder.
-# If this fails, the version defaults to 1.
-# (default: 0)
-#
-# rgssVersion=1
 
 
 # Create a debug context and log
@@ -36,9 +26,9 @@
 
 
 # Game window is resizable
-# (default: disabled)
+# (default: enabled)
 #
-# winResizable=false
+# winResizable=true
 
 
 # Start game in fullscreen (this can
@@ -57,9 +47,9 @@
 
 # Apply linear interpolation when game screen
 # is upscaled
-# (default: enabled)
+# (default: disabled)
 #
-# smoothScaling=true
+# smoothScaling=false
 
 
 # Sync screen redraws to the monitor refresh rate
@@ -133,14 +123,14 @@
 # Use either right or left Alt + Enter to toggle
 # fullscreen
 # (default: disabled)
-# 
+#
 # anyAltToggleFS=false
 
 
 # Enable F12 game reset
-# (default: enabled)
+# (default: disabled)
 #
-# enableReset=true
+# enableReset=false
 
 
 # Allow symlinks for game assets to be followed
@@ -168,13 +158,6 @@
 # iconPath=/path/to/icon.png
 
 
-# Instead of playing an RPG Maker game,
-# execute a single plain text script instead
-# (default: none)
-#
-# customScript=/path/to/script.rb
-
-
 # Define raw scripts to be executed before the
 # actual Scripts.rxdata execution starts
 # (default: none)
@@ -197,12 +180,6 @@
 # RTP=/path/to/rtp1
 # RTP=/path/to/rtp2.zip
 # RTP=/path/to/game.rgssad
-
-
-# Use the script's name as filename in warnings and error messages
-# (default: disabled)
-#
-# useScriptNames=false
 
 
 # Font substitutions allow drop-in replacements of fonts
@@ -254,25 +231,3 @@
 # this number. Maximum: 64.
 #
 # SE.sourceCount=6
-
-
-# The Windows game executable name minus ".exe". By default
-# this is "Game", but some developers manually rename it.
-# mkxp needs this name because both the .ini (game
-# configuration) and .rgssad (encrypted data archive) must
-# carry the same name minus their extension, and we cannot
-# guess the executable's name.
-# You could just as well rename them both to "Game.ini" and
-# "Game.rgssad", but specifying the executable name here
-# is a tiny bit less intrusive.
-#
-# execName=Game
-
-
-# Give a hint on which language the game title as
-# specified in the Game.ini is, useful if the encoding
-# is being falsely detected. Relevant only if mkxp was
-# built with automatic encoding conversion (INI_ENCODING).
-# (default: none)
-#
-# titleLanguage=japanese

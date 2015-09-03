@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <assert.h>
 
-const Vec2i winSize(540, 356);
+const Vec2i winSize(700, 316);
 
 const uint8_t cBgNorm = 50;
 const uint8_t cBgDark = 20;
@@ -63,16 +63,12 @@ struct VButton
 {
 	BTN_STRING(Up),
 	BTN_STRING(Down),
-	BTN_STRING(L),
 	BTN_STRING(Left),
 	BTN_STRING(Right),
-	BTN_STRING(R),
-	BTN_STRING(A),
-	BTN_STRING(B),
-	BTN_STRING(C),
-	BTN_STRING(X),
-	BTN_STRING(Y),
-	BTN_STRING(Z)
+	{ Input::C, "Action"     },
+	{ Input::B, "Menu"       },
+	{ Input::A, "Run/Misc"   },
+	{ Input::X, "Deactivate" },
 };
 
 static elementsN(vButtons);
@@ -432,7 +428,7 @@ struct SettingsMenuPrivate
 		else
 		{
 			dstRect.w = alignW;
-			dstRect.x = x;
+			dstRect.x = drawOff.x + x;
 			SDL_BlitScaled(txtSurf, 0, surf, &dstRect);
 		}
 	}
@@ -520,6 +516,7 @@ struct SettingsMenuPrivate
 		}
 
 		dupWarnLabel.setVisible(haveDup);
+		infoLabel.setVisible(!haveDup);
 	}
 
 	void redraw()
@@ -705,7 +702,7 @@ struct SettingsMenuPrivate
 
 	void onResetToDefault()
 	{
-		setupBindingData(genDefaultBindings(rtData.config));
+		setupBindingData(genDefaultBindings());
 		updateDuplicateStatus();
 		redraw();
 	}
@@ -964,18 +961,18 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 
 	p->rgb = p->winSurf->format;
 
-	const size_t layoutW = 4;
-	const size_t layoutH = 3;
+	const size_t layoutW = 2;
+	const size_t layoutH = 4;
 	assert(layoutW*layoutH == vButtonsN);
 
-	const int bWidgetW = winSize.x / layoutH;
+	const int bWidgetW = winSize.x / layoutW;
 	const int bWidgetH = 64;
-	const int bWidgetY = winSize.y - layoutW*bWidgetH - 48;
+	const int bWidgetY = winSize.y - layoutH*bWidgetH - 48;
 
-	for (int y = 0; y < 4; ++y)
-		for (int x = 0; x < 3; ++x)
+	for (int y = 0; y < layoutH; ++y)
+		for (int x = 0; x < layoutW; ++x)
 		{
-			int i = y*3+x;
+			int i = x*layoutH+y;
 			BindingWidget w(i, p, IntRect(x*bWidgetW, bWidgetY+y*bWidgetH,
 			                              bWidgetW, bWidgetH));
 			p->bWidgets.push_back(w);
@@ -1008,10 +1005,10 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 
 	/* Labels */
 	const char *info = "Use left click to bind a slot, right click to clear its binding";
-	p->infoLabel = Label(p, IntRect(16, 6, winSize.x, 16), info, cText, cText, cText);
+	p->infoLabel = Label(p, IntRect(112 + 32, buttonY + 8, winSize.x, 16), info, cText, cText, cText);
 
 	const char *warn = "Warning: Same physical key bound to multiple slots";
-	p->dupWarnLabel = Label(p, IntRect(16, 26, winSize.x, 16), warn, 255, 0, 0);
+	p->dupWarnLabel = Label(p, IntRect(112 + 32, buttonY + 8, winSize.x, 16), warn, 255, 0, 0);
 
 	p->widgets.push_back(&p->infoLabel);
 	p->widgets.push_back(&p->dupWarnLabel);

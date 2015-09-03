@@ -2,11 +2,13 @@
 
 TEMPLATE = app
 QT =
-TARGET = mkxp
+TARGET = Game
 DEPENDPATH += src shader assets
 INCLUDEPATH += . src
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
+
+CONFIG -= INI_ENCODING
 
 isEmpty(BINDING) {
 	BINDING = MRI
@@ -43,6 +45,7 @@ unix {
 	CONFIG += link_pkgconfig
 	PKGCONFIG += sigc++-2.0 pixman-1 zlib physfs vorbisfile \
 	             sdl2 SDL2_image SDL2_ttf SDL_sound openal
+	LIBS += -ldl
 
 	SHARED_FLUID {
 		PKGCONFIG += fluidsynth
@@ -74,6 +77,39 @@ unix {
 	}
 
 	LIBS += -lboost_program_options$$BOOST_LIB_SUFFIX
+}
+
+win32 {
+	CONFIG += link_pkgconfig
+	PKGCONFIG += sigc++-2.0 pixman-1 zlib \
+	             sdl2 SDL2_image SDL2_ttf openal SDL_sound vorbisfile
+	LIBS += -lphysfs -lboost_program_options-mt -lsecur32
+
+	# Deal with boost paths...
+	isEmpty(BOOST_I) {
+	        BOOST_I = $$(BOOST_I)
+	}
+	isEmpty(BOOST_I) {}
+	else {
+	        INCLUDEPATH += $$BOOST_I
+	}
+
+	isEmpty(BOOST_L) {
+	        BOOST_L = $$(BOOST_L)
+	}
+	isEmpty(BOOST_L) {}
+	else {
+	        LIBS += -L$$BOOST_L
+	}
+
+	# Ruby console bug
+	!console {
+	    DEFINES += NOCONSOLE
+	}
+
+	release {
+	    RC_FILE = assets/resources.rc
+	}
 }
 
 # Input
@@ -135,7 +171,8 @@ HEADERS += \
 	src/tileatlasvx.h \
 	src/sharedmidistate.h \
 	src/fluid-fun.h \
-	src/sdl-util.h
+	src/sdl-util.h \
+	src/oneshot.h
 
 SOURCES += \
 	src/main.cpp \
@@ -180,7 +217,8 @@ SOURCES += \
 	src/tileatlasvx.cpp \
 	src/autotilesvx.cpp \
 	src/midisource.cpp \
-	src/fluid-fun.cpp
+	src/fluid-fun.cpp \
+	src/oneshot.cpp
 
 EMBED = \
 	shader/common.h \
@@ -279,7 +317,8 @@ BINDING_MRUBY {
 
 BINDING_MRI {
 	isEmpty(MRIVERSION) {
-		MRIVERSION = 2.1
+		win32:MRIVERSION = 2.1
+		unix:MRIVERSION = 2.2
 	}
 
 	PKGCONFIG += ruby-$$MRIVERSION
@@ -320,7 +359,8 @@ BINDING_MRI {
 	binding-mri/module_rpg.cpp \
 	binding-mri/filesystem-binding.cpp \
 	binding-mri/windowvx-binding.cpp \
-	binding-mri/tilemapvx-binding.cpp
+	binding-mri/tilemapvx-binding.cpp \
+	binding-mri/oneshot-binding.cpp
 }
 
 OTHER_FILES += $$EMBED

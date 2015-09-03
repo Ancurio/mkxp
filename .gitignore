@@ -1,18 +1,13 @@
 *.o
 *.pro.*
 *.bak
-*.vert.xxd
-*.frag.xxd
-*.ttf.xxd
+*.xxd
 
-Makefile
+Makefile*
 
-mkxp
-xxd+
+Game
+Game.exe
+qmake-win.sh
 
 /build
-
-# Codeblocks
-mkxp.layout
-mkxp.cbp
 

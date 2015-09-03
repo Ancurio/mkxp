@@ -753,6 +753,8 @@ void Graphics::transition(int duration,
 
 	for (int i = 0; i < duration; ++i)
 	{
+		shState->input().update();
+
 		/* We need to clean up transMap properly before
 		 * a possible longjmp, so we manually test for
 		 * shutdown/reset here */
