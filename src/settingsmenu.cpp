@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <assert.h>
 
-const Vec2i winSize(700, 316);
+const Vec2i winSize(700, 500);
 
 const uint8_t cBgNorm = 50;
 const uint8_t cBgDark = 20;
@@ -62,13 +62,18 @@ struct VButton
 } static const vButtons[] =
 {
 	BTN_STRING(Up),
-	BTN_STRING(Down),
 	BTN_STRING(Left),
+	BTN_STRING(Action),
+	BTN_STRING(Cancel),
+	BTN_STRING(Menu),
+	BTN_STRING(L),
+
+	BTN_STRING(Down),
 	BTN_STRING(Right),
-	{ Input::C, "Action"     },
-	{ Input::B, "Menu"       },
-	{ Input::A, "Run/Misc"   },
-	{ Input::X, "Deactivate" },
+	BTN_STRING(Run),
+	BTN_STRING(Deactivate),
+	BTN_STRING(Items),
+	BTN_STRING(R),
 };
 
 static elementsN(vButtons);
@@ -516,7 +521,6 @@ struct SettingsMenuPrivate
 		}
 
 		dupWarnLabel.setVisible(haveDup);
-		infoLabel.setVisible(!haveDup);
 	}
 
 	void redraw()
@@ -962,7 +966,7 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 	p->rgb = p->winSurf->format;
 
 	const size_t layoutW = 2;
-	const size_t layoutH = 4;
+	const size_t layoutH = 6;
 	assert(layoutW*layoutH == vButtonsN);
 
 	const int bWidgetW = winSize.x / layoutW;
@@ -1005,10 +1009,10 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 
 	/* Labels */
 	const char *info = "Use left click to bind a slot, right click to clear its binding";
-	p->infoLabel = Label(p, IntRect(112 + 32, buttonY + 8, winSize.x, 16), info, cText, cText, cText);
+	p->infoLabel = Label(p, IntRect(16, 16, winSize.x, 16), info, cText, cText, cText);
 
 	const char *warn = "Warning: Same physical key bound to multiple slots";
-	p->dupWarnLabel = Label(p, IntRect(112 + 32, buttonY + 8, winSize.x, 16), warn, 255, 0, 0);
+	p->dupWarnLabel = Label(p, IntRect(16, 40, winSize.x, 16), warn, 255, 0, 0);
 
 	p->widgets.push_back(&p->infoLabel);
 	p->widgets.push_back(&p->dupWarnLabel);

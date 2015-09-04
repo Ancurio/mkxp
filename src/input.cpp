@@ -205,12 +205,6 @@ struct MsBinding : public Binding
 /* Not rebindable */
 static const KbBindingData staticKbBindings[] =
 {
-	{ SDL_SCANCODE_LSHIFT, Input::Shift },
-	{ SDL_SCANCODE_RSHIFT, Input::Shift },
-	{ SDL_SCANCODE_LCTRL,  Input::Ctrl  },
-	{ SDL_SCANCODE_RCTRL,  Input::Ctrl  },
-	{ SDL_SCANCODE_LALT,   Input::Alt   },
-	{ SDL_SCANCODE_RALT,   Input::Alt   },
 	{ SDL_SCANCODE_F5,     Input::F5    },
 	{ SDL_SCANCODE_F6,     Input::F6    },
 	{ SDL_SCANCODE_F7,     Input::F7    },

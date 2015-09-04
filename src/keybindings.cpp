@@ -67,32 +67,33 @@ struct JsBindingData
 /* Common */
 static const KbBindingData defaultKbBindings[] =
 {
-	{ SDL_SCANCODE_LEFT,   Input::Left  },
-	{ SDL_SCANCODE_RIGHT,  Input::Right },
-	{ SDL_SCANCODE_UP,     Input::Up    },
-	{ SDL_SCANCODE_DOWN,   Input::Down  },
-	{ SDL_SCANCODE_H,      Input::Left  },
-	{ SDL_SCANCODE_L,      Input::Right },
-	{ SDL_SCANCODE_K,      Input::Up    },
-	{ SDL_SCANCODE_J,      Input::Down  },
-	{ SDL_SCANCODE_Z,      Input::C     },
-	{ SDL_SCANCODE_SPACE,  Input::C     },
-	{ SDL_SCANCODE_RETURN, Input::C     },
-	{ SDL_SCANCODE_X,      Input::B     },
-	{ SDL_SCANCODE_ESCAPE, Input::B     },
-	{ SDL_SCANCODE_KP_0,   Input::B     },
-	{ SDL_SCANCODE_LSHIFT, Input::A     },
-	{ SDL_SCANCODE_LCTRL,  Input::X     },
+	{ SDL_SCANCODE_LEFT,   Input::Left       },
+	{ SDL_SCANCODE_RIGHT,  Input::Right      },
+	{ SDL_SCANCODE_UP,     Input::Up         },
+	{ SDL_SCANCODE_DOWN,   Input::Down       },
+	{ SDL_SCANCODE_H,      Input::Left       },
+	{ SDL_SCANCODE_L,      Input::Right      },
+	{ SDL_SCANCODE_K,      Input::Up         },
+	{ SDL_SCANCODE_J,      Input::Down       },
+	{ SDL_SCANCODE_Z,      Input::Action     },
+	{ SDL_SCANCODE_SPACE,  Input::Action     },
+	{ SDL_SCANCODE_RETURN, Input::Action     },
+	{ SDL_SCANCODE_X,      Input::Cancel     },
+	{ SDL_SCANCODE_A,      Input::Menu       },
+	{ SDL_SCANCODE_ESCAPE, Input::Menu       },
+	{ SDL_SCANCODE_KP_0,   Input::Menu       },
+	{ SDL_SCANCODE_S,      Input::Items      },
+    { SDL_SCANCODE_LSHIFT, Input::Run        },
+	{ SDL_SCANCODE_LCTRL,  Input::Deactivate },
+    { SDL_SCANCODE_Q,      Input::L          },
+	{ SDL_SCANCODE_W,      Input::R          },
 };
 
 static elementsN(defaultKbBindings);
 
 static const JsBindingData defaultJsBindings[] =
 {
-	{ 0, Input::C },
-	{ 1, Input::B },
-	{ 2, Input::A },
-	{ 3, Input::X },
+	{ 0, Input::Action },
 };
 
 static elementsN(defaultJsBindings);
@@ -148,7 +149,7 @@ BDescVec genDefaultBindings()
 	return d;
 }
 
-#define FORMAT_VER 2
+#define FORMAT_VER 3
 
 struct Header
 {
@@ -210,10 +211,13 @@ static bool verifyDesc(const BindingDesc &desc)
 	{
 	    Input::None,
 	    Input::Down, Input::Left, Input::Right, Input::Up,
-	    Input::A, Input::B, Input::C,
-	    Input::X, Input::Y, Input::Z,
+	    Input::Action,
+	    Input::Cancel,
+	    Input::Menu,
+	    Input::Items,
+	    Input::Run,
+	    Input::Deactivate,
 	    Input::L, Input::R,
-	    Input::Shift, Input::Ctrl, Input::Alt,
 	    Input::F5, Input::F6, Input::F7, Input::F8, Input::F9
 	};
 
