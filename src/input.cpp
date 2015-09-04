@@ -100,6 +100,56 @@ struct KbBinding : public Binding
 	SDL_Scancode source;
 };
 
+/* Controller button binding */
+struct GcButtonBinding : public Binding
+{
+	GcButtonBinding() {}
+
+	bool sourceActive() const
+	{
+		return EventThread::gcState.buttons[source];
+	}
+
+	bool sourceRepeatable() const
+	{
+		return true;
+	}
+
+	uint8_t source;
+};
+
+/* Controller axis binding */
+struct GcAxisBinding : public Binding
+{
+	GcAxisBinding() {}
+
+	GcAxisBinding(uint8_t source,
+	              AxisDir dir,
+	              Input::ButtonCode target)
+	    : Binding(target),
+	      source(source),
+	      dir(dir)
+	{}
+
+	bool sourceActive() const
+	{
+		int val = EventThread::gcState.axes[source];
+
+		if (dir == Negative)
+			return val < -JAXIS_THRESHOLD;
+		else /* dir == Positive */
+			return val > JAXIS_THRESHOLD;
+	}
+
+	bool sourceRepeatable() const
+	{
+		return true;
+	}
+
+	uint8_t source;
+	AxisDir dir;
+};
+
 /* Joystick button binding */
 struct JsButtonBinding : public Binding
 {
@@ -262,6 +312,8 @@ struct InputPrivate
 {
 	std::vector<KbBinding> kbStatBindings;
 	std::vector<KbBinding> kbBindings;
+	std::vector<GcAxisBinding> gcABindings;
+	std::vector<GcButtonBinding> gcBBindings;
 	std::vector<JsAxisBinding> jsABindings;
 	std::vector<JsHatBinding> jsHBindings;
 	std::vector<JsButtonBinding> jsBBindings;
@@ -370,6 +422,8 @@ struct InputPrivate
 	void applyBindingDesc(const BDescVec &d)
 	{
 		kbBindings.clear();
+		gcABindings.clear();
+		gcBBindings.clear();
 		jsABindings.clear();
 		jsHBindings.clear();
 		jsBBindings.clear();
@@ -392,6 +446,25 @@ struct InputPrivate
 				bind.source = src.d.scan;
 				bind.target = desc.target;
 				kbBindings.push_back(bind);
+
+				break;
+			}
+			case CAxis :
+			{
+				GcAxisBinding bind;
+				bind.source = src.d.ja.axis;
+				bind.dir = src.d.ja.dir;
+				bind.target = desc.target;
+				gcABindings.push_back(bind);
+
+				break;
+			}
+			case CButton :
+			{
+				GcButtonBinding bind;
+				bind.source = src.d.jb;
+				bind.target = desc.target;
+				gcBBindings.push_back(bind);
 
 				break;
 			}
@@ -435,6 +508,8 @@ struct InputPrivate
 		appendBindings(msBindings);
 
 		appendBindings(kbBindings);
+		appendBindings(gcABindings);
+		appendBindings(gcBBindings);
 		appendBindings(jsABindings);
 		appendBindings(jsHBindings);
 		appendBindings(jsBBindings);

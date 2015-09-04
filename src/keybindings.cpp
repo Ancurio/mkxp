@@ -64,24 +64,38 @@ struct JsBindingData
 	}
 };
 
+struct GcBindingData
+{
+	int source;
+	Input::ButtonCode target;
+
+	void add(BDescVec &d) const
+	{
+		SourceDesc src;
+		src.type = CButton;
+		src.d.jb = source;
+
+		BindingDesc desc;
+		desc.src = src;
+		desc.target = target;
+
+		d.push_back(desc);
+	}
+};
+
 /* Common */
 static const KbBindingData defaultKbBindings[] =
 {
-	{ SDL_SCANCODE_LEFT,   Input::Left       },
+    { SDL_SCANCODE_LEFT,   Input::Left       },
 	{ SDL_SCANCODE_RIGHT,  Input::Right      },
 	{ SDL_SCANCODE_UP,     Input::Up         },
 	{ SDL_SCANCODE_DOWN,   Input::Down       },
-	{ SDL_SCANCODE_H,      Input::Left       },
-	{ SDL_SCANCODE_L,      Input::Right      },
-	{ SDL_SCANCODE_K,      Input::Up         },
-	{ SDL_SCANCODE_J,      Input::Down       },
 	{ SDL_SCANCODE_Z,      Input::Action     },
-	{ SDL_SCANCODE_SPACE,  Input::Action     },
-	{ SDL_SCANCODE_RETURN, Input::Action     },
+    { SDL_SCANCODE_SPACE,  Input::Action     },
 	{ SDL_SCANCODE_X,      Input::Cancel     },
+    { SDL_SCANCODE_ESCAPE, Input::Cancel     },
 	{ SDL_SCANCODE_A,      Input::Menu       },
-	{ SDL_SCANCODE_ESCAPE, Input::Menu       },
-	{ SDL_SCANCODE_KP_0,   Input::Menu       },
+    { SDL_SCANCODE_RETURN, Input::Menu       },
 	{ SDL_SCANCODE_S,      Input::Items      },
     { SDL_SCANCODE_LSHIFT, Input::Run        },
 	{ SDL_SCANCODE_LCTRL,  Input::Deactivate },
@@ -91,33 +105,30 @@ static const KbBindingData defaultKbBindings[] =
 
 static elementsN(defaultKbBindings);
 
-static const JsBindingData defaultJsBindings[] =
+static const GcBindingData defaultGcBindings[] =
 {
-	{ 0, Input::Action },
+    { SDL_CONTROLLER_BUTTON_DPAD_LEFT,     Input::Left       },
+    { SDL_CONTROLLER_BUTTON_DPAD_RIGHT,    Input::Right      },
+    { SDL_CONTROLLER_BUTTON_DPAD_UP,       Input::Up         },
+    { SDL_CONTROLLER_BUTTON_DPAD_DOWN,     Input::Down       },
+    { SDL_CONTROLLER_BUTTON_A,             Input::Action     },
+    { SDL_CONTROLLER_BUTTON_B,             Input::Cancel     },
+    { SDL_CONTROLLER_BUTTON_X,             Input::Run        },
+    { SDL_CONTROLLER_BUTTON_Y,             Input::Items      },
+    { SDL_CONTROLLER_BUTTON_START,         Input::Menu       },
+    { SDL_CONTROLLER_BUTTON_BACK,          Input::Deactivate },
+    { SDL_CONTROLLER_BUTTON_LEFTSHOULDER,  Input::L          },
+    { SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, Input::R          },
 };
 
-static elementsN(defaultJsBindings);
+static elementsN(defaultGcBindings);
 
-static void addAxisBinding(BDescVec &d, uint8_t axis, AxisDir dir, Input::ButtonCode target)
+static void addGcAxisBinding(BDescVec &d, uint8_t axis, AxisDir dir, Input::ButtonCode target)
 {
 	SourceDesc src;
-	src.type = JAxis;
+	src.type = CAxis;
 	src.d.ja.axis = axis;
 	src.d.ja.dir = dir;
-
-	BindingDesc desc;
-	desc.src = src;
-	desc.target = target;
-
-	d.push_back(desc);
-}
-
-static void addHatBinding(BDescVec &d, uint8_t hat, uint8_t pos, Input::ButtonCode target)
-{
-	SourceDesc src;
-	src.type = JHat;
-	src.d.jh.hat = hat;
-	src.d.jh.pos = pos;
 
 	BindingDesc desc;
 	desc.src = src;
@@ -133,23 +144,20 @@ BDescVec genDefaultBindings()
 	for (size_t i = 0; i < defaultKbBindingsN; ++i)
 		defaultKbBindings[i].add(d);
 
-	for (size_t i = 0; i < defaultJsBindingsN; ++i)
-		defaultJsBindings[i].add(d);
+	for (size_t i = 0; i < defaultGcBindingsN; ++i)
+		defaultGcBindings[i].add(d);
 
-	addAxisBinding(d, 0, Negative, Input::Left );
-	addAxisBinding(d, 0, Positive, Input::Right);
-	addAxisBinding(d, 1, Negative, Input::Up   );
-	addAxisBinding(d, 1, Positive, Input::Down );
-
-	addHatBinding(d, 0, SDL_HAT_LEFT,  Input::Left );
-	addHatBinding(d, 0, SDL_HAT_RIGHT, Input::Right);
-	addHatBinding(d, 0, SDL_HAT_UP,    Input::Up   );
-	addHatBinding(d, 0, SDL_HAT_DOWN,  Input::Down );
+	addGcAxisBinding(d, SDL_CONTROLLER_AXIS_LEFTX,        Negative, Input::Left      );
+	addGcAxisBinding(d, SDL_CONTROLLER_AXIS_LEFTX,        Positive, Input::Right     );
+	addGcAxisBinding(d, SDL_CONTROLLER_AXIS_LEFTY,        Negative, Input::Up        );
+	addGcAxisBinding(d, SDL_CONTROLLER_AXIS_LEFTY,        Positive, Input::Down      );
+	addGcAxisBinding(d, SDL_CONTROLLER_AXIS_TRIGGERLEFT,  Positive, Input::Deactivate);
+	addGcAxisBinding(d, SDL_CONTROLLER_AXIS_TRIGGERRIGHT, Positive, Input::Run       );
 
 	return d;
 }
 
-#define FORMAT_VER 3
+#define FORMAT_VER 0
 
 struct Header
 {
@@ -239,12 +247,14 @@ static bool verifyDesc(const BindingDesc &desc)
 		return true;
 	case Key:
 		return src.d.scan < SDL_NUM_SCANCODES;
+	case CButton:
 	case JButton:
 		return true;
 	case JHat:
 		/* Only accept single directional binds */
 		return src.d.jh.pos == SDL_HAT_LEFT || src.d.jh.pos == SDL_HAT_RIGHT ||
 		       src.d.jh.pos == SDL_HAT_UP   || src.d.jh.pos == SDL_HAT_DOWN;
+	case CAxis:
 	case JAxis:
 		return src.d.ja.dir == Negative || src.d.ja.dir == Positive;
 	default:

@@ -23,6 +23,7 @@
 
 #include <SDL_events.h>
 #include <SDL_joystick.h>
+#include <SDL_gamecontroller.h>
 #include <SDL_messagebox.h>
 #include <SDL_timer.h>
 #include <SDL_thread.h>
@@ -39,6 +40,8 @@
 #include "debugwriter.h"
 
 #include <string.h>
+
+#include <map>
 
 typedef void (ALC_APIENTRY *LPALCDEVICEPAUSESOFT) (ALCdevice *device);
 typedef void (ALC_APIENTRY *LPALCDEVICERESUMESOFT) (ALCdevice *device);
@@ -70,6 +73,7 @@ initALCFunctions(ALCdevice *alcDev)
 #define HAVE_ALC_DEVICE_PAUSE alc.DevicePause
 
 uint8_t EventThread::keyStates[];
+EventThread::ControllerState EventThread::gcState;
 EventThread::JoyState EventThread::joyState;
 EventThread::MouseState EventThread::mouseState;
 EventThread::TouchState EventThread::touchState;
@@ -131,9 +135,21 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	bool terminate = false;
 
-	SDL_Joystick *js = 0;
-	if (SDL_NumJoysticks() > 0)
-		js = SDL_JoystickOpen(0);
+	std::map<int, SDL_GameController*> controllers;
+	std::map<int, SDL_Joystick*> joysticks;
+
+	for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+		if (SDL_IsGameController(i)) {
+			//Load as game controller
+			SDL_GameController *gc = SDL_GameControllerOpen(i);
+			int id = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(gc));
+			controllers[id] = gc;
+		} else {
+			//Fall back to joystick
+			SDL_Joystick *js = SDL_JoystickOpen(i);
+			joysticks[SDL_JoystickInstanceID(js)] = js;
+		}
+	}
 
 	char buffer[128];
 
@@ -144,6 +160,12 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	int winW, winH;
 	int i;
+
+	SDL_Joystick *js;
+	SDL_GameController *gc;
+	int id;
+	std::map<int, SDL_Joystick*>::iterator jsit;
+	std::map<int, SDL_GameController*>::iterator gcit;
 
 	SDL_GetWindowSize(win, &winW, &winH);
 
@@ -157,7 +179,7 @@ void EventThread::process(RGSSThreadData &rtData)
 			break;
 		}
 
-		if (sMenu && sMenu->onEvent(event))
+		if (sMenu && sMenu->onEvent(event, joysticks))
 		{
 			if (sMenu->destroyReq())
 			{
@@ -330,31 +352,64 @@ void EventThread::process(RGSSThreadData &rtData)
 			keyStates[event.key.keysym.scancode] = false;
 			break;
 
+		case SDL_CONTROLLERBUTTONDOWN:
+			gcState.buttons[event.cbutton.button] = true;
+			break;
+
+		case SDL_CONTROLLERBUTTONUP:
+			gcState.buttons[event.cbutton.button] = false;
+			break;
+
+		case SDL_CONTROLLERAXISMOTION:
+			gcState.axes[event.caxis.axis] = event.caxis.value;
+			break;
+
+		case SDL_CONTROLLERDEVICEADDED:
+			gc = SDL_GameControllerOpen(event.jdevice.which);
+			id = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(gc));
+			controllers[id] = gc;
+			break;
+
+		case SDL_CONTROLLERDEVICEREMOVED:
+			gcit = controllers.find(event.jdevice.which);
+			SDL_GameControllerClose(gcit->second);
+			controllers.erase(gcit);
+			break;
+
 		case SDL_JOYBUTTONDOWN :
-			joyState.buttons[event.jbutton.button] = true;
+			if (joysticks.find(event.jbutton.which) != joysticks.end())
+				joyState.buttons[event.jbutton.button] = true;
 			break;
 
 		case SDL_JOYBUTTONUP :
-			joyState.buttons[event.jbutton.button] = false;
+			if (joysticks.find(event.jbutton.which) != joysticks.end())
+				joyState.buttons[event.jbutton.button] = false;
 			break;
 
 		case SDL_JOYHATMOTION :
-			joyState.hats[event.jhat.hat] = event.jhat.value;
+			if (joysticks.find(event.jbutton.which) != joysticks.end())
+				joyState.hats[event.jhat.hat] = event.jhat.value;
 			break;
 
 		case SDL_JOYAXISMOTION :
-			joyState.axes[event.jaxis.axis] = event.jaxis.value;
+			if (joysticks.find(event.jbutton.which) != joysticks.end())
+				joyState.axes[event.jaxis.axis] = event.jaxis.value;
 			break;
 
 		case SDL_JOYDEVICEADDED :
-			if (event.jdevice.which > 0)
+			if (SDL_IsGameController(event.jdevice.which))
 				break;
-
-			js = SDL_JoystickOpen(0);
+			js = SDL_JoystickOpen(event.jdevice.which);
+			joysticks[SDL_JoystickInstanceID(js)] = js;
 			break;
 
 		case SDL_JOYDEVICEREMOVED :
-			resetInputStates();
+			jsit = joysticks.find(event.jdevice.which);
+			if (jsit != joysticks.end()) {
+				SDL_JoystickClose(jsit->second);
+				joysticks.erase(jsit);
+				resetInputStates();
+			}
 			break;
 
 		case SDL_MOUSEBUTTONDOWN :
@@ -442,8 +497,10 @@ void EventThread::process(RGSSThreadData &rtData)
 	/* Just in case */
 	rtData.syncPoint.resumeThreads();
 
-	if (SDL_JoystickGetAttached(js))
-		SDL_JoystickClose(js);
+	for (gcit = controllers.begin(); gcit != controllers.end(); ++gcit)
+		SDL_GameControllerClose(gcit->second);
+	for (jsit = joysticks.begin(); jsit != joysticks.end(); ++jsit)
+		SDL_JoystickClose(jsit->second);
 
 	delete sMenu;
 }
@@ -514,6 +571,7 @@ void EventThread::cleanup()
 void EventThread::resetInputStates()
 {
 	memset(&keyStates, 0, sizeof(keyStates));
+	memset(&gcState, 0, sizeof(gcState));
 	memset(&joyState, 0, sizeof(joyState));
 	memset(&mouseState.buttons, 0, sizeof(mouseState.buttons));
 	memset(&touchState, 0, sizeof(touchState));

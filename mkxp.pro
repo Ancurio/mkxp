@@ -246,7 +246,8 @@ EMBED = \
 	shader/simpleMatrix.vert \
 	shader/tilemapvx.vert \
 	assets/liberation.ttf \
-	assets/icon.png
+	assets/icon.png \
+	assets/gamecontrollerdb.txt
 
 SHARED_FLUID {
 	DEFINES += SHARED_FLUID
