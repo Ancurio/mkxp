@@ -43,9 +43,18 @@ contains(BINDING, NULL) {
 
 unix {
 	CONFIG += link_pkgconfig
-	PKGCONFIG += sigc++-2.0 pixman-1 zlib physfs vorbisfile \
-	             sdl2 SDL2_image SDL2_ttf SDL_sound openal
-	LIBS += -ldl
+	PKGCONFIG += sigc++-2.0 pixman-1 zlib vorbisfile \
+	             sdl2 SDL2_image SDL2_ttf SDL_sound
+	LIBS += -ldl -lphysfs
+	macx: {
+		QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.6
+		CONFIG -= app_bundle
+		INCLUDEPATH += /System/Library/Frameworks/OpenAL.framework/Headers
+		LIBS += -framework OpenAL
+	}
+	!macx: {
+		PKGCONFIG += openal
+	}
 
 	SHARED_FLUID {
 		PKGCONFIG += fluidsynth

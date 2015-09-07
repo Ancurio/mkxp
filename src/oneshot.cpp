@@ -20,6 +20,7 @@
 	#include <SDL2/SDL_syswm.h>
 #elif defined __APPLE__
 	#define OS_OSX
+	#include <pwd.h>
 #elif defined __linux__
 	#define OS_LINUX
 	#include <stdlib.h>

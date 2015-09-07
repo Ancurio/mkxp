@@ -31,7 +31,6 @@
 
 #include <al.h>
 #include <alc.h>
-#include <alext.h>
 
 #include "sharedstate.h"
 #include "graphics.h"
