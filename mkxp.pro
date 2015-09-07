@@ -8,8 +8,6 @@ INCLUDEPATH += . src
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
-CONFIG -= INI_ENCODING
-
 isEmpty(BINDING) {
 	BINDING = MRI
 }
@@ -58,10 +56,6 @@ unix {
 
 	SHARED_FLUID {
 		PKGCONFIG += fluidsynth
-	}
-
-	INI_ENCODING {
-		PKGCONFIG += libguess
 	}
 
 	# Deal with boost paths...
@@ -260,10 +254,6 @@ EMBED = \
 
 SHARED_FLUID {
 	DEFINES += SHARED_FLUID
-}
-
-INI_ENCODING {
-	DEFINES += INI_ENCODING
 }
 
 defineReplace(xxdOutput) {

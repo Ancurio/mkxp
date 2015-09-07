@@ -34,14 +34,6 @@
 #include "util.h"
 #include "sdl-util.h"
 
-#ifdef INI_ENCODING
-extern "C" {
-#include <libguess.h>
-}
-#include <iconv.h>
-#include <errno.h>
-#endif
-
 /* http://stackoverflow.com/a/1031773 */
 static bool validUtf8(const char *string)
 {
