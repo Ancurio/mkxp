@@ -85,7 +85,7 @@ unix {
 win32 {
 	CONFIG += link_pkgconfig
 	PKGCONFIG += sigc++-2.0 pixman-1 zlib \
-	             sdl2 SDL2_image SDL2_ttf openal SDL_sound vorbisfile
+	             sdl2 SDL2_image SDL2_ttf openal SDL_sound vorbisfile freetype2
 	LIBS += -lphysfs -lboost_program_options-mt -lsecur32
 
 	# Deal with boost paths...
@@ -317,8 +317,7 @@ BINDING_MRUBY {
 
 BINDING_MRI {
 	isEmpty(MRIVERSION) {
-		win32:MRIVERSION = 2.1
-		unix:MRIVERSION = 2.2
+		MRIVERSION = 2.2
 	}
 
 	PKGCONFIG += ruby-$$MRIVERSION

@@ -1,3 +1,2 @@
 #include <winuser.h>
-1 RT_MANIFEST "assets/manifest.xml"
 MAINICON ICON "assets/icon.ico"
