@@ -8,6 +8,8 @@ option(WORKDIR_CURRENT "Keep current directory on startup" OFF)
 option(FORCE32 "Force 32bit compile on 64bit OS" OFF)
 set(BINDING "MRI" CACHE STRING "The Binding Type (MRI, MRUBY, NULL)")
 set(EXTERNAL_LIB_PATH "" CACHE PATH "External precompiled lib prefix")
+set(BUNDLED_FONT "liberation" CACHE STRING "Bundled font name; file must exist in assets")
+set_property(CACHE BUNDLED_FONT PROPERTY ADVANCED ON)
 
 ## Misc setup ##
 
@@ -234,7 +236,7 @@ set(EMBEDDED_INPUT
 	shader/blurH.vert
 	shader/blurV.vert
 	shader/simpleMatrix.vert
-	assets/liberation.ttf
+	assets/${BUNDLED_FONT}.ttf
 	assets/icon.png
 )
 
@@ -402,6 +404,7 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
 	${DEFINES}
+	BUNDLED_FONT=${BUNDLED_FONT}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE
 	src
