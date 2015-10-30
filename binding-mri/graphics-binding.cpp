@@ -183,6 +183,18 @@ RB_METHOD(graphicsReset)
 	return Qnil;
 }
 
+RB_METHOD(graphicsPlayMovie)
+{
+	RB_UNUSED_PARAM;
+
+	const char *filename;
+	rb_get_args(argc, argv, "z", &filename RB_ARG_END);
+
+	shState->graphics().playMovie(filename);
+
+	return Qnil;
+}
+
 DEF_GRA_PROP_I(FrameRate)
 DEF_GRA_PROP_I(FrameCount)
 DEF_GRA_PROP_I(Brightness)
@@ -221,6 +233,11 @@ void graphicsBindingInit()
 	_rb_define_module_function(module, "resize_screen", graphicsResizeScreen);
 
 	INIT_GRA_PROP_BIND( Brightness, "brightness" );
+	}
+
+	if (rgssVer >= 3)
+	{
+	_rb_define_module_function(module, "play_movie", graphicsPlayMovie);
 	}
 
 	INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
