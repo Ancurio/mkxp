@@ -153,8 +153,6 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(gameFolder, std::string, ".") \
 	PO_DESC(anyAltToggleFS, bool, false) \
 	PO_DESC(allowSymlinks, bool, false) \
-	PO_DESC(dataPathOrg, std::string, "") \
-	PO_DESC(dataPathApp, std::string, "") \
 	PO_DESC(iconPath, std::string, "") \
 	PO_DESC(execName, std::string, "Game") \
 	PO_DESC(midi.soundFont, std::string, "") \
@@ -226,9 +224,6 @@ void Config::read(int argc, char *argv[])
 	rgssVersion = clamp(rgssVersion, 0, 3);
 
 	SE.sourceCount = clamp(SE.sourceCount, 1, 64);
-
-	if (!dataPathOrg.empty() && !dataPathApp.empty())
-		customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
 
 	commonDataPath = prefPath(".", "Oneshot");
 

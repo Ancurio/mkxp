@@ -53,9 +53,6 @@ struct Config
 	bool allowSymlinks;
 	bool pathCache;
 
-	std::string dataPathOrg;
-	std::string dataPathApp;
-
 	std::string iconPath;
 	std::string execName;
 

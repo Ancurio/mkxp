@@ -25,12 +25,6 @@
 # printFPS=false
 
 
-# Game window is resizable
-# (default: enabled)
-#
-# winResizable=true
-
-
 # Start game in fullscreen (this can
 # always be toggled with Alt-Enter at runtime)
 # (default: disabled)
@@ -127,29 +121,10 @@
 # anyAltToggleFS=false
 
 
-# Enable F12 game reset
-# (default: disabled)
-#
-# enableReset=false
-
-
 # Allow symlinks for game assets to be followed
 # (default: disabled)
 #
 # allowSymlinks=false
-
-
-# Organisation / company and application / game
-# name to build the directory path where mkxp
-# will store game specific data (eg. key bindings).
-# If not specified, mkxp will save to a common
-# directory shared by all games. Note that these
-# are TWO individual config entries, and both need
-# to be defined for this to take effect.
-# (default: none)
-#
-# dataPathOrg=mycompany
-# dataPathApp=mygame
 
 
 # Set the game window icon to 'path/to/icon.png'
