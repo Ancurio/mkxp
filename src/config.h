@@ -32,7 +32,6 @@ struct Config
 	bool debugMode;
 	bool printFPS;
 
-	bool winResizable;
 	bool fullscreen;
 	bool fixedAspectRatio;
 	bool smoothScaling;
@@ -51,7 +50,6 @@ struct Config
 
 	std::string gameFolder;
 	bool anyAltToggleFS;
-	bool enableReset;
 	bool allowSymlinks;
 	bool pathCache;
 

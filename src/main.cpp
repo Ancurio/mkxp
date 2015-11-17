@@ -251,8 +251,6 @@ int main(int argc, char *argv[])
 	SDL_Window *win;
 	Uint32 winFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS;
 
-	if (conf.winResizable)
-		winFlags |= SDL_WINDOW_RESIZABLE;
 	if (conf.fullscreen)
 		winFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 

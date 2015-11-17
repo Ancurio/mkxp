@@ -139,7 +139,6 @@ void Config::read(int argc, char *argv[])
 #define PO_DESC_ALL \
 	PO_DESC(debugMode, bool, false) \
 	PO_DESC(printFPS, bool, false) \
-	PO_DESC(winResizable, bool, true) \
 	PO_DESC(fullscreen, bool, false) \
 	PO_DESC(fixedAspectRatio, bool, true) \
 	PO_DESC(smoothScaling, bool, false) \
@@ -153,7 +152,6 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(subImageFix, bool, false) \
 	PO_DESC(gameFolder, std::string, ".") \
 	PO_DESC(anyAltToggleFS, bool, false) \
-	PO_DESC(enableReset, bool, false) \
 	PO_DESC(allowSymlinks, bool, false) \
 	PO_DESC(dataPathOrg, std::string, "") \
 	PO_DESC(dataPathApp, std::string, "") \
