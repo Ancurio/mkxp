@@ -1,0 +1,121 @@
+Game_Temp
+Game_System
+Game_Switches
+Game_Variables
+Game_SelfSwitches
+Game_Screen
+Game_Picture
+Game_Battler 1
+Game_Battler 2
+Game_Battler 3
+Game_BattleAction
+Game_Actor
+Game_Enemy
+Game_Actors
+Game_Party
+Game_Map
+Game_CommonEvent
+Game_Character 1
+Game_Character 2
+Game_Character 3
+Game_Event
+Game_Player
+Game_Oneshot
+Game_Light
+Game_Follower
+
+Sprite_Character
+Sprite_Battler
+Sprite_Picture
+Sprite_Timer
+Spriteset_Map
+
+Window_Base
+Window_Selectable
+Window_Command
+Window_Help
+Window_Gold
+Window_PlayTime
+Window_Steps
+Window_MenuStatus
+Window_Item
+Window_Skill
+Window_SkillStatus
+Window_Target
+Window_EquipLeft
+Window_EquipRight
+Window_EquipItem
+Window_Status
+Window_SaveFile
+Window_ShopCommand
+Window_ShopBuy
+Window_ShopSell
+Window_ShopNumber
+Window_ShopStatus
+Window_NameEdit
+Window_NameInput
+Window_InputNumber
+Window_Message
+Window_PartyCommand
+Window_BattleStatus
+Window_BattleResult
+Window_DebugLeft
+Window_DebugRight
+Window_MainMenu
+
+Interpreter 1
+Interpreter 2
+Interpreter 3
+Interpreter 4
+Interpreter 5
+Interpreter 6
+Interpreter 7
+
+Scene_Title
+Scene_Map
+Scene_Menu
+Scene_Item
+Scene_Skill
+Scene_Equip
+Scene_Status
+Scene_File
+Scene_Save
+Scene_Load
+Scene_End
+Scene_Battle 1
+Scene_Battle 2
+Scene_Battle 3
+Scene_Battle 4
+Scene_Name
+Scene_Debug
+
+RPG
+Ed_Message
+
+# Classes
+Language
+Translator
+Light
+Particles
+SpecialEventData
+
+# Data
+Item
+Language_Data
+Footsteps
+SpecialEventData_Data
+
+# Script Functions
+Script Aux
+Map
+Name
+Position
+
+# Puzzles
+Sokoban
+Pixel
+
+# Save/Load
+SaveLoad
+
+Main
