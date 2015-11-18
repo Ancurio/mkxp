@@ -5,6 +5,7 @@
 #==============================================================================
 
 class Window_Message < Window_Selectable
+  BLIP_TIME = 4
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -21,7 +22,7 @@ class Window_Message < Window_Selectable
     @opaque = true # set to false if we're not rendering the window bg
 
     @text_pause = 0
-    @blip = false
+    @blip = 0
 
     # Text drawing flags
     @text = nil
@@ -81,7 +82,7 @@ class Window_Message < Window_Selectable
   #--------------------------------------------------------------------------
   def refresh
     # Initialize
-    @blip = true
+    @blip = BLIP_TIME
     @text = ''
     y = -1
 
@@ -183,7 +184,7 @@ class Window_Message < Window_Selectable
     return if !@drawing_text
 
     # Get 1 text character in c (loop until unable to get text)
-    while ((c = @text.slice!(/./m)) != nil)
+    while ((c = @text.slice!(0)) != nil)
       # \n
       if c == "\n"
         @text_x = 0
@@ -330,9 +331,12 @@ class Window_Message < Window_Selectable
       if @text_pause > 0
         @text_pause -= 1
       else
-        Audio.se_play('Audio/SE/text.wav', 70) unless @text.empty? if @blip
-        @blip = !@blip
-        #tick
+        if @blip >= BLIP_TIME
+          Audio.se_play('Audio/SE/text.wav', 70) unless @text.empty?
+          @blip = 0
+        else
+          @blip += 1
+        end
         tick
       end
     else
