@@ -11,3 +11,4 @@ qmake-win.sh
 
 /build
 
+object_script.*
