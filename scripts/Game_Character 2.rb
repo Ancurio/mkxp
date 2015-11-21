@@ -108,6 +108,13 @@ class Game_Character
       # Increase animation count by 1
       @anime_count += 1
     end
+    # Wrap position
+    if @x * 128 == @real_x && @y * 128 == @real_y
+      @x %= $game_map.width
+      @y %= $game_map.height
+      @real_x = @x * 128
+      @real_y = @y * 128
+    end
   end
   #--------------------------------------------------------------------------
   # * Frame Update (stop)

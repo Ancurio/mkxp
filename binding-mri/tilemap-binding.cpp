@@ -136,6 +136,7 @@ DEF_PROP_OBJ_REF(Tilemap, Table,    FlashData,  "flash_data")
 DEF_PROP_OBJ_REF(Tilemap, Table,    Priorities, "priorities")
 
 DEF_PROP_B(Tilemap, Visible)
+DEF_PROP_B(Tilemap, Wrapping)
 
 DEF_PROP_I(Tilemap, OX)
 DEF_PROP_I(Tilemap, OY)
@@ -165,6 +166,7 @@ tilemapBindingInit()
 	INIT_PROP_BIND( Tilemap, FlashData,  "flash_data" );
 	INIT_PROP_BIND( Tilemap, Priorities, "priorities" );
 	INIT_PROP_BIND( Tilemap, Visible,    "visible"    );
+	INIT_PROP_BIND( Tilemap, Wrapping,   "wrapping"   );
 	INIT_PROP_BIND( Tilemap, OX,         "ox"         );
 	INIT_PROP_BIND( Tilemap, OY,         "oy"         );
 }

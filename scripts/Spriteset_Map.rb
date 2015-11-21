@@ -124,6 +124,8 @@ class Spriteset_Map
   # * Frame Update
   #--------------------------------------------------------------------------
   def update
+    # Update tilemap
+    @tilemap.wrapping = $game_map.wrapping
     # If panorama is different from current one
     if @panorama_name != $game_map.panorama_name or
        @panorama_hue != $game_map.panorama_hue

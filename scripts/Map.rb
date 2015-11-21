@@ -35,3 +35,7 @@ end
 def clamp_panorama
   $game_map.clamped_panorama = true
 end
+
+def wrap_map
+  $game_map.wrapping = true
+end

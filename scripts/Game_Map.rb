@@ -27,6 +27,7 @@ class Game_Map
   attr_accessor :bg_name                  # bg file name
   attr_accessor :particles_type           # particles name
   attr_accessor :clamped_panorama         # panorama is clamped?
+  attr_accessor :wrapping                 # map is wrapping?
   attr_reader   :passages                 # passage table
   attr_reader   :priorities               # prioroty table
   attr_reader   :terrain_tags             # terrain tag table
@@ -106,6 +107,8 @@ class Game_Map
     @particles_type = nil
     # Unclamp panorama
     @clamped_panorama = false
+    # Unwrap map
+    @wrapping = false
 
     # Construct map name path
     mapinfo = load_data("Data/MapInfos.rxdata")
@@ -225,6 +228,7 @@ class Game_Map
   #     y          : y-coordinate
   #--------------------------------------------------------------------------
   def valid?(x, y)
+    return true if @wrapping
     return (x >= 0 and x < width and y >= 0 and y < height)
   end
   #--------------------------------------------------------------------------
@@ -241,6 +245,8 @@ class Game_Map
       # impassable
       return false
     end
+    x %= self.width
+    y %= self.height
     # Change direction (0,2,4,6,8,10) to obstacle bit (0,1,2,4,8,0)
     bit = (1 << (d / 2 - 1)) & 0x0f
     # Loop in all events
