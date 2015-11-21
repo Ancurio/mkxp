@@ -9,18 +9,22 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize
+  def initialize(spriteset = nil)
     # Make viewports
-    @viewport1 = Viewport.new(0, 0, 640, 480)
-    @viewport2 = Viewport.new(0, 0, 640, 480)
-    @viewport3 = Viewport.new(0, 0, 640, 480)
-    @viewport2.z = 200
-    @viewport3.z = 5000
-    @viewport_particles = Viewport.new(0, 0, 640, 480)
+    @viewport = Viewport.new(0, 0, 640, 480)
     @viewport_bg = Viewport.new(0, 0, 640, 480)
+    @viewport_pics = Viewport.new(0, 0, 640, 480)
+    @viewport_particles = Viewport.new(0, 0, 640, 480)
+    @viewport_lights = Viewport.new(0, 0, 640, 480)
+    @viewport_flash = Viewport.new(0, 0, 640, 480)
+
     @viewport_bg.z = -500
+    @viewport_lights.z = 200
+    @viewport_pics.z = 500
+    @viewport_flash.z = 5000
+
     # Make tilemap
-    @tilemap = Tilemap.new(@viewport1)
+    @tilemap = Tilemap.new(@viewport)
     if $game_map.tileset_name == "blank"
       @tilemap.tileset = nil
     else
@@ -33,27 +37,27 @@ class Spriteset_Map
     @tilemap.map_data = $game_map.data
     @tilemap.priorities = $game_map.priorities
     # Make panorama plane
-    @panorama = Plane.new(@viewport1)
+    @panorama = Plane.new(@viewport)
     @panorama.z = -1000
     # Make fog plane
-    @fog = Plane.new(@viewport1)
+    @fog = Plane.new(@viewport)
     @fog.z = 3000
     # Make character sprites
     @character_sprites = []
     for i in $game_map.events.keys.sort
-      sprite = Sprite_Character.new(@viewport1, $game_map.events[i])
+      sprite = Sprite_Character.new(@viewport, $game_map.events[i])
       @character_sprites.push(sprite)
     end
     $game_followers.each do |follower|
-      @character_sprites.push(Sprite_Character.new(@viewport1, follower))
+      @character_sprites.push(Sprite_Character.new(@viewport, follower))
     end
-    @character_sprites.push(Sprite_Character.new(@viewport1, $game_player))
+    @character_sprites.push(Sprite_Character.new(@viewport, $game_player))
     # Make weather
-    @weather = RPG::Weather.new(@viewport1)
+    @weather = RPG::Weather.new(@viewport)
     # Make picture sprites
     @picture_sprites = []
     for i in 1..50
-      @picture_sprites.push(Sprite_Picture.new(@viewport2,
+      @picture_sprites.push(Sprite_Picture.new(@viewport_pics,
         $game_screen.pictures[i]))
     end
     # Make timer sprite
@@ -92,19 +96,20 @@ class Spriteset_Map
     # Dispose of timer sprite
     @timer_sprite.dispose
     # Dispose of viewports
-    @viewport1.dispose
-    @viewport2.dispose
-    @viewport3.dispose
+    @viewport.dispose
+    @viewport_pics.dispose
     @viewport_particles.dispose
     @viewport_bg.dispose
+    @viewport_lights.dispose
+    @viewport_flash.dispose
   end
   #--------------------------------------------------------------------------
   # * Follower operations
   #--------------------------------------------------------------------------
   def add_follower(follower)
     @character_sprites.pop.dispose
-    @character_sprites.push(Sprite_Character.new(@viewport1, follower))
-    @character_sprites.push(Sprite_Character.new(@viewport1, $game_player))
+    @character_sprites.push(Sprite_Character.new(@viewport, follower))
+    @character_sprites.push(Sprite_Character.new(@viewport, $game_player))
   end
   def remove_follower(follower)
     @character_sprites.reverse_each do |spr|
@@ -227,12 +232,12 @@ class Spriteset_Map
     # Update timer sprite
     @timer_sprite.update
     # Set screen color tone and shake position
-    @viewport1.tone = $game_screen.tone
-    @viewport1.ox = $game_screen.shake
+    @viewport.tone = $game_screen.tone
+    @viewport.ox = $game_screen.shake
     # Set screen flash color
-    @viewport3.color = $game_screen.flash_color
+    @viewport_flash.color = $game_screen.flash_color
     # Update viewports
-    @viewport1.update
-    @viewport3.update
+    @viewport.update
+    @viewport_flash.update
   end
 end
