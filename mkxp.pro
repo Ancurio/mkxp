@@ -6,7 +6,8 @@ TARGET = Game
 DEPENDPATH += src shader assets
 INCLUDEPATH += . src
 
-CONFIG += c++11
+QMAKE_CXXFLAGS += -std=gnu++11
+QMAKE_LFLAGS += -std=gnu++11
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
