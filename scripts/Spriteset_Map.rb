@@ -62,6 +62,10 @@ class Spriteset_Map
     end
     # Make timer sprite
     @timer_sprite = Sprite_Timer.new
+    # Make lightbulb sprite
+    @bulb = Sprite.new(@viewport_lights)
+    @bulb.bitmap = RPG::Cache.light('bulb')
+    @bulb.opacity = has_lightbulb? ? 255 : 0
     # Frame update
     update
   end
@@ -223,10 +227,14 @@ class Spriteset_Map
       sprite.update
     end
     # Update bulb if fading in
-    if @bulb && @bulb.intensity < @bulb_intensity
-      @bulb.intensity += 0.005
-      if @bulb.intensity > @bulb_intensity
-        @bulb.intensity = @bulb_intensity
+    @bulb.tone = $game_map.ambient
+    if has_lightbulb?
+      if @bulb.opacity < 255
+        @bulb.opacity += 2.125
+      end
+    else
+      if @bulb.opacity > 0
+        @bulb.opacity -= 2.125
       end
     end
     # Update particles
@@ -234,7 +242,7 @@ class Spriteset_Map
     # Update timer sprite
     @timer_sprite.update
     # Set screen color tone and shake position
-    @viewport.tone = $game_screen.tone
+    @viewport.tone = $game_screen.tone + $game_map.ambient * (1.0 - @bulb.opacity / 255.0)
     @viewport.ox = $game_screen.shake
     # Set screen flash color
     @viewport_flash.color = $game_screen.flash_color

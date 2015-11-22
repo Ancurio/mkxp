@@ -341,12 +341,6 @@ class Scene_Map
   #--------------------------------------------------------------------------
   # * Lighting operations
   #--------------------------------------------------------------------------
-  def ambient
-    @spriteset.ambient
-  end
-  def ambient=(val)
-    @spriteset.ambient = val
-  end
   def add_light(id, filename, intensity, x, y)
     @spriteset.add_light(id, filename, intensity, x, y)
   end
@@ -355,9 +349,6 @@ class Scene_Map
   end
   def clear_lights
     @spriteset.clear_lights
-  end
-  def fade_in_bulb
-    @spriteset.fade_in_bulb
   end
   #--------------------------------------------------------------------------
   # * Particle operations

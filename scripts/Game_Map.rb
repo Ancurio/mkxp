@@ -28,6 +28,7 @@ class Game_Map
   attr_accessor :particles_type           # particles name
   attr_accessor :clamped_panorama         # panorama is clamped?
   attr_accessor :wrapping                 # map is wrapping?
+  attr_accessor :ambient                  # ambient light
   attr_reader   :passages                 # passage table
   attr_reader   :priorities               # prioroty table
   attr_reader   :terrain_tags             # terrain tag table
@@ -109,6 +110,8 @@ class Game_Map
     @clamped_panorama = false
     # Unwrap map
     @wrapping = false
+    # Full bright ambient light
+    @ambient = Tone.new(0, 0, 0, 0)
 
     # Construct map name path
     mapinfo = load_data("Data/MapInfos.rxdata")

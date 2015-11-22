@@ -46,6 +46,10 @@ module Script
   end
 end
 
+def has_lightbulb?
+  $game_party.item_number(1) > 0
+end
+
 def enter_name
   $game_temp.name_calling = true
 end
@@ -76,14 +80,12 @@ def particles(type)
   $game_map.particles_type = type
 end
 
-def ambient(r, g = -1, b = -1)
-  g = r if g < 0
-  b = r if b < 0
-  #$scene.ambient = Color.new(r, g, b)
+def ambient(r, g, b, gray = 0)
+  $game_map.ambient.set(r, g, b, gray)
 end
 
 def clear_ambient
-  #$scene.ambient = Color.new(255, 255, 255)
+  $game_map.ambient.set(0, 0, 0, 0)
 end
 
 def add_light(id, file, intensity, x, y)
@@ -98,14 +100,15 @@ def clear_lights
   #$scene.clear_lights
 end
 
-def fade_in_bulb
-  #$scene.fade_in_bulb
-end
-
 def clamp_panorama
   $game_map.clamped_panorama = true
 end
 
 def wrap_map
   $game_map.wrapping = true
+end
+
+# Map specific settings
+def green_ambient
+  ambient -50, -50, -50
 end
