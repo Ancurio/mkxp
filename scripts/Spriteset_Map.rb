@@ -45,13 +45,13 @@ class Spriteset_Map
     # Make character sprites
     @character_sprites = []
     for i in $game_map.events.keys.sort
-      sprite = Sprite_Character.new(@viewport, $game_map.events[i])
+      sprite = Sprite_Character.new(@viewport, @viewport_lights, $game_map.events[i])
       @character_sprites.push(sprite)
     end
     $game_followers.each do |follower|
-      @character_sprites.push(Sprite_Character.new(@viewport, follower))
+      @character_sprites.push(Sprite_Character.new(@viewport, @viewport_lights, follower))
     end
-    @character_sprites.push(Sprite_Character.new(@viewport, $game_player))
+    @character_sprites.push(Sprite_Character.new(@viewport, @viewport_lights, $game_player))
     # Make weather
     @weather = RPG::Weather.new(@viewport)
     # Make picture sprites
@@ -108,8 +108,8 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def add_follower(follower)
     @character_sprites.pop.dispose
-    @character_sprites.push(Sprite_Character.new(@viewport, follower))
-    @character_sprites.push(Sprite_Character.new(@viewport, $game_player))
+    @character_sprites.push(Sprite_Character.new(@viewport, @viewport_lights, follower))
+    @character_sprites.push(Sprite_Character.new(@viewport, @viewport_lights, $game_player))
   end
   def remove_follower(follower)
     @character_sprites.reverse_each do |spr|
