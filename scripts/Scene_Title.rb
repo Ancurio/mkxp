@@ -33,6 +33,12 @@ class Scene_Title
     $tr.translate_database
     # Make system object
     $game_system = Game_System.new
+    # Skip title screen if debug mode
+    if $DEBUG
+      $game_map.update
+      $scene = Scene_Map.new
+      return
+    end
     # Make title graphic
     @sprite = Sprite.new
     @sprite.bitmap = RPG::Cache.title($data_system.title_name)
@@ -58,7 +64,7 @@ class Scene_Title
     Audio.me_stop
     Audio.bgs_stop
     # Execute transition
-    Graphics.transition($DEBUG ? 0 : 40)
+    Graphics.transition(40)
     # Main loop
     loop do
       # Update game screen
@@ -81,8 +87,8 @@ class Scene_Title
     @menu.dispose
     @cursor.bitmap.dispose
     @cursor.dispose
-    Audio.bgm_fade($DEBUG ? 0 : 60)
-    Graphics.transition($DEBUG ? 0 : 60)
+    Audio.bgm_fade(60)
+    Graphics.transition(60)
     # Run automatic change for BGM and BGS set with map
     $game_map.autoplay
   end
