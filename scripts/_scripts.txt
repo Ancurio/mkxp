@@ -1,3 +1,6 @@
+# Overrides
+RPG
+
 Game_Temp
 Game_System
 Game_Switches
@@ -28,6 +31,7 @@ Sprite_Character
 Sprite_Battler
 Sprite_Picture
 Sprite_Timer
+Sprite_Light
 Spriteset_Map
 
 Window_Base
@@ -89,33 +93,25 @@ Scene_Battle 4
 Scene_Name
 Scene_Debug
 
-RPG
-Ed_Message
-
-# Classes
-Language
-Translator
-Light
-Particles
-SpecialEventData
+# Internationalization
+i18n_Translator
+i18n_Language
 
 # Data
-Item
-Language_Data
-Footsteps
-SpecialEventData_Data
+Data_Item
+Data_Footsteps
+Data_SpecialEventData
 
 # Script Functions
-Script Aux
-Map
-Name
-Position
+Script
 
 # Puzzles
-Sokoban
-Pixel
+Puzzle_Sokoban
+Puzzle_Pixel
 
-# Save/Load
+# Misc
 SaveLoad
+Ed_Message
+Particles
 
 Main
