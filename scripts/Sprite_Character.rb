@@ -17,8 +17,8 @@ class Sprite_Character
   #     character      : character (Game_Character)
   #--------------------------------------------------------------------------
   def initialize(viewport, light_viewport, character = nil)
-    @sprite = Sprite.new(viewport)
-    @light_sprite = Sprite.new(light_viewport)
+    @sprite = RPG::Sprite.new(viewport)
+    @light_sprite = RPG::Sprite.new(light_viewport)
     @light_sprite.blend_type = 1
     @character = character
     update
