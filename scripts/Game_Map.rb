@@ -276,15 +276,21 @@ class Game_Map
       end
     end
     # Loop searches in order from top of layer
+    blank = 0
     for i in [2, 1, 0]
       # Get tile ID
       tile_id = data[x, y, i]
       # Tile ID acquistion failure
-      if tile_id == nil
-        # impassable
-        return false
+      return false if tile_id == nil
+
+      # Only handle blank if all three layers are blank
+      if tile_id < 48 && i > 0
+        blank += 1
+        next if blank < 3
+      end
+
       # If obstacle bit is set
-      elsif @passages[tile_id] & bit != 0
+      if @passages[tile_id] & bit != 0
         # impassable
         return false
       # If obstacle bit is set in all directions

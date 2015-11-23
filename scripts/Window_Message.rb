@@ -332,7 +332,7 @@ class Window_Message < Window_Selectable
         @text_pause -= 1
       else
         if @blip >= BLIP_TIME
-          Audio.se_play('Audio/SE/text.wav', 70) unless @text.empty?
+          Audio.se_play('Audio/SE/text.wav') unless @text.empty?
           @blip = 0
         else
           @blip += 1
