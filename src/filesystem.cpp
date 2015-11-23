@@ -476,7 +476,7 @@ static void fontSetEnumCB(void *data, const char *,
 		lowExt[i] = tolower(ext[i]);
 	lowExt[i] = '\0';
 
-	if (strcmp(lowExt, "ttf") && strcmp(lowExt, "otf"))
+	if (strcmp(lowExt, "ttf") && strcmp(lowExt, "otf") && strcmp(lowExt, "ttc"))
 		return;
 
 	char filename[512];

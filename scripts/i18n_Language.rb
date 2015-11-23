@@ -59,7 +59,7 @@ class Language
       ], 9
     ),
     :ja => Language.new(
-      'VL Gothic', [
+      'WenQuanYi Micro Hei', [
         "あ","い","う","え","お",
         "か","き","く","け","こ",
         "さ","し","す","せ","そ",
@@ -102,7 +102,7 @@ class Language
       ], 9
     ),
     :ko => Language.new(
-      'Baekmuk Dotum', [
+      'WenQuanYi Micro Hei', [
         "가","개","갸","거","게",
         "겨","고","교","구","규",
         "그","기","나","내","냐",
