@@ -36,5 +36,6 @@ FOOTSTEP_SFX = [
   # Red Factory Interior
   [],
   # Red observation deck
-  ['step_metal_light'],
+  ['step_metal_light',
+   'step_tile'],
 ]

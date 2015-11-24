@@ -264,7 +264,7 @@ class Game_Player < Game_Character
     return unless $game_temp.footstep_sfx
     tag = $game_map.terrain_tag(@x, @y) - 1
     if tag >= 0 && tag < $game_temp.footstep_sfx.size
-      Audio.se_play("Audio/SE/#{$game_temp.footstep_sfx[tag]}.wav")
+      Audio.se_play("Audio/SE/#{$game_temp.footstep_sfx[tag]}.wav", 50)
     end
   end
 end
