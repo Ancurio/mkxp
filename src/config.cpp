@@ -230,7 +230,7 @@ void Config::read(int argc, char *argv[])
 	//Hardcode some ini/version settings
 	rgssVersion = 1;
 	game.title = "Oneshot";
-	game.scripts = "Data/Scripts.rxdata";
+	game.scripts = "Data/xScripts.rxdata";
 	if (defScreenW <= 0)
 		defScreenW = 640;
 	if (defScreenH <= 0)
