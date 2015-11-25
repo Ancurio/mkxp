@@ -258,8 +258,8 @@ Oneshot::Oneshot(const RGSSThreadData &threadData)
 	struct passwd *pwd = getpwuid(getuid());
 	if (pwd)
 	{
-		if (pwd->pw_gecos && pwd->pw_gecos[0] != ',')
-		{
+        if (pwd->pw_gecos && pwd->pw_gecos[0] && pwd->pw_gecos[0] != ',')
+        {
 			//Get the user's full name
 			int comma = 0;
 			for (; pwd->pw_gecos[comma] && pwd->pw_gecos[comma] != ','; ++comma) {}
