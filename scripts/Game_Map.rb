@@ -37,6 +37,13 @@ class Game_Map
   attr_reader   :fog_oy                   # fog y-coordinate starting point
   attr_reader   :fog_tone                 # fog color tone
   #--------------------------------------------------------------------------
+  # * List of clamped panorama images
+  #--------------------------------------------------------------------------
+  CLAMPED_PANORAMAS = [
+    'red',
+    'red_distort',
+  ]
+  #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize
@@ -107,7 +114,7 @@ class Game_Map
     # Clear particles
     @particles_type = nil
     # Unclamp panorama
-    @clamped_panorama = false
+    @clamped_panorama = CLAMPED_PANORAMAS.include? @panorama_name
     # Unwrap map
     @wrapping = false
     # Full bright ambient light
