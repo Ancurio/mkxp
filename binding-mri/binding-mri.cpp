@@ -404,6 +404,9 @@ static void runRMXPScripts(BacktraceData &btData)
 		return;
 	}
 
+	/* Set the debug flag */
+	rb_gv_set("$DEBUG", conf.debugMode ? Qtrue : Qfalse);
+
 	rb_gv_set("$RGSS_SCRIPTS", scriptArray);
 
 	long scriptCount = RARRAY_LEN(scriptArray);

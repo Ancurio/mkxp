@@ -132,9 +132,6 @@ struct SharedStatePrivate
 
 		fileSystem.addPath(".");
 
-		for (size_t i = 0; i < config.rtps.size(); ++i)
-			fileSystem.addPath(config.rtps[i].c_str());
-
 		if (config.pathCache)
 			fileSystem.createPathCache();
 

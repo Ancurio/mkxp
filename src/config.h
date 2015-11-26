@@ -69,7 +69,6 @@ struct Config
 	} SE;
 
 	std::vector<std::string> preloadScripts;
-	std::vector<std::string> rtps;
 
 	std::vector<std::string> fontSubs;
 

@@ -5,9 +5,6 @@
 #==============================================================================
 
 begin
-  $DEBUG = true
-  $DEMO = false
-
   Graphics.frame_rate = 60
   Font.default_size = 20
 
