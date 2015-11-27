@@ -112,3 +112,25 @@ end
 def green_ambient
   ambient -50, -50, -50
 end
+
+# Misc
+def watcher_tell_time
+  hour = Time.now.hour
+  if hour >= 6 && hour < 12
+    Script.tmp_v1 = 0
+  elsif hour >= 12 && hour < 17
+    Script.tmp_v1 = 1
+  elsif hour >= 17
+    Script.tmp_v1 = 2
+  else
+    Script.tmp_v1 = 3
+  end
+end
+
+def plight_start_timer
+  $game_oneshot.plight_timer = Time.now
+end
+
+def plight_update_timer
+  Script.tmp_v1 = ((Time.now - $game_oneshot.plight_timer) / 60).to_i
+end

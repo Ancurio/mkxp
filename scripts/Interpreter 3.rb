@@ -18,12 +18,12 @@ class Interpreter
 
     # Create full text string
     choices = false
-    text = @list[@index].parameters[0].strip
+    text = @list[@index].parameters[0].rstrip
     loop do
       # 401: another line of text
       if @list[@index+1].code == 401
         @index += 1
-        text << " " << @list[@index].parameters[0]
+        text << " " << @list[@index].parameters[0].rstrip
       else
         # 102: show choices
         if @list[@index+1].code == 102
@@ -41,7 +41,7 @@ class Interpreter
         break
       end
     end
-    text.gsub!(/\s+\\n\s+/, '\\n')
+    text.gsub!(/\s*\\n\s*/, '\\n')
     text.strip!
 
     # Translate text

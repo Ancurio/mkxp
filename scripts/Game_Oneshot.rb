@@ -3,6 +3,7 @@ class Game_Oneshot
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :player_name              # map music (for battle memory)
+  attr_accessor :plight_timer             # start of plight's plight
 
   def initialize
     user_name = Oneshot::USER_NAME.split(/\s+/)
@@ -13,6 +14,7 @@ class Game_Oneshot
     end
     @lights = {}
     self.lang = Oneshot::LANG
+    @plight_timer = nil
   end
 
   # lang
@@ -29,9 +31,9 @@ class Game_Oneshot
 
   # MARSHAL
   def marshal_dump
-    [@player_name, @lang]
+    [@player_name, @lang, @plight_timer]
   end
   def marshal_load(array)
-    @player_name, self.lang = array
+    @player_name, self.lang, @plight_timer = array
   end
 end
