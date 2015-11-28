@@ -94,9 +94,6 @@ class Window_Message < Window_Selectable
       text.gsub!(/\\v\[([0-9]+)\]/) do
         $game_variables[$1.to_i]
       end
-      text.gsub!(/\\n\[([0-9]+)\]/) do
-        $game_actors[$1.to_i] != nil ? $game_actors[$1.to_i].name : ""
-      end
       text.gsub!("\\p", $game_oneshot.player_name)
       text.gsub!("\\n", "\n")
       # Handle text-rendering escape sequences
