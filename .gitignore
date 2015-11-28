@@ -7,7 +7,6 @@ Makefile*
 
 Game
 Game.exe
-qmake-win.sh
 
 /build
 
