@@ -244,10 +244,12 @@ class Spriteset_Map
     # Set screen color tone and shake position
     @viewport.tone = $game_screen.tone + $game_map.ambient * (1.0 - @bulb.opacity / 255.0)
     @viewport.ox = $game_screen.shake
+    @viewport_lights.ox = $game_screen.shake
     # Set screen flash color
     @viewport_flash.color = $game_screen.flash_color
     # Update viewports
     @viewport.update
     @viewport_flash.update
+    @viewport_lights.update
   end
 end
