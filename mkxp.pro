@@ -6,8 +6,7 @@ TARGET = Game
 DEPENDPATH += src shader assets
 INCLUDEPATH += . src
 
-QMAKE_CXXFLAGS += -std=gnu++11
-QMAKE_LFLAGS += -std=gnu++11
+CONFIG += link_pkgconfig
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
@@ -43,7 +42,7 @@ contains(BINDING, NULL) {
 }
 
 unix {
-	CONFIG += link_pkgconfig
+	CONFIG += c++11
 	PKGCONFIG += sigc++-2.0 pixman-1 zlib vorbisfile \
 	             sdl2 SDL2_image SDL2_ttf SDL_sound
 	LIBS += -ldl -lphysfs
@@ -86,7 +85,8 @@ unix {
 }
 
 win32 {
-	CONFIG += link_pkgconfig
+	QMAKE_CXXFLAGS += -std=gnu++11
+	QMAKE_LFLAGS += -std=gnu++11
 	PKGCONFIG += sigc++-2.0 pixman-1 zlib \
 	             sdl2 SDL2_image SDL2_ttf openal SDL_sound vorbisfile freetype2
 	LIBS += -lphysfs -lboost_program_options-mt -lsecur32
