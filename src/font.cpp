@@ -278,7 +278,7 @@ struct FontPrivate
 	}
 };
 
-std::string FontPrivate::defaultName     = "Arial";
+std::string FontPrivate::defaultName     = ""; /* Inited at runtime */
 int         FontPrivate::defaultSize     = 22;
 bool        FontPrivate::defaultBold     = false;
 bool        FontPrivate::defaultItalic   = false;
@@ -395,6 +395,20 @@ void Font::initDefaultDynAttribs()
 
 void Font::initDefaults()
 {
+	switch (rgssVer)
+	{
+	case 1:
+	default:
+		FontPrivate::defaultName = "Arial";
+		break;
+	case 2:
+		FontPrivate::defaultName = "UmePlus Gothic";
+		break;
+	case 3:
+		FontPrivate::defaultName = "VL Gothic";
+		break;
+	}
+
 	FontPrivate::defaultOutline = (rgssVer >= 3 ? true : false);
 	FontPrivate::defaultShadow  = (rgssVer == 2 ? true : false);
 }
