@@ -313,7 +313,7 @@ fontBindingInit()
 
 	if (rgssVer >= 2)
 	{
-		VALUE defNames = rb_ary_new2(3);
+		VALUE defNames = rb_ary_new2(4);
 		rb_ary_push(defNames, rb_str_new2(Font::getDefaultName()));
 		rb_ary_push(defNames, rb_str_new2("Verdana"));
 		rb_ary_push(defNames, rb_str_new2("Arial"));
