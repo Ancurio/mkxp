@@ -54,6 +54,7 @@ unix {
 	}
 	!macx: {
 		PKGCONFIG += openal
+		INCLUDEPATH += /usr/include/AL /usr/local/include/AL
 	}
 
 	SHARED_FLUID {
