@@ -32,7 +32,6 @@ struct Config
 	bool debugMode;
 	bool printFPS;
 
-	bool winResizable;
 	bool fullscreen;
 	bool fixedAspectRatio;
 	bool smoothScaling;
@@ -51,16 +50,11 @@ struct Config
 
 	std::string gameFolder;
 	bool anyAltToggleFS;
-	bool enableReset;
 	bool allowSymlinks;
 	bool pathCache;
 
-	std::string dataPathOrg;
-	std::string dataPathApp;
-
 	std::string iconPath;
 	std::string execName;
-	std::string titleLanguage;
 
 	struct
 	{
@@ -74,11 +68,7 @@ struct Config
 		int sourceCount;
 	} SE;
 
-	bool useScriptNames;
-
-	std::string customScript;
 	std::vector<std::string> preloadScripts;
-	std::vector<std::string> rtps;
 
 	std::vector<std::string> fontSubs;
 
@@ -97,7 +87,6 @@ struct Config
 	Config();
 
 	void read(int argc, char *argv[]);
-	void readGameINI();
 };
 
 #endif // CONFIG_H

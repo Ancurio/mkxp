@@ -34,11 +34,14 @@ public:
 
 		Down = 2, Left = 4, Right = 6, Up = 8,
 
-		A = 11, B = 12, C = 13,
-		X = 14, Y = 15, Z = 16,
-		L = 17, R = 18,
+		Action = 11,
+		Cancel = 12,
+		Menu = 13,
+		Items = 14,
+		Run = 15,
+		Deactivate = 16,
 
-		Shift = 21, Ctrl = 22, Alt = 23,
+		L = 17, R = 18,
 
 		F5 = 25, F6 = 26, F7 = 27, F8 = 28, F9 = 29,
 

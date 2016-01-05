@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <assert.h>
 
-const Vec2i winSize(540, 356);
+const Vec2i winSize(700, 500);
 
 const uint8_t cBgNorm = 50;
 const uint8_t cBgDark = 20;
@@ -62,17 +62,18 @@ struct VButton
 } static const vButtons[] =
 {
 	BTN_STRING(Up),
-	BTN_STRING(Down),
-	BTN_STRING(L),
 	BTN_STRING(Left),
+	BTN_STRING(Action),
+	BTN_STRING(Cancel),
+	BTN_STRING(Menu),
+	BTN_STRING(L),
+
+	BTN_STRING(Down),
 	BTN_STRING(Right),
+	BTN_STRING(Run),
+	BTN_STRING(Deactivate),
+	BTN_STRING(Items),
 	BTN_STRING(R),
-	BTN_STRING(A),
-	BTN_STRING(B),
-	BTN_STRING(C),
-	BTN_STRING(X),
-	BTN_STRING(Y),
-	BTN_STRING(Z)
 };
 
 static elementsN(vButtons);
@@ -80,6 +81,24 @@ static elementsN(vButtons);
 /* Human readable string representation */
 std::string sourceDescString(const SourceDesc &src)
 {
+	static const char *const gcButtonNames[SDL_CONTROLLER_BUTTON_MAX] = {
+	    "A Button",
+	    "B Button",
+	    "X Button",
+	    "Y Button",
+	    "Back Button",
+	    "Guide Button",
+	    "Start Button",
+	    "Left Stick",
+	    "Right Stick",
+	    "Left Shoulder",
+	    "Right Shoulder",
+	    "D-Pad (Up)",
+	    "D-Pad (Down)",
+	    "D-Pad (Left)",
+	    "D-Pad (Right)",
+	};
+
 	char buf[128];
 	char pos;
 
@@ -99,10 +118,44 @@ std::string sourceDescString(const SourceDesc &src)
 		if (*str == '\0')
 			return "Unknown key";
 		else
-			return str;
+			return std::string(str) + " Key";
 	}
+
+	case CButton:
+		snprintf(buf, sizeof(buf), "%s", gcButtonNames[src.d.jb]);
+		return buf;
+
+	case CAxis:
+		switch (src.d.ja.axis) {
+		case SDL_CONTROLLER_AXIS_LEFTX:
+			if (src.d.ja.dir == Negative)
+				return "Left Stick (Left)";
+			else
+				return "Left Stick (Right)";
+		case SDL_CONTROLLER_AXIS_LEFTY:
+			if (src.d.ja.dir == Negative)
+				return "Left Stick (Up)";
+			else
+				return "Left Stick (Down)";
+		case SDL_CONTROLLER_AXIS_RIGHTX:
+			if (src.d.ja.dir == Negative)
+				return "Right Stick (Left)";
+			else
+				return "Right Stick (Right)";
+		case SDL_CONTROLLER_AXIS_RIGHTY:
+			if (src.d.ja.dir == Negative)
+				return "Right Stick (Up)";
+			else
+				return "Right Stick (Down)";
+		case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+			return "Left Trigger";
+		case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+			return "Right Trigger";
+		}
+		return "";
+
 	case JButton:
-		snprintf(buf, sizeof(buf), "JS %d", src.d.jb);
+		snprintf(buf, sizeof(buf), "Joy Button %d", src.d.jb);
 		return buf;
 
 	case JHat:
@@ -127,12 +180,12 @@ std::string sourceDescString(const SourceDesc &src)
 		default:
 			pos = '-';
 		}
-		snprintf(buf, sizeof(buf), "Hat %d:%c",
+		snprintf(buf, sizeof(buf), "Joy Hat %d:%c",
 		         src.d.jh.hat, pos);
 		return buf;
 
 	case JAxis:
-		snprintf(buf, sizeof(buf), "Axis %d%c",
+		snprintf(buf, sizeof(buf), "Joy Axis %d%c",
 		         src.d.ja.axis, src.d.ja.dir == Negative ? '-' : '+');
 		return buf;
 	}
@@ -432,7 +485,7 @@ struct SettingsMenuPrivate
 		else
 		{
 			dstRect.w = alignW;
-			dstRect.x = x;
+			dstRect.x = drawOff.x + x;
 			SDL_BlitScaled(txtSurf, 0, surf, &dstRect);
 		}
 	}
@@ -637,9 +690,28 @@ struct SettingsMenuPrivate
 
 			break;
 
+		case SDL_CONTROLLERBUTTONDOWN:
+			desc.type = CButton;
+			desc.d.jb = event.cbutton.button;
+			break;
+
+		case SDL_CONTROLLERAXISMOTION:
+		{
+			int v = event.caxis.value;
+
+			/* Only register if pushed halfway through */
+			if (v > -JAXIS_THRESHOLD && v < JAXIS_THRESHOLD)
+				return true;
+
+			desc.type = CAxis;
+			desc.d.ja.axis = event.caxis.axis;
+			desc.d.ja.dir = v < 0 ? Negative : Positive;
+			break;
+		}
+
 		case SDL_JOYBUTTONDOWN:
 			desc.type = JButton;
-			desc.d.jb = event.jbutton.button;
+			desc.d.jb = event.cbutton.button;
 			break;
 
 		case SDL_JOYHATMOTION:
@@ -705,7 +777,7 @@ struct SettingsMenuPrivate
 
 	void onResetToDefault()
 	{
-		setupBindingData(genDefaultBindings(rtData.config));
+		setupBindingData(genDefaultBindings());
 		updateDuplicateStatus();
 		redraw();
 	}
@@ -964,18 +1036,18 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 
 	p->rgb = p->winSurf->format;
 
-	const size_t layoutW = 4;
-	const size_t layoutH = 3;
+	const size_t layoutW = 2;
+	const size_t layoutH = 6;
 	assert(layoutW*layoutH == vButtonsN);
 
-	const int bWidgetW = winSize.x / layoutH;
+	const int bWidgetW = winSize.x / layoutW;
 	const int bWidgetH = 64;
-	const int bWidgetY = winSize.y - layoutW*bWidgetH - 48;
+	const int bWidgetY = winSize.y - layoutH*bWidgetH - 48;
 
-	for (int y = 0; y < 4; ++y)
-		for (int x = 0; x < 3; ++x)
+	for (int y = 0; y < layoutH; ++y)
+		for (int x = 0; x < layoutW; ++x)
 		{
-			int i = y*3+x;
+			int i = x*layoutH+y;
 			BindingWidget w(i, p, IntRect(x*bWidgetW, bWidgetY+y*bWidgetH,
 			                              bWidgetW, bWidgetH));
 			p->bWidgets.push_back(w);
@@ -1008,10 +1080,10 @@ SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 
 	/* Labels */
 	const char *info = "Use left click to bind a slot, right click to clear its binding";
-	p->infoLabel = Label(p, IntRect(16, 6, winSize.x, 16), info, cText, cText, cText);
+	p->infoLabel = Label(p, IntRect(16, 16, winSize.x, 16), info, cText, cText, cText);
 
-	const char *warn = "Warning: Same physical key bound to multiple slots";
-	p->dupWarnLabel = Label(p, IntRect(16, 26, winSize.x, 16), warn, 255, 0, 0);
+	const char *warn = "Warning: Same physical action bound to multiple slots";
+	p->dupWarnLabel = Label(p, IntRect(16, 40, winSize.x, 16), warn, 255, 0, 0);
 
 	p->widgets.push_back(&p->infoLabel);
 	p->widgets.push_back(&p->dupWarnLabel);
@@ -1033,7 +1105,8 @@ SettingsMenu::~SettingsMenu()
 	delete p;
 }
 
-bool SettingsMenu::onEvent(const SDL_Event &event)
+bool SettingsMenu::onEvent(const SDL_Event &event,
+                           const std::map<int, SDL_Joystick*> &joysticks)
 {
 	/* First, check whether this event is for us */
 	switch (event.type)
@@ -1050,6 +1123,9 @@ bool SettingsMenu::onEvent(const SDL_Event &event)
 			return false;
 		break;
 
+	case SDL_CONTROLLERBUTTONDOWN:
+	case SDL_CONTROLLERBUTTONUP:
+	case SDL_CONTROLLERAXISMOTION:
 	case SDL_JOYBUTTONDOWN :
 	case SDL_JOYBUTTONUP :
 	case SDL_JOYHATMOTION :
@@ -1128,10 +1204,28 @@ bool SettingsMenu::onEvent(const SDL_Event &event)
 			break;
 		}
 
+	case SDL_CONTROLLERBUTTONDOWN:
+	case SDL_CONTROLLERAXISMOTION:
+		if (p->state != AwaitingInput)
+			return true;
+		break;
+
 	case SDL_JOYBUTTONDOWN:
+		if (p->state != AwaitingInput)
+			return true;
+		if (joysticks.find(event.jbutton.which) == joysticks.end())
+			return true;
+		break;
 	case SDL_JOYHATMOTION:
+		if (p->state != AwaitingInput)
+			return true;
+		if (joysticks.find(event.jhat.which) == joysticks.end())
+			return true;
+		break;
 	case SDL_JOYAXISMOTION:
 		if (p->state != AwaitingInput)
+			return true;
+		if (joysticks.find(event.jaxis.which) == joysticks.end())
 			return true;
 		break;
 

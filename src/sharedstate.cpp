@@ -26,6 +26,7 @@
 #include "graphics.h"
 #include "input.h"
 #include "audio.h"
+#include "oneshot.h"
 #include "glstate.h"
 #include "shader.h"
 #include "texpool.h"
@@ -77,6 +78,8 @@ struct SharedStatePrivate
 	Input input;
 	Audio audio;
 
+	Oneshot oneshot;
+
 	GLState _glState;
 
 	ShaderSet shaders;
@@ -109,6 +112,7 @@ struct SharedStatePrivate
 	      graphics(threadData),
 	      input(*threadData),
 	      audio(*threadData),
+	      oneshot(*threadData),
 	      fontState(threadData->config),
 	      stampCounter(0)
 	{
@@ -127,9 +131,6 @@ struct SharedStatePrivate
 		}
 
 		fileSystem.addPath(".");
-
-		for (size_t i = 0; i < config.rtps.size(); ++i)
-			fileSystem.addPath(config.rtps[i].c_str());
 
 		if (config.pathCache)
 			fileSystem.createPathCache();
@@ -227,6 +228,7 @@ GSATT(Config&, config)
 GSATT(Graphics&, graphics)
 GSATT(Input&, input)
 GSATT(Audio&, audio)
+GSATT(Oneshot&, oneshot)
 GSATT(GLState&, _glState)
 GSATT(ShaderSet&, shaders)
 GSATT(TexPool&, texPool)

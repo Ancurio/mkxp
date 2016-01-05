@@ -26,6 +26,7 @@
 
 #include <SDL_scancode.h>
 #include <SDL_joystick.h>
+#include <SDL_gamecontroller.h>
 #include <stdint.h>
 #include <assert.h>
 #include <vector>
@@ -40,6 +41,8 @@ enum SourceType
 {
 	Invalid,
 	Key,
+	CButton,
+	CAxis,
 	JButton,
 	JAxis,
 	JHat
@@ -82,8 +85,10 @@ struct SourceDesc
 			return true;
 		case Key:
 			return d.scan == o.d.scan;
+		case CButton:
 		case JButton:
 			return d.jb == o.d.jb;
+		case CAxis:
 		case JAxis:
 			return (d.ja.axis == o.d.ja.axis) && (d.ja.dir == o.d.ja.dir);
 		case JHat:
@@ -111,7 +116,7 @@ struct BindingDesc
 typedef std::vector<BindingDesc> BDescVec;
 struct Config;
 
-BDescVec genDefaultBindings(const Config &conf);
+BDescVec genDefaultBindings();
 
 void storeBindings(const BDescVec &d, const Config &conf);
 BDescVec loadBindings(const Config &conf);

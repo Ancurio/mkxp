@@ -24,6 +24,9 @@
 
 #include <stdint.h>
 
+#include <map>
+#include <SDL_joystick.h>
+
 struct SettingsMenuPrivate;
 struct RGSSThreadData;
 union SDL_Event;
@@ -35,7 +38,8 @@ public:
 	~SettingsMenu();
 
 	/* Returns true if the event was consumed */
-	bool onEvent(const SDL_Event &event);
+	bool onEvent(const SDL_Event &event,
+	             const std::map<int, SDL_Joystick*> &joysticks);
 	void raise();
 	bool destroyReq() const;
 

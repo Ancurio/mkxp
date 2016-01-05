@@ -42,6 +42,7 @@ class EventThread;
 class Graphics;
 class Input;
 class Audio;
+class Oneshot;
 class GLState;
 class TexPool;
 class Font;
@@ -70,6 +71,8 @@ struct SharedState
 	Graphics &graphics() const;
 	Input &input() const;
 	Audio &audio() const;
+
+	Oneshot &oneshot() const;
 
 	GLState &_glState() const;
 

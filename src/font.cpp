@@ -171,10 +171,7 @@ _TTF_Font *SharedFontState::getFont(std::string family,
 		shState->fileSystem().openReadRaw(*ops, path, true);
 	}
 
-	// FIXME 0.9 is guesswork at this point
-//	float gamma = (96.0/45.0)*(5.0/14.0)*(size-5);
-//	font = TTF_OpenFontRW(ops, 1, gamma /** .90*/);
-	font = TTF_OpenFontRW(ops, 1, size* 0.90f);
+	font = TTF_OpenFontRW(ops, 1, size);
 
 	if (!font)
 		throw Exception(Exception::SDLError, "%s", SDL_GetError());
@@ -278,7 +275,7 @@ struct FontPrivate
 	}
 };
 
-std::string FontPrivate::defaultName     = "Arial";
+std::string FontPrivate::defaultName     = ""; /* Inited at runtime */
 int         FontPrivate::defaultSize     = 22;
 bool        FontPrivate::defaultBold     = false;
 bool        FontPrivate::defaultItalic   = false;
@@ -395,6 +392,20 @@ void Font::initDefaultDynAttribs()
 
 void Font::initDefaults()
 {
+	switch (rgssVer)
+	{
+	case 1:
+	default:
+		FontPrivate::defaultName = "Arial";
+		break;
+	case 2:
+		FontPrivate::defaultName = "UmePlus Gothic";
+		break;
+	case 3:
+		FontPrivate::defaultName = "VL Gothic";
+		break;
+	}
+
 	FontPrivate::defaultOutline = (rgssVer >= 3 ? true : false);
 	FontPrivate::defaultShadow  = (rgssVer == 2 ? true : false);
 }

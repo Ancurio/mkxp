@@ -98,14 +98,15 @@ void AudioStream::play(const std::string &filename,
 		return;
 	}
 
-	/* If all parameters except volume match the current ones,
-	 * we update the volume and continue streaming */
+	/* If the filenames are equal,
+	 * we update the volume and pitch and continue streaming */
 	if (filename == current.filename
-	&&  _pitch   == current.pitch
 	&&  (sState == ALStream::Playing || sState == ALStream::Paused))
 	{
 		setVolume(Base, _volume);
+		stream.setPitch(_pitch);
 		current.volume = _volume;
+		current.pitch = _pitch;
 		unlockStream();
 		return;
 	}

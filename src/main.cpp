@@ -41,6 +41,7 @@
 #include "binding.h"
 
 #include "icon.png.xxd"
+#include "gamecontrollerdb.txt.xxd"
 
 static void
 rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
@@ -172,7 +173,7 @@ int main(int argc, char *argv[])
 	SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
 
 	/* initialize SDL first */
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0)
 	{
 		showInitError(std::string("Error initializing SDL: ") + SDL_GetError());
 		return 0;
@@ -205,8 +206,6 @@ int main(int argc, char *argv[])
 			showInitError(std::string("Unable to switch into gameFolder ") + conf.gameFolder);
 			return 0;
 		}
-
-	conf.readGameINI();
 
 	assert(conf.rgssVersion >= 1 && conf.rgssVersion <= 3);
 	printRgssVersion(conf.rgssVersion);
@@ -252,8 +251,6 @@ int main(int argc, char *argv[])
 	SDL_Window *win;
 	Uint32 winFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS;
 
-	if (conf.winResizable)
-		winFlags |= SDL_WINDOW_RESIZABLE;
 	if (conf.fullscreen)
 		winFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
@@ -296,6 +293,11 @@ int main(int argc, char *argv[])
 	EventThread eventThread;
 	RGSSThreadData rtData(&eventThread, argv[0], win,
 	                      alcDev, mode.refresh_rate, conf);
+
+	/* Add controller bindings from embedded controller DB */
+	SDL_RWops *controllerDB = SDL_RWFromConstMem(assets_gamecontrollerdb_txt,
+	                                             assets_gamecontrollerdb_txt_len);
+	SDL_GameControllerAddMappingsFromRW(controllerDB, 1);
 
 	int winW, winH;
 	SDL_GetWindowSize(win, &winW, &winH);

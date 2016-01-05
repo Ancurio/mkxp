@@ -29,6 +29,7 @@
 
 #include <SDL_scancode.h>
 #include <SDL_joystick.h>
+#include <SDL_gamecontroller.h>
 #include <SDL_mouse.h>
 #include <SDL_mutex.h>
 
@@ -46,6 +47,12 @@ union SDL_Event;
 class EventThread
 {
 public:
+	struct ControllerState
+	{
+		int axes[SDL_CONTROLLER_AXIS_MAX];
+		bool buttons[SDL_CONTROLLER_BUTTON_MAX];
+	};
+
 	struct JoyState
 	{
 		int axes[256];
@@ -72,6 +79,7 @@ public:
 	};
 
 	static uint8_t keyStates[SDL_NUM_SCANCODES];
+	static ControllerState gcState;
 	static JoyState joyState;
 	static MouseState mouseState;
 	static TouchState touchState;

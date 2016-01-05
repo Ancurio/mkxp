@@ -24,6 +24,10 @@
 
 #include "al-util.h"
 
+#ifdef _WIN32
+#include <cstring>
+#endif
+
 struct ALDataSource
 {
 	enum Status
