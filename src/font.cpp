@@ -184,7 +184,7 @@ _TTF_Font *SharedFontState::getFont(std::string family,
 	return font;
 }
 
-bool SharedFontState::fontPresent(std::string family)
+bool SharedFontState::fontPresent(std::string family) const
 {
 	/* Check for substitutions */
 	if (p->subs.contains(family))
@@ -200,6 +200,26 @@ _TTF_Font *SharedFontState::openBundled(int size)
 	SDL_RWops *ops = openBundledFont();
 
 	return TTF_OpenFontRW(ops, 1, size);
+}
+
+void pickExistingFontName(const std::vector<std::string> &names,
+                          std::string &out,
+                          const SharedFontState &sfs)
+{
+	/* Note: In RMXP, a names array with no existing entry
+	 * results in no text being drawn at all (same for "" and []);
+	 * we can't replicate this in mkxp due to the default substitute. */
+
+	for (size_t i = 0; i < names.size(); ++i)
+	{
+		if (sfs.fontPresent(names[i]))
+		{
+			out = names[i];
+			return;
+		}
+	}
+
+	out = "";
 }
 
 
@@ -229,15 +249,15 @@ struct FontPrivate
 	static Color defaultColorTmp;
 	static Color defaultOutColorTmp;
 
+	static std::vector<std::string> initialDefaultNames;
+
 	/* The actual font is opened as late as possible
 	 * (when it is queried by a Bitmap), prior it is
 	 * set to null */
 	TTF_Font *sdlFont;
 
-	FontPrivate(const char *name = 0,
-	            int size = 0)
-	    : name(name ? std::string(name) : defaultName),
-	      size(size ? size : defaultSize),
+	FontPrivate(int size)
+	    : size(size),
 	      bold(defaultBold),
 	      italic(defaultItalic),
 	      outline(defaultOutline),
@@ -290,6 +310,8 @@ Color      *FontPrivate::defaultOutColor = &FontPrivate::defaultOutColorTmp;
 Color FontPrivate::defaultColorTmp(255, 255, 255, 255);
 Color FontPrivate::defaultOutColorTmp(0, 0, 0, 128);
 
+std::vector<std::string> FontPrivate::initialDefaultNames;
+
 bool Font::doesExist(const char *name)
 {
 	if (!name)
@@ -298,10 +320,15 @@ bool Font::doesExist(const char *name)
 	return shState->fontState().fontPresent(name);
 }
 
-Font::Font(const char *name,
+Font::Font(const std::vector<std::string> *names,
            int size)
 {
-	p = new FontPrivate(name, size);
+	p = new FontPrivate(size ? size : FontPrivate::defaultSize);
+
+	if (names)
+		setName(*names);
+	else
+		p->name = FontPrivate::defaultName;
 }
 
 Font::Font(const Font &other)
@@ -321,17 +348,9 @@ const Font &Font::operator=(const Font &o)
 	return o;
 }
 
-const char *Font::getName() const
+void Font::setName(const std::vector<std::string> &names)
 {
-	return p->name.c_str();
-}
-
-void Font::setName(const char *value)
-{
-	if (p->name == value)
-		return;
-
-	p->name = value;
+	pickExistingFontName(names, p->name, shState->fontState());
 	p->sdlFont = 0;
 }
 
@@ -367,14 +386,15 @@ DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutline,  bool,    FontPrivate::defaultOutli
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultColor,    Color&, *FontPrivate::defaultColor)
 DEF_ATTR_SIMPLE_STATIC(Font, DefaultOutColor, Color&, *FontPrivate::defaultOutColor)
 
-const char *Font::getDefaultName()
+void Font::setDefaultName(const std::vector<std::string> &names,
+                          const SharedFontState &sfs)
 {
-	return FontPrivate::defaultName.c_str();
+	pickExistingFontName(names, FontPrivate::defaultName, sfs);
 }
 
-void Font::setDefaultName(const char *value)
+const std::vector<std::string> &Font::getInitialDefaultNames()
 {
-	FontPrivate::defaultName = value;
+	return FontPrivate::initialDefaultNames;
 }
 
 void Font::initDynAttribs()
@@ -393,8 +413,30 @@ void Font::initDefaultDynAttribs()
 		FontPrivate::defaultOutColor = new Color(FontPrivate::defaultOutColorTmp);
 }
 
-void Font::initDefaults()
+void Font::initDefaults(const SharedFontState &sfs)
 {
+	std::vector<std::string> &names = FontPrivate::initialDefaultNames;
+
+	switch (rgssVer)
+	{
+	case 1 :
+		// FIXME: Japanese version has "MS PGothic" instead
+		names.push_back("Arial");
+		break;
+
+	case 2 :
+		names.push_back("UmePlus Gothic");
+		names.push_back("MS Gothic");
+		names.push_back("Courier New");
+		break;
+
+	default:
+	case 3 :
+		names.push_back("VL Gothic");
+	}
+
+	setDefaultName(names, sfs);
+
 	FontPrivate::defaultOutline = (rgssVer >= 3 ? true : false);
 	FontPrivate::defaultShadow  = (rgssVer == 2 ? true : false);
 }

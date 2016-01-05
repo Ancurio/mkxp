@@ -27,6 +27,29 @@
 
 #include <string.h>
 
+
+static void
+collectStrings(VALUE obj, std::vector<std::string> &out)
+{
+	if (RB_TYPE_P(obj, RUBY_T_STRING))
+	{
+		out.push_back(RSTRING_PTR(obj));
+	}
+	else if (RB_TYPE_P(obj, RUBY_T_ARRAY))
+	{
+		for (long i = 0; i < RARRAY_LEN(obj); ++i)
+		{
+			VALUE str = rb_ary_entry(obj, i);
+
+			/* Non-string objects are tolerated (ignored) */
+			if (!RB_TYPE_P(str, RUBY_T_STRING))
+				continue;
+
+			out.push_back(RSTRING_PTR(str));
+		}
+	}
+}
+
 DEF_TYPE(Font);
 
 RB_METHOD(fontDoesExist)
@@ -48,12 +71,30 @@ RB_METHOD(FontSetName);
 
 RB_METHOD(fontInitialize)
 {
-	VALUE name = Qnil;
+	VALUE namesObj = Qnil;
 	int size = 0;
 
-	rb_get_args(argc, argv, "|oi", &name, &size RB_ARG_END);
+	rb_get_args(argc, argv, "|oi", &namesObj, &size RB_ARG_END);
 
-	Font *f = new Font(0, size);
+	Font *f;
+
+	if (NIL_P(namesObj))
+	{
+		namesObj = rb_iv_get(rb_obj_class(self), "default_name");
+		f = new Font(0, size);
+	}
+	else
+	{
+		std::vector<std::string> names;
+		collectStrings(namesObj, names);
+
+		f = new Font(&names, size);
+	}
+
+	/* This is semantically wrong; the new Font object should take
+	 * a dup'ed object here in case of an array. Ditto for the setters.
+	 * However the same bug/behavior exists in all RM versions. */
+	rb_iv_set(self, "name", namesObj);
 
 	setPrivateData(self, f);
 
@@ -64,13 +105,6 @@ RB_METHOD(fontInitialize)
 
 	if (rgssVer >= 3)
 		wrapProperty(self, &f->getOutColor(), "out_color", ColorType);
-
-	if (NIL_P(name))
-		name = rb_iv_get(rb_obj_class(self), "default_name");
-
-	/* Going over the 'name=' function automatically causes
-	 * a possbile name array to be re-verified for existing fonts */
-	FontSetName(1, &name, self);
 
 	return self;
 }
@@ -105,57 +139,17 @@ RB_METHOD(FontGetName)
 	return rb_iv_get(self, "name");
 }
 
-static void
-fontSetNameHelper(VALUE self, int argc, VALUE *argv,
-                  const char *nameIv, char *outBuf, size_t outLen)
-{
-	rb_check_argc(argc, 1);
-
-	VALUE arg = argv[0];
-
-	// Fixme: in RGSS3, specifying "" (and only that) as font name results in
-	// no text being drawn (everything else is substituted with Arial I think)
-	strncpy(outBuf, "", outLen);
-
-	if (RB_TYPE_P(arg, RUBY_T_STRING))
-	{
-		strncpy(outBuf, RSTRING_PTR(arg), outLen);
-	}
-	else if (RB_TYPE_P(arg, RUBY_T_ARRAY))
-	{
-		for (long i = 0; i < RARRAY_LEN(arg); ++i)
-		{
-			VALUE str = rb_ary_entry(arg, i);
-
-			/* Non-string objects are tolerated (ignored) */
-			if (!RB_TYPE_P(str, RUBY_T_STRING))
-				continue;
-
-			const char *family = RSTRING_PTR(str);
-
-			/* We only set the core Font object's name attribute
-			 * to the actually existing font name */
-			if (!shState->fontState().fontPresent(family))
-				continue;
-
-			strncpy(outBuf, family, outLen);
-		}
-	}
-
-	/* RMXP doesn't even care if the argument type is
-	 * something other than string/array. Whatever... */
-	rb_iv_set(self, nameIv, arg);
-}
-
 RB_METHOD(FontSetName)
 {
 	Font *f = getPrivateData<Font>(self);
 
-	char result[256];
-	fontSetNameHelper(self, argc, argv, "name",
-	                  result, sizeof(result));
+	rb_check_argc(argc, 1);
 
-	f->setName(result);
+	std::vector<std::string> namesObj;
+	collectStrings(argv[0], namesObj);
+
+	f->setName(namesObj);
+	rb_iv_set(self, "name", argv[0]);
 
 	return argv[0];
 }
@@ -223,11 +217,15 @@ RB_METHOD(FontGetDefaultName)
 
 RB_METHOD(FontSetDefaultName)
 {
-	char result[256];
-	fontSetNameHelper(self, argc, argv, "default_name",
-	                  result, sizeof(result));
+	RB_UNUSED_PARAM;
 
-	Font::setDefaultName(result);
+	rb_check_argc(argc, 1);
+
+	std::vector<std::string> namesObj;
+	collectStrings(argv[0], namesObj);
+
+	Font::setDefaultName(namesObj, shState->fontState());
+	rb_iv_set(self, "default_name", argv[0]);
 
 	return argv[0];
 }
@@ -267,7 +265,24 @@ fontBindingInit()
 
 	Font::initDefaultDynAttribs();
 	wrapProperty(klass, &Font::getDefaultColor(), "default_color", ColorType);
-	rb_iv_set(klass, "default_name", rb_str_new_cstr(Font::getDefaultName()));
+
+	/* Initialize default names */
+	const std::vector<std::string> &defNames = Font::getInitialDefaultNames();
+	VALUE defNamesObj;
+
+	if (defNames.size() == 1)
+	{
+		defNamesObj = rb_str_new_cstr(defNames[0].c_str());
+	}
+	else
+	{
+		defNamesObj = rb_ary_new2(defNames.size());
+
+		for (size_t i = 0; i < defNames.size(); ++i)
+			rb_ary_push(defNamesObj, rb_str_new_cstr(defNames[i].c_str()));
+	}
+
+	rb_iv_set(klass, "default_name", defNamesObj);
 
 	if (rgssVer >= 3)
 		wrapProperty(klass, &Font::getDefaultOutColor(), "default_out_color", ColorType);
@@ -309,15 +324,5 @@ fontBindingInit()
 	{
 	INIT_PROP_BIND(Font, Outline, "outline");
 	INIT_PROP_BIND(Font, OutColor, "out_color");
-	}
-
-	if (rgssVer >= 2)
-	{
-		VALUE defNames = rb_ary_new2(3);
-		rb_ary_push(defNames, rb_str_new2("Verdana"));
-		rb_ary_push(defNames, rb_str_new2("Arial"));
-		rb_ary_push(defNames, rb_str_new2("Courier New"));
-
-		FontSetDefaultName(1, &defNames, klass);
 	}
 }
