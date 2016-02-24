@@ -127,7 +127,9 @@ void EventThread::process(RGSSThreadData &rtData)
 	bool displayingFPS = false;
 
 	bool cursorInWindow = false;
-	bool windowFocused = false;
+
+	/* SDL doesn't send an initial FOCUS_GAINED event */
+	bool windowFocused = true;
 
 	bool terminate = false;
 
