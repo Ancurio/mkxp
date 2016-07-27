@@ -221,9 +221,9 @@ struct BitmapPrivate
 		surf = surfConv;
 	}
 
-	void onModified()
+	void onModified(bool freeSurface = true)
 	{
-		if (surface)
+		if (surface && freeSurface)
 		{
 			SDL_FreeSurface(surface);
 			surface = 0;
@@ -825,7 +825,16 @@ void Bitmap::setPixel(int x, int y, const Color &color)
 
 	p->addTaintedArea(IntRect(x, y, 1, 1));
 
-	p->onModified();
+	/* Setting just a single pixel is no reason to throw away the
+	 * whole cached surface; we can just apply the same change */
+
+	if (p->surface)
+	{
+		uint32_t &surfPixel = getPixelAt(p->surface, p->format, x, y);
+		surfPixel = SDL_MapRGBA(p->format, pixel[0], pixel[1], pixel[2], pixel[3]);
+	}
+
+	p->onModified(false);
 }
 
 void Bitmap::hueChange(int hue)
