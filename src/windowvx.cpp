@@ -852,10 +852,15 @@ void WindowVX::move(int x, int y, int width, int height)
 
 	const Vec2i size(std::max(0, width), std::max(0, height));
 
-	if (p->geo.w != size.x || p->geo.h != size.y)
+	if (p->geo.size() != size)
+	{
+		p->base.vertDirty = true;
 		p->base.texSizeDirty = true;
+		p->clipRectDirty = true;
+		p->ctrlVertDirty = true;
+	}
 
-	p->geo = IntRect(x, y, size.x, size.y);
+	p->geo = IntRect(Vec2i(x, y), size);
 	p->updateBaseQuad();
 }
 
