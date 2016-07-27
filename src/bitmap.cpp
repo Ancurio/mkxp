@@ -768,6 +768,14 @@ void Bitmap::clear()
 	p->onModified();
 }
 
+static uint32_t &getPixelAt(SDL_Surface *surf, SDL_PixelFormat *form, int x, int y)
+{
+	size_t offset = x*form->BytesPerPixel + y*surf->pitch;
+	uint8_t *bytes = (uint8_t*) surf->pixels + offset;
+
+	return *((uint32_t*) bytes);
+}
+
 Color Bitmap::getPixel(int x, int y) const
 {
 	guardDisposed();
@@ -790,9 +798,7 @@ Color Bitmap::getPixel(int x, int y) const
 		glState.viewport.pop();
 	}
 
-	size_t offset = x*p->format->BytesPerPixel + y*p->surface->pitch;
-	uint8_t *bytes = (uint8_t*) p->surface->pixels + offset;
-	uint32_t pixel = *((uint32_t*) bytes);
+	uint32_t pixel = getPixelAt(p->surface, p->format, x, y);
 
 	return Color((pixel >> p->format->Rshift) & 0xFF,
 	             (pixel >> p->format->Gshift) & 0xFF,
