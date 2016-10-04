@@ -240,10 +240,10 @@ class HueShader : public ShaderBase
 public:
 	HueShader();
 
-	void setRotationMat(const float value[9]);
+	void setHueAdjust(float value);
 
 private:
-	GLint u_rotationMat;
+	GLint u_hueAdjust;
 };
 
 class SimpleMatrixShader : public ShaderBase

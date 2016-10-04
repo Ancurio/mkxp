@@ -550,12 +550,12 @@ HueShader::HueShader()
 
 	ShaderBase::init();
 
-	GET_U(rotationMat);
+	GET_U(hueAdjust);
 }
 
-void HueShader::setRotationMat(const float value[9])
+void HueShader::setHueAdjust(float value)
 {
-	gl.UniformMatrix3fv(u_rotationMat, 1, GL_FALSE, value);
+	gl.Uniform1f(u_hueAdjust, value);
 }
 
 
