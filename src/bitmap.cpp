@@ -29,6 +29,8 @@
 
 #include <pixman.h>
 
+#include <math.h>
+
 #include "gl-util.h"
 #include "gl-meta.h"
 #include "quad.h"
@@ -854,13 +856,28 @@ void Bitmap::hueChange(int hue)
 	quad.setTexPosRect(texRect, texRect);
 	quad.setColor(Vec4(1, 1, 1, 1));
 
-	/* Calculate hue parameter */
+	/* Calculate hue rotation matrix */
 	hue = wrapRange(hue, 0, 359);
-	float hueAdj = -((M_PI * 2) / 360) * hue;
+	float hueRad = (M_PI / 180.0f) * hue;
+	float x = cos(hueRad);
+	float y = sin(hueRad);
+	float a = (1.0f - x) / 3.0f;
+	float b = sqrt(1.0f / 3.0f) * y;
+
+	float mat[9];
+	mat[0] = x + a;
+	mat[1] = a + b;
+	mat[2] = a - b;
+	mat[3] = mat[2];
+	mat[4] = mat[0];
+	mat[5] = mat[1];
+	mat[6] = mat[1];
+	mat[7] = mat[2];
+	mat[8] = mat[0];
 
 	HueShader &shader = shState->shaders().hue;
 	shader.bind();
-	shader.setHueAdjust(hueAdj);
+	shader.setRotationMat(mat);
 
 	FBO::bind(newTex.fbo);
 	p->pushSetViewport(shader);

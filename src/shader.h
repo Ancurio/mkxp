@@ -240,11 +240,10 @@ class HueShader : public ShaderBase
 public:
 	HueShader();
 
-	void setHueAdjust(float value);
-	void setInputTexture(TEX::ID tex);
+	void setRotationMat(const float value[9]);
 
 private:
-	GLint u_hueAdjust, u_inputTexture;
+	GLint u_rotationMat;
 };
 
 class SimpleMatrixShader : public ShaderBase
