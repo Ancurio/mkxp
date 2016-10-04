@@ -551,17 +551,11 @@ HueShader::HueShader()
 	ShaderBase::init();
 
 	GET_U(hueAdjust);
-	GET_U(inputTexture);
 }
 
 void HueShader::setHueAdjust(float value)
 {
 	gl.Uniform1f(u_hueAdjust, value);
-}
-
-void HueShader::setInputTexture(TEX::ID tex)
-{
-	setTexUniform(u_inputTexture, 0, tex);
 }
 
 

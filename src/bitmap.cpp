@@ -854,13 +854,10 @@ void Bitmap::hueChange(int hue)
 	quad.setTexPosRect(texRect, texRect);
 	quad.setColor(Vec4(1, 1, 1, 1));
 
-	/* Calculate hue parameter */
-	hue = wrapRange(hue, 0, 359);
-	float hueAdj = -((M_PI * 2) / 360) * hue;
-
 	HueShader &shader = shState->shaders().hue;
 	shader.bind();
-	shader.setHueAdjust(hueAdj);
+	/* Shader expects normalized value */
+	shader.setHueAdjust(wrapRange(hue, 0, 359) / 360.0f);
 
 	FBO::bind(newTex.fbo);
 	p->pushSetViewport(shader);

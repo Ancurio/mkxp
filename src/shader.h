@@ -241,10 +241,9 @@ public:
 	HueShader();
 
 	void setHueAdjust(float value);
-	void setInputTexture(TEX::ID tex);
 
 private:
-	GLint u_hueAdjust, u_inputTexture;
+	GLint u_hueAdjust;
 };
 
 class SimpleMatrixShader : public ShaderBase
