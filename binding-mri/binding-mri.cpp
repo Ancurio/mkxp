@@ -452,8 +452,9 @@ static void runRMXPScripts(BacktraceData &btData)
 	}
 
 	/* Execute preloaded scripts */
-	for (size_t i = 0; i < conf.preloadScripts.size(); ++i)
-		runCustomScript(conf.preloadScripts[i]);
+	for (std::set<std::string>::iterator i = conf.preloadScripts.begin();
+	     i != conf.preloadScripts.end(); ++i)
+		runCustomScript(*i);
 
 	VALUE exc = rb_gv_get("$!");
 	if (exc != Qnil)

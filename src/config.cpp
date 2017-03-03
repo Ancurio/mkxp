@@ -134,6 +134,12 @@ static std::string prefPath(const char *org, const char *app)
 	return str;
 }
 
+template<typename T>
+std::set<T> setFromVec(const std::vector<T> &vec)
+{
+	return std::set<T>(vec.begin(), vec.end());
+}
+
 typedef std::vector<std::string> StringVec;
 namespace po = boost::program_options;
 
@@ -226,7 +232,7 @@ void Config::read(int argc, char *argv[])
 
 	PO_DESC_ALL;
 
-	GUARD_ALL( preloadScripts = vm["preloadScript"].as<StringVec>(); );
+	GUARD_ALL( preloadScripts = setFromVec(vm["preloadScript"].as<StringVec>()); );
 
 	GUARD_ALL( rtps = vm["RTP"].as<StringVec>(); );
 
