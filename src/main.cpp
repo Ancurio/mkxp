@@ -40,7 +40,11 @@
 
 #include "binding.h"
 
+#ifdef __WINDOWS__
+#include "resource.h"
+#elif __LINUX__
 #include "icon.png.xxd"
+#endif
 
 static void
 rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
