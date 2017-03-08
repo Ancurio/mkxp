@@ -458,7 +458,7 @@ struct FontSetsCBData
 	SharedFontState *sfs;
 };
 
-static void fontSetEnumCB(void *data, const char *,
+static void fontSetEnumCB(void *data, const char *dir,
                           const char *fname)
 {
 	FontSetsCBData *d = static_cast<FontSetsCBData*>(data);
@@ -480,7 +480,7 @@ static void fontSetEnumCB(void *data, const char *,
 		return;
 
 	char filename[512];
-	snprintf(filename, sizeof(filename), "Fonts/%s", fname);
+	snprintf(filename, sizeof(filename), "%s/%s", dir, fname);
 
 	PHYSFS_File *handle = PHYSFS_openRead(filename);
 
@@ -495,11 +495,29 @@ static void fontSetEnumCB(void *data, const char *,
 	SDL_RWclose(&ops);
 }
 
+/* Basically just a case-insensitive search
+ * for the folder "Fonts"... */
+static void findFontsFolderCB(void *data, const char *,
+                              const char *fname)
+{
+	size_t i = 0;
+	char buffer[512];
+	const char *s = fname;
+
+	while (s && i < sizeof(buffer))
+		buffer[i++] = tolower(*s++);
+
+	buffer[i] = '\0';
+
+	if (strcmp(buffer, "fonts") == 0)
+		PHYSFS_enumerateFilesCallback(fname, fontSetEnumCB, data);
+}
+
 void FileSystem::initFontSets(SharedFontState &sfs)
 {
 	FontSetsCBData d = { p, &sfs };
 
-	PHYSFS_enumerateFilesCallback("Fonts", fontSetEnumCB, &d);
+	PHYSFS_enumerateFilesCallback(".", findFontsFolderCB, &d);
 }
 
 struct OpenReadEnumData
