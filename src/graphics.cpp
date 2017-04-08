@@ -566,6 +566,9 @@ struct GraphicsPrivate
 			glState.viewport.refresh();
 			recalculateScreenSize(threadData);
 			updateScreenResoRatio(threadData);
+
+			SDL_Rect screen = { scOffset.x, scOffset.y, scSize.x, scSize.y };
+			threadData->ethread->notifyGameScreenChange(screen);
 		}
 	}
 

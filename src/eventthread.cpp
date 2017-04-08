@@ -83,6 +83,7 @@ enum
 	REQUEST_SETCURSORVISIBLE,
 
 	UPDATE_FPS,
+	UPDATE_SCREEN_RECT,
 
 	EVENT_COUNT
 };
@@ -131,6 +132,8 @@ void EventThread::process(RGSSThreadData &rtData)
 	bool displayingFPS = false;
 
 	bool cursorInWindow = false;
+	/* Will be updated eventually */
+	SDL_Rect gameScreen = { 0, 0, 0, 0 };
 
 	/* SDL doesn't send an initial FOCUS_GAINED event */
 	bool windowFocused = true;
@@ -170,7 +173,7 @@ void EventThread::process(RGSSThreadData &rtData)
 				delete sMenu;
 				sMenu = 0;
 
-				updateCursorState(cursorInWindow && windowFocused);
+				updateCursorState(cursorInWindow && windowFocused, gameScreen);
 			}
 
 			continue;
@@ -211,14 +214,14 @@ void EventThread::process(RGSSThreadData &rtData)
 			case SDL_WINDOWEVENT_ENTER :
 				cursorInWindow = true;
 				mouseState.inWindow = true;
-				updateCursorState(cursorInWindow && windowFocused && !sMenu);
+				updateCursorState(cursorInWindow && windowFocused && !sMenu, gameScreen);
 
 				break;
 
 			case SDL_WINDOWEVENT_LEAVE :
 				cursorInWindow = false;
 				mouseState.inWindow = false;
-				updateCursorState(cursorInWindow && windowFocused && !sMenu);
+				updateCursorState(cursorInWindow && windowFocused && !sMenu, gameScreen);
 
 				break;
 
@@ -229,13 +232,13 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			case SDL_WINDOWEVENT_FOCUS_GAINED :
 				windowFocused = true;
-				updateCursorState(cursorInWindow && windowFocused && !sMenu);
+				updateCursorState(cursorInWindow && windowFocused && !sMenu, gameScreen);
 
 				break;
 
 			case SDL_WINDOWEVENT_FOCUS_LOST :
 				windowFocused = false;
-				updateCursorState(cursorInWindow && windowFocused && !sMenu);
+				updateCursorState(cursorInWindow && windowFocused && !sMenu, gameScreen);
 				resetInputStates();
 
 				break;
@@ -268,7 +271,7 @@ void EventThread::process(RGSSThreadData &rtData)
 				if (!sMenu)
 				{
 					sMenu = new SettingsMenu(rtData);
-					updateCursorState(false);
+					updateCursorState(false, gameScreen);
 				}
 
 				sMenu->raise();
@@ -374,6 +377,7 @@ void EventThread::process(RGSSThreadData &rtData)
 		case SDL_MOUSEMOTION :
 			mouseState.x = event.motion.x;
 			mouseState.y = event.motion.y;
+			updateCursorState(cursorInWindow, gameScreen);
 			break;
 
 		case SDL_FINGERDOWN :
@@ -413,7 +417,7 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			case REQUEST_SETCURSORVISIBLE :
 				showCursor = event.user.code;
-				updateCursorState(cursorInWindow);
+				updateCursorState(cursorInWindow, gameScreen);
 				break;
 
 			case UPDATE_FPS :
@@ -437,6 +441,15 @@ void EventThread::process(RGSSThreadData &rtData)
 				}
 
 				SDL_SetWindowTitle(win, buffer);
+				break;
+
+			case UPDATE_SCREEN_RECT :
+				gameScreen.x = event.user.windowID;
+				gameScreen.y = event.user.code;
+				gameScreen.w = reinterpret_cast<intptr_t>(event.user.data1);
+				gameScreen.h = reinterpret_cast<intptr_t>(event.user.data2);
+				updateCursorState(cursorInWindow, gameScreen);
+
 				break;
 			}
 		}
@@ -532,9 +545,13 @@ void EventThread::setFullscreen(SDL_Window *win, bool mode)
 	fullscreen = mode;
 }
 
-void EventThread::updateCursorState(bool inWindow)
+void EventThread::updateCursorState(bool inWindow,
+                                    const SDL_Rect &screen)
 {
-	if (inWindow)
+	SDL_Point pos = { mouseState.x, mouseState.y };
+	bool inScreen = inWindow && SDL_PointInRect(&pos, &screen);
+
+	if (inScreen)
 		SDL_ShowCursor(showCursor ? SDL_TRUE : SDL_FALSE);
 	else
 		SDL_ShowCursor(SDL_TRUE);
@@ -637,6 +654,19 @@ void EventThread::notifyFrame()
 	SDL_Event event;
 	event.user.code = avgFPS;
 	event.user.type = usrIdStart + UPDATE_FPS;
+	SDL_PushEvent(&event);
+}
+
+void EventThread::notifyGameScreenChange(const SDL_Rect &screen)
+{
+	/* We have to get a bit hacky here to fit the rectangle
+	 * data into the user event struct */
+	SDL_Event event;
+	event.type = usrIdStart + UPDATE_SCREEN_RECT;
+	event.user.windowID = screen.x;
+	event.user.code = screen.y;
+	event.user.data1 = reinterpret_cast<void*>(screen.w);
+	event.user.data2 = reinterpret_cast<void*>(screen.h);
 	SDL_PushEvent(&event);
 }
 
