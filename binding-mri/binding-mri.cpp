@@ -80,6 +80,7 @@ RB_METHOD(mriP);
 RB_METHOD(mkxpDataDirectory);
 RB_METHOD(mkxpPuts);
 RB_METHOD(mkxpRawKeyStates);
+RB_METHOD(mkxpMouseInWindow);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -144,6 +145,7 @@ static void mriBindingInit()
 	_rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
 	_rb_define_module_function(mod, "puts", mkxpPuts);
 	_rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
+	_rb_define_module_function(mod, "mouse_in_window", mkxpMouseInWindow);
 
 	rb_gv_set("MKXP", Qtrue);
 }
@@ -220,6 +222,13 @@ RB_METHOD(mkxpRawKeyStates)
 	memcpy(RSTRING_PTR(str), EventThread::keyStates, sizeof(EventThread::keyStates));
 
 	return str;
+}
+
+RB_METHOD(mkxpMouseInWindow)
+{
+	RB_UNUSED_PARAM;
+
+	return rb_bool_new(EventThread::mouseState.inWindow);
 }
 
 static VALUE rgssMainCb(VALUE block)
