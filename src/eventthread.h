@@ -98,12 +98,16 @@ public:
 	/* RGSS thread calls this once per frame */
 	void notifyFrame();
 
+	/* Called on game screen (size / offset) changes */
+	void notifyGameScreenChange(const SDL_Rect &screen);
+
 private:
 	static int eventFilter(void *, SDL_Event*);
 
 	void resetInputStates();
 	void setFullscreen(SDL_Window *, bool mode);
-	void updateCursorState(bool inWindow);
+	void updateCursorState(bool inWindow,
+	                       const SDL_Rect &screen);
 
 	bool fullscreen;
 	bool showCursor;
