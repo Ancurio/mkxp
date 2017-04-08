@@ -27,6 +27,7 @@
 #include <SDL_timer.h>
 #include <SDL_thread.h>
 #include <SDL_touch.h>
+#include <SDL_rect.h>
 
 #include <al.h>
 #include <alc.h>
