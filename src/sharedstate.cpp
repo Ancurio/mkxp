@@ -109,6 +109,7 @@ struct SharedStatePrivate
 	      graphics(threadData),
 	      input(*threadData),
 	      audio(*threadData),
+	      _glState(threadData->config),
 	      fontState(threadData->config),
 	      stampCounter(0)
 	{
