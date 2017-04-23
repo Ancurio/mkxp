@@ -124,6 +124,15 @@
 # subImageFix=false
 
 
+# Enable framebuffer blitting if the driver is
+# capable of it. Some drivers carry buggy
+# implementations of this functionality, so
+# disabling it can be used as a workaround
+# (default: enabled)
+#
+# enableBlitting=true
+
+
 # Limit the maximum size (width, height) of
 # most textures mkxp will create (exceptions are
 # rendering backbuffers and similar).

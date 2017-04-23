@@ -49,6 +49,7 @@ struct Config
 	bool solidFonts;
 
 	bool subImageFix;
+	bool enableBlitting;
 	int maxTextureSize;
 
 	std::string gameFolder;

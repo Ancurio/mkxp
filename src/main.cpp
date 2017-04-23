@@ -102,6 +102,9 @@ int rgssThreadFun(void *userdata)
 		return 0;
 	}
 
+	if (!conf.enableBlitting)
+		gl.BlitFramebuffer = 0;
+
 	gl.ClearColor(0, 0, 0, 1);
 	gl.Clear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapWindow(win);

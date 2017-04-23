@@ -166,6 +166,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(syncToRefreshrate, bool, false) \
 	PO_DESC(solidFonts, bool, false) \
 	PO_DESC(subImageFix, bool, false) \
+	PO_DESC(enableBlitting, bool, true) \
 	PO_DESC(maxTextureSize, int, 0) \
 	PO_DESC(gameFolder, std::string, ".") \
 	PO_DESC(anyAltToggleFS, bool, false) \
