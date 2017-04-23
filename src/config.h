@@ -49,6 +49,7 @@ struct Config
 	bool solidFonts;
 
 	bool subImageFix;
+	int maxTextureSize;
 
 	std::string gameFolder;
 	bool anyAltToggleFS;

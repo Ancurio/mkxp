@@ -23,6 +23,7 @@
 #include "shader.h"
 #include "etc.h"
 #include "gl-fun.h"
+#include "config.h"
 
 #include <SDL_rect.h>
 
@@ -111,7 +112,7 @@ GLState::Caps::Caps()
 	gl.GetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
 }
 
-GLState::GLState()
+GLState::GLState(const Config &conf)
 {
 	gl.Disable(GL_DEPTH_TEST);
 
@@ -121,4 +122,7 @@ GLState::GLState()
 	scissorTest.init(false);
 	scissorBox.init(IntRect(0, 0, 640, 480));
 	program.init(0);
+
+	if (conf.maxTextureSize > 0)
+		caps.maxTexSize = conf.maxTextureSize;
 }

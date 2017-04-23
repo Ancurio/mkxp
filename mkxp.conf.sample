@@ -124,6 +124,17 @@
 # subImageFix=false
 
 
+# Limit the maximum size (width, height) of
+# most textures mkxp will create (exceptions are
+# rendering backbuffers and similar).
+# If set to 0, the hardware maximum is used.
+# This is useful for recording traces that can
+# be played back on machines with lower specs.
+# (default: 0)
+#
+# maxTextureSize=0
+
+
 # Set the base path of the game to '/path/to/game'
 # (default: executable directory)
 #

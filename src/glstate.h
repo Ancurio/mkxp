@@ -27,6 +27,8 @@
 #include <stack>
 #include <assert.h>
 
+struct Config;
+
 template<typename T>
 struct GLProperty
 {
@@ -130,7 +132,7 @@ public:
 
 	} caps;
 
-	GLState();
+	GLState(const Config &conf);
 };
 
 #endif // GLSTATE_H
