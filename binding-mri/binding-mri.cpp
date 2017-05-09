@@ -32,7 +32,9 @@
 #include "boost-hash.h"
 
 #include <ruby.h>
+#if RUBY_API_VERSION_MAJOR > 1
 #include <ruby/encoding.h>
+#endif
 
 #include <assert.h>
 #include <string>
@@ -204,7 +206,7 @@ RB_METHOD(mriP)
 RB_METHOD(mkxpDataDirectory)
 {
 	RB_UNUSED_PARAM;
-	
+
 	const std::string &path = shState->config().customDataPath;
 	const char *s = path.empty() ? "." : path.c_str();
 
@@ -580,9 +582,15 @@ static void mriBindingExecute()
 	 * stdio streams on some platforms (eg. Windows) */
 	int argc = 0;
 	char **argv = 0;
-	ruby_sysinit(&argc, &argv);
 
+#if RUBY_API_VERSION_MAJOR == 1
+	ruby_init();
+	//ruby_options(argc, argv);
+#else
+	ruby_sysinit(&argc, &argv);
 	ruby_setup();
+#endif
+
 	rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
 
 	Config &conf = shState->rtData().config;

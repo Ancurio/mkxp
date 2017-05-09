@@ -90,6 +90,9 @@ void raiseRbExc(const Exception &exc)
 void
 raiseDisposedAccess(VALUE self)
 {
+#if RUBY_API_VERSION_MAJOR == 1
+// FIXME: raiseDisposedAccess not implemented
+#else
 	const char *klassName = RTYPEDDATA_TYPE(self)->wrap_struct_name;
 	char buf[32];
 
@@ -97,6 +100,7 @@ raiseDisposedAccess(VALUE self)
 	buf[0] = tolower(buf[0]);
 
 	rb_raise(getRbData()->exc[RGSS], "disposed %s", buf);
+#endif
 }
 
 int
@@ -319,3 +323,73 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 
 	return argI;
 }
+
+#if RUBY_API_VERSION_MAJOR == 1
+// Functions providing Ruby 1.8 compatibililty
+VALUE rb_sprintf(const char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	char buf[4096];
+	int const result = vsnprintf(buf, sizeof(buf), fmt, args);
+	va_end(args);
+
+	return rb_str_new2(buf);
+}
+
+VALUE rb_data_typed_object_alloc(VALUE klass, void *datap, const rb_data_type_t * rbType) {
+	return  rb_data_object_alloc(klass, 0, rbType->function.dmark, rbType->function.dfree);
+}
+
+void *rb_check_typeddata(VALUE v, const rb_data_type_t *) {
+// FIXME: rb_check_typeddata not implemented
+	return RTYPEDDATA_DATA(v);
+}
+
+NORETURN(void rb_error_arity(int, int, int)) {
+	assert(false);
+}
+
+VALUE rb_enc_str_new(const char* ch, long len, rb_encoding*) {
+	return rb_str_new(ch, len);
+}
+
+rb_encoding *rb_utf8_encoding(void) {
+	return NULL;
+}
+
+void rb_enc_set_default_external(VALUE encoding) {
+	// no-op, assuming UTF-8
+}
+
+VALUE rb_enc_from_encoding(rb_encoding *enc) {
+	return Qnil;
+}
+
+VALUE rb_str_catf(VALUE, const char*, ...) {
+	return Qnil;
+}
+
+VALUE rb_errinfo(void) {
+	return ruby_errinfo;
+}
+
+int rb_typeddata_is_kind_of(VALUE, const rb_data_type_t *) {
+	return 1;
+}
+
+VALUE rb_file_open_str(VALUE filename, const char* mode) {
+	return rb_file_open(RB_OBJ_STRING(filename), mode);
+}
+
+VALUE rb_enc_associate_index(VALUE, int) {
+	return Qnil;
+}
+
+int rb_utf8_encindex(void) {
+	return 0;
+}
+
+VALUE rb_hash_lookup2(VALUE, VALUE, VALUE) {
+	return Qnil;
+}
+#endif

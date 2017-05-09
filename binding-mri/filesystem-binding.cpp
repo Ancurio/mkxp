@@ -25,7 +25,9 @@
 #include "filesystem.h"
 #include "util.h"
 
+#if RUBY_API_VERSION_MAJOR > 1
 #include "ruby/encoding.h"
+#endif
 #include "ruby/intern.h"
 
 static void
@@ -130,7 +132,6 @@ kernelLoadDataInt(const char *filename, bool rubyExc)
 	VALUE port = fileIntForPath(filename, rubyExc);
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
-
 	// FIXME need to catch exceptions here with begin rescue
 	VALUE result = rb_funcall2(marsh, rb_intern("load"), 1, &port);
 
@@ -195,14 +196,21 @@ RB_METHOD(_marshalLoad)
 	rb_get_args(argc, argv, "o|o", &port, &proc RB_ARG_END);
 
 	VALUE utf8Proc;
+	// FIXME: Not implemented for Ruby 1.8
+#if RUBY_API_VERSION_MAJOR > 1
 	if (NIL_P(proc))
 		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
 	else
 		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(customProc), proc);
+#endif
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
+#if RUBY_API_VERSION_MAJOR > 1
 	VALUE v[] = { port, utf8Proc };
+#else
+	VALUE v[] = { port, proc };
+#endif
 	return rb_funcall2(marsh, rb_intern("_mkxp_load_alias"), ARRAY_SIZE(v), v);
 }
 
@@ -214,6 +222,8 @@ fileIntBindingInit()
 
 	_rb_define_method(klass, "read", fileIntRead);
 	_rb_define_method(klass, "getbyte", fileIntGetByte);
+	// Used by Ruby 1.8 Marshaller
+	_rb_define_method(klass, "getc", fileIntGetByte);
 	_rb_define_method(klass, "binmode", fileIntBinmode);
 	_rb_define_method(klass, "close", fileIntClose);
 
