@@ -474,9 +474,7 @@ struct GraphicsPrivate
 
 	bool frozen;
 	TEXFBO frozenScene;
-	TEXFBO currentScene;
 	Quad screenQuad;
-	TEXFBO transBuffer;
 
 	/* Global list of all live Disposables
 	 * (disposed on reset) */
@@ -502,16 +500,8 @@ struct GraphicsPrivate
 		TEXFBO::allocEmpty(frozenScene, scRes.x, scRes.y);
 		TEXFBO::linkFBO(frozenScene);
 
-		TEXFBO::init(currentScene);
-		TEXFBO::allocEmpty(currentScene, scRes.x, scRes.y);
-		TEXFBO::linkFBO(currentScene);
-
 		FloatRect screenRect(0, 0, scRes.x, scRes.y);
 		screenQuad.setTexPosRect(screenRect, screenRect);
-
-		TEXFBO::init(transBuffer);
-		TEXFBO::allocEmpty(transBuffer, scRes.x, scRes.y);
-		TEXFBO::linkFBO(transBuffer);
 
 		fpsLimiter.resetFrameAdjust();
 	}
@@ -519,9 +509,6 @@ struct GraphicsPrivate
 	~GraphicsPrivate()
 	{
 		TEXFBO::fini(frozenScene);
-		TEXFBO::fini(currentScene);
-
-		TEXFBO::fini(transBuffer);
 	}
 
 	void updateScreenResoRatio(RGSSThreadData *rtData)
@@ -721,8 +708,15 @@ void Graphics::transition(int duration,
 
 	setBrightness(255);
 
+	/* The PP frontbuffer will hold the current scene after the
+	 * composition step. Since the backbuffer is unused during
+	 * the transition, we can reuse it as the target buffer for
+	 * the final rendered image. */
+	TEXFBO &currentScene = p->screen.getPP().frontBuffer();
+	TEXFBO &transBuffer  = p->screen.getPP().backBuffer();
+
 	/* Capture new scene */
-	p->compositeToBuffer(p->currentScene);
+	p->screen.composite();
 
 	/* If no transition bitmap is provided,
 	 * we can use a simplified shader */
@@ -735,7 +729,7 @@ void Graphics::transition(int duration,
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
-		shader.setCurrentScene(p->currentScene.tex);
+		shader.setCurrentScene(currentScene.tex);
 		shader.setTransMap(transMap->getGLTypes().tex);
 		shader.setVague(vague / 256.0f);
 		shader.setTexSize(p->scRes);
@@ -746,7 +740,7 @@ void Graphics::transition(int duration,
 		shader.bind();
 		shader.applyViewportProj();
 		shader.setFrozenScene(p->frozenScene.tex);
-		shader.setCurrentScene(p->currentScene.tex);
+		shader.setCurrentScene(currentScene.tex);
 		shader.setTexSize(p->scRes);
 	}
 
@@ -790,7 +784,7 @@ void Graphics::transition(int duration,
 
 		/* Draw the composed frame to a buffer first
 		 * (we need this because we're skipping PingPong) */
-		FBO::bind(p->transBuffer.fbo);
+		FBO::bind(transBuffer.fbo);
 		FBO::clear();
 		p->screenQuad.draw();
 
@@ -801,7 +795,7 @@ void Graphics::transition(int duration,
 		FBO::clear();
 
 		GLMeta::blitBeginScreen(Vec2i(p->winSize));
-		GLMeta::blitSource(p->transBuffer);
+		GLMeta::blitSource(transBuffer);
 		p->metaBlitBufferFlippedScaled();
 		GLMeta::blitEnd();
 
@@ -945,12 +939,9 @@ void Graphics::resizeScreen(int width, int height)
 	p->screen.setResolution(width, height);
 
 	TEXFBO::allocEmpty(p->frozenScene, width, height);
-	TEXFBO::allocEmpty(p->currentScene, width, height);
 
 	FloatRect screenRect(0, 0, width, height);
 	p->screenQuad.setTexPosRect(screenRect, screenRect);
-
-	TEXFBO::allocEmpty(p->transBuffer, width, height);
 
 	shState->eThread().requestWindowResize(width, height);
 }
