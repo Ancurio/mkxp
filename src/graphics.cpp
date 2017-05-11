@@ -92,11 +92,9 @@ struct PingPong
 	{
 		screenW = width;
 		screenH = height;
+
 		for (int i = 0; i < 2; ++i)
-		{
-			TEX::bind(rt[i].tex);
-			TEX::allocEmpty(width, height);
-		}
+			TEXFBO::allocEmpty(rt[i], width, height);
 	}
 
 	void startRender()
@@ -946,16 +944,13 @@ void Graphics::resizeScreen(int width, int height)
 
 	p->screen.setResolution(width, height);
 
-	TEX::bind(p->frozenScene.tex);
-	TEX::allocEmpty(width, height);
-	TEX::bind(p->currentScene.tex);
-	TEX::allocEmpty(width, height);
+	TEXFBO::allocEmpty(p->frozenScene, width, height);
+	TEXFBO::allocEmpty(p->currentScene, width, height);
 
 	FloatRect screenRect(0, 0, width, height);
 	p->screenQuad.setTexPosRect(screenRect, screenRect);
 
-	TEX::bind(p->transBuffer.tex);
-	TEX::allocEmpty(width, height);
+	TEXFBO::allocEmpty(p->transBuffer, width, height);
 
 	shState->eThread().requestWindowResize(width, height);
 }
