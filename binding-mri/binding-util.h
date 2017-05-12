@@ -27,12 +27,27 @@
 
 #include "exception.h"
 
-// Ruby 1.8 and Ruby 2.x use different version macros
+// Ruby 1.8 and Ruby 1.9+ use different version macros
 #ifndef RUBY_API_VERSION_MAJOR
 #define RUBY_API_VERSION_MAJOR RUBY_VERSION_MAJOR
 #endif
 
+#ifndef RUBY_API_VERSION_MINOR
+#define RUBY_API_VERSION_MINOR RUBY_VERSION_MINOR
+#endif
+
 #if RUBY_API_VERSION_MAJOR == 1
+#define PRIsVALUE "s"
+#define RB_OBJ_CLASSNAME(obj) rb_obj_classname(obj)
+#define RB_OBJ_STRING(obj) StringValueCStr(obj)
+
+NORETURN(void rb_error_arity(int, int, int));
+
+#define OBJ_INIT_COPY(obj, orig) \
+	((obj) != (orig) && (rb_obj_init_copy((obj), (orig)), 1))
+#if RUBY_API_VERSION_MINOR == 8
+// Makes version checks easier
+#define RUBY_LEGACY_VERSION
 // Functions and macros providing Ruby 1.8 compatibililty
 #define FLONUM_P(x) 0
 
@@ -56,19 +71,12 @@
 #define RUBY_T_FALSE T_FALSE
 #define RUBY_T_NIL T_NIL
 
-#define OBJ_INIT_COPY(obj, orig) \
-    ((obj) != (orig) && (rb_obj_init_copy((obj), (orig)), 1))
-
 #define rb_str_new_cstr rb_str_new2
 
 #define RUBY_DEFAULT_FREE ((RUBY_DATA_FUNC)-1)
 #define RUBY_NEVER_FREE   ((RUBY_DATA_FUNC)0)
 #define RUBY_TYPED_DEFAULT_FREE RUBY_DEFAULT_FREE
 #define RUBY_TYPED_NEVER_FREE   RUBY_NEVER_FREE
-
-#define PRIsVALUE "s"
-#define RB_OBJ_CLASSNAME(obj) rb_obj_classname(obj)
-#define RB_OBJ_STRING(obj) StringValueCStr(obj)
 
 #define RTYPEDDATA_DATA DATA_PTR
 
@@ -79,16 +87,16 @@
 #define ENCODING_MASK (((VALUE)ENCODING_INLINE_MAX)<<ENCODING_SHIFT) /* FL_USER10|FL_USER11|FL_USER12|FL_USER13|FL_USER14|FL_USER15|FL_USER16 */
 
 #define ENCODING_SET_INLINED(obj,i) do {\
-    RBASIC(obj)->flags &= ~ENCODING_MASK;\
-    RBASIC(obj)->flags |= (VALUE)(i) << ENCODING_SHIFT;\
+	RBASIC(obj)->flags &= ~ENCODING_MASK;\
+	RBASIC(obj)->flags |= (VALUE)(i) << ENCODING_SHIFT;\
 } while (0)
 #define ENCODING_SET(obj,i) rb_enc_set_index((obj), (i))
 
 #define ENCODING_GET_INLINED(obj) (int)((RBASIC(obj)->flags & ENCODING_MASK)>>ENCODING_SHIFT)
 #define ENCODING_GET(obj) \
-    (ENCODING_GET_INLINED(obj) != ENCODING_INLINE_MAX ? \
-     ENCODING_GET_INLINED(obj) : \
-     rb_enc_get_index(obj))
+	(ENCODING_GET_INLINED(obj) != ENCODING_INLINE_MAX ? \
+	ENCODING_GET_INLINED(obj) : \
+	rb_enc_get_index(obj))
 
 #define ENCODING_IS_ASCII8BIT(obj) (ENCODING_GET_INLINED(obj) == 0)
 
@@ -112,8 +120,6 @@ VALUE rb_data_typed_object_alloc(VALUE klass, void *datap, const rb_data_type_t 
 void *rb_check_typeddata(VALUE, const rb_data_type_t *);
 
 #define Check_TypedStruct(v,t) rb_check_typeddata((VALUE)(v),(t))
-
-NORETURN(void rb_error_arity(int, int, int));
 
 typedef void rb_encoding;
 
@@ -139,7 +145,8 @@ int rb_utf8_encindex(void);
 
 VALUE rb_hash_lookup2(VALUE, VALUE, VALUE);
 
-#endif
+#endif // RUBY_API_VERSION_MINOR == 8
+#endif // RUBY_API_VERSION_MAJOR == 1
 
 enum RbException
 {
@@ -181,7 +188,7 @@ raiseRbExc(const Exception &exc);
 	extern rb_data_type_t Klass##Type
 
 /* 2.1 has added a new field (flags) to rb_data_type_t */
-#if RUBY_API_VERSION_MAJOR >= 2 && RUBY_API_VERSION_MINOR >= 1
+#if RUBY_API_VERSION_MAJOR > 1 && RUBY_API_VERSION_MINOR > 0
 /* TODO: can mkxp use RUBY_TYPED_FREE_IMMEDIATELY here? */
 #define DEF_TYPE_FLAGS 0
 #else
@@ -496,6 +503,5 @@ rb_check_argc(int actual, int expected)
 	_rb_define_method(klass, prop_name_s, Klass##Get##PropName); \
 	_rb_define_method(klass, prop_name_s "=", Klass##Set##PropName); \
 }
-
 
 #endif // BINDING_UTIL_H

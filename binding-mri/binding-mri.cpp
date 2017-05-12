@@ -32,7 +32,7 @@
 #include "boost-hash.h"
 
 #include <ruby.h>
-#if RUBY_API_VERSION_MAJOR > 1
+#ifndef RUBY_LEGACY_VERSION
 #include <ruby/encoding.h>
 #endif
 

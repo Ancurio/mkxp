@@ -90,7 +90,7 @@ void raiseRbExc(const Exception &exc)
 void
 raiseDisposedAccess(VALUE self)
 {
-#if RUBY_API_VERSION_MAJOR == 1
+#ifdef RUBY_LEGACY_VERSION
 // FIXME: raiseDisposedAccess not implemented
 #else
 	const char *klassName = RTYPEDDATA_TYPE(self)->wrap_struct_name;
@@ -325,6 +325,10 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 }
 
 #if RUBY_API_VERSION_MAJOR == 1
+NORETURN(void rb_error_arity(int, int, int)) {
+	assert(false);
+}
+#if RUBY_API_VERSION_MINOR == 8
 // Functions providing Ruby 1.8 compatibililty
 VALUE rb_sprintf(const char* fmt, ...) {
 	va_list args;
@@ -343,10 +347,6 @@ VALUE rb_data_typed_object_alloc(VALUE klass, void *datap, const rb_data_type_t 
 void *rb_check_typeddata(VALUE v, const rb_data_type_t *) {
 // FIXME: rb_check_typeddata not implemented
 	return RTYPEDDATA_DATA(v);
-}
-
-NORETURN(void rb_error_arity(int, int, int)) {
-	assert(false);
 }
 
 VALUE rb_enc_str_new(const char* ch, long len, rb_encoding*) {
@@ -392,4 +392,5 @@ int rb_utf8_encindex(void) {
 VALUE rb_hash_lookup2(VALUE, VALUE, VALUE) {
 	return Qnil;
 }
-#endif
+#endif // RUBY_API_VERSION_MINOR == 8
+#endif // RUBY_API_VERSION_MAJOR == 1

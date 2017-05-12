@@ -25,7 +25,7 @@
 #include "filesystem.h"
 #include "util.h"
 
-#if RUBY_API_VERSION_MAJOR > 1
+#ifndef RUBY_LEGACY_VERSION
 #include "ruby/encoding.h"
 #endif
 #include "ruby/intern.h"
@@ -197,7 +197,7 @@ RB_METHOD(_marshalLoad)
 
 	VALUE utf8Proc;
 	// FIXME: Not implemented for Ruby 1.8
-#if RUBY_API_VERSION_MAJOR > 1
+#ifndef RUBY_LEGACY_VERSION
 	if (NIL_P(proc))
 		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
 	else
@@ -206,7 +206,7 @@ RB_METHOD(_marshalLoad)
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
-#if RUBY_API_VERSION_MAJOR > 1
+#ifndef RUBY_LEGACY_VERSION
 	VALUE v[] = { port, utf8Proc };
 #else
 	VALUE v[] = { port, proc };
