@@ -585,7 +585,6 @@ static void mriBindingExecute()
 
 #if RUBY_API_VERSION_MAJOR == 1
 	ruby_init();
-	//ruby_options(argc, argv);
 #else
 	ruby_sysinit(&argc, &argv);
 	ruby_setup();

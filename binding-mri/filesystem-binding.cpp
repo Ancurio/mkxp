@@ -132,6 +132,7 @@ kernelLoadDataInt(const char *filename, bool rubyExc)
 	VALUE port = fileIntForPath(filename, rubyExc);
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+
 	// FIXME need to catch exceptions here with begin rescue
 	VALUE result = rb_funcall2(marsh, rb_intern("load"), 1, &port);
 
