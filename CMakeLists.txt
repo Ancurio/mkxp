@@ -99,6 +99,7 @@ find_package(ZLIB REQUIRED)
 ## Setup main source ##
 
 set(MAIN_HEADERS
+	assets/resource.h
 	src/quadarray.h
 	src/audio.h
 	src/binding.h
@@ -204,6 +205,10 @@ set(MAIN_SOURCE
 	src/midisource.cpp
 	src/fluid-fun.cpp
 )
+
+if(WIN32)
+	list(APPEND MAIN_SOURCE assets/resource.rc)
+endif()
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
 
@@ -404,6 +409,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 	${DEFINES}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE
+	assets
 	src
 	${SIGCXX_INCLUDE_DIRS}
 	${PIXMAN_INCLUDE_DIRS}
