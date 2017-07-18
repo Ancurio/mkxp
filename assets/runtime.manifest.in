@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+	<noInheritable></noInheritable>
+	<assemblyIdentity type="win32" name="runtime" version="1.0.0.0" processorArchitecture="@ARCH@" ></assemblyIdentity>
+	<!-- <file name="libstdc++-6.dll"></file> -->
+	<!-- <file name="libgcc_s_sjlj-1.dll"></file> -->
+	<file name="libboost_program_options.dll"></file>
+	<file name="libFLAC-8.dll"></file>
+	<file name="libfreetype-6.dll"></file>
+	<file name="libgcc_s_seh-1.dll"></file>
+	<file name="libjpeg-62.dll"></file>
+	<file name="libmodplug-1.dll"></file>
+	<file name="libogg-0.dll"></file>
+	<file name="libphysfs.dll"></file>
+	<file name="libpixman-1-0.dll"></file>
+	<file name="libpng16-16.dll"></file>
+	<file name="libSDL2-2-0-0.dll"></file>
+	<file name="libSDL_sound-1-0-1.dll"></file>
+	<file name="libsigc-2.0-0.dll"></file>
+	<file name="libspeex-1.dll"></file>
+	<file name="libstdc++-6.dll"></file>
+	<file name="libvorbis-0.dll"></file>
+	<file name="libvorbisfile-3.dll"></file>
+	<file name="libwebp-6.dll"></file>
+	<file name="OpenAL32.dll"></file>
+	<file name="ruby24.dll"></file>
+	<file name="SDL2_image.dll"></file>
+	<file name="SDL2_ttf.dll"></file>
+	<file name="zlib1.dll"></file>
+</assembly>
