@@ -207,7 +207,7 @@ set(MAIN_SOURCE
 )
 
 if(WIN32)
-	list(APPEND MAIN_SOURCE assets/resource.rc)
+	list(APPEND MAIN_SOURCE windows/resource.rc)
 endif()
 
 source_group("MKXP Source" FILES ${MAIN_SOURCE} ${MAIN_HEADERS})
@@ -409,8 +409,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 	${DEFINES}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE
-	assets
 	src
+	windows
 	${SIGCXX_INCLUDE_DIRS}
 	${PIXMAN_INCLUDE_DIRS}
 	${PHYSFS_INCLUDE_DIRS}
