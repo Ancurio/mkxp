@@ -121,7 +121,7 @@ struct SpritePrivate
 
 	void recomputeBushDepth()
 	{
-		if (!bitmap)
+		if (nullOrDisposed(bitmap))
 			return;
 
 		/* Calculate effective (normalized) bush depth */
@@ -137,7 +137,7 @@ struct SpritePrivate
 		FloatRect rect = srcRect->toFloatRect();
 		Vec2i bmSize;
 
-		if (bitmap)
+		if (!nullOrDisposed(bitmap))
 			bmSize = Vec2i(bitmap->width(), bitmap->height());
 
 		if (mirrored)
