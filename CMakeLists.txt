@@ -99,7 +99,6 @@ find_package(ZLIB REQUIRED)
 ## Setup main source ##
 
 set(MAIN_HEADERS
-	assets/resource.h
 	src/quadarray.h
 	src/audio.h
 	src/binding.h
@@ -207,6 +206,7 @@ set(MAIN_SOURCE
 )
 
 if(WIN32)
+	list(APPEND MAIN_HEADERS windows/resource.h)
 	list(APPEND MAIN_SOURCE windows/resource.rc)
 endif()
 
