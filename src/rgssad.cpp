@@ -331,14 +331,16 @@ verifyHeader(PHYSFS_Io *io, char version)
 }
 
 static void*
-RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
+RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite, int *claimed)
 {
 	if (forWrite)
-		return 0;
+		return NULL;
 
 	/* Version 1 */
 	if (!verifyHeader(io, 1))
-		return 0;
+		return NULL;
+	else
+		*claimed = 1;
 
 	RGSS_archiveData *data = new RGSS_archiveData;
 	data->archiveIo = io;
@@ -389,9 +391,9 @@ RGSS_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 	return data;
 }
 
-static void
+static PHYSFS_EnumerateCallbackResult
 RGSS_enumerateFiles(void *opaque, const char *dirname,
-                    PHYSFS_EnumFilesCallback cb,
+                    PHYSFS_EnumerateCallback cb,
                     const char *origdir, void *callbackdata)
 {
 	RGSS_archiveData *data = static_cast<RGSS_archiveData*>(opaque);
@@ -399,13 +401,15 @@ RGSS_enumerateFiles(void *opaque, const char *dirname,
 	std::string _dirname(dirname);
 
 	if (!data->dirHash.contains(_dirname))
-		return;
+		return PHYSFS_ENUM_STOP;
 
 	const BoostSet<std::string> &entries = data->dirHash[_dirname];
 
 	BoostSet<std::string>::const_iterator iter;
 	for (iter = entries.cbegin(); iter != entries.cend(); ++iter)
 		cb(callbackdata, origdir, iter->c_str());
+
+	return PHYSFS_ENUM_OK;
 }
 
 static PHYSFS_Io*
@@ -536,19 +540,21 @@ readUint32AndXor(PHYSFS_Io *io, uint32_t &result, uint32_t key)
 }
 
 static void*
-RGSS3_openArchive(PHYSFS_Io *io, const char *, int forWrite)
+RGSS3_openArchive(PHYSFS_Io *io, const char *, int forWrite, int *claimed)
 {
 	if (forWrite)
-		return 0;
+		return NULL;
 
 	/* Version 3 */
 	if (!verifyHeader(io, 3))
-		return 0;
+		return NULL;
+	else
+		*claimed = 1;
 
 	uint32_t baseMagic;
 
 	if (!readUint32(io, baseMagic))
-		return 0;
+		return NULL;
 
 	baseMagic = (baseMagic * 9) + 3;
 
@@ -605,7 +611,7 @@ RGSS3_openArchive(PHYSFS_Io *io, const char *, int forWrite)
 
 	error:
 		delete data;
-		return 0;
+		return NULL;
 	}
 
 	return data;
