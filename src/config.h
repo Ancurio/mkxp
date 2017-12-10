@@ -41,6 +41,7 @@ struct Config
 
 	int defScreenW;
 	int defScreenH;
+	std::string windowTitle;
 
 	int fixedFramerate;
 	bool frameSkip;

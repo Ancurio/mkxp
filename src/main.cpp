@@ -233,6 +233,9 @@ int main(int argc, char *argv[])
 
 	conf.readGameINI();
 
+	if (conf.windowTitle.empty())
+		conf.windowTitle = conf.game.title;
+
 	assert(conf.rgssVersion >= 1 && conf.rgssVersion <= 3);
 	printRgssVersion(conf.rgssVersion);
 
@@ -272,7 +275,7 @@ int main(int argc, char *argv[])
 	if (conf.fullscreen)
 		winFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-	win = SDL_CreateWindow(conf.game.title.c_str(),
+	win = SDL_CreateWindow(conf.windowTitle.c_str(),
 	                       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 	                       conf.defScreenW, conf.defScreenH, winFlags);
 

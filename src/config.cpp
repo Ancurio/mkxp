@@ -161,6 +161,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(vsync, bool, false) \
 	PO_DESC(defScreenW, int, 0) \
 	PO_DESC(defScreenH, int, 0) \
+	PO_DESC(windowTitle, std::string, "") \
 	PO_DESC(fixedFramerate, int, 0) \
 	PO_DESC(frameSkip, bool, true) \
 	PO_DESC(syncToRefreshrate, bool, false) \
