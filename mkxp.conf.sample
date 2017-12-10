@@ -77,12 +77,6 @@
 # defScreenW=640
 
 
-# Override the game window title
-# (default: none)
-#
-# windowTitle=Custom Title
-
-
 # Specify the window height on startup. If set to 0,
 # it will default to the default resolution height
 # specific to the RGSS version (480 in RGSS1, 416
@@ -90,6 +84,12 @@
 # (default: 0)
 #
 # defScreenH=480
+
+
+# Override the game window title
+# (default: none)
+#
+# windowTitle=Custom Title
 
 
 # Enforce a static frame rate
