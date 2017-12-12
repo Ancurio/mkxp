@@ -296,14 +296,14 @@ void EventThread::process(RGSSThreadData &rtData)
 					if (fullscreen)
 					{
 						/* Prevent fullscreen flicker */
-						strncpy(pendingTitle, rtData.config.game.title.c_str(),
+						strncpy(pendingTitle, rtData.config.windowTitle.c_str(),
 						        sizeof(pendingTitle));
 						havePendingTitle = true;
 
 						break;
 					}
 
-					SDL_SetWindowTitle(win, rtData.config.game.title.c_str());
+					SDL_SetWindowTitle(win, rtData.config.windowTitle.c_str());
 				}
 
 				break;
@@ -410,7 +410,7 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			case REQUEST_MESSAGEBOX :
 				SDL_ShowSimpleMessageBox(event.user.code,
-				                         rtData.config.game.title.c_str(),
+				                         rtData.config.windowTitle.c_str(),
 				                         (const char*) event.user.data1, win);
 				free(event.user.data1);
 				msgBoxDone.set();
@@ -429,7 +429,7 @@ void EventThread::process(RGSSThreadData &rtData)
 					break;
 
 				snprintf(buffer, sizeof(buffer), "%s - %d FPS",
-				         rtData.config.game.title.c_str(), event.user.code);
+				         rtData.config.windowTitle.c_str(), event.user.code);
 
 				/* Updating the window title in fullscreen
 				 * mode seems to cause flickering */
