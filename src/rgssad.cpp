@@ -297,6 +297,8 @@ processDirectories(RGSS_archiveData *data, BoostSet<std::string> &topLevel,
 
 		if (slash)
 			nameBuf[i] = '/';
+
+		break;
 	}
 
 	/* Check for more entries */
