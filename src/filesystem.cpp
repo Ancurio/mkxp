@@ -508,7 +508,7 @@ findFontsFolderCB(void *data, const char *, const char *fname)
 	char buffer[512];
 	const char *s = fname;
 
-	while (s && i < sizeof(buffer))
+	while (*s && i < sizeof(buffer))
 		buffer[i++] = tolower(*s++);
 
 	buffer[i] = '\0';
