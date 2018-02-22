@@ -189,6 +189,27 @@ void Config::read(int argc, char *argv[])
 // Not gonna take your shit boost
 #define GUARD_ALL( exp ) try { exp } catch(...) {}
 
+	editor.debug = false;
+	editor.battleTest = false;
+
+	/* Read arguments sent from the editor */
+	if (argc > 1)
+	{
+		std::string argv1 = argv[1];
+		/* RGSS1 uses "debug", 2 and 3 use "test" */
+		if (argv1 == "debug" || argv1 == "test")
+			editor.debug = true;
+		else if (argv1 == "btest")
+			editor.battleTest = true;
+
+		/* Fix offset */
+		if (editor.debug || editor.battleTest)
+		{
+			argc--;
+			argv++;
+		}
+	}
+
 #define PO_DESC(key, type, def) (#key, po::value< type >()->default_value(def))
 
 	po::options_description podesc;

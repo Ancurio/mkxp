@@ -88,6 +88,12 @@ struct Config
 
 	std::vector<std::string> rubyLoadpaths;
 
+	/* Editor flags */
+	struct {
+		bool debug;
+		bool battleTest;
+	} editor;
+
 	/* Game INI contents */
 	struct {
 		std::string scripts;
