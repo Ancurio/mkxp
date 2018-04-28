@@ -596,7 +596,7 @@ fileBindingInit(mrb_state *mrb)
 	mrb_define_method(mrb, klass, "path", fileGetPath, MRB_ARGS_NONE());
 
 	/* FileTest */
-	RClass *module = mrb_define_module(mrb, "FileTest");
+	RClass *module = mrb_define_module(mrb, "MKXPFileTest");
 	mrb_define_module_function(mrb, module, "exist?", fileTestDoesExist, MRB_ARGS_REQ(1));
 	mrb_define_module_function(mrb, module, "directory?", fileTestIsDirectory, MRB_ARGS_REQ(1));
 	mrb_define_module_function(mrb, module, "file?", fileTestIsFile, MRB_ARGS_REQ(1));

@@ -72,7 +72,7 @@ static const MrbExcData excData[] =
 	{ PHYSFS,   "PHYSFSError" },
 	{ SDL,      "SDLError"    },
 	{ MKXP,     "MKXPError"   },
-	{ IO,       "IOError"     }
+	{ IO,       "IOError2"     }
 };
 
 static elementsN(excData);
