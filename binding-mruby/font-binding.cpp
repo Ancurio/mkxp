@@ -91,8 +91,7 @@ MRB_METHOD(fontInitializeCopy)
 
 MRB_METHOD(FontGetName)
 {
-	/* FIXME: getName method is missing from Font */
-	return mrb_str_new_cstr(mrb, "name");
+	return mrb_iv_get(mrb, self, mrb_intern_cstr(mrb, "name"));
 }
 
 MRB_METHOD(FontSetName)
@@ -106,6 +105,7 @@ MRB_METHOD(FontSetName)
 	names.push_back(RSTRING_PTR(name));
 
 	f->setName(names);
+	mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "name"), name);
 
 	return name;
 }
@@ -142,13 +142,12 @@ DEF_KLASS_PROP(Font, mrb_bool, DefaultItalic,  "b", bool)
 DEF_KLASS_PROP(Font, mrb_bool, DefaultOutline, "b", bool)
 DEF_KLASS_PROP(Font, mrb_bool, DefaultShadow,  "b", bool)
 
-MRB_FUNCTION(FontGetDefaultName)
+MRB_METHOD(FontGetDefaultName)
 {
-	/* FIXME: getDefaultName method is missing from Font */
-	return mrb_str_new_cstr(mrb, "default_name");
+	return mrb_iv_get(mrb, self, mrb_intern_cstr(mrb, "default_name"));
 }
 
-MRB_FUNCTION(FontSetDefaultName)
+MRB_METHOD(FontSetDefaultName)
 {
 	mrb_value nameObj;
 	mrb_get_args(mrb, "S", &nameObj);
@@ -157,6 +156,7 @@ MRB_FUNCTION(FontSetDefaultName)
 	names.push_back(RSTRING_PTR(nameObj));
 
 	Font::setDefaultName(names, shState->fontState());
+	mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "default_name"), nameObj);
 
 	return nameObj;
 }
