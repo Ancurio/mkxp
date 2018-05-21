@@ -708,15 +708,15 @@ void Graphics::transition(int duration,
 
 	setBrightness(255);
 
+	/* Capture new scene */
+	p->screen.composite();
+
 	/* The PP frontbuffer will hold the current scene after the
 	 * composition step. Since the backbuffer is unused during
 	 * the transition, we can reuse it as the target buffer for
 	 * the final rendered image. */
 	TEXFBO &currentScene = p->screen.getPP().frontBuffer();
 	TEXFBO &transBuffer  = p->screen.getPP().backBuffer();
-
-	/* Capture new scene */
-	p->screen.composite();
 
 	/* If no transition bitmap is provided,
 	 * we can use a simplified shader */
