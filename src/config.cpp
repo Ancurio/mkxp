@@ -33,6 +33,7 @@
 #include "debugwriter.h"
 #include "util.h"
 #include "sdl-util.h"
+#include "iniconfig.h"
 
 #ifdef INI_ENCODING
 extern "C" {
@@ -310,37 +311,38 @@ void Config::readGameINI()
 		return;
 	}
 
-	po::options_description podesc;
-	podesc.add_options()
-	        ("Game.Title", po::value<std::string>())
-	        ("Game.Scripts", po::value<std::string>())
-	        ;
-
-	po::variables_map vm;
 	std::string iniFilename = execName + ".ini";
 	SDLRWStream iniFile(iniFilename.c_str(), "r");
 
 	if (iniFile)
 	{
-		try
+		INIConfiguration ic;
+		if(ic.load(iniFile.stream()))
 		{
-			po::store(po::parse_config_file(iniFile.stream(), podesc, true), vm);
-			po::notify(vm);
+			GUARD_ALL( game.title = ic.getStringProperty("Game", "Title"); );
+			GUARD_ALL( game.scripts = ic.getStringProperty("Game", "Scripts"); );
+
+			strReplace(game.scripts, '\\', '/');
+
+			if (game.title.empty())
+			{
+				Debug() << iniFilename + ": Could not find Game.Title property";
+			}
+
+			if (game.scripts.empty())
+			{
+				Debug() << iniFilename + ": Could not find Game.Scripts property";
+			}
 		}
-		catch (po::error &error)
+		else
 		{
-			Debug() << iniFilename + ":" << error.what();
+			Debug() << iniFilename + ": Failed to parse ini file";
 		}
 	}
 	else
 	{
 		Debug() << "FAILED to open" << iniFilename;
 	}
-
-	GUARD_ALL( game.title = vm["Game.Title"].as<std::string>(); );
-	GUARD_ALL( game.scripts = vm["Game.Scripts"].as<std::string>(); );
-
-	strReplace(game.scripts, '\\', '/');
 
 #ifdef INI_ENCODING
 	/* Can add more later */

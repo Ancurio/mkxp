@@ -89,6 +89,7 @@ HEADERS += \
 	src/flashable.h \
 	src/font.h \
 	src/input.h \
+	src/iniconfig.h \
 	src/plane.h \
 	src/scene.h \
 	src/sprite.h \
@@ -145,6 +146,7 @@ SOURCES += \
 	src/filesystem.cpp \
 	src/font.cpp \
 	src/input.cpp \
+	src/iniconfig.cpp \
 	src/plane.cpp \
 	src/scene.cpp \
 	src/sprite.cpp \
