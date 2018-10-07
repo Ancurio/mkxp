@@ -469,7 +469,7 @@ fontSetEnumCB (void *data, const char *dir, const char *fname)
 	const char *ext = findExt(fname);
 
 	if (!ext)
-		return PHYSFS_ENUM_STOP;
+		return PHYSFS_ENUM_OK;
 
 	char lowExt[8];
 	size_t i;
@@ -479,7 +479,7 @@ fontSetEnumCB (void *data, const char *dir, const char *fname)
 	lowExt[i] = '\0';
 
 	if (strcmp(lowExt, "ttf") && strcmp(lowExt, "otf"))
-		return PHYSFS_ENUM_STOP;
+		return PHYSFS_ENUM_OK;
 
 	char filename[512];
 	snprintf(filename, sizeof(filename), "%s/%s", dir, fname);
