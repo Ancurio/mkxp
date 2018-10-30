@@ -66,4 +66,6 @@ struct VertexTraits
 	static const GLsizei attrCount;
 };
 
+template <class VertType> const VertexAttribute* VertexTraits<VertType>::attr;
+
 #endif // VERTEX_H
