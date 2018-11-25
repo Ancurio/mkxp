@@ -71,8 +71,7 @@ static const MrbExcData excData[] =
 	{ Shutdown, "SystemExit"  },
 	{ PHYSFS,   "PHYSFSError" },
 	{ SDL,      "SDLError"    },
-	{ MKXP,     "MKXPError"   },
-	{ IO,       "IOError2"     }
+	{ MKXP,     "MKXPError"   }
 };
 
 static elementsN(excData);
@@ -118,6 +117,7 @@ MrbData::MrbData(mrb_state *mrb)
 
 	exc[TypeError] = mrb_class_get(mrb, "TypeError");
 	exc[ArgumentError] = mrb_class_get(mrb, "ArgumentError");
+	exc[IOError] = mrb_class_get(mrb, "IOError");
 
 	for (size_t i = 0; i < symDataN; ++i)
 		symbols[symData[i].ind] = mrb_intern_cstr(mrb, symData[i].str);
@@ -134,6 +134,7 @@ static const MrbException excToMrbExc[] =
 
 	TypeError,
 	ArgumentError,
+	IOError,
 
 	PHYSFS,      /* PHYSFSError */
 	SDL,         /* SDLError    */

@@ -91,6 +91,7 @@ enum MrbException
 
 	TypeError,
 	ArgumentError,
+	IOError,
 
 	MrbExceptionsMax
 };
