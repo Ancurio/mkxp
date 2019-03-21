@@ -19,7 +19,7 @@ typedef int (*FLUIDSYNTHPROGRAMCHANGEPROC)(fluid_synth_t* synth, int chan, int p
 typedef fluid_settings_t* (*NEWFLUIDSETTINGSPROC)(void);
 typedef fluid_synth_t* (*NEWFLUIDSYNTHPROC)(fluid_settings_t* settings);
 typedef void (*DELETEFLUIDSETTINGSPROC)(fluid_settings_t* settings);
-typedef int (*DELETEFLUIDSYNTHPROC)(fluid_synth_t* synth);
+typedef void (*DELETEFLUIDSYNTHPROC)(fluid_synth_t* synth);
 
 #define FLUID_FUNCS \
 	FLUID_FUN(settings_setnum, FLUIDSETTINGSSETNUMPROC) \
