@@ -6,10 +6,6 @@
 
 #include "debugwriter.h"
 
-#ifdef SHARED_FLUID
-#include <fluidsynth.h>
-#endif
-
 #if __LINUX__ || __ANDROID__
 #define FLUID_LIB "libfluidsynth.so.1"
 #elif __MACOSX__

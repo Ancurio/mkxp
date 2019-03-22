@@ -1,6 +1,12 @@
 #ifndef FLUIDFUN_H
 #define FLUIDFUN_H
 
+#ifdef SHARED_FLUID
+# include <fluidsynth.h>
+#else
+# define FLUIDSYNTH_VERSION_MAJOR 2
+#endif
+
 typedef struct _fluid_hashtable_t fluid_settings_t;
 typedef struct _fluid_synth_t fluid_synth_t;
 
@@ -19,7 +25,12 @@ typedef int (*FLUIDSYNTHPROGRAMCHANGEPROC)(fluid_synth_t* synth, int chan, int p
 typedef fluid_settings_t* (*NEWFLUIDSETTINGSPROC)(void);
 typedef fluid_synth_t* (*NEWFLUIDSYNTHPROC)(fluid_settings_t* settings);
 typedef void (*DELETEFLUIDSETTINGSPROC)(fluid_settings_t* settings);
+
+#if FLUIDSYNTH_VERSION_MAJOR == 1
+typedef int (*DELETEFLUIDSYNTHPROC)(fluid_synth_t* synth);
+#else
 typedef void (*DELETEFLUIDSYNTHPROC)(fluid_synth_t* synth);
+#endif
 
 #define FLUID_FUNCS \
 	FLUID_FUN(settings_setnum, FLUIDSETTINGSSETNUMPROC) \
