@@ -311,13 +311,22 @@ struct FileSystemPrivate
 	bool havePathCache;
 };
 
+static void throwPhysfsError(const char *desc)
+{
+	PHYSFS_ErrorCode ec = PHYSFS_getLastErrorCode();
+	const char *englishStr = PHYSFS_getErrorByCode(ec);
+
+	throw Exception(Exception::PHYSFSError, "%s: %s", desc, englishStr);
+}
+
 FileSystem::FileSystem(const char *argv0,
                        bool allowSymlinks)
 {
+	if (PHYSFS_init(argv0) == 0)
+		throwPhysfsError("Error initializing PhysFS");
+
 	p = new FileSystemPrivate;
 	p->havePathCache = false;
-
-	PHYSFS_init(argv0);
 
 	PHYSFS_registerArchiver(&RGSS1_Archiver);
 	PHYSFS_registerArchiver(&RGSS2_Archiver);
