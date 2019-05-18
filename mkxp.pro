@@ -8,6 +8,10 @@ INCLUDEPATH += . src
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
+CONFIG += c++11
+# And for older qmake versions..
+QMAKE_CXXFLAGS += -std=c++11
+
 isEmpty(BINDING) {
 	BINDING = MRI
 }
