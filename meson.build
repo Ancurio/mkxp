@@ -8,6 +8,8 @@ if get_option('workdir_current') == true
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
 endif
 
+add_project_arguments('-D' + get_option('binding').to_upper(), language: 'cpp')
+
 subdir('src')
 subdir(binding_dir)
 subdir('shader')

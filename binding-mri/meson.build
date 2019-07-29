@@ -2,8 +2,6 @@
 mri = dependency('ruby-' + get_option('mri_version'))
 binding_dependencies = [mri]
 
-add_project_arguments('-DBINDING_MRI', language: 'cpp')
-
 binding_headers = files(
     'binding-util.h',
     'binding-types.h',

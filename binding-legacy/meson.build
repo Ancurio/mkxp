@@ -3,8 +3,6 @@ error('Legacy bindings have not been completed yet.')
 mri = meson.get_compiler('cpp').find_library('ruby')
 binding_dependencies = [mri]
 
-add_project_arguments('-DBINDING_LEGACY', language: 'cpp')
-
 binding_headers = files(
 'binding-util.h',
 'binding-types.h',

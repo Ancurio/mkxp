@@ -8,8 +8,6 @@ add_languages('c')
 
 binding_dependencies = [mruby]
 
-add_project_arguments('-DBINDING_MRUBY', language: 'cpp')
-
 binding_headers = files(
     'binding-util.h',
     'disposable-binding.h',
