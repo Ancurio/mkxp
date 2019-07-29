@@ -1,0 +1,3 @@
+option('shared_fluid', type: 'boolean', value: false, description: 'Dynamically link fluidsynth at build time')
+option('binding', type: 'combo', value: 'mri', choices: ['mri', 'legacy', 'mruby', 'null'], description: 'Binding type')
+option('mri_version', type: 'string', value: '2.5', description: 'Version of MRI to link with')

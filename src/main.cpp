@@ -178,7 +178,7 @@ static void setupWindowIcon(const Config &conf, SDL_Window *win)
 	SDL_RWops *iconSrc;
 
 	if (conf.iconPath.empty())
-		iconSrc = SDL_RWFromConstMem(assets_icon_png, assets_icon_png_len);
+		iconSrc = SDL_RWFromConstMem(___assets_icon_png, ___assets_icon_png_len);
 	else
 		iconSrc = SDL_RWFromFile(conf.iconPath.c_str(), "rb");
 

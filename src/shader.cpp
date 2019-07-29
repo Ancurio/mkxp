@@ -56,7 +56,7 @@
 
 #define INIT_SHADER(vert, frag, name) \
 { \
-	Shader::init(shader_##vert##_vert, shader_##vert##_vert_len, shader_##frag##_frag, shader_##frag##_frag_len, \
+	Shader::init(___shader_##vert##_vert, ___shader_##vert##_vert_len, ___shader_##frag##_frag, ___shader_##frag##_frag_len, \
 	#vert, #frag, #name); \
 }
 
@@ -135,8 +135,8 @@ static void setupShaderSource(GLuint shader, GLenum type,
 		++i;
 	}
 
-	shaderSrc[i] = (const GLchar*) shader_common_h;
-	shaderSrcSize[i] = shader_common_h_len;
+	shaderSrc[i] = (const GLchar*) ___shader_common_h;
+	shaderSrcSize[i] = ___shader_common_h_len;
 	++i;
 
 	shaderSrc[i] = (const GLchar*) body;
