@@ -4,6 +4,10 @@ xxd = find_program('xxd')
 binding_dir = 'binding-' + get_option('binding')
 host_system = host_machine.system()
 
+if get_option('workdir_current') == true
+    add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
+endif
+
 subdir('src')
 subdir(binding_dir)
 subdir('shader')
