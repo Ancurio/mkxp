@@ -28,7 +28,11 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
+#ifndef OLD_RUBY
 DEF_TYPE(Sprite);
+#else
+DEF_ALLOCFUNC(Sprite);
+#endif
 
 RB_METHOD(spriteInitialize)
 {
@@ -98,7 +102,11 @@ void
 spriteBindingInit()
 {
 	VALUE klass = rb_define_class("Sprite", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&SpriteType>);
+#else
+    rb_define_alloc_func(klass, SpriteAllocate);
+#endif
 
 	disposableBindingInit     <Sprite>(klass);
 	flashableBindingInit      <Sprite>(klass);

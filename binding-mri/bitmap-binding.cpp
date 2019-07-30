@@ -27,7 +27,11 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
+#ifndef OLD_RUBY
 DEF_TYPE(Bitmap);
+#else
+DEF_ALLOCFUNC(Bitmap);
+#endif
 
 static const char *objAsStringPtr(VALUE obj)
 {
@@ -438,7 +442,11 @@ void
 bitmapBindingInit()
 {
 	VALUE klass = rb_define_class("Bitmap", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&BitmapType>);
+#else
+    rb_define_alloc_func(klass, BitmapAllocate);
+#endif
 
 	disposableBindingInit<Bitmap>(klass);
 

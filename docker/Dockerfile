@@ -20,10 +20,10 @@ RUN apt-get install ruby ruby-dev -y
 # Install stock mruby
 RUN apt-get install mruby libmruby-dev
 
-# Install Ruby 1.8
-# RUN curl https://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7.tar.bz2 | tar xj -C /source
-# RUN (cd /source/ruby-1.8.7 && autoconf && ./configure --disable-install-doc --enable-shared && make && make install)
-# RUN mkdir -p /usr/local/include/ruby; cp -r /source/ruby-1.8.7/*.h /usr/local/include/ruby
+# Install stock Ruby 1.8
+RUN curl https://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7.tar.bz2 | tar xj -C /source
+RUN (cd /source/ruby-1.8.7 && autoconf && ./configure --disable-install-doc --enable-shared && make && make install)
+RUN mkdir -p /usr/local/include/ruby; cp -r /source/ruby-1.8.7/*.h /usr/local/include/ruby
 
 # Install PhysFS
 RUN git clone https://github.com/criptych/physfs /source/physfs
@@ -33,4 +33,4 @@ RUN mkdir /source/physfs/build; (cd /source/physfs/build && cmake .. && make && 
 RUN git clone https://github.com/Ancurio/SDL_Sound /source/SDL_Sound
 RUN (cd /source/SDL_Sound && ./bootstrap && ./configure && make install)
 
-RUN rm -rf /source/*
+RUN rm -rf /source

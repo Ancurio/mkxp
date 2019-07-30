@@ -25,7 +25,11 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
+#ifndef OLD_RUBY
 DEF_TYPE(Plane);
+#else
+DEF_ALLOCFUNC(Plane);
+#endif
 
 RB_METHOD(planeInitialize)
 {
@@ -58,7 +62,11 @@ void
 planeBindingInit()
 {
 	VALUE klass = rb_define_class("Plane", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&PlaneType>);
+#else
+    rb_define_alloc_func(klass, PlaneAllocate);
+#endif
 
 	disposableBindingInit<Plane>     (klass);
 	viewportElementBindingInit<Plane>(klass);

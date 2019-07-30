@@ -49,8 +49,11 @@ static void parseArgsTableSizes(int argc, VALUE *argv, int *x, int *y, int *z)
 		rb_error_arity(argc, 1, 3);
 	}
 }
-
+#ifndef OLD_RUBY
 DEF_TYPE(Table);
+#else
+DEF_ALLOCFUNC(Table);
+#endif
 
 RB_METHOD(tableInitialize)
 {
@@ -162,7 +165,11 @@ void
 tableBindingInit()
 {
 	VALUE klass = rb_define_class("Table", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&TableType>);
+#else
+    rb_define_alloc_func(klass, TableAllocate);
+#endif
 
 	serializableBindingInit<Table>(klass);
 

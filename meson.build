@@ -32,5 +32,4 @@ executable('mkxp.@1@.@0@'.format(host_machine.cpu(), host_system),
     sources: all_sources,
     dependencies: [main_dependencies, binding_dependencies],
     include_directories: include_directories('src', binding_dir),
-    link_args: '-L/usr/local/opt/ruby/lib' # homebrew ruby pc is screwed
 )

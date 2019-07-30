@@ -47,7 +47,15 @@ static int getButtonArg(int argc, VALUE *argv)
 	else if (SYMBOL_P(argv[0]) && rgssVer >= 3)
 	{
 		VALUE symHash = getRbData()->buttoncodeHash;
+#ifndef OLD_RUBY
 		num = FIX2INT(rb_hash_lookup2(symHash, argv[0], INT2FIX(Input::None)));
+#else
+        VALUE res = rb_hash_aref(symHash, argv[0]);
+        if (!NIL_P(res))
+            num = FIX2INT(res);
+        else
+            num = Input::None;
+#endif
 	}
 	else
 	{

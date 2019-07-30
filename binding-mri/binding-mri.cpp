@@ -31,8 +31,12 @@
 #include "audio.h"
 #include "boost-hash.h"
 
+#ifndef OLD_RUBY
 #include <ruby.h>
 #include <ruby/encoding.h>
+#else
+#include <ruby/ruby.h>
+#endif
 
 #include <assert.h>
 #include <string>
@@ -331,10 +335,14 @@ RB_METHOD(_kernelCaller)
 	return trace;
 }
 
+#ifndef OLD_RUBY
 static VALUE newStringUTF8(const char *string, long length)
 {
 	return rb_enc_str_new(string, length, rb_utf8_encoding());
 }
+#else
+#define newStringUTF8 rb_str_new
+#endif
 
 struct evalArg
 {
@@ -575,6 +583,7 @@ static void showExc(VALUE exc, const BacktraceData &btData)
 
 static void mriBindingExecute()
 {
+#ifndef OLD_RUBY
 	/* Normally only a ruby executable would do a sysinit,
 	 * but not doing it will lead to crashes due to closed
 	 * stdio streams on some platforms (eg. Windows) */
@@ -584,6 +593,10 @@ static void mriBindingExecute()
 
 	ruby_setup();
 	rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
+#else
+    ruby_init();
+    rb_eval_string("$KCODE='U'");
+#endif
 
 	Config &conf = shState->rtData().config;
 
@@ -613,7 +626,11 @@ static void mriBindingExecute()
 	else
 		runRMXPScripts(btData);
 
+#ifndef OLD_RUBY
 	VALUE exc = rb_errinfo();
+#else
+    VALUE exc = rb_gv_get("$!");
+#endif
 	if (!NIL_P(exc) && !rb_obj_is_kind_of(exc, rb_eSystemExit))
 		showExc(exc, btData);
 

@@ -1,6 +1,16 @@
 
-mri = dependency('ruby-' + get_option('mri_version'))
-binding_dependencies = [mri]
+ver = get_option('mri_version')
+binding_dependencies = []
+if ver.version_compare('>1.8') == true
+    mri = dependency('ruby-' + ver)
+    binding_dependencies += mri
+else
+    #error('Support for legacy Ruby versions is not yet complete.')
+    lib = get_option('ruby_lib')
+    mri = meson.get_compiler('cpp').find_library(lib)
+    binding_dependencies += mri
+    add_project_arguments('-DOLD_RUBY', language: 'cpp')
+endif
 
 binding_headers = files(
     'binding-util.h',

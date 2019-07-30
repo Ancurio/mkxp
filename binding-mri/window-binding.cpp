@@ -24,7 +24,11 @@
 #include "viewportelement-binding.h"
 #include "binding-util.h"
 
+#ifndef OLD_RUBY
 DEF_TYPE(Window);
+#else
+DEF_ALLOCFUNC(Window);
+#endif
 
 RB_METHOD(windowInitialize)
 {
@@ -73,7 +77,12 @@ void
 windowBindingInit()
 {
 	VALUE klass = rb_define_class("Window", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&WindowType>);
+#else
+    rb_define_alloc_func(klass, WindowAllocate);
+#endif
+    
 
 	disposableBindingInit     <Window>(klass);
 	viewportElementBindingInit<Window>(klass);

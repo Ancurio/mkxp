@@ -27,7 +27,11 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
+#ifndef OLD_RUBY
 DEF_TYPE(Viewport);
+#else
+DEF_ALLOCFUNC(Viewport);
+#endif
 
 RB_METHOD(viewportInitialize)
 {
@@ -88,7 +92,11 @@ void
 viewportBindingInit()
 {
 	VALUE klass = rb_define_class("Viewport", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&ViewportType>);
+#else
+    rb_define_alloc_func(klass, ViewportAllocate);
+#endif
 
 	disposableBindingInit  <Viewport>(klass);
 	flashableBindingInit   <Viewport>(klass);

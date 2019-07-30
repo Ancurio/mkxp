@@ -90,7 +90,11 @@ void raiseRbExc(const Exception &exc)
 void
 raiseDisposedAccess(VALUE self)
 {
+#ifndef OLD_RUBY
 	const char *klassName = RTYPEDDATA_TYPE(self)->wrap_struct_name;
+#else
+    const char *klassName = rb_obj_classname(self);
+#endif
 	char buf[32];
 
 	strncpy(buf, klassName, sizeof(buf));

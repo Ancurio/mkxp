@@ -29,9 +29,14 @@
 #include "binding-util.h"
 #include "binding-types.h"
 
+#ifndef OLD_RUBY
 DEF_TYPE_CUSTOMNAME(TilemapVX, "Tilemap");
 
 DEF_TYPE_CUSTOMFREE(BitmapArray, RUBY_TYPED_NEVER_FREE);
+#else
+DEF_ALLOCFUNC(TilemapVX);
+#define BitmapArrayType "BitmapArray"
+#endif
 
 RB_METHOD(tilemapVXInitialize)
 {
@@ -137,7 +142,11 @@ void
 tilemapVXBindingInit()
 {
 	VALUE klass = rb_define_class("Tilemap", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&TilemapVXType>);
+#else
+    rb_define_alloc_func(klass, TilemapVXAllocate);
+#endif
 
 	disposableBindingInit<TilemapVX>(klass);
 
@@ -162,7 +171,9 @@ tilemapVXBindingInit()
 	}
 
 	klass = rb_define_class_under(klass, "BitmapArray", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&BitmapArrayType>);
+#endif
 
 	_rb_define_method(klass, "[]=", tilemapVXBitmapsSet);
 	_rb_define_method(klass, "[]", tilemapVXBitmapsGet);

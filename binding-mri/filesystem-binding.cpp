@@ -25,7 +25,9 @@
 #include "filesystem.h"
 #include "util.h"
 
+#ifndef OLD_RUBY
 #include "ruby/encoding.h"
+#endif
 #include "ruby/intern.h"
 
 static void
@@ -37,7 +39,11 @@ fileIntFreeInstance(void *inst)
 	SDL_FreeRW(ops);
 }
 
+#ifndef OLD_RUBY
 DEF_TYPE_CUSTOMFREE(FileInt, fileIntFreeInstance);
+#else
+DEF_ALLOCFUNC_CUSTOMFREE(FileInt, fileIntFreeInstance);
+#endif
 
 static VALUE
 fileIntForPath(const char *path, bool rubyExc)
@@ -169,7 +175,7 @@ RB_METHOD(kernelSaveData)
 
 	return Qnil;
 }
-
+#ifndef OLD_RUBY
 static VALUE stringForceUTF8(VALUE arg)
 {
 	if (RB_TYPE_P(arg, RUBY_T_STRING) && ENCODING_IS_ASCII8BIT(arg))
@@ -205,13 +211,18 @@ RB_METHOD(_marshalLoad)
 	VALUE v[] = { port, utf8Proc };
 	return rb_funcall2(marsh, rb_intern("_mkxp_load_alias"), ARRAY_SIZE(v), v);
 }
+#endif
 
 void
 fileIntBindingInit()
 {
 	VALUE klass = rb_define_class("FileInt", rb_cIO);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&FileIntType>);
-
+#else
+    rb_define_alloc_func(klass, FileIntAllocate);
+#endif
+    
 	_rb_define_method(klass, "read", fileIntRead);
 	_rb_define_method(klass, "getbyte", fileIntGetByte);
 	_rb_define_method(klass, "binmode", fileIntBinmode);
@@ -220,10 +231,12 @@ fileIntBindingInit()
 	_rb_define_module_function(rb_mKernel, "load_data", kernelLoadData);
 	_rb_define_module_function(rb_mKernel, "save_data", kernelSaveData);
 
+#ifndef OLD_RUBY
 	/* We overload the built-in 'Marshal::load()' function to silently
 	 * insert our utf8proc that ensures all read strings will be
 	 * UTF-8 encoded */
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 	rb_define_alias(rb_singleton_class(marsh), "_mkxp_load_alias", "load");
 	_rb_define_module_function(marsh, "load", _marshalLoad);
+#endif
 }

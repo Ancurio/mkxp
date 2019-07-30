@@ -13,6 +13,10 @@ zlib = dependency('zlib')
 
 main_dependencies = [sigcxx, openal, boost, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
 
+if host_system == 'darwin'
+    main_dependencies += meson.get_compiler('cpp').find_library('iconv')
+endif
+
 if get_option('shared_fluid') == true
     fluidsynth = dependency('fluidsynth')
     add_project_arguments('-DSHARED_FLUID', language: 'cpp')

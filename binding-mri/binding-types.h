@@ -24,6 +24,7 @@
 
 #include "binding-util.h"
 
+#ifndef OLD_RUBY
 DECL_TYPE(Table);
 DECL_TYPE(Rect);
 DECL_TYPE(Color);
@@ -36,5 +37,19 @@ DECL_TYPE(Plane);
 DECL_TYPE(Viewport);
 DECL_TYPE(Tilemap);
 DECL_TYPE(Window);
+#else
+#define TableType "Table"
+#define RectType "Rect"
+#define ColorType "Color"
+#define ToneType "Tone"
+#define FontType "Font"
+
+#define BitmapType "Bitmap"
+#define SpriteType "Sprite"
+#define PlaneType "Plane"
+#define ViewportType "Viewport"
+#define TilemapType "Tilemap"
+#define WindowType "Window"
+#endif
 
 #endif // BINDINGTYPES_H

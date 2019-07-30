@@ -26,7 +26,11 @@
 
 #include "bitmap.h"
 
+#ifndef OLD_RUBY
 DEF_TYPE_CUSTOMNAME(WindowVX, "Window");
+#else
+DEF_ALLOCFUNC(WindowVX);
+#endif
 
 void bitmapInitProps(Bitmap *b, VALUE self);
 
@@ -134,7 +138,11 @@ void
 windowVXBindingInit()
 {
 	VALUE klass = rb_define_class("Window", rb_cObject);
+#ifndef OLD_RUBY
 	rb_define_alloc_func(klass, classAllocate<&WindowVXType>);
+#else
+    rb_define_alloc_func(klass, WindowVXAllocate);
+#endif
 
 	disposableBindingInit     <WindowVX>(klass);
 	viewportElementBindingInit<WindowVX>(klass);
