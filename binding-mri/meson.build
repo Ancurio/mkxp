@@ -5,10 +5,14 @@ if ver.version_compare('>1.8') == true
     mri = dependency('ruby-' + ver)
     binding_dependencies += mri
 else
-    #error('Support for legacy Ruby versions is not yet complete.')
     lib = get_option('ruby_lib')
     mri = meson.get_compiler('cpp').find_library(lib)
-    binding_dependencies += mri
+    if lib.endswith('-static')
+        if host_system == 'windows'
+            binding_dependencies += meson.get_compiler('cpp').find_library('wsock32')
+        endif
+    endif
+    binding_dependencies += [mri]
     add_project_arguments('-DOLD_RUBY', language: 'cpp')
 endif
 
