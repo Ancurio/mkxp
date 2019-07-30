@@ -1,15 +1,19 @@
-# mkxp-z
+# mkxp
 
-This is a work-in-progress fork of mkxp that is intended to run as similarly to RPG Maker XP (RGSS1) as possible, specifically with the target of running games based on Pokemon Essentials, ideally without having to change a single line of code. Once this goal can be accomplished, it's possible that optional enhancements (such as Discord integration) can be written for fangame developers (you poor souls) to take advantage of.
+mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP", "RPG Maker VX" and "RPG Maker VX Ace" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file.
+
+It is licensed under the GNU General Public License v2+.
 
 ## Prebuilt binaries
-> None yet!
+[**Linux (32bit/64bit)**](http://ancurio.bplaced.net/mkxp/generic/)  
+[**OSX**](https://app.box.com/mkxpmacbuilds) by Ali  
+[**Windows (mingw-w64 32bit)**](http://ancurio.bplaced.net/mkxp/mingw32/)
 
 ## Should I use mkxp
 mkxp primarily targets technically versed users that are comfortable with Ruby / RGSS, and ideally know how to compile the project themselves. The reason for this is that for most games, due to Win32-API usage, mkxp is simply not a plug-and-play solution, but a building block with which a fully cross-platform version can be created in time.
 
 ## Bindings
-Bindings provide the glue code for an interpreted language environment to run game scripts in. Although mkxp-z still contains all pre-existing bindings at the moment, mkxp-z focuses on Ruby 1.8 and as such it isn't unlikely that the other bindings may even be removed completely. Please see the original README for more details.
+Bindings provide the glue code for an interpreted language environment to run game scripts in. Currently there are three bindings:
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
@@ -21,7 +25,21 @@ http://stackoverflow.com/questions/21574/what-is-the-difference-between-ruby-1-8
 
 This binding supports RGSS1, RGSS2 and RGSS3.
 
-> Note: Support for Ruby 1.8 has been added, but the binding is unfinished and experimental. I have made sure that a game (Ao Oni) starts, but I have not tested anything extensively.
+### mruby (Lightweight Ruby)
+Website: https://github.com/mruby/mruby
+
+mruby is a new endeavor by Matz and others to create a more lightweight, spec-adhering, embeddable Ruby implementation. You can think of it as a Ruby version of Lua.
+
+Due to heavy differences between mruby and MRI as well as lacking modules, running RPG Maker games with this binding will most likely not work correctly. It is provided as experimental code. You can eg. write your own ruby scripts and run them.
+
+Some extensions to the standard classes/modules are provided, taking the RPG Maker XP helpfile as a quasi "reference". These include Marshal, File, FileTest and Time.
+
+This binding only supports RGSS1.
+
+**Important:** If you decide to use [mattn's oniguruma regexp gem](https://github.com/mattn/mruby-onig-regexp), don't forget to add `-lonig` to the linker flags to avoid ugly symbol overlaps with libc.
+
+### null
+This binding only exists for testing purposes and does nothing (the engine quits immediately). It can be used to eg. run a minimal RGSS game loop directly in C++.
 
 ## Dependencies / Building
 
@@ -37,13 +55,13 @@ This binding supports RGSS1, RGSS2 and RGSS3.
 * vorbisfile
 * pixman
 * zlib (only ruby bindings)
-* OpenGL header (alternatively GLES2 with `cpp_args=-DGLES2_HEADER`)
+* OpenGL header (alternatively GLES2 with `DEFINES+=GLES2_HEADER`)
 * libiconv (on Windows, optional with INI_ENCODING)
 * libguess (optional with INI_ENCODING)
 
 (* For the F1 menu to work correctly under Linux/X11, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
 
-mkxp employs Qt's qmake build system, so you'll need to install that beforehand. Alternatively, you can build with cmake (FIXME: mkxp-z significantly altered the build system, fix everything in this section).
+mkxp employs Qt's qmake build system, so you'll need to install that beforehand. Alternatively, you can build with cmake (FIXME: add cmake instructions).
 
 qmake will use pkg-config to locate the respective include/library paths. If you installed any dependencies into non-standard prefixes, make sure to adjust your `PKG_CONFIG_PATH` variable accordingly.
 
@@ -66,9 +84,9 @@ These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build 
 
 To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2.0** with an up-to-date driver installed.
 
-## Platform-specific build instructions
+## Dependency kit
 
-This section still needs to be written, but to start with, use Homebrew to obtain packages on macOS and MSYS2+pacman to obtain them on Windows. For Ubuntu, refer to the dockerfile in the Docker directory.
+To facilitate hacking, I have assembled a package containing all dependencies to compile mkxp on a bare-bones Ubuntu 12.04 64bit installation. Compatibility with other distributions has not been tested. You can download it [here](https://www.dropbox.com/s/mtp44ur367m2zts/mkxp-depkit.tar.xz). Read the "README" for instructions.
 
 ## Configuration
 
@@ -96,7 +114,7 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 * Movie playback
 * wma audio files
-* The Win32API ruby class, although not for much longer. On Windows this will be supplied in full, while other operating systems will try to emulate some of the most common functions that Essentials games tend to use. A similar class employing `dlopen` and `dlsym` may also be included on those systems (this doesn't mean that you would copy/paste code).
+* The Win32API ruby class (for obvious reasons)
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)*
 
 \* There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.

@@ -1,4 +1,4 @@
-# This will create an Ubuntu 18.04 image with all the dependencies required to build MKXP-EX for linux.
+# This will create an Ubuntu 18.04 image with all the dependencies required to build MKXP-Z.
 
 FROM ubuntu:bionic
 #--------------------
@@ -33,4 +33,6 @@ RUN mkdir /source/physfs/build; (cd /source/physfs/build && cmake .. && make && 
 RUN git clone https://github.com/Ancurio/SDL_Sound /source/SDL_Sound
 RUN (cd /source/SDL_Sound && ./bootstrap && ./configure && make install)
 
-RUN rm -rf /source
+RUN rm -rf /source/*
+
+ADD . /source/mkxp-z

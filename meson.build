@@ -1,4 +1,4 @@
-project('mkxp', 'cpp', version: '1.0')
+project('mkxpz', 'cpp', version: '1.0')
 
 xxd = find_program('xxd')
 binding_dir = 'binding-' + get_option('binding')
