@@ -1,10 +1,9 @@
-win = import('Windows')
+win = import('windows')
 
 res = files(
-    'icon.ico',
-    'resource.h',
-    'resource.rc'
+'resource.h',
+'icon.ico',
+'resource.rc'
 )
 
-windows_resources = win.compile_resources(depend_files: windows_resources)
-
+windows_resources = win.compile_resources('resource.rc', depend_files: res)

@@ -1,4 +1,4 @@
-project('mkxp', 'cpp', version: '1.0', meson_version: '>=0.45.1')
+project('mkxp', 'cpp', version: '1.0')
 
 xxd = find_program('xxd')
 binding_dir = 'binding-' + get_option('binding')
@@ -16,20 +16,22 @@ subdir('shader')
 subdir('assets')
 
 all_sources = [main_headers, main_source, binding_headers, binding_source, processed_shaders, processed_assets]
+include_dirs = [include_directories('src', binding_dir)]
 
 linker_args = []
 
 if host_system == 'windows'
     subdir('windows')
     all_sources += windows_resources
+    include_dirs += include_directories('windows')
 elif host_system == 'darwin'
     if meson.get_compiler('cpp').get_id() == 'clang'
         add_project_arguments(['-std=c++11','-stdlib=libc++'], language: 'cpp')
     endif
 endif
 
-executable('mkxp.@1@.@0@'.format(host_machine.cpu(), host_system),
+executable('@0@-@1@_@2@'.format(meson.project_name(), host_system, host_machine.cpu_family()),
     sources: all_sources,
     dependencies: [main_dependencies, binding_dependencies],
-    include_directories: include_directories('src', binding_dir),
+    include_directories: include_dirs
 )
