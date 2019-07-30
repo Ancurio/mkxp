@@ -116,8 +116,6 @@ raiseRbExc(const Exception &exc);
 #define RB_FIXNUM_P(obj) FIXNUM_P(obj)
 #define RB_SYMBOL_P(obj) SYMBOL_P(obj)
 
-#define RFLOAT_VALUE(obj) RFLOAT(obj)->value
-
 #define RB_TYPE_P(obj, type) ( \
 ((type) == RUBY_T_FIXNUM) ? RB_FIXNUM_P(obj) : \
 ((type) == RUBY_T_TRUE) ? ((obj) == RUBY_Qtrue) : \
@@ -132,7 +130,7 @@ raiseRbExc(const Exception &exc);
 #define DEF_ALLOCFUNC_CUSTOMFREE(type,free) \
 static VALUE type##Allocate(VALUE klass)\
 { \
-    void *sval; \
+    void *sval = 0; \
     return Data_Wrap_Struct(klass, 0, free, sval); \
 }
 
