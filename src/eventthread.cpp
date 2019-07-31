@@ -31,7 +31,9 @@
 
 #include <al.h>
 #include <alc.h>
+#ifndef USE_MAC_OPENAL
 #include <alext.h>
+#endif
 
 #include "sharedstate.h"
 #include "graphics.h"
