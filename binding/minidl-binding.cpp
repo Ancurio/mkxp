@@ -2,20 +2,7 @@
 // it's just as basic but should work fine for the moment
 
 #include <ruby/ruby.h>
-
-#ifdef __WIN32__
-
-#include <windows.h>
-#define LIBHANDLE HINSTANCE
-#define FUNCHANDLE HANDLE
-
-#else
-
-#include <dlfcn.h>
-#define LIBHANDLE void*
-#define FUNCHANDLE void*
-
-#endif
+#include <SDL.h>
 
 #define _T_VOID     0
 #define _T_NUMBER   1
@@ -24,44 +11,10 @@
 
 typedef void* (*MINIDL_FUNC)(...);
 
-static void
-dl_freelib(LIBHANDLE lib)
-{
-#ifdef __WIN32__
-    FreeLibrary(lib);
-#else
-    dlclose(lib);
-#endif
-}
-
-static LIBHANDLE
-dl_loadlib(const char *filename)
-{
-    LIBHANDLE ret;
-#ifdef __WIN32__
-    ret = LoadLibrary(filename);
-#else
-    ret = dlopen(filename, RTLD_NOW);
-#endif
-    return ret;
-}
-
-static FUNCHANDLE
-dl_getfunc(LIBHANDLE lib, const char *filename)
-{
-    FUNCHANDLE ret;
-#ifdef __WIN32__
-    ret = (FUNCHANDLE)GetProcAddress(lib, filename);
-#else
-    ret = dlsym(lib, filename);
-#endif
-    return ret;
-}
-
 static VALUE
 MiniDL_alloc(VALUE self)
 {
-    return Data_Wrap_Struct(self, 0, dl_freelib, 0);
+    return Data_Wrap_Struct(self, 0, SDL_UnloadObject, 0);
 }
 
 static VALUE
@@ -71,22 +24,22 @@ MiniDL_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE ex
     SafeStringValue(func);
 
 
-    LIBHANDLE hlib = dl_loadlib(RSTRING_PTR(libname));
+    void *hlib = SDL_LoadObject(RSTRING_PTR(libname));
     if (!hlib)
-        rb_raise(rb_eRuntimeError, "Failed to load library %s", RSTRING_PTR(libname));
+        rb_raise(rb_eRuntimeError, "Failed to load library %s: %s", RSTRING_PTR(libname), SDL_GetError());
     DATA_PTR(self) = hlib;
 
-    FUNCHANDLE hfunc = dl_getfunc(hlib, RSTRING_PTR(func));
+    void *hfunc = SDL_LoadFunction(hlib, RSTRING_PTR(func));
 #ifdef __WIN32__
     if (!hfunc)
         {
             VALUE func_a = rb_str_new3(func);
             func_a = rb_str_cat(func_a, "A", 1);
-            hfunc = dl_getfunc(hlib, RSTRING_PTR(func_a));
+            hfunc = SDL_LoadFunction(hlib, RSTRING_PTR(func_a));
         }
 #endif
     if (!hfunc)
-        rb_raise(rb_eRuntimeError, "Failed to find function %s within %s", RSTRING_PTR(func), RSTRING_PTR(libname));
+        rb_raise(rb_eRuntimeError, "Failed to find function %s within %s: %s", RSTRING_PTR(func), RSTRING_PTR(libname), SDL_GetError());
     
 
     rb_iv_set(self, "_func", OFFT2NUM((unsigned long)hfunc));

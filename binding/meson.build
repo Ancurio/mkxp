@@ -5,13 +5,13 @@ if ver.version_compare('>1.8') == true
     binding_dependencies += dependency('ruby-' + ver)
 else
     lib = get_option('ruby_lib')
-    binding_dependencies += meson.get_compiler('cpp').find_library(lib)
+    binding_dependencies += compiler.find_library(lib)
     if host_system == 'windows'
         if lib.endswith('-static')
-            binding_dependencies += meson.get_compiler('cpp').find_library('wsock32')
+            binding_dependencies += compiler.find_library('wsock32')
         endif
     else
-        binding_dependencies += meson.get_compiler('cpp').find_library('dl')
+        binding_dependencies += compiler.find_library('dl')
     endif
     add_project_arguments('-DOLD_RUBY', language: 'cpp')
 endif

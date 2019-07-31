@@ -2,6 +2,8 @@ project('mkxp-z', 'cpp', version: '1.0')
 
 xxd = find_program('xxd')
 host_system = host_machine.system()
+compiler = meson.get_compiler('cpp')
+static = get_option('static')
 
 if get_option('workdir_current') == true
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
@@ -25,6 +27,10 @@ elif host_system == 'darwin'
     if meson.get_compiler('cpp').get_id() == 'clang'
         add_project_arguments(['-std=c++11','-stdlib=libc++'], language: 'cpp')
     endif
+endif
+
+if static == true and host_system != 'darwin'
+    add_project_link_arguments('--static', 'cpp')
 endif
 
 executable(meson.project_name(),

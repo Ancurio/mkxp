@@ -14,7 +14,7 @@ zlib = dependency('zlib')
 main_dependencies = [sigcxx, openal, boost, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
 
 if host_system == 'darwin'
-    main_dependencies += meson.get_compiler('cpp').find_library('iconv')
+    main_dependencies += compiler.find_library('iconv')
 
     if openal.type_name() != 'pkgconfig'
     add_project_arguments('-DUSE_MAC_OPENAL', language: 'cpp')
