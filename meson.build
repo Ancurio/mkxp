@@ -15,7 +15,7 @@ subdir(binding_dir)
 subdir('shader')
 subdir('assets')
 
-all_sources = [main_headers, main_source, binding_headers, binding_source, processed_shaders, processed_assets]
+all_sources = [main, bindings, processed_shaders, processed_assets]
 include_dirs = [include_directories('src', binding_dir)]
 
 linker_args = []

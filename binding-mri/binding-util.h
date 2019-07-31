@@ -188,10 +188,11 @@ getPrivateDataCheck(VALUE self, const char *type)
     void *obj = Check_TypedStruct(self, &type);
 #else
     rb_check_type(self, T_DATA);
+	/* RMXP apparently didn't check for this?
     const char *ownname = rb_obj_classname(self);
     if (strcmp(ownname, type))
         rb_raise(rb_eTypeError, "Type mismatch between %s and %s", ownname, type);
-        
+    */
     void *obj = DATA_PTR(self);
         
 #endif

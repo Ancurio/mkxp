@@ -45,4 +45,7 @@ binding_source = files(
     'filesystem-binding.cpp',
     'windowvx-binding.cpp',
     'tilemapvx-binding.cpp',
+    'minidl-binding.cpp'
 )
+
+bindings = [binding_headers, binding_source]

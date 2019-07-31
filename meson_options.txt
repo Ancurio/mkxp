@@ -2,5 +2,4 @@ option('shared_fluid', type: 'boolean', value: false, description: 'Dynamically 
 option('binding', type: 'combo', value: 'mri', choices: ['mri', 'mruby', 'null'], description: 'Binding type')
 option('mri_version', type: 'string', value: '2.5', description: 'Version of MRI to link with')
 option('workdir_current', type: 'boolean', value: false, description: 'Keep current directory on startup')
-
 option('ruby_lib', type: 'string', value: 'ruby', description: 'Name of legacy Ruby library')

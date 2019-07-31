@@ -43,6 +43,7 @@
 #include <zlib.h>
 
 #include <SDL_filesystem.h>
+#include <SDL_syswm.h>
 
 extern const char module_rpg1[];
 extern const char module_rpg2[];
@@ -78,6 +79,8 @@ void audioBindingInit();
 void graphicsBindingInit();
 
 void fileIntBindingInit();
+
+void MiniDLBindingInit();
 
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
@@ -116,6 +119,8 @@ static void mriBindingInit()
 	graphicsBindingInit();
 
 	fileIntBindingInit();
+
+	MiniDLBindingInit();
 
 	if (rgssVer >= 3)
 	{
@@ -507,6 +512,24 @@ static void runRMXPScripts(BacktraceData &btData)
 
 			fname = newStringUTF8(buf, len);
 			btData.scriptNames.insert(buf, scriptName);
+
+#ifdef __WIN32__
+			// Quick hacky fix for getting the current window
+			// from Win32API FindWindowEX calls
+			// This will be replaced with a hook to FindWindowEX
+			if(!strcmp(scriptName, "Win32API"))
+			{
+				SDL_SysWMinfo wminfo = {0};
+				SDL_GetWindowWMInfo(shState->sdlWindow(), &wminfo);
+				if (wminfo.info.win.window)
+				{
+					VALUE s = rb_str_new2("@@RGSSWINDOW=");
+					s = rb_str_append(s, rb_inspect(ULONG2NUM((unsigned long)wminfo.info.win.window)));
+					s = rb_str_append(s, rb_str_new2(";return @@RGSSWINDOW"));
+					string = rb_funcall(string, rb_intern("sub"), 2, rb_str_new2("raise \"Can't find RGSS player window\""), s);
+				}
+			}
+#endif
 
 			int state;
 			evalString(string, fname, &state);

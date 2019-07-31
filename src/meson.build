@@ -131,3 +131,5 @@ main_source = files(
     'midisource.cpp',
     'fluid-fun.cpp'
 )
+
+main = [main_source, main_headers]
