@@ -3,7 +3,6 @@ project('mkxp-z', 'cpp', version: '1.0')
 xxd = find_program('xxd')
 host_system = host_machine.system()
 compiler = meson.get_compiler('cpp')
-static = get_option('static')
 
 if get_option('workdir_current') == true
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
