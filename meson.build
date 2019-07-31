@@ -29,10 +29,6 @@ elif host_system == 'darwin'
     endif
 endif
 
-if static == true and host_system != 'darwin'
-    add_project_link_arguments('--static', 'cpp')
-endif
-
 executable(meson.project_name(),
     sources: all_sources,
     dependencies: [main_dependencies, binding_dependencies],
