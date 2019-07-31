@@ -7,7 +7,6 @@ else
     lib = get_option('ruby_lib')
     binding_dependencies += compiler.find_library(lib)
     if host_system == 'windows'
-            binding_dependencies += compiler.find_library('subhook')
         if lib.endswith('-static')
             binding_dependencies += compiler.find_library('wsock32')
         endif
