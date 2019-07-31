@@ -1,4 +1,4 @@
-project('mkxpz', 'cpp', version: '1.0')
+project('mkxp-z', 'cpp', version: '1.0')
 
 xxd = find_program('xxd')
 host_system = host_machine.system()
@@ -27,7 +27,7 @@ elif host_system == 'darwin'
     endif
 endif
 
-executable('@0@-@1@_@2@'.format(meson.project_name(), host_system, host_machine.cpu_family()),
+executable(meson.project_name(),
     sources: all_sources,
     dependencies: [main_dependencies, binding_dependencies],
     include_directories: include_dirs

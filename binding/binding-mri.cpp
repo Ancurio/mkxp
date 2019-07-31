@@ -43,7 +43,9 @@
 #include <zlib.h>
 
 #include <SDL_filesystem.h>
+#ifdef __WIN32__
 #include <SDL_syswm.h>
+#endif
 
 extern const char module_rpg1[];
 extern const char module_rpg2[];
