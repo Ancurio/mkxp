@@ -1,8 +1,12 @@
-// Most of this was taken from Ruby 1.8's Win32API.c,
+// Most of the MiniDL class was taken from Ruby 1.8's Win32API.c,
 // it's just as basic but should work fine for the moment
 
 #include <ruby/ruby.h>
 #include <SDL.h>
+#if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
+#include <SDL_syswm.h>
+#include "sharedstate.h"
+#endif
 
 #define _T_VOID     0
 #define _T_NUMBER   1
@@ -39,10 +43,12 @@ MiniDL_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE ex
         }
 #endif
     if (!hfunc)
-        rb_raise(rb_eRuntimeError, "Failed to find function %s within %s: %s", RSTRING_PTR(func), RSTRING_PTR(libname), SDL_GetError());
+        rb_raise(rb_eRuntimeError, "Failed to find function %s(A) within %s: %s", RSTRING_PTR(func), RSTRING_PTR(libname), SDL_GetError());
     
 
     rb_iv_set(self, "_func", OFFT2NUM((unsigned long)hfunc));
+    rb_iv_set(self, "_funcname", func);
+    rb_iv_set(self, "_libname", libname);
 
     VALUE ary_imports = rb_ary_new();
     VALUE *entry = RARRAY_PTR(imports);
@@ -176,7 +182,41 @@ MiniDL_call(int argc, VALUE *argv, VALUE self)
         params[i] = lParam;
     }
     
-    unsigned long ret = (unsigned long)ApiFunction(param);
+    unsigned long ret;
+#if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
+// On Windows, if essentials fixes are enabled, function calls that
+// do not work with MKXP will be intercepted here so that the code
+// still has its desired effect
+
+// Currently though, all this section does is pass dummies because
+// the Win32API side of Essentials is jank af and I've yet to work
+// out exactly what I should do here
+
+    SDL_SysWMinfo wm;
+    char *fname = RSTRING_PTR(rb_iv_get(self, "_funcname"));
+    #define func_is(x) !strcmp(fname, x)
+    #define if_func_is(x) if (func_is(x))
+    if (func_is("GetCurrentThreadId") || func_is("GetWindowThreadProcessId"))
+    {
+        ret = 571;
+    }
+    else if_func_is("FindWindowEx")
+    {
+        SDL_GetWindowWMInfo(shState->sdlWindow(), &wm);
+        ret = (unsigned long)wm.info.win.window;
+    }
+    else if_func_is("GetForegroundWindow")
+    {
+        ret = 571;
+    }
+    else
+    {
+        ret = (unsigned long)ApiFunction(param);
+    }
+
+#else
+    ret = (unsigned long)ApiFunction(param);
+#endif
     switch (FIX2INT(own_exports))
     {
         case _T_NUMBER: case _T_INTEGER:
@@ -190,6 +230,7 @@ MiniDL_call(int argc, VALUE *argv, VALUE self)
     }
 }
 
+
 void
 MiniDLBindingInit()
 {
@@ -198,6 +239,7 @@ MiniDLBindingInit()
     rb_define_method(cMiniDL, "initialize", RUBY_METHOD_FUNC(MiniDL_initialize), 4);
     rb_define_method(cMiniDL, "call", RUBY_METHOD_FUNC(MiniDL_call), -1);
     rb_define_alias(cMiniDL, "Call", "call");
+
 #ifdef __WIN32__
     rb_define_const(rb_cObject, "Win32API", cMiniDL);
 #endif

@@ -2,3 +2,5 @@ option('shared_fluid', type: 'boolean', value: false, description: 'Dynamically 
 option('mri_version', type: 'string', value: '1.8', description: 'Version of MRI to link with')
 option('workdir_current', type: 'boolean', value: false, description: 'Keep current directory on startup')
 option('ruby_lib', type: 'string', value: 'ruby', description: 'Name of legacy Ruby library')
+
+option('fix_essentials', type: 'boolean', value: false, description: 'Try to fix incompatibilities between Essentials and MKXP')

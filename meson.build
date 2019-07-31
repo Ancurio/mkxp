@@ -23,7 +23,7 @@ if host_system == 'windows'
     all_sources += windows_resources
     include_dirs += include_directories('windows')
 elif host_system == 'darwin'
-    if meson.get_compiler('cpp').get_id() == 'clang'
+    if compiler.get_id() == 'clang'
         add_project_arguments(['-std=c++11','-stdlib=libc++'], language: 'cpp')
     endif
 endif

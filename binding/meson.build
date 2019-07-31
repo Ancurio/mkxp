@@ -7,6 +7,7 @@ else
     lib = get_option('ruby_lib')
     binding_dependencies += compiler.find_library(lib)
     if host_system == 'windows'
+            binding_dependencies += compiler.find_library('subhook')
         if lib.endswith('-static')
             binding_dependencies += compiler.find_library('wsock32')
         endif
@@ -14,6 +15,10 @@ else
         binding_dependencies += compiler.find_library('dl')
     endif
     add_project_arguments('-DOLD_RUBY', language: 'cpp')
+endif
+
+if get_option('fix_essentials') == true
+    add_project_arguments('-DUSE_ESSENTIALS_FIXES', language: 'cpp')
 endif
 
 binding_headers = files(
