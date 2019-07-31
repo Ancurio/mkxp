@@ -1,22 +1,19 @@
 project('mkxpz', 'cpp', version: '1.0')
 
 xxd = find_program('xxd')
-binding_dir = 'binding-' + get_option('binding')
 host_system = host_machine.system()
 
 if get_option('workdir_current') == true
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
 endif
 
-add_project_arguments('-DBINDING_' + get_option('binding').to_upper(), language: 'cpp')
-
 subdir('src')
-subdir(binding_dir)
+subdir('binding')
 subdir('shader')
 subdir('assets')
 
 all_sources = [main, bindings, processed_shaders, processed_assets]
-include_dirs = [include_directories('src', binding_dir)]
+include_dirs = [include_directories('src', 'binding')]
 
 linker_args = []
 

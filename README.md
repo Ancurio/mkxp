@@ -9,7 +9,7 @@ This is a work-in-progress fork of mkxp that is intended to run as similarly to 
 mkxp primarily targets technically versed users that are comfortable with Ruby / RGSS, and ideally know how to compile the project themselves. The reason for this is that for most games, due to Win32-API usage, mkxp is simply not a plug-and-play solution, but a building block with which a fully cross-platform version can be created in time.
 
 ## Bindings
-Bindings provide the glue code for an interpreted language environment to run game scripts in. Although mkxp-z still contains all pre-existing bindings at the moment, mkxp-z focuses on Ruby 1.8 and as such it isn't unlikely that the other bindings may even be removed completely. Please see the original README for more details.
+Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being. Please see the original README for more details.
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
@@ -21,7 +21,7 @@ http://stackoverflow.com/questions/21574/what-is-the-difference-between-ruby-1-8
 
 This binding supports RGSS1, RGSS2 and RGSS3.
 
-> Note: Support for Ruby 1.8 has been added, but the binding is unfinished and experimental. I have made sure that a game (Ao Oni) starts, but I have not tested anything extensively.
+> Note: Support for Ruby 1.8 has been added, but the binding is unfinished and experimental.
 
 ## Dependencies / Building
 
@@ -33,7 +33,7 @@ This binding supports RGSS1, RGSS2 and RGSS3.
 * SDL2*
 * SDL2_image
 * SDL2_ttf
-* [my SDL_sound fork](https://github.com/Ancurio/SDL_sound)
+* [Ancurio's SDL_sound fork](https://github.com/Ancurio/SDL_sound)
 * vorbisfile
 * pixman
 * zlib (only ruby bindings)
@@ -43,7 +43,7 @@ This binding supports RGSS1, RGSS2 and RGSS3.
 
 (* For the F1 menu to work correctly under Linux/X11, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
 
-mkxp employs Qt's qmake build system, so you'll need to install that beforehand. Alternatively, you can build with cmake (FIXME: mkxp-z significantly altered the build system, fix everything in this section).
+mkxp employs Qt's qmake build system, so you'll need to install that beforehand. Alternatively, you can build with cmake (*FIXME: mkxp-z significantly altered the build system, fix everything in this section*).
 
 qmake will use pkg-config to locate the respective include/library paths. If you installed any dependencies into non-standard prefixes, make sure to adjust your `PKG_CONFIG_PATH` variable accordingly.
 

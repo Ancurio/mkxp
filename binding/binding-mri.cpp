@@ -80,7 +80,9 @@ void graphicsBindingInit();
 
 void fileIntBindingInit();
 
+#ifdef OLD_RUBY
 void MiniDLBindingInit();
+#endif
 
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
@@ -120,7 +122,9 @@ static void mriBindingInit()
 
 	fileIntBindingInit();
 
+#ifdef OLD_RUBY
 	MiniDLBindingInit();
+#endif
 
 	if (rgssVer >= 3)
 	{

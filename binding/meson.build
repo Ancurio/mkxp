@@ -2,17 +2,17 @@
 ver = get_option('mri_version')
 binding_dependencies = []
 if ver.version_compare('>1.8') == true
-    mri = dependency('ruby-' + ver)
-    binding_dependencies += mri
+    binding_dependencies += dependency('ruby-' + ver)
 else
     lib = get_option('ruby_lib')
-    mri = meson.get_compiler('cpp').find_library(lib)
-    if lib.endswith('-static')
-        if host_system == 'windows'
+    binding_dependencies += meson.get_compiler('cpp').find_library(lib)
+    if host_system == 'windows'
+        if lib.endswith('-static')
             binding_dependencies += meson.get_compiler('cpp').find_library('wsock32')
         endif
+    else
+        binding_dependencies += meson.get_compiler('cpp').find_library('dl')
     endif
-    binding_dependencies += [mri]
     add_project_arguments('-DOLD_RUBY', language: 'cpp')
 endif
 
@@ -26,7 +26,7 @@ binding_headers = files(
     'flashable-binding.h',
 )
 
-binding_source = files(
+binding_source = [files(
     'binding-mri.cpp',
     'binding-util.cpp',
     'table-binding.cpp',
@@ -45,7 +45,10 @@ binding_source = files(
     'filesystem-binding.cpp',
     'windowvx-binding.cpp',
     'tilemapvx-binding.cpp',
-    'minidl-binding.cpp'
-)
+)]
+
+if ver.version_compare('<=1.8') == true
+    binding_source += files('minidl-binding.cpp')
+endif
 
 bindings = [binding_headers, binding_source]
