@@ -5,9 +5,6 @@ This is a work-in-progress fork of mkxp that is intended to run as similarly to 
 ## Prebuilt binaries
 > None yet!
 
-## Should I use mkxp
-mkxp primarily targets technically versed users that are comfortable with Ruby / RGSS, and ideally know how to compile the project themselves. The reason for this is that for most games, due to Win32-API usage, mkxp is simply not a plug-and-play solution, but a building block with which a fully cross-platform version can be created in time.
-
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being. Please see the original README for more details.
 
@@ -34,32 +31,27 @@ This binding supports RGSS1, RGSS2 and RGSS3.
 * SDL2_image
 * SDL2_ttf
 * [Ancurio's SDL_sound fork](https://github.com/Ancurio/SDL_sound)
+* [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7)
 * vorbisfile
 * pixman
 * zlib (only ruby bindings)
-* OpenGL header (alternatively GLES2 with `cpp_args=-DGLES2_HEADER`)
+* OpenGL header (alternatively GLES2 with `-Dcpp_args=-DGLES2_HEADER`)
 * libiconv (on Windows, optional with INI_ENCODING)
 * libguess (optional with INI_ENCODING)
 
 (* For the F1 menu to work correctly under Linux/X11, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
 
-mkxp employs Qt's qmake build system, so you'll need to install that beforehand. Alternatively, you can build with cmake (*FIXME: mkxp-z significantly altered the build system, fix everything in this section*).
+mkxp-z employs the meson build system, so you'll need to install that beforehand.
 
-qmake will use pkg-config to locate the respective include/library paths. If you installed any dependencies into non-standard prefixes, make sure to adjust your `PKG_CONFIG_PATH` variable accordingly.
+meson will use pkg-config to locate the respective include/library paths. If you installed any dependencies into non-standard prefixes, make sure to set `-Dpkg_config_path` accordingly when configuring the build. If pkgconfig cannot find a dependency, meson will attempt to use CMake scripts instead (if CMake is installed), followed by system installations/macOS frameworks.
 
-The exception is boost, which is weird in that it still hasn't managed to pull off pkg-config support (seriously?). *If you installed boost in a non-standard prefix*, you will need to pass its include path via `BOOST_I` and library path via `BOOST_L`, either as direct arguments to qmake (`qmake BOOST_I="/usr/include" ...`) or via environment variables. You can specify a library suffix (eg. "-mt") via `BOOST_LIB_SUFFIX` if needed.
+Midi support is enabled by default and requires fluidsynth to be present at runtime (not needed for building); if mkxp can't find it at runtime, midi playback is disabled. It looks for `libfluidsynth.so.1` on Linux, `libfluidsynth.dylib.1` on OSX and `fluidsynth.dll` on Windows, so make sure to have one of these in your link path. If you still need fluidsynth to be hard linked at buildtime, use `-Dshared_fluid=true`. When building fluidsynth yourself, you can disable almost all options (audio drivers etc.) as they are not used. Note that upstream fluidsynth has support for sharing soundfont data between synthesizers (mkxp uses multiple synths), so if your memory usage is very high, you might want to try compiling fluidsynth from git master.
 
-Midi support is enabled by default and requires fluidsynth to be present at runtime (not needed for building); if mkxp can't find it at runtime, midi playback is disabled. It looks for `libfluidsynth.so.1` on Linux, `libfluidsynth.dylib.1` on OSX and `fluidsynth.dll` on Windows, so make sure to have one of these in your link path. If you still need fluidsynth to be hard linked at buildtime, use `CONFIG+=SHARED_FLUID`. When building fluidsynth yourself, you can disable almost all options (audio drivers etc.) as they are not used. Note that upstream fluidsynth has support for sharing soundfont data between synthesizers (mkxp uses multiple synths), so if your memory usage is very high, you might want to try compiling fluidsynth from git master.
+By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `-Dworkdir_current=true` to meson's build arguments.
 
-By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `DEFINES+=WORKDIR_CURRENT` to qmake's arguments.
+To auto detect the encoding of the game title in `Game.ini` and auto convert it to UTF-8, build with `-Dini_encoding=true`. Requires iconv implementation and libguess. If the encoding is wrongly detected, you can set the "titleLanguage" hint in mkxp.conf.
 
-To auto detect the encoding of the game title in `Game.ini` and auto convert it to UTF-8, build with `CONFIG+=INI_ENCODING`. Requires iconv implementation and libguess. If the encoding is wrongly detected, you can set the "titleLanguage" hint in mkxp.conf.
-
-**MRI-Binding**: pkg-config will look for `ruby-2.1.pc`, but you can override the version with `MRIVERSION=2.2` ('2.2' being an example). This is the default binding, so no arguments to qmake needed (`BINDING=MRI` to be explicit).
-
-**MRuby-Binding**: place the "mruby" folder into the project folder and build it first. Add `BINDING=MRUBY` to qmake's arguments.
-
-**Null-Binding**: Add `BINDING=NULL` to qmake's arguments.
+**MRI-Binding**: By default, meson will search for Ruby 1.8 libraries and includes within the system search path. This can be adjusted with `-Dcpp_args=-I[path]` for includes and `-Dcpp_link_args=-L[path]` for libraries. For newer Ruby versions, pkg-config will look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-2.6.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y` (`-Dmri_version=2.6` as an example).
 
 ### Supported image/audio formats
 These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
@@ -88,22 +80,24 @@ You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/
 
 ## Fonts
 
-In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, I decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
+In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
 
 If a requested font is not found, no error is generated. Instead, a built-in font is used (currently "Liberation Sans").
 
 ## What doesn't work (yet)
 
+* Win32API calls outside of Windows (This can obviously never be fully fixed, but I hope to implement a 'fake' Win32API for other OSes that allows for emulating at least some necessary system functions like sockets and window/thread detection)
+* Some Win32API calls don't seem to play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this
+* automatic window resize in Essentials
 * Movie playback
 * wma audio files
-* The Win32API ruby class, although not for much longer. On Windows this will be supplied in full, while other operating systems will try to emulate some of the most common functions that Essentials games tend to use. A similar class employing `dlopen` and `dlsym` may also be included on those systems (this doesn't mean that you would copy/paste code).
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)*
 
-\* There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
+\* There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. Since Essentials heavily changes the Tilemap class, games made using it will likely break when one is loaded.
 
 ## Nonstandard RGSS extensions
 
-To alleviate possible porting of heavily Win32API reliant scripts, I have added certain functionality that you won't find in the RGSS spec. Currently this amounts to the following:
+To alleviate possible porting of heavily Win32API reliant scripts, Ancurio added certain functionality that you won't find in the RGSS spec. Currently this amounts to the following:
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
 * The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen.
