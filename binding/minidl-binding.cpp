@@ -1,7 +1,7 @@
 // Most of the MiniDL class was taken from Ruby 1.8's Win32API.c,
 // it's just as basic but should work fine for the moment
 
-#include <ruby/ruby.h>
+#include <ruby.h>
 #include <SDL.h>
 #if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
 #include <SDL_syswm.h>

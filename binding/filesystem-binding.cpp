@@ -27,8 +27,10 @@
 
 #ifndef OLD_RUBY
 #include "ruby/encoding.h"
-#endif
 #include "ruby/intern.h"
+#else
+#include "intern.h"
+#endif
 
 static void
 fileIntFreeInstance(void *inst)

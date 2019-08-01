@@ -22,11 +22,7 @@
 #ifndef BINDING_UTIL_H
 #define BINDING_UTIL_H
 
-#ifndef OLD_RUBY
 #include <ruby.h>
-#else
-#include <ruby/ruby.h>
-#endif
 
 #include "exception.h"
 
@@ -69,7 +65,7 @@ raiseRbExc(const Exception &exc);
 #ifndef OLD_RUBY
 #define DECL_TYPE(Klass) \
 	extern rb_data_type_t Klass##Type
-#endif
+
 
 /* 2.1 has added a new field (flags) to rb_data_type_t */
 #include <ruby/version.h>
@@ -78,6 +74,7 @@ raiseRbExc(const Exception &exc);
 #define DEF_TYPE_FLAGS 0
 #else
 #define DEF_TYPE_FLAGS
+#endif
 #endif
 
 #ifndef OLD_RUBY
@@ -130,8 +127,7 @@ raiseRbExc(const Exception &exc);
 #define DEF_ALLOCFUNC_CUSTOMFREE(type,free) \
 static VALUE type##Allocate(VALUE klass)\
 { \
-    void *sval = 0; \
-    return Data_Wrap_Struct(klass, 0, free, sval); \
+    return Data_Wrap_Struct(klass, 0, free, 0); \
 }
 
 #define DEF_ALLOCFUNC(type) DEF_ALLOCFUNC_CUSTOMFREE(type, freeInstance<type>)

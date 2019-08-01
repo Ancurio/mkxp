@@ -31,11 +31,10 @@
 #include "audio.h"
 #include "boost-hash.h"
 
-#ifndef OLD_RUBY
 #include <ruby.h>
+
+#ifndef OLD_RUBY
 #include <ruby/encoding.h>
-#else
-#include <ruby/ruby.h>
 #endif
 
 #include <assert.h>
