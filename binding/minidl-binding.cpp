@@ -188,17 +188,20 @@ MiniDL_call(int argc, VALUE *argv, VALUE self)
 // do not work with MKXP will be intercepted here so that the code
 // still has its desired effect
 
-// Currently though, all this section does is pass dummies because
-// the Win32API side of Essentials is jank af and I've yet to work
-// out exactly what I should do here
+// GetCurrentThreadId, GetWindowThreadProcessId, FindWindowEx,
+// and GetForegroundWindow are used for determining whether to
+// handle input and for positioning
+
+// It's a super janky system, but I must abide by it
 
     SDL_SysWMinfo wm;
+
     char *fname = RSTRING_PTR(rb_iv_get(self, "_funcname"));
     #define func_is(x) !strcmp(fname, x)
     #define if_func_is(x) if (func_is(x))
     if (func_is("GetCurrentThreadId") || func_is("GetWindowThreadProcessId"))
     {
-        ret = 571;
+        ret = 571; // Dummy
     }
     else if_func_is("FindWindowEx")
     {
@@ -207,7 +210,25 @@ MiniDL_call(int argc, VALUE *argv, VALUE self)
     }
     else if_func_is("GetForegroundWindow")
     {
-        ret = 571;
+        if (SDL_GetWindowFlags(shState->sdlWindow()) & SDL_WINDOW_INPUT_FOCUS)
+        {
+            SDL_GetWindowWMInfo(shState->sdlWindow(), &wm);
+            ret = (unsigned long)wm.info.win.window;
+        }
+        else
+            ret = 0;
+    }
+
+    // GetCursorPos is broken too, apparently
+
+    else if_func_is("GetCursorPos")
+    {
+        int x, y;
+        int *output = (int*)params[0];
+        SDL_GetGlobalMouseState(&x, &y);
+        output[0] = x;
+        output[1] = y;
+        ret = true;
     }
     else
     {
