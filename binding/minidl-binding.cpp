@@ -13,7 +13,11 @@
 #define _T_POINTER  2
 #define _T_INTEGER  3
 
-typedef void* (*MINIDL_FUNC)(...);
+#ifdef __WIN32__
+typedef void* (__stdcall *MINIDL_FUNC)(...);
+#else
+typedef void* (__cdecl *MINIDL_FUNC)(...);
+#endif
 
 static VALUE
 MiniDL_alloc(VALUE self)
@@ -223,9 +227,9 @@ MiniDL_call(int argc, VALUE *argv, VALUE self)
 
     else if_func_is("GetCursorPos")
     {
-        int x, y;
         int *output = (int*)params[0];
-        SDL_GetGlobalMouseState(&x, &y);
+        int x, y;
+        SDL_GetMouseState(&x, &y);
         output[0] = x;
         output[1] = y;
         ret = true;
