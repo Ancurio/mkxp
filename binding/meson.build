@@ -52,7 +52,7 @@ binding_source = [files(
 )]
 
 if ver.version_compare('<=1.8') == true
-    binding_source += files('minidl-binding.cpp')
+    binding_source += files('miniffi-binding.cpp')
 endif
 
 bindings = [binding_headers, binding_source]

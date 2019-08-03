@@ -14,19 +14,19 @@
 #define _T_INTEGER  3
 
 #ifdef __WIN32__
-typedef void* (__stdcall *MINIDL_FUNC)(...);
+typedef void* (__stdcall *MINIFFI_FUNC)(...);
 #else
-typedef void* (__cdecl *MINIDL_FUNC)(...);
+typedef void* (__cdecl *MINIFFI_FUNC)(...);
 #endif
 
 static VALUE
-MiniDL_alloc(VALUE self)
+MiniFFI_alloc(VALUE self)
 {
     return Data_Wrap_Struct(self, 0, SDL_UnloadObject, 0);
 }
 
 static VALUE
-MiniDL_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE exports)
+MiniFFI_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE exports)
 {
     SafeStringValue(libname);
     SafeStringValue(func);
@@ -139,7 +139,7 @@ MiniDL_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE ex
 }
 
 static VALUE
-MiniDL_call(int argc, VALUE *argv, VALUE self)
+MiniFFI_call(int argc, VALUE *argv, VALUE self)
 {
     struct {
         unsigned long params[16];
@@ -148,7 +148,7 @@ MiniDL_call(int argc, VALUE *argv, VALUE self)
     VALUE func = rb_iv_get(self, "_func");
     VALUE own_imports = rb_iv_get(self, "_imports");
     VALUE own_exports = rb_iv_get(self, "_exports");
-    MINIDL_FUNC ApiFunction = (MINIDL_FUNC)NUM2OFFT(func);
+    MINIFFI_FUNC ApiFunction = (MINIFFI_FUNC)NUM2OFFT(func);
     VALUE args;
     int items = rb_scan_args(argc, argv, "0*", &args);
     int nimport = RARRAY_LEN(own_imports);
@@ -266,15 +266,15 @@ MiniDL_call(int argc, VALUE *argv, VALUE self)
 
 
 void
-MiniDLBindingInit()
+MiniFFIBindingInit()
 {
-    VALUE cMiniDL = rb_define_class("MiniDL", rb_cObject);
-    rb_define_alloc_func(cMiniDL, MiniDL_alloc);
-    rb_define_method(cMiniDL, "initialize", RUBY_METHOD_FUNC(MiniDL_initialize), 4);
-    rb_define_method(cMiniDL, "call", RUBY_METHOD_FUNC(MiniDL_call), -1);
-    rb_define_alias(cMiniDL, "Call", "call");
+    VALUE cMiniFFI = rb_define_class("MiniFFI", rb_cObject);
+    rb_define_alloc_func(cMiniFFI, MiniFFI_alloc);
+    rb_define_method(cMiniFFI, "initialize", RUBY_METHOD_FUNC(MiniFFI_initialize), 4);
+    rb_define_method(cMiniFFI, "call", RUBY_METHOD_FUNC(MiniFFI_call), -1);
+    rb_define_alias(cMiniFFI, "Call", "call");
 
 #ifdef __WIN32__
-    rb_define_const(rb_cObject, "Win32API", cMiniDL);
+    rb_define_const(rb_cObject, "Win32API", cMiniFFI);
 #endif
 }
