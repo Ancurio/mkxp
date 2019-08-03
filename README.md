@@ -18,7 +18,7 @@ http://stackoverflow.com/questions/21574/what-is-the-difference-between-ruby-1-8
 
 This binding supports RGSS1, RGSS2 and RGSS3.
 
-> Note: Support for Ruby 1.8 has been added, but the binding is unfinished and experimental.
+> Note: Experimental support for Ruby 1.8's API has been added. 
 
 ## Dependencies / Building
 
@@ -31,7 +31,7 @@ This binding supports RGSS1, RGSS2 and RGSS3.
 * SDL2_image
 * SDL2_ttf
 * [Ancurio's SDL_sound fork](https://github.com/Ancurio/SDL_sound)
-* [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7)
+* [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7), for the Zlib class and an actual working Windows build
 * vorbisfile
 * pixman
 * zlib (only ruby bindings)
@@ -86,14 +86,15 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 ## What doesn't work (yet)
 
-* Win32API calls outside of Windows (This can obviously never be fully fixed, but I hope to implement a 'fake' Win32API for other OSes that allows for emulating at least some necessary system functions like sockets and window/thread detection)
-* Some Win32API calls don't seem to play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this
-* automatic window resize in Essentials
+* Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you obviously cannot load Windows libraries without Windows)*
+* Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
 * Movie playback
 * wma audio files
-* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)*
+* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
 
-\* There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. Since Essentials heavily changes the Tilemap class, games made using it will likely break when one is loaded.
+\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option already)
+
+^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech due to an issue with the tilemaps, but Pokemon Uranium seems to be okay)
 
 ## Nonstandard RGSS extensions
 
