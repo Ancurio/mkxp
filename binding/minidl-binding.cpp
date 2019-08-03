@@ -223,17 +223,26 @@ MiniDL_call(int argc, VALUE *argv, VALUE self)
             ret = 0;
     }
 
-    // GetCursorPos is broken too, apparently
+    // Mouse support
 
     else if_func_is("GetCursorPos")
     {
         int *output = (int*)params[0];
         int x, y;
-        SDL_GetMouseState(&x, &y);
+        SDL_GetGlobalMouseState(&x, &y);
         output[0] = x;
         output[1] = y;
         ret = true;
     }
+	else if_func_is("ScreenToClient")
+	{
+		int *output = (int*)params[1];
+		int x, y;
+		SDL_GetMouseState(&x, &y);
+		output[0] = x;
+		output[1] = y;
+		ret = true;
+	}
     else
     {
         ret = (unsigned long)ApiFunction(param);
