@@ -238,9 +238,15 @@ MiniFFI_call(int argc, VALUE *argv, VALUE self)
         output[1] = y;
         ret = true;
     }
+	
+	// Window stuff
+	
     else if_func_is("SetWindowPos")
     {
-        SDL_SetWindowSize(shState->sdlWindow(),params[4],params[5]-24);
+		// Win32API.restoreScreen calls SetWindowPos with +6 to width
+		// and +29 to height, I should be fine if I account for this
+		// I think
+        SDL_SetWindowSize(shState->sdlWindow(),params[4]-6,params[5]-29);
         SDL_SetWindowPosition(shState->sdlWindow(),params[2],params[3]);
         return true;
     }
