@@ -4,7 +4,6 @@
 #include <ruby.h>
 #include <SDL.h>
 #if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
-#include <SDL_syswm.h>
 #include "sharedstate.h"
 #endif
 
@@ -30,82 +29,82 @@ MiniFFI_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE e
 {
     SafeStringValue(libname);
     SafeStringValue(func);
-
-
+    
+    
     void *hlib = SDL_LoadObject(RSTRING_PTR(libname));
     if (!hlib)
-        rb_raise(rb_eRuntimeError, "Failed to load library %s: %s", RSTRING_PTR(libname), SDL_GetError());
+    rb_raise(rb_eRuntimeError, "Failed to load library %s: %s", RSTRING_PTR(libname), SDL_GetError());
     DATA_PTR(self) = hlib;
-
+    
     void *hfunc = SDL_LoadFunction(hlib, RSTRING_PTR(func));
 #ifdef __WIN32__
     if (!hfunc)
-        {
-            VALUE func_a = rb_str_new3(func);
-            func_a = rb_str_cat(func_a, "A", 1);
-            hfunc = SDL_LoadFunction(hlib, RSTRING_PTR(func_a));
-        }
+    {
+        VALUE func_a = rb_str_new3(func);
+        func_a = rb_str_cat(func_a, "A", 1);
+        hfunc = SDL_LoadFunction(hlib, RSTRING_PTR(func_a));
+    }
 #endif
     if (!hfunc)
-        rb_raise(rb_eRuntimeError, "Failed to find function %s(A) within %s: %s", RSTRING_PTR(func), RSTRING_PTR(libname), SDL_GetError());
+    rb_raise(rb_eRuntimeError, "Failed to find function %s(A) within %s: %s", RSTRING_PTR(func), RSTRING_PTR(libname), SDL_GetError());
     
-
+    
     rb_iv_set(self, "_func", OFFT2NUM((unsigned long)hfunc));
     rb_iv_set(self, "_funcname", func);
     rb_iv_set(self, "_libname", libname);
-
+    
     VALUE ary_imports = rb_ary_new();
     VALUE *entry = RARRAY_PTR(imports);
     switch (TYPE(imports))
     {
-        case T_NIL:
-        break;
-        case T_ARRAY:
-        for (int i = 0; i < RARRAY_LEN(imports); i++)
+            case T_NIL:
+            break;
+            case T_ARRAY:
+            for (int i = 0; i < RARRAY_LEN(imports); i++)
         {
             SafeStringValue(entry[i]);
             switch (*(char*)RSTRING_PTR(entry[i]))
             {
-                case 'N': case 'n': case 'L': case 'l':
-                rb_ary_push(ary_imports, INT2FIX(_T_NUMBER));
-                break;
-
-                case 'P': case 'p':
-                rb_ary_push(ary_imports, INT2FIX(_T_POINTER));
-                break;
-
-                case 'I': case 'i':
-                rb_ary_push(ary_imports, INT2FIX(_T_INTEGER));
-                break;
+                    case 'N': case 'n': case 'L': case 'l':
+                    rb_ary_push(ary_imports, INT2FIX(_T_NUMBER));
+                    break;
+                    
+                    case 'P': case 'p':
+                    rb_ary_push(ary_imports, INT2FIX(_T_POINTER));
+                    break;
+                    
+                    case 'I': case 'i':
+                    rb_ary_push(ary_imports, INT2FIX(_T_INTEGER));
+                    break;
             }
         }
-        break;
+            break;
         default:
-        SafeStringValue(imports);
-        const char *s = RSTRING_PTR(imports);
-        for (int i = 0; i < RSTRING_LEN(imports); i++)
+            SafeStringValue(imports);
+            const char *s = RSTRING_PTR(imports);
+            for (int i = 0; i < RSTRING_LEN(imports); i++)
         {
             switch (*s++)
             {
-                case 'N': case 'n': case 'L': case 'l':
-                rb_ary_push(ary_imports, INT2FIX(_T_NUMBER));
-                break;
-
-                case 'P': case 'p':
-                rb_ary_push(ary_imports, INT2FIX(_T_POINTER));
-                break;
-
-                case 'I': case 'i':
-                rb_ary_push(ary_imports, INT2FIX(_T_INTEGER));
-                break;
+                    case 'N': case 'n': case 'L': case 'l':
+                    rb_ary_push(ary_imports, INT2FIX(_T_NUMBER));
+                    break;
+                    
+                    case 'P': case 'p':
+                    rb_ary_push(ary_imports, INT2FIX(_T_POINTER));
+                    break;
+                    
+                    case 'I': case 'i':
+                    rb_ary_push(ary_imports, INT2FIX(_T_INTEGER));
+                    break;
             }
         }
-        break;
+            break;
     }
-
+    
     if (16 < RARRAY_LEN(ary_imports))
-        rb_raise(rb_eRuntimeError, "too many parameters: %ld\n", RARRAY_LEN(ary_imports));
-
+    rb_raise(rb_eRuntimeError, "too many parameters: %ld\n", RARRAY_LEN(ary_imports));
+    
     rb_iv_set(self, "_imports", ary_imports);
     int ex;
     if (NIL_P(exports))
@@ -117,21 +116,21 @@ MiniFFI_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE e
         SafeStringValue(exports);
         switch(*RSTRING_PTR(exports))
         {
-            case 'V': case 'v':
-            ex = _T_VOID;
-            break;
-
-            case 'N': case 'n': case 'L': case 'l':
-            ex = _T_NUMBER;
-            break;
-
-            case 'P': case 'p':
-            ex = _T_POINTER;
-            break;
-
-            case 'I': case 'i':
-            ex = _T_INTEGER;
-            break;
+                case 'V': case 'v':
+                ex = _T_VOID;
+                break;
+                
+                case 'N': case 'n': case 'L': case 'l':
+                ex = _T_NUMBER;
+                break;
+                
+                case 'P': case 'p':
+                ex = _T_POINTER;
+                break;
+                
+                case 'I': case 'i':
+                ex = _T_INTEGER;
+                break;
         }
     }
     rb_iv_set(self, "_exports", INT2FIX(ex));
@@ -153,78 +152,74 @@ MiniFFI_call(int argc, VALUE *argv, VALUE self)
     int items = rb_scan_args(argc, argv, "0*", &args);
     int nimport = RARRAY_LEN(own_imports);
     if (items != nimport)
-        rb_raise(rb_eRuntimeError, "wrong number of parameters: expected %d, got %d",
-            nimport, items);
-
+    rb_raise(rb_eRuntimeError, "wrong number of parameters: expected %d, got %d",
+             nimport, items);
+    
     for (int i = 0; i < nimport; i++)
     {
         VALUE str = rb_ary_entry(args, i);
         unsigned long lParam = 0;
         switch(FIX2INT(rb_ary_entry(own_imports, i)))
         {
-            case _T_POINTER:
-            if (NIL_P(str))
+                case _T_POINTER:
+                if (NIL_P(str))
             {
                 lParam = 0;
             }
-            else if (FIXNUM_P(str))
+                else if (FIXNUM_P(str))
             {
                 lParam = NUM2OFFT(str);
             }
-            else
+                else
             {
                 StringValue(str);
                 rb_str_modify(str);
                 lParam = (unsigned long)RSTRING_PTR(str);
             }
-            break;
-
-            case _T_NUMBER: case _T_INTEGER: default:
-            lParam = NUM2OFFT(rb_ary_entry(args, i));
-            break;
+                break;
+                
+                case _T_NUMBER: case _T_INTEGER: default:
+                lParam = NUM2OFFT(rb_ary_entry(args, i));
+                break;
         }
         params[i] = lParam;
     }
     
     unsigned long ret;
 #if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
-// On Windows, if essentials fixes are enabled, function calls that
-// do not work with MKXP will be intercepted here so that the code
-// still has its desired effect
-
-// GetCurrentThreadId, GetWindowThreadProcessId, FindWindowEx,
-// and GetForegroundWindow are used for determining whether to
-// handle input and for positioning
-
-// It's a super janky system, but I must abide by it
-
-    SDL_SysWMinfo wm;
-
+    // On Windows, if essentials fixes are enabled, function calls that
+    // do not work with MKXP will be intercepted here so that the code
+    // still has its desired effect
+    
+    // GetCurrentThreadId, GetWindowThreadProcessId, FindWindowEx,
+    // and GetForegroundWindow are used for determining whether to
+    // handle input and for positioning
+    
+    // It's a super janky system, but I must abide by it
+    
     char *fname = RSTRING_PTR(rb_iv_get(self, "_funcname"));
-    #define func_is(x) !strcmp(fname, x)
-    #define if_func_is(x) if (func_is(x))
+#define func_is(x) !strcmp(fname, x)
+#define if_func_is(x) if (func_is(x))
     if (func_is("GetCurrentThreadId") || func_is("GetWindowThreadProcessId"))
     {
         ret = 571; // Dummy
     }
     else if_func_is("FindWindowEx")
     {
-        SDL_GetWindowWMInfo(shState->sdlWindow(), &wm);
-        ret = (unsigned long)wm.info.win.window;
+        ret = 571;
     }
     else if_func_is("GetForegroundWindow")
     {
         if (SDL_GetWindowFlags(shState->sdlWindow()) & SDL_WINDOW_INPUT_FOCUS)
         {
-            SDL_GetWindowWMInfo(shState->sdlWindow(), &wm);
-            ret = (unsigned long)wm.info.win.window;
+            ret = 571;
         }
         else
-            ret = 0;
+        ret = 0;
     }
-
+    
     // Mouse support
-
+    
     else if_func_is("GetCursorPos")
     {
         int *output = (int*)params[0];
@@ -234,33 +229,39 @@ MiniFFI_call(int argc, VALUE *argv, VALUE self)
         output[1] = y;
         ret = true;
     }
-	else if_func_is("ScreenToClient")
-	{
-		int *output = (int*)params[1];
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-		output[0] = x;
-		output[1] = y;
-		ret = true;
-	}
+    else if_func_is("ScreenToClient")
+    {
+        int *output = (int*)params[1];
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        output[0] = x;
+        output[1] = y;
+        ret = true;
+    }
+    else if_func_is("SetWindowPos")
+    {
+        SDL_SetWindowSize(shState->sdlWindow(),params[4],params[5]-24);
+        SDL_SetWindowPosition(shState->sdlWindow(),params[2],params[3]);
+        return true;
+    }
     else
     {
         ret = (unsigned long)ApiFunction(param);
     }
-
+    
 #else
     ret = (unsigned long)ApiFunction(param);
 #endif
     switch (FIX2INT(own_exports))
     {
-        case _T_NUMBER: case _T_INTEGER:
-        return OFFT2NUM(ret);
-
-        case _T_POINTER:
-        return rb_str_new2((char*)ret);
-
-        case _T_VOID: default:
-        return OFFT2NUM(0);
+            case _T_NUMBER: case _T_INTEGER:
+            return OFFT2NUM(ret);
+            
+            case _T_POINTER:
+            return rb_str_new2((char*)ret);
+            
+            case _T_VOID: default:
+            return OFFT2NUM(0);
     }
 }
 
@@ -273,7 +274,7 @@ MiniFFIBindingInit()
     rb_define_method(cMiniFFI, "initialize", RUBY_METHOD_FUNC(MiniFFI_initialize), 4);
     rb_define_method(cMiniFFI, "call", RUBY_METHOD_FUNC(MiniFFI_call), -1);
     rb_define_alias(cMiniFFI, "Call", "call");
-
+    
 #ifdef __WIN32__
     rb_define_const(rb_cObject, "Win32API", cMiniFFI);
 #endif
