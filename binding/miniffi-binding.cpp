@@ -1,9 +1,11 @@
-// Most of the MiniDL class was taken from Ruby 1.8's Win32API.c,
+// Most of the MiniFFI class was taken from Ruby 1.8's Win32API.c,
 // it's just as basic but should work fine for the moment
 
 #include <ruby.h>
 #include <SDL.h>
 #if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #include "sharedstate.h"
 #endif
 
@@ -17,6 +19,9 @@ typedef void* (__stdcall *MINIFFI_FUNC)(...);
 #else
 typedef void* (__cdecl *MINIFFI_FUNC)(...);
 #endif
+
+// MiniFFI class, also named Win32API on Windows
+// Uses LoadLibrary/GetProcAddress on Windows, dlopen/dlsym everywhere else
 
 static VALUE
 MiniFFI_alloc(VALUE self)
@@ -190,6 +195,11 @@ MiniFFI_call(int argc, VALUE *argv, VALUE self)
     // On Windows, if essentials fixes are enabled, function calls that
     // do not work with MKXP will be intercepted here so that the code
     // still has its desired effect
+	
+	// TODO: Move these to actual functions and just redirect the
+	//       function pointers during the initialization stage
+	//       so that we're not going through ugly if statements
+	//       a million times a second in Essentials
     
     // GetCurrentThreadId, GetWindowThreadProcessId, FindWindowEx,
     // and GetForegroundWindow are used for determining whether to
@@ -219,6 +229,8 @@ MiniFFI_call(int argc, VALUE *argv, VALUE self)
     }
     
     // Mouse support
+	// FIXME: It worked before but I've broken it somehow,
+	//        but on the plus side everything else works
     
     else if_func_is("GetCursorPos")
     {
@@ -250,6 +262,10 @@ MiniFFI_call(int argc, VALUE *argv, VALUE self)
         SDL_SetWindowPosition(shState->sdlWindow(),params[2],params[3]);
         return true;
     }
+	else if_func_is("RegisterHotKey") // Don't disable SDL's fullscreen,
+	{								  // it works fine
+		ret = 0;
+	}
     else
     {
         ret = (unsigned long)ApiFunction(param);
