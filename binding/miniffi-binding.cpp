@@ -199,10 +199,10 @@ RB_METHOD(MiniFFI_call)
     // do not work with MKXP will be intercepted here so that the code
     // still has its desired effect
 	
-	// TODO: Move these to actual functions and just redirect the
-	//       function pointers during the initialization stage
-	//       so that we're not going through ugly if statements
-	//       a million times a second in Essentials
+    // TODO: Move these to actual functions and just redirect the
+    //       function pointers during the initialization stage
+    //       so that we're not going through ugly if statements
+    //       a million times a second in Essentials
     
     // GetCurrentThreadId, GetWindowThreadProcessId, FindWindowEx,
     // and GetForegroundWindow are used for determining whether to
@@ -232,8 +232,8 @@ RB_METHOD(MiniFFI_call)
     }
     
     // Mouse support
-	// FIXME: It worked before but I've broken it somehow,
-	//        but on the plus side everything else works
+    // FIXME: It worked before but I've broken it somehow,
+    //        but on the plus side everything else works
     
     else if_func_is("GetCursorPos")
     {
@@ -254,19 +254,19 @@ RB_METHOD(MiniFFI_call)
         ret = true;
     }
 	
-	// Window stuff
+    // Window stuff
 	
     else if_func_is("SetWindowPos")
     {
-		// Win32API.restoreScreen calls SetWindowPos with +6 to width
-		// and +29 to height, I should be fine if I account for this
-		// I think
+	// Win32API.restoreScreen calls SetWindowPos with +6 to width
+  	// and +29 to height, I should be fine if I account for this
+	// I think
         SDL_SetWindowSize(shState->sdlWindow(),params[4]-6,params[5]-29);
         SDL_SetWindowPosition(shState->sdlWindow(),params[2],params[3]);
         return true;
     }
-	else if_func_is("RegisterHotKey") // Don't disable SDL's fullscreen,
-	{								  // it works fine
+	else if_func_is("RegisterHotKey") // Don't disable SDL's fullscreen, it works better than SpriteResizer ever did
+	{
 		ret = 0;
 	}
     else
