@@ -143,6 +143,7 @@ RB_METHOD(MiniFFI_initialize)
         }
     }
     rb_iv_set(self, "_exports", INT2FIX(ex));
+    if (rb_block_given_p()) rb_yield(self);
     return Qnil;
 }
 
