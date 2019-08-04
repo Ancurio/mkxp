@@ -6,7 +6,7 @@ This is a work-in-progress fork of mkxp that is intended to run as similarly to 
 > None yet!
 
 ## Bindings
-Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being, as after I've made sure that games work correctly, a post-YARV version of Ruby (>=1.9) can be forked to be compatible with 1.8.1's syntax in order to try and improve mkxp-z's performance. Please see the original README for more details.
+Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being.. Please see the original README for more details.
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
@@ -86,8 +86,9 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 ## What doesn't work (yet)
 
-* Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you obviously cannot load Windows libraries without Windows)*
+* Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
 * Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
+* Sockets in Essentials.
 * Movie playback
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
