@@ -38,7 +38,7 @@ MiniFFI_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE e
     
     void *hlib = SDL_LoadObject(RSTRING_PTR(libname));
     if (!hlib)
-    rb_raise(rb_eRuntimeError, "Failed to load library %s: %s", RSTRING_PTR(libname), SDL_GetError());
+    rb_raise(rb_eRuntimeError, SDL_GetError());
     DATA_PTR(self) = hlib;
     
     void *hfunc = SDL_LoadFunction(hlib, RSTRING_PTR(func));
@@ -51,7 +51,7 @@ MiniFFI_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE e
     }
 #endif
     if (!hfunc)
-    rb_raise(rb_eRuntimeError, "Failed to find function %s(A) within %s: %s", RSTRING_PTR(func), RSTRING_PTR(libname), SDL_GetError());
+    rb_raise(rb_eRuntimeError, SDL_GetError());
     
     
     rb_iv_set(self, "_func", OFFT2NUM((unsigned long)hfunc));
