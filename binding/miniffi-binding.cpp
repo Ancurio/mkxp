@@ -1,13 +1,13 @@
 // Most of the MiniFFI class was taken from Ruby 1.8's Win32API.c,
 // it's just as basic but should work fine for the moment
 
-#include <ruby.h>
 #include <SDL.h>
 #if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "sharedstate.h"
 #endif
+
+#include "binding-util.h"
 
 #define _T_VOID     0
 #define _T_NUMBER   1
@@ -32,12 +32,12 @@ MiniFFI_alloc(VALUE self)
     return Data_Wrap_Struct(self, 0, SDL_UnloadObject, 0);
 }
 
-static VALUE
-MiniFFI_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE exports)
-{
-    SafeStringValue(libname);
+RB_METHOD(MiniFFI_initialize)
+{   
+	VALUE libname, func, imports, exports;
+	rb_scan_args(argc, argv, "22", &libname, &func, &imports, &exports);
+	SafeStringValue(libname);
     SafeStringValue(func);
-    
     
     void *hlib = SDL_LoadObject(RSTRING_PTR(libname));
     if (!hlib)
@@ -146,8 +146,7 @@ MiniFFI_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE e
     return Qnil;
 }
 
-static VALUE
-MiniFFI_call(int argc, VALUE *argv, VALUE self)
+RB_METHOD(MiniFFI_call)
 {
     struct {
         unsigned long params[16];
@@ -297,7 +296,7 @@ MiniFFIBindingInit()
 {
     VALUE cMiniFFI = rb_define_class("MiniFFI", rb_cObject);
     rb_define_alloc_func(cMiniFFI, MiniFFI_alloc);
-    rb_define_method(cMiniFFI, "initialize", RUBY_METHOD_FUNC(MiniFFI_initialize), 4);
+    _rb_define_method(cMiniFFI, "initialize", MiniFFI_initialize);
     rb_define_method(cMiniFFI, "call", RUBY_METHOD_FUNC(MiniFFI_call), -1);
     rb_define_alias(cMiniFFI, "Call", "call");
     
