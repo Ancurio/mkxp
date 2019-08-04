@@ -14,10 +14,13 @@
 #define _T_POINTER  2
 #define _T_INTEGER  3
 
+
+// Might need to let MiniFFI.initialize set calling convention
+// as an optional arg, this won't work with everything
 #ifdef __WIN32__
 typedef void* (__stdcall *MINIFFI_FUNC)(...);
 #else
-typedef void* (__cdecl *MINIFFI_FUNC)(...);
+typedef void* (*MINIFFI_FUNC)(...);
 #endif
 
 // MiniFFI class, also named Win32API on Windows
@@ -59,12 +62,13 @@ MiniFFI_initialize(VALUE self, VALUE libname, VALUE func, VALUE imports, VALUE e
     rb_iv_set(self, "_libname", libname);
     
     VALUE ary_imports = rb_ary_new();
-    VALUE *entry = RARRAY_PTR(imports);
+    VALUE *entry;
     switch (TYPE(imports))
     {
             case T_NIL:
             break;
             case T_ARRAY:
+			entry = RARRAY_PTR(imports);
             for (int i = 0; i < RARRAY_LEN(imports); i++)
         {
             SafeStringValue(entry[i]);
