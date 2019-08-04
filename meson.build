@@ -1,6 +1,6 @@
 project('mkxp-z', 'cpp', version: '1.0')
 
-xxd = find_program('xxd')
+xxd = find_program('xxd', native: true)
 host_system = host_machine.system()
 compiler = meson.get_compiler('cpp')
 
