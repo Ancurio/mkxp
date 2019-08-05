@@ -135,14 +135,7 @@ kernelLoadDataInt(const char *filename, bool rubyExc)
 {
 	rb_gc_start();
     
-#ifndef OLD_RUBY
 	VALUE port = fileIntForPath(filename, rubyExc);
-#else
-    // the above results in an uninitialized IO,
-    // so let's use Ruby to open the file instead
-    // hopefully a temporary fix
-    VALUE port = rb_file_open_str(rb_str_new2(filename), "rb");
-#endif
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
@@ -234,6 +227,9 @@ fileIntBindingInit()
     
 	_rb_define_method(klass, "read", fileIntRead);
 	_rb_define_method(klass, "getbyte", fileIntGetByte);
+#ifdef OLD_RUBY // Marshal looks for 'getc', not 'getbyte'
+    rb_define_alias(klass, "getc", "getbyte");
+#endif
 	_rb_define_method(klass, "binmode", fileIntBinmode);
 	_rb_define_method(klass, "close", fileIntClose);
 
