@@ -69,8 +69,7 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2
 3. Install most of the dependencies you need with pacman:
 
 ```sh
-pacman -S base-devel git mingw-w64-i686-{gcc,meson,cmake,openal,boost,SDL2, \
-pixman,physfs,libsigc++,libvorbis,fluidsynth,libiconv,libguess} \
+pacman -S base-devel git mingw-w64-i686-{gcc,meson,cmake,openal,boost,SDL2,pixman,physfs,libsigc++,libvorbis,fluidsynth,libiconv,libguess} \
 mingw-w64-i686-SDL2_{image,ttf}
 ```
 
