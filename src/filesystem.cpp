@@ -689,7 +689,7 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
                              bool freeOnClose)
 {
 	PHYSFS_File *handle = PHYSFS_openRead(filename);
-	assert(handle);
+	// assert(handle); // Ruby exceptions are a little more helpful
 
 	initReadOps(handle, ops, freeOnClose);
 }

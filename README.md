@@ -288,7 +288,8 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 * Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
 * Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
-* Sockets in Essentials.
+* Sockets.
+* Loading data from an archive doesn't work like a real IO, so Ruby doesn't like it when Essentials tries to load files from an archive. Yet.
 * Movie playback
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
