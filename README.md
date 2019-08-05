@@ -31,7 +31,7 @@ This binding supports RGSS1, RGSS2 and RGSS3.
 * SDL2_image
 * SDL2_ttf
 * [Ancurio's SDL_sound fork](https://github.com/Ancurio/SDL_sound)
-* [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7), for the Zlib class and an actual working Windows build
+* [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7), for Zlib, a Windows build that doesn't segfault, and any 1.8.1 compatibility stuff
 * vorbisfile
 * pixman
 * zlib (only ruby bindings)
@@ -62,9 +62,9 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2
 
 ### Windows (MSYS+MinGW)
 
-1. Install [MSYS](https://www.msys2.org) and launch it. Run `pacman -Syu`, and close the console when it asks you to, then launch MSYS using the `MSYS MinGW 32-bit` shortcut that’s been added to your Start menu. Run `pacman -Syu` again.
+1. Install [MSYS](https://www.msys2.org) and launch it. Run `pacman -Syu`, and close the console when it asks you to, then launch MSYS using the `MSYS MinGW 32-bit` shortcut that’s been added to your Start menu. Run `pacman -Su` this time.
 
-2. Add `C:\msys64\mingw32\bin` to your PATH. Unless you want to try and build mkxp-z statically, this is important if you want to actually run the program you built.
+2. Add `C:\msys64\mingw32\bin` to your PATH. Unless you want to try and build mkxp-z statically, this is important if you want to actually run the program you built. Don't forget to log out and back in.
 
 3. Install most of the dependencies you need with pacman:
 
@@ -196,11 +196,72 @@ ninja
 Your results will be in `~/src/mkxp-z/build` . You can type `open ~/src/mkxp-z/build` to get there quickly.
 
 
-### Linux (Ubuntu)
+### Linux (Ubuntu Disco)
 
 > I'm assuming that if you're using anything other than Ubuntu, you're probably familiar enough with this sort of thing to not need instructions. In fact, you've probably built this thing already, haven't you?
 
-Writing it. Promise!
+1. Open your terminal and make sure your apt cache and packages are up to date with `sudo apt update; sudo apt upgrade`
+
+2. Get most of the dependencies from apt:
+
+```sh
+sudo apt install build-essential git bison cmake meson autoconf libtool \
+    pkg-config xxd libsdl2* libvorbisfile3 libvorbis-dev libpixman-1* \
+    libboost-program-options1.65* libopenal1*  libopenal-dev zlib1g* \
+    fluidsynth libfluidsynth-dev libsigc++-2.0* libogg-dev
+```
+
+3. Build the rest from source:
+
+```sh
+mkdir ~/src; cd ~/src
+
+# pkgconfig won't detect PhysFS unless you build it yourself,
+# so...
+
+git clone https://github.com/criptych/physfs
+cd physfs
+mkdir build; cd build
+cmake ..
+make -j`nproc`
+sudo make install
+cd ../..
+
+# Now we can do the other stuff:
+
+git clone https://github.com/Ancurio/SDL_Sound
+git clone https://github.com/inori-z/ruby --single-branch --branch ruby_1_8_7
+
+cd SDL_Sound && ./bootstrap
+./configure
+make -j`nproc`
+sudo make install
+cd ..
+
+cd ruby && autoconf
+./configure --enable-shared --disable-install-doc
+make -j`nproc`
+sudo make install
+cd ..
+```
+
+4. Build mkxp-z:
+
+```sh
+git clone https://github.com/inori-z/mkxp-z
+cd mkxp-z
+
+# Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
+# is a bit annoying) so you have to set include and link paths yourself.
+# in this case, includes will be found at `/usr/local/lib/ruby/1.8/x86_64-linux`.
+
+meson build -Dcpp_args=-I/usr/local/lib/ruby/1.8/x86_64-linux
+
+cd build
+ninja
+```
+
+See your results with `nautilus ~/src/mkxp-z/build`.
 
 ## Configuration
 
