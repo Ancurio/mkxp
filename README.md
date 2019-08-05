@@ -58,9 +58,51 @@ These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build 
 
 To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2.0** with an up-to-date driver installed.
 
-## Platform-specific build instructions
+## Configuration
 
-### Windows (MSYS+MinGW)
+mkxp reads configuration data from the file "mkxp.conf". The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. See 'mkxp.conf.sample' for a list of accepted entries.
+
+All option entries can alternatively be specified as command line options. Any options that are not arrays (eg. RTP paths) specified as command line options will override entries in mkxp.conf. Note that you will have to wrap values containing spaces in quotes (unlike in mkxp.conf).
+
+The syntax is: `--<option>=<value>`
+
+Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
+
+## Midi music
+
+mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
+
+You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
+
+## Fonts
+
+In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
+
+If a requested font is not found, no error is generated. Instead, a built-in font is used (currently "Liberation Sans").
+
+## What doesn't work (yet)
+
+* Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
+* Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
+* Sockets.
+* Loading data from an archive doesn't work like a real IO, so Ruby doesn't like it when Essentials tries to load files from an archive. Yet.
+* Movie playback
+* wma audio files
+* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
+
+\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option already)
+
+^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech due to an issue with the tilemaps, but Pokemon Uranium seems to be okay)
+
+## Nonstandard RGSS extensions
+
+To alleviate possible porting of heavily Win32API reliant scripts, Ancurio added certain functionality that you won't find in the RGSS spec. Currently this amounts to the following:
+
+* The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
+* The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen.
+* The `Graphics` module has two additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`.
+
+## Building on Windows (MSYS+MinGW)
 
 1. Install [MSYS](https://www.msys2.org) and launch it. Run `pacman -Syu`, and close the console when it asks you to, then launch MSYS using the `MSYS MinGW 32-bit` shortcut that’s been added to your Start menu. Run `pacman -Su` this time.
 
@@ -125,7 +167,7 @@ ninja
 
 You'll find your stuff under your MSYS home directory. You can also type `explorer .` in the shell to take a shortcut to the results.
 
-### macOS (homebrew)
+## Building on macOS (homebrew)
 
 1. Install [Homebrew](https://brew.sh).
 
@@ -195,7 +237,7 @@ ninja
 Your results will be in `~/src/mkxp-z/build` . You can type `open ~/src/mkxp-z/build` to get there quickly.
 
 
-### Linux (Ubuntu Disco)
+## Building on Linux (Ubuntu Disco)
 
 > I'm assuming that if you're using anything other than Ubuntu, you're probably familiar enough with this sort of thing to not need instructions. In fact, you've probably built this thing already, haven't you?
 
@@ -205,9 +247,9 @@ Your results will be in `~/src/mkxp-z/build` . You can type `open ~/src/mkxp-z/b
 
 ```sh
 sudo apt install build-essential git bison cmake meson autoconf libtool \
-    pkg-config xxd libsdl2* libvorbisfile3 libvorbis-dev libpixman-1* \
-    libboost-program-options1.65* libopenal1*  libopenal-dev zlib1g* \
-    fluidsynth libfluidsynth-dev libsigc++-2.0* libogg-dev
+pkg-config xxd libsdl2* libvorbisfile3 libvorbis-dev libpixman-1* \
+libboost-program-options1.65* libopenal1*  libopenal-dev zlib1g* \
+fluidsynth libfluidsynth-dev libsigc++-2.0* libogg-dev
 ```
 
 3. Build the rest from source:
@@ -261,47 +303,3 @@ ninja
 ```
 
 See your results with `nautilus ~/src/mkxp-z/build`.
-
-## Configuration
-
-mkxp reads configuration data from the file "mkxp.conf". The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. See 'mkxp.conf.sample' for a list of accepted entries.
-
-All option entries can alternatively be specified as command line options. Any options that are not arrays (eg. RTP paths) specified as command line options will override entries in mkxp.conf. Note that you will have to wrap values containing spaces in quotes (unlike in mkxp.conf).
-
-The syntax is: `--<option>=<value>`
-
-Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
-
-## Midi music
-
-mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
-
-You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
-
-## Fonts
-
-In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
-
-If a requested font is not found, no error is generated. Instead, a built-in font is used (currently "Liberation Sans").
-
-## What doesn't work (yet)
-
-* Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
-* Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
-* Sockets.
-* Loading data from an archive doesn't work like a real IO, so Ruby doesn't like it when Essentials tries to load files from an archive. Yet.
-* Movie playback
-* wma audio files
-* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
-
-\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option already)
-
-^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech due to an issue with the tilemaps, but Pokemon Uranium seems to be okay)
-
-## Nonstandard RGSS extensions
-
-To alleviate possible porting of heavily Win32API reliant scripts, Ancurio added certain functionality that you won't find in the RGSS spec. Currently this amounts to the following:
-
-* The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
-* The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen.
-* The `Graphics` module has two additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`.
