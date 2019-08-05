@@ -6,7 +6,7 @@ This is a work-in-progress fork of mkxp that is intended to run as similarly to 
 > None yet!
 
 ## Bindings
-Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being.. Please see the original README for more details.
+Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being. Please see the original README for more details.
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
@@ -60,7 +60,81 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2
 
 ## Platform-specific build instructions
 
-This section still needs to be written, but to start with, use Homebrew to obtain packages on macOS and MSYS2+pacman to obtain them on Windows. For Ubuntu, refer to the dockerfile in the Docker directory.
+### Windows (MSYS+MinGW)
+
+1. Install [MSYS](https://www.msys2.org) and launch it. Run `pacman -Syu`, and close the console when it asks you to, then launch MSYS using the `MSYS MinGW 32-bit` shortcut that’s been added to your Start menu. Run `pacman -Syu` again.
+
+2. Add `C:\msys64\mingw32\bin` to your PATH. Unless you want to try and build mkxp-z statically, this is important if you want to actually run the program you built.
+
+3. Install most of the dependencies you need with pacman:
+
+```sh
+pacman -S base-devel git mingw-w64-i686-{gcc,meson,cmake,openal,boost,SDL2, \
+pixman,physfs,libsigc++,libvorbis,fluidsynth,libiconv,libguess} \
+mingw-w64-i686-SDL2_{image,ttf}
+```
+
+4. Install the rest from source:
+
+```sh
+mkdir src; cd src
+git clone https://github.com/Ancurio/SDL_Sound
+git clone https://github.com/inori-z/ruby --single-branch --branch ruby_1_8_7
+
+cd SDL_Sound && ./bootstrap
+./configure --enable-{modplug,speex,flac}=no
+make install -j`nproc`
+cd ..
+
+# when you install ruby, some extensions might not want to build.
+# You probably don’t particularly need any, so you can just delete
+# any problematic ones if you like:
+
+rm -rf ruby/ext/{tk,win32ole,openssl}
+
+# and try building again afterwards. Or you can try to fix whatever
+# the problem is (missing libraries, usually). Hey, do whatever you need to
+# do, Capp’n.
+
+cd ruby && autoconf
+./configure --enable-shared --disable-install-doc
+make -j`nproc` && make install
+cd ..
+
+# `make install` runs a ruby script which apparently does not comply
+# with MSYS’s unix paths, so everything Ruby installs will go to the 
+# root of your drive. You have to move the resulting `mingw32` 
+# folder to the msys64 root yourself.
+```
+
+5. Build mkxp-z:
+
+```sh
+git clone https://github.com/inori-z/mkxp-z
+cd mkxp-z
+
+# Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
+# is a bit annoying) so you have to set include and link paths yourself.
+# for mingw32, includes will be at /mingw32/lib/ruby/1.8/i386-mingw32
+
+meson build -Druby_lib=msvcrt-ruby18 -Dfix_essentials=true \
+-Dcpp_args=-I/mingw32/lib/ruby/1.8/i386-mingw32
+
+cd build
+ninja
+```
+
+You'll find your stuff under your MSYS home directory. You can also type `explorer .` in the shell to take a shortcut to the results.
+
+### macOS (homebrew)
+
+Writing it.
+
+### Linux (Ubuntu)
+
+> I'm assuming that if you're using anything other than Ubuntu, you're probably familiar enough with this sort of thing to not need instructions. In fact, you've probably built this thing already, haven't you?
+
+Writing it. Promise!
 
 ## Configuration
 
