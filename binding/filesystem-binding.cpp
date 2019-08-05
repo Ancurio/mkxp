@@ -130,6 +130,14 @@ RB_METHOD(fileIntBinmode)
 	return Qnil;
 }
 
+RB_METHOD(fileIntPos)
+{
+    SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
+    
+    long long pos = SDL_RWtell(ops);  // Will return -1 if it doesn't work
+    return LL2NUM(pos);
+}
+
 VALUE
 kernelLoadDataInt(const char *filename, bool rubyExc)
 {
@@ -227,8 +235,12 @@ fileIntBindingInit()
     
 	_rb_define_method(klass, "read", fileIntRead);
 	_rb_define_method(klass, "getbyte", fileIntGetByte);
-#ifdef OLD_RUBY // Marshal looks for 'getc', not 'getbyte'
+#ifdef OLD_RUBY
+    // Ruby doesn't see this as an initialized stream,
+    // so either that has to be fixed or necessary
+    // IO functions have to be overridden
     rb_define_alias(klass, "getc", "getbyte");
+    _rb_define_method(klass, "pos", fileIntPos);
 #endif
 	_rb_define_method(klass, "binmode", fileIntBinmode);
 	_rb_define_method(klass, "close", fileIntClose);
