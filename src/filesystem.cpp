@@ -689,7 +689,16 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
                              bool freeOnClose)
 {
 	PHYSFS_File *handle = PHYSFS_openRead(filename);
-	// assert(handle); // Ruby exceptions are a little more helpful
+    
+    // Not sure what to do with this assert, I feel like
+    // I should throw an exception for the binding but
+    // Essentials pings for files that don't exist
+    
+    // I'll have to look at it later, but it works fine
+    // like this so I'll leave it commented out for now
+    
+	// assert(handle);
+    
 
 	initReadOps(handle, ops, freeOnClose);
 }

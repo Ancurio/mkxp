@@ -79,7 +79,7 @@ RB_METHOD(fileIntRead)
 {
 
 	int length = -1;
-	rb_get_args(argc, argv, "i", &length RB_ARG_END);
+	rb_get_args(argc, argv, "|i", &length RB_ARG_END);
 
 	SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
 
@@ -87,6 +87,12 @@ RB_METHOD(fileIntRead)
 	{
 		Sint64 cur = SDL_RWtell(ops);
 		Sint64 end = SDL_RWseek(ops, 0, SEEK_END);
+        
+        // Sometimes SDL_RWseek will fail for no reason
+        // with encrypted archives, so let's just ask
+        // for the size up front
+        if (end < 0) end = ops->size(ops);
+        
 		length = end - cur;
 		SDL_RWseek(ops, cur, SEEK_SET);
 	}
