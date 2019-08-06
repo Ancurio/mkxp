@@ -86,7 +86,8 @@ main_headers = files(
     'tileatlasvx.h',
     'sharedmidistate.h',
     'fluid-fun.h',
-    'sdl-util.h'
+    'sdl-util.h',
+    'fake-api.h'
 )
 
 main_source = files(
@@ -133,7 +134,8 @@ main_source = files(
     'tileatlasvx.cpp',
     'autotilesvx.cpp',
     'midisource.cpp',
-    'fluid-fun.cpp'
+    'fluid-fun.cpp',
+    'fake-api.cpp'
 )
 
 main = [main_source, main_headers]
