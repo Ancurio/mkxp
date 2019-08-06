@@ -165,10 +165,28 @@ RB_METHOD(kernelLoadData)
 {
 	RB_UNUSED_PARAM;
 
-	const char *filename;
-	rb_get_args(argc, argv, "z", &filename RB_ARG_END);
+	VALUE filename;
+	rb_get_args(argc, argv, "S", &filename RB_ARG_END);
+    
+#ifdef USE_ESSENTIALS_FIXES
+    // Okay seriously holy crap, what are you doing Essentials
+    
+    // MKXP's method of processing files in archives is way
+    // too slow to handle the constant barrage of queries
+    // SpriteWindow tries to do, and the game becomes pretty
+    // much unplayable once you get into the overworld, so
+    // until this can be fixed let's just not open Graphics
+    // files from archives
+    VALUE isGraphicsFile = rb_funcall(filename,
+                                      rb_intern("include?"),
+                                      1,
+                                      rb_str_new2("Graphics/"));
+    
+    if (isGraphicsFile == Qtrue)
+        return rb_file_open_str(filename, "rb");
+#endif
 
-	return kernelLoadDataInt(filename, true);
+	return kernelLoadDataInt(RSTRING_PTR(filename), true);
 }
 
 RB_METHOD(kernelSaveData)
