@@ -178,9 +178,9 @@ RB_METHOD(kernelLoadData)
     // until this can be fixed let's just not open Graphics
     // files from archives
     VALUE isGraphicsFile = rb_funcall(filename,
-                                      rb_intern("include?"),
+                                      rb_intern("start_with?"),
                                       1,
-                                      rb_str_new2("Graphics/"));
+                                      rb_str_new2("Graphics"));
     
     if (isGraphicsFile == Qtrue)
         return rb_file_open_str(filename, "rb");
