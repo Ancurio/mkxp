@@ -46,7 +46,6 @@ MiniFFI_GetFunctionHandle(void *lib, const char *func)
     CAPTURE(GetForegroundWindow);
     CAPTURE(GetCursorPos);
     CAPTURE(ScreenToClient);
-    CAPTURE(ScreenToClient);
     CAPTURE(SetWindowPos);
     CAPTURE(RegisterHotKey);
 #endif
