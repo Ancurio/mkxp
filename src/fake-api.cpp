@@ -1,5 +1,6 @@
 #ifdef __WIN32__
 #include <SDL.h>
+#include <SDL_syswm.h>
 
 #include <windows.h>
 
@@ -81,9 +82,7 @@ MKXP_ScreenToClient(HWND hWnd, LPPOINT lpPoint)
     return true;
 }
 
-// TODO: Try and get this, and the other hWnd stuff,
-// to just run the real functions with the right window
-// handle
+
 BOOL __stdcall
 MKXP_SetWindowPos(HWND hWnd,
                   HWND hWndInsertAfter,
@@ -93,8 +92,14 @@ MKXP_SetWindowPos(HWND hWnd,
                   int cy,
                   UINT uFlags)
 {
+    // Setting window position still doesn't work with
+    // SetWindowPos, but it still needs to be called
+    // because Win32API.restoreScreen is picky about its
+    // metrics
+    SDL_SysWMinfo wm;
+    SDL_GetWindowWMInfo(shState->sdlWindow(), &wm);
+    SetWindowPos(wm.info.win.window, hWndInsertAfter, X, Y, cx, cy, uFlags);
     SDL_SetWindowPosition(shState->sdlWindow(), X, Y);
-    SDL_SetWindowSize(shState->sdlWindow(), cx-6, cy-29);
     return true;
 }
 
