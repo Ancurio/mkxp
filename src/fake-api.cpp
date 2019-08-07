@@ -48,13 +48,17 @@ DWORD __stdcall
 MKXP_GetWindowThreadProcessId(HWND hWnd, LPDWORD lpdwProcessId)
 NOP_VAL(DUMMY_VAL)
 
-DWORD __stdcall
+HWND __stdcall
 MKXP_FindWindowEx(HWND hWnd,
                   HWND hWndChildAfter,
                   LPCSTR lpszClass,
                   LPCSTR lpszWindow
                   )
-NOP_VAL(DUMMY_VAL)
+{
+    SDL_SysWMinfo wm;
+    SDL_GetWindowWMInfo(shState->sdlWindow(), &wm);
+    return wm.info.win.window;
+}
 
 DWORD __stdcall
 MKXP_GetForegroundWindow(void)
@@ -76,9 +80,9 @@ MKXP_GetClientRect(HWND hWnd, LPRECT lpRect)
 }
 
 
-
-// FIXME: Mouse stuff doesn't work right now,
-// but at least it's not causing any Ruby exceptions
+// You would think that you could just call GetCursorPos
+// and ScreenToClient with the window handle and lppoint
+// and be fine, but nope
 BOOL __stdcall
 MKXP_GetCursorPos(LPPOINT lpPoint)
 {
@@ -106,9 +110,7 @@ MKXP_SetWindowPos(HWND hWnd,
     // SetWindowPos, but it still needs to be called
     // because Win32API.restoreScreen is picky about its
     // metrics
-    SDL_SysWMinfo wm;
-    SDL_GetWindowWMInfo(shState->sdlWindow(), &wm);
-    SetWindowPos(wm.info.win.window, hWndInsertAfter, X, Y, cx, cy, uFlags);
+    SetWindowPos(hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
     SDL_SetWindowPosition(shState->sdlWindow(), X, Y);
     return true;
 }

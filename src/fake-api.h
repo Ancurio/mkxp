@@ -35,7 +35,7 @@ MKXP_GetCurrentThreadId(void);
 DWORD __stdcall
 MKXP_GetWindowThreadProcessId(HWND hWnd, LPDWORD lpdwProcessId);
 
-DWORD __stdcall
+HWND __stdcall
 MKXP_FindWindowEx(HWND hWnd,
                   HWND hWndChildAfter,
                   LPCSTR lpszClass,
