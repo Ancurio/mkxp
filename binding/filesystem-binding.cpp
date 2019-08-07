@@ -183,7 +183,12 @@ RB_METHOD(kernelLoadData)
                                       rb_str_new2("Graphics"));
     
     if (isGraphicsFile == Qtrue)
-        return rb_file_open_str(filename, "rb");
+    {
+        VALUE f = rb_file_open_str(filename, "rb");
+        VALUE ret = rb_funcall(f, rb_intern("read"), 0);
+        rb_funcall(f, rb_intern("close"), 0);
+        return ret;
+    }
 #endif
 
 	return kernelLoadDataInt(RSTRING_PTR(filename), true);
