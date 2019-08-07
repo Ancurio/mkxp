@@ -44,6 +44,7 @@ MiniFFI_GetFunctionHandle(void *lib, const char *func)
     CAPTURE(GetWindowThreadProcessId);
     CAPTURE(FindWindowEx);
     CAPTURE(GetForegroundWindow);
+    CAPTURE(GetClientRect);
     CAPTURE(GetCursorPos);
     CAPTURE(ScreenToClient);
     CAPTURE(SetWindowPos);

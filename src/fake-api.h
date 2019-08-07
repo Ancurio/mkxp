@@ -46,6 +46,9 @@ DWORD __stdcall
 MKXP_GetForegroundWindow(void);
 
 BOOL __stdcall
+MKXP_GetClientRect(HWND hWnd, LPRECT lpRect);
+
+BOOL __stdcall
 MKXP_GetCursorPos(LPPOINT lpPoint);
 
 BOOL __stdcall

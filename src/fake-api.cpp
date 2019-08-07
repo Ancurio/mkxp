@@ -6,6 +6,7 @@
 
 #include "sharedstate.h"
 #include "fake-api.h"
+#include "debugwriter.h"
 
 
 // Essentials, without edits, needs Win32API. Two problems with that:
@@ -65,6 +66,16 @@ MKXP_GetForegroundWindow(void)
     return 0;
 }
 
+BOOL __stdcall
+MKXP_GetClientRect(HWND hWnd, LPRECT lpRect)
+{
+    SDL_GetWindowSize(shState->sdlWindow(),
+                      (int*)&lpRect->right,
+                      (int*)&lpRect->bottom);
+    return true;
+}
+
+
 
 // FIXME: Mouse stuff doesn't work right now,
 // but at least it's not causing any Ruby exceptions
@@ -81,7 +92,6 @@ MKXP_ScreenToClient(HWND hWnd, LPPOINT lpPoint)
     SDL_GetMouseState((int*)&lpPoint->x, (int*)&lpPoint->y);
     return true;
 }
-
 
 BOOL __stdcall
 MKXP_SetWindowPos(HWND hWnd,
