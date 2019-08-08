@@ -1,4 +1,4 @@
-project('mkxp-z', 'cpp', version: '1.0')
+project('mkxp-z', 'cpp', version: '1.0', default_options: ['cpp_std=c++11'])
 
 xxd = find_program('xxd', native: true)
 host_system = host_machine.system()
@@ -24,7 +24,7 @@ if host_system == 'windows'
     include_dirs += include_directories('windows')
 elif host_system == 'darwin'
     if compiler.get_id() == 'clang'
-        add_project_arguments(['-std=c++11','-stdlib=libc++'], language: 'cpp')
+        add_project_arguments('-stdlib=libc++', language: 'cpp')
     endif
 endif
 

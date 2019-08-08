@@ -24,6 +24,7 @@ This binding supports RGSS1, RGSS2 and RGSS3.
 
 * Boost.Unordered (headers only)
 * Boost.Program_options
+* Boost.Filesystem
 * libsigc++ 2.0
 * PhysFS (latest hg)
 * OpenAL

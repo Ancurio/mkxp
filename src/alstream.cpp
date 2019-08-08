@@ -34,6 +34,7 @@
 #include <SDL_mutex.h>
 #include <SDL_thread.h>
 #include <SDL_timer.h>
+#include <boost/filesystem/path.hpp>
 
 ALStream::ALStream(LoopMode loopMode,
 		           const std::string &threadId)
@@ -257,7 +258,12 @@ struct ALStreamOpenHandler : FileSystem::OpenHandler
 void ALStream::openSource(const std::string &filename)
 {
 	ALStreamOpenHandler handler(srcOps, looped);
-	shState->fileSystem().openRead(handler, filename.c_str());
+    
+    // The path must be normalized or ridiculous things like
+    // `Audio/BGM/../../Audio/ME/001-Victory01` will break
+    
+    std::string normal = boost::filesystem::path(filename).lexically_normal().generic_string();
+	shState->fileSystem().openRead(handler, normal.c_str());
 	source = handler.source;
 	needsRewind.clear();
 
