@@ -115,6 +115,24 @@ MKXP_SetWindowPos(HWND hWnd,
     return true;
 }
 
+
+// Games that use this to resize the window won't center
+// themselves, but it's better than having the window sent
+// so far into the corner that you can't even grab onto
+// the title bar
+BOOL __stdcall
+MKXP_GetWindowRect(HWND hWnd, LPRECT lpRect)
+{
+    int cur_x, cur_y, cur_w, cur_h;
+    SDL_GetWindowPosition(shState->sdlWindow(), &cur_x, &cur_y);
+    SDL_GetWindowSize(shState->sdlWindow(), &cur_w, &cur_h);
+    lpRect->left = cur_x;
+    lpRect->right = cur_x + cur_w + 1;
+    lpRect->top = cur_y;
+    lpRect->bottom = cur_y + cur_h + 1;
+    return true;
+}
+
 BOOL __stdcall
 MKXP_RegisterHotKey(HWND hWnd,
                     int id,

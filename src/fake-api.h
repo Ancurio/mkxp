@@ -64,6 +64,9 @@ MKXP_SetWindowPos(HWND hWnd,
                   UINT uFlags);
 
 BOOL __stdcall
+MKXP_GetWindowRect(HWND hWnd, LPRECT lpRect);
+
+BOOL __stdcall
 MKXP_RegisterHotKey(HWND hWnd,
                     int id,
                     UINT fsModifiers,

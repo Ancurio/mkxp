@@ -48,6 +48,7 @@ MiniFFI_GetFunctionHandle(void *lib, const char *func)
     CAPTURE(GetCursorPos);
     CAPTURE(ScreenToClient);
     CAPTURE(SetWindowPos);
+    CAPTURE(GetWindowRect);
     CAPTURE(RegisterHotKey);
 #endif
     return SDL_LoadFunction(lib, func);
