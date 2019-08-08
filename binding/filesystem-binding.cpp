@@ -150,11 +150,22 @@ kernelLoadDataInt(const char *filename, bool rubyExc)
 	rb_gc_start();
     
 	VALUE port = fileIntForPath(filename, rubyExc);
-
+    
+    // RGSS checks to see if a file is in the RGSSAD,
+    // and if it is, just passes a char* and the length
+    // of the file to rb_str_new and gives that back to
+    // Marshal. I haven't checked if the whole archive
+    // is kept decrypted in memory (probably, if the
+    // file is always locked), but either way, dumping
+    // the file to a string is much faster than faking
+    // the IO. Seems to cause a bit of startup lag,
+    // but that's no doubt fixable
+    
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
 	// FIXME need to catch exceptions here with begin rescue
-	VALUE result = rb_funcall2(marsh, rb_intern("load"), 1, &port);
+    VALUE data = fileIntRead(0, 0, port);
+	VALUE result = rb_funcall2(marsh, rb_intern("load"), 1, &data);
 
 	rb_funcall2(port, rb_intern("close"), 0, NULL);
 
@@ -167,29 +178,6 @@ RB_METHOD(kernelLoadData)
 
 	VALUE filename;
 	rb_get_args(argc, argv, "S", &filename RB_ARG_END);
-    
-#ifdef USE_ESSENTIALS_FIXES
-    // Okay seriously holy crap, what are you doing Essentials
-    
-    // MKXP's method of processing files in archives is way
-    // too slow to handle the constant barrage of queries
-    // SpriteWindow tries to do, and the game becomes pretty
-    // much unplayable once you get into the overworld, so
-    // until this can be fixed let's just not open Graphics
-    // files from archives
-    VALUE isGraphicsFile = rb_funcall(filename,
-                                      rb_intern("start_with?"),
-                                      1,
-                                      rb_str_new2("Graphics"));
-    
-    if (isGraphicsFile == Qtrue)
-    {
-        VALUE f = rb_file_open_str(filename, "rb");
-        VALUE ret = rb_funcall(f, rb_intern("read"), 0);
-        rb_funcall(f, rb_intern("close"), 0);
-        return ret;
-    }
-#endif
 
 	return kernelLoadDataInt(RSTRING_PTR(filename), true);
 }
