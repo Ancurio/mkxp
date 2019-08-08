@@ -178,6 +178,27 @@ RB_METHOD(kernelLoadData)
 
 	VALUE filename;
 	rb_get_args(argc, argv, "S", &filename RB_ARG_END);
+    
+    
+#ifdef USE_ESSENTIALS_FIXES
+    // Until a faster method for getting RGSSAD data is
+    // written (could just copy RMXP, keeping stuff in
+    // memory and just passing char pointers can't be
+    // that complicated), load_data is still too slow
+    // to handle the overworld load_data assault
+    VALUE isGraphicsFile = rb_funcall(filename,
+                                      rb_intern("start_with?"),
+                                      1,
+                                      rb_str_new2("Graphics"));
+    
+    if (isGraphicsFile == Qtrue)
+    {
+        VALUE f = rb_file_open_str(filename, "rb");
+        VALUE ret = rb_funcall(f, rb_intern("read"), 0);
+        rb_funcall(f, rb_intern("close"), 0);
+        return ret;
+    }
+#endif
 
 	return kernelLoadDataInt(RSTRING_PTR(filename), true);
 }
