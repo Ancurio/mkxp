@@ -7,7 +7,7 @@ sdl2_ttf = dependency('SDL2_ttf')
 sdl2_image = dependency('SDL2_image')
 sdl_sound = dependency('SDL_sound')
 
-boost = dependency('boost', version: '>=1.49', modules: ['program_options', 'filesystem'])
+boost = dependency('boost', version: '>=1.49', modules: ['system', 'program_options', 'filesystem'])
 openal = dependency('openal')
 zlib = dependency('zlib')
 

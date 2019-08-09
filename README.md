@@ -250,7 +250,7 @@ Your results will be in `~/src/mkxp-z/build` . You can type `open ~/src/mkxp-z/b
 sudo apt install build-essential git bison cmake meson autoconf libtool \
 pkg-config xxd libsdl2* libvorbisfile3 libvorbis-dev libpixman-1* \
 libboost-program-options1.65* libopenal1*  libopenal-dev zlib1g* \
-fluidsynth libfluidsynth-dev libsigc++-2.0* libogg-dev
+fluidsynth libfluidsynth-dev libsigc++-2.0* libogg-dev libboost-filesystem1.65*
 ```
 
 3. Build the rest from source:
