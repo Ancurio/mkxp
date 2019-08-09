@@ -115,6 +115,13 @@ MKXP_SetWindowPos(HWND hWnd,
     return true;
 }
 
+BOOL __stdcall
+MKXP_SetWindowTextA(HWND hWnd, LPCSTR lpString)
+{
+    SDL_SetWindowTitle(shState->sdlWindow(), (const char*)lpString);
+    return true;
+}
+
 
 // Games that use this to resize the window won't center
 // themselves, but it's better than having the window sent
