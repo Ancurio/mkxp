@@ -32,5 +32,5 @@ executable(meson.project_name(),
     sources: all_sources,
     dependencies: [main_dependencies, binding_dependencies],
     include_directories: include_dirs,
-    gui_app: (get_option('console') != false)
+    gui_app: (get_option('console') == false)
 )
