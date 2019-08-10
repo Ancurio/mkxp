@@ -4,7 +4,6 @@
 #include <SDL.h>
 #if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
 #include <windows.h>
-#include "sharedstate.h"
 #include "fake-api.h"
 #endif
 
@@ -18,10 +17,20 @@
 
 // Might need to let MiniFFI.initialize set calling convention
 // as an optional arg, this won't work with everything
+// Maybe libffi would help out with this
+
+// Only using 8 max args instead of 16 to reduce the time taken
+// to set all those variables up and ease the eyesore, and I don't
+// think there are many functions one would need to use that require
+// that many arguments anyway
+
+// stdcall is easy, everything in a struct gets pushed to the stack
 #ifdef __WIN32__
 typedef void* (__stdcall *MINIFFI_FUNC)(...);
 #else
-typedef void* (*MINIFFI_FUNC)(...);
+// L O N G, but variables won't get set up correctly otherwise
+// should allow for __fastcalls (macOS likes these) and whatever else
+typedef void* (*MINIFFI_FUNC)(unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long);
 #endif
 
 // MiniFFI class, also named Win32API on Windows
@@ -54,6 +63,9 @@ MiniFFI_GetFunctionHandle(void *lib, const char *func)
 #endif
     return SDL_LoadFunction(lib, func);
 }
+
+// MiniFFI.new(library, function[, imports[, exports]])
+// Yields itself in blocks
 
 RB_METHOD(MiniFFI_initialize)
 {
@@ -133,7 +145,7 @@ RB_METHOD(MiniFFI_initialize)
             break;
     }
     
-    if (16 < RARRAY_LEN(ary_imports))
+    if (8 < RARRAY_LEN(ary_imports))
         rb_raise(rb_eRuntimeError, "too many parameters: %ld\n", RARRAY_LEN(ary_imports));
     
     rb_iv_set(self, "_imports", ary_imports);
@@ -172,7 +184,7 @@ RB_METHOD(MiniFFI_initialize)
 RB_METHOD(MiniFFI_call)
 {
     struct {
-        unsigned long params[16];
+        unsigned long params[8];
     } param;
 #define params param.params
     VALUE func = rb_iv_get(self, "_func");
@@ -215,8 +227,11 @@ RB_METHOD(MiniFFI_call)
         }
         params[i] = lParam;
     }
-    
+#ifdef __WIN32__
     unsigned long ret = (unsigned long)ApiFunction(param);
+#else
+    unsigned long ret = (unsigned long)ApiFunction(params[0],params[1],params[2],params[3],params[4],params[5],params[6],params[7]);
+#endif
     
     switch (FIX2INT(own_exports))
     {
@@ -238,7 +253,7 @@ MiniFFIBindingInit()
     VALUE cMiniFFI = rb_define_class("MiniFFI", rb_cObject);
     rb_define_alloc_func(cMiniFFI, MiniFFI_alloc);
     _rb_define_method(cMiniFFI, "initialize", MiniFFI_initialize);
-    rb_define_method(cMiniFFI, "call", RUBY_METHOD_FUNC(MiniFFI_call), -1);
+    _rb_define_method(cMiniFFI, "call", MiniFFI_call);
     rb_define_alias(cMiniFFI, "Call", "call");
     
 #ifdef __WIN32__
