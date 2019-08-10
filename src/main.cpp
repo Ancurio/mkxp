@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
     if (WSAStartup(0x101, &wsadata) || wsadata.wVersion != 0x101)
     {
         char buf[200];
-        sprintf(&buf, "Error initializing winsock: %08X", WSAGetLastError());
+        snprintf(buf, sizeof(buf), "Error initializing winsock: %08X", WSAGetLastError());
         showInitError(std::string(buf)); // Not an error worth ending the program over
     }
 #endif
