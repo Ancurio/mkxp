@@ -43,6 +43,12 @@
 
 #include <SDL_filesystem.h>
 
+#ifdef __WIN32__
+#define NULL_IO "NUL"
+#else
+#define NULL_IO "/dev/null"
+#endif
+
 extern const char module_rpg1[];
 extern const char module_rpg2[];
 extern const char module_rpg3[];
@@ -616,6 +622,10 @@ static void mriBindingExecute()
 #else
     ruby_init();
     rb_eval_string("$KCODE='U'");
+#ifdef NO_CONSOLE
+    // Sysinit isn't a thing yet, so send stderr to /dev/null instead
+    rb_funcall(rb_gv_get("$stderr"), rb_intern("reopen"), 1, rb_str_new2(NULL_IO));
+#endif
 #endif
 
 	Config &conf = shState->rtData().config;

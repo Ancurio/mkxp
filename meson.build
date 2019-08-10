@@ -4,12 +4,16 @@ xxd = find_program('xxd', native: true)
 host_system = host_machine.system()
 compiler = meson.get_compiler('cpp')
 
-if get_option('workdir_current') == true
+if get_option('workdir_current')
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
 endif
 
-if get_option('fix_essentials') == true
+if get_option('fix_essentials')
     add_project_arguments('-DUSE_ESSENTIALS_FIXES', language: 'cpp')
+endif
+
+if not get_option('console')
+    add_project_arguments('-DNO_CONSOLE', language: 'cpp')
 endif
 
 subdir('src')
