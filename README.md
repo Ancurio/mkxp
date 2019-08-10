@@ -11,14 +11,9 @@ Bindings provide the glue code for an interpreted language environment to run ga
 ### MRI
 Website: https://www.ruby-lang.org/en/
 
-Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version of ruby. If you're interested in running games created with RPG Maker XP, this is the one you should go for. MRI 1.8 is what was used in RPG Maker XP, however, this binding is written against 2.0 (the latest version). For games utilizing only the default scripts provided by Enterbrain, this binding works quite well so far. Note that there are language and syntax differences between 1.8 and 2.0, so some user created scripts may not work correctly.
+Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version of ruby. MRI 1.8.1 is what was used in RPG Maker XP, and 1.8.7 is what mkxp-z is written around (at least for now). 1.8.1 and 1.8.7 are for the most part identical, though there are a few differences that need to be ironed out before Essentials can be loaded.
 
-For a list of differences, see:
-http://stackoverflow.com/questions/21574/what-is-the-difference-between-ruby-1-8-and-ruby-1-9
-
-This binding supports RGSS1, RGSS2 and RGSS3.
-
-> Note: Experimental support for Ruby 1.8's API has been added. 
+This binding supports RGSS1, RGSS2 and RGSS3, though I've only tested it with RGSS1.
 
 ## Dependencies / Building
 
@@ -85,13 +80,12 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 * Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
 * Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
-* Sockets.
 * `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so if `fix_essentials` is used Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag. Very hard.
 * Movie playback
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
 
-\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option already)
+\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option
 
 ^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech due to an issue with the tilemaps, but Pokemon Uranium seems to be okay)
 
