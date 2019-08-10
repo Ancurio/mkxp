@@ -19,6 +19,8 @@ if host_system == 'darwin'
     if openal.type_name() != 'pkgconfig'
     add_project_arguments('-DUSE_MAC_OPENAL', language: 'cpp')
     endif
+elif host_system == 'windows' and get_option('fix_essentials')
+    main_dependencies += compiler.find_library('wsock32')
 endif
 
 if get_option('shared_fluid') == true

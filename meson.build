@@ -8,6 +8,10 @@ if get_option('workdir_current') == true
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
 endif
 
+if get_option('fix_essentials') == true
+    add_project_arguments('-DUSE_ESSENTIALS_FIXES', language: 'cpp')
+endif
+
 subdir('src')
 subdir('binding')
 subdir('shader')
