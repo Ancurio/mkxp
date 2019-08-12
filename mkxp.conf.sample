@@ -36,9 +36,9 @@
 
 
 # Game window is resizable
-# (default: disabled)
+# (default: enabled)
 #
-# winResizable=false
+# winResizable=true
 
 
 # Start game in fullscreen (this can
@@ -57,9 +57,9 @@
 
 # Apply linear interpolation when game screen
 # is upscaled
-# (default: enabled)
+# (default: disabled)
 #
-# smoothScaling=true
+# smoothScaling=false
 
 
 # Sync screen redraws to the monitor refresh rate

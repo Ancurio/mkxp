@@ -123,10 +123,6 @@ MKXP_SetWindowTextA(HWND hWnd, LPCSTR lpString)
 }
 
 
-// Games that use this to resize the window won't center
-// themselves, but it's better than having the window sent
-// so far into the corner that you can't even grab onto
-// the title bar
 BOOL __stdcall
 MKXP_GetWindowRect(HWND hWnd, LPRECT lpRect)
 {
