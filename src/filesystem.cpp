@@ -690,14 +690,8 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
 {
 	PHYSFS_File *handle = PHYSFS_openRead(filename);
     
-    // Not sure what to do with this assert, I feel like
-    // I should throw an exception for the binding but
-    // Essentials pings for files that don't exist
-    
-    // I'll have to look at it later, but it works fine
-    // like this so I'll leave it commented out for now
-    
 	// assert(handle);
+    if (!handle) throw Exception(Exception::NoFileError, "%s", filename);
     
 
 	initReadOps(handle, ops, freeOnClose);
