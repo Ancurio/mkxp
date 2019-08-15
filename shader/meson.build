@@ -38,7 +38,7 @@ foreach file : embedded_shaders_f
             xxd, '-i', '@INPUT@'
         ],
         capture: true,
-        depend_files: embedded_shaders_f
+        depend_files: embedded_shaders_f[count]
         )
     count += 1
 endforeach

@@ -16,7 +16,7 @@ foreach file : embedded_assets_f
         xxd, '-i', '@INPUT@'
     ],
     capture: true,
-    depend_files: embedded_assets_f
+    depend_files: embedded_assets_f[count]
     )
     count += 1
 endforeach
