@@ -60,6 +60,7 @@ MiniFFI_GetFunctionHandle(void *lib, const char *func)
     CAPTURE(SetWindowTextA);
     CAPTURE(GetWindowRect);
     CAPTURE(RegisterHotKey);
+    CAPTURE(GetKeyboardState);
 #endif
     return SDL_LoadFunction(lib, func);
 }

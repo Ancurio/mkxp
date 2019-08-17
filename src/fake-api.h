@@ -74,4 +74,7 @@ MKXP_RegisterHotKey(HWND hWnd,
                     int id,
                     UINT fsModifiers,
                     UINT vk);
+
+BOOL __stdcall
+MKXP_GetKeyboardState(PBYTE lpKeyState);
 #endif

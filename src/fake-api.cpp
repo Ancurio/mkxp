@@ -142,4 +142,19 @@ MKXP_RegisterHotKey(HWND hWnd,
                     UINT fsModifiers,
                     UINT vk)
 NOP_VAL(true)
+
+// Shift key from GetKeyboardState doesn't work for whatever reason
+BOOL __stdcall
+MKXP_GetKeyboardState(PBYTE lpKeyState)
+{
+    bool rc = GetKeyboardState(lpKeyState);
+    if (rc)
+    {
+        const char *sdlkeystate = (const char*)SDL_GetKeyboardState(0);
+        lpKeyState[VK_LSHIFT] = sdlkeystate[SDL_SCANCODE_LSHIFT] << 7;
+        lpKeyState[VK_RSHIFT] = sdlkeystate[SDL_SCANCODE_RSHIFT] << 7;
+        lpKeyState[VK_SHIFT] = (lpKeyState[VK_LSHIFT] || lpKeyState[VK_RSHIFT]) ? 0x80 : 0;
+    }
+    return rc;
+}
 #endif
