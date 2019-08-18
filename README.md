@@ -76,16 +76,23 @@ In the RMXP version of RGSS, fonts are loaded directly from system specific sear
 
 If a requested font is not found, no error is generated. Instead, a built-in font is used (currently "Liberation Sans").
 
+## Notes on file formats
+
+* If you use Paint.NET, images exported with an indexed color format will confuse poor SDL2. `#000000` (black) pixels will be mistaken for completely transparent ones when loaded in. Export in or convert your stuff to RGB instead, or use Photoshop or something to export with indexed color. ImageMagick's should be able to handle this.
+* You will need to re-encode any audio files that OpenAL does not like (16-bit signed WAV works fine, 32-bit float WAV does not, for instance). The game will hitch while attempting to read unsupported formats.
+* If you don't know where to even begin with fixing this stuff, ImageMagick is the go-to for images (`convert in.png PNG32:out.png` for converting to a new file, `mogrify -define png:format=png32 in.png` for converting in-place) and FFMPEG is the tool for... well, many things, but it will convert your audio (`ffmpeg -f s16le -i in.wav out.wav`). You could take advantage of these commands to write scripts that can fix all your stuff for you instead of converting them all one-by-one.
+
 ## What doesn't work (yet)
 
 * Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
 * Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
+* The current implementation of `load_data` is case-sensitive. If you try to load `Data/MapXXX`, you will not find `Data/mapXXX`.
 * `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so if `fix_essentials` is used Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag. Very hard.
 * Movie playback
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
 
-\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option
+\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option. SDL2 can handle a lot of the things that are performed with WinAPI.
 
 ^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech due to an issue with the tilemaps, but Pokemon Uranium seems to be okay)
 
