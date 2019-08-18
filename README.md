@@ -49,10 +49,17 @@ To auto detect the encoding of the game title in `Game.ini` and auto convert it 
 
 **MRI-Binding**: By default, meson will search for Ruby 1.8 libraries and includes within the system search path. This can be adjusted with `-Dcpp_args=-I[path]` for includes and `-Dcpp_link_args=-L[path]` for libraries. For newer Ruby versions, pkg-config will look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-2.6.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y` (`-Dmri_version=2.6` as an example).
 
-### Supported image/audio formats
+## Supported image/audio formats
+
 These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
 
 To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2.0** with an up-to-date driver installed.
+
+A few notes on compatibility differences compared to RMXP:
+
+* If you use Paint.NET, images exported with an indexed color format will confuse poor SDL2. `#000000` (black) pixels will be mistaken for completely transparent ones when loaded in. Export in or convert your stuff to RGB instead.
+* You will need to re-encode any audio files that OpenAL does not like (16-bit signed WAV works fine, 32-bit float WAV does not, for instance). The game will hitch while attempting to read unsupported formats.
+* If you don't know where to even begin with fixing this stuff, ImageMagick is the go-to for images (`convert in.png PNG32:out.png` for converting to a new file, `mogrify -define png:format=png32 in.png` for converting in-place) and FFMPEG is the tool for... well, many things, but it will convert your audio (`ffmpeg -f s16le -i in.wav out.wav`). You could take advantage of these commands to write scripts that can fix all your stuff for you instead of having to convert them all one-by-one with whatever GUI program you favor.
 
 ## Configuration
 
@@ -75,12 +82,6 @@ You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/
 In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
 
 If a requested font is not found, no error is generated. Instead, a built-in font is used (currently "Liberation Sans").
-
-## Notes on file formats
-
-* If you use Paint.NET, images exported with an indexed color format will confuse poor SDL2. `#000000` (black) pixels will be mistaken for completely transparent ones when loaded in. Export in or convert your stuff to RGB instead, or use Photoshop or something to export with indexed color. ImageMagick's should be able to handle this.
-* You will need to re-encode any audio files that OpenAL does not like (16-bit signed WAV works fine, 32-bit float WAV does not, for instance). The game will hitch while attempting to read unsupported formats.
-* If you don't know where to even begin with fixing this stuff, ImageMagick is the go-to for images (`convert in.png PNG32:out.png` for converting to a new file, `mogrify -define png:format=png32 in.png` for converting in-place) and FFMPEG is the tool for... well, many things, but it will convert your audio (`ffmpeg -f s16le -i in.wav out.wav`). You could take advantage of these commands to write scripts that can fix all your stuff for you instead of converting them all one-by-one.
 
 ## What doesn't work (yet)
 
