@@ -86,11 +86,8 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 * Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
 * Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
-<<<<<<< HEAD
 * `rubyscreen.dll` doesn't work, and `Graphics.snap_to_bitmap` is unconditionally overridden by the SpriteResizer script. This can't be worked around without modifying Ruby in ways I don't have any desire to. When built with `fix_essentials` enabled, RGSS2 Graphics functions are bound, so wrap the definition of the Win32API-based `snap_to_bitmap` in an if statement. Or just delete the thing if you don't care about being able to swap executables in and out. As another consequence of `rubyscreen.dll` not being compatible, screenshots also don't work -- but the Graphics module now has a `screenshot` method to compensate for this.
-=======
 * The current implementation of `load_data` is case-sensitive. If you try to load `Data/MapXXX`, you will not find `Data/mapXXX`.
->>>>>>> e930e6a34505916f8f563e4846493c72aa3ee7e9
 * `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so if `fix_essentials` is used Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag. Very hard.
 * `FileSystem::openRead` is not compatible with absolute paths in Windows (this affects `Bitmap.new` or `Audio.bgm_play`, for instance, another reason why Win32API `Graphics.snap_to_bitmap` breaks).
 * Movie playback
