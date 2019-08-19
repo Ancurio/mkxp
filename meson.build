@@ -1,4 +1,4 @@
-project('mkxp-z', 'cpp', version: '1.0', default_options: ['cpp_std=c++11'])
+project('mkxp-z', 'cpp', 'c', version: '1.0', default_options: ['cpp_std=c++11'])
 
 xxd = find_program('xxd', native: true)
 host_system = host_machine.system()
@@ -23,6 +23,10 @@ subdir('assets')
 
 all_sources = [main, bindings, processed_shaders, processed_assets]
 include_dirs = [include_directories('src', 'binding')]
+
+# Use cwalk
+all_sources += files('cwalk/src/cwalk.c')
+include_dirs += include_directories('cwalk/include')
 
 linker_args = []
 

@@ -1,25 +1,24 @@
 # mkxp-z
 
-This is a work-in-progress fork of mkxp that is intended to run as similarly to RPG Maker XP (RGSS1) as possible, specifically with the target of running games based on Pokemon Essentials, ideally without having to change a single line of code. Once this goal can be accomplished, it's possible that optional enhancements (such as Discord integration) can be written for fangame developers (you poor souls) to take advantage of.
+This is a work-in-progress fork of mkxp that is intended to run and alleviate the difficulty of porting games based on Pokemon Essentials. It's not necessarily intended to be a byte-for-byte copy of RGSS though, so non-standard extensions and optional enhancements (such as Discord integration) can/will be written for fangame developers (you poor souls) to take advantage of.
 
 ## Prebuilt binaries
 > None yet!
 
 ## Bindings
-Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being. Please see the original README for more details.
+Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being, with the possible intent of working with >=1.9 to better support RGSS3. Please see the original README for more details.
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
 
 Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version of ruby. MRI 1.8.1 is what was used in RPG Maker XP, and 1.8.7 is what mkxp-z is written around (at least for now). 1.8.1 and 1.8.7 are for the most part identical, though there are a few differences that need to be ironed out before Essentials can be loaded.
 
-This binding supports RGSS1, RGSS2 and RGSS3, though I've only tested it with RGSS1.
+This binding should support RGSS1, RGSS2 and RGSS3, though I've only tested it with RGSS1.
 
 ## Dependencies / Building
 
 * Boost.Unordered (headers only)
 * Boost.Program_options
-* Boost.Filesystem
 * libsigc++ 2.0
 * PhysFS (latest hg)
 * OpenAL
@@ -87,23 +86,39 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 * Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
 * Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
+<<<<<<< HEAD
+* `rubyscreen.dll` doesn't work, and `Graphics.snap_to_bitmap` is unconditionally overridden by the SpriteResizer script. This can't be worked around without modifying Ruby in ways I don't have any desire to. When built with `fix_essentials` enabled, RGSS2 Graphics functions are bound, so wrap the definition of the Win32API-based `snap_to_bitmap` in an if statement. Or just delete the thing if you don't care about being able to swap executables in and out. As another consequence of `rubyscreen.dll` not being compatible, screenshots also don't work -- but the Graphics module now has a `screenshot` method to compensate for this.
+=======
 * The current implementation of `load_data` is case-sensitive. If you try to load `Data/MapXXX`, you will not find `Data/mapXXX`.
+>>>>>>> e930e6a34505916f8f563e4846493c72aa3ee7e9
 * `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so if `fix_essentials` is used Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag. Very hard.
+* `FileSystem::openRead` is not compatible with absolute paths in Windows (this affects `Bitmap.new` or `Audio.bgm_play`, for instance, another reason why Win32API `Graphics.snap_to_bitmap` breaks).
 * Movie playback
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
 
 \* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option. SDL2 can handle a lot of the things that are performed with WinAPI.
 
-^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech due to an issue with the tilemaps, but Pokemon Uranium seems to be okay)
+^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech, Zeta after you leave the cave, but Pokemon Uranium seems to be fine as far as I've tested)
+
+## Win32API
+
+Win32API exists in mkxp-z, objectively functioning nearly the same as before for better or worse. The third and fourth arguments are now optional (if you just want a function that takes no arguments and returns nothing, for instance), and Win32API objects will yield themselves to any blocks given to `initialize`.
+
+However, the Win32API class is also avaiable when built for Linux and macOS, under the name `MiniFFI` instead (Win32API is just an extra name for it in Windows). It will only load shared libraries built for your platform.
+
+Being simple as it is, it remains mostly as the lazy option/last resort if you can't/don't want to build MKXP yourself.
 
 ## Nonstandard RGSS extensions
 
-To alleviate possible porting of heavily Win32API reliant scripts, Ancurio added certain functionality that you won't find in the RGSS spec. Currently this amounts to the following:
+To alleviate possible porting of heavily Win32API reliant scripts, certain functionality that you won't find in the RGSS spec has been added. Currently this amounts to the following:
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
 * The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen.
 * The `Graphics` module has two additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`.
+* Calling `Graphics.screenshot(path)` will save a screenshot to `path` in BMP format.
+
+Commonly used Win32API routines will eventually have equivalent functions directly bound, like `Graphics.screenshot` for `Win32API.new('rubyscreen.dll,'TakeScreenshot','p','i')`.
 
 ## Building on Windows (MSYS+MinGW)
 
@@ -154,7 +169,7 @@ cd ..
 5. Build mkxp-z:
 
 ```sh
-git clone https://github.com/inori-z/mkxp-z
+git clone --recursive https://github.com/inori-z/mkxp-z
 cd mkxp-z
 
 # Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
@@ -217,7 +232,7 @@ cd ..
 4. Build mkxp-z:
 
 ```sh
-git clone https://github.com/inori-z/mkxp-z
+git clone --recursive https://github.com/inori-z/mkxp-z
 cd mkxp-z
 
 # Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
@@ -292,7 +307,7 @@ cd ..
 4. Build mkxp-z:
 
 ```sh
-git clone https://github.com/inori-z/mkxp-z
+git clone --recursive https://github.com/inori-z/mkxp-z
 cd mkxp-z
 
 # Ruby 1.8 doesn’t support pkg-config (Might add it in, since this

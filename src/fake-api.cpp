@@ -37,6 +37,11 @@
 // library made for your platform or, better yet, just write the
 // functionality into MKXP and don't use MiniFFI/Win32API at all.
 
+// A lot of functions here will probably be bound directly to Ruby
+// eventually (so that you can just call Graphics.save_screenshot
+// or something instead of having to make a messy Win32API call
+// that *now* has to run entirely different function to even work)
+
 // No macOS/Linux support yet.
 
 

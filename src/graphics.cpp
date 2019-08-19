@@ -23,6 +23,7 @@
 
 #include "util.h"
 #include "gl-util.h"
+#include "gl-fun.h"
 #include "sharedstate.h"
 #include "config.h"
 #include "glstate.h"
@@ -31,6 +32,7 @@
 #include "quad.h"
 #include "eventthread.h"
 #include "texpool.h"
+#include "filesystem.h"
 #include "bitmap.h"
 #include "etc-internal.h"
 #include "disposable.h"
@@ -949,6 +951,20 @@ void Graphics::resizeScreen(int width, int height)
 void Graphics::playMovie(const char *filename)
 {
 	Debug() << "Graphics.playMovie(" << filename << ") not implemented";
+}
+
+void Graphics::screenshot(const char *filename)
+{
+	int w = width();
+	int h = height();
+	const char *fn_normalized = shState->fileSystem().normalize(filename, true, true);
+	unsigned char *pixbuf = new unsigned char[w*h*4];
+	glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE,pixbuf);
+	SDL_Surface *s = SDL_CreateRGBSurfaceFrom(pixbuf,w,h,8*4,w*4,0,0,0,0);
+	int rc = SDL_SaveBMP(s, fn_normalized);
+	delete fn_normalized;
+	delete pixbuf;
+	if (rc) throw Exception(Exception::SDLError, "%s", SDL_GetError());
 }
 
 DEF_ATTR_RD_SIMPLE(Graphics, Brightness, int, p->brightness)

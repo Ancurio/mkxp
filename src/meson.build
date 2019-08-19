@@ -6,21 +6,23 @@ sdl2 = dependency('sdl2')
 sdl2_ttf = dependency('SDL2_ttf')
 sdl2_image = dependency('SDL2_image')
 sdl_sound = dependency('SDL_sound')
+opengl = dependency('GL')
 
 boost = dependency('boost', version: '>=1.49', modules: ['system', 'program_options', 'filesystem'])
 openal = dependency('openal')
 zlib = dependency('zlib')
 
-main_dependencies = [sigcxx, openal, boost, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
-
+main_dependencies = [sigcxx, openal, opengl, boost, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
 if host_system == 'darwin'
     main_dependencies += compiler.find_library('iconv')
 
     if openal.type_name() != 'pkgconfig'
     add_project_arguments('-DUSE_MAC_OPENAL', language: 'cpp')
     endif
-elif host_system == 'windows' and get_option('fix_essentials')
-    main_dependencies += compiler.find_library('wsock32')
+elif host_system == 'windows'
+    if get_option('fix_essentials') == true
+        main_dependencies += compiler.find_library('wsock32')
+    endif
 endif
 
 if get_option('shared_fluid') == true

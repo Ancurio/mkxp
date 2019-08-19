@@ -24,6 +24,7 @@
 #include "binding-util.h"
 #include "binding-types.h"
 #include "exception.h"
+#include <SDL.h>
 
 RB_METHOD(graphicsUpdate)
 {
@@ -195,6 +196,24 @@ RB_METHOD(graphicsPlayMovie)
     return Qnil;
 }
 
+RB_METHOD(graphicsScreenshot)
+{
+    RB_UNUSED_PARAM;
+
+    VALUE filename;
+    rb_scan_args(argc, argv, "1", &filename);
+    SafeStringValue(filename);
+    try
+    {
+        shState->graphics().screenshot(RSTRING_PTR(filename));
+    }
+    catch(const Exception &e)
+    {
+        raiseRbExc(e);
+    }
+    return Qnil;
+}
+
 DEF_GRA_PROP_I(FrameRate)
 DEF_GRA_PROP_I(FrameCount)
 DEF_GRA_PROP_I(Brightness)
@@ -216,6 +235,7 @@ void graphicsBindingInit()
     _rb_define_module_function(module, "freeze", graphicsFreeze);
     _rb_define_module_function(module, "transition", graphicsTransition);
     _rb_define_module_function(module, "frame_reset", graphicsFrameReset);
+    _rb_define_module_function(module, "screenshot", graphicsScreenshot);
     
     _rb_define_module_function(module, "__reset__", graphicsReset);
     

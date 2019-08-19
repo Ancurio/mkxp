@@ -23,6 +23,7 @@
 #define FILESYSTEM_H
 
 #include <SDL_rwops.h>
+#include <string>
 
 struct FileSystemPrivate;
 class SharedFontState;
@@ -63,6 +64,8 @@ public:
 	void openReadRaw(SDL_RWops &ops,
 	                 const char *filename,
 	                 bool freeOnClose = false);
+
+	char *normalize(const char *pathname, bool preferred, bool absolute);
 
 	/* Does not perform extension supplementing */
 	bool exists(const char *filename);

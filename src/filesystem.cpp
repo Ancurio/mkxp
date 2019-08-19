@@ -29,6 +29,12 @@
 #include "boost-hash.h"
 #include "debugwriter.h"
 
+// boost::filesystem::path and std::filesystem::path
+// are too troublesome
+extern "C"{
+#include "cwalk.h"
+}
+
 #include <physfs.h>
 
 #include <SDL_sound.h>
@@ -633,8 +639,12 @@ openReadEnumCB(void *d, const char *dirpath, const char *filename)
 
 void FileSystem::openRead(OpenHandler &handler, const char *filename)
 {
+	// FIXME: Paths with Windows drive letters don't
+	//        hecking work, apparently never did
+	char *filename_nm = normalize(filename, false, false);
 	char buffer[512];
-	size_t len = strcpySafe(buffer, filename, sizeof(buffer), -1);
+	size_t len = strcpySafe(buffer, filename_nm, sizeof(buffer), -1);
+	delete filename_nm;
 	char *delim;
 
 	if (p->havePathCache)
@@ -684,6 +694,8 @@ void FileSystem::openRead(OpenHandler &handler, const char *filename)
 		throw Exception(Exception::NoFileError, "%s", filename);
 }
 
+
+// FIXME: This is (a) slower than RGSS and (b) case-sensitive
 void FileSystem::openReadRaw(SDL_RWops &ops,
                              const char *filename,
                              bool freeOnClose)
@@ -695,6 +707,33 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
     
 
 	initReadOps(handle, ops, freeOnClose);
+}
+
+
+// RGSS normalizes paths for at least audio
+// Essentials kind of takes this for granted
+// (`Audio/BGM/../../Audio/ME/[file]`)
+
+// SDL_SaveBMP wants absolute paths
+char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
+{
+	char *path_nml = new char[512];
+	char *path_abs = 0;
+#ifdef __WIN32__
+	cwk_path_set_style((preferred) ? CWK_STYLE_WINDOWS : CWK_STYLE_UNIX);
+#endif
+
+	if (cwk_path_is_relative(pathname) && absolute)
+	{
+		path_abs = new char[512];
+		char *bp = SDL_GetBasePath();
+		cwk_path_join(bp, pathname, path_abs, 512);
+		SDL_free(bp);
+	}
+	
+	cwk_path_normalize((path_abs) ? path_abs : (char*)pathname, path_nml, 512);
+	Debug() << pathname << ":" << path_nml;
+	return path_nml;
 }
 
 bool FileSystem::exists(const char *filename)

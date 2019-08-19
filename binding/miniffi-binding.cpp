@@ -45,10 +45,10 @@ MiniFFI_alloc(VALUE self)
 // Probably should do something else for macOS and Linux if I get around to them,
 // this would probably be a *very* long list for those
 static void*
-MiniFFI_GetFunctionHandle(void *lib, const char *func)
+MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
 {
 #if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
-#define CAPTURE(name) if (!strcmp(#name, func)) return (void*)&MKXP_##name
+#define CAPTURE(n) if (!strcmp(#n,func)) return (void*)&MKXP_##n
     CAPTURE(GetCurrentThreadId);
     CAPTURE(GetWindowThreadProcessId);
     CAPTURE(FindWindowEx);
@@ -62,7 +62,7 @@ MiniFFI_GetFunctionHandle(void *lib, const char *func)
     CAPTURE(RegisterHotKey);
     CAPTURE(GetKeyboardState);
 #endif
-    return SDL_LoadFunction(lib, func);
+    return SDL_LoadFunction(libhandle, func);
 }
 
 // MiniFFI.new(library, function[, imports[, exports]])
