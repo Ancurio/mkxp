@@ -393,8 +393,7 @@ rb_str_catf(VALUE obj, const char *fmt, ...)
 static inline VALUE
 rb_file_open_str(VALUE filename, const char *mode)
 {
-    VALUE fileobj = rb_const_get(rb_cObject, rb_intern("File"));
-    return rb_funcall(fileobj, rb_intern("open"), 2, filename, rb_str_new2(mode));
+    return rb_funcall(rb_cFile, rb_intern("open"), 2, filename, rb_str_new2(mode));
 }
 #endif
 

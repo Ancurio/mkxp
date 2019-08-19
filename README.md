@@ -102,7 +102,7 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 Win32API exists in mkxp-z, objectively functioning nearly the same as before for better or worse. The third and fourth arguments are now optional (if you just want a function that takes no arguments and returns nothing, for instance), and Win32API objects will yield themselves to any blocks given to `initialize`.
 
-However, the Win32API class is also avaiable when built for Linux and macOS, under the name `MiniFFI` instead (Win32API is just an extra name for it in Windows). It will only load shared libraries built for your platform.
+However, the Win32API class is also available when built for Linux and macOS, under the name `MiniFFI` instead (Win32API is just an extra name for it in Windows). It will only load shared libraries built for your platform.
 
 Being simple as it is, it remains mostly as the lazy option/last resort if you can't/don't want to build MKXP yourself.
 
