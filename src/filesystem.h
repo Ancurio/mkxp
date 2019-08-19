@@ -23,7 +23,6 @@
 #define FILESYSTEM_H
 
 #include <SDL_rwops.h>
-#include <string>
 
 struct FileSystemPrivate;
 class SharedFontState;

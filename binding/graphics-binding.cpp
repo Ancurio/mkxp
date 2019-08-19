@@ -24,7 +24,6 @@
 #include "binding-util.h"
 #include "binding-types.h"
 #include "exception.h"
-#include <SDL.h>
 
 RB_METHOD(graphicsUpdate)
 {
