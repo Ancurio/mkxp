@@ -732,9 +732,6 @@ char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
 		cwk_path_join(bp, pathname, path_abs, 512);
 	}
 	
-	char test[512] = {0};
-	getcwd(test, 512);
-	Debug() << test;
 	cwk_path_normalize((path_abs) ? path_abs : (char*)pathname, path_nml, 512);
 	if (path_abs) delete path_abs;
 	return path_nml;
