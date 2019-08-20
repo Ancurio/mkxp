@@ -1,5 +1,8 @@
 project('mkxp-z', 'cpp', 'c', version: '1.0', default_options: ['cpp_std=c++11'])
 
+# The meson build is mostly directly copied from the old CMakeLists,
+# it still needs to be cleaned up
+
 xxd = find_program('xxd', native: true)
 host_system = host_machine.system()
 compiler = meson.get_compiler('cpp')
@@ -8,8 +11,8 @@ if get_option('workdir_current')
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
 endif
 
-if get_option('fix_essentials')
-    add_project_arguments('-DUSE_ESSENTIALS_FIXES', language: 'cpp')
+if get_option('use_fakeapi')
+    add_project_arguments('-DUSE_FAKEAPI', language: 'cpp')
 endif
 
 if not get_option('console')

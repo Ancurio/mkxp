@@ -20,9 +20,7 @@ if host_system == 'darwin'
     add_project_arguments('-DUSE_MAC_OPENAL', language: 'cpp')
     endif
 elif host_system == 'windows'
-    if get_option('fix_essentials') == true
-        main_dependencies += compiler.find_library('wsock32')
-    endif
+    main_dependencies += compiler.find_library('wsock32')
 endif
 
 if get_option('shared_fluid') == true
@@ -90,8 +88,7 @@ main_headers = files(
     'tileatlasvx.h',
     'sharedmidistate.h',
     'fluid-fun.h',
-    'sdl-util.h',
-    'fake-api.h'
+    'sdl-util.h'
 )
 
 main_source = files(
@@ -138,8 +135,11 @@ main_source = files(
     'tileatlasvx.cpp',
     'autotilesvx.cpp',
     'midisource.cpp',
-    'fluid-fun.cpp',
-    'fake-api.cpp'
+    'fluid-fun.cpp'
 )
 
 main = [main_source, main_headers]
+
+if get_option('use_fakeapi') == true
+    main += files('fake-api.cpp', 'fake-api.h')
+endif

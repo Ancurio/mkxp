@@ -2,8 +2,7 @@
 // it's just as basic but should work fine for the moment
 
 #include <SDL.h>
-#if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
-#include <windows.h>
+#ifdef USE_FAKEAPI
 #include "fake-api.h"
 #endif
 
@@ -42,12 +41,10 @@ MiniFFI_alloc(VALUE self)
     return Data_Wrap_Struct(self, 0, SDL_UnloadObject, 0);
 }
 
-// Probably should do something else for macOS and Linux if I get around to them,
-// this would probably be a *very* long list for those
 static void*
 MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
 {
-#if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
+#ifdef USE_FAKEAPI
 #define CAPTURE(n) if (!strcmp(#n,func)) return (void*)&MKXP_##n
     CAPTURE(GetCurrentThreadId);
     CAPTURE(GetWindowThreadProcessId);
@@ -61,6 +58,9 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(GetWindowRect);
     CAPTURE(RegisterHotKey);
     CAPTURE(GetKeyboardState);
+#ifndef __WIN32__  
+    // Functions needed on Linux and macOS go here
+#endif
 #endif
     return SDL_LoadFunction(libhandle, func);
 }
@@ -256,8 +256,9 @@ MiniFFIBindingInit()
     _rb_define_method(cMiniFFI, "initialize", MiniFFI_initialize);
     _rb_define_method(cMiniFFI, "call", MiniFFI_call);
     rb_define_alias(cMiniFFI, "Call", "call");
-    
-#ifdef __WIN32__
+
+    // Preferably use MiniFFI, the name Win32API makes no sense
+    // on things that aren't Windows but I'm leaving it here
+    // for compatibility
     rb_define_const(rb_cObject, "Win32API", cMiniFFI);
-#endif
 }

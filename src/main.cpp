@@ -42,9 +42,7 @@
 
 #ifdef __WINDOWS__
 #include "resource.h"
-#ifdef USE_ESSENTIALS_FIXES
 #include <Winsock2.h>
-#endif
 #endif
 
 #include "icon.png.xxd"
@@ -269,8 +267,8 @@ int main(int argc, char *argv[])
 
 		return 0;
 	}
-#if defined(__WINDOWS__) && defined(USE_ESSENTIALS_FIXES)
-    // Init winsock, allows Win32API socket to work
+#if defined(__WINDOWS__)
+    // Init winsock, allows socket ops in Ruby to work
     // MKXP itself doesn't need it so it's a little
     // hands-off
     WSAData wsadata = {0};
@@ -386,7 +384,7 @@ int main(int argc, char *argv[])
 	alcCloseDevice(alcDev);
 	SDL_DestroyWindow(win);
 
-#if defined(__WINDOWS__) && defined(USE_ESSENTIALS_FIXES)
+#if defined(__WINDOWS__)
     if (wsadata.wVersion) WSACleanup();
 #endif
 	Sound_Quit();

@@ -82,40 +82,45 @@ In the RMXP version of RGSS, fonts are loaded directly from system specific sear
 
 If a requested font is not found, no error is generated. Instead, a built-in font is used (currently "Liberation Sans").
 
+## Win32API
+
+Win32API exists in mkxp-z as both `Win32API.new` and `MiniFFI.new` (This class is available under macOS, linux and Windows and "Win32API" as a name makes no sense on the former two platforms). It functions nearly the same as Ruby 1.8's Win32API, for better or worse. The third and fourth arguments are now optional (if you just want a function that takes no arguments and returns nothing, for instance), and `new` will yield to blocks.
+
+Being simple as it is, it remains mostly as the lazy option/last resort to add C functions from shared libraries if you can't/don't want to build MKXP yourself.
+
 ## What doesn't work (yet)
 
 * Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
-* Some Win32API calls don't play nicely with SDL. Building with the `fix_essentials` option will attempt to fix this.
-* `rubyscreen.dll` doesn't work, and `Graphics.snap_to_bitmap` is unconditionally overridden by the SpriteResizer script. This can't be worked around without modifying Ruby in ways I don't have any desire to. When built with `fix_essentials` enabled, RGSS2 Graphics functions are bound, so wrap the definition of the Win32API-based `snap_to_bitmap` in an if statement. Or just delete the thing if you don't care about being able to swap executables in and out. As another consequence of `rubyscreen.dll` not being compatible, screenshots also don't work -- but the Graphics module now has a `screenshot` method to compensate for this.
+* Some Win32API calls don't play nicely with SDL. Building with the `use_fakeapi` option will attempt to fix this.
+* `rubyscreen.dll` doesn't work, and `Graphics.snap_to_bitmap` is unconditionally overridden by the SpriteResizer script. This can't be worked around without modifying Ruby in ways I don't have any desire to. RGSS2 Graphics functions are bound in RGSS1 mode, so wrap the definition of the Win32API-based `snap_to_bitmap` in an if statement, or delete it. As another consequence of `rubyscreen.dll` not being compatible, screenshots also don't work -- but the Graphics module now has a `screenshot` method to compensate for this.
 * The current implementation of `load_data` is case-sensitive. If you try to load `Data/MapXXX`, you will not find `Data/mapXXX`.
-* `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so if `fix_essentials` is used Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag. Very hard.
+* `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag if not using loose files. Very hard.
 * `FileSystem::openRead` is not compatible with absolute paths in Windows (this affects `Bitmap.new` or `Audio.bgm_play`, for instance, another reason why Win32API `Graphics.snap_to_bitmap` breaks).
 * Movie playback
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
 
-\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `fix_essentials` option. SDL2 can handle a lot of the things that are performed with WinAPI.
+\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `use_fakeapi` option. SDL2 can handle a lot of the things that are performed with WinAPI.
 
 ^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech, Zeta after you leave the cave, but Pokemon Uranium seems to be fine as far as I've tested)
-
-## Win32API
-
-Win32API exists in mkxp-z, objectively functioning nearly the same as before for better or worse. The third and fourth arguments are now optional (if you just want a function that takes no arguments and returns nothing, for instance), and Win32API objects will yield themselves to any blocks given to `initialize`.
-
-However, the Win32API class is also available when built for Linux and macOS, under the name `MiniFFI` instead (Win32API is just an extra name for it in Windows). It will only load shared libraries built for your platform.
-
-Being simple as it is, it remains mostly as the lazy option/last resort if you can't/don't want to build MKXP yourself.
 
 ## Nonstandard RGSS extensions
 
 To alleviate possible porting of heavily Win32API reliant scripts, certain functionality that you won't find in the RGSS spec has been added. Currently this amounts to the following:
 
+# Input
+
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
 * The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen.
+
+# Graphics
+
 * The `Graphics` module has two additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`.
-* Calling `Graphics.screenshot(path)` will save a screenshot to `path` in BMP format.
+* The `Graphics` module has one additional function: `Graphics.screenshot(path)` will save a screenshot to `path` in BMP format.
 
 Commonly used Win32API routines will eventually have equivalent functions directly bound, like `Graphics.screenshot` for `Win32API.new('rubyscreen.dll,'TakeScreenshot','p','i')`.
+
+-------------------------
 
 ## Building on Windows (MSYS+MinGW)
 
@@ -173,7 +178,7 @@ cd mkxp-z
 # is a bit annoying) so you have to set include and link paths yourself.
 # for mingw32, includes will be at /mingw32/lib/ruby/1.8/i386-mingw32
 
-meson build -Druby_lib=msvcrt-ruby18 -Dfix_essentials=true \
+meson build -Druby_lib=msvcrt-ruby18 -Duse_fakeapi=true \
 -Dcpp_args=-I/mingw32/lib/ruby/1.8/i386-mingw32
 
 cd build

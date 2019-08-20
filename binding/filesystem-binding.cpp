@@ -179,8 +179,6 @@ RB_METHOD(kernelLoadData)
 	VALUE filename;
 	rb_get_args(argc, argv, "S", &filename RB_ARG_END);
     
-    
-#ifdef USE_ESSENTIALS_FIXES
     // Until a faster method for getting RGSSAD data is
     // written (could just copy RMXP, keeping stuff in
     // memory and just passing char pointers can't be
@@ -198,7 +196,6 @@ RB_METHOD(kernelLoadData)
         rb_funcall(f, rb_intern("close"), 0);
         return ret;
     }
-#endif
 
 	return kernelLoadDataInt(RSTRING_PTR(filename), true);
 }

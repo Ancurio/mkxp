@@ -733,7 +733,6 @@ char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
 	
 	cwk_path_normalize((path_abs) ? path_abs : (char*)pathname, path_nml, 512);
     if (path_abs) delete path_abs;
-	Debug() << pathname << ":" << path_nml;
 	return path_nml;
 }
 

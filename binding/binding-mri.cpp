@@ -522,19 +522,7 @@ static void runRMXPScripts(BacktraceData &btData)
 			btData.scriptNames.insert(buf, scriptName);
 
 			int state;
-	
-			#if defined(__WIN32__) && defined(USE_ESSENTIALS_FIXES)
-			// I can hack around RGSS Linker and have it work properly,
-			// but (A) working with essentials is already hacky enough
-			// and (B) we can simply just use F-MOD as MKXP's audio backend
-			// if we absolutely had to.
-			
-			// GENERATE WIKI PAGES is just excluded because of a difference
-			// in ruby's regex code from 1.8.1 -> 1.8.7 that I haven't worked out yet
-			if (strcmp(scriptName, "RGSS Linker")
-				&& strcmp(scriptName, "F-mod main script")
-				&& strcmp(scriptName, "GENERATE WIKI PAGES"))
-			#endif
+
 			evalString(string, fname, &state);
 			if (state)
 				break;
