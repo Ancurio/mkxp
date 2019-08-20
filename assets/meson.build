@@ -1,6 +1,5 @@
 embedded_assets = [
     'icon.png',
-    'icon.svg',
     'liberation.ttf'
 ]
 
