@@ -8,7 +8,7 @@ sdl2_image = dependency('SDL2_image')
 sdl_sound = dependency('SDL_sound')
 opengl = dependency('GL')
 
-boost = dependency('boost', version: '>=1.49', modules: ['system', 'program_options', 'filesystem'])
+boost = dependency('boost', version: '>=1.49', modules: 'program_options')
 openal = dependency('openal')
 zlib = dependency('zlib')
 

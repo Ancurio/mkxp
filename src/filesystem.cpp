@@ -39,6 +39,7 @@ extern "C"{
 
 #include <SDL_sound.h>
 
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <algorithm>
@@ -726,13 +727,16 @@ char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
 	if (cwk_path_is_relative(pathname) && absolute)
 	{
 		path_abs = new char[512];
-		char *bp = SDL_GetBasePath();
+		char bp[512] = {0};
+		getcwd(bp, 512);
 		cwk_path_join(bp, pathname, path_abs, 512);
-		SDL_free(bp);
 	}
 	
+	char test[512] = {0};
+	getcwd(test, 512);
+	Debug() << test;
 	cwk_path_normalize((path_abs) ? path_abs : (char*)pathname, path_nml, 512);
-    if (path_abs) delete path_abs;
+	if (path_abs) delete path_abs;
 	return path_nml;
 }
 
