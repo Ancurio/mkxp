@@ -635,6 +635,11 @@ Graphics::Graphics(RGSSThreadData *data)
 {
 	p = new GraphicsPrivate(data);
 
+	// To appease people who don't want players to have
+	// emulator-like speedups
+	// Nothing stops anybody from building with this
+	// enabled though and I'm not removing this stuff
+#ifndef DEFAULT_FRAMERATE
 	if (data->config.syncToRefreshrate)
 	{
 		p->frameRate = data->refreshRate;
@@ -648,6 +653,7 @@ Graphics::Graphics(RGSSThreadData *data)
 	{
 		p->fpsLimiter.disabled = true;
 	}
+#endif
 }
 
 Graphics::~Graphics()

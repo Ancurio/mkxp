@@ -93,6 +93,7 @@
 
 
 # Enforce a static frame rate
+# This option may be force-disabled at build time.
 # (0 = disabled)
 #
 # fixedFramerate=0
@@ -109,7 +110,8 @@
 # "fixedFramerate" because the actual frame rate is
 # reported back to the game, ensuring correct timers.
 # If the screen refresh rate cannot be determined,
-# this option is force-disabled
+# this option is force-disabled.
+# This option may be force-disabled at build time.
 # (default: disabled)
 #
 # syncToRefreshrate=false
@@ -203,6 +205,7 @@
 
 # Define raw scripts to be executed before the
 # actual Scripts.rxdata execution starts
+# This option may be force-disabled at build time.
 # (default: none)
 #
 # preloadScript=my_win32_wrapper.rb
@@ -226,9 +229,9 @@
 
 
 # Use the script's name as filename in warnings and error messages
-# (default: disabled)
+# (default: enabled)
 #
-# useScriptNames=false
+# useScriptNames=true
 
 
 # Font substitutions allow drop-in replacements of fonts

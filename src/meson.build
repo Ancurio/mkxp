@@ -29,6 +29,10 @@ if get_option('shared_fluid') == true
     main_dependencies += fluidsynth
 endif
 
+if get_option('default_framerate') == true
+    add_project_arguments('-DDEFAULT_FRAMERATE', language: 'cpp')
+endif
+
 main_headers = files(
     'quadarray.h',
     'audio.h',

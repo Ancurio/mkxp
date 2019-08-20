@@ -1,7 +1,9 @@
 option('shared_fluid', type: 'boolean', value: false, description: 'Dynamically link fluidsynth at build time')
 option('mri_version', type: 'string', value: '1.8', description: 'Version of MRI to link with')
-option('workdir_current', type: 'boolean', value: false, description: 'Keep current directory on startup')
-option('ruby_lib', type: 'string', value: 'ruby', description: 'Name of legacy Ruby library')
-option('console', type: 'boolean', value: false, description: 'Whether to debug information in the console')
+option('workdir_current', type: 'boolean', value: true, description: 'Keep current directory on startup')
+option('ruby_lib', type: 'string', value: 'ruby', description: 'Name of the Ruby library')
+option('console', type: 'boolean', value: true, description: 'Whether to debug information in the console')
 
 option('use_fakeapi', type: 'boolean', value: false, description: 'Attempt to repair Win32API calls that do not work with MKXP')
+option('default_framerate', type: 'boolean', value: false, description: 'Disable syncToRefreshrate and fixedFramerate configuration options')
+option('no_preload_scripts', type: 'boolean', value: false, description: 'Disable the preloadScript configuration option')

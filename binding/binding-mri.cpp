@@ -490,6 +490,8 @@ static void runRMXPScripts(BacktraceData &btData)
 		rb_ary_store(script, 3, rb_str_new_cstr(decodeBuffer.c_str()));
 	}
 
+	// Can be force-disabled similarly to framerate options
+#ifndef NO_PRELOAD_SCRIPTS
 	/* Execute preloaded scripts */
 	for (std::set<std::string>::iterator i = conf.preloadScripts.begin();
 	     i != conf.preloadScripts.end(); ++i)
@@ -498,6 +500,7 @@ static void runRMXPScripts(BacktraceData &btData)
 	VALUE exc = rb_gv_get("$!");
 	if (exc != Qnil)
 		return;
+#endif
 
 	while (true)
 	{

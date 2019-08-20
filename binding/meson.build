@@ -9,6 +9,10 @@ else
     add_project_arguments('-DOLD_RUBY', language: 'cpp')
 endif
 
+if get_option('no_preload_scripts') == true
+    add_project_arguments('-DNO_PRELOAD_SCRIPTS', language: 'cpp')
+endif
+
 binding_headers = files(
     'binding-util.h',
     'binding-types.h',
