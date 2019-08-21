@@ -1,12 +1,13 @@
 #ifdef __WIN32__
 #include <SDL.h>
 #include <SDL_syswm.h>
+#include <cmath>
 
 #include <windows.h>
 
 #include "sharedstate.h"
+#include "input.h"
 #include "fake-api.h"
-#include "debugwriter.h"
 
 
 // Essentials, without edits, needs Win32API. Two problems with that:
@@ -98,7 +99,8 @@ MKXP_GetCursorPos(LPPOINT lpPoint)
 BOOL __stdcall
 MKXP_ScreenToClient(HWND hWnd, LPPOINT lpPoint)
 {
-    SDL_GetMouseState((int*)&lpPoint->x, (int*)&lpPoint->y);
+    lpPoint->x = shState->input().mouseX();
+    lpPoint->y = shState->input().mouseY();
     return true;
 }
 
