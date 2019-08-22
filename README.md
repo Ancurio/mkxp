@@ -108,12 +108,12 @@ Being simple as it is, it remains mostly as the lazy option/last resort to add C
 
 To alleviate possible porting of heavily Win32API reliant scripts, certain functionality that you won't find in the RGSS spec has been added. Currently this amounts to the following:
 
-# Input
+### Input
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
 * The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen.
 
-# Graphics
+### Graphics
 
 * The `Graphics` module has two additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`.
 * The `Graphics` module has one additional function: `Graphics.screenshot(path)` will save a screenshot to `path` in BMP format.

@@ -59,8 +59,12 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(RegisterHotKey);
     CAPTURE(GetKeyboardState);
 #ifndef __WIN32__  
-    // Functions needed on Linux and macOS go here
+    // Functions only needed on Linux and macOS go here
+    CAPTURE(RtlMoveMemory);
+    CAPTURE(LoadLibrary);
+    CAPTURE(FreeLibrary);
 #endif
+    if (!libhandle) return 0;
 #endif
     return SDL_LoadFunction(libhandle, func);
 }
@@ -74,14 +78,11 @@ RB_METHOD(MiniFFI_initialize)
     rb_scan_args(argc, argv, "22", &libname, &func, &imports, &exports);
     SafeStringValue(libname);
     SafeStringValue(func);
-    
     void *hlib = SDL_LoadObject(RSTRING_PTR(libname));
-    if (!hlib)
-        rb_raise(rb_eRuntimeError, SDL_GetError());
     DATA_PTR(self) = hlib;
     void *hfunc = MiniFFI_GetFunctionHandle(hlib, RSTRING_PTR(func));
 #ifdef __WIN32__
-    if (!hfunc)
+    if (hlib && !hfunc)
     {
         VALUE func_a = rb_str_new3(func);
         func_a = rb_str_cat(func_a, "A", 1);

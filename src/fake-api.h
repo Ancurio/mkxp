@@ -1,23 +1,40 @@
 #pragma once
+
 #ifdef __WIN32__
 #include <windows.h>
+#else
+#include <map>
+#endif
 
-/*
+#define ABI(x) __attribute__((x))
+#if defined(__WIN32__)
+#define PREFABI ABI(stdcall)
+#else
+#define PREFABI
+#endif
+
+
+
 #ifndef __WIN32__
-typedef unsigned long HWND;
-typedef unsigned int DWORD;
-typedef unsigned int* LPDWORD;
-typedef char* LPCSTR;
+typedef unsigned int HWND, DWORD, UINT, *LPDWORD;
+typedef char *LPCSTR, *PBYTE;
 typedef int LONG;
 typedef bool BOOL;
-typedef unsigned int UINT;
 typedef struct {
     LONG x;
     LONG y;
-} POINT;
-typedef POINT* LPPOINT;
+} POINT, *LPPOINT;
+typedef struct {
+    LONG left;
+    LONG top;
+    LONG right;
+    LONG bottom;
+} RECT, *PRECT, *NPRECT, *LPRECT;
+typedef void VOID, *LPVOID, *HANDLE, *HMODULE;
+typedef size_t SIZE_T;
+
+extern std::map<int, int> vKeyToScancode;
 #endif
-*/
 
 #define DUMMY_VAL 571
 #define NOP \
@@ -29,32 +46,32 @@ return; \
 return x; \
 }
 
-DWORD __stdcall
+PREFABI DWORD
 MKXP_GetCurrentThreadId(void);
 
-DWORD __stdcall
+PREFABI DWORD
 MKXP_GetWindowThreadProcessId(HWND hWnd, LPDWORD lpdwProcessId);
 
-HWND __stdcall
+PREFABI HWND
 MKXP_FindWindowEx(HWND hWnd,
                   HWND hWndChildAfter,
                   LPCSTR lpszClass,
                   LPCSTR lpszWindow
                   );
 
-DWORD __stdcall
+PREFABI DWORD
 MKXP_GetForegroundWindow(void);
 
-BOOL __stdcall
+PREFABI BOOL
 MKXP_GetClientRect(HWND hWnd, LPRECT lpRect);
 
-BOOL __stdcall
+PREFABI BOOL
 MKXP_GetCursorPos(LPPOINT lpPoint);
 
-BOOL __stdcall
+PREFABI BOOL
 MKXP_ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 
-BOOL __stdcall
+PREFABI BOOL
 MKXP_SetWindowPos(HWND hWnd,
                   HWND hWndInsertAfter,
                   int X,
@@ -63,18 +80,30 @@ MKXP_SetWindowPos(HWND hWnd,
                   int cy,
                   UINT uFlags);
 
-BOOL __stdcall
+PREFABI BOOL
 MKXP_SetWindowTextA(HWND hWnd, LPCSTR lpString);
 
-BOOL __stdcall
+PREFABI BOOL
 MKXP_GetWindowRect(HWND hWnd, LPRECT lpRect);
 
-BOOL __stdcall
+PREFABI BOOL
 MKXP_RegisterHotKey(HWND hWnd,
                     int id,
                     UINT fsModifiers,
                     UINT vk);
 
-BOOL __stdcall
+PREFABI BOOL
 MKXP_GetKeyboardState(PBYTE lpKeyState);
+
+#ifndef __WIN32__
+
+PREFABI VOID
+MKXP_RtlMoveMemory(VOID *Destination, VOID *Source, SIZE_T Length);
+
+PREFABI HMODULE
+MKXP_LoadLibrary(LPCSTR lpLibFileName);
+
+PREFABI BOOL
+MKXP_FreeLibrary(HMODULE hLibModule);
+
 #endif
