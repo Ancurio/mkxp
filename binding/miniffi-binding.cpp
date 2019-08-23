@@ -63,6 +63,7 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(RtlMoveMemory);
     CAPTURE(LoadLibrary);
     CAPTURE(FreeLibrary);
+    CAPTURE(GetAsyncKeyState);
 #endif
 #endif
     if (!libhandle) return 0;

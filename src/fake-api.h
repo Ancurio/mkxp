@@ -16,6 +16,7 @@
 #ifndef __WIN32__
 typedef unsigned int DWORD, UINT, *LPDWORD;
 typedef char *LPCSTR, *PBYTE;
+typedef short SHORT;
 typedef int LONG;
 typedef bool BOOL;
 typedef struct {
@@ -103,5 +104,8 @@ MKXP_LoadLibrary(LPCSTR lpLibFileName);
 
 PREFABI BOOL
 MKXP_FreeLibrary(HMODULE hLibModule);
+
+PREFABI SHORT
+MKXP_GetAsyncKeyState(int vKey);
 
 #endif

@@ -55,7 +55,6 @@
 // ===============================================================
 #ifndef __WIN32__
 #define m(vk,sc) { vk, SDL_SCANCODE_##sc }
-#define n(vk) m(vk,-1)
 std::map<int, int> vKeyToScancode{
     // 0x01 LEFT MOUSE
     // 0x02 RIGHT MOUSE
@@ -408,6 +407,25 @@ MKXP_FreeLibrary(HMODULE hLibModule)
 {
     SDL_UnloadObject(hLibModule);
     return true;
+}
+
+
+// Luckily, Essentials only cares about the high-order bit,
+// so SDL's keystates will work perfectly fine
+
+// Doesn't handle mouse clicks yet, but I'll do it later
+
+PREFABI SHORT
+MKXP_GetAsyncKeyState(int vKey)
+{
+    SHORT result;
+    try {
+        result = shState->eThread().keyStates[vKeyToScancode[vKey]] << 15;
+    }
+    catch (...) {
+        result = 0;
+    }
+    return result;
 }
 
 
