@@ -5,10 +5,10 @@
 #include <SDL_syswm.h>
 #else
 #include <map>
-#include "eventthread.h"
 #endif
 
 #include "sharedstate.h"
+#include "eventthread.h"
 #include "input.h"
 #include "fake-api.h"
 
