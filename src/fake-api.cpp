@@ -340,7 +340,7 @@ MKXP_GetKeyboardState(PBYTE lpKeyState)
     bool rc = GetKeyboardState(lpKeyState);
     if (rc)
     {
-        const char *sdlkeystate = shState->eThread().keystates
+        unsigned char *sdlkeystate = shState->eThread().keyStates;
         lpKeyState[VK_LSHIFT] = sdlkeystate[SDL_SCANCODE_LSHIFT] << 7;
         lpKeyState[VK_RSHIFT] = sdlkeystate[SDL_SCANCODE_RSHIFT] << 7;
         lpKeyState[VK_SHIFT] = (lpKeyState[VK_LSHIFT] || lpKeyState[VK_RSHIFT]) ? 0x80 : 0;
