@@ -13,10 +13,8 @@
 #define PREFABI
 #endif
 
-
-
 #ifndef __WIN32__
-typedef unsigned int HWND, DWORD, UINT, *LPDWORD;
+typedef unsigned int DWORD, UINT, *LPDWORD;
 typedef char *LPCSTR, *PBYTE;
 typedef int LONG;
 typedef bool BOOL;
@@ -30,7 +28,7 @@ typedef struct {
     LONG right;
     LONG bottom;
 } RECT, *PRECT, *NPRECT, *LPRECT;
-typedef void VOID, *LPVOID, *HANDLE, *HMODULE;
+typedef void VOID, *LPVOID, *HANDLE, *HMODULE, *HWND;
 typedef size_t SIZE_T;
 
 extern std::map<int, int> vKeyToScancode;

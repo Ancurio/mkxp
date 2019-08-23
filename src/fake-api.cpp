@@ -240,7 +240,7 @@ MKXP_FindWindowEx(HWND hWnd,
     return wm.info.win.window;
 }
 #else
-NOP_VAL(DUMMY_VAL)
+NOP_VAL((HWND)DUMMY_VAL)
 #endif
 
 PREFABI DWORD
@@ -340,7 +340,7 @@ MKXP_GetKeyboardState(PBYTE lpKeyState)
     bool rc = GetKeyboardState(lpKeyState);
     if (rc)
     {
-        const char *sdlkeystate = (const char*)SDL_GetKeyboardState(0);
+        const char *sdlkeystate = shState->eThread().keystates
         lpKeyState[VK_LSHIFT] = sdlkeystate[SDL_SCANCODE_LSHIFT] << 7;
         lpKeyState[VK_RSHIFT] = sdlkeystate[SDL_SCANCODE_RSHIFT] << 7;
         lpKeyState[VK_SHIFT] = (lpKeyState[VK_LSHIFT] || lpKeyState[VK_RSHIFT]) ? 0x80 : 0;

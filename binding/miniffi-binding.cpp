@@ -64,8 +64,8 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(LoadLibrary);
     CAPTURE(FreeLibrary);
 #endif
-    if (!libhandle) return 0;
 #endif
+    if (!libhandle) return 0;
     return SDL_LoadFunction(libhandle, func);
 }
 
