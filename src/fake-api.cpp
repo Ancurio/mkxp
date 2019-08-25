@@ -552,6 +552,10 @@ PREFABI BOOL
 MKXP_ReleaseCapture(void)
 NOP_VAL(true);
 
+PREFABI int
+MKXP_ShowCursor(BOOL bShow)
+NOP_VAL(DUMMY_VAL);
+
 PREFABI DWORD
 MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
                              LPCTSTR lpKeyName,
@@ -579,5 +583,13 @@ MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
     strncpy(lpReturnedString, lpDefault, nSize);
     return strlen(lpDefault);
 }
+
+
+// Only supports English, other languages are too
+// much work to keep in hacky code like this
+
+PREFABI short // I know it's a LANGID but I don't care
+MKXP_GetUserDefaultLangID(void)
+NOP_VAL(0xC09);
 
 #endif

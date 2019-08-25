@@ -137,6 +137,9 @@ MKXP_SetCapture(HWND hWnd);
 PREFABI BOOL
 MKXP_ReleaseCapture(void);
 
+PREFABI int
+MKXP_ShowCursor(BOOL bShow);
+
 PREFABI DWORD
 MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
                              LPCTSTR lpKeyName,
@@ -144,5 +147,8 @@ MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
                              LPTSTR lpReturnedString,
                              DWORD nSize,
                              LPCTSTR lpFileName);
+
+PREFABI short
+MKXP_GetUserDefaultLangID(void);
 
 #endif
