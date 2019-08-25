@@ -64,6 +64,10 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(LoadLibrary);
     CAPTURE(FreeLibrary);
     CAPTURE(GetAsyncKeyState);
+    CAPTURE(GetSystemPowerStatus);
+    CAPTURE(ShowWindow);
+    CAPTURE(SetWindowLong);
+    CAPTURE(GetSystemMetrics);
 #endif
 #endif
     if (!libhandle) return 0;

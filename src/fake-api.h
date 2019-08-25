@@ -15,22 +15,33 @@
 
 #ifndef __WIN32__
 typedef unsigned int DWORD, UINT, *LPDWORD;
-typedef char *LPCSTR, *PBYTE;
+typedef char BYTE, *LPCSTR, *PBYTE;
 typedef short SHORT;
 typedef int LONG;
 typedef bool BOOL;
+typedef void VOID, *LPVOID, *HANDLE, *HMODULE, *HWND;
+typedef size_t SIZE_T;
+
 typedef struct {
     LONG x;
     LONG y;
 } POINT, *LPPOINT;
+
 typedef struct {
     LONG left;
     LONG top;
     LONG right;
     LONG bottom;
 } RECT, *PRECT, *NPRECT, *LPRECT;
-typedef void VOID, *LPVOID, *HANDLE, *HMODULE, *HWND;
-typedef size_t SIZE_T;
+
+typedef struct {
+    BYTE  ACLineStatus;
+    BYTE  BatteryFlag;
+    BYTE  BatteryLifePercent;
+    BYTE  SystemStatusFlag;
+    DWORD BatteryLifeTime;
+    DWORD BatteryFullLifeTime;
+} SYSTEM_POWER_STATUS, *LPSYSTEM_POWER_STATUS;
 
 extern std::map<int, int> vKeyToScancode;
 #endif
@@ -107,5 +118,17 @@ MKXP_FreeLibrary(HMODULE hLibModule);
 
 PREFABI SHORT
 MKXP_GetAsyncKeyState(int vKey);
+
+PREFABI BOOL
+MKXP_GetSystemPowerStatus(LPSYSTEM_POWER_STATUS lpSystemPowerStatus);
+
+PREFABI BOOL
+MKXP_ShowWindow(HWND hWnd, int nCmdShow);
+
+PREFABI LONG
+MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong);
+
+PREFABI int
+MKXP_GetSystemMetrics(int nIndex);
 
 #endif

@@ -428,5 +428,111 @@ MKXP_GetAsyncKeyState(int vKey)
     return result;
 }
 
+PREFABI BOOL
+MKXP_GetSystemPowerStatus(LPSYSTEM_POWER_STATUS lpSystemPowerStatus)
+{
+    int seconds, percent;
+    SDL_PowerState ps;
+    ps = SDL_GetPowerInfo(&seconds, &percent);
+    
+    // Setting ACLineStatus
+    if (ps == SDL_POWERSTATE_UNKNOWN)
+    {
+        lpSystemPowerStatus->ACLineStatus = 0xFF;
+    }
+    else
+    {
+        lpSystemPowerStatus->ACLineStatus =
+            (ps == SDL_POWERSTATE_ON_BATTERY) ? 1 : 0;
+    }
+    
+    // Setting BatteryFlag
+    if (ps == SDL_POWERSTATE_ON_BATTERY)
+    {
+        if (percent == -1)
+        {
+            lpSystemPowerStatus->BatteryFlag = 0xFF;
+        }
+        else if (percent >= 33)
+        {
+            lpSystemPowerStatus->BatteryFlag = 1;
+        }
+        else if (4 < percent && percent < 33)
+        {
+            lpSystemPowerStatus->BatteryFlag = 2;
+        }
+        else
+        {
+            lpSystemPowerStatus->BatteryFlag = 4;
+        }
+    }
+    else if (ps == SDL_POWERSTATE_CHARGING)
+    {
+        lpSystemPowerStatus->BatteryFlag = 8;
+    }
+    else if (ps == SDL_POWERSTATE_NO_BATTERY)
+    {
+        lpSystemPowerStatus->BatteryFlag = (BYTE)128;
+    }
+    else
+    {
+        lpSystemPowerStatus->BatteryFlag = 0xFF;
+    }
+    
+    // Setting BatteryLifePercent
+    lpSystemPowerStatus->BatteryLifePercent = (percent != -1) ? (BYTE)percent : 0xFF;
+    
+    // Setting SystemStatusFlag
+    lpSystemPowerStatus->SystemStatusFlag = 0;
+    
+    // Setting BatteryLifeTime
+    lpSystemPowerStatus->BatteryLifeTime = seconds;
+    
+    // Setting BatteryFullLifeTime
+    lpSystemPowerStatus->BatteryFullLifeTime = -1;
+    
+    return true;
+}
+
+PREFABI BOOL
+MKXP_ShowWindow(HWND hWnd, int nCmdShow)
+NOP_VAL(true);
+
+PREFABI LONG
+MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong)
+NOP_VAL(DUMMY_VAL);
+
+
+// This only currently supports getting screen width/height
+// Not really motivated to do the other ones when I'll be
+// extending Ruby at a later time anyway
+PREFABI int
+MKXP_GetSystemMetrics(int nIndex)
+{
+    SDL_DisplayMode dm;
+    int rc = SDL_GetDesktopDisplayMode(
+                              SDL_GetWindowDisplayIndex(shState->sdlWindow()),
+                              &dm
+                                       );
+    if (rc)
+    {
+        switch (nIndex) {
+            case 0:
+            return dm.w;
+            break;
+            
+            case 1:
+            return dm.h;
+            break;
+            
+            default:
+            return -1;
+            break;
+        }
+    }
+    
+    return -1;
+}
+
 
 #endif
