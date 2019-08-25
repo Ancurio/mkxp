@@ -12,6 +12,7 @@
 #define _T_NUMBER   1
 #define _T_POINTER  2
 #define _T_INTEGER  3
+#define _T_BOOL     4
 
 
 // Might need to let MiniFFI.initialize set calling convention
@@ -126,6 +127,10 @@ RB_METHOD(MiniFFI_initialize)
                     case 'I': case 'i':
                         rb_ary_push(ary_imports, INT2FIX(_T_INTEGER));
                         break;
+                    
+                    case 'B': case 'b':
+                        rb_ary_push(ary_imports, INT2FIX(_T_BOOL));
+                        break;
                 }
             }
             break;
@@ -146,6 +151,10 @@ RB_METHOD(MiniFFI_initialize)
                         
                     case 'I': case 'i':
                         rb_ary_push(ary_imports, INT2FIX(_T_INTEGER));
+                        break;
+                    
+                    case 'B': case 'b':
+                        rb_ary_push(ary_imports, INT2FIX(_T_BOOL));
                         break;
                 }
             }
@@ -180,6 +189,10 @@ RB_METHOD(MiniFFI_initialize)
                 
             case 'I': case 'i':
                 ex = _T_INTEGER;
+                break;
+            
+            case 'B': case 'b':
+                ex = _T_BOOL;
                 break;
         }
     }
@@ -227,6 +240,10 @@ RB_METHOD(MiniFFI_call)
                     lParam = (unsigned long)RSTRING_PTR(str);
                 }
                 break;
+            
+            case _T_BOOL:
+                lParam = (rb_ary_entry(args, i) == Qtrue);
+                break;
                 
             case _T_NUMBER: case _T_INTEGER: default:
                 lParam = NUM2OFFT(rb_ary_entry(args, i));
@@ -247,6 +264,9 @@ RB_METHOD(MiniFFI_call)
             
         case _T_POINTER:
             return rb_str_new2((char*)ret);
+        
+        case _T_BOOL:
+            return rb_bool_new(ret);
             
         case _T_VOID: default:
             return OFFT2NUM(0);
