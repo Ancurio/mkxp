@@ -335,6 +335,7 @@ NOP_VAL(true)
 
 // Shift key with GetKeyboardState doesn't work for whatever reason,
 // so Windows needs this too
+#define ks(sc) shState->eThread().keyStates[SDL_SCANCODE_##sc]
 PREFABI BOOL
 MKXP_GetKeyboardState(PBYTE lpKeyState)
 {
@@ -342,38 +343,15 @@ MKXP_GetKeyboardState(PBYTE lpKeyState)
     bool rc = GetKeyboardState(lpKeyState);
     if (rc)
     {
-        unsigned char *sdlkeystate = shState->eThread().keyStates;
-        lpKeyState[VK_LSHIFT] = sdlkeystate[SDL_SCANCODE_LSHIFT] << 7;
-        lpKeyState[VK_RSHIFT] = sdlkeystate[SDL_SCANCODE_RSHIFT] << 7;
+        lpKeyState[VK_LSHIFT] = ks(LSHIFT) << 7;
+        lpKeyState[VK_RSHIFT] = ks(RSHIFT) << 7;
         lpKeyState[VK_SHIFT] = (lpKeyState[VK_LSHIFT] || lpKeyState[VK_RSHIFT]) ? 0x80 : 0;
     }
     return rc;
 #else
     for (int i = 254; i > 0; i--)
     {
-        if (i == 0x10) // Either Shift key
-        {
-            lpKeyState[i] = (lpKeyState[0xa0] || lpKeyState[0xa1]) ? 0x80 : 0;
-        }
-        else if (i == 0x11) // Either Ctrl key
-        {
-            lpKeyState[i] = (lpKeyState[0xa2] || lpKeyState[0xa3]) ? 0x80 : 0;
-        }
-        else if (i == 0x12) // Either Alt key
-        {
-            lpKeyState[i] = (lpKeyState[0xa4] || lpKeyState[0xa5]) ? 0x80 : 0;
-        }
-        else
-        {
-            try
-            {
-                lpKeyState[i] = shState->eThread().keyStates[vKeyToScancode[i]] << 7;
-            }
-            catch(...)
-            {
-                lpKeyState[i] = 0;
-            }
-        }
+        lpKeyState[i] = (MKXP_GetAsyncKeyState(i)) ? 0x80 : 0;
     }
     return true;
 #endif
@@ -422,14 +400,43 @@ PREFABI SHORT
 MKXP_GetAsyncKeyState(int vKey)
 {
     SHORT result;
-    try {
-        result = shState->eThread().keyStates[vKeyToScancode[vKey]] << 15;
-    }
-    catch (...) {
-        result = 0;
+    switch (vKey) {
+        case 0x10: // Any Shift
+        result = (ks(LSHIFT) || ks(RSHIFT)) ? 0x8000 : 0;
+        break;
+        
+        case 0x11: // Any Ctrl
+        result = (ks(LCTRL) || ks(RCTRL)) ? 0x8000 : 0;
+        break;
+        
+        case 0x12: // Any Alt
+        result = (ks(LALT) || ks(RALT)) ? 0x8000 : 0;
+        break;
+        
+        case 0x1: // Mouse button 1
+        result = shState->input().isPressed(Input::MouseLeft) << 15;
+        break;
+        
+        case 0x2: // Mouse button 2
+        result = shState->input().isPressed(Input::MouseRight) << 15;
+        break;
+        
+        case 0x4: // Middle mouse
+        result = shState->input().isPressed(Input::MouseMiddle) << 15;
+        break;
+        
+        default:
+        try {
+            result = shState->eThread().keyStates[vKeyToScancode[vKey]] << 15;
+        }
+        catch (...) {
+            result = 0;
+        }
+        break;
     }
     return result;
 }
+#undef ks
 
 PREFABI BOOL
 MKXP_GetSystemPowerStatus(LPSYSTEM_POWER_STATUS lpSystemPowerStatus)
