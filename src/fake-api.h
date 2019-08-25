@@ -15,7 +15,7 @@
 
 #ifndef __WIN32__
 typedef unsigned int DWORD, UINT, *LPDWORD;
-typedef char BYTE, *LPCSTR, *PBYTE;
+typedef char BYTE, *LPCSTR, *LPCTSTR, *LPTSTR, *PBYTE;
 typedef short SHORT;
 typedef int LONG;
 typedef bool BOOL;
@@ -130,5 +130,19 @@ MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong);
 
 PREFABI int
 MKXP_GetSystemMetrics(int nIndex);
+
+PREFABI HWND
+MKXP_SetCapture(HWND hWnd);
+
+PREFABI BOOL
+MKXP_ReleaseCapture(void);
+
+PREFABI DWORD
+MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
+                             LPCTSTR lpKeyName,
+                             LPCTSTR lpDefault,
+                             LPTSTR lpReturnedString,
+                             DWORD nSize,
+                             LPCTSTR lpFileName);
 
 #endif

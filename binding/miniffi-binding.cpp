@@ -69,6 +69,9 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(ShowWindow);
     CAPTURE(SetWindowLong);
     CAPTURE(GetSystemMetrics);
+    CAPTURE(SetCapture);
+    CAPTURE(ReleaseCapture);
+    CAPTURE(GetPrivateProfileString);
 #endif
 #endif
     if (!libhandle) return 0;
@@ -99,7 +102,7 @@ RB_METHOD(MiniFFI_initialize)
         rb_raise(rb_eRuntimeError, SDL_GetError());
     
     
-    rb_iv_set(self, "_func", OFFT2NUM((unsigned long)hfunc));
+    rb_iv_set(self, "_func", ULONG2NUM((unsigned long)hfunc));
     rb_iv_set(self, "_funcname", func);
     rb_iv_set(self, "_libname", libname);
     
@@ -210,7 +213,7 @@ RB_METHOD(MiniFFI_call)
     VALUE func = rb_iv_get(self, "_func");
     VALUE own_imports = rb_iv_get(self, "_imports");
     VALUE own_exports = rb_iv_get(self, "_exports");
-    MINIFFI_FUNC ApiFunction = (MINIFFI_FUNC)NUM2OFFT(func);
+    MINIFFI_FUNC ApiFunction = (MINIFFI_FUNC)NUM2ULONG(func);
     VALUE args;
     int items = rb_scan_args(argc, argv, "0*", &args);
     int nimport = RARRAY_LEN(own_imports);
@@ -231,7 +234,7 @@ RB_METHOD(MiniFFI_call)
                 }
                 else if (FIXNUM_P(str))
                 {
-                    lParam = NUM2OFFT(str);
+                    lParam = NUM2ULONG(str);
                 }
                 else
                 {
@@ -246,7 +249,7 @@ RB_METHOD(MiniFFI_call)
                 break;
                 
             case _T_NUMBER: case _T_INTEGER: default:
-                lParam = NUM2OFFT(rb_ary_entry(args, i));
+                lParam = NUM2ULONG(rb_ary_entry(args, i));
                 break;
         }
         params[i] = lParam;
@@ -260,7 +263,7 @@ RB_METHOD(MiniFFI_call)
     switch (FIX2INT(own_exports))
     {
         case _T_NUMBER: case _T_INTEGER:
-            return OFFT2NUM(ret);
+            return ULONG2NUM(ret);
             
         case _T_POINTER:
             return rb_str_new2((char*)ret);
@@ -269,7 +272,7 @@ RB_METHOD(MiniFFI_call)
             return rb_bool_new(ret);
             
         case _T_VOID: default:
-            return OFFT2NUM(0);
+            return ULONG2NUM(0);
     }
 }
 

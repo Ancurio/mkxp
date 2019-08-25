@@ -5,10 +5,13 @@
 #include <SDL_syswm.h>
 #else
 #include <map>
+#include <cstring>
+#include "iniconfig.h"
 #endif
 
 #include "sharedstate.h"
 #include "eventthread.h"
+#include "filesystem.h"
 #include "input.h"
 #include "fake-api.h"
 
@@ -296,7 +299,7 @@ MKXP_SetWindowPos(HWND hWnd,
 #ifdef __WIN32__
     SetWindowPos(hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
 #else
-    SDL_SetWindowSize(shState->sdlWindow(), cx, cy);
+    //SDL_SetWindowSize(shState->sdlWindow(), cx, cy);
 #endif
     SDL_SetWindowPosition(shState->sdlWindow(), X, Y);
     return true;
@@ -509,12 +512,12 @@ NOP_VAL(DUMMY_VAL);
 PREFABI int
 MKXP_GetSystemMetrics(int nIndex)
 {
-    SDL_DisplayMode dm;
+    SDL_DisplayMode dm = {0};
     int rc = SDL_GetDesktopDisplayMode(
                               SDL_GetWindowDisplayIndex(shState->sdlWindow()),
                               &dm
-                                       );
-    if (rc)
+                            );
+    if (!rc)
     {
         switch (nIndex) {
             case 0:
@@ -534,5 +537,40 @@ MKXP_GetSystemMetrics(int nIndex)
     return -1;
 }
 
+PREFABI HWND
+MKXP_SetCapture(HWND hWnd)
+NOP_VAL((HWND)DUMMY_VAL);
+
+PREFABI BOOL
+MKXP_ReleaseCapture(void)
+NOP_VAL(true);
+
+PREFABI DWORD
+MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
+                             LPCTSTR lpKeyName,
+                             LPCTSTR lpDefault,
+                             LPTSTR lpReturnedString,
+                             DWORD nSize,
+                             LPCTSTR lpFileName)
+{
+    char *lpFileName_normal = shState->fileSystem().normalize(lpFileName, true, false);
+    SDLRWStream iniFile(lpFileName_normal, "r");
+    delete lpFileName_normal;
+    if (iniFile)
+    {
+        INIConfiguration ic;
+        if (ic.load(iniFile.stream()))
+        {
+            std::string result = ic.getStringProperty(lpAppName, lpKeyName);
+            if (!result.empty())
+            {
+                strncpy(lpReturnedString, result.c_str(), nSize);
+                return result.length();
+            }
+        }
+    }
+    strncpy(lpReturnedString, lpDefault, nSize);
+    return strlen(lpDefault);
+}
 
 #endif
