@@ -393,9 +393,6 @@ MKXP_FreeLibrary(HMODULE hLibModule)
 
 // Luckily, Essentials only cares about the high-order bit,
 // so SDL's keystates will work perfectly fine
-
-// Doesn't handle mouse clicks yet, but I'll do it later
-
 PREFABI SHORT
 MKXP_GetAsyncKeyState(int vKey)
 {
@@ -414,15 +411,15 @@ MKXP_GetAsyncKeyState(int vKey)
         break;
         
         case 0x1: // Mouse button 1
-        result = shState->input().isPressed(Input::MouseLeft) << 15;
+        result = (SDL_GetMouseState(0,0) & SDL_BUTTON(1)) ? 0x8000 : 0;
         break;
         
         case 0x2: // Mouse button 2
-        result = shState->input().isPressed(Input::MouseRight) << 15;
+        result = (SDL_GetMouseState(0,0) & SDL_BUTTON(3)) ? 0x8000 : 0;
         break;
         
         case 0x4: // Middle mouse
-        result = shState->input().isPressed(Input::MouseMiddle) << 15;
+        result = (SDL_GetMouseState(0,0) & SDL_BUTTON(2)) ? 0x8000 : 0;
         break;
         
         default:
