@@ -38,6 +38,7 @@ if host_system == 'windows'
     all_sources += windows_resources
     include_dirs += include_directories('windows')
 elif host_system == 'darwin'
+    subdir('macos')
     if compiler.get_id() == 'clang'
         add_project_arguments('-stdlib=libc++', language: 'cpp')
     endif
@@ -47,5 +48,6 @@ executable(meson.project_name(),
     sources: all_sources,
     dependencies: [main_dependencies, binding_dependencies],
     include_directories: include_dirs,
-    gui_app: (get_option('console') == false)
+    gui_app: (get_option('console') == false),
+    install: (host_system == 'darwin')
 )
