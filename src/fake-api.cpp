@@ -334,6 +334,23 @@ MKXP_RegisterHotKey(HWND hWnd,
                     UINT vk)
 NOP_VAL(true)
 
+PREFABI LONG
+MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong)
+{
+    if (nIndex == -16)
+    {
+        if (dwNewLong == 0)
+        {
+            shState->graphics().setFullscreen(true);
+        }
+        else if (dwNewLong == 0x14ca0000)
+        {
+            shState->graphics().setFullscreen(false);
+        }
+    }
+    return DUMMY_VAL;
+};
+
 // Shift key with GetKeyboardState doesn't work for whatever reason,
 // so Windows needs this too
 #define ks(sc) shState->eThread().keyStates[SDL_SCANCODE_##sc]
@@ -505,24 +522,6 @@ MKXP_GetSystemPowerStatus(LPSYSTEM_POWER_STATUS lpSystemPowerStatus)
 PREFABI BOOL
 MKXP_ShowWindow(HWND hWnd, int nCmdShow)
 NOP_VAL(true);
-
-PREFABI LONG
-MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong)
-{
-    
-    if (nIndex == -16)
-    {
-        if (dwNewLong == 0)
-        {
-            shState->graphics().setFullscreen(true);
-        }
-        else if (dwNewLong == 0x14ca0000)
-        {
-            shState->graphics().setFullscreen(false);
-        }
-    }
-    return DUMMY_VAL;
-};
 
 
 // This only currently supports getting screen width/height

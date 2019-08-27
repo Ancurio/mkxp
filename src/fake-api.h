@@ -102,6 +102,9 @@ MKXP_RegisterHotKey(HWND hWnd,
                     UINT fsModifiers,
                     UINT vk);
 
+PREFABI LONG
+MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong);
+
 PREFABI BOOL
 MKXP_GetKeyboardState(PBYTE lpKeyState);
 
@@ -124,9 +127,6 @@ MKXP_GetSystemPowerStatus(LPSYSTEM_POWER_STATUS lpSystemPowerStatus);
 
 PREFABI BOOL
 MKXP_ShowWindow(HWND hWnd, int nCmdShow);
-
-PREFABI LONG
-MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong);
 
 PREFABI int
 MKXP_GetSystemMetrics(int nIndex);

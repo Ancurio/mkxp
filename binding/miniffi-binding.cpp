@@ -58,6 +58,7 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(SetWindowTextA);
     CAPTURE(GetWindowRect);
     CAPTURE(RegisterHotKey);
+    CAPTURE(SetWindowLong);
     CAPTURE(GetKeyboardState);
 #ifndef __WIN32__  
     // Functions only needed on Linux and macOS go here
@@ -67,7 +68,6 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(GetAsyncKeyState);
     CAPTURE(GetSystemPowerStatus);
     CAPTURE(ShowWindow);
-    CAPTURE(SetWindowLong);
     CAPTURE(GetSystemMetrics);
     CAPTURE(SetCapture);
     CAPTURE(ReleaseCapture);
