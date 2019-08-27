@@ -104,7 +104,7 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `SetWindowTextA`: Sets the window title.
 * `GetWindowRect`: Returns the screen coordinates of the game window's corners.
 * `RegisterHotKey`: No-op. pls no disabling SDL's precious fullscreen.
-* `SetWindowLong`: Only supports switching between fullscreen/windowed modes. Always returns `571`.
+* `SetWindowLong`: Native SetWindowLong on Windows. Everywhere else, only supports switching between fullscreen/windowed modes and always returns `571`.
 * `GetKeyboardState`: On Windows, adds states for Shift based on SDL's keystates. Emulated everywhere else.
 
 #### macOS/Linux

@@ -337,6 +337,9 @@ NOP_VAL(true)
 PREFABI LONG
 MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong)
 {
+#ifdef __WIN32__
+    return SetWindowLong(hWnd, nIndex, dwNewLong);
+#else
     if (nIndex == -16)
     {
         if (dwNewLong == 0)
@@ -349,6 +352,7 @@ MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong)
         }
     }
     return DUMMY_VAL;
+#endif
 };
 
 // Shift key with GetKeyboardState doesn't work for whatever reason,
