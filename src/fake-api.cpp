@@ -12,6 +12,7 @@
 #include "sharedstate.h"
 #include "eventthread.h"
 #include "filesystem.h"
+#include "graphics.h"
 #include "input.h"
 #include "fake-api.h"
 
@@ -507,7 +508,21 @@ NOP_VAL(true);
 
 PREFABI LONG
 MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong)
-NOP_VAL(DUMMY_VAL);
+{
+    
+    if (nIndex == -16)
+    {
+        if (dwNewLong == 0)
+        {
+            shState->graphics().setFullscreen(true);
+        }
+        else if (dwNewLong == 0x14ca0000)
+        {
+            shState->graphics().setFullscreen(false);
+        }
+    }
+    return DUMMY_VAL;
+};
 
 
 // This only currently supports getting screen width/height
