@@ -966,7 +966,13 @@ void Graphics::screenshot(const char *filename)
 {
 	int w = width();
 	int h = height();
-	
+#ifdef __WIN32__
+    SDL_Surface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
+    if (!img) throw Exception(Exception::SDLError, "%s", SDL_GetError());
+    
+    glReadBuffer(GL_FRONT);
+    glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE, img->pixels);
+#else
     SDL_Surface *tmp, *img;
     tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
     img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
@@ -987,6 +993,7 @@ void Graphics::screenshot(const char *filename)
                4 * w);
     }
     SDL_FreeSurface(tmp);
+#endif
     
     char *fn_normalized = shState->fileSystem().normalize(filename, 1, 1);
 	int rc = SDL_SaveBMP(img, fn_normalized);
