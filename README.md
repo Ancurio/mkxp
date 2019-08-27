@@ -1,6 +1,8 @@
 # mkxp-z
 
-This is a work-in-progress fork of mkxp that is intended to run and alleviate the difficulty of porting games based on Pokemon Essentials. It's not necessarily intended to be a byte-for-byte copy of RGSS though, so non-standard extensions and optional enhancements (such as Discord integration) can/will be written for fangame developers (you poor souls) to take advantage of.
+![ss](/screenshot.png?raw=true)
+
+This is a work-in-progress fork of mkxp that is intended to run and alleviate the difficulty of porting games based on Pokemon Essentials. It's not necessarily intended to be a byte-for-byte copy of RGSS though, so non-standard extensions and optional enhancements can/will be written for fangame developers (you poor souls) to take advantage of.
 
 ## Prebuilt binaries
 > None yet!
@@ -84,23 +86,47 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 ## Win32API
 
-Win32API exists in mkxp-z as both `Win32API.new` and `MiniFFI.new` (This class is available under macOS, linux and Windows and "Win32API" as a name makes no sense on the former two platforms). It functions nearly the same as Ruby 1.8's Win32API, for better or worse. The third and fourth arguments are now optional (if you just want a function that takes no arguments and returns nothing, for instance), and `new` will yield to blocks.
+Win32API exists in mkxp-z as both `Win32API.new` and `MiniFFI.new` (This class is available under macOS, linux and Windows and "Win32API" as a name makes no sense on the former two platforms). It functions nearly the same as Ruby 1.8's Win32API, for better or worse. The third and fourth arguments are now optional (if you just want a function that takes no arguments and returns nothing, for instance), and `new` will yield to blocks. Being simple as it is, it remains mostly as the lazy option/last resort to add C functions from shared libraries if you can't/don't want to build mkxp-z yourself.
 
-Being simple as it is, it remains mostly as the lazy option/last resort to add C functions from shared libraries if you can't/don't want to build MKXP yourself.
+### fake-api
+
+mkxp-z provides limited support for some WinAPI functions that would normally break. While using Win32API isn't the most recommended course of action, there is still no replacement (*yet*)for the majority of functions that use it and it does make porting easier if you don't care whether it's used or not. Building with the `use_fakeapi` option enables this.
+
+#### Universal
+* `GetCurrentThreadId`: Always returns `571`.
+* `GetWindowThreadProcessId`: Always returns `571`.
+* `FindWindowEx`: Returns SDL window handle on Windows, else always returns `571`.
+* `GetForegroundWindow`: Returns `571` if the window has input focus, else `0`.
+* `GetClientRect`: Returns window size.
+* `GetCursorPos`: Returns global mouse position.
+* `ScreenToClient`: Returns position relative to the game window, taking into account window scale.
+* `SetWindowPos`: Sets window position. May also set window size on Windows. (I haven't actually checked.)
+* `SetWindowTextA`: Sets the window title.
+* `GetWindowRect`: Returns the screen coordinates of the game window's corners.
+* `RegisterHotKey`: No-op. pls no disabling SDL's precious fullscreen.
+* `GetKeyboardState`: On Windows, adds states for Shift based on SDL's keystates. Emulated everywhere else.
+
+#### macOS/Linux
+* `RtlMoveMemory`: memcpy.
+* `LoadLibrary`/`FreeLibrary`: dlopen/dlclose. Obviously will never actually work.
+* `GetAsyncKeyState`: Emulated based on SDL mouse/key states.
+* `GetSystemPowerStatus`: Emulated based on SDL_GetPowerInfo.
+* `ShowWindow`: No-op.
+* `SetWindowLong`: No-op. Always returns `571`.
+* `GetSystemMetrics`: Only supports getting screen width/height.
+* `SetCapture`: No-op. Always returns `571`.
+* `ReleaseCapture`: No-op.
+* `GetPrivateProfileString`: Emulated with MKXP's ini code.
+* `GetUserDefaultLangId`: Always returns English (`0xc09`).
 
 ## What doesn't work (yet)
 
-* Win32API calls outside of Windows (Win32API is just an alias to the MiniFFI class, which *does* work with other operating systems, but you can obviously only load libraries made for the platform you're on)*
-* Some Win32API calls don't play nicely with SDL. Building with the `use_fakeapi` option will attempt to fix this.
-* `rubyscreen.dll` doesn't work, and `Graphics.snap_to_bitmap` is unconditionally overridden by the SpriteResizer script. This can't be worked around without modifying Ruby in ways I don't have any desire to. RGSS2 Graphics functions are bound in RGSS1 mode, so wrap the definition of the Win32API-based `snap_to_bitmap` in an if statement, or delete it. As another consequence of `rubyscreen.dll` not being compatible, screenshots also don't work -- but the Graphics module now has a `screenshot` method to compensate for this.
 * The current implementation of `load_data` is case-sensitive. If you try to load `Data/MapXXX`, you will not find `Data/mapXXX`.
 * `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag if not using loose files. Very hard.
-* `FileSystem::openRead` is not compatible with absolute paths in Windows (this affects `Bitmap.new` or `Audio.bgm_play`, for instance, another reason why Win32API `Graphics.snap_to_bitmap` breaks).
+* `FileSystem::openRead` is not compatible with absolute paths in Windows (this affects `Bitmap.new` or `Audio.bgm_play`, for instance).
 * Movie playback
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
-
-\* Once games can be played comfortably on Windows, I may try to have a 'fake' Win32API class written for other operating systems which intercepts and interprets some of the common calls that get used, a bit like what's already being done with the `use_fakeapi` option. SDL2 can handle a lot of the things that are performed with WinAPI.
 
 ^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech, Zeta after you leave the cave, but Pokemon Uranium seems to be fine as far as I've tested)
 

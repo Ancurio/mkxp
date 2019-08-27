@@ -967,6 +967,12 @@ void Graphics::screenshot(const char *filename)
     SDL_Surface *tmp, *img;
     tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
     img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
+    if (!tmp || !img)
+    {
+        if (tmp) SDL_FreeSurface(tmp);
+        if (img) SDL_FreeSurface(img);
+        throw Exception(Exception::SDLError, "%s", SDL_GetError());
+    }
     
     glReadBuffer(GL_FRONT);
     glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE, tmp->pixels);
@@ -974,7 +980,7 @@ void Graphics::screenshot(const char *filename)
     for (int i = 0; i < h; i++)
     {
         memcpy((char*)img->pixels + 4 * w * i,
-               (char*)tmp->pixels + 4 * w * (h - i),
+               (char*)tmp->pixels + 4 * w * (h - i - 1),
                4 * w);
     }
     SDL_FreeSurface(tmp);
