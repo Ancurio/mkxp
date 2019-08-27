@@ -963,13 +963,27 @@ void Graphics::screenshot(const char *filename)
 {
 	int w = width();
 	int h = height();
-	const char *fn_normalized = shState->fileSystem().normalize(filename, true, true);
-	unsigned char *pixbuf = new unsigned char[w*h*4];
-	glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE,pixbuf);
-	SDL_Surface *s = SDL_CreateRGBSurfaceFrom(pixbuf,w,h,8*4,w*4,0,0,0,0);
-	int rc = SDL_SaveBMP(s, fn_normalized);
-	delete fn_normalized;
-	delete pixbuf;
+	
+    SDL_Surface *tmp, *img;
+    tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
+    img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
+    
+    glReadBuffer(GL_FRONT);
+    glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE, tmp->pixels);
+    
+    for (int i = 0; i < h; i++)
+    {
+        memcpy((char*)img->pixels + 4 * w * i,
+               (char*)tmp->pixels + 4 * w * (h - i),
+               4 * w);
+    }
+    SDL_FreeSurface(tmp);
+    
+    char *fn_normalized = shState->fileSystem().normalize(filename, 1, 1);
+	int rc = SDL_SaveBMP(img, fn_normalized);
+    
+    SDL_FreeSurface(img);
+    delete fn_normalized;
 	if (rc) throw Exception(Exception::SDLError, "%s", SDL_GetError());
 }
 
