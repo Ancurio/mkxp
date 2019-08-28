@@ -127,8 +127,10 @@ private:
 	{
 		if (rotation >= 360 || rotation < -360)
 			rotation = (float) fmod(rotation, 360);
-		if (rotation < 0)
-			rotation += 360;
+
+        // RGSS allows negative angles
+		//if (rotation < 0)
+		//	rotation += 360;
 
 		float angle  = rotation * 3.141592654f / 180.0f;
 		float cosine = (float) cos(angle);
