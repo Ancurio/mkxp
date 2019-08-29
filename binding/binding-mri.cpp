@@ -226,8 +226,12 @@ RB_METHOD(mkxpDataDirectory)
 	
 	const std::string &path = shState->config().customDataPath;
 	const char *s = path.empty() ? "." : path.c_str();
+    
+    char *s_nml = shState->fileSystem().normalize(s, 1, 1);
+    VALUE ret = rb_str_new_cstr(s_nml);
+    delete s_nml;
 
-	return rb_str_new_cstr(s);
+	return ret;
 }
 
 RB_METHOD(mkxpPuts)
