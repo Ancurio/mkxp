@@ -97,6 +97,21 @@ shState->graphics().set##PropName(value); \
 return rb_bool_new(value); \
 }
 
+#define DEF_GRA_PROP_F(PropName) \
+RB_METHOD(graphics##Get##PropName) \
+{ \
+RB_UNUSED_PARAM; \
+return rb_float_new(shState->graphics().get##PropName()); \
+} \
+RB_METHOD(graphics##Set##PropName) \
+{ \
+RB_UNUSED_PARAM; \
+double value; \
+rb_get_args(argc, argv, "f", &value RB_ARG_END); \
+shState->graphics().set##PropName(value); \
+return rb_float_new(value); \
+}
+
 RB_METHOD(graphicsWidth)
 {
     RB_UNUSED_PARAM;
@@ -219,6 +234,7 @@ DEF_GRA_PROP_I(Brightness)
 
 DEF_GRA_PROP_B(Fullscreen)
 DEF_GRA_PROP_B(ShowCursor)
+DEF_GRA_PROP_F(Scale);
 
 #define INIT_GRA_PROP_BIND(PropName, prop_name_s) \
 { \
@@ -263,4 +279,5 @@ void graphicsBindingInit()
     
     INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
     INIT_GRA_PROP_BIND( ShowCursor, "show_cursor" );
+    INIT_GRA_PROP_BIND( Scale,      "scale"       );
 }

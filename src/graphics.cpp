@@ -40,6 +40,7 @@
 #include "binding.h"
 #include "debugwriter.h"
 
+#include <SDL.h>
 #include <SDL_video.h>
 #include <SDL_timer.h>
 #include <SDL_image.h>
@@ -1057,6 +1058,19 @@ bool Graphics::getShowCursor() const
 void Graphics::setShowCursor(bool value)
 {
 	p->threadData->ethread->requestShowCursor(value);
+}
+
+double Graphics::getScale() const
+{
+    return (double)p->scSize.y / p->scRes.y;
+}
+
+void Graphics::setScale(double factor)
+{
+    factor = clamp(factor, 0.5, 2.0);
+    int widthpx = p->scRes.x * factor;
+    int heightpx = p->scRes.y * factor;
+    shState->eThread().requestWindowResize(widthpx, heightpx);
 }
 
 Scene *Graphics::getScreen() const
