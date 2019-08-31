@@ -142,7 +142,7 @@ To alleviate possible porting of heavily Win32API reliant scripts, certain funct
 ### Graphics
 
 * The `Graphics` module has three additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`. `scale` represents the current scale factor of the screen, and can be set from `0.5` to `2`.
-* The `Graphics` module has one additional function: `Graphics.screenshot(path)` will save a screenshot to `path` in BMP format.
+* The `Graphics` module has two additional functions: `Graphics.screenshot(path)` will save a screenshot to `path` in BMP format. `Graphics.center` will move the window to the center of the screen.
 
 Commonly used Win32API routines will eventually have equivalent functions directly bound, like `Graphics.screenshot` for `Win32API.new('rubyscreen.dll,'TakeScreenshot','p','i')`.
 

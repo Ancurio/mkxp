@@ -198,6 +198,14 @@ RB_METHOD(graphicsReset)
     return Qnil;
 }
 
+RB_METHOD(graphicsCenter)
+{
+    RB_UNUSED_PARAM;
+    
+    shState->graphics().center();
+    return Qnil;
+}
+
 RB_METHOD(graphicsPlayMovie)
 {
     RB_UNUSED_PARAM;
@@ -267,6 +275,7 @@ void graphicsBindingInit()
     _rb_define_module_function(module, "fadein", graphicsFadein);
     _rb_define_module_function(module, "snap_to_bitmap", graphicsSnapToBitmap);
     _rb_define_module_function(module, "resize_screen", graphicsResizeScreen);
+    _rb_define_module_function(module, "center", graphicsCenter);
         
     INIT_GRA_PROP_BIND( Brightness, "brightness" );
 

@@ -84,6 +84,7 @@ enum
 	REQUEST_WINRESIZE,
     REQUEST_WINREPOSITION,
     REQUEST_WINRENAME,
+    REQUEST_WINCENTER,
 	REQUEST_MESSAGEBOX,
 	REQUEST_SETCURSORVISIBLE,
 
@@ -157,7 +158,9 @@ void EventThread::process(RGSSThreadData &rtData)
 	bool resetting = false;
 
 	int winW, winH;
-	int i;
+	int i, rc;
+    
+    SDL_DisplayMode dm = {0};
 
 	SDL_GetWindowSize(win, &winW, &winH);
 
@@ -416,6 +419,14 @@ void EventThread::process(RGSSThreadData &rtData)
                 SDL_SetWindowPosition(win, event.window.data1, event.window.data2);
                 break;
                     
+            case REQUEST_WINCENTER :
+                    rc = SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(win), &dm);
+                    if (!rc)
+                        SDL_SetWindowPosition(win,
+                                              (dm.w / 2) - (winW / 2),
+                                              (dm.h / 2) - (winH / 2));
+                    break;
+                    
             case REQUEST_WINRENAME :
                 rtData.config.windowTitle = (const char*)event.user.data1;
                 SDL_SetWindowTitle(win, rtData.config.windowTitle.c_str());
@@ -604,6 +615,13 @@ void EventThread::requestWindowReposition(int x, int y)
     event.type = usrIdStart + REQUEST_WINREPOSITION;
     event.window.data1 = x;
     event.window.data2 = y;
+    SDL_PushEvent(&event);
+}
+
+void EventThread::requestWindowCenter()
+{
+    SDL_Event event;
+    event.type = usrIdStart + REQUEST_WINCENTER;
     SDL_PushEvent(&event);
 }
 

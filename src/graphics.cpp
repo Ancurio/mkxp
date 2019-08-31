@@ -1039,6 +1039,11 @@ void Graphics::reset()
 	setBrightness(255);
 }
 
+void Graphics::center()
+{
+    p->threadData->ethread->requestWindowCenter();
+}
+
 bool Graphics::getFullscreen() const
 {
 	return p->threadData->ethread->getFullscreen();
@@ -1067,9 +1072,21 @@ double Graphics::getScale() const
 void Graphics::setScale(double factor)
 {
     factor = clamp(factor, 0.5, 2.0);
+    
+    if (factor == getScale()) return;
+    
     int widthpx = p->scRes.x * factor;
     int heightpx = p->scRes.y * factor;
+    
+    int cur_sz = p->scSize.x;
     shState->eThread().requestWindowResize(widthpx, heightpx);
+    
+    // Give things a little time to recalculate before continuing
+    for (int i = 0; i < p->frameRate; i++)
+    {
+        if (cur_sz != p->scSize.x) break;
+        update();
+    }
 }
 
 Scene *Graphics::getScreen() const

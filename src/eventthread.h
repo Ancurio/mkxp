@@ -87,6 +87,7 @@ public:
 	void requestFullscreenMode(bool mode);
 	void requestWindowResize(int width, int height);
     void requestWindowReposition(int x, int y);
+    void requestWindowCenter();
     void requestWindowRename(const char *title);
 	void requestShowCursor(bool mode);
 

@@ -58,6 +58,7 @@ public:
 	void screenshot(const char *filename);
 
 	void reset();
+    void center();
 
 	/* Non-standard extension */
 	DECL_ATTR( Fullscreen, bool )
