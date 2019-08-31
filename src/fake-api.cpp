@@ -303,7 +303,7 @@ MKXP_SetWindowPos(HWND hWnd,
 PREFABI BOOL
 MKXP_SetWindowTextA(HWND hWnd, LPCSTR lpString)
 {
-    SDL_SetWindowTitle(shState->sdlWindow(), (const char*)lpString);
+    shState->eThread().requestWindowRename((const char*)lpString);
     return true;
 }
 
