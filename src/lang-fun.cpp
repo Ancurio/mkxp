@@ -63,7 +63,7 @@ const char *getUserLanguage()
     static char buf[50] = {0};
 #if defined(__WIN32__)
     wchar_t wbuf[50] = {0};
-    LANGID lid = GetUserDefaultLangId();
+    LANGID lid = GetUserDefaultLangID();
     LCIDToLocaleName(lid, wbuf, sizeof(wbuf), 0);
     wcstombs(buf, wbuf, sizeof(buf));
 #else

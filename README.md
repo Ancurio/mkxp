@@ -117,7 +117,7 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `SetCapture`: No-op. Always returns `571`.
 * `ReleaseCapture`: No-op.
 * `GetPrivateProfileString`: Emulated with MKXP's ini code.
-* `GetUserDefaultLangId`: Always returns English (`0xc09`).
+* `GetUserDefaultLangId`: Checks for JP, EN, FR, IT, DE, ES, KO, PT and ZH. Returns English (`0x09`) if the locale can't be determined. Doesn't handle sublanguages. Use `MKXP.user_language` instead.
 
 ## What doesn't work (yet)
 
