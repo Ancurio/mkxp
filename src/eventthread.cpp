@@ -82,6 +82,7 @@ enum
 {
 	REQUEST_SETFULLSCREEN = 0,
 	REQUEST_WINRESIZE,
+    REQUEST_WINREPOSITION,
 	REQUEST_MESSAGEBOX,
 	REQUEST_SETCURSORVISIBLE,
 
@@ -409,6 +410,10 @@ void EventThread::process(RGSSThreadData &rtData)
 			case REQUEST_WINRESIZE :
 				SDL_SetWindowSize(win, event.window.data1, event.window.data2);
 				break;
+                    
+            case REQUEST_WINREPOSITION :
+                SDL_SetWindowPosition(win, event.window.data1, event.window.data2);
+                break;
 
 			case REQUEST_MESSAGEBOX :
 				SDL_ShowSimpleMessageBox(event.user.code,
@@ -585,6 +590,15 @@ void EventThread::requestWindowResize(int width, int height)
 	event.window.data1 = width;
 	event.window.data2 = height;
 	SDL_PushEvent(&event);
+}
+
+void EventThread::requestWindowReposition(int x, int y)
+{
+    SDL_Event event;
+    event.type = usrIdStart + REQUEST_WINREPOSITION;
+    event.window.data1 = x;
+    event.window.data2 = y;
+    SDL_PushEvent(&event);
 }
 
 void EventThread::requestShowCursor(bool mode)

@@ -12,7 +12,6 @@
 #include "sharedstate.h"
 #include "eventthread.h"
 #include "filesystem.h"
-#include "graphics.h"
 #include "input.h"
 #include "fake-api.h"
 
@@ -293,16 +292,11 @@ MKXP_SetWindowPos(HWND hWnd,
                   int cy,
                   UINT uFlags)
 {
-    // Setting window position still doesn't work with
-    // SetWindowPos, but it still needs to be called
-    // because Win32API.restoreScreen is picky about its
-    // metrics
-#ifdef __WIN32__
-    SetWindowPos(hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
-#else
-    //SDL_SetWindowSize(shState->sdlWindow(), cx, cy);
-#endif
-    SDL_SetWindowPosition(shState->sdlWindow(), X, Y);
+    // The game calls resize_screen which will automatically
+    // ... well, resize the screen
+    //shState->eThread().requestWindowResize(cx, cy);
+    
+    shState->eThread().requestWindowReposition(X, Y);
     return true;
 }
 
@@ -344,11 +338,11 @@ MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong)
     {
         if (dwNewLong == 0)
         {
-            shState->graphics().setFullscreen(true);
+            shState->eThread().requestFullscreenMode(true);
         }
         else if (dwNewLong == 0x14ca0000)
         {
-            shState->graphics().setFullscreen(false);
+            shState->eThread().requestFullscreenMode(false);
         }
     }
     return DUMMY_VAL;

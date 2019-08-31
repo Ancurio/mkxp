@@ -40,7 +40,6 @@
 #include "binding.h"
 #include "debugwriter.h"
 
-#include <SDL.h>
 #include <SDL_video.h>
 #include <SDL_timer.h>
 #include <SDL_image.h>
