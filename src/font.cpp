@@ -33,7 +33,18 @@
 
 #include <SDL_ttf.h>
 
+#ifndef CJK_FALLBACK
+#include "liberation.ttf.xxd"
+#else
+#include "wqymicrohei.ttf.xxd"
+#endif
+
+
+#ifndef CJK_FALLBACK
 #define BUNDLED_FONT liberation
+#else
+#define BUNDLED_FONT wqymicrohei
+#endif
 
 #define BUNDLED_FONT_DECL(FONT) \
 	extern unsigned char ___assets_##FONT##_ttf[]; \

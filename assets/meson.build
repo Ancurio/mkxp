@@ -1,7 +1,12 @@
 embedded_assets = [
-    'icon.png',
-    'liberation.ttf'
+    'icon.png'
 ]
+
+if get_option('cjk_fallback_font') == true
+    embedded_assets += 'wqymicrohei.ttf'
+else
+    embedded_assets += 'liberation.ttf'
+endif
 
 embedded_assets_f = files(embedded_assets)
 

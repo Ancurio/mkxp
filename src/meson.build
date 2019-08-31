@@ -33,6 +33,10 @@ if get_option('default_framerate') == true
     add_project_arguments('-DDEFAULT_FRAMERATE', language: 'cpp')
 endif
 
+if get_option('cjk_fallback_font') == true
+    add_project_arguments('-DCJK_FALLBACK', language: 'cpp')
+endif
+
 main_headers = files(
     'quadarray.h',
     'audio.h',
@@ -132,7 +136,6 @@ main_source = files(
     'alstream.cpp',
     'audiostream.cpp',
     'rgssad.cpp',
-    'bundledfont.cpp',
     'vorbissource.cpp',
     'windowvx.cpp',
     'tilemapvx.cpp',
