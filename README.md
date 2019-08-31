@@ -82,7 +82,7 @@ You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/
 
 In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
 
-If a requested font is not found, no error is generated. Instead, a built-in font is used (currently "Liberation Sans").
+If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
 
 ## Win32API
 
@@ -100,7 +100,7 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `GetClientRect`: Returns window size.
 * `GetCursorPos`: Returns global mouse position.
 * `ScreenToClient`: Returns position relative to the game window, taking into account window scale.
-* `SetWindowPos`: Sets window position. May also set window size on Windows. (I haven't actually checked.)
+* `SetWindowPos`: Sets window position.
 * `SetWindowTextA`: Sets the window title.
 * `GetWindowRect`: Returns the screen coordinates of the game window's corners.
 * `RegisterHotKey`: No-op. pls no disabling SDL's precious fullscreen.
@@ -128,7 +128,7 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
 
-^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. (This breaks SLLD after the professor's speech, Zeta after you leave the cave, but Pokemon Uranium seems to be fine as far as I've tested)
+^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
 
 ## Nonstandard RGSS extensions
 
@@ -141,7 +141,7 @@ To alleviate possible porting of heavily Win32API reliant scripts, certain funct
 
 ### Graphics
 
-* The `Graphics` module has two additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`.
+* The `Graphics` module has three additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`. `scale` represents the current scale factor of the screen, and can be set from `0.5` to `2`.
 * The `Graphics` module has one additional function: `Graphics.screenshot(path)` will save a screenshot to `path` in BMP format.
 
 Commonly used Win32API routines will eventually have equivalent functions directly bound, like `Graphics.screenshot` for `Win32API.new('rubyscreen.dll,'TakeScreenshot','p','i')`.
