@@ -15,6 +15,7 @@ zlib = dependency('zlib')
 main_dependencies = [sigcxx, openal, opengl, boost, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
 if host_system == 'darwin'
     main_dependencies += compiler.find_library('iconv')
+    main_dependencies += dependency('CoreFoundation')
 
     if openal.type_name() != 'pkgconfig'
     add_project_arguments('-DUSE_MAC_OPENAL', language: 'cpp')
@@ -96,7 +97,8 @@ main_headers = files(
     'tileatlasvx.h',
     'sharedmidistate.h',
     'fluid-fun.h',
-    'sdl-util.h'
+    'sdl-util.h',
+    'lang-fun.h'
 )
 
 main_source = files(
@@ -142,7 +144,8 @@ main_source = files(
     'tileatlasvx.cpp',
     'autotilesvx.cpp',
     'midisource.cpp',
-    'fluid-fun.cpp'
+    'fluid-fun.cpp',
+    'lang-fun.cpp'
 )
 
 main = [main_source, main_headers]

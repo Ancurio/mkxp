@@ -29,6 +29,7 @@
 #include "debugwriter.h"
 #include "graphics.h"
 #include "audio.h"
+#include "lang-fun.h"
 #include "boost-hash.h"
 
 #include <ruby.h>
@@ -95,6 +96,7 @@ RB_METHOD(mkxpPuts);
 RB_METHOD(mkxpRawKeyStates);
 RB_METHOD(mkxpMouseInWindow);
 RB_METHOD(mkxpPlatform);
+RB_METHOD(mkxpUserLanguage);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -165,6 +167,7 @@ static void mriBindingInit()
 	_rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
 	_rb_define_module_function(mod, "mouse_in_window", mkxpMouseInWindow);
     _rb_define_module_function(mod, "platform", mkxpPlatform);
+    _rb_define_module_function(mod, "user_language", mkxpUserLanguage);
 
 	/* Load global constants */
 	rb_gv_set("MKXP", Qtrue);
@@ -268,6 +271,13 @@ RB_METHOD(mkxpPlatform)
     RB_UNUSED_PARAM;
     
     return rb_str_new_cstr(SDL_GetPlatform());
+}
+
+RB_METHOD(mkxpUserLanguage)
+{
+    RB_UNUSED_PARAM;
+    
+    return rb_str_new_cstr(getUserLanguage());
 }
 
 static VALUE rgssMainCb(VALUE block)

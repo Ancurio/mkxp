@@ -13,6 +13,7 @@
 #include "eventthread.h"
 #include "filesystem.h"
 #include "input.h"
+#include "lang-fun.h"
 #include "fake-api.h"
 
 
@@ -594,11 +595,38 @@ MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
 }
 
 
-// Only supports English, other languages are too
-// much work to keep in hacky code like this
+// Does not handle sublanguages, only returns a few
+// common languages
+
+// Use MKXP.user_language instead
 
 PREFABI short // I know it's a LANGID but I don't care
 MKXP_GetUserDefaultLangID(void)
-NOP_VAL(0xC09);
+{
+    char buf[50];
+    strncpy(buf, getUserLanguage(), sizeof(buf));
+    
+    for (int i = 0; i < strlen(buf); i++)
+    {
+        if (buf[i] == '_')
+        {
+            buf[i] = 0;
+            break;
+        }
+    }
+    
+#define MATCH(l, c) if (!strcmp(l, buf)) return (c & 0x3ff);
+    MATCH("ja", 0x11);
+    MATCH("en", 0x09);
+    MATCH("fr", 0x0c);
+    MATCH("it", 0x10);
+    MATCH("de", 0x07);
+    MATCH("es", 0x0a);
+    MATCH("ko", 0x12);
+    MATCH("pt", 0x16);
+    MATCH("zh", 0x04);
+#undef MATCH
+    return 0x09;
+}
 
 #endif
