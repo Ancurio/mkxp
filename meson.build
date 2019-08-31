@@ -1,5 +1,7 @@
 project('mkxp-z', 'cpp', 'c', version: '1.0', default_options: ['cpp_std=c++11'])
 
+minimum_macos_version = '10.10'
+
 # The meson build is mostly directly copied from the old CMakeLists,
 # it still needs to be cleaned up
 
@@ -41,6 +43,9 @@ elif host_system == 'darwin'
     subdir('macos')
     if compiler.get_id() == 'clang'
         add_project_arguments('-stdlib=libc++', language: 'cpp')
+    add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'cpp')
+    add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'c')
+    add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'cpp')
     endif
 endif
 

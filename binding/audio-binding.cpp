@@ -32,10 +32,7 @@
 		int volume = 100; \
 		int pitch = 100; \
 		double pos = 0.0; \
-		if (rgssVer >= 3) \
-			rb_get_args(argc, argv, "z|iif", &filename, &volume, &pitch, &pos RB_ARG_END); \
-		else \
-			rb_get_args(argc, argv, "z|ii", &filename, &volume, &pitch RB_ARG_END); \
+        rb_get_args(argc, argv, "z|iif", &filename, &volume, &pitch, &pos RB_ARG_END); \
 		GUARD_EXC( shState->audio().entity##Play(filename, volume, pitch, pos); ) \
 		return Qnil; \
 	} \

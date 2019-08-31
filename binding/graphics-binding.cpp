@@ -265,9 +265,6 @@ void graphicsBindingInit()
     INIT_GRA_PROP_BIND( FrameRate,  "frame_rate"  );
     INIT_GRA_PROP_BIND( FrameCount, "frame_count" );
 
-    // Typically, these functions are only used in RGSS2+, but
-    // Essentials really wants them badly
-
     _rb_define_module_function(module, "width", graphicsWidth);
     _rb_define_module_function(module, "height", graphicsHeight);
     _rb_define_module_function(module, "wait", graphicsWait);
