@@ -221,7 +221,7 @@ You'll find your stuff under your MSYS home directory. You can also type `explor
 
 ```sh
 brew install meson cmake automake autoconf sdl2 sdl2_{image,ttf} \
-boost pixman physfs libsigc++ libvorbis fluidsynth pkgconfig
+boost pixman physfs libsigc++ libvorbis fluidsynth pkgconfig libtool
 ```
 
 3. Build the rest from source:
