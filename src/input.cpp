@@ -454,7 +454,9 @@ struct InputPrivate
     uint8_t *rawStatesOld;
 
 	Input::ButtonCode repeating;
+    int rawRepeating;
 	unsigned int repeatCount;
+    unsigned int rawRepeatCount;
 
 	struct
 	{
@@ -560,7 +562,15 @@ struct InputPrivate
                 
                 b.pressed = rawStates[scancode];
                 b.triggered = (rawStates[scancode] && !rawStatesOld[scancode]);
-                b.repeated = (rawStates[scancode] && rawStatesOld[scancode]);
+                
+                bool repeated;
+                if (rgssVer >= 2)
+                    repeated = rawRepeatCount >= 23 && ((rawRepeatCount+1) % 6) == 0;
+                else
+                    repeated = rawRepeatCount >= 15 && ((rawRepeatCount+1) % 4) == 0;
+                
+                b.repeated = repeated;
+                
                 return b;
                 break;
         }
@@ -738,6 +748,24 @@ struct InputPrivate
     void updateRaw()
     {
         memcpy(rawStates, shState->eThread().keyStates, SDL_NUM_SCANCODES);
+        
+        for (int i = 1; i < 255; i++)
+        {
+            if (rawStates[i] && rawStatesOld[i])
+            {
+                if (rawRepeating == i)
+                {
+                    rawRepeatCount++;
+                }
+                else
+                {
+                    rawRepeatCount = 0;
+                    rawRepeating = i;
+                }
+                
+                break;
+            }
+        }
     }
 
 	void updateDir4()
