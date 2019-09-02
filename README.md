@@ -132,19 +132,18 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 
 ## Nonstandard RGSS extensions
 
-To alleviate possible porting of heavily Win32API reliant scripts, certain functionality that you won't find in the RGSS spec has been added. Currently this amounts to the following:
+To begin deprecating the use of Win32API and by extension the fake-api build option, functionality that you won't find in the RGSS spec is being added. Currently this amounts to the following:
 
 ### Input
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
-* The `Input` module has two additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen.
+* The `Input` module has five additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen. `#pressex?`, `#triggerex?` and `#repeatex?` provide input states for raw key codes, which are provided in the form of [Microsoft Virtual-Key Codes](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes). Only buttons which are also [tracked by SDL](https://wiki.libsdl.org/SDL_Scancode) are supported.
 
 ### Graphics
 
+* RGSS2 Graphics functions and properties are now bound in RGSS1 mode.
 * The `Graphics` module has three additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`. `scale` represents the current scale factor of the screen, and can be set from `0.5` to `2`.
-* The `Graphics` module has two additional functions: `Graphics.screenshot(path)` will save a screenshot to `path` in BMP format. `Graphics.center` will move the window to the center of the screen.
-
-Commonly used Win32API routines will eventually have equivalent functions directly bound, like `Graphics.screenshot` for `Win32API.new('rubyscreen.dll,'TakeScreenshot','p','i')`.
+* The `Graphics` module has two additional functions: `#screenshot(path)` will save a screenshot to `path` in BMP format. `#center` will move the window to the center of the screen.
 
 -------------------------
 
