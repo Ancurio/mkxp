@@ -2,8 +2,6 @@
 
 #ifdef __WIN32__
 #include <windows.h>
-#else
-#include <map>
 #endif
 
 #define ABI(x) __attribute__((x))
@@ -42,8 +40,6 @@ typedef struct {
     DWORD BatteryLifeTime;
     DWORD BatteryFullLifeTime;
 } SYSTEM_POWER_STATUS, *LPSYSTEM_POWER_STATUS;
-
-extern std::map<int, int> vKeyToScancode;
 #endif
 
 #define DUMMY_VAL 571

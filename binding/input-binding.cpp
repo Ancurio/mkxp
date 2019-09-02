@@ -94,6 +94,36 @@ RB_METHOD(inputRepeat)
 	return rb_bool_new(shState->input().isRepeated(num));
 }
 
+RB_METHOD(inputPressEx)
+{
+    RB_UNUSED_PARAM;
+    
+    int num;
+    rb_get_args(argc, argv, "i", &num RB_ARG_END);
+    
+    return rb_bool_new(shState->input().isPressedEx(num));
+}
+
+RB_METHOD(inputTriggerEx)
+{
+    RB_UNUSED_PARAM;
+    
+    int num;
+    rb_get_args(argc, argv, "i", &num RB_ARG_END);
+    
+    return rb_bool_new(shState->input().isTriggeredEx(num));
+}
+
+RB_METHOD(inputRepeatEx)
+{
+    RB_UNUSED_PARAM;
+    
+    int num;
+    rb_get_args(argc, argv, "i", &num RB_ARG_END);
+    
+    return rb_bool_new(shState->input().isRepeatedEx(num));
+}
+
 RB_METHOD(inputDir4)
 {
 	RB_UNUSED_PARAM;
@@ -171,6 +201,9 @@ inputBindingInit()
 	_rb_define_module_function(module, "press?", inputPress);
 	_rb_define_module_function(module, "trigger?", inputTrigger);
 	_rb_define_module_function(module, "repeat?", inputRepeat);
+    _rb_define_module_function(module, "pressex?", inputPressEx);
+    _rb_define_module_function(module, "triggerex?", inputTriggerEx);
+    _rb_define_module_function(module, "repeatex?", inputRepeatEx);
 	_rb_define_module_function(module, "dir4", inputDir4);
 	_rb_define_module_function(module, "dir8", inputDir8);
 

@@ -1,6 +1,6 @@
 project('mkxp-z', 'cpp', 'c', version: '1.0', default_options: ['cpp_std=c++11'])
 
-minimum_macos_version = '10.10'
+minimum_macos_version = get_option('macos_min_version')
 
 # The meson build is mostly directly copied from the old CMakeLists,
 # it still needs to be cleaned up

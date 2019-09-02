@@ -22,6 +22,10 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#include <map>
+
+extern std::map<int, int> vKeyToScancode;
+
 struct InputPrivate;
 struct RGSSThreadData;
 
@@ -51,6 +55,9 @@ public:
 	bool isPressed(int button);
 	bool isTriggered(int button);
 	bool isRepeated(int button);
+    bool isPressedEx(int vKey);
+    bool isTriggeredEx(int vKey);
+    bool isRepeatedEx(int vKey);
 
 	int dir4Value();
 	int dir8Value();
