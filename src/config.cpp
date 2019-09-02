@@ -271,11 +271,6 @@ void Config::read(int argc, char *argv[])
 	rgssVersion = clamp(rgssVersion, 0, 3);
 
 	SE.sourceCount = clamp(SE.sourceCount, 1, 64);
-
-	if (!dataPathOrg.empty() && !dataPathApp.empty())
-		customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
-
-	commonDataPath = prefPath(".", "mkxp");
 }
 
 static std::string baseName(const std::string &path)
@@ -404,8 +399,22 @@ void Config::readGameINI()
 		game.title.clear();
 #endif
 
+    
 	if (game.title.empty())
-		game.title = baseName(gameFolder);
+    {
+        game.title = baseName(gameFolder);
+    }
+    else
+    {
+        if (dataPathOrg.empty()) dataPathOrg = ".";
+        if (dataPathApp.empty()) dataPathApp = game.title;
+    }
+    
+    if (!dataPathOrg.empty() && !dataPathApp.empty())
+        customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
+    
+    commonDataPath = prefPath(".", "mkxpz");
+    
 
 	if (rgssVersion == 0)
 	{
