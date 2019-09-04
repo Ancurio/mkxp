@@ -124,6 +124,12 @@ int discordTryConnect(DiscordStatePrivate *p)
     strncpy((char*)&p->defaultActivity.details, p->threadData->config.game.title.c_str(), 128);
     p->defaultActivity.timestamps.start = time(0);
     
+    if (p->clientId == DEFAULT_CLIENT_ID)
+    {
+        strncpy((char*)&p->defaultActivity.assets.large_image, "default", 128);
+        strncpy((char*)&p->defaultActivity.assets.large_text, "mkxp-z", 128);
+    }
+    
     p->app.activities->update_activity(p->app.activities, &p->defaultActivity, 0, defaultActivityCb);
     
     return rc;
