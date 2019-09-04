@@ -72,21 +72,22 @@ The syntax is: `--<option>=<value>`
 
 Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
 
-## Midi music
-
-mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
-
-You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
-
-## Fonts
-
-In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
-
-If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
-
 ## Discord Support
 
-mkxp-z can optionally be built with support for the Discord GameSDK. Currently only basic Activity (rich presence) functionality is implemented.
+mkxp-z can optionally be built with support for the Discord GameSDK. Currently only basic Activity (rich presence) functionality is implemented. The Discord module is being actively fleshed out.
+
+A different Client ID may be specified in the configuration file.
+
+```ruby
+if Discord.connected?
+    p Discord.user_name, Discord.user_discriminator, Discord.user_id
+    
+    Discord::Activity.new do |activity|
+        activity.start_time = Time.now.to_i
+        activity.details = MKXP.game_title
+    end
+end
+```
 
 ## Win32API
 
@@ -122,6 +123,18 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `ReleaseCapture`: No-op.
 * `GetPrivateProfileString`: Emulated with MKXP's ini code.
 * `GetUserDefaultLangId`: Checks for JP, EN, FR, IT, DE, ES, KO, PT and ZH. Returns English (`0x09`) if the locale can't be determined. Doesn't handle sublanguages. Use `MKXP.user_language` instead.
+
+## Midi music
+
+mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
+
+You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
+
+## Fonts
+
+In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
+
+If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
 
 ## What doesn't work (yet)
 

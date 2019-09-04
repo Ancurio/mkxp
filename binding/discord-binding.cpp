@@ -70,7 +70,7 @@ RB_METHOD(DiscordActivityInitialize)
     if (rb_block_given_p())
     {
         rb_yield(self);
-        return DiscordActivitySend(0, 0, self);
+        DiscordActivitySend(0, 0, self);
     };
     return self;
 }

@@ -28,6 +28,7 @@
 #include "sdl-util.h"
 #include "debugwriter.h"
 #include "graphics.h"
+#include "config.h"
 #include "audio.h"
 #include "lang-fun.h"
 #include "boost-hash.h"
@@ -97,6 +98,7 @@ RB_METHOD(mkxpRawKeyStates);
 RB_METHOD(mkxpMouseInWindow);
 RB_METHOD(mkxpPlatform);
 RB_METHOD(mkxpUserLanguage);
+RB_METHOD(mkxpGameTitle);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -168,6 +170,7 @@ static void mriBindingInit()
 	_rb_define_module_function(mod, "mouse_in_window", mkxpMouseInWindow);
     _rb_define_module_function(mod, "platform", mkxpPlatform);
     _rb_define_module_function(mod, "user_language", mkxpUserLanguage);
+    _rb_define_module_function(mod, "game_title", mkxpGameTitle);
 
 	/* Load global constants */
 	rb_gv_set("MKXP", Qtrue);
@@ -278,6 +281,13 @@ RB_METHOD(mkxpUserLanguage)
     RB_UNUSED_PARAM;
     
     return rb_str_new_cstr(getUserLanguage());
+}
+
+RB_METHOD(mkxpGameTitle)
+{
+    RB_UNUSED_PARAM;
+    
+    return rb_str_new_cstr(shState->config().game.title.c_str());
 }
 
 static VALUE rgssMainCb(VALUE block)
