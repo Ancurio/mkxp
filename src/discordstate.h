@@ -15,6 +15,9 @@ public:
     DiscordState(DiscordClientId clientId, int *result);
     ~DiscordState();
     
+    IDiscordActivityManager *activityManager();
+    IDiscordUserManager *userManager();
+    
     int update();
     bool isConnected();
 

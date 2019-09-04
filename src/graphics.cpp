@@ -31,7 +31,6 @@
 #include "scene.h"
 #include "quad.h"
 #include "eventthread.h"
-#include "discordstate.h"
 #include "texpool.h"
 #include "filesystem.h"
 #include "bitmap.h"
@@ -44,6 +43,10 @@
 #include <SDL_video.h>
 #include <SDL_timer.h>
 #include <SDL_image.h>
+
+#ifdef HAVE_DISCORDSDK
+#include "discordstate.h"
+#endif
 
 #include <time.h>
 #include <sys/time.h>

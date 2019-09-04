@@ -1,4 +1,5 @@
 #include <discord_game_sdk.h>
+
 #include "sharedstate.h"
 #include "eventthread.h"
 #include "discordstate.h"
@@ -117,6 +118,7 @@ int discordTryConnect(DiscordStatePrivate *p)
 DiscordState::DiscordState(DiscordClientId clientId, int *result)
 {
     p = new DiscordStatePrivate();
+    memset(&p->app, 0, sizeof(Application));
     p->clientId = clientId;
     int rc = discordTryConnect(p);
     if (result) *result = rc;
@@ -125,6 +127,16 @@ DiscordState::DiscordState(DiscordClientId clientId, int *result)
 DiscordState::~DiscordState()
 {
     delete p;
+}
+
+IDiscordActivityManager *DiscordState::activityManager()
+{
+    return p->app.activities;
+}
+
+IDiscordUserManager *DiscordState::userManager()
+{
+    return p->app.users;
 }
 
 int DiscordState::update()
@@ -138,6 +150,7 @@ int DiscordState::update()
         {
             p->connected = false;
             memset(&p->currentUser, 0, sizeof(DiscordUser));
+            memset(&p->app, 0, sizeof(Application));
             p->userPresent = false;
             return rc;
         }

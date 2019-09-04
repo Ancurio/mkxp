@@ -37,7 +37,10 @@
 #include "binding.h"
 #include "exception.h"
 #include "sharedmidistate.h"
+
+#ifdef HAVE_DISCORDSDK
 #include "discordstate.h"
+#endif
 
 #include <unistd.h>
 #include <stdio.h>
@@ -242,7 +245,10 @@ GSATT(TexPool&, texPool)
 GSATT(Quad&, gpQuad)
 GSATT(SharedFontState&, fontState)
 GSATT(SharedMidiState&, midiState)
+
+#ifdef HAVE_DISCORDSDK
 GSATT(DiscordState&, discord)
+#endif
 
 void SharedState::setBindingData(void *data)
 {
