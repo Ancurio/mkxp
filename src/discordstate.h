@@ -12,7 +12,7 @@ struct DiscordStatePrivate;
 class DiscordState
 {
 public:
-    DiscordState(DiscordClientId clientId, int *result);
+    DiscordState(RGSSThreadData *rtData);
     ~DiscordState();
     
     IDiscordActivityManager *activityManager();

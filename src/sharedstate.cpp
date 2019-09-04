@@ -115,7 +115,7 @@ struct SharedStatePrivate
 	      config(threadData->config),
 	      midiState(threadData->config),
 #ifdef HAVE_DISCORDSDK
-          discord(threadData->config.discordClientId, 0),
+          discord(threadData),
 #endif
 	      graphics(threadData),
 	      input(*threadData),

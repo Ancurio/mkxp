@@ -84,6 +84,10 @@ In the RMXP version of RGSS, fonts are loaded directly from system specific sear
 
 If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
 
+## Discord Support
+
+mkxp-z can optionally be built with support for the Discord GameSDK. Currently only basic Activity (rich presence) functionality is implemented.
+
 ## Win32API
 
 Win32API exists in mkxp-z as both `Win32API.new` and `MiniFFI.new` (This class is available under macOS, linux and Windows and "Win32API" as a name makes no sense on the former two platforms). It functions nearly the same as Ruby 1.8's Win32API, for better or worse. The third and fourth arguments are now optional (if you just want a function that takes no arguments and returns nothing, for instance), and `new` will yield to blocks. Being simple as it is, it remains mostly as the lazy option/last resort to add C functions from shared libraries if you can't/don't want to build mkxp-z yourself.

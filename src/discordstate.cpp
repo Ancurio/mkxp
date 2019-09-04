@@ -1,11 +1,17 @@
 #include <discord_game_sdk.h>
+#include <time.h>
 
-#include "sharedstate.h"
 #include "eventthread.h"
 #include "discordstate.h"
 #include "exception.h"
 #include "debugwriter.h"
 #include "bitmap.h"
+#include "config.h"
+
+void defaultActivityCb(void *callback_data, enum EDiscordResult result)
+{
+    
+}
 
 struct Application {
     struct IDiscordCore* core;
@@ -20,6 +26,8 @@ struct Application {
 
 struct DiscordStatePrivate
 {
+    RGSSThreadData *threadData;
+    
     DiscordClientId clientId;
 
     IDiscordCore *core;
@@ -29,6 +37,7 @@ struct DiscordStatePrivate
     IDiscordUserEvents userEvents;
     
     DiscordUser currentUser;
+    DiscordActivity defaultActivity;
     
     bool discordInstalled;
     bool connected;
@@ -105,23 +114,29 @@ int discordTryConnect(DiscordStatePrivate *p)
     if (rc != DiscordResult_Ok)
         return rc;
     
-    p->core->set_log_hook(p->core, DiscordLogLevel_Debug, (void*)p, discordLogHook);
+    p->core->set_log_hook(p->core, DiscordLogLevel_Error, (void*)p, discordLogHook);
     
     p->app.activities = p->core->get_activity_manager(p->core);
     p->app.users = p->core->get_user_manager(p->core);
     
     p->connected = true;
     
+    strncpy((char*)&p->defaultActivity.details, p->threadData->config.game.title.c_str(), 128);
+    p->defaultActivity.timestamps.start = time(0);
+    
+    p->app.activities->update_activity(p->app.activities, &p->defaultActivity, 0, defaultActivityCb);
+    
     return rc;
 }
 
-DiscordState::DiscordState(DiscordClientId clientId, int *result)
+DiscordState::DiscordState(RGSSThreadData *rtData)
 {
     p = new DiscordStatePrivate();
+    p->threadData = rtData;
     memset(&p->app, 0, sizeof(Application));
-    p->clientId = clientId;
-    int rc = discordTryConnect(p);
-    if (result) *result = rc;
+    p->clientId = rtData->config.discordClientId;
+    discordTryConnect(p);
+
 }
 
 DiscordState::~DiscordState()

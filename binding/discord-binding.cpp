@@ -44,19 +44,6 @@ RB_METHOD(DiscordGetUserId)
     return LL2NUM(shState->discord().userId());
 }
 
-RB_METHOD(DiscordActivityInitialize)
-{
-    RB_UNUSED_PARAM;
-    
-    DiscordActivity *activity = ALLOC(DiscordActivity);
-    setPrivateData(self, activity);
-    
-    memset(activity, 0, sizeof(DiscordActivity));
-    
-    activity->type = DiscordActivityType_Playing;
-    return self;
-}
-
 RB_METHOD(DiscordActivitySend)
 {
     RB_UNUSED_PARAM;
@@ -69,6 +56,25 @@ RB_METHOD(DiscordActivitySend)
     return Qnil;
 }
 
+RB_METHOD(DiscordActivityInitialize)
+{
+    RB_UNUSED_PARAM;
+    
+    DiscordActivity *activity = ALLOC(DiscordActivity);
+    setPrivateData(self, activity);
+    
+    memset(activity, 0, sizeof(DiscordActivity));
+    
+    activity->type = DiscordActivityType_Playing;
+    
+    if (rb_block_given_p())
+    {
+        rb_yield(self);
+        return DiscordActivitySend(0, 0, self);
+    };
+    return self;
+}
+
 RB_METHOD(DiscordActivityClear)
 {
     RB_UNUSED_PARAM;
@@ -77,6 +83,26 @@ RB_METHOD(DiscordActivityClear)
     
     return Qnil;
 }
+
+#define DEF_DCPROP_ACTPARTYSZ(n) \
+RB_METHOD(DiscordActivityGetParty##n) \
+{ \
+RB_UNUSED_PARAM; \
+DiscordActivity *p = getPrivateData<DiscordActivity>(self); \
+return INT2NUM(p->party.size.n); \
+} \
+RB_METHOD(DiscordActivitySetParty##n) \
+{ \
+RB_UNUSED_PARAM; \
+int num; \
+rb_get_args(argc, argv, "i", &num); \
+DiscordActivity *p = getPrivateData<DiscordActivity>(self); \
+p->party.size.n = num; \
+return INT2NUM(num); \
+}
+
+DEF_DCPROP_ACTPARTYSZ(current_size);
+DEF_DCPROP_ACTPARTYSZ(max_size);
 
 #define DEF_DCPROP_S(basename, propname, maxsz) \
 RB_METHOD(Discord##basename##Get##propname) \
@@ -182,7 +208,6 @@ p->subname.propname = b; \
 return rb_bool_new(b); \
 }
 
-DEF_DCPROP_S(Activity, name, 128);
 DEF_DCPROP_S(Activity, state, 128);
 DEF_DCPROP_S(Activity, details, 128);
 DEF_DCPROP_S_SUB(Activity, assets, large_image, 128);
@@ -192,9 +217,9 @@ DEF_DCPROP_S_SUB(Activity, assets, small_text, 128);
 DEF_DCPROP_S_SUB(Activity, secrets, match, 128);
 DEF_DCPROP_S_SUB(Activity, secrets, join, 128);
 DEF_DCPROP_S_SUB(Activity, secrets, spectate, 128);
+DEF_DCPROP_S_SUB(Activity, party, id, 128);
 
 DEF_DCPROP_I(Activity, type, INT, EDiscordActivityType);
-DEF_DCPROP_I(Activity, application_id, LL, int64_t);
 DEF_DCPROP_I_SUB(Activity, timestamps, start, LL, DiscordTimestamp);
 DEF_DCPROP_I_SUB(Activity, timestamps, end, LL, DiscordTimestamp);
 DEF_DCPROP_B(Activity, instance);
@@ -225,7 +250,6 @@ void DiscordBindingInit()
     
     _rb_define_method(activityClass, "send", DiscordActivitySend);
     
-    BIND_DCPROP(Activity, "name", name);
     BIND_DCPROP(Activity, "state", state);
     BIND_DCPROP(Activity, "details", details);
     BIND_DCPROP(Activity, "large_image", assets_large_image);
@@ -235,9 +259,11 @@ void DiscordBindingInit()
     BIND_DCPROP(Activity, "match_secret", secrets_match);
     BIND_DCPROP(Activity, "join_secret", secrets_join);
     BIND_DCPROP(Activity, "spectate_secret", secrets_spectate);
+    BIND_DCPROP(Activity, "party_id", party_id);
+    BIND_DCPROP(Activity, "party_currentsize", Partycurrent_size);
+    BIND_DCPROP(Activity, "party_maxsize", Partymax_size);
     
     BIND_DCPROP(Activity, "type", type);
-    BIND_DCPROP(Activity, "application_id", application_id);
     BIND_DCPROP(Activity, "start_time", timestamps_start);
     BIND_DCPROP(Activity, "end_time", timestamps_end);
     BIND_DCPROP(Activity, "instance", instance);
