@@ -16,6 +16,13 @@ DEF_TYPE_CUSTOMFREE(DCActivity, free);
 DEF_ALLOCFUNC_CUSTOMFREE(DCActivity, free);
 #endif
 
+RB_METHOD(DiscordConnected)
+{
+    RB_UNUSED_PARAM;
+    
+    return rb_bool_new(shState->discord().isConnected());
+}
+
 RB_METHOD(DiscordGetUsername)
 {
     RB_UNUSED_PARAM;
@@ -200,6 +207,7 @@ _rb_define_method(activityClass, b "=", Discord##basename##Set##f);
 void DiscordBindingInit()
 {
     VALUE mod = rb_define_module("Discord");
+    _rb_define_module_function(mod, "connected?", DiscordConnected);
     _rb_define_module_function(mod, "user_name", DiscordGetUsername);
     _rb_define_module_function(mod, "user_discriminator", DiscordGetDiscriminator);
     _rb_define_module_function(mod, "user_id", DiscordGetUserId);
