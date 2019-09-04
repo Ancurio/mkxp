@@ -9,6 +9,29 @@ xxd = find_program('xxd', native: true)
 host_system = host_machine.system()
 compiler = meson.get_compiler('cpp')
 
+# ====================
+# Ext libs
+# ====================
+ext_dependencies = []
+
+# DISCORD
+
+discord = false
+discord_libpath = get_option('discord_sdk_path')
+if discord_libpath != ''
+    discordlib = compiler.find_library('discord_game_sdk', required: false, dirs: '@0@/lib/@1@'.format(discord_libpath, host_machine.cpu_family()))
+
+    if discordlib.found() == true
+        add_project_arguments(['-I@0@/c'.format(discord_libpath), '-DHAVE_DISCORDSDK'], language: 'cpp')
+        ext_dependencies += discordlib
+        discord = true
+    endif
+endif
+
+# ====================
+# Main source
+# ====================
+
 if get_option('workdir_current')
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
 endif
@@ -33,6 +56,7 @@ include_dirs = [include_directories('src', 'binding')]
 all_sources += files('cwalk/src/cwalk.c')
 include_dirs += include_directories('cwalk/include')
 
+
 linker_args = []
 
 if host_system == 'windows'
@@ -51,7 +75,7 @@ endif
 
 executable(meson.project_name(),
     sources: all_sources,
-    dependencies: [main_dependencies, binding_dependencies],
+    dependencies: [main_dependencies, binding_dependencies, ext_dependencies],
     include_directories: include_dirs,
     gui_app: (get_option('console') == false),
     install: (host_system == 'darwin')

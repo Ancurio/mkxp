@@ -31,6 +31,7 @@
 #include "scene.h"
 #include "quad.h"
 #include "eventthread.h"
+#include "discordstate.h"
 #include "texpool.h"
 #include "filesystem.h"
 #include "bitmap.h"
@@ -686,6 +687,10 @@ void Graphics::update()
 			p->fpsLimiter.resetFrameAdjust();
 		}
 	}
+
+#ifdef HAVE_DISCORDSDK
+    if (p->frameCount % 10 == 0) shState->discord().update();
+#endif
 
 	p->checkResize();
 	p->redrawScreen();

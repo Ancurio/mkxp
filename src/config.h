@@ -26,6 +26,10 @@
 #include <vector>
 #include <set>
 
+#ifdef HAVE_DISCORDSDK
+#include <discord_game_sdk.h>
+#endif
+
 struct Config
 {
 	int rgssVersion;
@@ -79,6 +83,10 @@ struct Config
 	} SE;
 
 	bool useScriptNames;
+    
+#ifdef HAVE_DISCORDSDK
+    DiscordClientId discordClientId;
+#endif
 
 	std::string customScript;
 	std::set<std::string> preloadScripts;

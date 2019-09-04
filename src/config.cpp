@@ -35,6 +35,11 @@
 #include "sdl-util.h"
 #include "iniconfig.h"
 
+#ifdef HAVE_DISCORDSDK
+#include <discord_game_sdk.h>
+#include "discordstate.h"
+#endif
+
 #ifdef INI_ENCODING
 extern "C" {
 #include <libguess.h>
@@ -216,6 +221,9 @@ void Config::read(int argc, char *argv[])
 	po::options_description podesc;
 	podesc.add_options()
 	        PO_DESC_ALL
+#ifdef HAVE_DISCORDSDK
+            PO_DESC(discordClientId, DiscordClientId, DEFAULT_CLIENT_ID)
+#endif
 	        ("preloadScript", po::value<StringVec>()->composing())
 	        ("RTP", po::value<StringVec>()->composing())
 	        ("fontSub", po::value<StringVec>()->composing())
@@ -256,6 +264,10 @@ void Config::read(int argc, char *argv[])
 #define PO_DESC(key, type, def) GUARD_ALL( key = vm[#key].as< type >(); )
 
 	PO_DESC_ALL;
+    
+#ifdef HAVE_DISCORDSDK
+    PO_DESC(discordClientId, DiscordClientId, DEFAULT_CLIENT_ID)
+#endif
 
 	GUARD_ALL( preloadScripts = setFromVec(vm["preloadScript"].as<StringVec>()); );
 

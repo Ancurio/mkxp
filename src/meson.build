@@ -153,3 +153,7 @@ main = [main_source, main_headers]
 if get_option('use_fakeapi') == true
     main += files('fake-api.cpp', 'fake-api.h')
 endif
+
+if discord == true
+    main += files('discordstate.cpp', 'discordstate.h')
+endif
