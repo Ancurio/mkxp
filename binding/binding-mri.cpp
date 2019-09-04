@@ -90,6 +90,10 @@ void fileIntBindingInit();
 void MiniFFIBindingInit();
 #endif
 
+#ifdef HAVE_DISCORDSDK
+void DiscordBindingInit();
+#endif
+
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
 RB_METHOD(mkxpDataDirectory);
@@ -133,6 +137,10 @@ static void mriBindingInit()
 
 #ifdef OLD_RUBY
 	MiniFFIBindingInit();
+#endif
+    
+#ifdef HAVE_DISCORDSDK
+    DiscordBindingInit();
 #endif
 
 	if (rgssVer >= 3)
