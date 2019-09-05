@@ -204,6 +204,17 @@ RB_METHOD(bitmapClear)
 	return self;
 }
 
+RB_METHOD(bitmapUpdate)
+{
+    RB_UNUSED_PARAM;
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    GUARD_EXC( b->update(); )
+    
+    return self;
+}
+
 RB_METHOD(bitmapGetPixel)
 {
 	Bitmap *b = getPrivateData<Bitmap>(self);

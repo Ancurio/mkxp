@@ -115,12 +115,12 @@ struct BitmapPrivate
 
 	BitmapPrivate(Bitmap *self)
 	    : self(self),
-	      megaSurface(0),
-	      surface(0),
 #ifdef HAVE_GIFLIB
           nFrames(1),
-          currentFrame(0)
+          currentFrame(0),
 #endif
+	      megaSurface(0),
+	      surface(0)
 	{
 		format = SDL_AllocFormat(SDL_PIXELFORMAT_ABGR8888);
 
