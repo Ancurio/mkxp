@@ -899,6 +899,8 @@ void Bitmap::replaceRaw(void *pixel_data, int w, int h)
     GLMeta::blitRectangle(IntRect(0,0,w,h), Vec2i());
     GLMeta::blitEnd();
     
+    TEXFBO::fini(buf);
+    
     taintArea(IntRect(0,0,w,h));
     
 }
