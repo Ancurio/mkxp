@@ -211,30 +211,38 @@ DiscordUserId DiscordState::userId()
 typedef struct { DiscordStatePrivate *pri; Bitmap *bmp; } AvatarCbData;
 Bitmap *DiscordState::getAvatar(DiscordUserId userId, int size)
 {
+    size = clamp(size, 32, 256);
+    while ((size & (size-1)) != 0) {
+        size++;
+    }
+
     if (!isConnected()) return 0;
-    AvatarCbData cbData{};
-    cbData.bmp = new Bitmap(size, size);
-    cbData.pri = p;
+    AvatarCbData *cbData = new AvatarCbData;
+    Bitmap *ret = new Bitmap(size, size);
+    cbData->bmp = ret;
+    cbData->pri = p;
     DiscordImageHandle handle{};
     handle.id = userId;
     handle.size = size;
     
-    p->app.images->fetch(p->app.images, handle, true, &cbData,
+    p->app.images->fetch(p->app.images, handle, true, cbData,
                          [](void *callback_data, enum EDiscordResult result, struct DiscordImageHandle handle_result){
                              if (result == DiscordResult_Ok)
                              {
                                  AvatarCbData *data = (AvatarCbData*)callback_data;
+                                 if (data->bmp->isDisposed()) return;
                                  int sz = data->bmp->width()*data->bmp->height()*4;
                                  uint8_t *buf = new uint8_t[sz];
                                  data->pri->app.images->get_data(data->pri->app.images, handle_result, buf, sz);
                                  data->bmp->replaceRaw(buf, data->bmp->width(), data->bmp->height());
                                  delete[] buf;
+                                 delete data;
                              }
                          });
-    return cbData.bmp;
+    return ret;
 }
 
-Bitmap *DiscordState::userAvatar()
+Bitmap *DiscordState::userAvatar(int size)
 {
-    return (p->userPresent) ? getAvatar(p->currentUser.id, 256) : 0;
+    return (p->userPresent) ? getAvatar(p->currentUser.id, size) : 0;
 }

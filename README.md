@@ -72,7 +72,7 @@ The syntax is: `--<option>=<value>`
 
 Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
 
-## Discord Support
+## Discord GameSDK
 
 mkxp-z can optionally be built with support for the Discord GameSDK. Currently only basic Activity (rich presence) functionality is implemented. The Discord module is being actively fleshed out.
 
@@ -82,9 +82,15 @@ A different Client ID may be specified in the configuration file.
 if Discord.connected?
     p Discord.user_name, Discord.user_discriminator, Discord.user_id
     
+    avatar = Sprite.new
+    avatar.bitmap = Discord.user_avatar(64)
+    avatar.visible = true
+    
     Discord::Activity.new do |activity|
         activity.start_time = Time.now.to_i
         activity.details = MKXP.game_title
+        activity.large_image = "someimage"
+        activity.large_text = "sometext"
     end
 end
 ```

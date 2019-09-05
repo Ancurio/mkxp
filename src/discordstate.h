@@ -27,7 +27,7 @@ public:
     DiscordUserId userId();
     
     Bitmap *getAvatar(DiscordUserId userId, int size);
-    Bitmap *userAvatar();
+    Bitmap *userAvatar(int size);
     
 private:
     DiscordStatePrivate *p;

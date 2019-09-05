@@ -50,8 +50,10 @@ void bitmapInitProps(Bitmap *b, VALUE self);
 RB_METHOD(DiscordGetUserAvatar)
 {
     RB_UNUSED_PARAM;
+    int size = 32;
+    rb_get_args(argc, argv, "|i", &size RB_ARG_END);
     
-    Bitmap *result = shState->discord().userAvatar();
+    Bitmap *result = shState->discord().userAvatar(size);
     if (!result) return RUBY_Qnil;
     
     VALUE ret = wrapObject(result, BitmapType);

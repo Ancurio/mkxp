@@ -669,6 +669,10 @@ void Graphics::update()
 {
 	p->checkShutDownReset();
 	p->checkSyncLock();
+    
+#ifdef HAVE_DISCORDSDK
+    shState->discord().update();
+#endif
 
 	if (p->frozen)
 		return;
@@ -690,10 +694,6 @@ void Graphics::update()
 			p->fpsLimiter.resetFrameAdjust();
 		}
 	}
-
-#ifdef HAVE_DISCORDSDK
-    if (p->frameCount % 10 == 0) shState->discord().update();
-#endif
 
 	p->checkResize();
 	p->redrawScreen();
