@@ -3,6 +3,7 @@
 #include "discordstate.h"
 #include "sharedstate.h"
 #include "binding-util.h"
+#include "binding-types.h"
 
 //NYI
 void discordResultCb(void *callback_data, enum EDiscordResult result)
@@ -42,6 +43,22 @@ RB_METHOD(DiscordGetUserId)
     RB_UNUSED_PARAM;
     
     return LL2NUM(shState->discord().userId());
+}
+
+void bitmapInitProps(Bitmap *b, VALUE self);
+
+RB_METHOD(DiscordGetUserAvatar)
+{
+    RB_UNUSED_PARAM;
+    
+    Bitmap *result = shState->discord().userAvatar();
+    if (!result) return RUBY_Qnil;
+    
+    VALUE ret = wrapObject(result, BitmapType);
+    bitmapInitProps(result, ret);
+    
+    return ret;
+    
 }
 
 RB_METHOD(DiscordActivitySend)
@@ -236,6 +253,7 @@ void DiscordBindingInit()
     _rb_define_module_function(mod, "user_name", DiscordGetUsername);
     _rb_define_module_function(mod, "user_discriminator", DiscordGetDiscriminator);
     _rb_define_module_function(mod, "user_id", DiscordGetUserId);
+    _rb_define_module_function(mod, "user_avatar", DiscordGetUserAvatar);
     
     VALUE activityClass = rb_define_class_under(mod, "Activity", rb_cObject);
 #ifndef OLD_RUBY

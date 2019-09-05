@@ -40,6 +40,7 @@ class Bitmap : public Disposable
 public:
 	Bitmap(const char *filename);
 	Bitmap(int width, int height);
+    Bitmap(void *pixeldata, int width, int height);
 	/* Clone constructor */
 	Bitmap(const Bitmap &other);
 	~Bitmap();
@@ -80,6 +81,8 @@ public:
 
 	Color getPixel(int x, int y) const;
 	void setPixel(int x, int y, const Color &color);
+    
+    void replaceRaw(void *pixel_data, int width, int height);
 
 	void hueChange(int hue);
 

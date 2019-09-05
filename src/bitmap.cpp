@@ -307,6 +307,52 @@ Bitmap::Bitmap(int width, int height)
 	clear();
 }
 
+Bitmap::Bitmap(void *pixeldata, int width, int height)
+{
+    SDL_Surface *surface = SDL_CreateRGBSurface(0, width, height, p->format->BitsPerPixel,
+                                                p->format->Rmask,
+                                                p->format->Gmask,
+                                                p->format->Bmask,
+                                                p->format->Amask);
+    
+    if (!surface)
+        throw Exception(Exception::SDLError, "Error creating Bitmap: %s",
+                        SDL_GetError());
+    
+    memcpy(surface->pixels, pixeldata, width*height*(p->format->BitsPerPixel/8));
+    
+    if (surface->w > glState.caps.maxTexSize || surface->h > glState.caps.maxTexSize)
+    {
+        p = new BitmapPrivate(this);
+        p->megaSurface = surface;
+        SDL_SetSurfaceBlendMode(p->megaSurface, SDL_BLENDMODE_NONE);
+    }
+    else
+    {
+        TEXFBO tex;
+        
+        try
+        {
+            tex = shState->texPool().request(surface->w, surface->h);
+        }
+        catch (const Exception &e)
+        {
+            SDL_FreeSurface(surface);
+            throw e;
+        }
+        
+        p = new BitmapPrivate(this);
+        p->gl = tex;
+        
+        TEX::bind(p->gl.tex);
+        TEX::uploadImage(p->gl.width, p->gl.height, surface->pixels, GL_RGBA);
+        
+        SDL_FreeSurface(surface);
+    }
+    
+    p->addTaintedArea(rect());
+}
+
 Bitmap::Bitmap(const Bitmap &other)
 {
 	other.ensureNonMega();
@@ -835,6 +881,26 @@ void Bitmap::setPixel(int x, int y, const Color &color)
 	}
 
 	p->onModified(false);
+}
+
+void Bitmap::replaceRaw(void *pixel_data, int w, int h)
+{
+    guardDisposed();
+    if (w != width() || h != height()) return;
+    
+    GUARD_MEGA;
+    
+    TEXFBO buf = shState->texPool().request(w, h);
+    TEX::bind(buf.tex);
+    TEX::uploadImage(w, h, pixel_data, GL_RGBA);
+    
+    GLMeta::blitBegin(p->gl);
+    GLMeta::blitSource(buf);
+    GLMeta::blitRectangle(IntRect(0,0,w,h), Vec2i());
+    GLMeta::blitEnd();
+    
+    taintArea(IntRect(0,0,w,h));
+    
 }
 
 void Bitmap::hueChange(int hue)

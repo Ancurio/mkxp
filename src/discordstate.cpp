@@ -15,12 +15,9 @@ void defaultActivityCb(void *callback_data, enum EDiscordResult result)
 
 struct Application {
     struct IDiscordCore* core;
+    struct IDiscordImageManager* images;
     struct IDiscordUserManager* users;
-    struct IDiscordAchievementManager* achievements;
     struct IDiscordActivityManager* activities;
-    struct IDiscordRelationshipManager* relationships;
-    struct IDiscordApplicationManager* application;
-    struct IDiscordLobbyManager* lobbies;
     DiscordUserId user_id;
 };
 
@@ -118,6 +115,7 @@ int discordTryConnect(DiscordStatePrivate *p)
     
     p->app.activities = p->core->get_activity_manager(p->core);
     p->app.users = p->core->get_user_manager(p->core);
+    p->app.images = p->core->get_image_manager(p->core);
     
     p->connected = true;
     
@@ -158,6 +156,11 @@ IDiscordActivityManager *DiscordState::activityManager()
 IDiscordUserManager *DiscordState::userManager()
 {
     return p->app.users;
+}
+
+IDiscordImageManager *DiscordState::imageManager()
+{
+    return p->app.images;
 }
 
 int DiscordState::update()
@@ -205,10 +208,33 @@ DiscordUserId DiscordState::userId()
     return (p->userPresent) ? p->currentUser.id : 0;
 }
 
-// NYI
-Bitmap *userAvatar()
+typedef struct { DiscordStatePrivate *pri; Bitmap *bmp; } AvatarCbData;
+Bitmap *DiscordState::getAvatar(DiscordUserId userId, int size)
 {
-    Bitmap *ret = new Bitmap(256, 256);
+    if (!isConnected()) return 0;
+    AvatarCbData cbData{};
+    cbData.bmp = new Bitmap(size, size);
+    cbData.pri = p;
+    DiscordImageHandle handle{};
+    handle.id = userId;
+    handle.size = size;
     
-    return ret;
+    p->app.images->fetch(p->app.images, handle, true, &cbData,
+                         [](void *callback_data, enum EDiscordResult result, struct DiscordImageHandle handle_result){
+                             if (result == DiscordResult_Ok)
+                             {
+                                 AvatarCbData *data = (AvatarCbData*)callback_data;
+                                 int sz = data->bmp->width()*data->bmp->height()*4;
+                                 uint8_t *buf = new uint8_t[sz];
+                                 data->pri->app.images->get_data(data->pri->app.images, handle_result, buf, sz);
+                                 data->bmp->replaceRaw(buf, data->bmp->width(), data->bmp->height());
+                                 delete[] buf;
+                             }
+                         });
+    return cbData.bmp;
+}
+
+Bitmap *DiscordState::userAvatar()
+{
+    return (p->userPresent) ? getAvatar(p->currentUser.id, 256) : 0;
 }

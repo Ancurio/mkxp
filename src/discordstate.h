@@ -17,6 +17,7 @@ public:
     
     IDiscordActivityManager *activityManager();
     IDiscordUserManager *userManager();
+    IDiscordImageManager *imageManager();
     
     int update();
     bool isConnected();
@@ -24,6 +25,8 @@ public:
     std::string userName();
     std::string userDiscrim();
     DiscordUserId userId();
+    
+    Bitmap *getAvatar(DiscordUserId userId, int size);
     Bitmap *userAvatar();
     
 private:
