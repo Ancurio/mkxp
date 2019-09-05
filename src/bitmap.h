@@ -78,6 +78,8 @@ public:
 	void radialBlur(int angle, int divisions);
 
 	void clear();
+    
+    void update();
 
 	Color getPixel(int x, int y) const;
 	void setPixel(int x, int y, const Color &color);

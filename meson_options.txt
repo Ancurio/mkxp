@@ -11,3 +11,4 @@ option('no_preload_scripts', type: 'boolean', value: false, description: 'Disabl
 option('workdir_current', type: 'boolean', value: false, description: 'Keep current directory on startup')
 
 option('discord_sdk_path', type: 'string', value: '', description: 'Path to Discord GameSDK')
+option('giflib_prefix', type: 'string', value: '', description: 'Path to the prefix where giflib is installed')
