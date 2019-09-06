@@ -44,6 +44,7 @@
 #include <zlib.h>
 
 #include <SDL_filesystem.h>
+#include <SDL_power.h>
 
 #ifdef __WIN32__
 #define NULL_IO "NUL"
@@ -104,6 +105,7 @@ RB_METHOD(mkxpMouseInWindow);
 RB_METHOD(mkxpPlatform);
 RB_METHOD(mkxpUserLanguage);
 RB_METHOD(mkxpGameTitle);
+RB_METHOD(mkxpPowerState);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -181,6 +183,7 @@ static void mriBindingInit()
     _rb_define_module_function(mod, "platform", mkxpPlatform);
     _rb_define_module_function(mod, "user_language", mkxpUserLanguage);
     _rb_define_module_function(mod, "game_title", mkxpGameTitle);
+    _rb_define_module_function(mod, "power_state", mkxpPowerState);
 
 	/* Load global constants */
 	rb_gv_set("MKXP", Qtrue);
@@ -310,6 +313,24 @@ RB_METHOD(mkxpGameTitle)
     RB_UNUSED_PARAM;
     
     return rb_str_new_cstr(shState->config().game.title.c_str());
+}
+
+RB_METHOD(mkxpPowerState)
+{
+    RB_UNUSED_PARAM;
+    
+    int secs, pct;
+    SDL_PowerState ps = SDL_GetPowerInfo(&secs, &pct);
+    
+    VALUE hash = rb_hash_new();
+    
+    rb_hash_aset(hash, ID2SYM(rb_intern("seconds")), (secs > -1) ? INT2NUM(secs) : RUBY_Qnil);
+    
+    rb_hash_aset(hash, ID2SYM(rb_intern("percent")), (pct > -1) ? INT2NUM(pct) : RUBY_Qnil);
+    
+    rb_hash_aset(hash, ID2SYM(rb_intern("discharging")), rb_bool_new(ps == SDL_POWERSTATE_ON_BATTERY));
+    
+    return hash;
 }
 
 static VALUE rgssMainCb(VALUE block)

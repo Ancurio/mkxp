@@ -959,7 +959,15 @@ void Graphics::resizeScreen(int width, int height)
 	FloatRect screenRect(0, 0, width, height);
 	p->screenQuad.setTexPosRect(screenRect, screenRect);
 
+    int cur_sz = p->scSize.x;
 	shState->eThread().requestWindowResize(width, height);
+    
+    // Give things a little time to recalculate before continuing
+    for (int i = 0; i < p->frameRate; i++)
+    {
+        if (cur_sz != p->scSize.x) break;
+        update();
+    }
 }
 
 void Graphics::playMovie(const char *filename)
