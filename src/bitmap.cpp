@@ -883,9 +883,9 @@ void Bitmap::setPixel(int x, int y, const Color &color)
 	p->onModified(false);
 }
 
-void Bitmap::getRaw(void *output, int output_size)
+bool Bitmap::getRaw(void *output, int output_size)
 {
-    if (output_size != width()*height()*4) return;
+    if (output_size != width()*height()*4) return false;
     
     guardDisposed();
     
@@ -893,6 +893,7 @@ void Bitmap::getRaw(void *output, int output_size)
     
     FBO::bind(p->gl.fbo);
     glReadPixels(0,0,width(),height(),GL_BGRA,GL_UNSIGNED_BYTE,output);
+    return true;
 }
 
 void Bitmap::replaceRaw(void *pixel_data, int size)
@@ -917,6 +918,27 @@ void Bitmap::replaceRaw(void *pixel_data, int size)
     
     taintArea(IntRect(0,0,w,h));
     p->onModified();
+}
+
+void Bitmap::saveToFile(const char *filename)
+{
+    guardDisposed();
+    
+    GUARD_MEGA;
+    
+    SDL_Surface *surf = SDL_CreateRGBSurface(0, width(), height(),p->format->BitsPerPixel, 0,0,0,0);
+    
+    if (!surf)
+        throw new Exception(Exception::SDLError, "Failed to save bitmap: %s", SDL_GetError());
+    
+    getRaw(surf->pixels, surf->w * surf->h * 4);
+    
+    char *fn_normalized = shState->fileSystem().normalize(filename, 1, 1);
+    int rc = SDL_SaveBMP(surf, fn_normalized);
+    
+    SDL_FreeSurface(surf);
+    delete fn_normalized;
+    if (rc) throw new Exception(Exception::SDLError, "%s", SDL_GetError());
 }
 
 void Bitmap::hueChange(int hue)

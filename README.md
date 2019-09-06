@@ -150,6 +150,7 @@ To smooth over cross-platform compatibility, functionality that you won't find i
 ### Bitmap
 
 * The `Bitmap` class has one additional property: `raw_data` gets and sets the raw pixel data of a Bitmap in the form of a string. The string must be the size of the bitmap's `width*height*4`. If it is not, no error is raised, but the Bitmap will not be updated.
+* The `Bitmap` class has one additional function: `to_file(path)` will save the bitmap to `path` in BMP format. This won't take opacity into account.
 
 ### Audio
 

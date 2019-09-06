@@ -445,6 +445,25 @@ RB_METHOD(bitmapSetRawData)
     return self;
 }
 
+RB_METHOD(bitmapSaveToFile)
+{
+    RB_UNUSED_PARAM;
+    
+    VALUE str;
+    rb_scan_args(argc, argv, "1", &str);
+    SafeStringValue(str);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    try {
+        b->saveToFile(RSTRING_PTR(str));
+    } catch (const Exception &e) {
+        raiseRbExc(e);
+    }
+    
+    return RUBY_Qnil;
+}
+
 RB_METHOD(bitmapInitializeCopy)
 {
 	rb_check_argc(argc, 1);
@@ -496,6 +515,7 @@ bitmapBindingInit()
     
     _rb_define_method(klass, "raw_data",    bitmapGetRawData);
     _rb_define_method(klass, "raw_data=",   bitmapSetRawData);
+    _rb_define_method(klass, "to_file",     bitmapSaveToFile);
 
 	_rb_define_method(klass, "gradient_fill_rect", bitmapGradientFillRect);
 	_rb_define_method(klass, "clear_rect",         bitmapClearRect);
