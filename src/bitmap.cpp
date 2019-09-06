@@ -44,10 +44,6 @@
 #include "font.h"
 #include "eventthread.h"
 
-#ifdef HAVE_GIFLIB
-#include <gif_lib.h>
-#endif
-
 #define GUARD_MEGA \
 	{ \
 		if (p->megaSurface) \
@@ -105,20 +101,9 @@ struct BitmapPrivate
 	 * in the texture and blit to it directly, saving
 	 * ourselves the expensive blending calculation */
 	pixman_region16_t tainted;
-    
-    /* If the image is a gif, its frames are located here. */
-#ifdef HAVE_GIFLIB
-    SDL_Surface* gifSurfaces[256];
-    int nFrames;
-    int currentFrame;
-#endif
 
 	BitmapPrivate(Bitmap *self)
 	    : self(self),
-#ifdef HAVE_GIFLIB
-          nFrames(1),
-          currentFrame(0),
-#endif
 	      megaSurface(0),
 	      surface(0)
 	{
@@ -132,10 +117,6 @@ struct BitmapPrivate
 	{
 		SDL_FreeFormat(format);
 		pixman_region_fini(&tainted);
-#ifdef HAVE_GIFLIB
-        if (nFrames > 1)
-            for (int i = 0; i < nFrames; i++) SDL_FreeSurface(gifSurfaces[i]);
-#endif
 	}
 
 	void allocSurface()
@@ -270,53 +251,6 @@ struct BitmapOpenHandler : FileSystem::OpenHandler
 Bitmap::Bitmap(const char *filename)
 {
 	BitmapOpenHandler handler;
-    
-    // If the file is a gif, try opening it with giflib first
-    // and read every frame
-#ifdef HAVE_GIFLIB
-    char *extension = strrchr((char*)filename, '.');
-    int *rc{};
-    if (extension && !strcmp((extension+1), "gif"))
-    {
-        GifFileType *gif = DGifOpenFileName(filename, rc);
-        if (rc && DGifSlurp(gif) == GIF_OK)
-        {
-            p->nFrames = gif->ImageCount;
-            int colorReso = gif->SColorResolution;
-            for (int i = 0; i < p->nFrames; i++)
-            {
-                SDL_Surface *frame = SDL_CreateRGBSurface(0,
-                                                          gif->SWidth,
-                                                          gif->SHeight,
-                                                          colorReso,
-                                                          p->format->Rmask,
-                                                          p->format->Gmask,
-                                                          p->format->Bmask,
-                                                          p->format->Amask);
-                if (frame)
-                {
-                    memcpy(frame->pixels,
-                           gif->SavedImages[i].RasterBits,
-                           frame->w*frame->h*(colorReso/8));
-                    p->gifSurfaces[i] = frame;
-                }
-                else
-                {
-                    for (int b = i; b >= 0; b--)
-                    {
-                        SDL_FreeSurface(p->gifSurfaces[b]);
-                        p->gifSurfaces[b] = 0;
-                    }
-                    break;
-                }
-            }
-            GifFreeSavedImages(gif);
-            handler.surf = p->gifSurfaces[0];
-        }
-    }
-    
-    if (!handler.surf)
-#endif
 	shState->fileSystem().openRead(handler, filename);
 	SDL_Surface *imgSurf = handler.surf;
 
@@ -880,31 +814,6 @@ void Bitmap::clear()
 	p->onModified();
 }
 
-void Bitmap::update()
-{
-#ifdef HAVE_GIFLIB
-    if (p->nFrames < 2) return;
-    
-    guardDisposed();
-    
-    GUARD_MEGA;
-    
-    if (p->currentFrame >= p->nFrames)
-    {
-        p->currentFrame = 0;
-    }
-    else
-    {
-        p->currentFrame++;
-    }
-    SDL_Surface *surf = p->gifSurfaces[p->currentFrame];
-    
-    replaceRaw(surf->pixels, surf->w, surf->h);
-#else
-    return;
-#endif
-}
-
 static uint32_t &getPixelAt(SDL_Surface *surf, SDL_PixelFormat *form, int x, int y)
 {
 	size_t offset = x*form->BytesPerPixel + y*surf->pitch;
@@ -993,7 +902,6 @@ void Bitmap::replaceRaw(void *pixel_data, int w, int h)
     TEXFBO::fini(buf);
     
     taintArea(IntRect(0,0,w,h));
-    p->onModified();
     
 }
 

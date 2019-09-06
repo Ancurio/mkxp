@@ -28,19 +28,6 @@ if discord_libpath != ''
     endif
 endif
 
-# GIFLIB
-
-gif = false
-gif_prefix = get_option('giflib_prefix')
-if gif_prefix != ''
-    giflib = compiler.find_library('gif', required: false, dirs: gif_prefix+'/lib')
-    if giflib.found() == true
-        add_project_arguments(['-I@0@/include'.format(gif_prefix), '-DHAVE_GIFLIB'], language: 'cpp')
-        ext_dependencies += giflib
-        gif = true
-    endif
-endif
-
 # ====================
 # Main source
 # ====================

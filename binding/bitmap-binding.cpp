@@ -204,17 +204,6 @@ RB_METHOD(bitmapClear)
 	return self;
 }
 
-RB_METHOD(bitmapUpdate)
-{
-    RB_UNUSED_PARAM;
-    
-    Bitmap *b = getPrivateData<Bitmap>(self);
-    
-    GUARD_EXC( b->update(); )
-    
-    return self;
-}
-
 RB_METHOD(bitmapGetPixel)
 {
 	Bitmap *b = getPrivateData<Bitmap>(self);
@@ -471,7 +460,6 @@ bitmapBindingInit()
 	_rb_define_method(klass, "stretch_blt", bitmapStretchBlt);
 	_rb_define_method(klass, "fill_rect",   bitmapFillRect);
 	_rb_define_method(klass, "clear",       bitmapClear);
-    _rb_define_method(klass, "update",      bitmapUpdate);
 	_rb_define_method(klass, "get_pixel",   bitmapGetPixel);
 	_rb_define_method(klass, "set_pixel",   bitmapSetPixel);
 	_rb_define_method(klass, "hue_change",  bitmapHueChange);
