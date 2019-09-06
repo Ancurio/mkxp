@@ -581,6 +581,12 @@ static void runRMXPScripts(BacktraceData &btData)
 
 	while (true)
 	{
+#if defined(OLD_RUBY) && defined(NO_CONSOLE)
+        VALUE iostr = rb_str_new2(NULL_IO);
+        // Sysinit isn't a thing yet, so send io to /dev/null instead
+        rb_funcall(rb_gv_get("$stderr"), rb_intern("reopen"), 1, iostr);
+        rb_funcall(rb_gv_get("$stdout"), rb_intern("reopen"), 1, iostr);
+#endif
 		for (long i = 0; i < scriptCount; ++i)
 		{
 			VALUE script = rb_ary_entry(scriptArray, i);
@@ -714,12 +720,6 @@ static void mriBindingExecute()
 #else
     ruby_init();
     rb_eval_string("$KCODE='U'");
-#ifdef NO_CONSOLE
-    VALUE iostr = rb_str_new2(NULL_IO);
-    // Sysinit isn't a thing yet, so send io to /dev/null instead
-    rb_funcall(rb_gv_get("$stderr"), rb_intern("reopen"), 1, iostr);
-    rb_funcall(rb_gv_get("$stdout"), rb_intern("reopen"), 1, iostr);
-#endif
 #endif
     
 #if defined(USE_FAKEAPI) && !defined(__WIN32__)
