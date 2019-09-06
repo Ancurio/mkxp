@@ -721,6 +721,11 @@ static void mriBindingExecute()
     rb_funcall(rb_gv_get("$stdout"), rb_intern("reopen"), 1, iostr);
 #endif
 #endif
+    
+#if defined(USE_FAKEAPI) && !defined(__WIN32__)
+    char *tmpdir = getenv("TMPDIR");
+    if (tmpdir) setenv("TEMP", tmpdir, false);
+#endif
 
 	Config &conf = shState->rtData().config;
 
