@@ -607,13 +607,21 @@ static void runRMXPScripts(BacktraceData &btData)
             
             // |W| - Windows, |M| - Mac OS X, |L| - Linux
             
-            if (strlen(scriptName) > 2 &&
-                scriptName[0] == '|' && scriptName[2] == scriptName[0])
+            // Adding a 'not' symbol means it WON'T run on that
+            // platform (i.e. |!W| won't run on Windows)
+            
+            if (scriptName[0] == '|')
             {
-                if (scriptName[1] != platform[0])
+                int len = strlen(scriptName);
+                if (len > 2)
                 {
-                    Debug() << RSTRING_PTR(fname) << ": Skipped due to platform check mismatch";
-                    continue;
+                    if (scriptName[1] == '!' && len > 3 && scriptName[3] == scriptName[0])
+                    {
+                        if (toupper(scriptName[2]) == platform[0])
+                            continue;
+                    }
+                    if (scriptName[2] == scriptName[0] && toupper(scriptName[1]) != platform[0])
+                        continue;
                 }
             }
             
