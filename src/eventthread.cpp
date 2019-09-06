@@ -258,7 +258,8 @@ void EventThread::process(RGSSThreadData &rtData)
 			break;
                 
         case SDL_TEXTINPUT :
-            textInputBuffer += event.text.text;
+            if (textInputBuffer.size() < 512)
+                textInputBuffer += event.text.text;
             break;
 
 		case SDL_QUIT :
