@@ -108,29 +108,6 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `GetUserDefaultLangId`: Checks for JP, EN, FR, IT, DE, ES, KO, PT and ZH. Returns English (`0x09`) if the locale can't be determined. Doesn't handle sublanguages.
 * `GetUserName`: Returns the `$USER` environment variable, or `Ditto` if it doesn't exist.
 
-## Midi music
-
-mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
-
-You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
-
-## Fonts
-
-In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
-
-If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
-
-## What doesn't work (yet)
-
-* The current implementation of `load_data` is case-sensitive. If you try to load `Data/MapXXX`, you will not find `Data/mapXXX`.
-* `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag if not using loose files. Very hard.
-* `FileSystem::openRead` is not compatible with absolute paths in Windows (this affects `Bitmap.new` or `Audio.bgm_play`, for instance).
-* Movie playback
-* wma audio files
-* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
-
-^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
-
 ## Nonstandard RGSS extensions
 
 To smooth over cross-platform compatibility, functionality that you won't find in the RGSS spec has been added. Currently this amounts to the following:
@@ -218,6 +195,33 @@ activity = Discord::Activity.new
 # Send the Activity. Does nothing if Discord isn't connected.
 activity.send
 ```
+
+## Platform-specific scripts
+
+By including `|p|` or `|!p|` at the very beginning of a script's title, you can specify what platform the script should or shouldn't run on. `p` should match the first letter of your platform, and is case-insensitive. As an example, a script named `|!W| Socket` would not run on Windows, while a script named `|W| Socket` would *only* run on Windows.
+
+## Midi music
+
+mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
+
+You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
+
+## Fonts
+
+In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
+
+If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
+
+## What doesn't work (yet)
+
+* The current implementation of `load_data` is case-sensitive. If you try to load `Data/MapXXX`, you will not find `Data/mapXXX`.
+* `load_data` is slow. In fact, it's too slow to handle `pbResolveBitmap` firing a million times a second, so Graphics files can only be loaded from outside of the game's archive. You could remove that code if you want, but you'll lag if not using loose files. Very hard.
+* `FileSystem::openRead` is not compatible with absolute paths in Windows (this affects `Bitmap.new` or `Audio.bgm_play`, for instance).
+* Movie playback
+* wma audio files
+* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 8192 on modern cards)^
+
+^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
 
 -------------------------
 
