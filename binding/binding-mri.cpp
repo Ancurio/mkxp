@@ -715,8 +715,10 @@ static void mriBindingExecute()
     ruby_init();
     rb_eval_string("$KCODE='U'");
 #ifdef NO_CONSOLE
-    // Sysinit isn't a thing yet, so send stderr to /dev/null instead
-    rb_funcall(rb_gv_get("$stderr"), rb_intern("reopen"), 1, rb_str_new2(NULL_IO));
+    VALUE iostr = rb_str_new2(NULL_IO);
+    // Sysinit isn't a thing yet, so send io to /dev/null instead
+    rb_funcall(rb_gv_get("$stderr"), rb_intern("reopen"), 1, iostr);
+    rb_funcall(rb_gv_get("$stdout"), rb_intern("reopen"), 1, iostr);
 #endif
 #endif
 
