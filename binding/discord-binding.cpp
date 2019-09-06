@@ -94,6 +94,25 @@ RB_METHOD(DiscordActivityInitialize)
     return self;
 }
 
+RB_METHOD(DiscordActivityInitializeCopy)
+{
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 1);
+    VALUE origObj = argv[0];
+    
+    if (!OBJ_INIT_COPY(self, origObj))
+        return self;
+    
+    DiscordActivity *orig = getPrivateData<DiscordActivity>(origObj);
+    DiscordActivity *s = ALLOC(DiscordActivity);
+    
+    memcpy(s, orig, sizeof(DiscordActivity));
+    
+    setPrivateData(self, s);
+    return self;
+}
+
 RB_METHOD(DiscordActivityClear)
 {
     RB_UNUSED_PARAM;
@@ -265,6 +284,7 @@ void DiscordBindingInit()
 #endif
     
     _rb_define_method(activityClass, "initialize", DiscordActivityInitialize);
+    _rb_define_method(activityClass, "initialize_copy", DiscordActivityInitializeCopy);
     
     rb_define_class_method(activityClass, "clear", DiscordActivityClear);
     
