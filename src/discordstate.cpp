@@ -181,7 +181,7 @@ int DiscordState::update()
         }
         return rc;
     }
-    
+    if (time(0) % 5 != 0) return -1;
     return discordTryConnect(p);
 }
 
