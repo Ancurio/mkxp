@@ -84,7 +84,7 @@ void onActivityInviteRequestCb(void *event_data, enum EDiscordActivityActionType
 
 void discordLogHook(void *hook_data, enum EDiscordLogLevel level, const char *message)
 {
-    Debug() << "DISCORD:" << message;
+    Debug() << "Discord:" << message;
 }
 
 int discordTryConnect(DiscordStatePrivate *p)
@@ -238,7 +238,7 @@ Bitmap *DiscordState::getAvatar(DiscordUserId userId, int size)
                                  int sz = data->bmp->width()*data->bmp->height()*4;
                                  uint8_t *buf = new uint8_t[sz];
                                  data->pri->app.images->get_data(data->pri->app.images, handle_result, buf, sz);
-                                 data->bmp->replaceRaw(buf, data->bmp->width(), data->bmp->height());
+                                 data->bmp->replaceRaw(buf, sz);
                                  delete[] buf;
                                  delete data;
                              }

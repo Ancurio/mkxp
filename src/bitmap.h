@@ -82,7 +82,8 @@ public:
 	Color getPixel(int x, int y) const;
 	void setPixel(int x, int y, const Color &color);
     
-    void replaceRaw(void *pixel_data, int width, int height);
+    void *getRaw();
+    void replaceRaw(void *pixel_data, int size);
 
 	void hueChange(int hue);
 

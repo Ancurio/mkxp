@@ -417,6 +417,36 @@ RB_METHOD(bitmapRadialBlur)
 	return Qnil;
 }
 
+RB_METHOD(bitmapGetRawData)
+{
+    RB_UNUSED_PARAM;
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    char *pixels{};
+    int size{};
+    
+    GUARD_EXC( pixels = (char*)b->getRaw(); );
+    GUARD_EXC( size = b->width()*b->height()*4; );
+    
+    return rb_str_new(pixels, size);
+}
+
+RB_METHOD(bitmapSetRawData)
+{
+    RB_UNUSED_PARAM;
+
+    VALUE str;
+    rb_get_args(argc, argv, "1", &str);
+    SafeStringValue(str);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    GUARD_EXC( b->replaceRaw(RSTRING_PTR(str), RSTRING_LEN(str)); );
+    
+    return self;
+}
+
 RB_METHOD(bitmapInitializeCopy)
 {
 	rb_check_argc(argc, 1);
@@ -465,14 +495,14 @@ bitmapBindingInit()
 	_rb_define_method(klass, "hue_change",  bitmapHueChange);
 	_rb_define_method(klass, "draw_text",   bitmapDrawText);
 	_rb_define_method(klass, "text_size",   bitmapTextSize);
+    
+    _rb_define_method(klass, "raw_data",    bitmapGetRawData);
+    _rb_define_method(klass, "raw_data=",   bitmapSetRawData);
 
-	if (rgssVer >= 2)
-	{
 	_rb_define_method(klass, "gradient_fill_rect", bitmapGradientFillRect);
 	_rb_define_method(klass, "clear_rect",         bitmapClearRect);
 	_rb_define_method(klass, "blur",               bitmapBlur);
 	_rb_define_method(klass, "radial_blur",        bitmapRadialBlur);
-	}
 
 	INIT_PROP_BIND(Bitmap, Font, "font");
 }

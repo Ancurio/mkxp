@@ -145,6 +145,15 @@ To smooth over cross-platform compatibility, functionality that you won't find i
 * RGSS2 Graphics functions and properties are now bound in RGSS1 mode.
 * The `Graphics` module has three additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`. `scale` represents the current scale factor of the screen, and can be set from `0.5` to `2`.
 * The `Graphics` module has two additional functions: `#screenshot(path)` will save a screenshot to `path` in BMP format. `#center` will move the window to the center of the screen.
+
+### Bitmap
+
+* The `Bitmap` class has one additional property: `raw_data` gets and sets the raw pixel data of a Bitmap in the form of a string. The string must be the size of the bitmap's `width*height*4`. If it is not, no error is raised, but the Bitmap will not be updated.
+
+### Audio
+
+* RGSS2 Audio functions and properties are now bound in RGSS1 mode.
+
 ### Discord
 
 * This module is only included if the `discord_sdk_path` option is set to the location of the Discord GameSDK when building.

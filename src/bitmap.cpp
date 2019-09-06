@@ -883,10 +883,21 @@ void Bitmap::setPixel(int x, int y, const Color &color)
 	p->onModified(false);
 }
 
-void Bitmap::replaceRaw(void *pixel_data, int w, int h)
+void *Bitmap::getRaw()
 {
     guardDisposed();
-    if (w != width() || h != height()) return;
+    
+    GUARD_MEGA;
+    
+    return p->surface->pixels;
+}
+
+void Bitmap::replaceRaw(void *pixel_data, int size)
+{
+    guardDisposed();
+    int w = width();
+    int h = height();
+    if (size != w*h*4) return;
     
     GUARD_MEGA;
     

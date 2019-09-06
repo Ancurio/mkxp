@@ -137,13 +137,10 @@ audioBindingInit()
 	BIND_PLAY_STOP_FADE( bgs );
 	BIND_PLAY_STOP_FADE( me  );
 
-	if (rgssVer >= 3)
-	{
 	BIND_POS( bgm );
 	BIND_POS( bgs );
 
 	_rb_define_module_function(module, "setup_midi", audioSetupMidi);
-	}
 
 	BIND_PLAY_STOP( se )
 
