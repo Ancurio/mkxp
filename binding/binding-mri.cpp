@@ -479,6 +479,7 @@ static void runRMXPScripts(BacktraceData &btData)
 {
 	const Config &conf = shState->rtData().config;
 	const std::string &scriptPack = conf.game.scripts;
+    const char *platform = SDL_GetPlatform();
 
 	if (scriptPack.empty())
 	{
@@ -599,7 +600,23 @@ static void runRMXPScripts(BacktraceData &btData)
 
 			fname = newStringUTF8(buf, len);
 			btData.scriptNames.insert(buf, scriptName);
-
+            
+            // if the script name starts with |s|, only execute
+            // it if "s" is the same first letter as the platform
+            // we're running on
+            
+            // |W| - Windows, |M| - Mac OS X, |L| - Linux
+            
+            if (strlen(scriptName) > 2 &&
+                scriptName[0] == '|' && scriptName[2] == scriptName[0])
+            {
+                if (scriptName[1] != platform[0])
+                {
+                    Debug() << RSTRING_PTR(fname) << ": Skipped due to platform check mismatch";
+                    continue;
+                }
+            }
+            
 			int state;
 
 			evalString(string, fname, &state);
