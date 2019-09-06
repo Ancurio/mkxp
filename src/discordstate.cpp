@@ -119,6 +119,7 @@ int discordTryConnect(DiscordStatePrivate *p)
     
     p->connected = true;
     
+    memset(&p->defaultActivity, 0, sizeof(DiscordActivity));
     strncpy((char*)&p->defaultActivity.details, p->threadData->config.game.title.c_str(), 128);
     p->defaultActivity.timestamps.start = time(0);
     

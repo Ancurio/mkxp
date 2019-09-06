@@ -65,6 +65,11 @@ public:
 	/* Non-standard extensions */
 	int mouseX();
 	int mouseY();
+    
+    bool getTextInputMode();
+    void setTextInputMode(bool mode);
+    const char *getText();
+    void clearText();
 
 private:
 	Input(const RGSSThreadData &rtData);

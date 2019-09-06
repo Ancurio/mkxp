@@ -87,6 +87,8 @@ enum
     REQUEST_WINCENTER,
 	REQUEST_MESSAGEBOX,
 	REQUEST_SETCURSORVISIBLE,
+    
+    REQUEST_TEXTMODE,
 
 	UPDATE_FPS,
 	UPDATE_SCREEN_RECT,
@@ -163,6 +165,8 @@ void EventThread::process(RGSSThreadData &rtData)
     SDL_DisplayMode dm = {0};
 
 	SDL_GetWindowSize(win, &winW, &winH);
+    
+    textInputBuffer.clear();
 
 	SettingsMenu *sMenu = 0;
 
@@ -252,6 +256,10 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
 			}
 			break;
+                
+        case SDL_TEXTINPUT :
+            textInputBuffer += event.text.text;
+            break;
 
 		case SDL_QUIT :
 			terminate = true;
@@ -430,6 +438,19 @@ void EventThread::process(RGSSThreadData &rtData)
             case REQUEST_WINRENAME :
                 rtData.config.windowTitle = (const char*)event.user.data1;
                 SDL_SetWindowTitle(win, rtData.config.windowTitle.c_str());
+                break;
+                    
+            case REQUEST_TEXTMODE :
+                if (event.user.code)
+                {
+                    SDL_StartTextInput();
+                    textInputBuffer.clear();
+                }
+                else
+                {
+                    SDL_StopTextInput();
+                    textInputBuffer.clear();
+                }
                 break;
 
 			case REQUEST_MESSAGEBOX :
@@ -639,6 +660,14 @@ void EventThread::requestShowCursor(bool mode)
 	event.type = usrIdStart + REQUEST_SETCURSORVISIBLE;
 	event.user.code = mode;
 	SDL_PushEvent(&event);
+}
+
+void EventThread::requestTextInputMode(bool mode)
+{
+    SDL_Event event;
+    event.type = usrIdStart + REQUEST_TEXTMODE;
+    event.user.code = mode;
+    SDL_PushEvent(&event);
 }
 
 void EventThread::showMessageBox(const char *body, int flags)

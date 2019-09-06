@@ -75,6 +75,8 @@ public:
 	static JoyState joyState;
 	static MouseState mouseState;
 	static TouchState touchState;
+    
+    std::string textInputBuffer;
 
 	static bool allocUserEvents();
 
@@ -90,6 +92,8 @@ public:
     void requestWindowCenter();
     void requestWindowRename(const char *title);
 	void requestShowCursor(bool mode);
+    
+    void requestTextInputMode(bool mode);
 
 	void requestTerminate();
 

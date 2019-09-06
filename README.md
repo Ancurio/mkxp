@@ -160,7 +160,8 @@ To begin deprecating the use of Win32API and by extension the fake-api build opt
 ### Input
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
-* The `Input` module has five additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen. `#pressex?`, `#triggerex?` and `#repeatex?` provide input states for raw key codes, which are provided in the form of [Microsoft Virtual-Key Codes](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes). Only buttons which are also [tracked by SDL](https://wiki.libsdl.org/SDL_Scancode) are supported.
+* The `Input` module has one additional property: `text_input` determines whether to accept text editing events.
+* The `Input` module has six additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen. `#pressex?`, `#triggerex?` and `#repeatex?` provide input states for raw key codes, which are provided in the form of [Microsoft Virtual-Key Codes](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes). Only buttons which are also [tracked by SDL](https://wiki.libsdl.org/SDL_Scancode) are supported. `#gets` returns a UTF-8 string of any text that was input by the user since the last time `#gets` was called. The `text_input` property must be set to true for it to work.
 
 ### Graphics
 

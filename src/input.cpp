@@ -457,6 +457,8 @@ struct InputPrivate
     int rawRepeating;
 	unsigned int repeatCount;
     unsigned int rawRepeatCount;
+    
+    bool textInputMode;
 
 	struct
 	{
@@ -496,6 +498,8 @@ struct InputPrivate
 		dir4Data.previous = Input::None;
 
 		dir8Data.active = 0;
+        
+        textInputMode = false;
 	}
 
 	inline ButtonState &getStateCheck(int code)
@@ -955,6 +959,26 @@ int Input::mouseY()
 	RGSSThreadData &rtData = shState->rtData();
 
 	return (EventThread::mouseState.y - rtData.screenOffset.y) * rtData.sizeResoRatio.y;
+}
+
+bool Input::getTextInputMode()
+{
+    return p->textInputMode;
+}
+
+void Input::setTextInputMode(bool mode)
+{
+    shState->eThread().requestTextInputMode(mode);
+}
+
+const char *Input::getText()
+{
+    return shState->eThread().textInputBuffer.c_str();
+}
+
+void Input::clearText()
+{
+    shState->eThread().textInputBuffer.clear();
 }
 
 Input::~Input()

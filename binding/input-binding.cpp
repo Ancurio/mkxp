@@ -153,6 +153,35 @@ RB_METHOD(inputMouseY)
 	return rb_fix_new(shState->input().mouseY());
 }
 
+RB_METHOD(inputGetMode)
+{
+    RB_UNUSED_PARAM;
+    
+    return rb_bool_new(shState->input().getTextInputMode());
+}
+
+RB_METHOD(inputSetMode)
+{
+    RB_UNUSED_PARAM;
+    
+    bool mode;
+    rb_get_args(argc, argv, "b", &mode RB_ARG_END);
+    
+    shState->input().setTextInputMode(mode);
+    
+    return mode;
+}
+
+RB_METHOD(inputGets)
+{
+    RB_UNUSED_PARAM;
+    
+    VALUE ret = rb_str_new_cstr(shState->input().getText());
+    shState->input().clearText();
+    
+    return ret;
+}
+
 
 struct
 {
@@ -209,6 +238,10 @@ inputBindingInit()
 
 	_rb_define_module_function(module, "mouse_x", inputMouseX);
 	_rb_define_module_function(module, "mouse_y", inputMouseY);
+    
+    _rb_define_module_function(module, "text_input", inputGetMode);
+    _rb_define_module_function(module, "text_input=", inputSetMode);
+    _rb_define_module_function(module, "gets", inputGets);
 
 	if (rgssVer >= 3)
 	{
