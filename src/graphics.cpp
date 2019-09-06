@@ -979,6 +979,9 @@ void Graphics::screenshot(const char *filename)
 {
 	int w = width();
 	int h = height();
+
+    update();
+    
 #ifdef __WIN32__
     SDL_Surface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
     if (!img) throw Exception(Exception::SDLError, "%s", SDL_GetError());
