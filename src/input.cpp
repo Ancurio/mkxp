@@ -28,6 +28,7 @@
 
 #include <SDL_scancode.h>
 #include <SDL_mouse.h>
+#include <SDL_clipboard.h>
 
 #include <vector>
 #include <map>
@@ -979,6 +980,20 @@ const char *Input::getText()
 void Input::clearText()
 {
     shState->eThread().textInputBuffer.clear();
+}
+
+char *Input::getClipboardText()
+{
+    char *tx = SDL_GetClipboardText();
+    if (!tx)
+        throw new Exception(Exception::SDLError, "Failed to get clipboard text: %s", SDL_GetError());
+    return tx;
+}
+
+void Input::setClipboardText(char *text)
+{
+    if (SDL_SetClipboardText(text) < 0)
+        throw new Exception(Exception::SDLError, "Failed to set clipboard text: %s", SDL_GetError());
 }
 
 Input::~Input()

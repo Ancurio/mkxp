@@ -72,36 +72,13 @@ The syntax is: `--<option>=<value>`
 
 Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
 
-## Discord GameSDK
-
-mkxp-z can optionally be built with support for the Discord GameSDK. Currently only basic Activity (rich presence) functionality is implemented. The Discord module is being actively fleshed out.
-
-A different Client ID may be specified in the configuration file.
-
-```ruby
-if Discord.connected?
-    p Discord.user_name, Discord.user_discriminator, Discord.user_id
-    
-    avatar = Sprite.new
-    avatar.bitmap = Discord.user_avatar(64)
-    avatar.visible = true
-    
-    Discord::Activity.new do |activity|
-        activity.start_time = Time.now.to_i
-        activity.details = MKXP.game_title
-        activity.large_image = "someimage"
-        activity.large_text = "sometext"
-    end
-end
-```
-
 ## Win32API
 
 Win32API exists in mkxp-z as both `Win32API.new` and `MiniFFI.new` (This class is available under macOS, linux and Windows and "Win32API" as a name makes no sense on the former two platforms). It functions nearly the same as Ruby 1.8's Win32API, for better or worse. The third and fourth arguments are now optional (if you just want a function that takes no arguments and returns nothing, for instance), and `new` will yield to blocks. Being simple as it is, it remains mostly as the lazy option/last resort to add C functions from shared libraries if you can't/don't want to build mkxp-z yourself.
 
 ### fake-api
 
-mkxp-z provides limited support for some WinAPI functions that would normally break. While using Win32API isn't the most recommended course of action, there is still no replacement (*yet*)for the majority of functions that use it and it does make porting easier if you don't care whether it's used or not. Building with the `use_fakeapi` option enables this.
+mkxp-z provides limited support for some WinAPI functions that would normally break. While using Win32API isn't the most recommended course of action, it does make porting easier if you don't care whether it's used or not. Building with the `use_fakeapi` option enables this.
 
 #### Universal
 * `GetCurrentThreadId`: Always returns `571`.
@@ -128,7 +105,7 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `SetCapture`: No-op. Always returns `571`.
 * `ReleaseCapture`: No-op.
 * `GetPrivateProfileString`: Emulated with MKXP's ini code.
-* `GetUserDefaultLangId`: Checks for JP, EN, FR, IT, DE, ES, KO, PT and ZH. Returns English (`0x09`) if the locale can't be determined. Doesn't handle sublanguages. Use `MKXP.user_language` instead.
+* `GetUserDefaultLangId`: Checks for JP, EN, FR, IT, DE, ES, KO, PT and ZH. Returns English (`0x09`) if the locale can't be determined. Doesn't handle sublanguages.
 
 ## Midi music
 
@@ -155,12 +132,12 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 ## Nonstandard RGSS extensions
 
-To begin deprecating the use of Win32API and by extension the fake-api build option, functionality that you won't find in the RGSS spec is being added. Currently this amounts to the following:
+To smooth over cross-platform compatibility, functionality that you won't find in the RGSS spec has been added. Currently this amounts to the following:
 
 ### Input
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons.
-* The `Input` module has one additional property: `text_input` determines whether to accept text editing events.
+* The `Input` module has two additional property: `text_input` determines whether to accept text editing events. `clipboard` gets and sets the user's clipboard.
 * The `Input` module has six additional functions, `#mouse_x` and `#mouse_y` to query the mouse pointer position relative to the game screen. `#pressex?`, `#triggerex?` and `#repeatex?` provide input states for raw key codes, which are provided in the form of [Microsoft Virtual-Key Codes](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes). Only buttons which are also [tracked by SDL](https://wiki.libsdl.org/SDL_Scancode) are supported. `#gets` returns a UTF-8 string of any text that was input by the user since the last time `#gets` was called. The `text_input` property must be set to true for it to work.
 
 ### Graphics
@@ -168,6 +145,57 @@ To begin deprecating the use of Win32API and by extension the fake-api build opt
 * RGSS2 Graphics functions and properties are now bound in RGSS1 mode.
 * The `Graphics` module has three additional properties: `fullscreen` represents the current fullscreen mode (`true` = fullscreen, `false` = windowed), `show_cursor` hides the system cursor inside the game window when `false`. `scale` represents the current scale factor of the screen, and can be set from `0.5` to `2`.
 * The `Graphics` module has two additional functions: `#screenshot(path)` will save a screenshot to `path` in BMP format. `#center` will move the window to the center of the screen.
+### Discord
+
+* This module is only included if the `discord_sdk_path` option is set to the location of the Discord GameSDK when building.
+
+```ruby
+# Boolean. Whether mkxp-z has connected to a Discord client.
+p Discord.connected?
+
+# String. The user's name. Empty if Discord isn't connected.
+p Discord.user_name
+
+# String. The user's discriminator. Empty if Discord isn't connected.
+p Discord.user_discriminator
+
+# Numeric. The user's ID. Always 0 if Discord isn't connected.
+p Discord.user_id
+
+# Bitmap/Nil. The user's avatar. The returned Bitmap is initially empty,
+# and updates itself with the avatar once Discord has finished
+# downloading it. Nil if Discord isn't connected.
+
+# An optional size argument may also be passed, and defaults to 64.
+avatar = Sprite.new
+avatar.bitmap = (Discord.connected?) ? Discord.user_avatar : Bitmap.new(64,64)
+avatar.visible = true
+
+# Create a new Activity. If passed a block, the Activity will automatically
+# attempt to send itself after execution of the block.
+activity = Discord::Activity.new
+
+# Available properties:
+# - state
+# - details
+# - large_image
+# - large_text
+# - small_image
+# - small_text
+# - match_secret
+# - join_secret
+# - spectate_secret
+# - party_id
+# - party_currentsize
+# - party_maxsize
+# - type (0: Playing, 1: Streaming, 2: Listening, 3: Watching)
+# - start_time
+# - end_time
+# - instance
+
+# Send the Activity. Does nothing if Discord isn't connected.
+activity.send
+```
 
 -------------------------
 

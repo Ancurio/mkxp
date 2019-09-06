@@ -70,6 +70,9 @@ public:
     void setTextInputMode(bool mode);
     const char *getText();
     void clearText();
+    
+    char *getClipboardText();
+    void setClipboardText(char *text);
 
 private:
 	Input(const RGSSThreadData &rtData);

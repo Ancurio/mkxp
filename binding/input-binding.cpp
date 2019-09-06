@@ -182,6 +182,35 @@ RB_METHOD(inputGets)
     return ret;
 }
 
+RB_METHOD(inputGetClipboard)
+{
+    RB_UNUSED_PARAM;
+    VALUE ret;
+    try {
+        ret = rb_str_new_cstr(shState->input().getClipboardText());
+    } catch (const Exception &e) {
+        raiseRbExc(e);
+    }
+    return ret;
+}
+
+RB_METHOD(inputSetClipboard)
+{
+    RB_UNUSED_PARAM;
+    
+    VALUE str;
+    rb_scan_args(argc, argv, "1", &str);
+    
+    SafeStringValue(str);
+    
+    try {
+        shState->input().setClipboardText(RSTRING_PTR(str));
+    } catch (const Exception &e) {
+        raiseRbExc(e);
+    }
+    return str;
+}
+
 
 struct
 {
@@ -242,6 +271,9 @@ inputBindingInit()
     _rb_define_module_function(module, "text_input", inputGetMode);
     _rb_define_module_function(module, "text_input=", inputSetMode);
     _rb_define_module_function(module, "gets", inputGets);
+    
+    _rb_define_module_function(module, "clipboard", inputGetClipboard);
+    _rb_define_module_function(module, "clipboard=", inputSetClipboard);
 
 	if (rgssVer >= 3)
 	{
