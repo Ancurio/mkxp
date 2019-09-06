@@ -155,6 +155,17 @@ To smooth over cross-platform compatibility, functionality that you won't find i
 
 * RGSS2 Audio functions and properties are now bound in RGSS1 mode.
 
+### MKXP
+
+* `data_directory` returns the assigned directory for saves and other data files.
+* `set_window_title` sets the window's title.
+* `raw_key_states` returns the raw state of MKXP's keystates in the form of a string.
+* `mouse_in_window` returns whether the mouse is currently located within the window.
+* `platform` returns the operating system MKXP is running on (e.g. `Windows`).
+* `user_language` returns the user's current locale (e.g. `en_US`).
+* `game_title` returns the game's title as set in its ini.
+* `power_state` returns a hash with the system power state information. Its members are `:discharging` (Boolean), `:percent` (int/nil), and `:seconds` (int/nil)
+
 ### Discord
 
 * This module is only included if the `discord_sdk_path` option is set to the location of the Discord GameSDK when building.
