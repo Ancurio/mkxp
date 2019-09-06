@@ -902,7 +902,7 @@ void Bitmap::replaceRaw(void *pixel_data, int w, int h)
     TEXFBO::fini(buf);
     
     taintArea(IntRect(0,0,w,h));
-    
+    p->onModified();
 }
 
 void Bitmap::hueChange(int hue)
