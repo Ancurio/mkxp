@@ -40,10 +40,13 @@ struct DiscordStatePrivate
     bool connected;
     bool userPresent;
     
+    long long startTime;
+    
     DiscordStatePrivate()
         : discordInstalled(false),
           connected(false),
-          userPresent(false)
+          userPresent(false),
+          startTime(time(0))
     {};
     
     ~DiscordStatePrivate()
@@ -121,7 +124,7 @@ int discordTryConnect(DiscordStatePrivate *p)
     
     memset(&p->defaultActivity, 0, sizeof(DiscordActivity));
     strncpy((char*)&p->defaultActivity.details, p->threadData->config.game.title.c_str(), 128);
-    p->defaultActivity.timestamps.start = time(0);
+    p->defaultActivity.timestamps.start = p->startTime;
     
     if (p->clientId == DEFAULT_CLIENT_ID)
     {
