@@ -74,6 +74,7 @@ MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
     CAPTURE(ShowCursor);
     CAPTURE(GetPrivateProfileString);
     CAPTURE(GetUserDefaultLangID);
+    CAPTURE(GetUserName);
 #endif
 #endif
     if (!libhandle) return 0;

@@ -13,7 +13,7 @@
 
 #ifndef __WIN32__
 typedef unsigned int DWORD, UINT, *LPDWORD;
-typedef char BYTE, *LPCSTR, *LPCTSTR, *LPTSTR, *PBYTE;
+typedef char BYTE, *LPSTR, *LPCSTR, *LPCTSTR, *LPTSTR, *PBYTE;
 typedef short SHORT;
 typedef int LONG;
 typedef bool BOOL;
@@ -146,5 +146,8 @@ MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
 
 PREFABI short
 MKXP_GetUserDefaultLangID(void);
+
+PREFABI BOOL
+MKXP_GetUserName(LPSTR lpBuffer, LPDWORD pcbBuffer);
 
 #endif

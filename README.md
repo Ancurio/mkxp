@@ -106,6 +106,7 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `ReleaseCapture`: No-op.
 * `GetPrivateProfileString`: Emulated with MKXP's ini code.
 * `GetUserDefaultLangId`: Checks for JP, EN, FR, IT, DE, ES, KO, PT and ZH. Returns English (`0x09`) if the locale can't be determined. Doesn't handle sublanguages.
+* `GetUserName`: Returns the `$USER` environment variable, or `Ditto` if it doesn't exist.
 
 ## Midi music
 

@@ -460,4 +460,14 @@ MKXP_GetUserDefaultLangID(void)
     return 0x09;
 }
 
+PREFABI BOOL
+MKXP_GetUserName(LPSTR lpBuffer, LPDWORD pcbBuffer)
+{
+    if (*pcbBuffer < 2) return false;
+    char *username = getenv("USER");
+    strncpy(lpBuffer, (username) ? username : "ditto", *pcbBuffer);
+    lpBuffer[0] = toupper(lpBuffer[0]);
+    return true;
+}
+
 #endif
