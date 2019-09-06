@@ -414,7 +414,7 @@ void Config::readGameINI()
     
 	if (game.title.empty())
     {
-        game.title = baseName(gameFolder);
+        game.title = "mkxp-z";
     }
     else
     {

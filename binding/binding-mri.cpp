@@ -97,6 +97,7 @@ void DiscordBindingInit();
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
 RB_METHOD(mkxpDataDirectory);
+RB_METHOD(mkxpSetTitle);
 RB_METHOD(mkxpPuts);
 RB_METHOD(mkxpRawKeyStates);
 RB_METHOD(mkxpMouseInWindow);
@@ -173,6 +174,7 @@ static void mriBindingInit()
 
 	VALUE mod = rb_define_module("MKXP");
 	_rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
+    _rb_define_module_function(mod, "set_window_title", mkxpSetTitle);
 	_rb_define_module_function(mod, "puts", mkxpPuts);
 	_rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
 	_rb_define_module_function(mod, "mouse_in_window", mkxpMouseInWindow);
@@ -246,6 +248,18 @@ RB_METHOD(mkxpDataDirectory)
     delete s_nml;
 
 	return ret;
+}
+
+RB_METHOD(mkxpSetTitle)
+{
+    RB_UNUSED_PARAM;
+    
+    VALUE s;
+    rb_scan_args(argc, argv, "1", &s);
+    SafeStringValue(s);
+    
+    shState->eThread().requestWindowRename(RSTRING_PTR(s));
+    return s;
 }
 
 RB_METHOD(mkxpPuts)
