@@ -883,13 +883,16 @@ void Bitmap::setPixel(int x, int y, const Color &color)
 	p->onModified(false);
 }
 
-void *Bitmap::getRaw()
+void Bitmap::getRaw(void *output, int output_size)
 {
+    if (output_size != width()*height()*4) return;
+    
     guardDisposed();
     
     GUARD_MEGA;
     
-    return p->surface->pixels;
+    FBO::bind(p->gl.fbo);
+    glReadPixels(0,0,width(),height(),GL_BGRA,GL_UNSIGNED_BYTE,output);
 }
 
 void Bitmap::replaceRaw(void *pixel_data, int size)

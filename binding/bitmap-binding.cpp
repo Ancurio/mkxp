@@ -422,14 +422,12 @@ RB_METHOD(bitmapGetRawData)
     RB_UNUSED_PARAM;
     
     Bitmap *b = getPrivateData<Bitmap>(self);
+    int size = b->width()*b->height()*4;
+    VALUE ret = rb_str_new(0, size);
+
+    GUARD_EXC ( b->getRaw(RSTRING_PTR(ret), size); );
     
-    char *pixels{};
-    int size{};
-    
-    GUARD_EXC( pixels = (char*)b->getRaw(); );
-    GUARD_EXC( size = b->width()*b->height()*4; );
-    
-    return rb_str_new(pixels, size);
+    return ret;
 }
 
 RB_METHOD(bitmapSetRawData)
@@ -437,7 +435,7 @@ RB_METHOD(bitmapSetRawData)
     RB_UNUSED_PARAM;
 
     VALUE str;
-    rb_get_args(argc, argv, "1", &str);
+    rb_scan_args(argc, argv, "1", &str);
     SafeStringValue(str);
     
     Bitmap *b = getPrivateData<Bitmap>(self);
