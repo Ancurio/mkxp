@@ -24,14 +24,15 @@ struct Application {
 struct DiscordStatePrivate
 {
     RGSSThreadData *threadData;
-    
-    DiscordClientId clientId;
 
     IDiscordCore *core;
     
     Application app;
+    
     IDiscordActivityEvents activityEvents;
     IDiscordUserEvents userEvents;
+    DiscordCreateParams params;
+    
     
     DiscordUser currentUser;
     DiscordActivity defaultActivity;
@@ -89,24 +90,10 @@ void discordLogHook(void *hook_data, enum EDiscordLogLevel level, const char *me
 
 int discordTryConnect(DiscordStatePrivate *p)
 {
-    DiscordCreateParams params{};
-    DiscordCreateParamsSetDefault(&params);
     
-    params.client_id = p->clientId;
-    params.flags = DiscordCreateFlags_NoRequireDiscord;
-    params.event_data = (void*)p;
+    DiscordCreateParamsSetDefault(&p->params);
     
-    p->activityEvents.on_activity_join = onActivityJoinCb;
-    p->activityEvents.on_activity_spectate = onActivitySpectateCb;
-    p->activityEvents.on_activity_join_request = onActivityJoinRequestCb;
-    p->activityEvents.on_activity_invite = onActivityInviteRequestCb;
-    params.activity_events = &p->activityEvents;
-    
-    
-    p->userEvents.on_current_user_update = onCurrentUserUpdateCb;
-    params.user_events = &p->userEvents;
-    
-    int rc = DiscordCreate(DISCORD_VERSION, &params, &p->core);
+    int rc = DiscordCreate(DISCORD_VERSION, &p->params, &p->core);
     
     if (rc != DiscordResult_NotInstalled)
         p->discordInstalled = true;
@@ -126,7 +113,7 @@ int discordTryConnect(DiscordStatePrivate *p)
     strncpy((char*)&p->defaultActivity.details, p->threadData->config.game.title.c_str(), 128);
     p->defaultActivity.timestamps.start = p->startTime;
     
-    if (p->clientId == DEFAULT_CLIENT_ID)
+    if (p->params.client_id == DEFAULT_CLIENT_ID)
     {
         strncpy((char*)&p->defaultActivity.assets.large_image, "default", 128);
         strncpy((char*)&p->defaultActivity.assets.large_text, "mkxp-z", 128);
@@ -142,7 +129,24 @@ DiscordState::DiscordState(RGSSThreadData *rtData)
     p = new DiscordStatePrivate();
     p->threadData = rtData;
     memset(&p->app, 0, sizeof(Application));
-    p->clientId = rtData->config.discordClientId;
+    
+    memset(&p->params, 0, sizeof(DiscordCreateParams));
+    memset(&p->activityEvents, 0, sizeof(IDiscordActivityEvents));
+    memset(&p->userEvents, 0, sizeof(IDiscordUserEvents));
+    
+    p->params.client_id = rtData->config.discordClientId;
+    p->params.flags = DiscordCreateFlags_NoRequireDiscord;
+    p->params.event_data = (void*)p;
+    
+    p->activityEvents.on_activity_join = onActivityJoinCb;
+    p->activityEvents.on_activity_spectate = onActivitySpectateCb;
+    p->activityEvents.on_activity_join_request = onActivityJoinRequestCb;
+    p->activityEvents.on_activity_invite = onActivityInviteRequestCb;
+    p->params.activity_events = &p->activityEvents;
+    
+    p->userEvents.on_current_user_update = onCurrentUserUpdateCb;
+    p->params.user_events = &p->userEvents;
+    
     discordTryConnect(p);
 
 }
