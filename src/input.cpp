@@ -27,6 +27,7 @@
 #include "util.h"
 
 #include <SDL_scancode.h>
+#include <SDL_keyboard.h>
 #include <SDL_mouse.h>
 #include <SDL_clipboard.h>
 
@@ -458,8 +459,6 @@ struct InputPrivate
     int rawRepeating;
 	unsigned int repeatCount;
     unsigned int rawRepeatCount;
-    
-    bool textInputMode;
 
 	struct
 	{
@@ -499,8 +498,6 @@ struct InputPrivate
 		dir4Data.previous = Input::None;
 
 		dir8Data.active = 0;
-        
-        textInputMode = false;
 	}
 
 	inline ButtonState &getStateCheck(int code)
@@ -964,7 +961,7 @@ int Input::mouseY()
 
 bool Input::getTextInputMode()
 {
-    return p->textInputMode;
+    return (SDL_IsTextInputActive() == SDL_TRUE);
 }
 
 void Input::setTextInputMode(bool mode)

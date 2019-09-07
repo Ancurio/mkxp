@@ -1,8 +1,9 @@
 # mkxp-z
 
-[![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com)
-![Made for dark types](https://img.shields.io/badge/made_for-dark_types-71584a?style=for-the-badge)
+
 ![GitHub commits since latest release](https://img.shields.io/github/commits-since/inori-z/mkxp-z/latest?style=for-the-badge)
+![built with resentment](https://img.shields.io/badge/built_with-resentment-d55c32?style=for-the-badge)
+![Made for dark types](https://img.shields.io/badge/made_for-dark_types-71584a?style=for-the-badge)
 
 ![ss](/screenshot.png?raw=true)
 
