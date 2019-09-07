@@ -1,4 +1,4 @@
-project('mkxp-z', 'cpp', 'c', version: '1.0', default_options: ['cpp_std=c++11'])
+project('mkxp-z', 'cpp', 'c', version: '1.0.1', default_options: ['cpp_std=c++11'])
 
 minimum_macos_version = get_option('macos_min_version')
 
