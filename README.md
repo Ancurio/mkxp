@@ -7,10 +7,7 @@
 
 ![ss](/screenshot.png?raw=true)
 
-This is a work-in-progress fork of mkxp that is intended to run and alleviate the difficulty of porting games based on Pokemon Essentials. It's not necessarily intended to be a byte-for-byte copy of RGSS though, so non-standard extensions and optional enhancements can/will be written for fangame developers (you poor souls) to take advantage of.
-
-## Prebuilt binaries
-> None yet!
+This is a fork of mkxp that is intended to run and alleviate the difficulty of porting games based on Pokemon Essentials. It's not necessarily intended to be a byte-for-byte copy of RGSS though, so non-standard extensions and optional enhancements can/will be written for fangame developers (you poor souls) to take advantage of.
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being, with the possible intent of working with >=1.9 to better support RGSS3. Please see the original README for more details.
@@ -132,7 +129,7 @@ To smooth over cross-platform compatibility, functionality that you won't find i
 ### Bitmap
 
 * The `Bitmap` class has one additional property: `raw_data` gets and sets the raw pixel data of a Bitmap in the form of a string. The string must be the size of the bitmap's `width*height*4`. If it is not, no error is raised, but the Bitmap will not be updated.
-* The `Bitmap` class has one additional function: `to_file(path)` will save the bitmap to `path` in BMP format. This won't take opacity into account.
+* The `Bitmap` class has one additional function: `to_file(path)` will save the bitmap to `path` in BMP format.
 
 ### Audio
 
