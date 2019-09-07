@@ -926,7 +926,7 @@ void Bitmap::saveToFile(const char *filename)
     
     GUARD_MEGA;
     
-    SDL_Surface *surf = SDL_CreateRGBSurface(0, width(), height(),p->format->BitsPerPixel, 0,0,0,0);
+    SDL_Surface *surf = SDL_CreateRGBSurface(0, width(), height(),p->format->BitsPerPixel, p->format->Rmask,p->format->Gmask,p->format->Bmask,p->format->Amask);
     
     if (!surf)
         throw new Exception(Exception::SDLError, "Failed to save bitmap: %s", SDL_GetError());
