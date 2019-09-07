@@ -1,5 +1,9 @@
 # mkxp-z
 
+[![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com)
+![Made for dark types](https://img.shields.io/badge/made_for-dark_types-71584a?style=for-the-badge)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/inori-z/mkxp-z/latest?style=for-the-badge)
+
 ![ss](/screenshot.png?raw=true)
 
 This is a work-in-progress fork of mkxp that is intended to run and alleviate the difficulty of porting games based on Pokemon Essentials. It's not necessarily intended to be a byte-for-byte copy of RGSS though, so non-standard extensions and optional enhancements can/will be written for fangame developers (you poor souls) to take advantage of.
