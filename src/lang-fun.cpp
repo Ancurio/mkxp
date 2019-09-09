@@ -16,6 +16,7 @@ extern "C" {
 #endif
 
 #include <string>
+#include <cstring>
 #include "lang-fun.h"
 
 // ======================================================================
