@@ -892,7 +892,7 @@ bool Bitmap::getRaw(void *output, int output_size)
     GUARD_MEGA;
     
     FBO::bind(p->gl.fbo);
-    glReadPixels(0,0,width(),height(),GL_BGRA,GL_UNSIGNED_BYTE,output);
+    glReadPixels(0,0,width(),height(),GL_RGBA,GL_UNSIGNED_BYTE,output);
     return true;
 }
 
