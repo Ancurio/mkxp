@@ -904,18 +904,10 @@ void Bitmap::replaceRaw(void *pixel_data, int size)
     if (size != w*h*4) return;
     
     GUARD_MEGA;
-    
-    TEXFBO buf = shState->texPool().request(w, h);
-    TEX::bind(buf.tex);
+
+    TEX::bind(p->gl.tex);
     TEX::uploadImage(w, h, pixel_data, GL_RGBA);
-    
-    GLMeta::blitBegin(p->gl);
-    GLMeta::blitSource(buf);
-    GLMeta::blitRectangle(IntRect(0,0,w,h), Vec2i());
-    GLMeta::blitEnd();
-    
-    TEXFBO::fini(buf);
-    
+
     taintArea(IntRect(0,0,w,h));
     p->onModified();
 }
