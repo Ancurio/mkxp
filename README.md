@@ -183,9 +183,6 @@ activity = Discord::Activity.new
 # - large_text
 # - small_image
 # - small_text
-# - match_secret
-# - join_secret
-# - spectate_secret
 # - party_id
 # - party_currentsize
 # - party_maxsize

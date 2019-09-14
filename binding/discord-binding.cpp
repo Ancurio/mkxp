@@ -252,9 +252,6 @@ DEF_DCPROP_S_SUB(Activity, assets, large_image, 128);
 DEF_DCPROP_S_SUB(Activity, assets, large_text, 128);
 DEF_DCPROP_S_SUB(Activity, assets, small_image, 128);
 DEF_DCPROP_S_SUB(Activity, assets, small_text, 128);
-DEF_DCPROP_S_SUB(Activity, secrets, match, 128);
-DEF_DCPROP_S_SUB(Activity, secrets, join, 128);
-DEF_DCPROP_S_SUB(Activity, secrets, spectate, 128);
 DEF_DCPROP_S_SUB(Activity, party, id, 128);
 
 DEF_DCPROP_I(Activity, type, INT, EDiscordActivityType);
@@ -296,9 +293,6 @@ void DiscordBindingInit()
     BIND_DCPROP(Activity, "large_text", assets_large_text);
     BIND_DCPROP(Activity, "small_image", assets_small_image);
     BIND_DCPROP(Activity, "small_text", assets_small_text);
-    BIND_DCPROP(Activity, "match_secret", secrets_match);
-    BIND_DCPROP(Activity, "join_secret", secrets_join);
-    BIND_DCPROP(Activity, "spectate_secret", secrets_spectate);
     BIND_DCPROP(Activity, "party_id", party_id);
     BIND_DCPROP(Activity, "party_currentsize", Partycurrent_size);
     BIND_DCPROP(Activity, "party_maxsize", Partymax_size);
