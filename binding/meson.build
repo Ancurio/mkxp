@@ -42,11 +42,8 @@ binding_source = [files(
     'filesystem-binding.cpp',
     'windowvx-binding.cpp',
     'tilemapvx-binding.cpp',
+    'miniffi-binding.cpp'
 )]
-
-if ver.version_compare('<=1.8') == true
-    binding_source += files('miniffi-binding.cpp')
-endif
 
 if discord == true
     binding_source += files('discord-binding.cpp')

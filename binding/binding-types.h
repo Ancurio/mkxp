@@ -38,6 +38,8 @@ DECL_TYPE(Viewport);
 DECL_TYPE(Tilemap);
 DECL_TYPE(Window);
 
+DECL_TYPE(MiniFFI);
+
 #else
 #define TableType "Table"
 #define RectType "Rect"
@@ -51,6 +53,8 @@ DECL_TYPE(Window);
 #define ViewportType "Viewport"
 #define TilemapType "Tilemap"
 #define WindowType "Window"
+
+#define MiniFFIType "MiniFFI"
 #endif
 
 #ifdef HAVE_DISCORDSDK

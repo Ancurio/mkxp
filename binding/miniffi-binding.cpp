@@ -36,6 +36,12 @@ typedef void* (*MINIFFI_FUNC)(unsigned long,unsigned long,unsigned long,unsigned
 // MiniFFI class, also named Win32API on Windows
 // Uses LoadLibrary/GetProcAddress on Windows, dlopen/dlsym everywhere else
 
+#ifndef OLD_RUBY
+DEF_TYPE_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
+#else
+DEF_ALLOCFUNC_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
+#endif
+
 static VALUE
 MiniFFI_alloc(VALUE self)
 {
@@ -91,7 +97,7 @@ RB_METHOD(MiniFFI_initialize)
     SafeStringValue(libname);
     SafeStringValue(func);
     void *hlib = SDL_LoadObject(RSTRING_PTR(libname));
-    DATA_PTR(self) = hlib;
+    setPrivateData(self, hlib);
     void *hfunc = MiniFFI_GetFunctionHandle(hlib, RSTRING_PTR(func));
 #ifdef __WIN32__
     if (hlib && !hfunc)
@@ -269,7 +275,7 @@ RB_METHOD(MiniFFI_call)
             return ULONG2NUM(ret);
             
         case _T_POINTER:
-            return rb_str_new2((char*)ret);
+            return rb_str_new_cstr((char*)ret);
         
         case _T_BOOL:
             return rb_bool_new(ret);
@@ -284,13 +290,16 @@ void
 MiniFFIBindingInit()
 {
     VALUE cMiniFFI = rb_define_class("MiniFFI", rb_cObject);
+#ifndef OLD_RUBY
+    rb_define_alloc_func(cMiniFFI, classAllocate<&MiniFFIType>);
+#else
     rb_define_alloc_func(cMiniFFI, MiniFFI_alloc);
+#endif
     _rb_define_method(cMiniFFI, "initialize", MiniFFI_initialize);
     _rb_define_method(cMiniFFI, "call", MiniFFI_call);
     rb_define_alias(cMiniFFI, "Call", "call");
 
-    // Preferably use MiniFFI, the name Win32API makes no sense
-    // on things that aren't Windows but I'm leaving it here
-    // for compatibility
+#if defined(__WIN32__) || defined(USE_FAKEAPI)
     rb_define_const(rb_cObject, "Win32API", cMiniFFI);
+#endif
 }
