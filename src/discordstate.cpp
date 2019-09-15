@@ -52,7 +52,7 @@ struct DiscordStatePrivate
     
     ~DiscordStatePrivate()
     {
-        if (core) core->destroy(core);
+        //if (core) core->destroy(core);
     }
 };
 
