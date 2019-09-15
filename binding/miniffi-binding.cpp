@@ -42,12 +42,6 @@ DEF_TYPE_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
 DEF_ALLOCFUNC_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
 #endif
 
-static VALUE
-MiniFFI_alloc(VALUE self)
-{
-    return Data_Wrap_Struct(self, 0, SDL_UnloadObject, 0);
-}
-
 static void*
 MiniFFI_GetFunctionHandle(void *libhandle, const char *func)
 {
@@ -293,7 +287,7 @@ MiniFFIBindingInit()
 #ifndef OLD_RUBY
     rb_define_alloc_func(cMiniFFI, classAllocate<&MiniFFIType>);
 #else
-    rb_define_alloc_func(cMiniFFI, MiniFFI_alloc);
+    rb_define_alloc_func(cMiniFFI, MiniFFIAllocate);
 #endif
     _rb_define_method(cMiniFFI, "initialize", MiniFFI_initialize);
     _rb_define_method(cMiniFFI, "call", MiniFFI_call);
