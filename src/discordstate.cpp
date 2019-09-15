@@ -91,8 +91,6 @@ void discordLogHook(void *hook_data, enum EDiscordLogLevel level, const char *me
 int discordTryConnect(DiscordStatePrivate *p)
 {
     
-    DiscordCreateParamsSetDefault(&p->params);
-    
     int rc = DiscordCreate(DISCORD_VERSION, &p->params, &p->core);
     
     if (rc != DiscordResult_NotInstalled)
@@ -130,7 +128,8 @@ DiscordState::DiscordState(RGSSThreadData *rtData)
     p->threadData = rtData;
     memset(&p->app, 0, sizeof(Application));
     
-    memset(&p->params, 0, sizeof(DiscordCreateParams));
+    DiscordCreateParamsSetDefault(&p->params);
+    
     memset(&p->activityEvents, 0, sizeof(IDiscordActivityEvents));
     memset(&p->userEvents, 0, sizeof(IDiscordUserEvents));
     
