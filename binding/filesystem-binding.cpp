@@ -32,8 +32,6 @@
 #include "intern.h"
 #endif
 
-#include "debugwriter.h"
-
 static void
 fileIntFreeInstance(void *inst)
 {
@@ -181,16 +179,13 @@ RB_METHOD(kernelLoadData)
                                       1,
                                       rb_str_new2("Graphics"));
     
-    if (Qfalse == Qtrue)
+    if (isGraphicsFile == Qtrue)
     {
         VALUE f = rb_file_open_str(filename, "rb");
         VALUE ret = rb_funcall(f, rb_intern("read"), 0);
         rb_funcall(f, rb_intern("close"), 0);
         return ret;
     }
-    
-    Debug() << "KernelLoadDataInt (" << RSTRING_PTR(filename) << ")";
-
 	return kernelLoadDataInt(RSTRING_PTR(filename), true);
 }
 
