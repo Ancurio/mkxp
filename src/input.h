@@ -66,6 +66,10 @@ public:
 	int mouseX();
 	int mouseY();
     
+    bool getJoystickConnected();
+    const char *getJoystickName();
+    int getJoystickPowerLevel();
+    
     bool getTextInputMode();
     void setTextInputMode(bool mode);
     const char *getText();

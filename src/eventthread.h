@@ -99,6 +99,9 @@ public:
 
 	bool getFullscreen() const;
 	bool getShowCursor() const;
+    bool getJoystickConnected() const;
+    
+    SDL_Joystick *joystick() const;
 
 	void showMessageBox(const char *body, int flags = 0);
 
@@ -117,7 +120,10 @@ private:
 	                       const SDL_Rect &screen);
 
 	bool fullscreen;
+    bool joystickConnected;
 	bool showCursor;
+    
+    SDL_Joystick *js;
 	AtomicFlag msgBoxDone;
 
 	struct

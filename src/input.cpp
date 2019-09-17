@@ -959,6 +959,25 @@ int Input::mouseY()
 	return (EventThread::mouseState.y - rtData.screenOffset.y) * rtData.sizeResoRatio.y;
 }
 
+bool Input::getJoystickConnected()
+{
+    return shState->eThread().getJoystickConnected();
+}
+
+const char *Input::getJoystickName()
+{
+    return (getJoystickConnected()) ?
+    SDL_JoystickName(shState->eThread().joystick()) :
+    0;
+}
+
+int Input::getJoystickPowerLevel()
+{
+    return (getJoystickConnected()) ?
+    SDL_JoystickCurrentPowerLevel(shState->eThread().joystick()) :
+    SDL_JOYSTICK_POWER_UNKNOWN;
+}
+
 bool Input::getTextInputMode()
 {
     return (SDL_IsTextInputActive() == SDL_TRUE);

@@ -25,6 +25,8 @@
 #include "binding-util.h"
 #include "util.h"
 
+#include <SDL_joystick.h>
+
 RB_METHOD(inputUpdate)
 {
 	RB_UNUSED_PARAM;
@@ -153,6 +155,45 @@ RB_METHOD(inputMouseY)
 	return rb_fix_new(shState->input().mouseY());
 }
 
+#define M_SYMBOL(x) ID2SYM(rb_intern(x))
+#define POWERCASE(v,c) \
+case SDL_JOYSTICK_POWER_##c: \
+v = M_SYMBOL(#c); \
+break;
+
+RB_METHOD(inputJoystickInfo)
+{
+    RB_UNUSED_PARAM;
+    
+    if (!shState->input().getJoystickConnected())
+        return RUBY_Qnil;
+    
+    VALUE ret = rb_hash_new();
+    
+    rb_hash_aset(ret, M_SYMBOL("name"), rb_str_new_cstr(shState->input().getJoystickName()));
+    
+    VALUE power;
+    
+    switch (shState->input().getJoystickPowerLevel()) {
+            POWERCASE(power, MAX);
+            POWERCASE(power, WIRED);
+            POWERCASE(power, FULL);
+            POWERCASE(power, MEDIUM);
+            POWERCASE(power, LOW);
+            POWERCASE(power, EMPTY);
+            
+        default:
+            power = M_SYMBOL("UNKNOWN");
+            break;
+    }
+    
+    rb_hash_aset(ret, M_SYMBOL("power"), power);
+    return ret;
+    
+}
+#undef POWERCASE
+#undef M_SYMBOL
+
 RB_METHOD(inputGetMode)
 {
     RB_UNUSED_PARAM;
@@ -267,6 +308,8 @@ inputBindingInit()
 
 	_rb_define_module_function(module, "mouse_x", inputMouseX);
 	_rb_define_module_function(module, "mouse_y", inputMouseY);
+    
+    _rb_define_module_function(module, "joystick", inputJoystickInfo);
     
     _rb_define_module_function(module, "text_input", inputGetMode);
     _rb_define_module_function(module, "text_input=", inputSetMode);

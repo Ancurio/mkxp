@@ -110,7 +110,9 @@ bool EventThread::allocUserEvents()
 
 EventThread::EventThread()
     : fullscreen(false),
-      showCursor(true)
+      showCursor(true),
+      joystickConnected(false),
+      js(0)
 {}
 
 void EventThread::process(RGSSThreadData &rtData)
@@ -148,7 +150,6 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	bool terminate = false;
 
-	SDL_Joystick *js = 0;
 	if (SDL_NumJoysticks() > 0)
 		js = SDL_JoystickOpen(0);
 
@@ -377,10 +378,12 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
 
 			js = SDL_JoystickOpen(0);
+            joystickConnected = true;
 			break;
 
 		case SDL_JOYDEVICEREMOVED :
 			resetInputStates();
+            joystickConnected = false;
 			break;
 
 		case SDL_MOUSEBUTTONDOWN :
@@ -695,6 +698,16 @@ bool EventThread::getFullscreen() const
 bool EventThread::getShowCursor() const
 {
 	return showCursor;
+}
+
+bool EventThread::getJoystickConnected() const
+{
+    return joystickConnected;
+}
+
+SDL_Joystick *EventThread::joystick() const
+{
+    return (joystickConnected) ? js : 0;
 }
 
 void EventThread::notifyFrame()

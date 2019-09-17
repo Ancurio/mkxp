@@ -32,6 +32,8 @@
 #include "intern.h"
 #endif
 
+#include "debugwriter.h"
+
 static void
 fileIntFreeInstance(void *inst)
 {
@@ -151,16 +153,6 @@ kernelLoadDataInt(const char *filename, bool rubyExc)
     
 	VALUE port = fileIntForPath(filename, rubyExc);
     
-    // RGSS checks to see if a file is in the RGSSAD,
-    // and if it is, just passes a char* and the length
-    // of the file to rb_str_new and gives that back to
-    // Marshal. I haven't checked if the whole archive
-    // is kept decrypted in memory (probably, if the
-    // file is always locked), but either way, dumping
-    // the file to a string is much faster than faking
-    // the IO. Seems to cause a bit of startup lag,
-    // but that's no doubt fixable
-    
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
 	// FIXME need to catch exceptions here with begin rescue
@@ -189,13 +181,15 @@ RB_METHOD(kernelLoadData)
                                       1,
                                       rb_str_new2("Graphics"));
     
-    if (isGraphicsFile == Qtrue)
+    if (Qfalse == Qtrue)
     {
         VALUE f = rb_file_open_str(filename, "rb");
         VALUE ret = rb_funcall(f, rb_intern("read"), 0);
         rb_funcall(f, rb_intern("close"), 0);
         return ret;
     }
+    
+    Debug() << "KernelLoadDataInt (" << RSTRING_PTR(filename) << ")";
 
 	return kernelLoadDataInt(RSTRING_PTR(filename), true);
 }
