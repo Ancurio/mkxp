@@ -94,6 +94,8 @@ public:
 	void requestShowCursor(bool mode);
     
     void requestTextInputMode(bool mode);
+    
+    void requestSettingsMenu();
 
 	void requestTerminate();
 

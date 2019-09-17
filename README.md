@@ -145,6 +145,7 @@ To smooth over cross-platform compatibility, functionality that you won't find i
 * `user_language` returns the user's current locale (e.g. `en_US`).
 * `game_title` returns the game's title as set in its ini.
 * `power_state` returns a hash with the system power state information. Its members are `:discharging` (Boolean), `:percent` (int/nil), and `:seconds` (int/nil)
+* `show_settings` displays the keybinding menu.
 
 ### Discord
 

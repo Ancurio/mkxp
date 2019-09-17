@@ -106,6 +106,7 @@ RB_METHOD(mkxpPlatform);
 RB_METHOD(mkxpUserLanguage);
 RB_METHOD(mkxpGameTitle);
 RB_METHOD(mkxpPowerState);
+RB_METHOD(mkxpSettingsMenu);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -177,6 +178,7 @@ static void mriBindingInit()
 	VALUE mod = rb_define_module("MKXP");
 	_rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
     _rb_define_module_function(mod, "set_window_title", mkxpSetTitle);
+    _rb_define_module_function(mod, "show_settings", mkxpSettingsMenu);
 	_rb_define_module_function(mod, "puts", mkxpPuts);
 	_rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
 	_rb_define_module_function(mod, "mouse_in_window", mkxpMouseInWindow);
@@ -331,6 +333,15 @@ RB_METHOD(mkxpPowerState)
     rb_hash_aset(hash, ID2SYM(rb_intern("discharging")), rb_bool_new(ps == SDL_POWERSTATE_ON_BATTERY));
     
     return hash;
+}
+
+RB_METHOD(mkxpSettingsMenu)
+{
+    RB_UNUSED_PARAM;
+    
+    shState->eThread().requestSettingsMenu();
+    
+    return Qnil;
 }
 
 static VALUE rgssMainCb(VALUE block)

@@ -89,6 +89,8 @@ enum
 	REQUEST_SETCURSORVISIBLE,
     
     REQUEST_TEXTMODE,
+    
+    REQUEST_SETTINGS,
 
 	UPDATE_FPS,
 	UPDATE_SCREEN_RECT,
@@ -469,6 +471,16 @@ void EventThread::process(RGSSThreadData &rtData)
 				showCursor = event.user.code;
 				updateCursorState(cursorInWindow, gameScreen);
 				break;
+                    
+            case REQUEST_SETTINGS :
+                if (!sMenu)
+                {
+                    sMenu = new SettingsMenu(rtData);
+                    updateCursorState(false, gameScreen);
+                }
+                
+                sMenu->raise();
+                break;
 
 			case UPDATE_FPS :
 				if (rtData.config.printFPS)
@@ -671,6 +683,13 @@ void EventThread::requestTextInputMode(bool mode)
     SDL_Event event;
     event.type = usrIdStart + REQUEST_TEXTMODE;
     event.user.code = mode;
+    SDL_PushEvent(&event);
+}
+
+void EventThread::requestSettingsMenu()
+{
+    SDL_Event event;
+    event.type = usrIdStart + REQUEST_SETTINGS;
     SDL_PushEvent(&event);
 }
 
