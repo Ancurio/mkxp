@@ -175,7 +175,7 @@ static void mriBindingInit()
 	else
 		assert(!"unreachable");
 
-	VALUE mod = rb_define_module("MKXP");
+	VALUE mod = rb_define_module("System");
 	_rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
     _rb_define_module_function(mod, "set_window_title", mkxpSetTitle);
     _rb_define_module_function(mod, "show_settings", mkxpSettingsMenu);
@@ -484,6 +484,7 @@ struct BacktraceData
 	BoostHash<std::string, std::string> scriptNames;
 };
 
+#ifndef MARIN
 #define SCRIPT_SECTION_FMT (rgssVer >= 3 ? "{%04ld}" : "Section%03ld")
 
 static void runRMXPScripts(BacktraceData &btData)
@@ -656,6 +657,7 @@ static void runRMXPScripts(BacktraceData &btData)
 		processReset();
 	}
 }
+#endif
 
 static void showExc(VALUE exc, const BacktraceData &btData)
 {
@@ -740,11 +742,10 @@ static void mriBindingExecute()
 
 	Config &conf = shState->rtData().config;
 
+    VALUE lpaths = rb_gv_get(":");
 	if (!conf.rubyLoadpaths.empty())
 	{
 		/* Setup custom load paths */
-		VALUE lpaths = rb_gv_get(":");
-
 		for (size_t i = 0; i < conf.rubyLoadpaths.size(); ++i)
 		{
 			std::string &path = conf.rubyLoadpaths[i];
@@ -753,6 +754,13 @@ static void mriBindingExecute()
 			rb_ary_push(lpaths, pathv);
 		}
 	}
+#ifdef MARIN
+    else
+    {
+        rb_ary_push(lpaths, rb_str_new_cstr("ruby/extensions/2.5.0"));
+        rb_ary_push(lpaths, rb_str_new_cstr("ruby/extensions/2.5.0/i386-mingw32"));
+    }
+#endif
 
 	RbData rbData;
 	shState->setBindingData(&rbData);
@@ -764,7 +772,11 @@ static void mriBindingExecute()
 	if (!customScript.empty())
 		runCustomScript(customScript);
 	else
+#ifdef MARIN
+        runCustomScript("ruby/scripts/requires.rb");
+#else
 		runRMXPScripts(btData);
+#endif
 
 #ifndef OLD_RUBY
 	VALUE exc = rb_errinfo();

@@ -44,6 +44,10 @@ if not get_option('console')
     add_project_arguments('-DNO_CONSOLE', language: 'cpp')
 endif
 
+if get_option('mk')
+    add_project_arguments('-DMARIN', language: 'cpp')
+endif
+
 subdir('src')
 subdir('binding')
 subdir('shader')

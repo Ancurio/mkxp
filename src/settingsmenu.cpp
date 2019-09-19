@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <assert.h>
 
-const Vec2i winSize(540, 356);
+const Vec2i winSize(640, 356);
 
 const uint8_t cBgNorm = 50;
 const uint8_t cBgDark = 20;
@@ -54,7 +54,8 @@ static bool pointInRect(const SDL_Rect &r, int x, int y)
 
 typedef SettingsMenuPrivate SMP;
 
-#define BTN_STRING(btn) { Input:: btn, #btn }
+#define BTN_STRING_CUSTOM(btn, name) { Input:: btn, name }
+#define BTN_STRING(btn) BTN_STRING_CUSTOM(btn, #btn)
 struct VButton
 {
 	Input::ButtonCode code;
@@ -69,10 +70,18 @@ struct VButton
 	BTN_STRING(R),
 	BTN_STRING(A),
 	BTN_STRING(B),
-	BTN_STRING(C),
+#ifdef MARIN
+	BTN_STRING(ZL),
+#else
+    BTN_STRING_CUSTOM(ZL, "C"),
+#endif
 	BTN_STRING(X),
 	BTN_STRING(Y),
-	BTN_STRING(Z)
+#ifdef MARIN
+	BTN_STRING(ZR),
+#else
+    BTN_STRING_CUSTOM(ZL, "Z"),
+#endif
 };
 
 static elementsN(vButtons);
