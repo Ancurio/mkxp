@@ -248,6 +248,22 @@ RB_METHOD(inputJoystickInfo)
 #undef POWERCASE
 #undef M_SYMBOL
 
+RB_METHOD(inputRumble)
+{
+    RB_UNUSED_PARAM;
+    VALUE duration, strength, attack, fade;
+    rb_scan_args(argc, argv, "13", &duration, &strength, &attack, &fade);
+    
+    int dur = NUM2INT(duration);
+    int str = (NIL_P(strength)) ? 1 : NUM2INT(strength);
+    int att = (NIL_P(attack)) ? 0 : NUM2INT(attack);
+    int fad = (NIL_P(fade)) ? 0 : NUM2INT(fade);
+    
+    shState->input().rumble(dur, str, att, fad);
+    
+    return Qnil;
+}
+
 RB_METHOD(inputGetMode)
 {
     RB_UNUSED_PARAM;
@@ -364,6 +380,7 @@ inputBindingInit()
 	_rb_define_module_function(module, "mouse_y", inputMouseY);
     
     _rb_define_module_function(module, "joystick", inputJoystickInfo);
+    _rb_define_module_function(module, "rumble", inputRumble);
     
     _rb_define_module_function(module, "text_input", inputGetMode);
     _rb_define_module_function(module, "text_input=", inputSetMode);
