@@ -108,6 +108,7 @@ int discordTryConnect(DiscordStatePrivate *p)
     p->connected = true;
     
     memset(&p->defaultActivity, 0, sizeof(DiscordActivity));
+#ifndef MARIN
     strncpy((char*)&p->defaultActivity.details, p->threadData->config.game.title.c_str(), 128);
     p->defaultActivity.timestamps.start = p->startTime;
     
@@ -116,9 +117,16 @@ int discordTryConnect(DiscordStatePrivate *p)
         strncpy((char*)&p->defaultActivity.assets.large_image, "default", 128);
         strncpy((char*)&p->defaultActivity.assets.large_text, "mkxp-z", 128);
     }
+#else
+    p->defaultActivity.timestamps.start = p->startTime;
     
+    if (p->params.client_id == DEFAULT_CLIENT_ID)
+    {
+        strncpy((char*)&p->defaultActivity.assets.large_image, "default", 128);
+        strncpy((char*)&p->defaultActivity.assets.large_text, "MK", 128);
+    }
+#endif
     p->app.activities->update_activity(p->app.activities, &p->defaultActivity, 0, defaultActivityCb);
-    
     return rc;
 }
 

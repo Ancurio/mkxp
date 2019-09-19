@@ -4,8 +4,11 @@
 #include <string>
 
 #include "bitmap.h"
-
+#ifdef MARIN
+#define DEFAULT_CLIENT_ID 624284820201013248
+#else
 #define DEFAULT_CLIENT_ID 618672572183347211
+#endif
 
 struct DiscordStatePrivate;
 

@@ -1,6 +1,10 @@
-embedded_assets = [
-    'icon.png'
-]
+embedded_assets = []
+
+if get_option('mk') == true
+    embedded_assets += 'icon_mk.png'
+else
+    embedded_assets += 'icon.png'
+endif
 
 if get_option('cjk_fallback_font') == true
     embedded_assets += 'wqymicrohei.ttf'

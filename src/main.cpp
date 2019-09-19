@@ -45,7 +45,11 @@
 #include <Winsock2.h>
 #endif
 
+#ifdef MARIN
+#include "icon_mk.png.xxd"
+#else
 #include "icon.png.xxd"
+#endif
 
 static void
 rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
@@ -179,7 +183,11 @@ static void setupWindowIcon(const Config &conf, SDL_Window *win)
 	SDL_RWops *iconSrc;
 
 	if (conf.iconPath.empty())
+#ifdef MARIN
+        iconSrc = SDL_RWFromConstMem(___assets_icon_mk_png, ___assets_icon_mk_png_len);
+#else
 		iconSrc = SDL_RWFromConstMem(___assets_icon_png, ___assets_icon_png_len);
+#endif
 	else
 		iconSrc = SDL_RWFromFile(conf.iconPath.c_str(), "rb");
 
