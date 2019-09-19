@@ -81,7 +81,7 @@ static int getScancodeArg(VALUE *argv)
         rb_raise(rb_eRuntimeError, "%s is not a valid key.", scancode);
     }
     
-    return rb_bool_new(shState->input().isPressedEx(code, 0));
+    return code;
 }
 
 RB_METHOD(inputPress)
