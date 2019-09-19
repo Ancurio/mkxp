@@ -22,9 +22,11 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include <map>
+#include <unordered_map>
+#include <string>
 
-extern std::map<int, int> vKeyToScancode;
+extern std::unordered_map<int, int> vKeyToScancode;
+extern std::unordered_map<std::string, int> strToScancode;
 
 struct InputPrivate;
 struct RGSSThreadData;
@@ -55,9 +57,9 @@ public:
 	bool isPressed(int button);
 	bool isTriggered(int button);
 	bool isRepeated(int button);
-    bool isPressedEx(int vKey);
-    bool isTriggeredEx(int vKey);
-    bool isRepeatedEx(int vKey);
+    bool isPressedEx(int code, bool isVKey);
+    bool isTriggeredEx(int code, bool isVKey);
+    bool isRepeatedEx(int code, bool isVKey);
 
 	int dir4Value();
 	int dir8Value();

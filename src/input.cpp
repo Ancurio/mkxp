@@ -32,16 +32,14 @@
 #include <SDL_clipboard.h>
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string.h>
 #include <assert.h>
 
 #define BUTTON_CODE_COUNT 24
 
-// Map of Windows virtualkey codes to SDL scancodes.
-// Used for pressex, triggerex and repeatex
 #define m(vk,sc) { vk, SDL_SCANCODE_##sc }
-std::map<int, int> vKeyToScancode{
+std::unordered_map<int, int> vKeyToScancode{
     // 0x01 LEFT MOUSE
     // 0x02 RIGHT MOUSE
     m(0x03, CANCEL),
@@ -201,6 +199,225 @@ std::map<int, int> vKeyToScancode{
     // 0xfd PA1
     m(0xfe, CLEAR)
 };
+#undef m
+#define m(keycode) { #keycode, SDL_SCANCODE_##keycode }
+std::unordered_map<std::string, int> strToScancode{
+    m(0), m(1),
+    m(2), m(3),
+    m(4), m(5),
+    m(6), m(7),
+    m(8), m(9),
+    m(A),
+    m(AC_BACK),
+    m(AC_BOOKMARKS),
+    m(AC_FORWARD),
+    m(AC_HOME),
+    m(AC_REFRESH),
+    m(AC_SEARCH),
+    m(AC_STOP),
+    m(AGAIN),
+    m(ALTERASE),
+    m(APOSTROPHE),
+    m(APPLICATION),
+    m(AUDIOMUTE),
+    m(AUDIONEXT),
+    m(AUDIOPLAY),
+    m(AUDIOPREV),
+    m(AUDIOSTOP),
+    m(B),
+    m(BACKSLASH),
+    m(BACKSPACE),
+    m(BRIGHTNESSDOWN),
+    m(BRIGHTNESSUP),
+    m(C),
+    m(CALCULATOR),
+    m(CANCEL),
+    m(CAPSLOCK),
+    m(CLEAR),
+    m(CLEARAGAIN),
+    m(COMMA),
+    m(COMPUTER),
+    m(COPY),
+    m(CRSEL),
+    m(CURRENCYSUBUNIT),
+    m(CURRENCYUNIT),
+    m(CUT),
+    m(D),
+    m(DECIMALSEPARATOR),
+    m(DELETE),
+    m(DISPLAYSWITCH),
+    m(DOWN),
+    m(E),
+    m(EJECT),
+    m(END),
+    m(EQUALS),
+    m(ESCAPE),
+    m(EXECUTE),
+    m(EXSEL),
+    m(F),
+    m(F1),  m(F2),
+    m(F3),  m(F4),
+    m(F5),  m(F6),
+    m(F7),  m(F8),
+    m(F9),  m(F10),
+    m(F11), m(F12),
+    m(F13), m(F14),
+    m(F15), m(F16),
+    m(F17), m(F18),
+    m(F19), m(F20),
+    m(F21), m(F22),
+    m(F23), m(F24),
+    m(FIND),
+    m(G),
+    m(GRAVE),
+    m(H),
+    m(HELP),
+    m(HOME),
+    m(I),
+    m(INSERT),
+    m(J),
+    m(K),
+    m(KBDILLUMDOWN),
+    m(KBDILLUMTOGGLE),
+    m(KBDILLUMUP),
+    m(KP_0),
+    m(KP_00),
+    m(KP_000),
+    m(KP_1), m(KP_2),
+    m(KP_3), m(KP_4),
+    m(KP_5), m(KP_6),
+    m(KP_7), m(KP_8),
+    m(KP_9),
+    m(KP_A),
+    m(KP_AMPERSAND),
+    m(KP_AT),
+    m(KP_B),
+    m(KP_BACKSPACE),
+    m(KP_BINARY),
+    m(KP_C),
+    m(KP_CLEAR),
+    m(KP_CLEARENTRY),
+    m(KP_COLON),
+    m(KP_COMMA),
+    m(KP_D),
+    m(KP_DBLAMPERSAND),
+    m(KP_DBLVERTICALBAR),
+    m(KP_DECIMAL),
+    m(KP_DIVIDE),
+    m(KP_E),
+    m(KP_ENTER),
+    m(KP_EQUALS),
+    m(KP_EQUALSAS400),
+    m(KP_EXCLAM),
+    m(KP_F),
+    m(KP_GREATER),
+    m(KP_HASH),
+    m(KP_HEXADECIMAL),
+    m(KP_LEFTBRACE),
+    m(KP_LEFTPAREN),
+    m(KP_LESS),
+    m(KP_MEMADD),
+    m(KP_MEMCLEAR),
+    m(KP_MEMDIVIDE),
+    m(KP_MEMMULTIPLY),
+    m(KP_MEMRECALL),
+    m(KP_MEMSTORE),
+    m(KP_MEMSUBTRACT),
+    m(KP_MINUS),
+    m(KP_MULTIPLY),
+    m(KP_OCTAL),
+    m(KP_PERCENT),
+    m(KP_PERIOD),
+    m(KP_PLUS),
+    m(KP_PLUSMINUS),
+    m(KP_POWER),
+    m(KP_RIGHTBRACE),
+    m(KP_RIGHTPAREN),
+    m(KP_SPACE),
+    m(KP_TAB),
+    m(KP_VERTICALBAR),
+    m(KP_XOR),
+    m(L),
+    m(LALT),
+    m(LCTRL),
+    m(LEFT),
+    m(LEFTBRACKET),
+    m(LGUI),
+    m(LSHIFT),
+    m(M),
+    m(MAIL),
+    m(MEDIASELECT),
+    m(MENU),
+    m(MINUS),
+    m(MODE),
+    m(MUTE),
+    m(N),
+    m(NUMLOCKCLEAR),
+    m(O),
+    m(OPER),
+    m(OUT),
+    m(P),
+    m(PAGEDOWN),
+    m(PAGEUP),
+    m(PASTE),
+    m(PAUSE),
+    m(PERIOD),
+    m(POWER),
+    m(PRINTSCREEN),
+    m(PRIOR),
+    m(Q),
+    m(R),
+    m(RALT),
+    m(RCTRL),
+    m(RETURN),
+    m(RETURN2),
+    m(RGUI),
+    m(RIGHT),
+    m(RIGHTBRACKET),
+    m(RSHIFT),
+    m(S),
+    m(SCROLLLOCK),
+    m(SELECT),
+    m(SEMICOLON),
+    m(SEPARATOR),
+    m(SLASH),
+    m(SLEEP),
+    m(SPACE),
+    m(STOP),
+    m(SYSREQ),
+    m(T),
+    m(TAB),
+    m(THOUSANDSSEPARATOR),
+    m(U),
+    m(UNDO),
+    m(UNKNOWN),
+    m(UP),
+    m(V),
+    m(VOLUMEDOWN),
+    m(VOLUMEUP),
+    m(W),
+    m(WWW),
+    m(X),
+    m(Y),
+    m(Z),
+    m(INTERNATIONAL1),
+    m(INTERNATIONAL2),
+    m(INTERNATIONAL3),
+    m(INTERNATIONAL4),
+    m(INTERNATIONAL5),
+    m(INTERNATIONAL6),
+    m(INTERNATIONAL7),
+    m(INTERNATIONAL8),
+    m(INTERNATIONAL9),
+    m(LANG1), m(LANG2),
+    m(LANG3), m(LANG4),
+    m(LANG5), m(LANG6),
+    m(LANG7), m(LANG8),
+    m(LANG9),
+    m(NONUSBACKSLASH),
+    m(NONUSHASH)
+};
+
 #undef m
 
 struct ButtonState
@@ -522,62 +739,64 @@ struct InputPrivate
 		return statesOld[mapToIndex[code]];
 	}
     
-    inline ButtonState getStateRaw(int code)
+    inline ButtonState getStateRaw(int code, bool useVKey)
     {
         ButtonState b;
-        int scancode = -1;
-        
-        switch (code)
+        int scancode = (useVKey) ? -1 : code;
+        if (scancode < 0)
         {
-                case 0x10:
-                return getState(Input::Shift);
-                break;
-                
-                case 0x11:
-                return getState(Input::Ctrl);
-                break;
-                
-                case 0x12:
-                return getState(Input::Alt);
-                break;
-                
-                case 0x1:
-                return getState(Input::MouseLeft);
-                break;
-                
-                case 0x2:
-                return getState(Input::MouseRight);
-                break;
-                
-                case 0x4:
-                return getState(Input::MouseMiddle);
-                break;
-                
-                default:
-                ButtonState b;
-                try
-                {
-                    scancode = vKeyToScancode[code];
-                }
-                catch (...) {}
-                if (scancode == -1) return b;
-                
-                b.pressed = rawStates[scancode];
-                b.triggered = (rawStates[scancode] && !rawStatesOld[scancode]);
-                
-                bool repeated = false;
-                if (scancode == rawRepeating)
-                {
-                    if (rgssVer >= 2)
-                        repeated = rawRepeatCount >= 23 && ((rawRepeatCount+1) % 6) == 0;
-                    else
-                        repeated = rawRepeatCount >= 15 && ((rawRepeatCount+1) % 4) == 0;
-                }
-                b.repeated = repeated;
-                
-                return b;
-                break;
+            switch (code)
+            {
+                    case 0x10:
+                    return getState(Input::Shift);
+                    break;
+                    
+                    case 0x11:
+                    return getState(Input::Ctrl);
+                    break;
+                    
+                    case 0x12:
+                    return getState(Input::Alt);
+                    break;
+                    
+                    case 0x1:
+                    return getState(Input::MouseLeft);
+                    break;
+                    
+                    case 0x2:
+                    return getState(Input::MouseRight);
+                    break;
+                    
+                    case 0x4:
+                    return getState(Input::MouseMiddle);
+                    break;
+                    
+                    default:
+                    ButtonState b;
+                    try
+                    {
+                        scancode = vKeyToScancode[code];
+                    }
+                    catch (...) {}
+                    if (scancode == -1) return b;
+                    break;
+            }
         }
+        
+        b.pressed = rawStates[scancode];
+        b.triggered = (rawStates[scancode] && !rawStatesOld[scancode]);
+        
+        bool repeated = false;
+        if (scancode == rawRepeating)
+        {
+            if (rgssVer >= 2)
+            repeated = rawRepeatCount >= 23 && ((rawRepeatCount+1) % 6) == 0;
+            else
+            repeated = rawRepeatCount >= 15 && ((rawRepeatCount+1) % 4) == 0;
+        }
+        b.repeated = repeated;
+        
+        return b;
     }
 
 	void swapBuffers()
@@ -920,19 +1139,19 @@ bool Input::isRepeated(int button)
 	return p->getStateCheck(button).repeated;
 }
 
-bool Input::isPressedEx(int vKey)
+bool Input::isPressedEx(int code, bool isVKey)
 {
-    return p->getStateRaw(vKey).pressed;
+    return p->getStateRaw(code, isVKey).pressed;
 }
 
-bool Input::isTriggeredEx(int vKey)
+bool Input::isTriggeredEx(int code, bool isVKey)
 {
-    return p->getStateRaw(vKey).triggered;
+    return p->getStateRaw(code, isVKey).triggered;
 }
 
-bool Input::isRepeatedEx(int vKey)
+bool Input::isRepeatedEx(int code, bool isVKey)
 {
-    return p->getStateRaw(vKey).repeated;
+    return p->getStateRaw(code, isVKey).repeated;
 }
 
 int Input::dir4Value()

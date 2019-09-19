@@ -25,6 +25,7 @@
 #include "binding-util.h"
 #include "util.h"
 
+#include <string>
 #include <SDL_joystick.h>
 
 RB_METHOD(inputUpdate)
@@ -36,23 +37,21 @@ RB_METHOD(inputUpdate)
 	return Qnil;
 }
 
-static int getButtonArg(int argc, VALUE *argv)
+static int getButtonArg(VALUE *argv)
 {
 	int num;
-
-	rb_check_argc(argc, 1);
-
-	if (FIXNUM_P(argv[0]))
+    
+	if (FIXNUM_P(*argv))
 	{
-		num = FIX2INT(argv[0]);
+		num = FIX2INT(*argv);
 	}
-	else if (SYMBOL_P(argv[0]) && rgssVer >= 3)
+	else if (SYMBOL_P(*argv) && rgssVer >= 3)
 	{
 		VALUE symHash = getRbData()->buttoncodeHash;
 #ifndef OLD_RUBY
-		num = FIX2INT(rb_hash_lookup2(symHash, argv[0], INT2FIX(Input::None)));
+		num = FIX2INT(rb_hash_lookup2(symHash, *argv, INT2FIX(Input::None)));
 #else
-        VALUE res = rb_hash_aref(symHash, argv[0]);
+        VALUE res = rb_hash_aref(symHash, *argv);
         if (!NIL_P(res))
             num = FIX2INT(res);
         else
@@ -69,11 +68,40 @@ static int getButtonArg(int argc, VALUE *argv)
 	return num;
 }
 
+static int getScancodeArg(VALUE *argv)
+{
+    const char *scancode = rb_id2name(SYM2ID(argv));
+    int code{};
+    try
+    {
+        code = strToScancode[scancode];
+    }
+    catch (...)
+    {
+        rb_raise(rb_eRuntimeError, "%s is not a valid key.", scancode);
+    }
+    
+    return rb_bool_new(shState->input().isPressedEx(code, 0));
+}
+
 RB_METHOD(inputPress)
 {
 	RB_UNUSED_PARAM;
-
-	int num = getButtonArg(argc, argv);
+    
+    rb_check_argc(argc, 1);
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    int num{};
+    
+    if (SYMBOL_P(button))
+    {
+        num = getScancodeArg(&button);
+        return rb_bool_new(shState->input().isPressedEx(num, 0));
+    }
+    
+	num = getButtonArg(&button);
 
 	return rb_bool_new(shState->input().isPressed(num));
 }
@@ -81,8 +109,21 @@ RB_METHOD(inputPress)
 RB_METHOD(inputTrigger)
 {
 	RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 1);
 
-	int num = getButtonArg(argc, argv);
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    int num{};
+    
+    if (SYMBOL_P(button))
+    {
+        num = getScancodeArg(&button);
+        return rb_bool_new(shState->input().isTriggeredEx(num, 0));
+    }
+    
+    num = getButtonArg(&button);
 
 	return rb_bool_new(shState->input().isTriggered(num));
 }
@@ -90,8 +131,21 @@ RB_METHOD(inputTrigger)
 RB_METHOD(inputRepeat)
 {
 	RB_UNUSED_PARAM;
-
-	int num = getButtonArg(argc, argv);
+    
+    rb_check_argc(argc, 1);
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    int num{};
+    
+    if (SYMBOL_P(button))
+    {
+        num = getScancodeArg(&button);
+        return rb_bool_new(shState->input().isRepeatedEx(num, 0));
+    }
+    
+    num = getButtonArg(&button);
 
 	return rb_bool_new(shState->input().isRepeated(num));
 }
@@ -103,7 +157,7 @@ RB_METHOD(inputPressEx)
     int num;
     rb_get_args(argc, argv, "i", &num RB_ARG_END);
     
-    return rb_bool_new(shState->input().isPressedEx(num));
+    return rb_bool_new(shState->input().isPressedEx(num, 1));
 }
 
 RB_METHOD(inputTriggerEx)
@@ -113,7 +167,7 @@ RB_METHOD(inputTriggerEx)
     int num;
     rb_get_args(argc, argv, "i", &num RB_ARG_END);
     
-    return rb_bool_new(shState->input().isTriggeredEx(num));
+    return rb_bool_new(shState->input().isTriggeredEx(num, 1));
 }
 
 RB_METHOD(inputRepeatEx)
@@ -123,7 +177,7 @@ RB_METHOD(inputRepeatEx)
     int num;
     rb_get_args(argc, argv, "i", &num RB_ARG_END);
     
-    return rb_bool_new(shState->input().isRepeatedEx(num));
+    return rb_bool_new(shState->input().isRepeatedEx(num, 1));
 }
 
 RB_METHOD(inputDir4)
