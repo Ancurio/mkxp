@@ -70,7 +70,7 @@ static int getButtonArg(VALUE *argv)
 
 static int getScancodeArg(VALUE *argv)
 {
-    const char *scancode = rb_id2name(SYM2ID(argv));
+    const char *scancode = rb_id2name(SYM2ID(*argv));
     int code{};
     try
     {

@@ -180,10 +180,10 @@
 # Organisation / company and application / game
 # name to build the directory path where mkxp
 # will store game specific data (eg. key bindings).
-# If not specified, mkxp will save to a common
-# directory shared by all games. Note that these
-# are TWO individual config entries, and both need
-# to be defined for this to take effect.
+# If not specified, mkxp will choose the game's name
+# as set in its ini. Note that these are TWO individual
+# config entries, and both need to be defined for this
+# to take effect.
 # (default: none)
 #
 # dataPathOrg=mycompany

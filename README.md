@@ -112,8 +112,6 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 
 ## Nonstandard RGSS extensions
 
-To smooth over cross-platform compatibility, functionality that you won't find in the RGSS spec has been added. Currently this amounts to the following:
-
 ### Input
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons. It will now also accept [SDL scancodes](https://wiki.libsdl.org/SDL_Scancode?highlight=%28%5CbCategoryEnum%5Cb%29%7C%28CategoryKeyboard%29) in the form of symbols corresponding to each scancode (e.g. `SDL_SCANCODE_RETURN` would be requested through `Input.press?/trigger?/repeat? :RETURN`)
