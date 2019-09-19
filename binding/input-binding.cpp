@@ -336,10 +336,6 @@ static buttonCodes[] =
 	{ "UP",    Input::Up    },
     
 #ifdef MARIN
-    { "CONFIRM", Input::A    },
-    { "CANCEL",  Input::B    },
-    { "MENU",    Input::X    },
-    { "OPTION",  Input::Y    },
     { "ZL",      Input::ZL   },
     { "ZR",      Input::ZR   },
 #else

@@ -85,14 +85,14 @@ static const KbBindingData defaultKbBindings[] =
 	{ SDL_SCANCODE_A,      Input::X     },
 	{ SDL_SCANCODE_S,      Input::Y     }
 #else
-    { SDL_SCANCODE_E,      Input::ZL    },
-    { SDL_SCANCODE_D,      Input::ZR    },
-    { SDL_SCANCODE_Q,      Input::L     },
-    { SDL_SCANCODE_W,      Input::R     },
-    { SDL_SCANCODE_X,      Input::A     },
-    { SDL_SCANCODE_Z,      Input::B     },
-    { SDL_SCANCODE_A,      Input::X     },
-    { SDL_SCANCODE_S,      Input::Y     }
+    { SDL_SCANCODE_D,      Input::ZL    },
+    { SDL_SCANCODE_F,      Input::ZR    },
+    { SDL_SCANCODE_A,      Input::L     },
+    { SDL_SCANCODE_S,      Input::R     },
+    { SDL_SCANCODE_C,      Input::A     },
+    { SDL_SCANCODE_X,      Input::B     },
+    { SDL_SCANCODE_Z,      Input::X     },
+    { SDL_SCANCODE_V,      Input::Y     }
 #endif
 };
 
@@ -120,14 +120,14 @@ static elementsN(defaultKbBindings2);
 
 static const JsBindingData defaultJsBindings[] =
 {
-	{ 0, Input::A  },
-	{ 1, Input::B  },
-	{ 2, Input::ZL },
-	{ 3, Input::X  },
+	{ 3, Input::A  },
+	{ 0, Input::B  },
+	{ 1, Input::ZL },
+	{ 2, Input::X  },
 	{ 4, Input::Y  },
 	{ 5, Input::ZR },
-	{ 6, Input::L  },
-	{ 7, Input::R  }
+	{ 9, Input::L  },
+	{ 10, Input::R  }
 };
 
 static elementsN(defaultJsBindings);
