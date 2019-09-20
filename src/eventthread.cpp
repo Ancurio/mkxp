@@ -503,7 +503,11 @@ void EventThread::process(RGSSThreadData &rtData)
                     hapticEffect.constant.fade_level = 0;
                     hapticEffectId = SDL_HapticNewEffect(hapt, &hapticEffect);
                 }
-                    
+                if (hapticEffect.constant.length == 0 && SDL_HapticGetEffectStatus(hapt, hapticEffectId) > 0)
+                {
+                    SDL_HapticStopEffect(hapt, hapticEffectId);
+                    break;
+                }
                 SDL_HapticUpdateEffect(hapt, hapticEffectId, &hapticEffect);
                     
                 SDL_HapticRunEffect(hapt, hapticEffectId, 1);
