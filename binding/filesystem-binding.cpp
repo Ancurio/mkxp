@@ -145,17 +145,24 @@ RB_METHOD(fileIntPos)
 }
 
 VALUE
-kernelLoadDataInt(const char *filename, bool rubyExc)
+kernelLoadDataInt(const char *filename, bool rubyExc, bool raw)
 {
 	rb_gc_start();
     
 	VALUE port = fileIntForPath(filename, rubyExc);
-    
-	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+    VALUE result;
+    if (!raw)
+    {
+        VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
-	// FIXME need to catch exceptions here with begin rescue
-    VALUE data = fileIntRead(0, 0, port);
-	VALUE result = rb_funcall2(marsh, rb_intern("load"), 1, &data);
+        // FIXME need to catch exceptions here with begin rescue
+        VALUE data = fileIntRead(0, 0, port);
+        result = rb_funcall2(marsh, rb_intern("load"), 1, &data);
+    }
+    else
+    {
+        result = fileIntRead(0, 0, port);
+    }
 
 	rb_funcall2(port, rb_intern("close"), 0, NULL);
 
@@ -167,7 +174,8 @@ RB_METHOD(kernelLoadData)
 	RB_UNUSED_PARAM;
 
 	VALUE filename;
-	rb_get_args(argc, argv, "S", &filename RB_ARG_END);
+    bool raw = false;
+	rb_get_args(argc, argv, "S|b", &filename, &raw RB_ARG_END);
     
     // Until a faster method for getting RGSSAD data is
     // written (could just copy RMXP, keeping stuff in
@@ -186,7 +194,7 @@ RB_METHOD(kernelLoadData)
         rb_funcall(f, rb_intern("close"), 0);
         return ret;
     }
-	return kernelLoadDataInt(RSTRING_PTR(filename), true);
+	return kernelLoadDataInt(RSTRING_PTR(filename), true, raw);
 }
 
 RB_METHOD(kernelSaveData)

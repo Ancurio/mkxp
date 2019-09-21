@@ -45,6 +45,7 @@
 
 #include <SDL_filesystem.h>
 #include <SDL_power.h>
+#include <SDL_cpuinfo.h>
 
 #ifdef __WIN32__
 #define NULL_IO "NUL"
@@ -107,6 +108,8 @@ RB_METHOD(mkxpUserLanguage);
 RB_METHOD(mkxpGameTitle);
 RB_METHOD(mkxpPowerState);
 RB_METHOD(mkxpSettingsMenu);
+RB_METHOD(mkxpCpuCount);
+RB_METHOD(mkxpSystemMemory);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -186,6 +189,8 @@ static void mriBindingInit()
     _rb_define_module_function(mod, "user_language", mkxpUserLanguage);
     _rb_define_module_function(mod, "game_title", mkxpGameTitle);
     _rb_define_module_function(mod, "power_state", mkxpPowerState);
+    _rb_define_module_function(mod, "nproc", mkxpCpuCount);
+    _rb_define_module_function(mod, "memory", mkxpSystemMemory);
 
 	/* Load global constants */
 	rb_gv_set("MKXP", Qtrue);
@@ -344,6 +349,20 @@ RB_METHOD(mkxpSettingsMenu)
     return Qnil;
 }
 
+RB_METHOD(mkxpCpuCount)
+{
+    RB_UNUSED_PARAM;
+    
+    return INT2NUM(SDL_GetCPUCount());
+}
+
+RB_METHOD(mkxpSystemMemory)
+{
+    RB_UNUSED_PARAM;
+    
+    return INT2NUM(SDL_GetSystemRAM());
+}
+
 static VALUE rgssMainCb(VALUE block)
 {
 	rb_funcall2(block, rb_intern("call"), 0, 0);
@@ -476,7 +495,7 @@ static void runCustomScript(const std::string &filename)
 	           newStringUTF8(filename.c_str(), filename.size()), NULL);
 }
 
-VALUE kernelLoadDataInt(const char *filename, bool rubyExc);
+VALUE kernelLoadDataInt(const char *filename, bool rubyExc, bool raw);
 
 struct BacktraceData
 {
@@ -511,7 +530,7 @@ static void runRMXPScripts(BacktraceData &btData)
 	 * still go wrong */
 	try
 	{
-		scriptArray = kernelLoadDataInt(scriptPack.c_str(), false);
+		scriptArray = kernelLoadDataInt(scriptPack.c_str(), false, false);
 	}
 	catch (const Exception &e)
 	{

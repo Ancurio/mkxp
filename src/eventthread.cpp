@@ -389,8 +389,16 @@ void EventThread::process(RGSSThreadData &rtData)
             joystickConnected = true;
                 
             hap = SDL_HapticOpenFromJoystick(js);
+            Debug() << (hap ? "true" : "false");
             if (hap && (SDL_HapticQuery(hap) & SDL_HAPTIC_SINE))
+            {
                 hapt = hap;
+                Debug() << "Haptic device initialized";
+            }
+            else
+            {
+                Debug() << "No haptic support found";
+            }
             
 			break;
 

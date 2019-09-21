@@ -112,6 +112,10 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 
 ## Nonstandard RGSS extensions
 
+### Kernel
+
+* `load_data` now has a second optional `Boolean` argument which, if set to true, returns the contents of the file as a string (rather than trying to load it with Marshal first).
+
 ### Input
 
 * The `Input.press?` family of functions accepts three additional button constants: `::MOUSELEFT`, `::MOUSEMIDDLE` and `::MOUSERIGHT` for the respective mouse buttons. It will now also accept [SDL scancodes](https://wiki.libsdl.org/SDL_Scancode?highlight=%28%5CbCategoryEnum%5Cb%29%7C%28CategoryKeyboard%29) in the form of symbols corresponding to each scancode (e.g. `SDL_SCANCODE_RETURN` would be requested through `Input.press?/trigger?/repeat? :RETURN`)
@@ -149,6 +153,8 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `game_title` returns the game's title as set in its ini.
 * `power_state` returns a hash with the system power state information. Its members are `:discharging` (Boolean), `:percent` (int/nil), and `:seconds` (int/nil)
 * `show_settings` displays the keybinding menu.
+* `nproc` returns the amount of logical cores available to the system.
+* `memory` returns the total amount of RAM detected by the system in megabytes.
 
 ### Discord
 
