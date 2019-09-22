@@ -248,7 +248,7 @@ RB_METHOD(MiniFFI_call)
                 break;
             
             case _T_BOOL:
-                lParam = (rb_ary_entry(args, i) == Qtrue);
+                lParam = RTEST(rb_ary_entry(args, i));
                 break;
                 
             case _T_NUMBER: case _T_INTEGER: default:

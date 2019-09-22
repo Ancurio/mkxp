@@ -174,8 +174,15 @@ RB_METHOD(kernelLoadData)
 	RB_UNUSED_PARAM;
 
 	VALUE filename;
-    bool raw = false;
-	rb_get_args(argc, argv, "S|b", &filename, &raw RB_ARG_END);
+    VALUE raw;
+	rb_scan_args(argc, argv, "11", &filename, &raw);
+    SafeStringValue(filename);
+    
+    // There's gotta be an easier way to do this
+    if (raw != Qnil && raw != Qtrue && raw != Qfalse)
+    {
+        rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
+    }
     
     // Until a faster method for getting RGSSAD data is
     // written (could just copy RMXP, keeping stuff in
@@ -194,7 +201,7 @@ RB_METHOD(kernelLoadData)
         rb_funcall(f, rb_intern("close"), 0);
         return ret;
     }
-	return kernelLoadDataInt(RSTRING_PTR(filename), true, raw);
+	return kernelLoadDataInt(RSTRING_PTR(filename), true, RTEST(raw));
 }
 
 RB_METHOD(kernelSaveData)
