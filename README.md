@@ -125,7 +125,7 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
     + `#pressex?`, `#triggerex?` and `#repeatex?` provide input states for raw key codes, which are provided in the form of [Microsoft Virtual-Key Codes](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes). Only buttons which are also tracked by SDL are supported.
     + `#gets` returns a UTF-8 string of any text that was input by the user since the last time `#gets` was called. The `text_input` property must be set to true for it to work.
     + `#joystick` returns a hash containing the `:name` and `:power` entries, or `nil` if there is not a joystick connected. `:name` is a string corresponding to the joystick's name, and `:power` can be any from: `:MAX`, `:WIRED`, `:FULL`, `:MEDIUM`, `:LOW`, `:EMPTY`, and `:UNKNOWN`.
-    + `#rumble` triggers a simple rumble effect on supported controllers. It has one required argument (the duration in ms), and three optional arguments (the strength from 0 to 100, the attack envelope duration in ms, and the fade envelope duration in ms)
+    + `#rumble` triggers a simple rumble effect on supported controllers. It has one required argument (the duration in ms, will stop any active effects when `0`), and three optional arguments (the strength from 0 to 100, the attack envelope duration in ms, and the fade envelope duration in ms)
 
 ### Graphics
 
@@ -142,7 +142,9 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 
 * RGSS2 Audio functions and properties are now bound in RGSS1 mode.
 
-### MKXP
+### System
+
+The `System` module contains functions that don't really fit anywhere else.
 
 * `data_directory` returns the assigned directory for saves and other data files.
 * `set_window_title` sets the window's title.
