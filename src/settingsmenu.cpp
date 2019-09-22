@@ -80,7 +80,7 @@ struct VButton
 #ifdef MARIN
 	BTN_STRING(ZR),
 #else
-    BTN_STRING_CUSTOM(ZL, "Z"),
+    BTN_STRING_CUSTOM(ZR, "Z"),
 #endif
 };
 
