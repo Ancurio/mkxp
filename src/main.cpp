@@ -209,16 +209,47 @@ int main(int argc, char *argv[])
 		showInitError("Error allocating SDL user events");
 		return 0;
 	}
-
+/*
 #ifndef WORKDIR_CURRENT
-	/* set working directory */
-	char *dataDir = SDL_GetBasePath();
+	// set working directory
+    char *dataDir{};
+    dataDir = SDL_GetBasePath();
 	if (dataDir)
 	{
 		int result = chdir(dataDir);
 		(void)result;
 		SDL_free(dataDir);
 	}
+#else
+#ifdef __linux__
+    dataDir = getenv("OWD");
+    if (!dataDir)
+#endif
+#endif
+*/
+    
+#ifndef WORKDIR_CURRENT
+    char dataDir[512]{};
+    char *tmp{};
+#if defined(__linux__) && defined(INDEPENDENT_APPIMAGE)
+    tmp = getenv("APPIMAGE");
+    if (tmp)
+    {
+        strncpy(dataDir, tmp, sizeof(dataDir));
+        int spos = strrchr(dataDir, '/');
+        dataDir[spos] = 0;
+    }
+#endif
+    if (!dataDir[0])
+    {
+        tmp = SDL_GetBasePath();
+        if (tmp)
+        {
+            strncpy(dataDir, tmp, sizeof(dataDir));
+            SDL_free(tmp);
+        }
+    }
+    chdir(dataDir);
 #endif
 
 	/* now we load the config */

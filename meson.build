@@ -36,6 +36,10 @@ if get_option('workdir_current')
     add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
 endif
 
+if get_option('independent_appimage')
+    add_project_arguments('-DINDEPENDENT_APPIMAGE', language: 'cpp')
+endif
+
 if get_option('use_fakeapi')
     add_project_arguments('-DUSE_FAKEAPI', language: 'cpp')
 endif
