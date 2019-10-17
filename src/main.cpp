@@ -75,47 +75,6 @@ int rgssThreadFun(void *userdata)
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
 	const Config &conf = threadData->config;
 	SDL_Window *win = threadData->window;
-	SDL_GLContext glCtx;
-
-	/* Setup GL context */
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	if (conf.debugMode)
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-
-	glCtx = SDL_GL_CreateContext(win);
-
-	if (!glCtx)
-	{
-		rgssThreadError(threadData, std::string("Error creating context: ") + SDL_GetError());
-		return 0;
-	}
-
-	try
-	{
-		initGLFunctions();
-	}
-	catch (const Exception &exc)
-	{
-		rgssThreadError(threadData, exc.msg);
-		SDL_GL_DeleteContext(glCtx);
-
-		return 0;
-	}
-
-	if (!conf.enableBlitting)
-		gl.BlitFramebuffer = 0;
-
-	gl.ClearColor(0, 0, 0, 1);
-	gl.Clear(GL_COLOR_BUFFER_BIT);
-	SDL_GL_SwapWindow(win);
-
-	printGLInfo();
-
-	bool vsync = conf.vsync || conf.syncToRefreshrate;
-	SDL_GL_SetSwapInterval(vsync ? 1 : 0);
-
-	GLDebugLogger dLogger;
 
 	/* Setup AL context */
 	ALCcontext *alcCtx = alcCreateContext(threadData->alcDev, 0);
@@ -123,8 +82,6 @@ int rgssThreadFun(void *userdata)
 	if (!alcCtx)
 	{
 		rgssThreadError(threadData, "Error creating OpenAL context");
-		SDL_GL_DeleteContext(glCtx);
-
 		return 0;
 	}
 
@@ -138,7 +95,6 @@ int rgssThreadFun(void *userdata)
 	{
 		rgssThreadError(threadData, exc.msg);
 		alcDestroyContext(alcCtx);
-		SDL_GL_DeleteContext(glCtx);
 
 		return 0;
 	}
@@ -152,7 +108,6 @@ int rgssThreadFun(void *userdata)
 	SharedState::finiInstance();
 
 	alcDestroyContext(alcCtx);
-	SDL_GL_DeleteContext(glCtx);
 
 	return 0;
 }
@@ -358,8 +313,52 @@ int main(int argc, char *argv[])
 		conf.syncToRefreshrate = false;
 
 	EventThread eventThread;
+    
+    SDL_GLContext glCtx{};
+    
+    /* Setup GL context. Must be done in main thread since macOS 10.15 */
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    if (conf.debugMode)
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+
+    glCtx = SDL_GL_CreateContext(win);
+
+    if (!glCtx)
+    {
+        showInitError(std::string("Error creating context: ") + SDL_GetError());
+        return 0;
+    }
+
+    try
+    {
+        initGLFunctions();
+    }
+    catch (const Exception &exc)
+    {
+        showInitError(exc.msg);
+        SDL_GL_DeleteContext(glCtx);
+
+        return 0;
+    }
+
+    if (!conf.enableBlitting)
+        gl.BlitFramebuffer = 0;
+
+    gl.ClearColor(0, 0, 0, 1);
+    gl.Clear(GL_COLOR_BUFFER_BIT);
+    SDL_GL_SwapWindow(win);
+
+    printGLInfo();
+
+    bool vsync = conf.vsync || conf.syncToRefreshrate;
+    SDL_GL_SetSwapInterval(vsync ? 1 : 0);
+
+    GLDebugLogger dLogger;
+    
+    
 	RGSSThreadData rtData(&eventThread, argv[0], win,
-	                      alcDev, mode.refresh_rate, conf);
+	                      alcDev, mode.refresh_rate, conf, glCtx);
 
 	int winW, winH;
 	SDL_GetWindowSize(win, &winW, &winH);
@@ -412,6 +411,7 @@ int main(int argc, char *argv[])
 
 	Debug() << "Shutting down.";
 
+    SDL_GL_DeleteContext(glCtx);
 	alcCloseDevice(alcDev);
 	SDL_DestroyWindow(win);
 

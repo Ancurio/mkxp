@@ -260,6 +260,8 @@ struct RGSSThreadData
 
 	SDL_Window *window;
 	ALCdevice *alcDev;
+    
+    SDL_GLContext glContext;
 
 	Vec2 sizeResoRatio;
 	Vec2i screenOffset;
@@ -274,14 +276,16 @@ struct RGSSThreadData
 	               SDL_Window *window,
 	               ALCdevice *alcDev,
 	               int refreshRate,
-	               const Config& newconf)
+	               const Config& newconf,
+                   SDL_GLContext ctx)
 	    : ethread(ethread),
 	      argv0(argv0),
 	      window(window),
 	      alcDev(alcDev),
 	      sizeResoRatio(1, 1),
 	      refreshRate(refreshRate),
-	      config(newconf)
+	      config(newconf),
+          glContext(ctx)
 	{}
 };
 
