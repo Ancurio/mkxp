@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 SELF_DIR="$(dirname "$(readlink -f "$0")")"
 LIBS_PATH="$SELF_DIR/usr/lib"
