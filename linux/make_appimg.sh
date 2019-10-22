@@ -35,7 +35,6 @@ do
     cp "$dep" "$INSTALLDIR"
 done
 
-echo $PWD
 cp ${MESON_INSTALL_PREFIX}/share/mkxp-z/* ${MESON_INSTALL_PREFIX}
 rm -rf ${MESON_INSTALL_PREFIX}/share
 $2 ${MESON_INSTALL_PREFIX}
