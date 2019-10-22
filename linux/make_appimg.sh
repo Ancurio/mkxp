@@ -1,5 +1,5 @@
 BINNAME=$1
 APPIMGKIT=$2
 
-exec("./copy_dependencies.sh $BINNAME ${MESON_INSTALL_PREFIX}/lib")
+exec("./copy_dependencies.sh $BINNAME ${MESON_INSTALL_PREFIX}/usr/lib")
 $APPIMGKIT ${MESON_INSTALL_PREFIX} ${MESON_BUILD_ROOT}
