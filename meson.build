@@ -79,6 +79,8 @@ elif host_system == 'darwin'
     add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'c')
     add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'cpp')
     endif
+else
+    subdir('linux')
 endif
 
 executable(meson.project_name(),
@@ -86,5 +88,5 @@ executable(meson.project_name(),
     dependencies: [main_dependencies, binding_dependencies, ext_dependencies],
     include_directories: include_dirs,
     gui_app: (get_option('console') == false),
-    install: (host_system == 'darwin')
+    install: (host_system != 'windows')
 )

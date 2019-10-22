@@ -10,6 +10,7 @@ option('use_fakeapi', type: 'boolean', value: false, description: 'Attempt to re
 option('default_framerate', type: 'boolean', value: false, description: 'Disable syncToRefreshrate and fixedFramerate configuration options')
 option('no_preload_scripts', type: 'boolean', value: false, description: 'Disable the preloadScript configuration option')
 option('workdir_current', type: 'boolean', value: false, description: 'Keep current directory on startup')
-option('independent_appimage', type: 'boolean', value: true, description: 'Set current directory to the original location of the AppImage when contained within one')
 
+option('independent_appimage', type: 'boolean', value: true, description: 'Set current directory to the original location of the AppImage when contained within one')
 option('discord_sdk_path', type: 'string', value: '', description: 'Path to Discord GameSDK')
+option('appimagekit_path', type: 'string', value: '', description: 'Path to AppImageKit, used for building AppImages')

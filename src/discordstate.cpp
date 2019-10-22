@@ -201,7 +201,7 @@ int DiscordState::update()
 
 bool DiscordState::isConnected()
 {
-    return p->connected;
+    return (p->connected && p->userPresent);
 }
 
 std::string DiscordState::userName()

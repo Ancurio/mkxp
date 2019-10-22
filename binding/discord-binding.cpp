@@ -21,7 +21,8 @@ RB_METHOD(DiscordConnected)
 {
     RB_UNUSED_PARAM;
     
-    return rb_bool_new(shState->discord().isConnected());
+    // Checking to make sure callbacks have actually fired
+    return rb_bool_new(shState->discord().userId());
 }
 
 RB_METHOD(DiscordGetUsername)

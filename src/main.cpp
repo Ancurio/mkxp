@@ -73,8 +73,6 @@ printGLInfo()
 int rgssThreadFun(void *userdata)
 {
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
-	const Config &conf = threadData->config;
-	SDL_Window *win = threadData->window;
 
 	/* Setup AL context */
 	ALCcontext *alcCtx = alcCreateContext(threadData->alcDev, 0);
@@ -187,12 +185,10 @@ int main(int argc, char *argv[])
     char dataDir[512]{};
     char *tmp{};
 #if defined(__linux__) && defined(INDEPENDENT_APPIMAGE)
-    tmp = getenv("APPIMAGE");
+    tmp = getenv("SRCDIR");
     if (tmp)
     {
         strncpy(dataDir, tmp, sizeof(dataDir));
-        int spos = strrchr(dataDir, '/');
-        dataDir[spos] = 0;
     }
 #endif
     if (!dataDir[0])
