@@ -77,7 +77,7 @@ int rgssThreadFun(void *userdata)
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
     
 #ifndef __APPLE__
-    threadData->glContext = initGL(threadData->window, threadData->glContext);
+    threadData->glContext = initGL(threadData->window, threadData->config);
 #else
     SDL_GL_MakeCurrent(threadData->window, threadData->glContext);
 #endif
