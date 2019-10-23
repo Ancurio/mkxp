@@ -48,9 +48,9 @@
 #include "icon.png.xxd"
 
 #ifdef __APPLE__
-#define GLINIT_SHOWERROR(s) rgssThreadError(threadData, s)
-#else
 #define GLINIT_SHOWERROR(s) showInitError(s)
+#else
+#define GLINIT_SHOWERROR(s) rgssThreadError(threadData, s)
 #endif
 
 static void

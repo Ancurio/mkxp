@@ -65,7 +65,7 @@ all_sources += files('cwalk/src/cwalk.c')
 include_dirs += include_directories('cwalk/include')
 
 # Disable some warnings
-add_project_arguments(['-Wno-undefined-var-template', '-Wno-non-virtual-dtor', '-Wno-uninitialized'], language: 'cpp')
+add_project_arguments(['-Wno-reorder', '-Wno-non-virtual-dtor', '-Wno-uninitialized'], language: 'cpp')
 
 
 linker_args = []
@@ -78,6 +78,7 @@ elif host_system == 'darwin'
     subdir('macos')
     if compiler.get_id() == 'clang'
         add_project_arguments('-stdlib=libc++', language: 'cpp')
+    add_project_arguments('-Wno-undefined-var-template', language: 'cpp')
     add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'cpp')
     add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'c')
     add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'cpp')
