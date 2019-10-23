@@ -70,9 +70,17 @@ printGLInfo()
 	Debug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
 }
 
+static SDL_GLContext initGL(SDL_Window* win, Config& conf);
+
 int rgssThreadFun(void *userdata)
 {
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
+    
+#ifndef __APPLE__
+    threadData->glContext = initGL(threadData->window, threadData->glContext);
+#else
+    SDL_GL_MakeCurrent(threadData->window, threadData->glContext);
+#endif
 
 	/* Setup AL context */
 	ALCcontext *alcCtx = alcCreateContext(threadData->alcDev, 0);
@@ -310,48 +318,11 @@ int main(int argc, char *argv[])
 
 	EventThread eventThread;
     
-    SDL_GLContext glCtx{};
-    
-    /* Setup GL context. Must be done in main thread since macOS 10.15 */
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    if (conf.debugMode)
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-
-    glCtx = SDL_GL_CreateContext(win);
-
-    if (!glCtx)
-    {
-        showInitError(std::string("Error creating context: ") + SDL_GetError());
-        return 0;
-    }
-
-    try
-    {
-        initGLFunctions();
-    }
-    catch (const Exception &exc)
-    {
-        showInitError(exc.msg);
-        SDL_GL_DeleteContext(glCtx);
-
-        return 0;
-    }
-
-    if (!conf.enableBlitting)
-        gl.BlitFramebuffer = 0;
-
-    gl.ClearColor(0, 0, 0, 1);
-    gl.Clear(GL_COLOR_BUFFER_BIT);
-    SDL_GL_SwapWindow(win);
-
-    printGLInfo();
-
-    bool vsync = conf.vsync || conf.syncToRefreshrate;
-    SDL_GL_SetSwapInterval(vsync ? 1 : 0);
-
-    GLDebugLogger dLogger;
-    
+#ifdef __APPLE__
+    SDL_GLContext glCtx = initGL(win, conf);
+#else
+    SDL_GLContext glCtx = NULL;
+#endif
     
 	RGSSThreadData rtData(&eventThread, argv[0], win,
 	                      alcDev, mode.refresh_rate, conf, glCtx);
@@ -401,13 +372,14 @@ int main(int argc, char *argv[])
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, conf.windowTitle.c_str(),
 		                         rtData.rgssErrorMsg.c_str(), win);
 	}
+    
+    SDL_GL_DeleteContext(rtData.glContext);
 
 	/* Clean up any remainin events */
 	eventThread.cleanup();
 
 	Debug() << "Shutting down.";
 
-    SDL_GL_DeleteContext(glCtx);
 	alcCloseDevice(alcDev);
 	SDL_DestroyWindow(win);
 
@@ -420,4 +392,50 @@ int main(int argc, char *argv[])
 	SDL_Quit();
 
 	return 0;
+}
+
+static SDL_GLContext initGL(SDL_Window* win, Config& conf)
+{
+    SDL_GLContext glCtx{};
+    
+    /* Setup GL context. Must be done in main thread since macOS 10.15 */
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    if (conf.debugMode)
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+
+    glCtx = SDL_GL_CreateContext(win);
+
+    if (!glCtx)
+    {
+        showInitError(std::string("Error creating context: ") + SDL_GetError());
+        return 0;
+    }
+
+    try
+    {
+        initGLFunctions();
+    }
+    catch (const Exception &exc)
+    {
+        showInitError(exc.msg);
+        SDL_GL_DeleteContext(glCtx);
+
+        return 0;
+    }
+
+    if (!conf.enableBlitting)
+        gl.BlitFramebuffer = 0;
+
+    gl.ClearColor(0, 0, 0, 1);
+    gl.Clear(GL_COLOR_BUFFER_BIT);
+    SDL_GL_SwapWindow(win);
+
+    printGLInfo();
+
+    bool vsync = conf.vsync || conf.syncToRefreshrate;
+    SDL_GL_SetSwapInterval(vsync ? 1 : 0);
+
+    //GLDebugLogger dLogger;
+    return glCtx;
 }
