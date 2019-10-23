@@ -47,6 +47,12 @@
 
 #include "icon.png.xxd"
 
+#ifdef __APPLE__
+#define GLINIT_SHOWERROR(s) rgssThreadError(threadData, s)
+#else
+#define GLINIT_SHOWERROR(s) showInitError(s)
+#endif
+
 static void
 rgssThreadError(RGSSThreadData *rtData, const std::string &msg)
 {
@@ -70,14 +76,15 @@ printGLInfo()
 	Debug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
 }
 
-static SDL_GLContext initGL(SDL_Window* win, Config& conf);
+static SDL_GLContext initGL(SDL_Window* win, Config& conf, RGSSThreadData* threadData);
 
 int rgssThreadFun(void *userdata)
 {
 	RGSSThreadData *threadData = static_cast<RGSSThreadData*>(userdata);
     
 #ifndef __APPLE__
-    threadData->glContext = initGL(threadData->window, threadData->config);
+    threadData->glContext = initGL(threadData->window, threadData->config, threadData);
+    if (!threadData->glContext) return 0;
 #else
     SDL_GL_MakeCurrent(threadData->window, threadData->glContext);
 #endif
@@ -319,7 +326,7 @@ int main(int argc, char *argv[])
 	EventThread eventThread;
     
 #ifdef __APPLE__
-    SDL_GLContext glCtx = initGL(win, conf);
+    SDL_GLContext glCtx = initGL(win, conf, 0);
 #else
     SDL_GLContext glCtx = NULL;
 #endif
@@ -394,7 +401,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-static SDL_GLContext initGL(SDL_Window* win, Config& conf)
+static SDL_GLContext initGL(SDL_Window* win, Config& conf, RGSSThreadData* threadData)
 {
     SDL_GLContext glCtx{};
     
@@ -408,7 +415,7 @@ static SDL_GLContext initGL(SDL_Window* win, Config& conf)
 
     if (!glCtx)
     {
-        showInitError(std::string("Error creating context: ") + SDL_GetError());
+        GLINIT_SHOWERROR(std::string("Error creating context: ") + SDL_GetError());
         return 0;
     }
 
@@ -418,7 +425,7 @@ static SDL_GLContext initGL(SDL_Window* win, Config& conf)
     }
     catch (const Exception &exc)
     {
-        showInitError(exc.msg);
+        GLINIT_SHOWERROR(exc.msg);
         SDL_GL_DeleteContext(glCtx);
 
         return 0;
