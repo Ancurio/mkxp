@@ -380,7 +380,7 @@ int main(int argc, char *argv[])
 		                         rtData.rgssErrorMsg.c_str(), win);
 	}
     
-    SDL_GL_DeleteContext(rtData.glContext);
+    if (rtData.glContext) SDL_GL_DeleteContext(rtData.glContext);
 
 	/* Clean up any remainin events */
 	eventThread.cleanup();

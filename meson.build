@@ -64,6 +64,9 @@ include_dirs = [include_directories('src', 'binding')]
 all_sources += files('cwalk/src/cwalk.c')
 include_dirs += include_directories('cwalk/include')
 
+# Disable some warnings
+add_project_arguments(['-Wno-undefined-var-template', '-Wno-non-virtual-dtor', '-Wno-uninitialized'], language: 'cpp')
+
 
 linker_args = []
 
