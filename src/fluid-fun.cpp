@@ -17,8 +17,9 @@
 #endif
 
 struct FluidFunctions fluid;
-
+#ifndef SHARED_FLUID
 static void *so;
+#endif
 
 void initFluidFunctions()
 {

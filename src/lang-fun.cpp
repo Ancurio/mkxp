@@ -74,7 +74,7 @@ const char *getUserLanguage()
 #endif
 #endif
 
-    for (int i = 0; i < strlen(buf); i++)
+    for (int i = 0; (size_t)i < strlen(buf); i++)
     {
 #ifdef __WIN32__
         if (buf[i] == '-')
