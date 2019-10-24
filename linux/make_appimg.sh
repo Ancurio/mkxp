@@ -3,7 +3,7 @@
 BINARY=$1
 function get_dep()
 {
-DEP=$(ldd $BINARY | grep $1 | sed -r 's/    \w.+ => (\/.+) .+$/\1/g')
+DEP=$(ldd $BINARY | grep $1 | sed -r 's/	\w.+ => (\/.+) .+$/\1/g')
 cp "$DEP" "${MESON_INSTALL_PREFIX}/usr/lib"
 }
 
