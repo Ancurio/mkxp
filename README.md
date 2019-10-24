@@ -60,7 +60,7 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2
 
 A few notes on compatibility differences compared to RMXP:
 
-* If you use Paint.NET, images exported with an indexed color format will confuse poor SDL2. `#000000` (black) pixels will be mistaken for completely transparent ones when loaded in. Export in or convert your stuff to RGB instead.
+* If your graphics are appearing oddly (some pixels appearing transparent when they shouldn't), export in or convert your stuff to RGB instead.
 * You will need to re-encode any audio files that OpenAL does not like (16-bit signed WAV works fine, 32-bit float WAV does not, for instance). The game will hitch while attempting to read unsupported formats.
 * If you don't know where to even begin with fixing this stuff, ImageMagick is the go-to for images (`convert in.png PNG32:out.png` for converting to a new file, `mogrify -define png:format=png32 in.png` for converting in-place) and FFMPEG is the tool for... well, many things, but it will convert your audio (`ffmpeg -i in.wav out.wav`). You could take advantage of these commands to write scripts that can fix all your stuff for you instead of having to convert them all one-by-one with whatever GUI program you favor. Or you could just use the [crappy one I wrote which will still do the job](https://gist.github.com/inori-z/33c27340fe215814f1890e367e2cab52).
 
