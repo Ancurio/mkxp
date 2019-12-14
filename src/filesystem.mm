@@ -714,28 +714,25 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
 // SDL_SaveBMP wants absolute paths
 char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
 {
-	@autoreleasepool
-	{
-		char* ret = new char[512];
-		id str = [OFMutableString stringWithUTF8String:pathname];
+	char* ret = new char[512];
+	id str = [OFMutableString stringWithUTF8String:pathname];
 
-		if (absolute)
-		{
-			OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
-			OFURL* purl = [OFURL fileURLWithPath:str];
-			OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
-			str = [OFMutableString stringWithString:path];
-		}
+	if (absolute)
+	{
+		OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
+		OFURL* purl = [OFURL fileURLWithPath:str];
+		OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
+		str = [OFMutableString stringWithString:path];
+	}
 
 #ifdef __WIN32__
-		if (preferred)
-		{
-			[str replaceOccurrencesOfString:@"/" withString:@"\\"];
-		}
-#endif
-		strncpy(ret, [[str stringByStandardizingPath] UTF8String], 512);
-		return ret;
+	if (preferred)
+	{
+		[str replaceOccurrencesOfString:@"/" withString:@"\\"];
 	}
+#endif
+	strncpy(ret, [[str stringByStandardizingPath] UTF8String], 512);
+	return ret;
 }
 
 bool FileSystem::exists(const char *filename)

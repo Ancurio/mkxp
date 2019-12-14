@@ -65,8 +65,10 @@ global_args += run_command(objfw,'--cppflags').stdout().split()
 add_project_arguments(run_command(objfw,'--objcflags').stdout().split(), language:'objc')
 add_project_link_arguments(run_command(objfw,'--libs','--ldflags').stdout().split(), language:['objc','objcpp'])
 
-if compilers['objc'].get_id() == 'clang'
+if (compilers['objc'].get_id() == 'clang' and get_option('gc_type') == 'arc' and host_machine.cpu_family() == 'x86_64')
     add_project_arguments(run_command(objfw,'--arc').stdout().split(), language: ['objc','objcpp'])
+else
+    add_project_arguments('-fobjc-gc', language: ['objc', 'objcpp'])
 endif
 
 subdir('src')
