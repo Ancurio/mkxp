@@ -43,7 +43,10 @@ endif
 # Suppress warnings
 global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas']
 if compilers['objc'].get_id() == 'clang'
-    global_args += ['-Wno-undefined-var-template','-Wno-delete-non-abstract-non-virtual-dtor']
+    global_args += ['-Wno-undefined-var-template']
+    if host_system == 'darwin' or host_system == 'windows'
+        global_args += '-Wno-delete-non-abstract-non-virtual-dtor'
+    endif
 endif
 
 if get_option('workdir_current')
@@ -66,22 +69,19 @@ if get_option('mk')
     global_args += '-DMARIN'
 endif
 
+# Objectify our C
 global_args += run_command(objfw,'--cppflags').stdout().split()
 add_project_arguments(run_command(objfw,'--objcflags').stdout().split(), language:'objc')
 add_project_link_arguments(run_command(objfw,'--libs','--ldflags').stdout().split(), language:['objc','objcpp'])
 
-gc = get_option('gc_type')
-
-if gc == 'auto'
-    gc = compilers['objc'].first_supported_argument('-fobjc-gc', '-fobjc-gc-only', '-fobjc-arc')
-    if gc != []
-        add_project_arguments(gc, language: ['objc','objcpp'])
+# Make sure to use ARC
+if compilers['objc'].get_id() == 'clang'
+    add_project_arguments(run_command(objfw,'--arc').stdout().split(), language:['objc','objcpp'])
+    if host_system != 'darwin'
+        add_project_arguments('-fobjc-runtime=objfw', language:['objc','objcpp'])
     endif
-elif gc == 'arc'
-    add_project_arguments(run_command(objfw,'--arc').stdout().split(), language: ['objc','objcpp'])
-else
-    add_project_arguments('-fobjc-'+get_option('gc_type'), language: ['objc', 'objcpp'])
 endif
+
 
 subdir('src')
 subdir('binding')

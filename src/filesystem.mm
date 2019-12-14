@@ -715,23 +715,26 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
 char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
 {
 	char* ret = new char[512];
-	id str = [OFMutableString stringWithUTF8String:pathname];
-
-	if (absolute)
+	@autoreleasepool
 	{
-		OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
-		OFURL* purl = [OFURL fileURLWithPath:str];
-		OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
-		str = [OFMutableString stringWithString:path];
-	}
+		id str = [OFMutableString stringWithUTF8String:pathname];
 
-#ifdef __WIN32__
-	if (preferred)
-	{
-		[str replaceOccurrencesOfString:@"/" withString:@"\\"];
+		if (absolute)
+		{
+			OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
+			OFURL* purl = [OFURL fileURLWithPath:str];
+			OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
+			str = [OFMutableString stringWithString:path];
+		}
+
+	#ifdef __WIN32__
+		if (preferred)
+		{
+			[str replaceOccurrencesOfString:@"/" withString:@"\\"];
+		}
+	#endif
+		strncpy(ret, [[str stringByStandardizingPath] UTF8String], 512);
 	}
-#endif
-	strncpy(ret, [[str stringByStandardizingPath] UTF8String], 512);
 	return ret;
 }
 
