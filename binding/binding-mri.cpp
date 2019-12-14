@@ -33,11 +33,14 @@
 #include "lang-fun.h"
 #include "boost-hash.h"
 
+extern "C"
+{
 #include <ruby.h>
 
 #ifndef OLD_RUBY
 #include <ruby/encoding.h>
 #endif
+}
 
 #include <assert.h>
 #include <string>

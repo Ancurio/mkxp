@@ -1,4 +1,4 @@
-project('mkxp-z', 'cpp', 'c', version: '1.1.0', default_options: ['cpp_std=c++11'])
+project('mkxp-z', 'cpp', 'objc', 'objcpp', version: '1.2.0', default_options: ['cpp_std=c++11', 'buildtype=release'])
 
 minimum_macos_version = get_option('macos_min_version')
 
@@ -6,8 +6,9 @@ minimum_macos_version = get_option('macos_min_version')
 # it still needs to be cleaned up
 
 xxd = find_program('xxd', native: true)
+objfw = find_program('objfw-config', native: true)
 host_system = host_machine.system()
-compiler = meson.get_compiler('cpp')
+compilers = {'cpp': meson.get_compiler('cpp'), 'objc': meson.get_compiler('objc'), 'objcpp': meson.get_compiler('objcpp')}
 
 # ====================
 # Ext libs
@@ -19,7 +20,7 @@ ext_dependencies = []
 discord = false
 discord_libpath = get_option('discord_sdk_path')
 if discord_libpath != ''
-    discordlib = compiler.find_library('discord_game_sdk', required: false, dirs: '@0@/lib/@1@'.format(discord_libpath, host_machine.cpu_family()))
+    discordlib = compilers['cpp'].find_library('discord_game_sdk', required: false, dirs: '@0@/lib/@1@'.format(discord_libpath, host_machine.cpu_family()))
 
     if discordlib.found() == true
         add_project_arguments(['-I@0@/c'.format(discord_libpath), '-DHAVE_DISCORDSDK'], language: 'cpp')
@@ -31,25 +32,41 @@ endif
 # ====================
 # Main source
 # ====================
+global_sources = []
+global_dependencies = []
+global_include_dirs = []
+global_args = []
+global_link_args = []
+
+# Suppress warnings
+global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder']
 
 if get_option('workdir_current')
-    add_project_arguments('-DWORKDIR_CURRENT', language: 'cpp')
+    global_args += '-DWORKDIR_CURRENT'
 endif
 
 if get_option('independent_appimage')
-    add_project_arguments('-DINDEPENDENT_APPIMAGE', language: 'cpp')
+    global_args += '-DINDEPENDENT_APPIMAGE'
 endif
 
 if get_option('use_fakeapi')
-    add_project_arguments('-DUSE_FAKEAPI', language: 'cpp')
+    global_args += '-DUSE_FAKEAPI'
 endif
 
 if not get_option('console')
-    add_project_arguments('-DNO_CONSOLE', language: 'cpp')
+    global_args += '-DNO_CONSOLE'
 endif
 
 if get_option('mk')
-    add_project_arguments('-DMARIN', language: 'cpp')
+    global_args += '-DMARIN'
+endif
+
+global_args += run_command(objfw,'--cppflags').stdout().split()
+add_project_arguments(run_command(objfw,'--objcflags').stdout().split(), language:'objc')
+add_project_link_arguments(run_command(objfw,'--libs','--ldflags').stdout().split(), language:['objc','objcpp'])
+
+if compilers['objc'].get_id() == 'clang'
+    add_project_arguments(run_command(objfw,'--arc').stdout().split(), language: ['objc','objcpp'])
 endif
 
 subdir('src')
@@ -57,40 +74,36 @@ subdir('binding')
 subdir('shader')
 subdir('assets')
 
-all_sources = [main, bindings, processed_shaders, processed_assets]
-include_dirs = [include_directories('src', 'binding')]
-
-# Use cwalk
-all_sources += files('cwalk/src/cwalk.c')
-include_dirs += include_directories('cwalk/include')
+#all_sources = [main, bindings, processed_shaders, processed_assets]
+global_include_dirs += include_directories('src', 'binding')
 
 # Disable some warnings
-add_project_arguments(['-Wno-reorder', '-Wno-non-virtual-dtor', '-Wno-uninitialized'], language: 'cpp')
-
-
-linker_args = []
+#add_project_arguments(['-Wno-reorder', '-Wno-non-virtual-dtor', '-Wno-uninitialized'], language: 'cpp')
 
 if host_system == 'windows'
     subdir('windows')
-    all_sources += windows_resources
-    include_dirs += include_directories('windows')
+    global_sources += windows_resources
+    global_include_dirs += include_directories('windows')
 elif host_system == 'darwin'
     subdir('macos')
-    if compiler.get_id() == 'clang'
-        add_project_arguments('-stdlib=libc++', language: 'cpp')
-    add_project_arguments('-Wno-undefined-var-template', language: 'cpp')
-    add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'cpp')
-    add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'c')
-    add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: 'cpp')
+    if compilers['cpp'].get_id() == 'clang'
+        add_project_arguments('-stdlib=libc++', language: ['cpp','objcpp'])
+        add_project_arguments('-std=c++11', language: 'objcpp')
+        global_args += ['-Wno-undefined-var-template', '-mmacosx-version-min='+minimum_macos_version]
+        global_link_args += '-mmacosx-version-min='+minimum_macos_version
     endif
 else
     subdir('linux')
 endif
 
 executable(meson.project_name(),
-    sources: all_sources,
-    dependencies: [main_dependencies, binding_dependencies, ext_dependencies],
-    include_directories: include_dirs,
+    sources: global_sources,
+    dependencies: [global_dependencies, ext_dependencies],
+    include_directories: global_include_dirs,
+    link_args: global_link_args,
+    cpp_args: global_args,
+    objc_args: global_args,
+    objcpp_args: global_args,
     gui_app: (get_option('console') == false),
     install: (host_system != 'windows')
 )

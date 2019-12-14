@@ -19,35 +19,31 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "filesystem.h"
+#import <ObjFW/ObjFW.h>
 
-#include "rgssad.h"
-#include "font.h"
-#include "util.h"
-#include "exception.h"
-#include "sharedstate.h"
-#include "boost-hash.h"
-#include "debugwriter.h"
+#import "filesystem.h"
 
-// boost::filesystem::path and std::filesystem::path
-// are too troublesome
-extern "C"{
-#include "cwalk.h"
-}
+#import "rgssad.h"
+#import "font.h"
+#import "util.h"
+#import "exception.h"
+#import "sharedstate.h"
+#import "boost-hash.h"
+#import "debugwriter.h"
 
-#include <physfs.h>
+#import <physfs.h>
 
-#include <SDL_sound.h>
+#import <SDL_sound.h>
 
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <algorithm>
-#include <vector>
-#include <stack>
+#import <unistd.h>
+#import <stdio.h>
+#import <string.h>
+#import <algorithm>
+#import <vector>
+#import <stack>
 
 #ifdef __APPLE__
-#include <iconv.h>
+#import <iconv.h>
 #endif
 
 struct SDLRWIoContext
@@ -643,6 +639,7 @@ void FileSystem::openRead(OpenHandler &handler, const char *filename)
 	// FIXME: Paths with Windows drive letters don't
 	//        hecking work, apparently never did
 	char *filename_nm = normalize(filename, false, false);
+	Debug() << filename_nm;
 	char buffer[512];
 	size_t len = strcpySafe(buffer, filename_nm, sizeof(buffer), -1);
 	delete filename_nm;
@@ -718,23 +715,28 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
 // SDL_SaveBMP wants absolute paths
 char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
 {
-	char *path_nml = new char[512];
-	char *path_abs = 0;
-#ifdef __WIN32__
-	cwk_path_set_style((preferred) ? CWK_STYLE_WINDOWS : CWK_STYLE_UNIX);
-#endif
-
-	if (cwk_path_is_relative(pathname) && absolute)
+	@autoreleasepool
 	{
-		path_abs = new char[512];
-		char bp[512] = {0};
-		getcwd(bp, 512);
-		cwk_path_join(bp, pathname, path_abs, 512);
+		char* ret = new char[512];
+		id str = [OFMutableString stringWithUTF8String:pathname];
+
+		if (absolute)
+		{
+			OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
+			OFURL* purl = [OFURL fileURLWithPath:str];
+			OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
+			str = [OFMutableString stringWithString:path];
+		}
+
+#ifdef __WIN32__
+		if (preferred)
+		{
+			[str replaceOccurrencesOfString:@"/" withString:@"\\"];
+		}
+#endif
+		strncpy(ret, [[str stringByStandardizingPath] UTF8String], 512);
+		return ret;
 	}
-	
-	cwk_path_normalize((path_abs) ? path_abs : (char*)pathname, path_nml, 512);
-	if (path_abs) delete path_abs;
-	return path_nml;
 }
 
 bool FileSystem::exists(const char *filename)

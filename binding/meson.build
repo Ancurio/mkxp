@@ -1,27 +1,18 @@
 
 ver = get_option('mri_version')
-binding_dependencies = []
 if ver.version_compare('>1.8') == true
-    binding_dependencies += dependency('ruby-' + ver)
+    global_dependencies += dependency('ruby-' + ver)
 else
     lib = get_option('ruby_lib')
-    binding_dependencies += compiler.find_library(lib)
-    add_project_arguments('-DOLD_RUBY', language: 'cpp')
+    global_dependencies += compilers['cpp'].find_library(lib)
+    add_project_arguments('-DOLD_RUBY', language: ['cpp','objc','objcpp'])
 endif
 
 if get_option('no_preload_scripts') == true
-    add_project_arguments('-DNO_PRELOAD_SCRIPTS', language: 'cpp')
+    add_project_arguments('-DNO_PRELOAD_SCRIPTS', language: ['cpp','objc','objcpp'])
 endif
 
-binding_headers = files(
-    'binding-util.h',
-    'binding-types.h',
-    'serializable-binding.h',
-    'disposable-binding.h',
-    'sceneelement-binding.h',
-    'viewportelement-binding.h',
-    'flashable-binding.h',
-)
+global_include_dirs += include_directories('.')
 
 binding_source = [files(
     'binding-mri.cpp',
@@ -49,4 +40,4 @@ if discord == true
     binding_source += files('discord-binding.cpp')
 endif
 
-bindings = [binding_headers, binding_source]
+global_sources += binding_source

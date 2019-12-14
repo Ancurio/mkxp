@@ -29,9 +29,8 @@ embedded_shaders = [
 embedded_shaders_f = files(embedded_shaders)
 
 count = 0
-processed_shaders = []
 foreach file : embedded_shaders_f
-    processed_shaders += custom_target(embedded_shaders[count],
+    global_sources += custom_target(embedded_shaders[count],
         input: file,
         output: '@0@.xxd'.format(embedded_shaders[count]),
         command: [

@@ -21,6 +21,7 @@ This binding should support RGSS1, RGSS2 and RGSS3, though I've only tested it w
 
 ## Dependencies / Building
 
+* ObjFW
 * Boost.Unordered (headers only)
 * Boost.Program_options
 * libsigc++ 2.0
@@ -254,24 +255,31 @@ mingw-w64-i686-SDL2_{image,ttf}
 ```sh
 mkdir src; cd src
 git clone https://github.com/Ancurio/SDL_Sound
+git clone https://github.com/ObjFW/ObjFW
 git clone https://github.com/inori-z/ruby --single-branch --branch ruby_1_8_7
 
 cd SDL_Sound && ./bootstrap
 ./configure --enable-{modplug,speex,flac}=no
 make install -j`nproc`
-cd ..
+
+cd ../ObjFW
+./autogen.sh
+./configure
+make install -j`nproc`
+
+cd ../ruby
 
 # when you install ruby, some extensions might not want to build.
 # You probably don’t particularly need any, so you can just delete
 # any problematic ones if you like:
 
-rm -rf ruby/ext/{tk,win32ole,openssl}
+rm -rf ext/{tk,win32ole,openssl}
 
 # and try building again afterwards. Or you can try to fix whatever
 # the problem is (missing libraries, usually). Hey, do whatever you need to
 # do, Capp’n.
 
-cd ruby && autoconf
+autoconf
 ./configure --enable-shared --disable-install-doc
 make -j`nproc` && make install
 cd ..
@@ -285,7 +293,7 @@ cd ..
 5. Build mkxp-z:
 
 ```sh
-git clone --recursive https://github.com/inori-z/mkxp-z
+git clone https://github.com/inori-z/mkxp-z
 cd mkxp-z
 
 # Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
@@ -308,7 +316,7 @@ You'll find your stuff under your MSYS home directory. You can also type `explor
 2. Get most of your dependencies from Homebrew:
 
 ```sh
-brew install meson cmake automake autoconf sdl2 sdl2_{image,ttf} \
+brew install meson cmake automake autoconf sdl2 sdl2_{image,ttf} objfw \
 boost pixman physfs libsigc++ libvorbis fluidsynth pkgconfig libtool
 ```
 
@@ -322,19 +330,20 @@ git clone https://github.com/inori-z/ruby --single-branch --branch ruby_1_8_7
 cd SDL_Sound && ./bootstrap
 ./configure
 make install -j`nproc`
-cd ..
+
+cd ../ruby
 
 # when you install ruby, some extensions might not want to build.
 # You probably don’t particularly need any, so you can just delete
 # any problematic ones if you like:
 
-rm -rf ruby/ext/tk
+rm -rf ext/tk
 
 # and try building again afterwards. Or you can try to fix whatever
 # the problem is (missing libraries, usually). Hey, do whatever you
 # need to do, Capp’n.
 
-cd ruby && autoconf
+autoconf
 
 # We're putting our build of ruby in its own prefix. macOS already
 # includes Ruby (at least until 10.16 or so), and you really do
@@ -348,21 +357,21 @@ cd ..
 4. Build mkxp-z:
 
 ```sh
-git clone --recursive https://github.com/inori-z/mkxp-z
+git clone https://github.com/inori-z/mkxp-z
 cd mkxp-z
 
 # Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
 # is a bit annoying) so you have to set include and link paths yourself.
 # the header folder that Ruby 1.8 creates for macOS includes a version 
-# number (i.e. `x86_64-darwin18.7.0`), and is going to be located under
+# number (i.e. `x86_64-darwin19.0.0`), and is going to be located under
 # `/usr/local/opt/mkxp-ruby/lib/ruby/1.8`.
 
 # You will also need to link to `/usr/local/opt/mkxp-ruby/lib`, and tell
 # meson where your pkgconfig path is (`/usr/local/lib/pkgconfig`).
 
 meson build -Dpkg_config_path=/usr/local/lib/pkgconfig \
--Dcpp_args=-I/usr/local/opt/mkxp-ruby/lib/ruby/1.8/x86_64-darwin18.7.0 \
--Dcpp_link_args=-L/usr/local/opt/mkxp-ruby/lib
+-Dcpp_args=-I/usr/local/opt/mkxp-ruby/lib/ruby/1.8/x86_64-darwin19.0.0 \
+-Dobjcpp_link_args=-L/usr/local/opt/mkxp-ruby/lib
 
 cd build
 ninja
@@ -371,7 +380,7 @@ ninja
 Your results will be in `~/src/mkxp-z/build` . You can type `open ~/src/mkxp-z/build` to get there quickly.
 
 
-## Building on Linux (Ubuntu Disco)
+## Building on Linux (Ubuntu Eoan)
 
 > I'm assuming that if you're using anything other than Ubuntu, you're probably familiar enough with this sort of thing to not need instructions. In fact, you've probably built this thing already, haven't you?
 
@@ -405,15 +414,20 @@ cd ../..
 # Now we can do the other stuff:
 
 git clone https://github.com/Ancurio/SDL_Sound
+git clone https://github.com/ObjFW/ObjFW
 git clone https://github.com/inori-z/ruby --single-branch --branch ruby_1_8_7
 
 cd SDL_Sound && ./bootstrap
 ./configure
 make -j`nproc`
 sudo make install
-cd ..
 
-cd ruby && autoconf
+cd ../ObjFW
+./autogen.sh
+./configure
+make install -j`nproc`
+
+cd ../ruby && autoconf
 ./configure --enable-shared --disable-install-doc
 make -j`nproc`
 sudo make install
@@ -423,7 +437,7 @@ cd ..
 4. Build mkxp-z:
 
 ```sh
-git clone --recursive https://github.com/inori-z/mkxp-z
+git clone https://github.com/inori-z/mkxp-z
 cd mkxp-z
 
 # Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
