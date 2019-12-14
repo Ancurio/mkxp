@@ -22,7 +22,7 @@ if host_system == 'darwin'
     add_project_arguments('-DUSE_MAC_OPENAL', language: 'cpp')
     endif
 elif host_system == 'windows'
-    global_dependencies += compiler.find_library('wsock32')
+    global_dependencies += compilers['cpp'].find_library('wsock32')
 endif
 
 if get_option('shared_fluid') == true

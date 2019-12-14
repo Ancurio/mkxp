@@ -639,7 +639,6 @@ void FileSystem::openRead(OpenHandler &handler, const char *filename)
 	// FIXME: Paths with Windows drive letters don't
 	//        hecking work, apparently never did
 	char *filename_nm = normalize(filename, false, false);
-	Debug() << filename_nm;
 	char buffer[512];
 	size_t len = strcpySafe(buffer, filename_nm, sizeof(buffer), -1);
 	delete filename_nm;
