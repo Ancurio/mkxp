@@ -22,8 +22,6 @@ This binding should support RGSS1, RGSS2 and RGSS3, though I've only tested it w
 ## Dependencies / Building
 
 * ObjFW
-* Boost.Unordered (headers only)
-* Boost.Program_options
 * libsigc++ 2.0
 * PhysFS (latest hg)
 * OpenAL
@@ -36,8 +34,7 @@ This binding should support RGSS1, RGSS2 and RGSS3, though I've only tested it w
 * pixman
 * zlib (only ruby bindings)
 * OpenGL header (alternatively GLES2 with `-Dcpp_args=-DGLES2_HEADER`)
-* libiconv (on Windows, optional with INI_ENCODING)
-* libguess (optional with INI_ENCODING)
+* libiconv (macOS only)
 
 (* For the F1 menu to work correctly under Linux/X11, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
 
@@ -48,8 +45,6 @@ meson will use pkg-config to locate the respective include/library paths. If you
 Midi support is enabled by default and requires fluidsynth to be present at runtime (not needed for building); if mkxp can't find it at runtime, midi playback is disabled. It looks for `libfluidsynth.so.1` on Linux, `libfluidsynth.dylib.1` on OSX and `fluidsynth.dll` on Windows, so make sure to have one of these in your link path. If you still need fluidsynth to be hard linked at buildtime, use `-Dshared_fluid=true`. When building fluidsynth yourself, you can disable almost all options (audio drivers etc.) as they are not used. Note that upstream fluidsynth has support for sharing soundfont data between synthesizers (mkxp uses multiple synths), so if your memory usage is very high, you might want to try compiling fluidsynth from git master.
 
 By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `-Dworkdir_current=true` to meson's build arguments.
-
-To auto detect the encoding of the game title in `Game.ini` and auto convert it to UTF-8, build with `-Dini_encoding=true`. Requires iconv implementation and libguess. If the encoding is wrongly detected, you can set the "titleLanguage" hint in mkxp.conf.
 
 **MRI-Binding**: By default, meson will search for Ruby 1.8 libraries and includes within the system search path. This can be adjusted with `-Dcpp_args=-I[path]` for includes and `-Dcpp_link_args=-L[path]` for libraries. For newer Ruby versions, pkg-config will look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-2.6.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y` (`-Dmri_version=2.6` as an example).
 
@@ -67,13 +62,7 @@ A few notes on compatibility differences compared to RMXP:
 
 ## Configuration
 
-mkxp reads configuration data from the file "mkxp.conf". The format is ini-style. Do *not* use quotes around file paths (spaces won't break). Lines starting with '#' are comments. See 'mkxp.conf.sample' for a list of accepted entries.
-
-All option entries can alternatively be specified as command line options. Any options that are not arrays (eg. RTP paths) specified as command line options will override entries in mkxp.conf. Note that you will have to wrap values containing spaces in quotes (unlike in mkxp.conf).
-
-The syntax is: `--<option>=<value>`
-
-Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
+mkxp reads configuration data from the file "mkxp.json". The format is JSON5. Lines starting with '//' are comments. See 'mkxp.json.sample' for a list of accepted entries.
 
 ## Win32API
 

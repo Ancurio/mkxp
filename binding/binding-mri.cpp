@@ -31,7 +31,9 @@
 #include "config.h"
 #include "audio.h"
 #include "lang-fun.h"
+
 #include "boost-hash.h"
+#include <vector>
 
 extern "C"
 {
@@ -604,7 +606,7 @@ static void runRMXPScripts(BacktraceData &btData)
 	// Can be force-disabled similarly to framerate options
 #ifndef NO_PRELOAD_SCRIPTS
 	/* Execute preloaded scripts */
-	for (std::set<std::string>::iterator i = conf.preloadScripts.begin();
+	for (std::vector<std::string>::const_iterator i = conf.preloadScripts.begin();
 	     i != conf.preloadScripts.end(); ++i)
 		runCustomScript(*i);
 

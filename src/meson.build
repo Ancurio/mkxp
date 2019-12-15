@@ -7,13 +7,11 @@ sdl2_ttf = dependency('SDL2_ttf')
 sdl2_image = dependency('SDL2_image')
 sdl_sound = dependency('SDL_sound')
 opengl = dependency('GL')
-
-boost = dependency('boost', version: '>=1.49', modules: 'program_options')
 openal = dependency('openal')
 zlib = dependency('zlib')
 
 global_include_dirs += include_directories('.')
-global_dependencies += [sigcxx, openal, opengl, boost, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
+global_dependencies += [sigcxx, openal, opengl, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
 if host_system == 'darwin'
     global_dependencies += compilers['cpp'].find_library('iconv')
     global_dependencies += dependency('Foundation')

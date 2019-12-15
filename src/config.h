@@ -89,7 +89,7 @@ struct Config
 #endif
 
 	std::string customScript;
-	std::set<std::string> preloadScripts;
+	std::vector<std::string> preloadScripts;
 	std::vector<std::string> rtps;
 
 	std::vector<std::string> fontSubs;

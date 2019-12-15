@@ -1,36 +1,9 @@
-/*
-** config.cpp
-**
-** This file is part of mkxp.
-**
-** Copyright (C) 2013 Jonas Kulla <Nyocurio@gmail.com>
-**
-** mkxp is free software: you can redistribute it and/or modify
-** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation, either version 2 of the License, or
-** (at your option) any later version.
-**
-** mkxp is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-** GNU General Public License for more details.
-**
-** You should have received a copy of the GNU General Public License
-** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #import <ObjFW/ObjFW.h>
-
+#import <SDL_filesystem.h>
 #import "config.h"
 
-#import <boost/program_options/options_description.hpp>
-#import <boost/program_options/parsers.hpp>
-#import <boost/program_options/variables_map.hpp>
-
-#import <SDL_filesystem.h>
-
-#import <fstream>
 #import <stdint.h>
+#import <vector>
 
 #import "debugwriter.h"
 #import "util.h"
@@ -41,173 +14,176 @@
 #import "discordstate.h"
 #endif
 
-static std::string prefPath(const char *org, const char *app)
+OFString* prefPath(const char* org, const char* app)
 {
-	char *path = SDL_GetPrefPath(org, app);
-
-	if (!path)
-		return std::string();
-
-	std::string str(path);
-	SDL_free(path);
-
-	return str;
+    char* path = SDL_GetPrefPath(org, app);
+    if (!path)
+        return [OFString string];
+    
+    OFString* str = [OFString stringWithUTF8String:path];
+    SDL_free(path);
+    return str;
 }
 
-template<typename T>
-std::set<T> setFromVec(const std::vector<T> &vec)
+void fillStringVec(id array, std::vector<std::string>& vector)
 {
-	return std::set<T>(vec.begin(), vec.end());
+    if (![array isKindOfClass:[OFArray class]])
+    {
+        if ([array isKindOfClass:[OFString class]])
+            vector.push_back(std::string([array UTF8String]));
+
+        return;
+    }
+
+    OFEnumerator* e = [array objectEnumerator];
+    @autoreleasepool{
+        for (id obj = [e nextObject]; obj != nil; obj = [e nextObject])
+        {
+            if (![obj isKindOfClass:[OFString class]])
+                continue;
+            
+            vector.push_back(std::string([obj UTF8String]));
+        }
+    }
 }
 
-typedef std::vector<std::string> StringVec;
-namespace po = boost::program_options;
+#define CONF_FILE "mkxp.json"
 
-#define CONF_FILE "mkxp.conf"
-
-Config::Config()
-{}
+Config::Config() {}
 
 void Config::read(int argc, char *argv[])
 {
-#define PO_DESC_ALL \
-	PO_DESC(rgssVersion, int, 0) \
-	PO_DESC(debugMode, bool, false) \
-	PO_DESC(printFPS, bool, false) \
-	PO_DESC(winResizable, bool, true) \
-	PO_DESC(fullscreen, bool, false) \
-	PO_DESC(fixedAspectRatio, bool, true) \
-	PO_DESC(smoothScaling, bool, false) \
-	PO_DESC(vsync, bool, false) \
-	PO_DESC(defScreenW, int, 0) \
-	PO_DESC(defScreenH, int, 0) \
-	PO_DESC(windowTitle, std::string, "") \
-	PO_DESC(fixedFramerate, int, 0) \
-	PO_DESC(frameSkip, bool, false) \
-	PO_DESC(syncToRefreshrate, bool, false) \
-	PO_DESC(solidFonts, bool, false) \
-	PO_DESC(subImageFix, bool, false) \
-	PO_DESC(enableBlitting, bool, true) \
-	PO_DESC(maxTextureSize, int, 0) \
-	PO_DESC(gameFolder, std::string, ".") \
-	PO_DESC(anyAltToggleFS, bool, false) \
-	PO_DESC(enableReset, bool, true) \
-	PO_DESC(allowSymlinks, bool, false) \
-	PO_DESC(dataPathOrg, std::string, "") \
-	PO_DESC(dataPathApp, std::string, "") \
-	PO_DESC(iconPath, std::string, "") \
-	PO_DESC(execName, std::string, "Game") \
-	PO_DESC(titleLanguage, std::string, "") \
-	PO_DESC(midi.soundFont, std::string, "") \
-	PO_DESC(midi.chorus, bool, false) \
-	PO_DESC(midi.reverb, bool, false) \
-	PO_DESC(SE.sourceCount, int, 6) \
-	PO_DESC(customScript, std::string, "") \
-	PO_DESC(pathCache, bool, true) \
-	PO_DESC(useScriptNames, bool, true)
-
-// Not gonna take your shit boost
-#define GUARD_ALL( exp ) try { exp } catch(...) {}
-#define GUARD_ALL_OBJ( exp ) @try { exp } @catch(...) {}
-
-	editor.debug = false;
-	editor.battleTest = false;
-
-	/* Read arguments sent from the editor */
-	if (argc > 1)
-	{
-		std::string argv1 = argv[1];
-		/* RGSS1 uses "debug", 2 and 3 use "test" */
-		if (argv1 == "debug" || argv1 == "test")
-			editor.debug = true;
-		else if (argv1 == "btest")
-			editor.battleTest = true;
-
-		/* Fix offset */
-		if (editor.debug || editor.battleTest)
-		{
-			argc--;
-			argv++;
-		}
-	}
-
-#define PO_DESC(key, type, def) (#key, po::value< type >()->default_value(def))
-
-	po::options_description podesc;
-	podesc.add_options()
-	        PO_DESC_ALL
+    OFMutableDictionary* opts = [OFMutableDictionary dictionaryWithDictionary:@{
+        @"rgssVersion": @0,
+        @"debugMode": @false,
+        @"printFPS": @false,
+        @"winResizable": @true,
+        @"fullscreen": @false,
+        @"fixedAspectRatio": @true,
+        @"smoothScaling": @false,
+        @"vsync": @false,
+        @"defScreenW": @0,
+        @"defScreenH": @0,
+        @"windowTitle": @"",
+        @"fixedFramerate": @false,
+        @"frameSkip": @false,
+        @"syncToRefreshRate": @false,
+        @"solidFonts": @false,
+        @"subImageFix": @false,
+        @"enableBlitting": @true,
+        @"maxTextureSize": @0,
+        @"gameFolder": @".",
+        @"anyAltToggleFS": @false,
+        @"enableReset": @true,
+        @"allowSymlinks": @false,
+        @"dataPathOrg": @"",
+        @"dataPathApp": @"",
+        @"iconPath": @"",
+        @"execName": @"Game",
+        @"midiSoundFont": @"",
+        @"midiChorus": @false,
+        @"midiReverb": @false,
+        @"SESourceCount": @6,
+        @"customScript": @"",
+        @"pathCache": @true,
 #ifdef HAVE_DISCORDSDK
-            PO_DESC(discordClientId, DiscordClientId, DEFAULT_CLIENT_ID)
+        @"discordClientId": @DEFAULT_CLIENT_ID,
 #endif
-	        ("preloadScript", po::value<StringVec>()->composing())
-	        ("RTP", po::value<StringVec>()->composing())
-	        ("fontSub", po::value<StringVec>()->composing())
-	        ("rubyLoadpath", po::value<StringVec>()->composing())
-	        ;
+        @"useScriptNames": @1,
+        @"preloadScript": @[],
+        @"RTP": @[],
+        @"fontSub": @[],
+        @"rubyLoadpath": @[]
+    }];
 
-	po::variables_map vm;
+#define GUARD( exp )  @try { exp } @catch(...) {}
 
-	/* Parse command line options */
-	try
-	{
-		po::parsed_options cmdPo =
-			po::command_line_parser(argc, argv).options(podesc).run();
-		po::store(cmdPo, vm);
-	}
-	catch (po::error &error)
-	{
-		Debug() << "Command line:" << error.what();
-	}
+    editor.debug = false;
+    editor.battleTest = false;
 
-	/* Parse configuration file */
-	SDLRWStream confFile(CONF_FILE, "r");
+    if (argc > 1)
+    {
+        OFString* argv1 = [OFString stringWithUTF8String:argv[1]];
+        if ([argv1 isEqual: @"debug"] || [argv1 isEqual: @"test"])
+            editor.debug = true;
+        else if ([argv1 isEqual: @"btest"])
+            editor.battleTest = true;
+    }
 
-	if (confFile)
-	{
-		try
-		{
-			po::store(po::parse_config_file(confFile.stream(), podesc, true), vm);
-			po::notify(vm);
-		}
-		catch (po::error &error)
-		{
-			Debug() << CONF_FILE":" << error.what();
-		}
-	}
+    if ([[OFFileManager defaultManager] fileExistsAtPath:@CONF_FILE])
+    {
+        @autoreleasepool{
+            @try {
+                id confData = [
+                    [OFString
+                    stringWithContentsOfFile:@CONF_FILE
+                    encoding: OF_STRING_ENCODING_UTF_8
+                    ] JSONValue];
+                
+                if (![confData isKindOfClass:[OFDictionary class]])
+                {
+                    confData = @{};
+                }
 
-#undef PO_DESC
-#define PO_DESC(key, type, def) GUARD_ALL( key = vm[#key].as< type >(); )
+                OFEnumerator* e = [confData keyEnumerator];
+                for (id key = [e nextObject]; key != nil; key = [e nextObject])
+                {        
+                    Debug() << [[key description] UTF8String] << [[key className] UTF8String];
+                    opts[key] = confData[key];
+                }
+            }
+            @catch(OFException *e){
+                Debug() << [[e description] UTF8String];
+            }
+        }
+#define SET_OPT_CUSTOMKEY(var, key, type) GUARD( var = [opts[@#key] type]; )
+#define SET_OPT(var, type) SET_OPT_CUSTOMKEY(var, var, type)
+#define SET_STRINGOPT(var, key) GUARD( var = std::string([opts[@#key] UTF8String]); )
+    }
+    SET_OPT(rgssVersion, intValue);
+    SET_OPT(debugMode, boolValue);
+    SET_OPT(printFPS, boolValue);
+    SET_OPT(winResizable, boolValue);
+    SET_OPT(fullscreen, boolValue);
+    SET_OPT(fixedAspectRatio, boolValue);
+    SET_OPT(smoothScaling, boolValue);
+    SET_OPT(vsync, boolValue);
+    SET_OPT(defScreenW, intValue);
+    SET_OPT(defScreenH, intValue);
+    SET_STRINGOPT(windowTitle, windowTitle);
+    SET_OPT(fixedFramerate, intValue);
+    SET_OPT(frameSkip, boolValue);
+    SET_OPT(syncToRefreshrate, boolValue);
+    SET_OPT(solidFonts, boolValue);
+    SET_OPT(subImageFix, boolValue);
+    SET_OPT(enableBlitting, boolValue);
+    SET_OPT(maxTextureSize, intValue);
+    SET_STRINGOPT(gameFolder, gameFolder);
+    SET_OPT(anyAltToggleFS, boolValue);
+    SET_OPT(enableReset, boolValue);
+    SET_OPT(allowSymlinks, boolValue);
+    SET_STRINGOPT(dataPathOrg, dataPathOrg);
+    SET_STRINGOPT(dataPathApp, dataPathApp);
+    SET_STRINGOPT(iconPath, iconPath);
+    SET_STRINGOPT(execName, execName);
+    SET_STRINGOPT(midi.soundFont, midiSoundFont);
+    SET_OPT_CUSTOMKEY(midi.chorus, midiChorus, boolValue);
+    SET_OPT_CUSTOMKEY(midi.reverb, midiReverb, boolValue);
+    SET_OPT_CUSTOMKEY(SE.sourceCount, SESourceCount, intValue);
+    SET_STRINGOPT(customScript, customScript);
+    SET_OPT(pathCache, boolValue);
+    SET_OPT(useScriptNames, boolValue);
 
-	PO_DESC_ALL;
-    
+    fillStringVec(opts[@"preloadScript"], preloadScripts);
+    fillStringVec(opts[@"RTP"], rtps);
+    fillStringVec(opts[@"fontSub"], fontSubs);
+    fillStringVec(opts[@"rubyLoadpath"], rubyLoadpaths);
+    rgssVersion = clamp(rgssVersion, 0, 3);
+    SE.sourceCount = clamp(SE.sourceCount, 1, 64);
 #ifdef HAVE_DISCORDSDK
-    PO_DESC(discordClientId, DiscordClientId, DEFAULT_CLIENT_ID)
-#endif
+    SET_OPT(discordClientId, longLongValue);
+#endif 
 
-	GUARD_ALL( preloadScripts = setFromVec(vm["preloadScript"].as<StringVec>()); );
-
-	GUARD_ALL( rtps = vm["RTP"].as<StringVec>(); );
-
-	GUARD_ALL( fontSubs = vm["fontSub"].as<StringVec>(); );
-
-	GUARD_ALL( rubyLoadpaths = vm["rubyLoadpath"].as<StringVec>(); );
-
-#undef PO_DESC
-#undef PO_DESC_ALL
-
-	rgssVersion = clamp(rgssVersion, 0, 3);
-
-	SE.sourceCount = clamp(SE.sourceCount, 1, 64);
-}
-
-static std::string baseName(const std::string &path)
-{
-	size_t pos = path.find_last_of("/\\");
-
-	if (pos == path.npos)
-		return path;
-
-	return path.substr(pos + 1);
 }
 
 static void setupScreenSize(Config &conf)
@@ -223,7 +199,8 @@ void Config::readGameINI()
 {
 	if (!customScript.empty())
 	{
-		game.title = baseName(customScript);
+
+		game.title = [[[[OFString stringWithUTF8String:customScript.c_str()] pathComponents] componentsJoinedByString:@"/"] UTF8String];
 
 		if (rgssVersion == 0)
 			rgssVersion = 1;
@@ -232,15 +209,14 @@ void Config::readGameINI()
 
 		return;
 	}
-
 	OFString* iniFilename = [OFString stringWithFormat:@"%s.ini", execName.c_str()];
 	if ([[OFFileManager defaultManager] fileExistsAtPath:iniFilename])
 	{
 		@try{
 			OFINIFile* iniFile = [OFINIFile fileWithPath:iniFilename];
 			OFINICategory* iniCat = [iniFile categoryForName:@"Game"];
-			GUARD_ALL_OBJ( game.title = [[iniCat stringForKey:@"Title" defaultValue:@""] UTF8String]; )
-			GUARD_ALL_OBJ( game.scripts = [[iniCat stringForKey:@"Scripts" defaultValue:@""] UTF8String]; )
+			GUARD( game.title = [[iniCat stringForKey:@"Title" defaultValue:@""] UTF8String]; )
+			GUARD( game.scripts = [[iniCat stringForKey:@"Scripts" defaultValue:@""] UTF8String]; )
 
 			strReplace(game.scripts, '\\', '/');
 		}
@@ -301,9 +277,9 @@ void Config::readGameINI()
     }
     
     if (!dataPathOrg.empty() && !dataPathApp.empty())
-        customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
+        customDataPath = [prefPath(dataPathOrg.c_str(), dataPathApp.c_str()) UTF8String];
     
-    commonDataPath = prefPath(".", "mkxpz");
+    commonDataPath = [prefPath(".", "mkxpz") UTF8String];
     
 
 	if (rgssVersion == 0)
@@ -326,6 +302,5 @@ void Config::readGameINI()
 				rgssVersion = 3;
 		}
 	}
-
 	setupScreenSize(*this);
 }
