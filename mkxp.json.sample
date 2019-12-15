@@ -265,7 +265,7 @@
     // SoundFont to use for midi playback (via fluidsynth)
     // (default: none)
     //
-    "midiSoundFont": "Audio/BGM/GMGSx.sf2",
+    // "midiSoundFont": "Audio/BGM/GMGSx.sf2",
 
 
     // Activate "chorus" effect for midi playback
