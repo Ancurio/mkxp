@@ -71,7 +71,7 @@ endif
 
 # Objectify our C
 global_args += run_command(objfw,'--cppflags').stdout().split()
-add_project_arguments(run_command(objfw,'--objcflags').stdout().split(), language:'objc')
+add_project_arguments(run_command(objfw,'--objcflags').stdout().split(), language:['objc','objcpp'])
 add_project_link_arguments(run_command(objfw,'--libs','--ldflags').stdout().split(), language:['objc','objcpp'])
 
 # Make sure to use ARC

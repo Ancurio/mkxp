@@ -19,113 +19,27 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "config.h"
+#import <ObjFW/ObjFW.h>
 
-#include <boost/program_options/options_description.hpp>
-#include <boost/program_options/parsers.hpp>
-#include <boost/program_options/variables_map.hpp>
+#import "config.h"
 
-#include <SDL_filesystem.h>
+#import <boost/program_options/options_description.hpp>
+#import <boost/program_options/parsers.hpp>
+#import <boost/program_options/variables_map.hpp>
 
-#include <fstream>
-#include <stdint.h>
+#import <SDL_filesystem.h>
 
-#include "debugwriter.h"
-#include "util.h"
-#include "sdl-util.h"
-#include "iniconfig.h"
+#import <fstream>
+#import <stdint.h>
+
+#import "debugwriter.h"
+#import "util.h"
+#import "sdl-util.h"
 
 #ifdef HAVE_DISCORDSDK
-#include <discord_game_sdk.h>
-#include "discordstate.h"
+#import <discord_game_sdk.h>
+#import "discordstate.h"
 #endif
-
-#ifdef INI_ENCODING
-extern "C" {
-#include <libguess.h>
-}
-#include <iconv.h>
-#include <errno.h>
-#endif
-
-/* http://stackoverflow.com/a/1031773 */
-static bool validUtf8(const char *string)
-{
-	const uint8_t *bytes = (uint8_t*) string;
-
-	while(*bytes)
-	{
-		if( (/* ASCII
-			  * use bytes[0] <= 0x7F to allow ASCII control characters */
-				bytes[0] == 0x09 ||
-				bytes[0] == 0x0A ||
-				bytes[0] == 0x0D ||
-				(0x20 <= bytes[0] && bytes[0] <= 0x7E)
-			)
-		) {
-			bytes += 1;
-			continue;
-		}
-
-		if( (/* non-overlong 2-byte */
-				(0xC2 <= bytes[0] && bytes[0] <= 0xDF) &&
-				(0x80 <= bytes[1] && bytes[1] <= 0xBF)
-			)
-		) {
-			bytes += 2;
-			continue;
-		}
-
-		if( (/* excluding overlongs */
-				bytes[0] == 0xE0 &&
-				(0xA0 <= bytes[1] && bytes[1] <= 0xBF) &&
-				(0x80 <= bytes[2] && bytes[2] <= 0xBF)
-			) ||
-			(/* straight 3-byte */
-				((0xE1 <= bytes[0] && bytes[0] <= 0xEC) ||
-					bytes[0] == 0xEE ||
-					bytes[0] == 0xEF) &&
-				(0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
-				(0x80 <= bytes[2] && bytes[2] <= 0xBF)
-			) ||
-			(/* excluding surrogates */
-				bytes[0] == 0xED &&
-				(0x80 <= bytes[1] && bytes[1] <= 0x9F) &&
-				(0x80 <= bytes[2] && bytes[2] <= 0xBF)
-			)
-		) {
-			bytes += 3;
-			continue;
-		}
-
-		if( (/* planes 1-3 */
-				bytes[0] == 0xF0 &&
-				(0x90 <= bytes[1] && bytes[1] <= 0xBF) &&
-				(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
-				(0x80 <= bytes[3] && bytes[3] <= 0xBF)
-			) ||
-			(/* planes 4-15 */
-				(0xF1 <= bytes[0] && bytes[0] <= 0xF3) &&
-				(0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
-				(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
-				(0x80 <= bytes[3] && bytes[3] <= 0xBF)
-			) ||
-			(/* plane 16 */
-				bytes[0] == 0xF4 &&
-				(0x80 <= bytes[1] && bytes[1] <= 0x8F) &&
-				(0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
-				(0x80 <= bytes[3] && bytes[3] <= 0xBF)
-			)
-		) {
-			bytes += 4;
-			continue;
-		}
-
-		return false;
-	}
-
-	return true;
-}
 
 static std::string prefPath(const char *org, const char *app)
 {
@@ -194,6 +108,7 @@ void Config::read(int argc, char *argv[])
 
 // Not gonna take your shit boost
 #define GUARD_ALL( exp ) try { exp } catch(...) {}
+#define GUARD_ALL_OBJ( exp ) @try { exp } @catch(...) {}
 
 	editor.debug = false;
 	editor.battleTest = false;
@@ -318,6 +233,29 @@ void Config::readGameINI()
 		return;
 	}
 
+	OFString* iniFilename = [OFString stringWithFormat:@"%s.ini", execName.c_str()];
+	if ([[OFFileManager defaultManager] fileExistsAtPath:iniFilename])
+	{
+		@try{
+			OFINIFile* iniFile = [OFINIFile fileWithPath:iniFilename];
+			OFINICategory* iniCat = [iniFile categoryForName:@"Game"];
+			GUARD_ALL_OBJ( game.title = [[iniCat stringForKey:@"Title" defaultValue:@""] UTF8String]; )
+			GUARD_ALL_OBJ( game.scripts = [[iniCat stringForKey:@"Scripts" defaultValue:@""] UTF8String]; )
+
+			strReplace(game.scripts, '\\', '/');
+		}
+		@catch(OFException* exc){
+			Debug() << "Failed to parse INI:" << [[exc description] UTF8String];
+		}
+		if (game.title.empty())
+			Debug() << [iniFilename UTF8String] << ": Could not find Game.Title property";
+		
+		if (game.scripts.empty())
+			Debug() << [iniFilename UTF8String] << ": Could not find Game.Scripts property";
+		
+	}
+
+/*
 	std::string iniFilename = execName + ".ini";
 	SDLRWStream iniFile(iniFilename.c_str(), "r");
 
@@ -350,68 +288,8 @@ void Config::readGameINI()
 	{
 		Debug() << "FAILED to open" << iniFilename;
 	}
+*/
 
-#ifdef INI_ENCODING
-	/* Can add more later */
-	const char *languages[] =
-	{
-		titleLanguage.c_str(),
-		GUESS_REGION_JP, /* Japanese */
-		GUESS_REGION_KR, /* Korean */
-		GUESS_REGION_CN, /* Chinese */
-		0
-	};
-
-	bool convSuccess = true;
-
-	/* Verify that the game title is UTF-8, and if not,
-	 * try to determine the encoding and convert to UTF-8 */
-	if (!validUtf8(game.title.c_str()))
-	{
-		const char *encoding = 0;
-		convSuccess = false;
-
-		for (size_t i = 0; languages[i]; ++i)
-		{
-			encoding = libguess_determine_encoding(game.title.c_str(),
-			                                       game.title.size(),
-			                                       languages[i]);
-			if (encoding)
-				break;
-		}
-
-		if (encoding)
-		{
-			iconv_t cd = iconv_open("UTF-8", encoding);
-
-			size_t inLen = game.title.size();
-			size_t outLen = inLen * 4;
-			std::string buf(outLen, '\0');
-			char *inPtr = const_cast<char*>(game.title.c_str());
-			char *outPtr = const_cast<char*>(buf.c_str());
-
-			errno = 0;
-			size_t result = iconv(cd, &inPtr, &inLen, &outPtr, &outLen);
-
-			iconv_close(cd);
-
-			if (result != (size_t) -1 && errno == 0)
-			{
-				buf.resize(buf.size()-outLen);
-				game.title = buf;
-				convSuccess = true;
-			}
-		}
-	}
-
-	if (!convSuccess)
-		game.title.clear();
-#else
-	if (!validUtf8(game.title.c_str()))
-		game.title.clear();
-#endif
-
-    
 	if (game.title.empty())
     {
         game.title = "mkxp-z";

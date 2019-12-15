@@ -47,7 +47,6 @@ main_source = files(
     'filesystem.mm',
     'font.cpp',
     'input.cpp',
-    'iniconfig.cpp',
     'plane.cpp',
     'scene.cpp',
     'sprite.cpp',
@@ -63,7 +62,7 @@ main_source = files(
     'graphics.cpp',
     'gl-debug.cpp',
     'etc.cpp',
-    'config.cpp',
+    'config.mm',
     'settingsmenu.cpp',
     'keybindings.cpp',
     'tileatlas.cpp',
@@ -87,7 +86,7 @@ main_source = files(
 )
 
 if get_option('use_fakeapi') == true
-    main_source += files('fake-api.cpp')
+    main_source += files('fake-api.mm')
 endif
 
 if discord == true

@@ -1,19 +1,22 @@
-#include <SDL.h>
+#import <SDL.h>
+#ifdef __APPLE__
+#import <Foundation/Foundation.h>
+#endif
+#import <ObjFW/ObjFW.h>
 
 #ifdef __WIN32__
-#include <windows.h>
-#include <SDL_syswm.h>
+#import <windows.h>
+#import <SDL_syswm.h>
 #else
-#include <cstring>
-#include "iniconfig.h"
+#import <cstring>
 #endif
 
-#include "sharedstate.h"
-#include "eventthread.h"
-#include "filesystem.h"
-#include "input.h"
-#include "lang-fun.h"
-#include "fake-api.h"
+#import "sharedstate.h"
+#import "eventthread.h"
+#import "filesystem.h"
+#import "input.h"
+#import "lang-fun.h"
+#import "fake-api.h"
 
 
 // Essentials, without edits, needs Win32API. Two problems with that:
@@ -405,23 +408,25 @@ MKXP_GetPrivateProfileString(LPCTSTR lpAppName,
                              DWORD nSize,
                              LPCTSTR lpFileName)
 {
-    char *lpFileName_normal = shState->fileSystem().normalize(lpFileName, true, false);
-    SDLRWStream iniFile(lpFileName_normal, "r");
-    delete lpFileName_normal;
-    if (iniFile)
+    OFString* filePath = [OFString stringWithUTF8String:lpFileName];
+    OFString* ret = 0;
+    if ([[OFFileManager defaultManager] fileExistsAtPath:filePath])
     {
-        INIConfiguration ic;
-        if (ic.load(iniFile.stream()))
-        {
-            std::string result = ic.getStringProperty(lpAppName, lpKeyName);
-            if (!result.empty())
-            {
-                strncpy(lpReturnedString, result.c_str(), nSize);
-                return result.length();
-            }
+        @try{
+            OFINIFile* iniFile = [OFINIFile fileWithPath:filePath];
+            OFINICategory* iniCat = [iniFile categoryForName:[OFString stringWithUTF8String:lpAppName]];
+            ret = [iniCat stringForKey:[OFString stringWithUTF8String:lpKeyName]];
         }
+        @catch(...){}
     }
-    strncpy(lpReturnedString, lpDefault, nSize);
+    if (ret)
+    {
+        strncpy(lpReturnedString, [ret UTF8String], nSize);
+    }
+    else
+    {
+        strncpy(lpReturnedString, lpDefault, nSize);
+    }
     return strlen(lpDefault);
 }
 
@@ -464,9 +469,13 @@ PREFABI BOOL
 MKXP_GetUserName(LPSTR lpBuffer, LPDWORD pcbBuffer)
 {
     if (*pcbBuffer < 1) return false;
+#ifdef __APPLE__
+    strncpy(lpBuffer, [NSUserName() UTF8String], *pcbBuffer);
+#else
     char *username = getenv("USER");
     strncpy(lpBuffer, (username) ? username : "ditto", *pcbBuffer);
     lpBuffer[0] = toupper(lpBuffer[0]);
+#endif
     return true;
 }
 

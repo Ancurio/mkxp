@@ -41,11 +41,11 @@ NSString* get_mac_locale(void)
         NSString* locale_string;
         
         if (country != nil)
-            locale_string = [NSString stringWithFormat:@"%@_%@", lang, country];
+            locale_string = [NSString stringWithFormat:[NSString stringWithUTF8String:"%@_%@"], lang, country];
         else
             locale_string = [NSString stringWithString:lang];
 
-        [mac_locale appendFormat:@"%@%@", locale_string, @".UTF-8"];
+        [mac_locale appendFormat:[NSString stringWithUTF8String:"%@%@"], locale_string, [NSString stringWithUTF8String:".UTF-8"]];
     }
     return mac_locale;
 }

@@ -107,9 +107,9 @@ mkxp-z provides limited support for some WinAPI functions that would normally br
 * `GetSystemMetrics`: Only supports getting screen width/height.
 * `SetCapture`: No-op. Always returns `571`.
 * `ReleaseCapture`: No-op.
-* `GetPrivateProfileString`: Emulated with MKXP's ini code.
+* `GetPrivateProfileString`: Emulated with OFINIFile.
 * `GetUserDefaultLangId`: Checks for JP, EN, FR, IT, DE, ES, KO, PT and ZH. Returns English (`0x09`) if the locale can't be determined. Doesn't handle sublanguages.
-* `GetUserName`: Returns the `$USER` environment variable, or `Ditto` if it doesn't exist.
+* `GetUserName`: *(macOS)* Gets user login name. *(Linux)* Returns the `$USER` environment variable, or `Ditto` if it doesn't exist.
 
 ## Nonstandard RGSS extensions
 

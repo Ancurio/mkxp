@@ -16,7 +16,7 @@ typedef unsigned int DWORD, UINT, *LPDWORD;
 typedef char BYTE, *LPSTR, *LPCSTR, *LPCTSTR, *LPTSTR, *PBYTE;
 typedef short SHORT;
 typedef int LONG;
-typedef bool BOOL;
+typedef signed char BOOL;
 typedef void VOID, *LPVOID, *HANDLE, *HMODULE, *HWND;
 typedef size_t SIZE_T;
 

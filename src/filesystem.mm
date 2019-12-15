@@ -721,10 +721,13 @@ char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
 
 		if (absolute)
 		{
-			OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
-			OFURL* purl = [OFURL fileURLWithPath:str];
-			OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
-			str = [OFMutableString stringWithString:path];
+			@try{
+				OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
+				OFURL* purl = [OFURL fileURLWithPath:str];
+				OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
+				str = [OFMutableString stringWithString:path];
+			}
+			@catch(...){}
 		}
 
 	#ifdef __WIN32__
