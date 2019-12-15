@@ -1,23 +1,20 @@
 #if defined(__WIN32__)
 
-#include <windows.h>
-#include <stdlib.h>
+#import <windows.h>
+#import <stdlib.h>
 
 #else
-#include <locale>
+#import <locale>
 
 #ifdef __APPLE__
-extern "C" {
-#include <CoreFoundation/CFLocale.h>
-#include <CoreFoundation/CFString.h>
-}
+#import <Foundation/Foundation.h>
 #endif
 
 #endif
 
-#include <string>
-#include <cstring>
-#include "lang-fun.h"
+#import <string>
+#import <cstring>
+#import "lang-fun.h"
 
 // ======================================================================
 // https://github.com/wine-mirror/wine/blob/master/dlls/kernel32/locale.c
@@ -32,34 +29,29 @@ extern "C" {
  * things like script, variant, etc.  Or, rather, just construct it as
  * <lang>[_<country>].UTF-8.
  */
-static const char* get_mac_locale(void)
+NSString* get_mac_locale(void)
 {
-    static char mac_locale[50];
+    NSMutableString* mac_locale = [NSMutableString string];
     
-    if (!mac_locale[0])
+    if (mac_locale != nil)
     {
-        CFLocaleRef locale = CFLocaleCopyCurrent();
-        CFStringRef lang = (CFStringRef)CFLocaleGetValue( locale, kCFLocaleLanguageCode );
-        CFStringRef country = (CFStringRef)CFLocaleGetValue( locale, kCFLocaleCountryCode );
-        CFStringRef locale_string;
+        NSLocale* locale = [NSLocale currentLocale];
+        NSString* lang = [locale languageCode];
+        NSString* country = [locale countryCode];
+        NSString* locale_string;
         
-        if (country)
-            locale_string = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@_%@"), lang, country);
+        if (country != nil)
+            locale_string = [NSString stringWithFormat:@"%@_%@", lang, country];
         else
-            locale_string = CFStringCreateCopy(NULL, lang);
-        
-        CFStringGetCString(locale_string, mac_locale, sizeof(mac_locale), kCFStringEncodingUTF8);
-        strcat(mac_locale, ".UTF-8");
-        
-        CFRelease(locale);
-        CFRelease(locale_string);
+            locale_string = [NSString stringWithString:lang];
+
+        [mac_locale appendFormat:@"%@%@", locale_string, @".UTF-8"];
     }
-    
     return mac_locale;
 }
 #endif
 
-const char *getUserLanguage()
+const char* getUserLanguage()
 {
     static char buf[50] = {0};
 #if defined(__WIN32__)
@@ -70,7 +62,7 @@ const char *getUserLanguage()
 #else
     strncpy(buf, std::locale("").name().c_str(), sizeof(buf));
 #ifdef __APPLE__
-    if (!buf[0]) strncpy(buf, get_mac_locale(), sizeof(buf));
+    if (!buf[0]) strncpy(buf, [get_mac_locale() UTF8String], sizeof(buf));
 #endif
 #endif
 

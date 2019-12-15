@@ -16,7 +16,7 @@ global_include_dirs += include_directories('.')
 global_dependencies += [sigcxx, openal, opengl, boost, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
 if host_system == 'darwin'
     global_dependencies += compilers['cpp'].find_library('iconv')
-    global_dependencies += dependency('CoreFoundation')
+    global_dependencies += dependency('Foundation')
 
     if openal.type_name() != 'pkgconfig'
     add_project_arguments('-DUSE_MAC_OPENAL', language: 'cpp')
@@ -83,7 +83,7 @@ main_source = files(
     'autotilesvx.cpp',
     'midisource.cpp',
     'fluid-fun.cpp',
-    'lang-fun.cpp'
+    'lang-fun.mm'
 )
 
 if get_option('use_fakeapi') == true
