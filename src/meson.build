@@ -38,7 +38,7 @@ if get_option('cjk_fallback_font') == true
 endif
 
 main_source = files(
-    'main.cpp',
+    'main.mm',
     'audio.cpp',
     'bitmap.cpp',
     'eventthread.cpp',

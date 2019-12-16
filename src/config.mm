@@ -127,13 +127,12 @@ void Config::read(int argc, char *argv[])
 
                 OFEnumerator* e = [confData keyEnumerator];
                 for (id key = [e nextObject]; key != nil; key = [e nextObject])
-                {        
-                    Debug() << [[key description] UTF8String] << [[key className] UTF8String];
+                {
                     opts[key] = confData[key];
                 }
             }
             @catch(OFException *e){
-                Debug() << [[e description] UTF8String];
+                Debug() << "OBJC:" << [[e description] UTF8String];
             }
         }
 #define SET_OPT_CUSTOMKEY(var, key, type) GUARD( var = [opts[@#key] type]; )
@@ -230,41 +229,6 @@ void Config::readGameINI()
 			Debug() << [iniFilename UTF8String] << ": Could not find Game.Scripts property";
 		
 	}
-
-/*
-	std::string iniFilename = execName + ".ini";
-	SDLRWStream iniFile(iniFilename.c_str(), "r");
-
-	if (iniFile)
-	{
-		INIConfiguration ic;
-		if(ic.load(iniFile.stream()))
-		{
-			GUARD_ALL( game.title = ic.getStringProperty("Game", "Title"); );
-			GUARD_ALL( game.scripts = ic.getStringProperty("Game", "Scripts"); );
-
-			strReplace(game.scripts, '\\', '/');
-
-			if (game.title.empty())
-			{
-				Debug() << iniFilename + ": Could not find Game.Title property";
-			}
-
-			if (game.scripts.empty())
-			{
-				Debug() << iniFilename + ": Could not find Game.Scripts property";
-			}
-		}
-		else
-		{
-			Debug() << iniFilename + ": Failed to parse ini file";
-		}
-	}
-	else
-	{
-		Debug() << "FAILED to open" << iniFilename;
-	}
-*/
 
 	if (game.title.empty())
     {

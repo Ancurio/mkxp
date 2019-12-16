@@ -19,33 +19,35 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <alc.h>
+#import <alc.h>
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_sound.h>
+#import <SDL.h>
+#import <SDL_image.h>
+#import <SDL_ttf.h>
+#import <SDL_sound.h>
 
-#include <unistd.h>
-#include <string.h>
-#include <assert.h>
-#include <string>
+#import <unistd.h>
+#import <string.h>
+#import <assert.h>
+#import <string>
 
-#include "sharedstate.h"
-#include "eventthread.h"
-#include "gl-debug.h"
-#include "debugwriter.h"
-#include "exception.h"
-#include "gl-fun.h"
+#import "sharedstate.h"
+#import "eventthread.h"
+#import "gl-debug.h"
+#import "debugwriter.h"
+#import "exception.h"
+#import "gl-fun.h"
 
-#include "binding.h"
+#import "binding.h"
 
 #ifdef __WINDOWS__
-#include "resource.h"
-#include <Winsock2.h>
+#import "resource.h"
+#import <Winsock2.h>
 #endif
 
-#include "icon.png.xxd"
+#import <ObjFW/ObjFW.h>
+
+#import "icon.png.xxd"
 
 #ifdef __APPLE__
 #define GLINIT_SHOWERROR(s) showInitError(s)
@@ -112,8 +114,10 @@ int rgssThreadFun(void *userdata)
 		return 0;
 	}
 
-	/* Start script execution */
-	scriptBinding->execute();
+	@autoreleasepool{
+		/* Start script execution */
+		scriptBinding->execute();
+	}
 
 	threadData->rqTermAck.set();
 	threadData->ethread->requestTerminate();
@@ -161,7 +165,7 @@ static void setupWindowIcon(const Config &conf, SDL_Window *win)
 }
 
 int main(int argc, char *argv[])
-{
+{@autoreleasepool{
 	SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0");
 	SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
 
@@ -195,6 +199,8 @@ int main(int argc, char *argv[])
 #endif
 #endif
 */
+
+	OFFileManager* fm = [OFFileManager defaultManager];
     
 #ifndef WORKDIR_CURRENT
     char dataDir[512]{};
@@ -215,7 +221,7 @@ int main(int argc, char *argv[])
             SDL_free(tmp);
         }
     }
-    chdir(dataDir);
+    @try{[fm changeCurrentDirectoryPath:[OFString stringWithUTF8String:dataDir]];}@catch(...){}
 #endif
 
 	/* now we load the config */
@@ -223,11 +229,15 @@ int main(int argc, char *argv[])
 	conf.read(argc, argv);
 
 	if (!conf.gameFolder.empty())
-		if (chdir(conf.gameFolder.c_str()) != 0)
-		{
+	{
+		@try{
+			[fm changeCurrentDirectoryPath:[OFString stringWithUTF8String:conf.gameFolder.c_str()]];
+		}
+		@catch(...){
 			showInitError(std::string("Unable to switch into gameFolder ") + conf.gameFolder);
 			return 0;
 		}
+	}
 
 	conf.readGameINI();
 
@@ -399,7 +409,7 @@ int main(int argc, char *argv[])
 	SDL_Quit();
 
 	return 0;
-}
+}}
 
 static SDL_GLContext initGL(SDL_Window* win, Config& conf, RGSSThreadData* threadData)
 {
