@@ -20,7 +20,7 @@ OFString* prefPath(const char* org, const char* app)
     if (!path)
         return [OFString string];
     
-    OFString* str = [OFString stringWithUTF8String:path];
+    OFString* str = @(path);
     SDL_free(path);
     return str;
 }
@@ -103,7 +103,7 @@ void Config::read(int argc, char *argv[])
 
     if (argc > 1)
     {
-        OFString* argv1 = [OFString stringWithUTF8String:argv[1]];
+        OFString* argv1 = @(argv[1]);
         if ([argv1 isEqual: @"debug"] || [argv1 isEqual: @"test"])
             editor.debug = true;
         else if ([argv1 isEqual: @"btest"])
@@ -199,7 +199,7 @@ void Config::readGameINI()
 	if (!customScript.empty())
 	{
 
-		game.title = [[[[OFString stringWithUTF8String:customScript.c_str()] pathComponents] componentsJoinedByString:@"/"] UTF8String];
+		game.title = customScript.c_str();
 
 		if (rgssVersion == 0)
 			rgssVersion = 1;

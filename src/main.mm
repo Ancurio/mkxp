@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
             SDL_free(tmp);
         }
     }
-    @try{[fm changeCurrentDirectoryPath:[OFString stringWithUTF8String:dataDir]];}@catch(...){}
+    @try{[fm changeCurrentDirectoryPath:@(dataDir)];}@catch(...){}
 #endif
 
 	/* now we load the config */
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 	if (!conf.gameFolder.empty())
 	{
 		@try{
-			[fm changeCurrentDirectoryPath:[OFString stringWithUTF8String:conf.gameFolder.c_str()]];
+			[fm changeCurrentDirectoryPath:@(conf.gameFolder.c_str())];
 		}
 		@catch(...){
 			showInitError(std::string("Unable to switch into gameFolder ") + conf.gameFolder);
