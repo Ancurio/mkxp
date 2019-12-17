@@ -21,7 +21,7 @@ This binding should support RGSS1, RGSS2 and RGSS3, though I've only tested it w
 
 ## Dependencies / Building
 
-* ObjFW
+* [ObjFW](https://github.com/ObjFW/ObjFW)
 * libsigc++ 2.0
 * PhysFS (latest hg)
 * OpenAL
@@ -29,7 +29,7 @@ This binding should support RGSS1, RGSS2 and RGSS3, though I've only tested it w
 * SDL2_image
 * SDL2_ttf
 * [Ancurio's SDL_sound fork](https://github.com/Ancurio/SDL_sound)
-* [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7), for Zlib, a Windows build that doesn't segfault, and any 1.8.1 compatibility stuff
+* [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7), if using Ruby 1.8
 * vorbisfile
 * pixman
 * zlib (only ruby bindings)
@@ -46,7 +46,7 @@ Midi support is enabled by default and requires fluidsynth to be present at runt
 
 By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `-Dworkdir_current=true` to meson's build arguments.
 
-**MRI-Binding**: By default, meson will search for Ruby 1.8 libraries and includes within the system search path. This can be adjusted with `-Dcpp_args=-I[path]` for includes and `-Dcpp_link_args=-L[path]` for libraries. For newer Ruby versions, pkg-config will look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-2.6.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y` (`-Dmri_version=2.6` as an example).
+**MRI-Binding**: Meson will use pkg-config to look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-2.5.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y`. `mri-version` is set to `1.8` by default.
 
 ## Supported image/audio formats
 

@@ -2,9 +2,7 @@
 // it's just as basic but should work fine for the moment
 
 #include <SDL.h>
-#ifdef USE_FAKEAPI
 #include "fake-api.h"
-#endif
 
 #include "binding-util.h"
 

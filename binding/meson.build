@@ -1,12 +1,9 @@
 
 ver = get_option('mri_version')
-if ver.version_compare('>1.8') == true
-    global_dependencies += dependency('ruby-' + ver)
-else
-    lib = get_option('ruby_lib')
-    global_dependencies += compilers['cpp'].find_library(lib)
+if ver.version_compare('>1.8') == false
     add_project_arguments('-DOLD_RUBY', language: ['cpp','objc','objcpp'])
 endif
+global_dependencies += dependency('ruby-' + ver)
 
 if get_option('no_preload_scripts') == true
     add_project_arguments('-DNO_PRELOAD_SCRIPTS', language: ['cpp','objc','objcpp'])

@@ -1,14 +1,16 @@
 #pragma once
 
-#ifdef __WIN32__
-#include <windows.h>
-#endif
-
 #define ABI(x) __attribute__((x))
 #if defined(__WIN32__)
 #define PREFABI ABI(stdcall)
 #else
 #define PREFABI
+#endif
+
+#ifdef USE_FAKEAPI
+
+#ifdef __WIN32__
+#include <windows.h>
 #endif
 
 #ifndef __WIN32__
@@ -150,4 +152,5 @@ MKXP_GetUserDefaultLangID(void);
 PREFABI BOOL
 MKXP_GetUserName(LPSTR lpBuffer, LPDWORD pcbBuffer);
 
+#endif
 #endif
