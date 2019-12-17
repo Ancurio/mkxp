@@ -24,14 +24,9 @@
 // think there are many functions one would need to use that require
 // that many arguments anyway
 
-// stdcall is easy, everything in a struct gets pushed to the stack
-#ifdef __WIN32__
-typedef void* (__stdcall *MINIFFI_FUNC)(...);
-#else
 // L O N G, but variables won't get set up correctly otherwise
 // should allow for __fastcalls (macOS likes these) and whatever else
-typedef void* (*MINIFFI_FUNC)(unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long);
-#endif
+typedef PREFABI void* (*MINIFFI_FUNC)(unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long,unsigned long);
 
 // MiniFFI class, also named Win32API on Windows
 // Uses LoadLibrary/GetProcAddress on Windows, dlopen/dlsym everywhere else
@@ -257,11 +252,7 @@ RB_METHOD(MiniFFI_call)
         }
         params[i] = lParam;
     }
-#ifdef __WIN32__
-    unsigned long ret = (unsigned long)ApiFunction(param);
-#else
     unsigned long ret = (unsigned long)ApiFunction(params[0],params[1],params[2],params[3],params[4],params[5],params[6],params[7]);
-#endif
     
     switch (FIX2INT(own_exports))
     {
