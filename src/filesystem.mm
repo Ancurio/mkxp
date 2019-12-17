@@ -28,6 +28,7 @@
 #import "util.h"
 #import "exception.h"
 #import "sharedstate.h"
+#import "eventthread.h"
 #import "boost-hash.h"
 #import "debugwriter.h"
 
@@ -451,6 +452,7 @@ cacheEnumCB(void *d, const char *origdir, const char *fname)
 		/* Get the file list for the directory we're currently
 		 * traversing and append this filename to it */
 		std::vector<std::string> &list = *data.fileLists.top();
+		
 		std::string lowerFilename(fname);
 		strTolower(lowerFilename);
 		list.push_back(lowerFilename);
@@ -598,7 +600,6 @@ openReadEnumCB(void *d, const char *dirpath, const char *filename)
 	}
 
 	char last = filename[data.filenameN];
-
 	/* If fname matches up to a following '.' (meaning the rest is part
 	 * of the extension), or up to a following '\0' (full match), we've
 	 * found our file */
@@ -666,7 +667,7 @@ void FileSystem::openRead(OpenHandler &handler, const char *filename)
 		file = delim+1;
 		dir = buffer;
 	}
-
+	shState->eThread().showMessageBox([[OFString stringWithFormat:@"%s,%s,%s",dir,file,buffer] UTF8String]);
 	OpenReadEnumData data(handler, file, len + buffer - delim - !root,
 	                      p->havePathCache ? &p->pathCache : 0);
 
@@ -707,39 +708,53 @@ void FileSystem::openReadRaw(SDL_RWops &ops,
 }
 
 
+
+
+// A bit obtuse, but it doesn't work unless I do it this way
+char* fixSeparators(const char* in, bool preferred)
+{
+	char* ret = new char[512];
+	OFString* inStr = @(in);
+	OFString* out;
+
+#ifdef __WINDOWS__
+	if (preferred)
+	{
+		out = [inStr stringByReplacingOccurrencesOfString:@"/" withString:@"\\" options:0 range:{[inStr length],0}];
+	}
+	else
+#endif
+	{
+		out = [inStr stringByReplacingOccurrencesOfString:@"\\" withString:@"/" options:0 range:{[inStr length],0}];
+	}
+
+	strncpy(ret, [out UTF8String], 512);
+
+	return ret;
+}
 // RGSS normalizes paths for at least audio
 // Essentials kind of takes this for granted
 // (`Audio/BGM/../../Audio/ME/[file]`)
 
 // SDL_SaveBMP wants absolute paths
 char* FileSystem::normalize(const char *pathname, bool preferred, bool absolute)
-{
-	char* ret = new char[512];
-	@autoreleasepool
+{@autoreleasepool{
+	id str = [OFString stringWithString:@(pathname)];
+	if (absolute)
 	{
-		id str = [OFMutableString stringWithUTF8String:pathname];
-
-		if (absolute)
-		{
-			@try{
-				OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
-				OFURL* purl = [OFURL fileURLWithPath:str];
-				OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
-				str = [OFMutableString stringWithString:path];
-			}
-			@catch(...){}
+		@try{
+			OFURL* base = [OFURL fileURLWithPath:[[OFFileManager defaultManager] currentDirectoryPath]];
+			OFURL* purl = [OFURL fileURLWithPath:str];
+			OFString* path = [[OFURL URLWithString:[purl string] relativeToURL:base] path];
+			str = [OFString stringWithString:path];
+#ifdef __WINDOWS__
+			str = [OFString stringWithString:[str substringWithRange:{1, ([str length]-1)}]];
+#endif
 		}
-
-	#ifdef __WIN32__
-		if (preferred)
-		{
-			[str replaceOccurrencesOfString:@"/" withString:@"\\"];
-		}
-	#endif
-		strncpy(ret, [[str stringByStandardizingPath] UTF8String], 512);
+		@catch(...){}
 	}
-	return ret;
-}
+	return fixSeparators([str UTF8String], preferred);
+}}
 
 bool FileSystem::exists(const char *filename)
 {
