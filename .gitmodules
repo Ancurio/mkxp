@@ -1,0 +1,3 @@
+[submodule "boost-unordered"]
+	path = boost-unordered
+	url = https://github.com/inori-z/mkxp-z-boost-unordered

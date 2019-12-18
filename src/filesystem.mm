@@ -613,6 +613,7 @@ openReadEnumCB(void *d, const char *dirpath, const char *filename)
 
 	PHYSFS_File *phys = PHYSFS_openRead(fullPath);
 
+
 	if (!phys)
 	{
 		/* Failing to open this file here means there must
@@ -623,7 +624,6 @@ openReadEnumCB(void *d, const char *dirpath, const char *filename)
 
 		return PHYSFS_ENUM_ERROR;
 	}
-
 	initReadOps(phys, data.ops, false);
 
 	const char *ext = findExt(filename);

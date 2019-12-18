@@ -36,6 +36,9 @@ if discord_libpath != ''
     endif
 endif
 
+# BOOST UNORDERED
+global_include_dirs += include_directories('boost-unordered')
+
 # ====================
 # Main source
 # ====================
