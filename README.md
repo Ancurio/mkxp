@@ -32,9 +32,8 @@ This binding should support RGSS1, RGSS2 and RGSS3, though I've only tested it w
 * [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7), if using Ruby 1.8
 * vorbisfile
 * pixman
-* zlib (only ruby bindings)
+* zlib
 * OpenGL header (alternatively GLES2 with `-Dcpp_args=-DGLES2_HEADER`)
-* libiconv (macOS only)
 
 (* For the F1 menu to work correctly under Linux/X11, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
 
@@ -235,8 +234,7 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 3. Install most of the dependencies you need with pacman:
 
 ```sh
-pacman -S base-devel git mingw-w64-i686-{gcc,meson,cmake,openal,boost,SDL2,pixman,physfs,libsigc++,libvorbis,fluidsynth,libiconv,libguess} \
-mingw-w64-i686-SDL2_{image,ttf}
+pacman -S base-devel git mingw-w64-i686-{clang,gcc-objc,meson,cmake,openal,SDL2,SDL2_image,SDL2_ttf,pixman,physfs,libsigc++,libvorbis,fluidsynth}
 ```
 
 4. Install the rest from source:
@@ -248,13 +246,13 @@ git clone https://github.com/ObjFW/ObjFW
 git clone https://github.com/inori-z/ruby --single-branch --branch ruby_1_8_7
 
 cd SDL_Sound && ./bootstrap
-./configure --enable-{modplug,speex,flac}=no
+./configure --disable-{modplug,speex,flac}
 make install -j`nproc`
 
 cd ../ObjFW
 ./autogen.sh
 ./configure
-make install -j`nproc`
+make -j`nproc`; make install 
 
 cd ../ruby
 
@@ -264,12 +262,9 @@ cd ../ruby
 
 rm -rf ext/{tk,win32ole,openssl}
 
-# and try building again afterwards. Or you can try to fix whatever
-# the problem is (missing libraries, usually). Hey, do whatever you need to
-# do, Capp’n.
 
 autoconf
-./configure --enable-shared --disable-install-doc
+CC=gcc ./configure --enable-shared --disable-install-doc
 make -j`nproc` && make install
 cd ..
 
@@ -282,15 +277,11 @@ cd ..
 5. Build mkxp-z:
 
 ```sh
-git clone https://github.com/inori-z/mkxp-z
+git clone --recurse-submodules https://github.com/inori-z/mkxp-z
 cd mkxp-z
 
-# Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
-# is a bit annoying) so you have to set include and link paths yourself.
-# for mingw32, includes will be at /mingw32/lib/ruby/1.8/i386-mingw32
-
-meson build -Druby_lib=msvcrt-ruby18 -Duse_fakeapi=true \
--Dcpp_args=-I/mingw32/lib/ruby/1.8/i386-mingw32
+# Make sure to build with Clang:
+OBJC=clang CXX=clang++ OBJCXX=clang++ meson build
 
 cd build
 ninja
@@ -305,8 +296,8 @@ You'll find your stuff under your MSYS home directory. You can also type `explor
 2. Get most of your dependencies from Homebrew:
 
 ```sh
-brew install meson cmake automake autoconf sdl2 sdl2_{image,ttf} objfw \
-boost pixman physfs libsigc++ libvorbis fluidsynth pkgconfig libtool
+brew install meson cmake automake autoconf sdl2 sdl2_{image,ttf}     \
+pixman physfs libsigc++ libvorbis fluidsynth pkgconfig libtool
 ```
 
 3. Build the rest from source:
@@ -314,11 +305,17 @@ boost pixman physfs libsigc++ libvorbis fluidsynth pkgconfig libtool
 ```sh
 mkdir ~/src; cd ~/src
 git clone https://github.com/Ancurio/SDL_Sound
+git clone https://github.com/ObjFW/ObjFW
 git clone https://github.com/inori-z/ruby --single-branch --branch ruby_1_8_7
 
 cd SDL_Sound && ./bootstrap
 ./configure
 make install -j`nproc`
+
+cd ../ObjFW
+./autogen.sh
+./configure
+make -j`nproc`; make install 
 
 cd ../ruby
 
@@ -346,21 +343,10 @@ cd ..
 4. Build mkxp-z:
 
 ```sh
-git clone https://github.com/inori-z/mkxp-z
+git clone --recurse-submodules https://github.com/inori-z/mkxp-z
+
 cd mkxp-z
-
-# Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
-# is a bit annoying) so you have to set include and link paths yourself.
-# the header folder that Ruby 1.8 creates for macOS includes a version 
-# number (i.e. `x86_64-darwin19.0.0`), and is going to be located under
-# `/usr/local/opt/mkxp-ruby/lib/ruby/1.8`.
-
-# You will also need to link to `/usr/local/opt/mkxp-ruby/lib`, and tell
-# meson where your pkgconfig path is (`/usr/local/lib/pkgconfig`).
-
-meson build -Dpkg_config_path=/usr/local/lib/pkgconfig \
--Dcpp_args=-I/usr/local/opt/mkxp-ruby/lib/ruby/1.8/x86_64-darwin19.0.0 \
--Dobjcpp_link_args=-L/usr/local/opt/mkxp-ruby/lib
+meson build -Dpkg_config_path=/usr/local/opt/mkxp-ruby/lib/pkgconfig
 
 cd build
 ninja
@@ -378,9 +364,9 @@ Your results will be in `~/src/mkxp-z/build` . You can type `open ~/src/mkxp-z/b
 2. Get most of the dependencies from apt:
 
 ```sh
-sudo apt install build-essential git bison cmake meson autoconf libtool \
-pkg-config xxd libsdl2* libvorbisfile3 libvorbis-dev libpixman-1* \
-libboost-program-options1.65* libopenal1*  libopenal-dev zlib1g* \
+sudo apt install build-essential git bison cmake meson clang gobjc \
+gobjc++ autoconf libtool pkg-config xxd libsdl2* libvorbisfile3    \
+libvorbis-dev libpixman-1* libopenal1*  libopenal-dev zlib1g*      \
 fluidsynth libfluidsynth-dev libsigc++-2.0* libogg-dev
 ```
 
@@ -414,10 +400,10 @@ sudo make install
 cd ../ObjFW
 ./autogen.sh
 ./configure
-make install -j`nproc`
+sudo make install -j`nproc`
 
 cd ../ruby && autoconf
-./configure --enable-shared --disable-install-doc
+CC=gcc ./configure --enable-shared --disable-install-doc
 make -j`nproc`
 sudo make install
 cd ..
@@ -426,15 +412,10 @@ cd ..
 4. Build mkxp-z:
 
 ```sh
-git clone https://github.com/inori-z/mkxp-z
+git clone --recurse-submodules https://github.com/inori-z/mkxp-z
 cd mkxp-z
 
-# Ruby 1.8 doesn’t support pkg-config (Might add it in, since this
-# is a bit annoying) so you have to set include and link paths yourself.
-# in this case, includes will be found at `/usr/local/lib/ruby/1.8/x86_64-linux`.
-
-meson build -Dcpp_args=-I/usr/local/lib/ruby/1.8/x86_64-linux
-
+OBJC=clang CXX=clang++ OBJCXX=clang++ meson build
 cd build
 ninja
 ```
