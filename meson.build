@@ -11,6 +11,10 @@ host_system = host_machine.system()
 
 compilers = {'cpp': meson.get_compiler('cpp'), 'objc': meson.get_compiler('objc'), 'objcpp': meson.get_compiler('objcpp')}
 
+if compilers['objc'].get_id() != 'clang'
+    error('This program must be built with Clang! ( try: OBJC=clang CXX=clang++ OBJCXX=clang++ meson build )')
+endif
+
 global_sources = []
 global_dependencies = []
 global_include_dirs = []
@@ -46,10 +50,7 @@ global_include_dirs += include_directories('boost-unordered')
 # Suppress warnings
 global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas']
 if compilers['objc'].get_id() == 'clang'
-    global_args += ['-Wno-undefined-var-template']
-    if host_system == 'darwin' or host_system == 'windows'
-        global_args += '-Wno-delete-non-abstract-non-virtual-dtor'
-    endif
+    global_args += ['-Wno-undefined-var-template', '-Wno-delete-non-abstract-non-virtual-dtor']
 endif
 
 if get_option('workdir_current')
@@ -78,11 +79,9 @@ add_project_arguments(run_command(objfw,'--objcflags').stdout().split(), languag
 add_project_link_arguments(run_command(objfw,'--libs','--ldflags').stdout().split(), language:['objc','objcpp'])
 
 # Make sure to use ARC
-if compilers['objc'].get_id() == 'clang'
-    add_project_arguments(run_command(objfw,'--arc').stdout().split(), language:['objc','objcpp'])
-    if host_system != 'darwin'
-        add_project_arguments('-fobjc-runtime=objfw', language:['objc','objcpp'])
-    endif
+add_project_arguments(run_command(objfw,'--arc').stdout().split(), language:['objc','objcpp'])
+if host_system != 'darwin'
+    add_project_arguments('-fobjc-runtime=objfw', language:['objc','objcpp'])
 endif
 
 
@@ -103,12 +102,10 @@ if host_system == 'windows'
     global_include_dirs += include_directories('windows')
 elif host_system == 'darwin'
     subdir('macos')
-    if compilers['cpp'].get_id() == 'clang'
-        add_project_arguments('-stdlib=libc++', language: ['cpp','objcpp'])
-        add_project_arguments('-std=c++11', language: 'objcpp')
-        global_args += '-mmacosx-version-min='+minimum_macos_version
-        global_link_args += '-mmacosx-version-min='+minimum_macos_version
-    endif
+    add_project_arguments('-stdlib=libc++', language: ['cpp','objcpp'])
+    add_project_arguments('-std=c++11', language: 'objcpp')
+    global_args += '-mmacosx-version-min='+minimum_macos_version
+    global_link_args += '-mmacosx-version-min='+minimum_macos_version
 else
     subdir('linux')
 endif
