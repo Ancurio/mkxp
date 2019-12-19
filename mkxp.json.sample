@@ -270,12 +270,12 @@
 
     // Activate "chorus" effect for midi playback
     //
-    // midi."chorus": false
+    // "midiChorus": false,
 
 
     // Activate "reverb" effect for midi playback
     //
-    // midi."reverb": false
+    // "midiReverb": false,
 
 
     // Number of OpenAL sources to allocate for SE playback.
@@ -283,7 +283,7 @@
     // and audibly cutting each other off, try increasing
     // this number. Maximum: 64.
     //
-    // SE."sourceCount": 6
+    // "SESourceCount": 6
 
 
     // The Windows game executable name minus ".exe". By default
