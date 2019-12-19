@@ -11,7 +11,6 @@ mkdir -p ${MESON_INSTALL_PREFIX}/usr/lib
 
 
 # Required by Ubuntu
-get_dep boost_program_options
 get_dep openal
 get_dep physfs
 get_dep SDL2-2.0
@@ -23,6 +22,8 @@ get_dep ruby
 get_dep sndio
 get_dep readline
 get_dep tinfo
+get_dep objfw
+get_dep objfwrt
 
 # Required by Fedora & Manjaro
 get_dep libXss

@@ -1,21 +1,16 @@
 # mkxp-z
 
-
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/inori-z/mkxp-z/latest?style=for-the-badge)
-![built with resentment](https://img.shields.io/badge/built_with-resentment-d55c32?style=for-the-badge)
-![Made for dark types](https://img.shields.io/badge/made_for-dark_types-71584a?style=for-the-badge)
-
 ![ss](/screenshot.png?raw=true)
 
 This is a fork of mkxp that is intended to run and alleviate the difficulty of porting games based on Pokemon Essentials. It's not necessarily intended to be a byte-for-byte copy of RGSS though, so non-standard extensions and optional enhancements can/will be written for fangame developers (you poor souls) to take advantage of.
 
 ## Bindings
-Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on Ruby 1.8 and as such the mruby and null bindings are not included. The original MRI bindings remain for the time being, with the possible intent of working with >=1.9 to better support RGSS3. Please see the original README for more details.
+Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on MRI and as such the mruby and null bindings are not included. The original MRI bindings remain. Please see the original README for more details.
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
 
-Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version of ruby. MRI 1.8.1 is what was used in RPG Maker XP, and 1.8.7 is what mkxp-z is written around (at least for now). 1.8.1 and 1.8.7 are for the most part identical, though there are a few differences that need to be ironed out before Essentials can be loaded.
+Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version of ruby. MRI 1.8.1 is what was used in RPG Maker XP, and 1.8.7 is the lowest that mkxp-z is prepared to let you go. 1.8.1 and 1.8.7 are for the most part identical, though there are a few differences that need to be ironed out before Essentials can be loaded (and are dealt with in my fork of 1.8.7).
 
 This binding should support RGSS1, RGSS2 and RGSS3, though I've only tested it with RGSS1.
 
