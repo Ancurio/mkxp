@@ -180,13 +180,12 @@ getPrivateDataCheck(VALUE self, const rb_data_type_t &type)
 getPrivateDataCheck(VALUE self, const char *type)
 #endif
 {
-#ifndef OLD_RUBY
-    void *obj = Check_TypedStruct(self, &type);
-#else // RGSS1 works in a more permissive way than the above,
-	  // See the function at ram:10012AB0 in RGSS104E for an example
-	  // This isn't an exact replica, but should have pretty much the same result
-    rb_check_type(self, T_DATA);
-    VALUE otherObj = rb_const_get(rb_cObject, rb_intern(type));
+	rb_check_type(self, T_DATA);
+#ifdef OLD_RUBY
+	VALUE otherObj = rb_const_get(rb_cObject, rb_intern(type));
+#else
+	VALUE otherObj = rb_const_get(rb_cObject, rb_intern(type.wrap_struct_name));
+#endif
 	const char *ownname, *othername;
 	if (!rb_obj_is_kind_of(self, otherObj))
 	{
@@ -194,9 +193,8 @@ getPrivateDataCheck(VALUE self, const char *type)
 		othername = rb_obj_classname(otherObj);
 		rb_raise(rb_eTypeError, "Can't convert %s into %s", othername, ownname);
 	}
-    void *obj = DATA_PTR(self);
-        
-#endif
+	void *obj = DATA_PTR(self);
+
 	return static_cast<C*>(obj);
 }
 
