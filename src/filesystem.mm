@@ -637,8 +637,6 @@ openReadEnumCB(void *d, const char *dirpath, const char *filename)
 
 void FileSystem::openRead(OpenHandler &handler, const char *filename)
 {
-	// FIXME: Paths with Windows drive letters don't
-	//        hecking work, apparently never did
 	char *filename_nm = normalize(filename, false, false);
 	char buffer[512];
 	size_t len = strcpySafe(buffer, filename_nm, sizeof(buffer), -1);
@@ -667,7 +665,6 @@ void FileSystem::openRead(OpenHandler &handler, const char *filename)
 		file = delim+1;
 		dir = buffer;
 	}
-	shState->eThread().showMessageBox([[OFString stringWithFormat:@"%s,%s,%s",dir,file,buffer] UTF8String]);
 	OpenReadEnumData data(handler, file, len + buffer - delim - !root,
 	                      p->havePathCache ? &p->pathCache : 0);
 

@@ -8,6 +8,7 @@
 #endif
 
 #ifdef USE_FAKEAPI
+#include <stddef.h>
 
 #ifdef __WIN32__
 #include <windows.h>
