@@ -29,12 +29,15 @@ binding_source = [files(
     'module_rpg.cpp',
     'filesystem-binding.cpp',
     'windowvx-binding.cpp',
-    'tilemapvx-binding.cpp',
-    'miniffi-binding.cpp'
+    'tilemapvx-binding.cpp'
 )]
 
 if discord == true
     binding_source += files('discord-binding.cpp')
+endif
+
+if miniffi == true
+    binding_source += files('miniffi-binding.cpp')
 endif
 
 global_sources += binding_source

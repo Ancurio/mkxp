@@ -53,6 +53,20 @@ if compilers['objc'].get_id() == 'clang'
     global_args += ['-Wno-undefined-var-template', '-Wno-delete-non-abstract-non-virtual-dtor']
 endif
 
+# Decide whether or not to use MiniFFI
+miniffi = get_option('use_miniffi')
+if miniffi == true
+    if compilers['cpp'].sizeof('void*') == compilers['cpp'].sizeof('long')
+        miniffi = true
+        global_args += '-DUSE_MINIFFI'
+    else
+        warning('64-bit MiniFFI is only supported on Linux and macOS.')
+        warning('To use MiniFFI/Win32API on Windows, target 32-bit.')
+        miniffi = false
+    endif
+endif
+
+# Defines
 if get_option('workdir_current')
     global_args += '-DWORKDIR_CURRENT'
 endif
@@ -61,7 +75,7 @@ if get_option('independent_appimage')
     global_args += '-DINDEPENDENT_APPIMAGE'
 endif
 
-if get_option('use_fakeapi')
+if get_option('use_fakeapi') == true and miniffi == true
     global_args += '-DUSE_FAKEAPI'
 endif
 
@@ -72,6 +86,7 @@ endif
 if get_option('mk')
     global_args += '-DMARIN'
 endif
+
 
 # Objectify our C
 global_args += run_command(objfw,'--cppflags').stdout().split()
