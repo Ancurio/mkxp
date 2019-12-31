@@ -1,7 +1,7 @@
 #if defined(__WIN32__)
 
-#import <windows.h>
 #import <stdlib.h>
+#import <windows.h>
 
 #else
 #import <locale>
@@ -12,9 +12,9 @@
 
 #endif
 
-#import <string>
-#import <cstring>
 #import "lang-fun.h"
+#import <cstring>
+#import <string>
 
 // ======================================================================
 // https://github.com/wine-mirror/wine/blob/master/dlls/kernel32/locale.c
@@ -29,59 +29,56 @@
  * things like script, variant, etc.  Or, rather, just construct it as
  * <lang>[_<country>].UTF-8.
  */
-NSString* get_mac_locale(void)
-{
-    NSMutableString* mac_locale = [NSMutableString string];
-    
-    if (mac_locale != nil)
-    {
-        NSLocale* locale = [NSLocale currentLocale];
-        NSString* lang = [locale languageCode];
-        NSString* country = [locale countryCode];
-        NSString* locale_string;
-        
-        if (country != nil)
-            locale_string = [NSString stringWithFormat:[NSString stringWithUTF8String:"%@_%@"], lang, country];
-        else
-            locale_string = [NSString stringWithString:lang];
+NSString *get_mac_locale(void) {
+  NSMutableString *mac_locale = [NSMutableString string];
 
-        [mac_locale appendFormat:[NSString stringWithUTF8String:"%@%@"], locale_string, [NSString stringWithUTF8String:".UTF-8"]];
-    }
-    return mac_locale;
+  if (mac_locale != nil) {
+    NSLocale *locale = NSLocale.currentLocale;
+    NSString *lang = locale.languageCode;
+    NSString *country = locale.countryCode;
+    NSString *locale_string;
+
+    if (country != nil)
+      locale_string =
+          [NSString stringWithFormat:[NSString stringWithUTF8String:"%@_%@"],
+                                     lang, country];
+    else
+      locale_string = [NSString stringWithString:lang];
+
+    [mac_locale appendFormat:[NSString stringWithUTF8String:"%@%@"],
+                             locale_string,
+                             [NSString stringWithUTF8String:".UTF-8"]];
+  }
+  return mac_locale;
 }
 #endif
 
-const char* getUserLanguage()
-{
-    static char buf[50] = {0};
+const char *getUserLanguage() {
+  static char buf[50] = {0};
 #if defined(__WIN32__)
-    wchar_t wbuf[50] = {0};
-    LANGID lid = GetUserDefaultLangID();
-    LCIDToLocaleName(lid, wbuf, sizeof(wbuf), 0);
-    wcstombs(buf, wbuf, sizeof(buf));
+  wchar_t wbuf[50] = {0};
+  LANGID lid = GetUserDefaultLangID();
+  LCIDToLocaleName(lid, wbuf, sizeof(wbuf), 0);
+  wcstombs(buf, wbuf, sizeof(buf));
 #else
-    strncpy(buf, std::locale("").name().c_str(), sizeof(buf));
+  strncpy(buf, std::locale("").name().c_str(), sizeof(buf));
 #ifdef __APPLE__
-    if (!buf[0]) strncpy(buf, [get_mac_locale() UTF8String], sizeof(buf));
+  if (!buf[0])
+    strncpy(buf, get_mac_locale().UTF8String, sizeof(buf));
 #endif
 #endif
 
-    for (int i = 0; (size_t)i < strlen(buf); i++)
-    {
+  for (int i = 0; (size_t)i < strlen(buf); i++) {
 #ifdef __WIN32__
-        if (buf[i] == '-')
-        {
-            buf[i] = '_';
+    if (buf[i] == '-') {
+      buf[i] = '_';
 #else
-        if (buf[i] == '.')
-        {
-            buf[i] = 0;
+    if (buf[i] == '.') {
+      buf[i] = 0;
 #endif
-            break;
-        }
+      break;
     }
-    
-    return buf;
+  }
+
+  return buf;
 }
-
-

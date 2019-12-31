@@ -84,6 +84,10 @@ if host_system != 'darwin'
     add_project_arguments('-fobjc-runtime=objfw', language:['objc','objcpp'])
 endif
 
+# (Fix cquery thinking ObjC headers are C++ headers in VSCode)
+add_project_arguments('-ObjC', language:'objc')
+add_project_arguments('-ObjC++', language:'objcpp')
+
 
 subdir('src')
 subdir('binding')
