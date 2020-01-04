@@ -1,9 +1,6 @@
-project('mkxp-z', 'cpp', 'objc', 'objcpp', version: '1.2.0', default_options: ['cpp_std=c++11', 'buildtype=release'])
+project('mkxp-z', 'cpp', 'objc', 'objcpp', version: '1.2.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release'])
 
 minimum_macos_version = get_option('macos_min_version')
-
-# The meson build is mostly directly copied from the old CMakeLists,
-# it still needs to be cleaned up
 
 xxd = find_program('xxd', native: true)
 objfw = find_program('objfw-config', native: true)
@@ -109,11 +106,7 @@ subdir('binding')
 subdir('shader')
 subdir('assets')
 
-#all_sources = [main, bindings, processed_shaders, processed_assets]
 global_include_dirs += include_directories('src', 'binding')
-
-# Disable some warnings
-#add_project_arguments(['-Wno-reorder', '-Wno-non-virtual-dtor', '-Wno-uninitialized'], language: 'cpp')
 
 if host_system == 'windows'
     subdir('windows')
@@ -122,7 +115,7 @@ if host_system == 'windows'
 elif host_system == 'darwin'
     subdir('macos')
     add_project_arguments('-stdlib=libc++', language: ['cpp','objcpp'])
-    add_project_arguments('-std=c++11', language: 'objcpp')
+    add_project_arguments('-std=c++11', language: 'objcpp') # Meson's cpp_std doesn't work on ObjC for some reason
     global_args += '-mmacosx-version-min='+minimum_macos_version
     global_link_args += '-mmacosx-version-min='+minimum_macos_version
 else
