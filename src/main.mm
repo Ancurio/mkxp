@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
     SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
 
     /* initialize SDL first */
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC) < 0) {
       showInitError(std::string("Error initializing SDL: ") + SDL_GetError());
       return 0;
     }
