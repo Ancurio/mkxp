@@ -120,6 +120,7 @@ elif host_system == 'darwin'
     global_link_args += '-mmacosx-version-min='+minimum_macos_version
 else
     subdir('linux')
+    add_project_arguments('-std=c++11', language: 'objcpp')
 endif
 
 executable(meson.project_name(),

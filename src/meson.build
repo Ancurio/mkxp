@@ -1,4 +1,4 @@
-sigcxx = dependency('sigc++-2.0')
+sigcxx = dependency('sigc++-2.0', version: '>=2.10.0')
 pixman = dependency('pixman-1')
 physfs = dependency('physfs', version: '>=2.1')
 vorbisfile = dependency('vorbisfile')
