@@ -19,9 +19,13 @@ typedef unsigned int DWORD, UINT, *LPDWORD;
 typedef char BYTE, *LPSTR, *LPCSTR, *LPCTSTR, *LPTSTR, *PBYTE;
 typedef short SHORT;
 typedef int LONG;
+
 #ifdef __APPLE__
 typedef signed char BOOL;
+#else
+typedef bool BOOL;
 #endif
+
 typedef void VOID, *LPVOID, *HANDLE, *HMODULE, *HWND;
 typedef size_t SIZE_T;
 
