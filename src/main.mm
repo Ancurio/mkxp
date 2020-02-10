@@ -49,7 +49,7 @@
 
 #import "icon.png.xxd"
 
-#ifdef __APPLE__
+#ifndef THREADED_GLINIT
 #define GLINIT_SHOWERROR(s) showInitError(s)
 #else
 #define GLINIT_SHOWERROR(s) rgssThreadError(threadData, s)
@@ -75,7 +75,7 @@ static SDL_GLContext initGL(SDL_Window *win, Config &conf,
 int rgssThreadFun(void *userdata) {
   RGSSThreadData *threadData = static_cast<RGSSThreadData *>(userdata);
 
-#ifndef __APPLE__
+#ifdef THREADED_GLINIT
   threadData->glContext =
       initGL(threadData->window, threadData->config, threadData);
   if (!threadData->glContext)
@@ -322,7 +322,7 @@ int main(int argc, char *argv[]) {
 
     EventThread eventThread;
 
-#ifdef __APPLE__
+#ifndef THREADED_GLINIT
     SDL_GLContext glCtx = initGL(win, conf, 0);
 #else
     SDL_GLContext glCtx = NULL;
