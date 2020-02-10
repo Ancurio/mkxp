@@ -47,6 +47,10 @@
 #import <iconv.h>
 #endif
 
+#ifdef __WINDOWS__
+#import <direct.h>
+#endif
+
 struct SDLRWIoContext {
   SDL_RWops *ops;
   std::string filename;
@@ -630,31 +634,6 @@ void FileSystem::openReadRaw(SDL_RWops &ops, const char *filename,
   initReadOps(handle, ops, freeOnClose);
 }
 
-// A bit obtuse, but it doesn't work unless I do it this way
-char *fixSeparators(const char *in, bool preferred) {
-  char *ret = new char[512];
-  OFString *inStr = @(in);
-  OFString *out;
-
-#ifdef __WINDOWS__
-  if (preferred) {
-    out = [inStr stringByReplacingOccurrencesOfString:@"/"
-                                           withString:@"\\"
-                                              options:0
-                                                range:{inStr.length, 0}];
-  } else
-#endif
-  {
-    out = [inStr stringByReplacingOccurrencesOfString:@"\\"
-                                           withString:@"/"
-                                              options:0
-                                                range:{inStr.length, 0}];
-  }
-
-  strncpy(ret, [out UTF8String], 512);
-
-  return ret;
-}
 // RGSS normalizes paths for at least audio
 // Essentials kind of takes this for granted
 // (`Audio/BGM/../../Audio/ME/[file]`)
@@ -663,24 +642,28 @@ char *fixSeparators(const char *in, bool preferred) {
 char *FileSystem::normalize(const char *pathname, bool preferred,
                             bool absolute) {
   @autoreleasepool {
-    id str = [OFString stringWithString:@(pathname)];
-    if (absolute) {
-      @try {
-        OFURL *base = [OFURL
-            fileURLWithPath:OFFileManager.defaultManager.currentDirectoryPath];
-        OFURL *purl = [OFURL fileURLWithPath:str];
-        OFString *path =
-            [OFURL URLWithString:purl.string relativeToURL:base].path;
-        str = [path copy];
-#ifdef __WINDOWS__
-        str = [OFString
-            stringWithString:[str substringWithRange:{1, ([str length] - 1)}]];
-#endif
-      } @catch (...) {
-      }
+    OFMutableString *str = @(pathname).mutableCopy;
+
+    if (absolute && !str.absolutePath) {
+      [str prependString:@"/"];
+      [str prependString:OFFileManager.defaultManager.currentDirectoryPath];
     }
-    return fixSeparators([str UTF8String], preferred);
-  }
+    str = str.stringByStandardizingPath.mutableCopy;
+#ifdef __WINDOWS__
+    if (preferred) {
+      [str replaceOccurrencesOfString:@"/" withString:@"\\"];
+    } else {
+      [str replaceOccurrencesOfString:@"\\" withString:@"/"];
+    }
+#else
+    [str replaceOccurrencesOfString:@"\\" withString:@"/"];
+#endif
+
+    [str makeImmutable];
+    char *ret = new char[300];
+    strncpy(ret, str.UTF8String, 300);
+    return ret;
+  };
 }
 
 bool FileSystem::exists(const char *filename) {

@@ -1,4 +1,4 @@
-project('mkxp-z', 'cpp', 'objc', 'objcpp', version: '1.2.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'objcpp_std=c++11','buildtype=release'])
+project('mkxp-z', 'cpp', 'objc', 'objcpp', version: '1.2.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release'])
 
 minimum_macos_version = get_option('macos_min_version')
 
