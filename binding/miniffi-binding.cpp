@@ -5,6 +5,7 @@
 #include <SDL.h>
 
 #include "binding-util.h"
+#include "debugwriter.h"
 
 #define _T_VOID 0
 #define _T_NUMBER 1
@@ -20,6 +21,10 @@
 // to set all those variables up and ease the eyesore, and I don't
 // think there are many functions one would need to use that require
 // that many arguments anyway
+
+typedef struct {
+  unsigned long params[8];
+} MiniFFIFuncArgs;
 
 // L O N G, but variables won't get set up correctly otherwise
 // should allow for __fastcalls (macOS likes these) and whatever else
@@ -213,9 +218,7 @@ RB_METHOD(MiniFFI_initialize) {
 }
 
 RB_METHOD(MiniFFI_call) {
-  struct {
-    unsigned long params[8];
-  } param;
+  MiniFFIFuncArgs param;
 #define params param.params
   VALUE func = rb_iv_get(self, "_func");
   VALUE own_imports = rb_iv_get(self, "_imports");
@@ -256,9 +259,35 @@ RB_METHOD(MiniFFI_call) {
     }
     params[i] = lParam;
   }
+#ifndef __WINDOWS__
   unsigned long ret =
       (unsigned long)ApiFunction(params[0], params[1], params[2], params[3],
                                  params[4], params[5], params[6], params[7]);
+
+// Setting stdcall doesn't work anymore, I HATE WINDOWS
+#else
+  unsigned long ret = 0;
+  asm volatile(".intel_syntax noprefix\n"
+               "test ecx, ecx\n"
+               "jz call_void\n"
+               "sub ecx, 4\n"
+               "test ecx, ecx\n"
+               "jz loop_end\n"
+               "loop_start:\n"
+               "mov eax, [esi+ecx]\n"
+               "push eax\n"
+               "sub ecx, 4\n"
+               "test ecx, ecx\n"
+               "jnz loop_start\n"
+               "loop_end:\n"
+               "mov eax, [esi]\n"
+               "push eax\n"
+               "call_void:\n"
+               "call edi"
+               : "+a"(ret)
+               : "c"(nimport * 4), "S"(&param), "D"(ApiFunction)
+               : "memory");
+#endif
 
   switch (FIX2INT(own_exports)) {
   case _T_NUMBER:
