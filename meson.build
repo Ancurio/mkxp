@@ -1,4 +1,4 @@
-project('mkxp-z', 'cpp', 'objc', 'objcpp', version: '1.2.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release'])
+project('mkxp-z', 'cpp', 'objc', 'objcpp', version: '1.2.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release', 'warning_level=0'])
 
 minimum_macos_version = get_option('macos_min_version')
 
@@ -45,7 +45,7 @@ global_include_dirs += include_directories('boost-unordered')
 # ====================
 
 # Suppress warnings
-global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas']
+global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas', '-Wno-unknown-warning-option']
 if compilers['objc'].get_id() == 'clang'
     global_args += ['-Wno-undefined-var-template', '-Wno-delete-non-abstract-non-virtual-dtor']
 endif
