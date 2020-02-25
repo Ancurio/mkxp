@@ -1,4 +1,8 @@
 option('mri_version', type: 'string', value: '1.8', description: 'Version of MRI to link with')
+option('mri_includes', type: 'string', value: '', description: 'Ruby manual include path')
+option('mri_libpath', type: 'string', value: '', description: 'Ruby manual lib path')
+option('mri_library', type: 'string', value: '', description: 'Ruby manual link name')
+
 option('mk', type: 'boolean', value: false, description: 'Build to fit Marin\'s MK standard')
 option('console', type: 'boolean', value: false, description: 'Whether to debug information in the console')
 option('macos_min_version', type: 'string', value: '10.12', description: 'Minimum macOS system version to support')

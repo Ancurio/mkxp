@@ -1,9 +1,14 @@
 
-ver = get_option('mri_version')
-if ver.version_compare('>1.8') == false
-    add_project_arguments('-DOLD_RUBY', language: ['cpp','objc','objcpp'])
+if get_option('mri_includes') == ''
+    ver = get_option('mri_version')
+    if ver.version_compare('>1.8') == false
+        add_project_arguments('-DOLD_RUBY', language: ['cpp','objc','objcpp'])
+    endif
+    global_dependencies += dependency('ruby-' + ver)
+else
+    global_args += ('-I' + get_option('mri_includes'))
+    global_dependencies += compilers['cpp'].find_library(get_option('mri_library'), dirs: get_option('mri_libpath'))
 endif
-global_dependencies += dependency('ruby-' + ver)
 
 if get_option('no_preload_scripts') == true
     add_project_arguments('-DNO_PRELOAD_SCRIPTS', language: ['cpp','objc','objcpp'])

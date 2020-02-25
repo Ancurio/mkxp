@@ -22,7 +22,7 @@
 #include "audio.h"
 #include "binding-util.h"
 #include "binding.h"
-#include "config.h"
+#include "src/config.h"
 #include "debugwriter.h"
 #include "eventthread.h"
 #include "filesystem.h"
@@ -30,7 +30,7 @@
 #include "lang-fun.h"
 #include "sdl-util.h"
 #include "sharedstate.h"
-#include "util.h"
+#include "src/util.h"
 
 #include "boost-hash.h"
 #include <vector>

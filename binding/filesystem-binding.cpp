@@ -23,8 +23,8 @@
 
 #include "sharedstate.h"
 #include "filesystem.h"
-#include "config.h"
-#include "util.h"
+#include "src/config.h"
+#include "src/util.h"
 
 #ifndef OLD_RUBY
 #include "ruby/encoding.h"
@@ -185,7 +185,7 @@ RB_METHOD(kernelLoadData)
 			rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
 	}
 	
-	if (!shState->config().compressedGraphics)
+	if (!shState->config().encryptedGraphics)
 	{
 		VALUE isGraphicsFile = rb_funcall(filename,
 																		rb_intern("start_with?"),

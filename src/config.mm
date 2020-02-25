@@ -82,7 +82,7 @@ void Config::read(int argc, char *argv[]) {
     @"SESourceCount" : @6,
     @"customScript" : @"",
     @"pathCache" : @true,
-    @"compressedGraphics" : @false,
+    @"encryptedGraphics" : @false,
 #ifdef HAVE_DISCORDSDK
     @"discordClientId" : @DEFAULT_CLIENT_ID,
 #endif
@@ -169,7 +169,7 @@ void Config::read(int argc, char *argv[]) {
   SET_OPT_CUSTOMKEY(SE.sourceCount, SESourceCount, intValue);
   SET_STRINGOPT(customScript, customScript);
   SET_OPT(pathCache, boolValue);
-  SET_OPT(compressedGraphics, boolValue);
+  SET_OPT(encryptedGraphics, boolValue);
   SET_OPT(useScriptNames, boolValue);
 
   fillStringVec(opts[@"preloadScript"], preloadScripts);
