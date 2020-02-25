@@ -98,8 +98,8 @@ void initGLFunctions()
 	/* Assume single digit */
 	int glMajor = *ver - '0';
 
-	if (glMajor < 2)
-		throw EXC("At least OpenGL (ES) 2.0 is required");
+	if (glMajor < 4)
+		throw EXC("At least OpenGL 4.0 is required"); // Actually 4.1
 
 	if (gles)
 	{
