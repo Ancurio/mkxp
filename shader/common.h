@@ -1,4 +1,4 @@
-#version 410
+#version 330
 #define attribute in
 #define varying out
 
