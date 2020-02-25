@@ -3,7 +3,6 @@ option('mk', type: 'boolean', value: false, description: 'Build to fit Marin\'s 
 option('console', type: 'boolean', value: false, description: 'Whether to debug information in the console')
 option('macos_min_version', type: 'string', value: '10.12', description: 'Minimum macOS system version to support')
 option('threaded_gl_init', type: 'boolean', value: true, description: 'Init GL on secondary thread')
-option('gl3', type: 'boolean', value: false, description: 'Use OpenGL 3.3 instead of 4.1')
 
 option('shared_fluid', type: 'boolean', value: false, description: 'Dynamically link fluidsynth at build time')
 option('cjk_fallback_font', type: 'boolean', value: false, description: 'Use WenQuanYi Micro Hei as the fallback font')
