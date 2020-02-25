@@ -1,15 +1,8 @@
-#ifdef GLSLES
-
-#ifdef FRAGMENT_SHADER
-/* Only the fragment shader has no default float precision */
-precision mediump float;
-#endif
-
-#else
+#version 330
+#define attribute in
+#define varying out
 
 /* Desktop GLSL doesn't know about these */
 #define highp
 #define mediump
 #define lowp
-
-#endif

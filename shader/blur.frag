@@ -1,16 +1,17 @@
 
-uniform sampler2D texture;
+uniform sampler2D v_texture;
 
-varying vec2 v_texCoord;
-varying vec2 v_blurCoord[2];
+in vec2 v_texCoord;
+in vec2 v_blurCoord[2];
 
-void main()
-{
-	lowp vec4 frag = vec4(0, 0, 0, 0);
+out vec4 fragColor;
 
-	frag += texture2D(texture, v_texCoord);
-	frag += texture2D(texture, v_blurCoord[0]);
-	frag += texture2D(texture, v_blurCoord[1]);
+void main() {
+  lowp vec4 frag = vec4(0, 0, 0, 0);
 
-	gl_FragColor = frag / 3.0;
+  frag += texture(v_texture, v_texCoord);
+  frag += texture(v_texture, v_blurCoord[0]);
+  frag += texture(v_texture, v_blurCoord[1]);
+
+  fragColor = frag / 3.0;
 }
