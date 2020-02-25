@@ -97,10 +97,9 @@ void initGLFunctions()
 
 	/* Assume single digit */
 	int glMajor = *ver - '0';
-	int glMinor = ver[2] - '0';
 
-	if (glMajor < Z_GL_MAJOR || glMinor < Z_GL_MINOR)
-		throw EXC("OpenGL (ES) version >= 2.1 required");
+	if (glMajor < 2)
+		throw EXC("OpenGL (ES) version >= 2 required");
 
 	if (gles)
 	{
