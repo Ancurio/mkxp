@@ -99,7 +99,7 @@ void initGLFunctions()
 	int glMajor = *ver - '0';
 	int glMinor = ver[2] - '0';
 
-	if (glMajor < Z_GL_MAJOR || glMajor < Z_GL_MINOR)
+	if (glMajor < Z_GL_MAJOR || glMinor < Z_GL_MINOR)
 		throw EXC("Insufficient OpenGL version");
 
 	if (gles)
