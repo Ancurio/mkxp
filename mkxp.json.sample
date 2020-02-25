@@ -21,6 +21,20 @@
     // "rgssVersion": 1,
 
 
+    // Request an OpenGL 4.1 context. This
+    // introduces these minimum requirements
+    // for GPUs:
+    //
+    // +    NVIDIA 400 Series+
+    // +    AMD Radeon HD 5000+
+    // +    Intel HD Graphics 4000+
+    //
+    // If disabled, OpenGL 3.3 is used instead.
+    // (default: enabled)
+    //
+    // "openGL4": true,
+
+
     // Create a debug context and log
     // OpenGL debug information to the console
     // (default: disabled)
@@ -219,6 +233,28 @@
     //
     // "pathCache": true,
 
+    // In some versions of Essentials, overworld code
+    // requests the player's sprite texture from disk
+    // at least once every frame. The damage this
+    // causes is less perceptible in RPG Maker XP,
+    // but MKXP's RGSSAD code is much slower and will
+    // cause games to lag. Hard.
+    //
+    // I have no interest in fixing it, because:
+    //
+    // (A) I don't see any point in such frail encryption, and
+    // (B) One can easily replicate load_data entirely in Ruby
+    // (https://gist.github.com/inori-z/0800dbdc213b9936e0e81f64c9a98c4c)
+    //
+    // If you insist on using archives, you can use a
+    // version of Essentials that isn't broken,
+    // otherwise come up with your own solution
+    // (there are many), or leave your Graphics files
+    // loose and disable this option.
+    // (default: false)
+    //
+    // "compressedGraphics": false,
+
 
     // Add 'rtp1', 'rtp2.zip' and 'game.rgssad' to the
     // asset search path (multiple allowed)
@@ -259,7 +295,7 @@
     // (default: none)
     //
     // "rubyLoadpath": ["/usr/lib64/ruby/",
-    //                  "/usr/local/share/ruby/site_ruby]"],
+    //                  "/usr/local/share/ruby/site_ruby"],
 
 
     // SoundFont to use for midi playback (via fluidsynth)

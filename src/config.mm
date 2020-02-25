@@ -50,6 +50,7 @@ Config::Config() {}
 void Config::read(int argc, char *argv[]) {
   OFMutableDictionary *opts = @{
     @"rgssVersion" : @0,
+    @"openGL4" : @true,
     @"debugMode" : @false,
     @"printFPS" : @false,
     @"winResizable" : @true,
@@ -81,6 +82,7 @@ void Config::read(int argc, char *argv[]) {
     @"SESourceCount" : @6,
     @"customScript" : @"",
     @"pathCache" : @true,
+    @"compressedGraphics" : @false,
 #ifdef HAVE_DISCORDSDK
     @"discordClientId" : @DEFAULT_CLIENT_ID,
 #endif
@@ -167,6 +169,7 @@ void Config::read(int argc, char *argv[]) {
   SET_OPT_CUSTOMKEY(SE.sourceCount, SESourceCount, intValue);
   SET_STRINGOPT(customScript, customScript);
   SET_OPT(pathCache, boolValue);
+  SET_OPT(compressedGraphics, boolValue);
   SET_OPT(useScriptNames, boolValue);
 
   fillStringVec(opts[@"preloadScript"], preloadScripts);
@@ -175,6 +178,14 @@ void Config::read(int argc, char *argv[]) {
   fillStringVec(opts[@"rubyLoadpath"], rubyLoadpaths);
   rgssVersion = clamp(rgssVersion, 0, 3);
   SE.sourceCount = clamp(SE.sourceCount, 1, 64);
+
+  if ([opts[@"openGL4"] boolValue]) {
+    glVersion.major = 4;
+    glVersion.minor = 1;
+  } else {
+    glVersion.major = 3;
+    glVersion.minor = 3;
+  }
 #ifdef HAVE_DISCORDSDK
   SET_OPT(discordClientId, longLongValue);
 #endif

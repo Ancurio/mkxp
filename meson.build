@@ -89,14 +89,6 @@ if get_option('threaded_gl_init')
     global_args += '-DTHREADED_GLINIT'
 endif
 
-# Mainly for virtual machines
-if get_option('gl3')
-    global_args += ['-DZ_GL_MINOR=3','-DZ_GL_MAJOR=3']
-else
-    global_args += ['-DZ_GL_MINOR=1','-DZ_GL_MAJOR=4']
-endif
-
-
 # Objectify our C
 global_args += run_command(objfw,'--cppflags').stdout().split()
 add_project_arguments(run_command(objfw,'--objcflags').stdout().split(), language:['objc','objcpp'])

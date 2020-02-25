@@ -22,100 +22,103 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
 
 #ifdef HAVE_DISCORDSDK
 #include <discord_game_sdk.h>
 #endif
 
-struct Config
-{
-	int rgssVersion;
+struct Config {
+  int rgssVersion;
 
-	bool debugMode;
-	bool printFPS;
+  struct {
+    char major;
+    char minor;
+  } glVersion;
 
-	bool winResizable;
-	bool fullscreen;
-	bool fixedAspectRatio;
-	bool smoothScaling;
-	bool vsync;
+  bool debugMode;
+  bool printFPS;
 
-	int defScreenW;
-	int defScreenH;
-	std::string windowTitle;
+  bool winResizable;
+  bool fullscreen;
+  bool fixedAspectRatio;
+  bool smoothScaling;
+  bool vsync;
 
-	int fixedFramerate;
-	bool frameSkip;
-	bool syncToRefreshrate;
+  int defScreenW;
+  int defScreenH;
+  std::string windowTitle;
 
-	bool solidFonts;
+  int fixedFramerate;
+  bool frameSkip;
+  bool syncToRefreshrate;
 
-	bool subImageFix;
-	bool enableBlitting;
-	int maxTextureSize;
+  bool solidFonts;
 
-	std::string gameFolder;
-	bool anyAltToggleFS;
-	bool enableReset;
-	bool allowSymlinks;
-	bool pathCache;
+  bool subImageFix;
+  bool enableBlitting;
+  int maxTextureSize;
 
-	std::string dataPathOrg;
-	std::string dataPathApp;
+  std::string gameFolder;
+  bool anyAltToggleFS;
+  bool enableReset;
+  bool allowSymlinks;
+  bool pathCache;
+  bool compressedGraphics;
 
-	std::string iconPath;
-	std::string execName;
-	std::string titleLanguage;
+  std::string dataPathOrg;
+  std::string dataPathApp;
 
-	struct
-	{
-		std::string soundFont;
-		bool chorus;
-		bool reverb;
-	} midi;
+  std::string iconPath;
+  std::string execName;
+  std::string titleLanguage;
 
-	struct
-	{
-		int sourceCount;
-	} SE;
+  struct {
+    std::string soundFont;
+    bool chorus;
+    bool reverb;
+  } midi;
 
-	bool useScriptNames;
-    
+  struct {
+    int sourceCount;
+  } SE;
+
+  bool useScriptNames;
+
 #ifdef HAVE_DISCORDSDK
-    DiscordClientId discordClientId;
+  DiscordClientId discordClientId;
 #endif
 
-	std::string customScript;
-	std::vector<std::string> preloadScripts;
-	std::vector<std::string> rtps;
+  std::string customScript;
+  std::vector<std::string> preloadScripts;
+  std::vector<std::string> rtps;
 
-	std::vector<std::string> fontSubs;
+  std::vector<std::string> fontSubs;
 
-	std::vector<std::string> rubyLoadpaths;
+  std::vector<std::string> rubyLoadpaths;
 
-	/* Editor flags */
-	struct {
-		bool debug;
-		bool battleTest;
-	} editor;
+  /* Editor flags */
+  struct {
+    bool debug;
+    bool battleTest;
+  } editor;
 
-	/* Game INI contents */
-	struct {
-		std::string scripts;
-		std::string title;
-	} game;
+  /* Game INI contents */
+  struct {
+    std::string scripts;
+    std::string title;
+  } game;
 
-	/* Internal */
-	std::string customDataPath;
-	std::string commonDataPath;
+  /* Internal */
+  std::string customDataPath;
+  std::string commonDataPath;
 
-	Config();
+  Config();
 
-	void read(int argc, char *argv[]);
-	void readGameINI();
+  void read(int argc, char *argv[]);
+  void readGameINI();
 };
 
 #endif // CONFIG_H

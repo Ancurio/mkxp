@@ -23,6 +23,7 @@
 
 #include "sharedstate.h"
 #include "filesystem.h"
+#include "config.h"
 #include "util.h"
 
 #ifndef OLD_RUBY
@@ -174,33 +175,31 @@ RB_METHOD(kernelLoadData)
 	RB_UNUSED_PARAM;
 
 	VALUE filename;
-    VALUE raw;
+  VALUE raw;
 	rb_scan_args(argc, argv, "11", &filename, &raw);
-    SafeStringValue(filename);
-    
-    // There's gotta be an easier way to do this
-    if (raw != Qnil && raw != Qtrue && raw != Qfalse)
-    {
-        rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
-    }
-    
-    // Until a faster method for getting RGSSAD data is
-    // written (could just copy RMXP, keeping stuff in
-    // memory and just passing char pointers can't be
-    // that complicated), load_data is still too slow
-    // to handle the overworld load_data assault
-    VALUE isGraphicsFile = rb_funcall(filename,
-                                      rb_intern("start_with?"),
-                                      1,
-                                      rb_str_new2("Graphics"));
-    
-    if (isGraphicsFile == Qtrue)
-    {
-        VALUE f = rb_file_open_str(filename, "rb");
-        VALUE ret = rb_funcall(f, rb_intern("read"), 0);
-        rb_funcall(f, rb_intern("close"), 0);
-        return ret;
-    }
+	SafeStringValue(filename);
+	
+	// There's gotta be an easier way to do this
+	if (raw != Qnil && raw != Qtrue && raw != Qfalse)
+	{
+			rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
+	}
+	
+	if (!shState->config().compressedGraphics)
+	{
+		VALUE isGraphicsFile = rb_funcall(filename,
+																		rb_intern("start_with?"),
+																		1,
+																		rb_str_new2("Graphics"));
+	
+		if (isGraphicsFile == Qtrue)
+		{
+				VALUE f = rb_file_open_str(filename, "rb");
+				VALUE ret = rb_funcall(f, rb_intern("read"), 0);
+				rb_funcall(f, rb_intern("close"), 0);
+				return ret;
+		}
+	}
 	return kernelLoadDataInt(RSTRING_PTR(filename), true, RTEST(raw));
 }
 

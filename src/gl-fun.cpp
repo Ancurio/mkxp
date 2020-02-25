@@ -100,7 +100,7 @@ void initGLFunctions()
 	int glMinor = ver[2] - '0';
 
 	if (glMajor < Z_GL_MAJOR || glMinor < Z_GL_MINOR)
-		throw EXC("Insufficient OpenGL version");
+		throw EXC("OpenGL (ES) version >= 2.1 required");
 
 	if (gles)
 	{
