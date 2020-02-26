@@ -204,7 +204,7 @@ RB_METHOD(kernelSaveData) {
 #if RAPI_FULL < 270
 static VALUE stringForceUTF8(VALUE arg)
 #else
-static VALUE stringForceUTF8(RB_BLOCK_CALL_FUNC_ARGLIST(yielded_arg, arg))
+static VALUE stringForceUTF8(RB_BLOCK_CALL_FUNC_ARGLIST(arg, callback_arg))
 #endif
 {
   if (RB_TYPE_P(arg, RUBY_T_STRING) && ENCODING_IS_ASCII8BIT(arg))
