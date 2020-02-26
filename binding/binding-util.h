@@ -202,13 +202,14 @@ getPrivateDataCheck(VALUE self, const char *type)
     rb_raise(rb_eTypeError, "Can't convert %s into %s", othername, ownname);
   }
   void *obj = DATA_PTR(self);
-#endif
+#else
   const char *ownname = rb_obj_classname(self);
   if (!rb_typeddata_is_kind_of(self, &type))
     rb_raise(rb_eTypeError, "Can't convert %s into %s", ownname,
              type.wrap_struct_name);
 
   void *obj = RTYPEDDATA_DATA(self);
+#endif
   return static_cast<C *>(obj);
 }
 
