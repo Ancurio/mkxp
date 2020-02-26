@@ -73,9 +73,15 @@ void raiseRbExc(const Exception &exc);
 #endif
 
 #ifndef OLD_RUBY
+#if RUBYCOMPAT < 270
 #define DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, Free)                        \
   rb_data_type_t Klass##Type = {                                               \
       Name, {0, Free, 0, {0, 0}}, 0, 0, DEF_TYPE_FLAGS}
+#else
+#define DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, Free)                        \
+  rb_data_type_t Klass##Type = {                                               \
+      Name, {0, Free, 0, 0, 0}, 0, 0, DEF_TYPE_FLAGS}
+#endif
 
 #define DEF_TYPE_CUSTOMFREE(Klass, Free)                                       \
   DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, #Klass, Free)
@@ -172,14 +178,13 @@ getPrivateDataCheck(VALUE self, const rb_data_type_t &type)
 getPrivateDataCheck(VALUE self, const char *type)
 #endif
 {
-#ifndef OLD_RUBY
-  void *obj = Check_TypedStruct(self, &type);
-#else // RGSS1 works in a more permissive way than the above,
-      // See the function at ram:10012AB0 in RGSS104E for an example
-      // This isn't an exact replica, but should have pretty much the same
-      // result
+#ifdef OLD_RUBY
   rb_check_type(self, T_DATA);
   VALUE otherObj = rb_const_get(rb_cObject, rb_intern(type));
+#else
+  Check_TypedStruct(self, &type);
+  VALUE otherObj = rb_const_get(rb_cObject, rb_intern(type.wrap_struct_name));
+#endif
   const char *ownname, *othername;
   if (!rb_obj_is_kind_of(self, otherObj)) {
     ownname = rb_obj_classname(self);
@@ -188,7 +193,6 @@ getPrivateDataCheck(VALUE self, const char *type)
   }
   void *obj = DATA_PTR(self);
 
-#endif
   return static_cast<C *>(obj);
 }
 

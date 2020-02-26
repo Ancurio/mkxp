@@ -4,6 +4,9 @@ if get_option('mri_includes') == ''
     if ver.version_compare('>1.8') == false
         add_project_arguments('-DOLD_RUBY', language: ['cpp','objc','objcpp'])
     endif
+    if ver.version_compare('>=2.7') == true
+        add_project_arguments('-DRUBYCOMPAT=270', language: ['cpp', 'objc', 'objcpp'])
+    endif
     global_dependencies += dependency('ruby-' + ver)
 else
     global_args += ('-I' + get_option('mri_includes'))
