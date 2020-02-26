@@ -195,10 +195,6 @@ getPrivateDataCheck(VALUE self, const char *type)
 #if RAPI_FULL <= 187
   rb_check_type(self, T_DATA);
   VALUE otherObj = rb_const_get(rb_cObject, rb_intern(type));
-#else
-  Check_TypedStruct(self, &type);
-  VALUE otherObj = rb_const_get(rb_cObject, rb_intern(type.wrap_struct_name));
-#endif
   const char *ownname, *othername;
   if (!rb_obj_is_kind_of(self, otherObj)) {
     ownname = rb_obj_classname(self);
@@ -206,7 +202,13 @@ getPrivateDataCheck(VALUE self, const char *type)
     rb_raise(rb_eTypeError, "Can't convert %s into %s", othername, ownname);
   }
   void *obj = DATA_PTR(self);
+#endif
+  const char *ownname = rb_obj_classname(self);
+  if (!rb_typeddata_is_kind_of(self, &type))
+    rb_raise(rb_eTypeError, "Can't convert %s into %s", ownname,
+             type.wrap_struct_name);
 
+  void *obj = RTYPEDDATA_DATA(self);
   return static_cast<C *>(obj);
 }
 
