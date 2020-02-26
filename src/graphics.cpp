@@ -982,43 +982,43 @@ void Graphics::playMovie(const char *filename)
 
 void Graphics::screenshot(const char *filename)
 {
-	int w = width();
-	int h = height();
+	int w = p->scSize.x;
+	int h = p->scSize.y;
 
-    update();
-    
+	update();
+	
 #ifdef __WIN32__
-    SDL_Surface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
-    if (!img) throw new Exception(Exception::SDLError, "%s", SDL_GetError());
-    
-    glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE, img->pixels);
+	SDL_Surface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
+	if (!img) throw new Exception(Exception::SDLError, "%s", SDL_GetError());
+	
+	glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE, img->pixels);
 #else
-    SDL_Surface *tmp, *img;
-    tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
-    img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
-    if (!tmp || !img)
-    {
-        if (tmp) SDL_FreeSurface(tmp);
-        if (img) SDL_FreeSurface(img);
-        throw Exception(Exception::SDLError, "%s", SDL_GetError());
-    }
-    
-    glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE, tmp->pixels);
-    
-    for (int i = 0; i < h; i++)
-    {
-        memcpy((char*)img->pixels + 4 * w * i,
-               (char*)tmp->pixels + 4 * w * (h - i - 1),
-               4 * w);
-    }
-    SDL_FreeSurface(tmp);
+	SDL_Surface *tmp, *img;
+	tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
+	img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0,0,0,0);
+	if (!tmp || !img)
+	{
+			if (tmp) SDL_FreeSurface(tmp);
+			if (img) SDL_FreeSurface(img);
+			throw Exception(Exception::SDLError, "%s", SDL_GetError());
+	}
+	
+	glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_BYTE, tmp->pixels);
+	
+	for (int i = 0; i < h; i++)
+	{
+			memcpy((char*)img->pixels + 4 * w * i,
+							(char*)tmp->pixels + 4 * w * (h - i - 1),
+							4 * w);
+	}
+	SDL_FreeSurface(tmp);
 #endif
-    
-    char *fn_normalized = shState->fileSystem().normalize(filename, 1, 1);
-	int rc = SDL_SaveBMP(img, fn_normalized);
-    
-    SDL_FreeSurface(img);
-    delete fn_normalized;
+	
+	char *fn_normalized = shState->fileSystem().normalize(filename, 1, 1);
+int rc = SDL_SaveBMP(img, fn_normalized);
+	
+	SDL_FreeSurface(img);
+	delete fn_normalized;
 	if (rc) throw new Exception(Exception::SDLError, "%s", SDL_GetError());
 }
 
