@@ -3,6 +3,7 @@
 
 #include "fake-api.h"
 #include <SDL.h>
+#include <cstdint>
 
 #include "binding-util.h"
 #include "debugwriter.h"
@@ -251,8 +252,12 @@ RB_METHOD(MiniFFI_call) {
       lParam = RTEST(rb_ary_entry(args, i));
       break;
 
-    case _T_NUMBER:
     case _T_INTEGER:
+#if INTPTR_MAX == INT64_MAX
+      lParam = NUM2UINT(rb_ary_entry(args, i)) & UINT32_MAX;
+      break;
+#endif
+    case _T_NUMBER:
     default:
       lParam = NUM2ULONG(rb_ary_entry(args, i));
       break;
