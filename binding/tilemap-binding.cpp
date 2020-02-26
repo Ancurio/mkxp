@@ -19,166 +19,158 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "tilemap.h"
-#include "viewport.h"
 #include "bitmap.h"
 #include "table.h"
+#include "tilemap.h"
+#include "viewport.h"
 
-#include "disposable-binding.h"
-#include "binding-util.h"
 #include "binding-types.h"
+#include "binding-util.h"
+#include "disposable-binding.h"
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 DEF_TYPE_CUSTOMFREE(TilemapAutotiles, RUBY_TYPED_NEVER_FREE);
 #else
 #define TilemapAutotilesType "TilemapAutotiles"
 #endif
 
-RB_METHOD(tilemapAutotilesSet)
-{
-	Tilemap::Autotiles *a = getPrivateData<Tilemap::Autotiles>(self);
+RB_METHOD(tilemapAutotilesSet) {
+  Tilemap::Autotiles *a = getPrivateData<Tilemap::Autotiles>(self);
 
-	int i;
-	VALUE bitmapObj;
+  int i;
+  VALUE bitmapObj;
 
-	rb_get_args(argc, argv, "io", &i, &bitmapObj RB_ARG_END);
+  rb_get_args(argc, argv, "io", &i, &bitmapObj RB_ARG_END);
 
-	Bitmap *bitmap = getPrivateDataCheck<Bitmap>(bitmapObj, BitmapType);
+  Bitmap *bitmap = getPrivateDataCheck<Bitmap>(bitmapObj, BitmapType);
 
-	a->set(i, bitmap);
+  a->set(i, bitmap);
 
-	VALUE ary = rb_iv_get(self, "array");
-	rb_ary_store(ary, i, bitmapObj);
+  VALUE ary = rb_iv_get(self, "array");
+  rb_ary_store(ary, i, bitmapObj);
 
-	return self;
+  return self;
 }
 
-RB_METHOD(tilemapAutotilesGet)
-{
-	int i;
-	rb_get_args (argc, argv, "i", &i RB_ARG_END);
+RB_METHOD(tilemapAutotilesGet) {
+  int i;
+  rb_get_args(argc, argv, "i", &i RB_ARG_END);
 
-	if (i < 0 || i > 6)
-		return Qnil;
+  if (i < 0 || i > 6)
+    return Qnil;
 
-	VALUE ary = rb_iv_get(self, "array");
+  VALUE ary = rb_iv_get(self, "array");
 
-	return rb_ary_entry(ary, i);
+  return rb_ary_entry(ary, i);
 }
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 DEF_TYPE(Tilemap);
 #else
 DEF_ALLOCFUNC(Tilemap);
 #endif
 
-RB_METHOD(tilemapInitialize)
-{
-	Tilemap *t;
+RB_METHOD(tilemapInitialize) {
+  Tilemap *t;
 
-	/* Get parameters */
-	VALUE viewportObj = Qnil;
-	Viewport *viewport = 0;
+  /* Get parameters */
+  VALUE viewportObj = Qnil;
+  Viewport *viewport = 0;
 
-	rb_get_args(argc, argv, "|o", &viewportObj RB_ARG_END);
+  rb_get_args(argc, argv, "|o", &viewportObj RB_ARG_END);
 
-	if (!NIL_P(viewportObj))
-		viewport = getPrivateDataCheck<Viewport>(viewportObj, ViewportType);
+  if (!NIL_P(viewportObj))
+    viewport = getPrivateDataCheck<Viewport>(viewportObj, ViewportType);
 
-	/* Construct object */
-	t = new Tilemap(viewport);
+  /* Construct object */
+  t = new Tilemap(viewport);
 
-	setPrivateData(self, t);
+  setPrivateData(self, t);
 
-	rb_iv_set(self, "viewport", viewportObj);
+  rb_iv_set(self, "viewport", viewportObj);
 
-	wrapProperty(self, &t->getAutotiles(), "autotiles", TilemapAutotilesType);
+  wrapProperty(self, &t->getAutotiles(), "autotiles", TilemapAutotilesType);
 
-	VALUE autotilesObj = rb_iv_get(self, "autotiles");
+  VALUE autotilesObj = rb_iv_get(self, "autotiles");
 
-	VALUE ary = rb_ary_new2(7);
-	for (int i = 0; i < 7; ++i)
-		rb_ary_push(ary, Qnil);
+  VALUE ary = rb_ary_new2(7);
+  for (int i = 0; i < 7; ++i)
+    rb_ary_push(ary, Qnil);
 
-	rb_iv_set(autotilesObj, "array", ary);
+  rb_iv_set(autotilesObj, "array", ary);
 
-	/* Circular reference so both objects are always
-	 * alive at the same time */
-	rb_iv_set(autotilesObj, "tilemap", self);
+  /* Circular reference so both objects are always
+   * alive at the same time */
+  rb_iv_set(autotilesObj, "tilemap", self);
 
-	return self;
+  return self;
 }
 
-RB_METHOD(tilemapGetAutotiles)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(tilemapGetAutotiles) {
+  RB_UNUSED_PARAM;
 
-	checkDisposed<Tilemap>(self);
+  checkDisposed<Tilemap>(self);
 
-	return rb_iv_get(self, "autotiles");
+  return rb_iv_get(self, "autotiles");
 }
 
-RB_METHOD(tilemapUpdate)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(tilemapUpdate) {
+  RB_UNUSED_PARAM;
 
-	Tilemap *t = getPrivateData<Tilemap>(self);
+  Tilemap *t = getPrivateData<Tilemap>(self);
 
-	t->update();
+  t->update();
 
-	return Qnil;
+  return Qnil;
 }
 
-RB_METHOD(tilemapGetViewport)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(tilemapGetViewport) {
+  RB_UNUSED_PARAM;
 
-	checkDisposed<Tilemap>(self);
+  checkDisposed<Tilemap>(self);
 
-	return rb_iv_get(self, "viewport");
+  return rb_iv_get(self, "viewport");
 }
 
-DEF_PROP_OBJ_REF(Tilemap, Bitmap,   Tileset,    "tileset")
-DEF_PROP_OBJ_REF(Tilemap, Table,    MapData,    "map_data")
-DEF_PROP_OBJ_REF(Tilemap, Table,    FlashData,  "flash_data")
-DEF_PROP_OBJ_REF(Tilemap, Table,    Priorities, "priorities")
+DEF_PROP_OBJ_REF(Tilemap, Bitmap, Tileset, "tileset")
+DEF_PROP_OBJ_REF(Tilemap, Table, MapData, "map_data")
+DEF_PROP_OBJ_REF(Tilemap, Table, FlashData, "flash_data")
+DEF_PROP_OBJ_REF(Tilemap, Table, Priorities, "priorities")
 
 DEF_PROP_B(Tilemap, Visible)
 
 DEF_PROP_I(Tilemap, OX)
 DEF_PROP_I(Tilemap, OY)
 
-void
-tilemapBindingInit()
-{
-	VALUE klass = rb_define_class("TilemapAutotiles", rb_cObject);
-#ifndef OLD_RUBY
-	rb_define_alloc_func(klass, classAllocate<&TilemapAutotilesType>);
+void tilemapBindingInit() {
+  VALUE klass = rb_define_class("TilemapAutotiles", rb_cObject);
+#if RAPI_FULL > 187
+  rb_define_alloc_func(klass, classAllocate<&TilemapAutotilesType>);
 #endif
 
-	_rb_define_method(klass, "[]=", tilemapAutotilesSet);
-	_rb_define_method(klass, "[]", tilemapAutotilesGet);
+  _rb_define_method(klass, "[]=", tilemapAutotilesSet);
+  _rb_define_method(klass, "[]", tilemapAutotilesGet);
 
-	klass = rb_define_class("Tilemap", rb_cObject);
-#ifndef OLD_RUBY
-	rb_define_alloc_func(klass, classAllocate<&TilemapType>);
+  klass = rb_define_class("Tilemap", rb_cObject);
+#if RAPI_FULL > 187
+  rb_define_alloc_func(klass, classAllocate<&TilemapType>);
 #else
-    rb_define_alloc_func(klass, TilemapAllocate);
+  rb_define_alloc_func(klass, TilemapAllocate);
 #endif
 
-	disposableBindingInit<Tilemap>(klass);
+  disposableBindingInit<Tilemap>(klass);
 
-	_rb_define_method(klass, "initialize", tilemapInitialize);
-	_rb_define_method(klass, "autotiles", tilemapGetAutotiles);
-	_rb_define_method(klass, "update", tilemapUpdate);
+  _rb_define_method(klass, "initialize", tilemapInitialize);
+  _rb_define_method(klass, "autotiles", tilemapGetAutotiles);
+  _rb_define_method(klass, "update", tilemapUpdate);
 
-	_rb_define_method(klass, "viewport", tilemapGetViewport);
+  _rb_define_method(klass, "viewport", tilemapGetViewport);
 
-	INIT_PROP_BIND( Tilemap, Tileset,    "tileset"    );
-	INIT_PROP_BIND( Tilemap, MapData,    "map_data"   );
-	INIT_PROP_BIND( Tilemap, FlashData,  "flash_data" );
-	INIT_PROP_BIND( Tilemap, Priorities, "priorities" );
-	INIT_PROP_BIND( Tilemap, Visible,    "visible"    );
-	INIT_PROP_BIND( Tilemap, OX,         "ox"         );
-	INIT_PROP_BIND( Tilemap, OY,         "oy"         );
+  INIT_PROP_BIND(Tilemap, Tileset, "tileset");
+  INIT_PROP_BIND(Tilemap, MapData, "map_data");
+  INIT_PROP_BIND(Tilemap, FlashData, "flash_data");
+  INIT_PROP_BIND(Tilemap, Priorities, "priorities");
+  INIT_PROP_BIND(Tilemap, Visible, "visible");
+  INIT_PROP_BIND(Tilemap, OX, "ox");
+  INIT_PROP_BIND(Tilemap, OY, "oy");
 }

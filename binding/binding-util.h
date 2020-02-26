@@ -23,8 +23,24 @@
 #define BINDING_UTIL_H
 
 #include <ruby.h>
+#ifndef LEGACY_RUBY
+#include <ruby/version.h>
+#else
+#include <version.h>
+#endif
 
 #include "exception.h"
+
+#ifdef RUBY_API_VERSION_MAJOR
+#define RAPI_MAJOR RUBY_API_VERSION_MAJOR
+#define RAPI_MINOR RUBY_API_VERSION_MINOR
+#define RAPI_TEENY RUBY_API_VERSION_TEENY
+#else
+#define RAPI_MAJOR RUBY_VERSION_MAJOR
+#define RAPI_MINOR RUBY_VERSION_MINOR
+#define RAPI_TEENY RUBY_VERSION_TEENY
+#endif
+#define RAPI_FULL ((RAPI_MAJOR * 100) + (RAPI_MINOR * 10) + RAPI_TEENY)
 
 enum RbException {
   RGSS = 0,
@@ -59,12 +75,11 @@ struct Exception;
 
 void raiseRbExc(const Exception &exc);
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 #define DECL_TYPE(Klass) extern rb_data_type_t Klass##Type
 
 /* 2.1 has added a new field (flags) to rb_data_type_t */
-#include <ruby/version.h>
-#if RUBY_API_VERSION_MAJOR >= 2 && RUBY_API_VERSION_MINOR >= 1
+#if RAPI_FULL >= 210
 /* TODO: can mkxp use RUBY_TYPED_FREE_IMMEDIATELY here? */
 #define DEF_TYPE_FLAGS 0
 #else
@@ -72,15 +87,14 @@ void raiseRbExc(const Exception &exc);
 #endif
 #endif
 
-#ifndef OLD_RUBY
-#if RUBYCOMPAT < 270
+#if RAPI_MAJOR > 1
+#if RAPI_FULL < 270
 #define DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, Free)                        \
   rb_data_type_t Klass##Type = {                                               \
       Name, {0, Free, 0, {0, 0}}, 0, 0, DEF_TYPE_FLAGS}
 #else
 #define DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, Free)                        \
-  rb_data_type_t Klass##Type = {                                               \
-      Name, {0, Free, 0, 0, 0}, 0, 0, DEF_TYPE_FLAGS}
+  rb_data_type_t Klass##Type = {Name, {0, Free, 0, 0, 0}, 0, 0, DEF_TYPE_FLAGS}
 #endif
 
 #define DEF_TYPE_CUSTOMFREE(Klass, Free)                                       \
@@ -93,7 +107,7 @@ void raiseRbExc(const Exception &exc);
 #endif
 
 // Ruby 1.8 helper stuff
-#ifdef OLD_RUBY
+#if RAPI_FULL <= 187
 
 #define RUBY_T_FIXNUM T_FIXNUM
 #define RUBY_T_TRUE T_TRUE
@@ -144,10 +158,10 @@ void raiseRbExc(const Exception &exc);
 #endif
 // end
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 template <rb_data_type_t *rbType> static VALUE classAllocate(VALUE klass) {
 /* 2.3 has changed the name of this function */
-#if RUBY_API_VERSION_MAJOR >= 2 && RUBY_API_VERSION_MINOR >= 3
+#if RAPI_FULL >= 230
   return rb_data_typed_object_wrap(klass, 0, rbType);
 #else
   return rb_data_typed_object_alloc(klass, 0, rbType);
@@ -162,7 +176,7 @@ template <class C> static void freeInstance(void *inst) {
 void raiseDisposedAccess(VALUE self);
 
 template <class C> inline C *getPrivateData(VALUE self) {
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
   C *c = static_cast<C *>(RTYPEDDATA_DATA(self));
 #else
   C *c = static_cast<C *>(DATA_PTR(self));
@@ -172,13 +186,13 @@ template <class C> inline C *getPrivateData(VALUE self) {
 
 template <class C>
 static inline C *
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 getPrivateDataCheck(VALUE self, const rb_data_type_t &type)
 #else
 getPrivateDataCheck(VALUE self, const char *type)
 #endif
 {
-#ifdef OLD_RUBY
+#if RAPI_FULL <= 187
   rb_check_type(self, T_DATA);
   VALUE otherObj = rb_const_get(rb_cObject, rb_intern(type));
 #else
@@ -197,7 +211,7 @@ getPrivateDataCheck(VALUE self, const char *type)
 }
 
 static inline void setPrivateData(VALUE self, void *p) {
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
   RTYPEDDATA_DATA(self) = p;
 #else
   DATA_PTR(self) = p;
@@ -205,13 +219,13 @@ static inline void setPrivateData(VALUE self, void *p) {
 }
 
 inline VALUE
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 wrapObject(void *p, const rb_data_type_t &type, VALUE underKlass = rb_cObject)
 #else
 wrapObject(void *p, const char *type, VALUE underKlass = rb_cObject)
 #endif
 {
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
   VALUE klass = rb_const_get(underKlass, rb_intern(type.wrap_struct_name));
 #else
   VALUE klass = rb_const_get(underKlass, rb_intern(type));
@@ -224,7 +238,7 @@ wrapObject(void *p, const char *type, VALUE underKlass = rb_cObject)
 }
 
 inline VALUE wrapProperty(VALUE self, void *prop, const char *iv,
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
                           const rb_data_type_t &type,
 #else
                           const char *type,
@@ -346,7 +360,7 @@ inline void rb_check_argc(int actual, int expected) {
              expected);
 }
 
-#ifdef OLD_RUBY
+#if RAPI_FULL <= 187
 static inline void rb_error_arity(int argc, int min, int max) {
   if (argc > max || argc < min)
     rb_raise(rb_eArgError, "Finish me! rb_error_arity()"); // TODO
@@ -395,7 +409,7 @@ static inline VALUE rb_file_open_str(VALUE filename, const char *mode) {
  * FIXME: Getter assumes prop is disposable,
  * because self.disposed? is not checked in this case.
  * Should make this more clear */
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 #define DEF_PROP_OBJ_REF(Klass, PropKlass, PropName, prop_iv)                  \
   RB_METHOD(Klass##Get##PropName) {                                            \
     RB_UNUSED_PARAM;                                                           \
@@ -438,7 +452,7 @@ static inline VALUE rb_file_open_str(VALUE filename, const char *mode) {
 #endif
 
 /* Object property which is copied by value, not reference */
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 #define DEF_PROP_OBJ_VAL(Klass, PropKlass, PropName, prop_iv)                  \
   RB_METHOD(Klass##Get##PropName) {                                            \
     RB_UNUSED_PARAM;                                                           \

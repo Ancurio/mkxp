@@ -38,7 +38,7 @@
 extern "C" {
 #include <ruby.h>
 
-#ifndef OLD_RUBY
+#if RAPI_FULL >= 190
 #include <ruby/encoding.h>
 #endif
 }
@@ -369,7 +369,7 @@ RB_METHOD(mriRgssMain) {
 
   while (true) {
     VALUE exc = Qnil;
-#if RUBYCOMPAT < 270
+#if RAPI_FULL < 270
     rb_rescue2((VALUE(*)(ANYARGS))rgssMainCb, rb_block_proc(),
                (VALUE(*)(ANYARGS))rgssMainRescue, (VALUE)&exc, rb_eException,
                (VALUE)0);
@@ -431,7 +431,7 @@ RB_METHOD(_kernelCaller) {
   return trace;
 }
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 static VALUE newStringUTF8(const char *string, long length) {
   return rb_enc_str_new(string, length, rb_utf8_encoding());
 }
@@ -571,7 +571,7 @@ static void runRMXPScripts(BacktraceData &btData) {
 #endif
 
   while (true) {
-#if defined(OLD_RUBY) && defined(NO_CONSOLE)
+#if RAPI_FULL < 200 && defined(NO_CONSOLE)
     VALUE iostr = rb_str_new2(NULL_IO);
     // Sysinit isn't a thing yet, so send io to /dev/null instead
     rb_funcall(rb_gv_get("$stderr"), rb_intern("reopen"), 1, iostr);
@@ -694,7 +694,7 @@ static void showExc(VALUE exc, const BacktraceData &btData) {
 }
 
 static void mriBindingExecute() {
-#ifndef OLD_RUBY
+#if RAPI_FULL > 200
   /* Normally only a ruby executable would do a sysinit,
    * but not doing it will lead to crashes due to closed
    * stdio streams on some platforms (eg. Windows) */
@@ -750,7 +750,7 @@ static void mriBindingExecute() {
     runRMXPScripts(btData);
 #endif
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
   VALUE exc = rb_errinfo();
 #else
   VALUE exc = rb_gv_get("$!");

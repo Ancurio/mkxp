@@ -19,12 +19,12 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "etc.h"
 #include "binding-util.h"
+#include "etc.h"
 #include "serializable-binding.h"
 #include "sharedstate.h"
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 DEF_TYPE(Color);
 DEF_TYPE(Tone);
 DEF_TYPE(Rect);
@@ -34,24 +34,23 @@ DEF_ALLOCFUNC(Tone);
 DEF_ALLOCFUNC(Rect);
 #endif
 
-#define ATTR_RW(Klass, Attr, arg_type, arg_t_s, value_fun) \
-	RB_METHOD(Klass##Get##Attr) \
-	{ \
-		RB_UNUSED_PARAM \
-		Klass *p = getPrivateData<Klass>(self); \
-		return value_fun(p->get##Attr()); \
-	} \
-	RB_METHOD(Klass##Set##Attr) \
-	{ \
-		Klass *p = getPrivateData<Klass>(self); \
-		arg_type arg; \
-		rb_get_args(argc, argv, arg_t_s, &arg RB_ARG_END); \
-		p->set##Attr(arg); \
-		return *argv; \
-	}
+#define ATTR_RW(Klass, Attr, arg_type, arg_t_s, value_fun)                     \
+  RB_METHOD(Klass##Get##Attr) {                                                \
+    RB_UNUSED_PARAM                                                            \
+    Klass *p = getPrivateData<Klass>(self);                                    \
+    return value_fun(p->get##Attr());                                          \
+  }                                                                            \
+  RB_METHOD(Klass##Set##Attr) {                                                \
+    Klass *p = getPrivateData<Klass>(self);                                    \
+    arg_type arg;                                                              \
+    rb_get_args(argc, argv, arg_t_s, &arg RB_ARG_END);                         \
+    p->set##Attr(arg);                                                         \
+    return *argv;                                                              \
+  }
 
-#define ATTR_DOUBLE_RW(Klass, Attr) ATTR_RW(Klass, Attr, double, "f", rb_float_new)
-#define ATTR_INT_RW(Klass, Attr)   ATTR_RW(Klass, Attr, int, "i", rb_fix_new)
+#define ATTR_DOUBLE_RW(Klass, Attr)                                            \
+  ATTR_RW(Klass, Attr, double, "f", rb_float_new)
+#define ATTR_INT_RW(Klass, Attr) ATTR_RW(Klass, Attr, int, "i", rb_fix_new)
 
 ATTR_DOUBLE_RW(Color, Red)
 ATTR_DOUBLE_RW(Color, Green)
@@ -68,161 +67,137 @@ ATTR_INT_RW(Rect, Y)
 ATTR_INT_RW(Rect, Width)
 ATTR_INT_RW(Rect, Height)
 
-#ifndef OLD_RUBY
-#define EQUAL_FUN(Klass) \
-	RB_METHOD(Klass##Equal) \
-	{ \
-		Klass *p = getPrivateData<Klass>(self); \
-		VALUE otherObj; \
-		Klass *other; \
-		rb_get_args(argc, argv, "o", &otherObj RB_ARG_END); \
-		if (rgssVer >= 3) \
-			if (!rb_typeddata_is_kind_of(otherObj, &Klass##Type)) \
-				return Qfalse; \
-		other = getPrivateDataCheck<Klass>(otherObj, Klass##Type); \
-		return rb_bool_new(*p == *other); \
-	}
+#if RAPI_FULL > 187
+#define EQUAL_FUN(Klass)                                                       \
+  RB_METHOD(Klass##Equal) {                                                    \
+    Klass *p = getPrivateData<Klass>(self);                                    \
+    VALUE otherObj;                                                            \
+    Klass *other;                                                              \
+    rb_get_args(argc, argv, "o", &otherObj RB_ARG_END);                        \
+    if (rgssVer >= 3)                                                          \
+      if (!rb_typeddata_is_kind_of(otherObj, &Klass##Type))                    \
+        return Qfalse;                                                         \
+    other = getPrivateDataCheck<Klass>(otherObj, Klass##Type);                 \
+    return rb_bool_new(*p == *other);                                          \
+  }
 #else
-#define EQUAL_FUN(Klass) \
-    RB_METHOD(Klass##Equal) \
-    { \
-        Klass *p = getPrivateData<Klass>(self); \
-        VALUE otherObj; \
-        Klass *other; \
-        rb_get_args(argc, argv, "o", &otherObj RB_ARG_END); \
-        return Qfalse; \
-        other = getPrivateDataCheck<Klass>(otherObj, #Klass); \
-        return rb_bool_new(*p == *other); \
-    }
+#define EQUAL_FUN(Klass)                                                       \
+  RB_METHOD(Klass##Equal) {                                                    \
+    Klass *p = getPrivateData<Klass>(self);                                    \
+    VALUE otherObj;                                                            \
+    Klass *other;                                                              \
+    rb_get_args(argc, argv, "o", &otherObj RB_ARG_END);                        \
+    return Qfalse;                                                             \
+    other = getPrivateDataCheck<Klass>(otherObj, #Klass);                      \
+    return rb_bool_new(*p == *other);                                          \
+  }
 #endif
 
 EQUAL_FUN(Color)
 EQUAL_FUN(Tone)
 EQUAL_FUN(Rect)
 
-#define INIT_FUN(Klass, param_type, param_t_s, last_param_def) \
-	RB_METHOD(Klass##Initialize) \
-	{ \
-		Klass *k; \
-		if (argc == 0) \
-		{ \
-			k = new Klass(); \
-		} \
-		else \
-		{ \
-			param_type p1, p2, p3, p4 = last_param_def; \
-			rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END); \
-			k = new Klass(p1, p2, p3, p4); \
-		} \
-		setPrivateData(self, k); \
-		return self; \
-	}
+#define INIT_FUN(Klass, param_type, param_t_s, last_param_def)                 \
+  RB_METHOD(Klass##Initialize) {                                               \
+    Klass *k;                                                                  \
+    if (argc == 0) {                                                           \
+      k = new Klass();                                                         \
+    } else {                                                                   \
+      param_type p1, p2, p3, p4 = last_param_def;                              \
+      rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END);       \
+      k = new Klass(p1, p2, p3, p4);                                           \
+    }                                                                          \
+    setPrivateData(self, k);                                                   \
+    return self;                                                               \
+  }
 
 INIT_FUN(Color, double, "fff|f", 255)
 INIT_FUN(Tone, double, "fff|f", 0)
 INIT_FUN(Rect, int, "iiii", 0)
 
-#ifndef OLD_RUBY
-#define SET_FUN(Klass, param_type, param_t_s, last_param_def) \
-	RB_METHOD(Klass##Set) \
-	{ \
-		Klass *k = getPrivateData<Klass>(self); \
-		if (argc == 1) \
-		{ \
-			VALUE otherObj = argv[0]; \
-            Klass *other = getPrivateDataCheck<Klass>(otherObj, Klass##Type); \
-			*k = *other; \
-		} \
-		else \
-		{ \
-			param_type p1, p2, p3, p4 = last_param_def; \
-			rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END); \
-			k->set(p1, p2, p3, p4); \
-		} \
-		return self; \
-	}
+#if RAPI_FULL > 187
+#define SET_FUN(Klass, param_type, param_t_s, last_param_def)                  \
+  RB_METHOD(Klass##Set) {                                                      \
+    Klass *k = getPrivateData<Klass>(self);                                    \
+    if (argc == 1) {                                                           \
+      VALUE otherObj = argv[0];                                                \
+      Klass *other = getPrivateDataCheck<Klass>(otherObj, Klass##Type);        \
+      *k = *other;                                                             \
+    } else {                                                                   \
+      param_type p1, p2, p3, p4 = last_param_def;                              \
+      rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END);       \
+      k->set(p1, p2, p3, p4);                                                  \
+    }                                                                          \
+    return self;                                                               \
+  }
 #else
-#define SET_FUN(Klass, param_type, param_t_s, last_param_def) \
-    RB_METHOD(Klass##Set) \
-    { \
-        Klass *k = getPrivateData<Klass>(self); \
-        if (argc == 1) \
-    { \
-        VALUE otherObj = argv[0]; \
-        Klass *other = getPrivateDataCheck<Klass>(otherObj, #Klass); \
-        *k = *other; \
-    } \
-    else \
-    { \
-        param_type p1, p2, p3, p4 = last_param_def; \
-        rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END); \
-        k->set(p1, p2, p3, p4); \
-    } \
-        return self; \
-    }
+#define SET_FUN(Klass, param_type, param_t_s, last_param_def)                  \
+  RB_METHOD(Klass##Set) {                                                      \
+    Klass *k = getPrivateData<Klass>(self);                                    \
+    if (argc == 1) {                                                           \
+      VALUE otherObj = argv[0];                                                \
+      Klass *other = getPrivateDataCheck<Klass>(otherObj, #Klass);             \
+      *k = *other;                                                             \
+    } else {                                                                   \
+      param_type p1, p2, p3, p4 = last_param_def;                              \
+      rb_get_args(argc, argv, param_t_s, &p1, &p2, &p3, &p4 RB_ARG_END);       \
+      k->set(p1, p2, p3, p4);                                                  \
+    }                                                                          \
+    return self;                                                               \
+  }
 #endif
 
 SET_FUN(Color, double, "fff|f", 255)
 SET_FUN(Tone, double, "fff|f", 0)
 SET_FUN(Rect, int, "iiii", 0)
 
-RB_METHOD(rectEmpty)
-{
-	RB_UNUSED_PARAM;
-	Rect *r = getPrivateData<Rect>(self);
-	r->empty();
-	return self;
+RB_METHOD(rectEmpty) {
+  RB_UNUSED_PARAM;
+  Rect *r = getPrivateData<Rect>(self);
+  r->empty();
+  return self;
 }
 
-RB_METHOD(ColorStringify)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(ColorStringify) {
+  RB_UNUSED_PARAM;
 
-	Color *c = getPrivateData<Color>(self);
-#ifndef OLD_RUBY
-	return rb_sprintf("(%f, %f, %f, %f)",
-                      c->red, c->green, c->blue, c->alpha);
+  Color *c = getPrivateData<Color>(self);
+#if RAPI_FULL > 187
+  return rb_sprintf("(%f, %f, %f, %f)", c->red, c->green, c->blue, c->alpha);
 #else
-    char buf[50] = {0};
-    sprintf((char*)&buf, "(%f, %f, %f, %f)",
-            c->red, c->green, c->blue, c->alpha);
-    return rb_str_new2(buf);
+  char buf[50] = {0};
+  sprintf((char *)&buf, "(%f, %f, %f, %f)", c->red, c->green, c->blue,
+          c->alpha);
+  return rb_str_new2(buf);
 #endif
 }
 
-RB_METHOD(ToneStringify)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(ToneStringify) {
+  RB_UNUSED_PARAM;
 
-	Tone *t = getPrivateData<Tone>(self);
+  Tone *t = getPrivateData<Tone>(self);
 
-#ifndef OLD_RUBY
-	return rb_sprintf("(%f, %f, %f, %f)",
-                      t->red, t->green, t->blue, t->gray);
+#if RAPI_FULL > 187
+  return rb_sprintf("(%f, %f, %f, %f)", t->red, t->green, t->blue, t->gray);
 #else
-    char buf[50] = {0};
-    sprintf((char*)&buf, "(%f, %f, %f, %f)",
-            t->red, t->green, t->blue, t->gray);
-    return rb_str_new2(buf);
+  char buf[50] = {0};
+  sprintf((char *)&buf, "(%f, %f, %f, %f)", t->red, t->green, t->blue, t->gray);
+  return rb_str_new2(buf);
 #endif
 }
 
-RB_METHOD(RectStringify)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(RectStringify) {
+  RB_UNUSED_PARAM;
 
-	Rect *r = getPrivateData<Rect>(self);
+  Rect *r = getPrivateData<Rect>(self);
 
-#ifndef OLD_RUBY
-	return rb_sprintf("(%d, %d, %d, %d)",
-                      r->x, r->y, r->width, r->height);
+#if RAPI_FULL > 187
+  return rb_sprintf("(%d, %d, %d, %d)", r->x, r->y, r->width, r->height);
 #else
-    char buf[50] = {0};
-    sprintf((char*)&buf, "(%d, %d, %d, %d)",
-            r->x, r->y, r->width, r->height);
-    return rb_str_new2(buf);
+  char buf[50] = {0};
+  sprintf((char *)&buf, "(%d, %d, %d, %d)", r->x, r->y, r->width, r->height);
+  return rb_str_new2(buf);
 #endif
-                      
 }
 
 MARSH_LOAD_FUN(Color)
@@ -233,73 +208,82 @@ INITCOPY_FUN(Tone)
 INITCOPY_FUN(Color)
 INITCOPY_FUN(Rect)
 
-#ifndef OLD_RUBY
-#define INIT_BIND(Klass) \
-{ \
-	klass = rb_define_class(#Klass, rb_cObject); \
-	rb_define_alloc_func(klass, classAllocate<&Klass##Type>); \
-	rb_define_class_method(klass, "_load", Klass##Load); \
-	serializableBindingInit<Klass>(klass); \
-	_rb_define_method(klass, "initialize", Klass##Initialize); \
-	_rb_define_method(klass, "initialize_copy", Klass##InitializeCopy); \
-	_rb_define_method(klass, "set", Klass##Set); \
-	_rb_define_method(klass, "==", Klass##Equal); \
-	_rb_define_method(klass, "===", Klass##Equal); \
-	_rb_define_method(klass, "eql?", Klass##Equal); \
-	_rb_define_method(klass, "to_s", Klass##Stringify); \
-	_rb_define_method(klass, "inspect", Klass##Stringify); \
-}
+#if RAPI_FULL > 187
+#define INIT_BIND(Klass)                                                       \
+  {                                                                            \
+    klass = rb_define_class(#Klass, rb_cObject);                               \
+    rb_define_alloc_func(klass, classAllocate<&Klass##Type>);                  \
+    rb_define_class_method(klass, "_load", Klass##Load);                       \
+    serializableBindingInit<Klass>(klass);                                     \
+    _rb_define_method(klass, "initialize", Klass##Initialize);                 \
+    _rb_define_method(klass, "initialize_copy", Klass##InitializeCopy);        \
+    _rb_define_method(klass, "set", Klass##Set);                               \
+    _rb_define_method(klass, "==", Klass##Equal);                              \
+    _rb_define_method(klass, "===", Klass##Equal);                             \
+    _rb_define_method(klass, "eql?", Klass##Equal);                            \
+    _rb_define_method(klass, "to_s", Klass##Stringify);                        \
+    _rb_define_method(klass, "inspect", Klass##Stringify);                     \
+  }
 #else
-#define INIT_BIND(Klass) \
-{ \
-    klass = rb_define_class(#Klass, rb_cObject); \
-    rb_define_alloc_func(klass, Klass##Allocate); \
-    rb_define_class_method(klass, "_load", Klass##Load); \
-    serializableBindingInit<Klass>(klass); \
-    _rb_define_method(klass, "initialize", Klass##Initialize); \
-    _rb_define_method(klass, "initialize_copy", Klass##InitializeCopy); \
-    _rb_define_method(klass, "set", Klass##Set); \
-    _rb_define_method(klass, "==", Klass##Equal); \
-    _rb_define_method(klass, "===", Klass##Equal); \
-    _rb_define_method(klass, "eql?", Klass##Equal); \
-    _rb_define_method(klass, "to_s", Klass##Stringify); \
-    _rb_define_method(klass, "inspect", Klass##Stringify); \
-}
+#define INIT_BIND(Klass)                                                       \
+  {                                                                            \
+    klass = rb_define_class(#Klass, rb_cObject);                               \
+    rb_define_alloc_func(klass, Klass##Allocate);                              \
+    rb_define_class_method(klass, "_load", Klass##Load);                       \
+    serializableBindingInit<Klass>(klass);                                     \
+    _rb_define_method(klass, "initialize", Klass##Initialize);                 \
+    _rb_define_method(klass, "initialize_copy", Klass##InitializeCopy);        \
+    _rb_define_method(klass, "set", Klass##Set);                               \
+    _rb_define_method(klass, "==", Klass##Equal);                              \
+    _rb_define_method(klass, "===", Klass##Equal);                             \
+    _rb_define_method(klass, "eql?", Klass##Equal);                            \
+    _rb_define_method(klass, "to_s", Klass##Stringify);                        \
+    _rb_define_method(klass, "inspect", Klass##Stringify);                     \
+  }
 #endif
 
-#define MRB_ATTR_R(Class, attr) mrb_define_method(mrb, klass, #attr, Class##Get_##attr, MRB_ARGS_NONE())
-#define MRB_ATTR_W(Class, attr) mrb_define_method(mrb, klass, #attr "=", Class##Set_##attr, MRB_ARGS_REQ(1))
-#define MRB_ATTR_RW(Class, attr) { MRB_ATTR_R(Class, attr); MRB_ATTR_W(Class, attr); }
+#define MRB_ATTR_R(Class, attr)                                                \
+  mrb_define_method(mrb, klass, #attr, Class##Get_##attr, MRB_ARGS_NONE())
+#define MRB_ATTR_W(Class, attr)                                                \
+  mrb_define_method(mrb, klass, #attr "=", Class##Set_##attr, MRB_ARGS_REQ(1))
+#define MRB_ATTR_RW(Class, attr)                                               \
+  {                                                                            \
+    MRB_ATTR_R(Class, attr);                                                   \
+    MRB_ATTR_W(Class, attr);                                                   \
+  }
 
-#define RB_ATTR_R(Klass, Attr, attr) _rb_define_method(klass, #attr, Klass##Get##Attr)
-#define RB_ATTR_W(Klass, Attr, attr) _rb_define_method(klass, #attr "=", Klass##Set##Attr)
-#define RB_ATTR_RW(Klass, Attr, attr) \
-	{ RB_ATTR_R(Klass, Attr, attr); RB_ATTR_W(Klass, Attr, attr); }
+#define RB_ATTR_R(Klass, Attr, attr)                                           \
+  _rb_define_method(klass, #attr, Klass##Get##Attr)
+#define RB_ATTR_W(Klass, Attr, attr)                                           \
+  _rb_define_method(klass, #attr "=", Klass##Set##Attr)
+#define RB_ATTR_RW(Klass, Attr, attr)                                          \
+  {                                                                            \
+    RB_ATTR_R(Klass, Attr, attr);                                              \
+    RB_ATTR_W(Klass, Attr, attr);                                              \
+  }
 
-void
-etcBindingInit()
-{
-	VALUE klass;
+void etcBindingInit() {
+  VALUE klass;
 
-	INIT_BIND(Color);
+  INIT_BIND(Color);
 
-	RB_ATTR_RW(Color, Red, red);
-	RB_ATTR_RW(Color, Green, green);
-	RB_ATTR_RW(Color, Blue, blue);
-	RB_ATTR_RW(Color, Alpha, alpha);
+  RB_ATTR_RW(Color, Red, red);
+  RB_ATTR_RW(Color, Green, green);
+  RB_ATTR_RW(Color, Blue, blue);
+  RB_ATTR_RW(Color, Alpha, alpha);
 
-	INIT_BIND(Tone);
+  INIT_BIND(Tone);
 
-	RB_ATTR_RW(Tone, Red, red);
-	RB_ATTR_RW(Tone, Green, green);
-	RB_ATTR_RW(Tone, Blue, blue);
-	RB_ATTR_RW(Tone, Gray, gray);
+  RB_ATTR_RW(Tone, Red, red);
+  RB_ATTR_RW(Tone, Green, green);
+  RB_ATTR_RW(Tone, Blue, blue);
+  RB_ATTR_RW(Tone, Gray, gray);
 
-	INIT_BIND(Rect);
+  INIT_BIND(Rect);
 
-	RB_ATTR_RW(Rect, X, x);
-	RB_ATTR_RW(Rect, Y, y);
-	RB_ATTR_RW(Rect, Width, width);
-	RB_ATTR_RW(Rect, Height, height);
-	_rb_define_method(klass, "empty", rectEmpty);
+  RB_ATTR_RW(Rect, X, x);
+  RB_ATTR_RW(Rect, Y, y);
+  RB_ATTR_RW(Rect, Width, width);
+  RB_ATTR_RW(Rect, Height, height);
+  _rb_define_method(klass, "empty", rectEmpty);
 }

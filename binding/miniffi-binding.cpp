@@ -36,7 +36,7 @@ typedef PREFABI void *(*MINIFFI_FUNC)(unsigned long, unsigned long,
 // MiniFFI class, also named Win32API on Windows
 // Uses LoadLibrary/GetProcAddress on Windows, dlopen/dlsym everywhere else
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 DEF_TYPE_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
 #else
 DEF_ALLOCFUNC_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
@@ -308,7 +308,7 @@ RB_METHOD(MiniFFI_call) {
 
 void MiniFFIBindingInit() {
   VALUE cMiniFFI = rb_define_class("MiniFFI", rb_cObject);
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
   rb_define_alloc_func(cMiniFFI, classAllocate<&MiniFFIType>);
 #else
   rb_define_alloc_func(cMiniFFI, MiniFFIAllocate);

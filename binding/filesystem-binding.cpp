@@ -26,7 +26,7 @@
 #include "src/config.h"
 #include "src/util.h"
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 #include "ruby/encoding.h"
 #include "ruby/intern.h"
 #else
@@ -40,7 +40,7 @@ static void fileIntFreeInstance(void *inst) {
   SDL_FreeRW(ops);
 }
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 DEF_TYPE_CUSTOMFREE(FileInt, fileIntFreeInstance);
 #else
 DEF_ALLOCFUNC_CUSTOMFREE(FileInt, fileIntFreeInstance);
@@ -200,8 +200,8 @@ RB_METHOD(kernelSaveData) {
 
   return Qnil;
 }
-#ifndef OLD_RUBY
-#if RUBYCOMPAT < 270
+#if RAPI_FULL > 187
+#if RAPI_FULL < 270
 static VALUE stringForceUTF8(VALUE arg)
 #else
 static VALUE stringForceUTF8(RB_BLOCK_CALL_FUNC_ARGLIST(yielded_arg, arg))
@@ -213,7 +213,7 @@ static VALUE stringForceUTF8(RB_BLOCK_CALL_FUNC_ARGLIST(yielded_arg, arg))
   return arg;
 }
 
-#if RUBYCOMPAT < 270
+#if RAPI_FULL < 270
 static VALUE customProc(VALUE arg, VALUE proc) {
   VALUE obj = stringForceUTF8(arg);
   obj = rb_funcall2(proc, rb_intern("call"), 1, &obj);
@@ -224,16 +224,16 @@ static VALUE customProc(VALUE arg, VALUE proc) {
 
 RB_METHOD(_marshalLoad) {
   RB_UNUSED_PARAM;
-#if RUBYCOMPAT < 270
+#if RAPI_FULL < 270
   VALUE port, proc = Qnil;
   rb_get_args(argc, argv, "o|o", &port, &proc RB_ARG_END);
 #else
-	VALUE port;
-	rb_get_args(argc, argv, "o", &port RB_ARG_END);
+  VALUE port;
+  rb_get_args(argc, argv, "o", &port RB_ARG_END);
 #endif
 
   VALUE utf8Proc;
-#if RUBYCOMPAT < 270
+#if RAPI_FULL < 270
   if (NIL_P(proc))
 
     utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
@@ -250,35 +250,35 @@ RB_METHOD(_marshalLoad) {
 }
 #endif
 
-  void fileIntBindingInit() {
-    VALUE klass = rb_define_class("FileInt", rb_cIO);
-#ifndef OLD_RUBY
-    rb_define_alloc_func(klass, classAllocate<&FileIntType>);
+void fileIntBindingInit() {
+  VALUE klass = rb_define_class("FileInt", rb_cIO);
+#if RAPI_FULL > 187
+  rb_define_alloc_func(klass, classAllocate<&FileIntType>);
 #else
   rb_define_alloc_func(klass, FileIntAllocate);
 #endif
 
-    _rb_define_method(klass, "read", fileIntRead);
-    _rb_define_method(klass, "getbyte", fileIntGetByte);
-#ifdef OLD_RUBY
-    // Ruby doesn't see this as an initialized stream,
-    // so either that has to be fixed or necessary
-    // IO functions have to be overridden
-    rb_define_alias(klass, "getc", "getbyte");
-    _rb_define_method(klass, "pos", fileIntPos);
+  _rb_define_method(klass, "read", fileIntRead);
+  _rb_define_method(klass, "getbyte", fileIntGetByte);
+#if RAPI_FULL <= 187
+  // Ruby doesn't see this as an initialized stream,
+  // so either that has to be fixed or necessary
+  // IO functions have to be overridden
+  rb_define_alias(klass, "getc", "getbyte");
+  _rb_define_method(klass, "pos", fileIntPos);
 #endif
-    _rb_define_method(klass, "binmode", fileIntBinmode);
-    _rb_define_method(klass, "close", fileIntClose);
+  _rb_define_method(klass, "binmode", fileIntBinmode);
+  _rb_define_method(klass, "close", fileIntClose);
 
-    _rb_define_module_function(rb_mKernel, "load_data", kernelLoadData);
-    _rb_define_module_function(rb_mKernel, "save_data", kernelSaveData);
+  _rb_define_module_function(rb_mKernel, "load_data", kernelLoadData);
+  _rb_define_module_function(rb_mKernel, "save_data", kernelSaveData);
 
-#ifndef OLD_RUBY
-    /* We overload the built-in 'Marshal::load()' function to silently
-     * insert our utf8proc that ensures all read strings will be
-     * UTF-8 encoded */
-    VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
-    rb_define_alias(rb_singleton_class(marsh), "_mkxp_load_alias", "load");
-    _rb_define_module_function(marsh, "load", _marshalLoad);
+#if RAPI_FULL > 187
+  /* We overload the built-in 'Marshal::load()' function to silently
+   * insert our utf8proc that ensures all read strings will be
+   * UTF-8 encoded */
+  VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+  rb_define_alias(rb_singleton_class(marsh), "_mkxp_load_alias", "load");
+  _rb_define_module_function(marsh, "load", _marshalLoad);
 #endif
-  }
+}

@@ -24,7 +24,7 @@
 
 #include "binding-util.h"
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 DECL_TYPE(Table);
 DECL_TYPE(Rect);
 DECL_TYPE(Color);
@@ -59,7 +59,7 @@ DECL_TYPE(MiniFFI);
 
 #ifdef HAVE_DISCORDSDK
 
-#ifndef OLD_RUBY
+#if RAPI_FULL > 187
 DECL_TYPE(DCActivity);
 
 #else
