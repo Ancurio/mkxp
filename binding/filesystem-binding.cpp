@@ -21,8 +21,8 @@
 
 #include "binding-util.h"
 
-#include "sharedstate.h"
 #include "filesystem.h"
+#include "sharedstate.h"
 #include "src/config.h"
 #include "src/util.h"
 
@@ -33,13 +33,11 @@
 #include "intern.h"
 #endif
 
-static void
-fileIntFreeInstance(void *inst)
-{
-	SDL_RWops *ops = static_cast<SDL_RWops*>(inst);
+static void fileIntFreeInstance(void *inst) {
+  SDL_RWops *ops = static_cast<SDL_RWops *>(inst);
 
-	SDL_RWclose(ops);
-	SDL_FreeRW(ops);
+  SDL_RWclose(ops);
+  SDL_FreeRW(ops);
 }
 
 #ifndef OLD_RUBY
@@ -48,231 +46,220 @@ DEF_TYPE_CUSTOMFREE(FileInt, fileIntFreeInstance);
 DEF_ALLOCFUNC_CUSTOMFREE(FileInt, fileIntFreeInstance);
 #endif
 
-static VALUE
-fileIntForPath(const char *path, bool rubyExc)
-{
-	SDL_RWops *ops = SDL_AllocRW();
+static VALUE fileIntForPath(const char *path, bool rubyExc) {
+  SDL_RWops *ops = SDL_AllocRW();
 
-	try
-	{
-		shState->fileSystem().openReadRaw(*ops, path);
-	}
-	catch (const Exception &e)
-	{
-		SDL_FreeRW(ops);
+  try {
+    shState->fileSystem().openReadRaw(*ops, path);
+  } catch (const Exception &e) {
+    SDL_FreeRW(ops);
 
-		if (rubyExc)
-			raiseRbExc(e);
-		else
-			throw e;
-	}
+    if (rubyExc)
+      raiseRbExc(e);
+    else
+      throw e;
+  }
 
-	VALUE klass = rb_const_get(rb_cObject, rb_intern("FileInt"));
+  VALUE klass = rb_const_get(rb_cObject, rb_intern("FileInt"));
 
-	VALUE obj = rb_obj_alloc(klass);
+  VALUE obj = rb_obj_alloc(klass);
 
-	setPrivateData(obj, ops);
+  setPrivateData(obj, ops);
 
-	return obj;
+  return obj;
 }
 
-RB_METHOD(fileIntRead)
-{
+RB_METHOD(fileIntRead) {
 
-	int length = -1;
-	rb_get_args(argc, argv, "|i", &length RB_ARG_END);
+  int length = -1;
+  rb_get_args(argc, argv, "|i", &length RB_ARG_END);
 
-	SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
+  SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
 
-	if (length == -1)
-	{
-		Sint64 cur = SDL_RWtell(ops);
-		Sint64 end = SDL_RWseek(ops, 0, SEEK_END);
-        
-        // Sometimes SDL_RWseek will fail for no reason
-        // with encrypted archives, so let's just ask
-        // for the size up front
-        if (end < 0) end = ops->size(ops);
-        
-		length = end - cur;
-		SDL_RWseek(ops, cur, SEEK_SET);
-	}
+  if (length == -1) {
+    Sint64 cur = SDL_RWtell(ops);
+    Sint64 end = SDL_RWseek(ops, 0, SEEK_END);
 
-	if (length == 0)
-		return Qnil;
+    // Sometimes SDL_RWseek will fail for no reason
+    // with encrypted archives, so let's just ask
+    // for the size up front
+    if (end < 0)
+      end = ops->size(ops);
 
-	VALUE data = rb_str_new(0, length);
+    length = end - cur;
+    SDL_RWseek(ops, cur, SEEK_SET);
+  }
 
-	SDL_RWread(ops, RSTRING_PTR(data), 1, length);
+  if (length == 0)
+    return Qnil;
 
-	return data;
+  VALUE data = rb_str_new(0, length);
+
+  SDL_RWread(ops, RSTRING_PTR(data), 1, length);
+
+  return data;
 }
 
-RB_METHOD(fileIntClose)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(fileIntClose) {
+  RB_UNUSED_PARAM;
 
-	SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
-	SDL_RWclose(ops);
+  SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
+  SDL_RWclose(ops);
 
-	return Qnil;
+  return Qnil;
 }
 
-RB_METHOD(fileIntGetByte)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(fileIntGetByte) {
+  RB_UNUSED_PARAM;
 
-	SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
+  SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
 
-	unsigned char byte;
-	size_t result = SDL_RWread(ops, &byte, 1, 1);
+  unsigned char byte;
+  size_t result = SDL_RWread(ops, &byte, 1, 1);
 
-	return (result == 1) ? rb_fix_new(byte) : Qnil;
+  return (result == 1) ? rb_fix_new(byte) : Qnil;
 }
 
-RB_METHOD(fileIntBinmode)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(fileIntBinmode) {
+  RB_UNUSED_PARAM;
 
-	return Qnil;
+  return Qnil;
 }
 
-RB_METHOD(fileIntPos)
-{
-    SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
-    
-    long long pos = SDL_RWtell(ops);  // Will return -1 if it doesn't work
-    return LL2NUM(pos);
+RB_METHOD(fileIntPos) {
+  SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
+
+  long long pos = SDL_RWtell(ops); // Will return -1 if it doesn't work
+  return LL2NUM(pos);
 }
 
 VALUE
-kernelLoadDataInt(const char *filename, bool rubyExc, bool raw)
-{
-	rb_gc_start();
-    
-	VALUE port = fileIntForPath(filename, rubyExc);
-    VALUE result;
-    if (!raw)
-    {
-        VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+kernelLoadDataInt(const char *filename, bool rubyExc, bool raw) {
+  rb_gc_start();
 
-        // FIXME need to catch exceptions here with begin rescue
-        VALUE data = fileIntRead(0, 0, port);
-        result = rb_funcall2(marsh, rb_intern("load"), 1, &data);
-    }
-    else
-    {
-        result = fileIntRead(0, 0, port);
-    }
+  VALUE port = fileIntForPath(filename, rubyExc);
+  VALUE result;
+  if (!raw) {
+    VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
-	rb_funcall2(port, rb_intern("close"), 0, NULL);
+    // FIXME need to catch exceptions here with begin rescue
+    VALUE data = fileIntRead(0, 0, port);
+    result = rb_funcall2(marsh, rb_intern("load"), 1, &data);
+  } else {
+    result = fileIntRead(0, 0, port);
+  }
 
-	return result;
+  rb_funcall2(port, rb_intern("close"), 0, NULL);
+
+  return result;
 }
 
-RB_METHOD(kernelLoadData)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(kernelLoadData) {
+  RB_UNUSED_PARAM;
 
-	VALUE filename;
+  VALUE filename;
   VALUE raw;
-	rb_scan_args(argc, argv, "11", &filename, &raw);
-	SafeStringValue(filename);
-	
-	// There's gotta be an easier way to do this
-	if (raw != Qnil && raw != Qtrue && raw != Qfalse)
-	{
-			rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
-	}
-	
-	if (!shState->config().encryptedGraphics)
-	{
-		VALUE isGraphicsFile = rb_funcall(filename,
-																		rb_intern("start_with?"),
-																		1,
-																		rb_str_new2("Graphics"));
-	
-		if (isGraphicsFile == Qtrue)
-		{
-				VALUE f = rb_file_open_str(filename, "rb");
-				VALUE ret = rb_funcall(f, rb_intern("read"), 0);
-				rb_funcall(f, rb_intern("close"), 0);
-				return ret;
-		}
-	}
-	return kernelLoadDataInt(RSTRING_PTR(filename), true, RTEST(raw));
+  rb_scan_args(argc, argv, "11", &filename, &raw);
+  SafeStringValue(filename);
+
+  // There's gotta be an easier way to do this
+  if (raw != Qnil && raw != Qtrue && raw != Qfalse) {
+    rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
+  }
+
+  if (!shState->config().encryptedGraphics) {
+    VALUE isGraphicsFile = rb_funcall(filename, rb_intern("start_with?"), 1,
+                                      rb_str_new2("Graphics"));
+
+    if (isGraphicsFile == Qtrue) {
+      VALUE f = rb_file_open_str(filename, "rb");
+      VALUE ret = rb_funcall(f, rb_intern("read"), 0);
+      rb_funcall(f, rb_intern("close"), 0);
+      return ret;
+    }
+  }
+  return kernelLoadDataInt(RSTRING_PTR(filename), true, RTEST(raw));
 }
 
-RB_METHOD(kernelSaveData)
-{
-	RB_UNUSED_PARAM;
+RB_METHOD(kernelSaveData) {
+  RB_UNUSED_PARAM;
 
-	VALUE obj;
-	VALUE filename;
+  VALUE obj;
+  VALUE filename;
 
-	rb_get_args(argc, argv, "oS", &obj, &filename RB_ARG_END);
+  rb_get_args(argc, argv, "oS", &obj, &filename RB_ARG_END);
 
-	VALUE file = rb_file_open_str(filename, "wb");
+  VALUE file = rb_file_open_str(filename, "wb");
 
-	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+  VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
-	VALUE v[] = { obj, file };
-	rb_funcall2(marsh, rb_intern("dump"), ARRAY_SIZE(v), v);
+  VALUE v[] = {obj, file};
+  rb_funcall2(marsh, rb_intern("dump"), ARRAY_SIZE(v), v);
 
-	rb_io_close(file);
+  rb_io_close(file);
 
-	return Qnil;
+  return Qnil;
 }
 #ifndef OLD_RUBY
+#if RUBYCOMPAT < 270
 static VALUE stringForceUTF8(VALUE arg)
-{
-	if (RB_TYPE_P(arg, RUBY_T_STRING) && ENCODING_IS_ASCII8BIT(arg))
-		rb_enc_associate_index(arg, rb_utf8_encindex());
-
-	return arg;
-}
-
-static VALUE customProc(VALUE arg, VALUE proc)
-{
-	VALUE obj = stringForceUTF8(arg);
-	obj = rb_funcall2(proc, rb_intern("call"), 1, &obj);
-
-	return obj;
-}
-
-RB_METHOD(_marshalLoad)
-{
-	RB_UNUSED_PARAM;
-
-	VALUE port, proc = Qnil;
-
-	rb_get_args(argc, argv, "o|o", &port, &proc RB_ARG_END);
-
-	VALUE utf8Proc;
-	if (NIL_P(proc))
-		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
-	else
-		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(customProc), proc);
-
-	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
-
-	VALUE v[] = { port, utf8Proc };
-	return rb_funcall2(marsh, rb_intern("_mkxp_load_alias"), ARRAY_SIZE(v), v);
-}
-#endif
-
-void
-fileIntBindingInit()
-{
-	VALUE klass = rb_define_class("FileInt", rb_cIO);
-#ifndef OLD_RUBY
-	rb_define_alloc_func(klass, classAllocate<&FileIntType>);
 #else
-    rb_define_alloc_func(klass, FileIntAllocate);
+static VALUE stringForceUTF8(RB_BLOCK_CALL_FUNC_ARGLIST(yielded_arg, arg))
 #endif
-    
-	_rb_define_method(klass, "read", fileIntRead);
-	_rb_define_method(klass, "getbyte", fileIntGetByte);
+{
+  if (RB_TYPE_P(arg, RUBY_T_STRING) && ENCODING_IS_ASCII8BIT(arg))
+    rb_enc_associate_index(arg, rb_utf8_encindex());
+
+  return arg;
+}
+
+#if RUBYCOMPAT < 270
+static VALUE customProc(VALUE arg, VALUE proc) {
+  VALUE obj = stringForceUTF8(arg);
+  obj = rb_funcall2(proc, rb_intern("call"), 1, &obj);
+
+  return obj;
+}
+#endif
+
+RB_METHOD(_marshalLoad) {
+  RB_UNUSED_PARAM;
+#if RUBYCOMPAT < 270
+  VALUE port, proc = Qnil;
+  rb_get_args(argc, argv, "o|o", &port, &proc RB_ARG_END);
+#else
+	VALUE port;
+	rb_get_args(argc, argv, "o", &port RB_ARG_END);
+#endif
+
+  VALUE utf8Proc;
+#if RUBYCOMPAT < 270
+  if (NIL_P(proc))
+
+    utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
+  else
+    utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(customProc), proc);
+#else
+  utf8Proc = rb_proc_new(stringForceUTF8, Qnil);
+#endif
+
+  VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+
+  VALUE v[] = {port, utf8Proc};
+  return rb_funcall2(marsh, rb_intern("_mkxp_load_alias"), ARRAY_SIZE(v), v);
+}
+#endif
+
+  void fileIntBindingInit() {
+    VALUE klass = rb_define_class("FileInt", rb_cIO);
+#ifndef OLD_RUBY
+    rb_define_alloc_func(klass, classAllocate<&FileIntType>);
+#else
+  rb_define_alloc_func(klass, FileIntAllocate);
+#endif
+
+    _rb_define_method(klass, "read", fileIntRead);
+    _rb_define_method(klass, "getbyte", fileIntGetByte);
 #ifdef OLD_RUBY
     // Ruby doesn't see this as an initialized stream,
     // so either that has to be fixed or necessary
@@ -280,18 +267,18 @@ fileIntBindingInit()
     rb_define_alias(klass, "getc", "getbyte");
     _rb_define_method(klass, "pos", fileIntPos);
 #endif
-	_rb_define_method(klass, "binmode", fileIntBinmode);
-	_rb_define_method(klass, "close", fileIntClose);
+    _rb_define_method(klass, "binmode", fileIntBinmode);
+    _rb_define_method(klass, "close", fileIntClose);
 
-	_rb_define_module_function(rb_mKernel, "load_data", kernelLoadData);
-	_rb_define_module_function(rb_mKernel, "save_data", kernelSaveData);
+    _rb_define_module_function(rb_mKernel, "load_data", kernelLoadData);
+    _rb_define_module_function(rb_mKernel, "save_data", kernelSaveData);
 
 #ifndef OLD_RUBY
-	/* We overload the built-in 'Marshal::load()' function to silently
-	 * insert our utf8proc that ensures all read strings will be
-	 * UTF-8 encoded */
-	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
-	rb_define_alias(rb_singleton_class(marsh), "_mkxp_load_alias", "load");
-	_rb_define_module_function(marsh, "load", _marshalLoad);
+    /* We overload the built-in 'Marshal::load()' function to silently
+     * insert our utf8proc that ensures all read strings will be
+     * UTF-8 encoded */
+    VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
+    rb_define_alias(rb_singleton_class(marsh), "_mkxp_load_alias", "load");
+    _rb_define_module_function(marsh, "load", _marshalLoad);
 #endif
-}
+  }

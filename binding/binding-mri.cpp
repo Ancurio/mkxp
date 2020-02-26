@@ -22,7 +22,6 @@
 #include "audio.h"
 #include "binding-util.h"
 #include "binding.h"
-#include "src/config.h"
 #include "debugwriter.h"
 #include "eventthread.h"
 #include "filesystem.h"
@@ -30,6 +29,7 @@
 #include "lang-fun.h"
 #include "sdl-util.h"
 #include "sharedstate.h"
+#include "src/config.h"
 #include "src/util.h"
 
 #include "boost-hash.h"
@@ -369,10 +369,14 @@ RB_METHOD(mriRgssMain) {
 
   while (true) {
     VALUE exc = Qnil;
-
+#if RUBYCOMPAT < 270
     rb_rescue2((VALUE(*)(ANYARGS))rgssMainCb, rb_block_proc(),
                (VALUE(*)(ANYARGS))rgssMainRescue, (VALUE)&exc, rb_eException,
                (VALUE)0);
+#else
+    rb_rescue2(rgssMainCb, rb_block_proc(), rgssMainRescue, (VALUE)&exc,
+               rb_eException, (VALUE)0);
+#endif
 
     if (NIL_P(exc))
       break;
