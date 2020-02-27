@@ -30,6 +30,8 @@ get_dep libjpeg
 get_dep libwebp
 get_dep libcrypt
 get_dep libbsd
+get_dep tinfo
+get_dep readline
 
 cp ${MESON_INSTALL_PREFIX}/share/mkxp-z/* ${MESON_INSTALL_PREFIX}
 rm -rf ${MESON_INSTALL_PREFIX}/share
