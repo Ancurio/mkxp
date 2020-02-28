@@ -110,7 +110,7 @@ RB_METHOD(CUSLGetAchievementAndUnlockTime) {
   SafeStringValue(name);
 
   bool achieved;
-  uint time;
+  unsigned int time;
 
   if (!SteamUserStats()->GetAchievementAndUnlockTime(RSTRING_PTR(name),
                                                      &achieved, &time))
