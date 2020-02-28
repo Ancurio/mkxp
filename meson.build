@@ -128,6 +128,11 @@ if get_option('mk')
     global_args += '-DMARIN'
 endif
 
+build_static = false
+if get_option('static_executable') == true and host_system == 'windows'
+    build_static = true
+endif
+
 # This MUST be disabled if building for macOS >= 10.15
 if get_option('threaded_gl_init')
     global_args += '-DTHREADED_GLINIT'

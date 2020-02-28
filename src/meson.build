@@ -1,14 +1,33 @@
-sigcxx = dependency('sigc++-2.0', version: '>=2.10.0')
-pixman = dependency('pixman-1')
-physfs = dependency('physfs', version: '>=2.1')
-vorbisfile = dependency('vorbisfile')
-sdl2 = dependency('sdl2')
-sdl2_ttf = dependency('SDL2_ttf')
-sdl2_image = dependency('SDL2_image')
-sdl_sound = dependency('SDL_sound')
+sigcxx = dependency('sigc++-2.0', version: '>=2.10.0', static: build_static)
+pixman = dependency('pixman-1', static: build_static)
+physfs = dependency('physfs', version: '>=2.1', static: build_static)
+vorbisfile = dependency('vorbisfile', static: build_static)
+sdl2 = dependency('sdl2', static: build_static)
+sdl2_ttf = dependency('SDL2_ttf', static: build_static)
+sdl2_image = dependency('SDL2_image', static: build_static)
+sdl_sound = dependency('SDL_sound', static: build_static)
 opengl = dependency('GL')
-openal = dependency('openal')
-zlib = dependency('zlib')
+openal = dependency('openal', static: build_static)
+zlib = dependency('zlib', static: build_static)
+
+
+# Windows needs to be treated like a special needs child here
+explicit_libs = ''
+if host_system == 'windows'
+    # Newer versions of Ruby will refuse to link without these
+    explicit_libs += 'libmsvcrt;libgcc;libmingwex;libgmp;'
+endif
+if build_static == true
+    explicit_libs += 'libfreetype;libbz2;libharfbuzz;libgraphite2;'
+    explicit_libs += 'libjpeg;libpng;libtiff;libwebp;liblzma;libzstd;'
+    global_link_args += '-static'
+endif
+
+foreach l : explicit_libs.split(';')
+        if l != ''
+            global_link_args += '-l:' + l + '.a'
+        endif
+endforeach
 
 global_include_dirs += include_directories('.')
 global_dependencies += [sigcxx, openal, opengl, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
@@ -24,7 +43,7 @@ elif host_system == 'windows'
 endif
 
 if get_option('shared_fluid') == true
-    fluidsynth = dependency('fluidsynth')
+    fluidsynth = dependency('fluidsynth', static: build_static)
     add_project_arguments('-DSHARED_FLUID', language: 'cpp')
     global_dependencies += fluidsynth
 endif
