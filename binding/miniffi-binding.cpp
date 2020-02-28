@@ -269,7 +269,10 @@ RB_METHOD(MiniFFI_call) {
       (unsigned long)ApiFunction(params[0], params[1], params[2], params[3],
                                  params[4], params[5], params[6], params[7]);
 
-// Setting stdcall doesn't work anymore, I HATE WINDOWS
+// Telling the compiler that the called function uses stdcall
+// apparently doesn't work anymore, so assembly is used instead.
+// Technically also allows for an unlimited number of arguments,
+// but the above code does not
 #else
   unsigned long ret = 0;
   asm volatile(".intel_syntax noprefix\n"

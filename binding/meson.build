@@ -41,6 +41,10 @@ if discord == true
     binding_source += files('discord-binding.cpp')
 endif
 
+if steamworks == true
+    binding_source += files('cusl-binding.cpp')
+endif
+
 if miniffi == true
     binding_source += files('miniffi-binding.cpp')
 endif

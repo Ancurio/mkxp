@@ -18,6 +18,10 @@ global_include_dirs = []
 global_args = []
 global_link_args = []
 
+sizeof = {'void*': compilers['cpp'].sizeof('void*'),
+          'long': compilers['cpp'].sizeof('long')
+         }
+win64 = (sizeof['void*'] != sizeof['long'])
 # ====================
 # Ext libs
 # ====================
@@ -37,6 +41,46 @@ if discord_libpath != ''
     endif
 endif
 
+# STEAMWORKS
+
+steamworks = false
+steamworks_path = get_option('steamworks_path')
+if steamworks_path != ''
+    libname = 'steam_api'
+    if host_system == 'linux'
+        if sizeof['void*'] == 4
+            bindir = 'linux32'
+        else
+            bindir = 'linux64'
+        endif
+    elif host_system == 'windows'
+        if win64 == true
+            bindir = 'win64'
+            libname += '64'
+        else
+            bindir = ''
+        endif
+    else
+        bindir = 'osx'
+    endif
+
+    steam_libpath = steamworks_path + '/redistributable_bin/' + bindir
+    steamlib = compilers['cpp'].find_library(libname, required: false, dirs: [steam_libpath])
+
+    if steamlib.found() == true
+        if get_option('steam_appid') != ''
+            global_include_dirs += include_directories(steamworks_path + '/public')
+            global_args += ['-I@0@/public'.format(steamworks_path),
+                            '-DHAVE_STEAMWORKS',
+                            '-DSTEAM_APPID=' + get_option('steam_appid')]
+            global_dependencies += steamlib
+            steamworks = true
+        else
+            error('Steamworks SDK was found, but steam_appid isn\'t set!')
+        endif
+    endif
+endif
+
 # BOOST UNORDERED
 global_include_dirs += include_directories('boost-unordered')
 
@@ -53,7 +97,7 @@ endif
 # Decide whether or not to use MiniFFI
 miniffi = get_option('use_miniffi')
 if miniffi == true
-    if compilers['cpp'].sizeof('void*') == compilers['cpp'].sizeof('long')
+    if win64 != true
         miniffi = true
         global_args += '-DUSE_MINIFFI'
     else

@@ -48,6 +48,10 @@
 #include "discordstate.h"
 #endif
 
+#ifdef HAVE_STEAMWORKS
+#include "steam/steam_api.h"
+#endif
+
 #include <algorithm>
 #include <errno.h>
 #include <sys/time.h>
@@ -588,6 +592,11 @@ void Graphics::update() {
 
 #ifdef HAVE_DISCORDSDK
   shState->discord().update();
+#endif
+
+#ifdef HAVE_STEAMWORKS
+  if (SteamAPI_IsSteamRunning())
+    SteamAPI_RunCallbacks();
 #endif
 
   if (p->frozen)

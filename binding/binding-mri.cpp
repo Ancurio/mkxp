@@ -96,6 +96,10 @@ void MiniFFIBindingInit();
 void DiscordBindingInit();
 #endif
 
+#ifdef HAVE_STEAMWORKS
+void CUSLBindingInit();
+#endif
+
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
 RB_METHOD(mkxpDataDirectory);
@@ -144,6 +148,10 @@ static void mriBindingInit() {
 
 #ifdef HAVE_DISCORDSDK
   DiscordBindingInit();
+#endif
+
+#ifdef HAVE_STEAMWORKS
+  CUSLBindingInit();
 #endif
 
   if (rgssVer >= 3) {

@@ -46,7 +46,9 @@
 #endif
 
 #import <ObjFW/ObjFW.h>
-
+#ifdef HAVE_STEAMWORKS
+#import <steam/steam_api.h>
+#endif
 #import "icon.png.xxd"
 
 #ifndef THREADED_GLINIT
@@ -157,6 +159,17 @@ static void setupWindowIcon(const Config &conf, SDL_Window *win) {
 
 int main(int argc, char *argv[]) {
   @autoreleasepool {
+#ifdef HAVE_STEAMWORKS
+    if (SteamAPI_RestartAppIfNecessary(STEAM_APPID)) {
+      Debug() << "Restarting with Steam...";
+      return 0;
+    }
+
+    if (!SteamAPI_Init()) {
+      showInitError("Steamworks failed to initialize.");
+      return 0;
+    }
+#endif
     SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0");
     SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
 
@@ -389,6 +402,10 @@ int main(int argc, char *argv[]) {
 #if defined(__WINDOWS__)
     if (wsadata.wVersion)
       WSACleanup();
+#endif
+
+#ifdef HAVE_STEAMWORKS
+    SteamAPI_Shutdown();
 #endif
     Sound_Quit();
     TTF_Quit();
