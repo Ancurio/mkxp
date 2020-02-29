@@ -91,6 +91,10 @@ struct Config {
   DiscordClientId discordClientId;
 #endif
 
+#ifdef HAVE_STEAMWORKS
+  unsigned int steamAppId;
+#endif
+
   std::string customScript;
   std::vector<std::string> preloadScripts;
   std::vector<std::string> rtps;

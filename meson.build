@@ -68,16 +68,19 @@ if steamworks_path != ''
     steamlib = compilers['cpp'].find_library(libname, required: false, dirs: [steam_libpath])
 
     if steamlib.found() == true
-        if get_option('steam_appid') != ''
-            global_include_dirs += include_directories(steamworks_path + '/public')
-            global_args += ['-I@0@/public'.format(steamworks_path),
-                            '-DHAVE_STEAMWORKS',
-                            '-DSTEAM_APPID=' + get_option('steam_appid')]
-            global_dependencies += steamlib
-            steamworks = true
-        else
-            error('Steamworks SDK was found, but steam_appid isn\'t set!')
+        appid = get_option('steam_appid')
+        if appid == ''
+            appid = '0'
         endif
+        if appid == '0'
+            warning('Steam support is enabled, but steam_appid is not set.')
+            warning('Please make sure to set the corresponding option in the configuration file.')
+        endif
+        global_args += ['-I@0@/public'.format(steamworks_path),
+                        '-DHAVE_STEAMWORKS',
+                        '-DSTEAM_APPID=' + appid]
+        global_dependencies += steamlib
+        steamworks = true
     endif
 endif
 

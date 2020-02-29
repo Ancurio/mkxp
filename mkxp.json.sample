@@ -339,6 +339,19 @@
     // mkxp-z's Client ID is used by default.
     // Only has an effect if mkxp-z is built with Discord support.
     //
-    // "discordClientId": 1234567890
+    // "discordClientId": 1234567890,
+
+
+    // The game's Steam AppID.
+    //
+    // If the ID was specified at build time, this setting is
+    // ignored. If the ID is specified neither here nor in
+    // the build itself, the program will raise an error
+    // at startup.
+    //
+    // Only has an effect if mkxp-z was built with
+    // Steam support.
+    //
+    // "steamAppId": 0
 
 }

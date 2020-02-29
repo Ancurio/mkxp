@@ -125,7 +125,7 @@ static void printRgssVersion(int ver) {
   const char *const makers[] = {"", "XP", "VX", "VX Ace"};
 
   char buf[128];
-  snprintf(buf, sizeof(buf), "RGSS version %d (%s)", ver, makers[ver]);
+  snprintf(buf, sizeof(buf), "RGSS version %d (RPG Maker %s)", ver, makers[ver]);
 
   Debug() << buf;
 }
@@ -138,7 +138,7 @@ static void rgssThreadError(RGSSThreadData *rtData, const std::string &msg) {
 
 static void showInitError(const std::string &msg) {
   Debug() << msg;
-  SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "mkxp", msg.c_str(), 0);
+  SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "mkxp-z", msg.c_str(), 0);
 }
 
 static void setupWindowIcon(const Config &conf, SDL_Window *win) {
@@ -159,17 +159,6 @@ static void setupWindowIcon(const Config &conf, SDL_Window *win) {
 
 int main(int argc, char *argv[]) {
   @autoreleasepool {
-#ifdef HAVE_STEAMWORKS
-    if (SteamAPI_RestartAppIfNecessary(STEAM_APPID)) {
-      Debug() << "Restarting with Steam...";
-      return 0;
-    }
-
-    if (!SteamAPI_Init()) {
-      showInitError("Steamworks failed to initialize.");
-      return 0;
-    }
-#endif
     SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0");
     SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
 
@@ -241,6 +230,30 @@ int main(int argc, char *argv[]) {
     }
 
     conf.readGameINI();
+
+#ifdef HAVE_STEAMWORKS
+#if STEAM_APPID == 0
+    if (!conf.steamAppId) {
+      showInitError("Steam AppID is not set. The application cannot continue launching.");
+      SDL_Quit();
+      return 0;
+    }
+
+    if (SteamAPI_RestartAppIfNecessary(conf.steamAppId))
+#else
+    if (SteamAPI_RestartAppIfNecessary(STEAM_APPID))
+#endif
+    {
+      SDL_Quit();
+      return 0;
+    }
+
+    if (!SteamAPI_Init()) {
+      showInitError("Steamworks failed to initialize.");
+      SDL_Quit();
+      return 0;
+    }
+#endif
 
     if (conf.windowTitle.empty())
       conf.windowTitle = conf.game.title;

@@ -86,6 +86,9 @@ void Config::read(int argc, char *argv[]) {
 #ifdef HAVE_DISCORDSDK
     @"discordClientId" : @DEFAULT_CLIENT_ID,
 #endif
+#ifdef HAVE_STEAMWORKS
+    @"steamAppId" : @0,
+#endif
     @"useScriptNames" : @1,
     @"preloadScript" : @[],
     @"RTP" : @[],
@@ -188,6 +191,9 @@ void Config::read(int argc, char *argv[]) {
   }
 #ifdef HAVE_DISCORDSDK
   SET_OPT(discordClientId, longLongValue);
+#endif
+#ifdef HAVE_STEAMWORKS
+  SET_OPT(steamAppId, uInt32Value);
 #endif
 }
 
