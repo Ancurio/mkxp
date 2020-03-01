@@ -30,9 +30,9 @@
     // +    Intel HD Graphics 4000+
     //
     // If disabled, OpenGL 3.3 is used instead.
-    // (default: enabled)
+    // (default: disabled)
     //
-    // "openGL4": true,
+    // "openGL4": false,
 
 
     // Create a debug context and log
