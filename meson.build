@@ -96,6 +96,9 @@ global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '
 if compilers['objc'].get_id() == 'clang'
     global_args += ['-Wno-undefined-var-template', '-Wno-delete-non-abstract-non-virtual-dtor']
 endif
+if host_system == 'windows'
+    global_args += '-Wno-unknown-attributes'
+endif
 
 # Decide whether or not to use MiniFFI
 miniffi = get_option('use_miniffi')
