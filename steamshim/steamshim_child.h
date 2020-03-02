@@ -17,6 +17,8 @@ typedef enum STEAMSHIM_EventType
     SHIMEVENT_GETSTATI,
     SHIMEVENT_SETSTATF,
     SHIMEVENT_GETSTATF,
+    SHIMEVENT_GETPERSONANAME,
+    SHIMEVENT_GETCURRENTGAMELANGUAGE,
 } STEAMSHIM_EventType;
 
 /* not all of these fields make sense in a given event. */
@@ -43,6 +45,8 @@ void STEAMSHIM_setStatI(const char *name, const int _val);
 void STEAMSHIM_getStatI(const char *name);
 void STEAMSHIM_setStatF(const char *name, const float val);
 void STEAMSHIM_getStatF(const char *name);
+void STEAMSHIM_getPersonaName();
+void STEAMSHIM_getCurrentGameLanguage();
 
 #ifdef __cplusplus
 }
@@ -51,4 +55,3 @@ void STEAMSHIM_getStatF(const char *name);
 #endif  /* include-once blocker */
 
 /* end of steamshim_child.h ... */
-

@@ -1,34 +1,38 @@
-//#define GAME_LAUNCH_NAME "testapp"
 #ifndef GAME_LAUNCH_NAME
-#error Please define your game exe name.
+#define GAME_LAUNCH_NAME "oneshot"
 #endif
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN 1
+#define UNICODE
 #include <windows.h>
 typedef PROCESS_INFORMATION ProcessType;
 typedef HANDLE PipeType;
 #define NULLPIPE NULL
+#define LLUFMT "%I64u"
 #else
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <fcntl.h>
 typedef pid_t ProcessType;
 typedef int PipeType;
 #define NULLPIPE -1
+#define LLUFMT "%llu"
 #endif
+#include <stdlib.h>
 
 #include "steam/steam_api.h"
 
-#define DEBUGPIPE 1
-#if DEBUGPIPE
+#ifdef STEAMSHIM_DEBUG
 #define dbgpipe printf
 #else
-static inline void dbgpipe(const char *fmt, ...) {}
+static inline void dbgpipe(const char *fmt, ...) {
+    (void)fmt;
+}
 #endif
 
 /* platform-specific mainline calls this. */
@@ -100,11 +104,57 @@ static bool setEnvVar(const char *key, const char *val)
     return (SetEnvironmentVariableA(key, val) != 0);
 } // setEnvVar
 
-static bool launchChild(ProcessType *pid);
+static LPWSTR genCommandLine()
 {
-    return (CreateProcessW(TEXT(".\\") TEXT(GAME_LAUNCH_NAME) TEXT(".exe"),
-                           GetCommandLineW(), NULL, NULL, TRUE, 0, NULL,
-                           NULL, NULL, pid) != 0);
+    // Construct a command line with the appropriate filename
+    LPWSTR cmdline = GetCommandLineW();
+
+    // Find the index of the first argument after 0
+    int iFirstArg = -1;
+    bool quote = false;
+    bool whitespace = false;
+    for (int i = 0; cmdline[i]; ++i)
+    {
+        if (cmdline[i] == '"' && (i == 0 || cmdline[i-1] != '\\'))
+        {
+            quote = !quote;
+            whitespace = false;
+        }
+        else if (!quote && (cmdline[i] == ' ' || cmdline[i] == '\t'))
+        {
+            whitespace = true;
+        }
+        else
+        {
+            if (whitespace)
+            {
+                iFirstArg = i;
+                break;
+            }
+            whitespace = false;
+        }
+    }
+
+    // If it doesn't exist, that must mean there are no arguments,
+    // so just return GAME_LAUNCH_NAME
+    if (iFirstArg == -1)
+        return _wcsdup(TEXT("\".\\" GAME_LAUNCH_NAME ".exe\""));
+
+    // Create the new string
+    // (`".\.exe" ` == +9
+    LPWSTR newcmdline = (LPWSTR)malloc(sizeof(TEXT(GAME_LAUNCH_NAME))
+                                       + sizeof(WCHAR) * (wcslen(cmdline) - iFirstArg + 9));
+    wsprintf(newcmdline, TEXT("\".\\" GAME_LAUNCH_NAME ".exe\" %s"), cmdline + iFirstArg);
+    return newcmdline;
+}
+
+static bool launchChild(ProcessType *pid)
+{
+    STARTUPINFOW si;
+    memset(&si, 0, sizeof(si));
+    return CreateProcessW(TEXT(".\\" GAME_LAUNCH_NAME ".exe"),
+                          genCommandLine(), NULL, NULL, TRUE, 0, NULL,
+                          NULL, &si, pid);
 } // launchChild
 
 static int closeProcess(ProcessType *pid)
@@ -154,6 +204,8 @@ static bool createPipes(PipeType *pPipeParentRead, PipeType *pPipeParentWrite,
     int fds[2];
     if (pipe(fds) == -1)
         return 0;
+    fcntl(fds[0], F_SETFL, 0);
+    fcntl(fds[1], F_SETFL, 0);
     *pPipeParentRead = fds[0];
     *pPipeChildWrite = fds[1];
 
@@ -164,6 +216,8 @@ static bool createPipes(PipeType *pPipeParentRead, PipeType *pPipeParentWrite,
         return 0;
     } // if
 
+    fcntl(fds[0], F_SETFL, 0);
+    fcntl(fds[1], F_SETFL, 0);
     *pPipeChildRead = fds[0];
     *pPipeParentWrite = fds[1];
 
@@ -192,11 +246,15 @@ static bool launchChild(ProcessType *pid)
         return true;  // we'll let the pipe fail if this didn't work.
 
     // we're the child.
-    char buf[350] = {0};
+#ifdef __APPLE__
+    char buf[300];
     strncpy(buf, GArgv[0], sizeof(buf));
-    strcat(buf, "_child");
+    strcat(buf, "_rt");
     GArgv[0] = buf;
-    //GArgv[0] = strdup("./" GAME_LAUNCH_NAME);
+#else
+    GArgv[0] = strdup("./" GAME_LAUNCH_NAME);
+#endif
+    dbgpipe("Starting %s\n", GArgv[0]);
     execvp(GArgv[0], GArgv);
     // still here? It failed! Terminate, closing child's ends of the pipes.
     _exit(1);
@@ -229,6 +287,8 @@ class SteamBridge;
 static ISteamUserStats *GSteamStats = NULL;
 static ISteamUtils *GSteamUtils = NULL;
 static ISteamUser *GSteamUser = NULL;
+static ISteamFriends *GSteamFriends = NULL;
+static ISteamApps *GSteamApps = NULL;
 static AppId_t GAppID = 0;
 static uint64 GUserID = 0;
 static SteamBridge *GSteamBridge = NULL;
@@ -257,6 +317,8 @@ typedef enum ShimCmd
     SHIMCMD_GETSTATI,
     SHIMCMD_SETSTATF,
     SHIMCMD_GETSTATF,
+    SHIMCMD_GETPERSONANAME,
+    SHIMCMD_GETCURRENTGAMELANGUAGE,
 } ShimCmd;
 
 typedef enum ShimEvent
@@ -271,6 +333,8 @@ typedef enum ShimEvent
     SHIMEVENT_GETSTATI,
     SHIMEVENT_SETSTATF,
     SHIMEVENT_GETSTATF,
+    SHIMEVENT_GETPERSONANAME,
+    SHIMEVENT_GETCURRENTGAMELANGUAGE,
 } ShimEvent;
 
 static bool write1ByteCmd(PipeType fd, const uint8 b1)
@@ -291,6 +355,14 @@ static bool write3ByteCmd(PipeType fd, const uint8 b1, const uint8 b2, const uin
     return writePipe(fd, buf, sizeof (buf));
 } // write3ByteCmd
 
+static bool writeString(PipeType fd, ShimEvent event, const char *str)
+{
+    uint8 buf[256];
+    buf[0] = strlen(str) + 2;
+    buf[1] = (uint8) event;
+    strcpy((char *) buf + 2, str);
+    return writePipe(fd, buf, buf[0] + 1);
+} // writeString
 
 static inline bool writeBye(PipeType fd)
 {
@@ -328,7 +400,7 @@ static bool writeAchievementGet(PipeType fd, const char *name, const int status,
 {
     uint8 buf[256];
     uint8 *ptr = buf+1;
-    dbgpipe("Parent sending SHIMEVENT_GETACHIEVEMENT('%s', status %d, time %llu).\n", name, status, (unsigned long long) time);
+    dbgpipe("Parent sending SHIMEVENT_GETACHIEVEMENT('%s', status %d, time " LLUFMT ").\n", name, status, (unsigned long long) time);
     *(ptr++) = (uint8) SHIMEVENT_GETACHIEVEMENT;
     *(ptr++) = (uint8) status;
     memcpy(ptr, &time, sizeof (time));
@@ -414,7 +486,7 @@ static bool processCommand(const uint8 *buf, unsigned int buflen, PipeType fd)
     const ShimCmd cmd = (ShimCmd) *(buf++);
     buflen--;
 
-    #if DEBUGPIPE
+    #if STEAMSHIM_DEBUG
     if (false) {}
     #define PRINTGOTCMD(x) else if (cmd == x) printf("Parent got " #x ".\n")
     PRINTGOTCMD(SHIMCMD_BYE);
@@ -428,6 +500,8 @@ static bool processCommand(const uint8 *buf, unsigned int buflen, PipeType fd)
     PRINTGOTCMD(SHIMCMD_GETSTATI);
     PRINTGOTCMD(SHIMCMD_SETSTATF);
     PRINTGOTCMD(SHIMCMD_GETSTATF);
+    PRINTGOTCMD(SHIMCMD_GETPERSONANAME);
+    PRINTGOTCMD(SHIMCMD_GETCURRENTGAMELANGUAGE);
     #undef PRINTGOTCMD
     else printf("Parent got unknown shimcmd %d.\n", (int) cmd);
     #endif
@@ -534,6 +608,16 @@ static bool processCommand(const uint8 *buf, unsigned int buflen, PipeType fd)
                     writeGetStatF(fd, name, 0.0f, false);
             } // if
             break;
+
+        case SHIMCMD_GETPERSONANAME:
+            dbgpipe("Parent sending SHIMEVENT_GETPERSONANAME.\n");
+            writeString(fd, SHIMEVENT_GETPERSONANAME, GSteamFriends->GetPersonaName());
+            break;
+
+        case SHIMCMD_GETCURRENTGAMELANGUAGE:
+            dbgpipe("Parent sending SHIMEVENT_GETCURRENTGAMELANGUAGE.\n");
+            writeString(fd, SHIMEVENT_GETCURRENTGAMELANGUAGE, GSteamApps->GetCurrentGameLanguage());
+            break;
     } // switch
 
     return true;  // keep going.
@@ -580,11 +664,11 @@ static void processCommands(PipeType pipeParentRead, PipeType pipeParentWrite)
 static bool setEnvironmentVars(PipeType pipeChildRead, PipeType pipeChildWrite)
 {
     char buf[64];
-    snprintf(buf, sizeof (buf), "%llu", (unsigned long long) pipeChildRead);
+    snprintf(buf, sizeof (buf), LLUFMT, (unsigned long long) pipeChildRead);
     if (!setEnvVar("STEAMSHIM_READHANDLE", buf))
         return false;
 
-    snprintf(buf, sizeof (buf), "%llu", (unsigned long long) pipeChildWrite);
+    snprintf(buf, sizeof (buf), LLUFMT, (unsigned long long) pipeChildWrite);
     if (!setEnvVar("STEAMSHIM_WRITEHANDLE", buf))
         return false;
 
@@ -607,6 +691,8 @@ static bool initSteamworks(PipeType fd)
     GSteamStats = SteamUserStats();
     GSteamUtils = SteamUtils();
     GSteamUser = SteamUser();
+    GSteamFriends = SteamFriends();
+    GSteamApps = SteamApps();
 
     GAppID = GSteamUtils ? GSteamUtils->GetAppID() : 0;
 	GUserID = GSteamUser ? GSteamUser->GetSteamID().ConvertToUint64() : 0;
@@ -675,4 +761,3 @@ static int mainline(void)
 } // mainline
 
 // end of steamshim_parent.cpp ...
-

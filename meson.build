@@ -160,10 +160,10 @@ endif
 
 exe_name = meson.project_name()
 if steamworks == true
-    exe_name = meson.project_name() + '_child'
+    exe_name = meson.project_name() + '_rt'
     la = ''
     if build_static == true
-        la = '-static-libgcc -static-libstdc++'
+        la = '-static'
     endif
     shim_args = ['-DGAME_LAUNCH_NAME="' + exe_name + '"']
     if get_option('steam_appid') != ''

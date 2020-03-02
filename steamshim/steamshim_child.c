@@ -9,7 +9,6 @@ typedef __int32 int32;
 typedef unsigned __int64 uint64;
 #else
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include <unistd.h>
@@ -22,14 +21,16 @@ typedef uint64_t uint64;
 typedef int PipeType;
 #define NULLPIPE -1
 #endif
+#include <stdlib.h>
 
 #include "steamshim_child.h"
 
-#define DEBUGPIPE 1
-#if DEBUGPIPE
+#ifdef STEAMSHIM_DEBUG
 #define dbgpipe printf
 #else
-static inline void dbgpipe(const char *fmt, ...) {}
+static inline void dbgpipe(const char *fmt, ...) {
+    (void)fmt;
+}
 #endif
 
 static int writePipe(PipeType fd, const void *buf, const unsigned int _len);
@@ -66,12 +67,11 @@ static void closePipe(PipeType fd)
     CloseHandle(fd);
 } /* closePipe */
 
-static char *getEnvVar(const char *key, char *buf, const size_t _buflen)
+static char *getEnvVar(const char *key, char *buf, const size_t buflen)
 {
-    const DWORD buflen = (DWORD) _buflen;
-    const DWORD rc = GetEnvironmentVariableA(key, val, buflen);
+    const DWORD rc = GetEnvironmentVariableA(key, buf, buflen);
     /* rc doesn't count null char, hence "<". */
-    return ((rc > 0) && (rc < buflen)) ? NULL : buf;
+    return ((rc > 0) && (rc < buflen)) ? buf : NULL;
 } /* getEnvVar */
 
 #else
@@ -133,6 +133,8 @@ typedef enum ShimCmd
     SHIMCMD_GETSTATI,
     SHIMCMD_SETSTATF,
     SHIMCMD_GETSTATF,
+    SHIMCMD_GETPERSONANAME,
+    SHIMCMD_GETCURRENTGAMELANGUAGE,
 } ShimCmd;
 
 static int write1ByteCmd(const uint8 b1)
@@ -156,22 +158,15 @@ static inline int writeBye(void)
 static int initPipes(void)
 {
     char buf[64];
-    unsigned long long val;
 
     if (!getEnvVar("STEAMSHIM_READHANDLE", buf, sizeof (buf)))
         return 0;
-    else if (sscanf(buf, "%llu", &val) != 1)
-        return 0;
-    else
-        GPipeRead = (PipeType) val;
+    GPipeRead = (PipeType) strtoull(buf, 0, 10);
 
     if (!getEnvVar("STEAMSHIM_WRITEHANDLE", buf, sizeof (buf)))
         return 0;
-    else if (sscanf(buf, "%llu", &val) != 1)
-        return 0;
-    else
-        GPipeWrite = (PipeType) val;
-    
+    GPipeWrite = (PipeType) strtoull(buf, 0, 10);
+
     return ((GPipeRead != NULLPIPE) && (GPipeWrite != NULLPIPE));
 } /* initPipes */
 
@@ -185,7 +180,9 @@ int STEAMSHIM_init(void)
         return 0;
     } /* if */
 
+#ifndef _WIN32
     signal(SIGPIPE, SIG_IGN);
+#endif
 
     dbgpipe("Child init success!\n");
     return 1;
@@ -205,7 +202,9 @@ void STEAMSHIM_deinit(void)
 
     GPipeRead = GPipeWrite = NULLPIPE;
 
+#ifndef _WIN32
     signal(SIGPIPE, SIG_DFL);
+#endif
 } /* STEAMSHIM_deinit */
 
 static inline int isAlive(void)
@@ -233,7 +232,7 @@ static const STEAMSHIM_Event *processEvent(const uint8 *buf, size_t buflen)
     event.type = type;
     event.okay = 1;
 
-    #if DEBUGPIPE
+    #ifdef STEAMSHIM_DEBUG
     if (0) {}
     #define PRINTGOTEVENT(x) else if (type == x) printf("Child got " #x ".\n")
     PRINTGOTEVENT(SHIMEVENT_BYE);
@@ -246,6 +245,8 @@ static const STEAMSHIM_Event *processEvent(const uint8 *buf, size_t buflen)
     PRINTGOTEVENT(SHIMEVENT_GETSTATI);
     PRINTGOTEVENT(SHIMEVENT_SETSTATF);
     PRINTGOTEVENT(SHIMEVENT_GETSTATF);
+    PRINTGOTEVENT(SHIMEVENT_GETPERSONANAME);
+    PRINTGOTEVENT(SHIMEVENT_GETCURRENTGAMELANGUAGE);
     #undef PRINTGOTEVENT
     else printf("Child got unknown shimevent %d.\n", (int) type);
     #endif
@@ -297,6 +298,11 @@ static const STEAMSHIM_Event *processEvent(const uint8 *buf, size_t buflen)
             event.okay = *(buf++) ? 1 : 0;
             event.fvalue = (int) *((float *) buf);
             buf += sizeof (float);
+            strcpy(event.name, (const char *) buf);
+            break;
+
+        case SHIMEVENT_GETPERSONANAME:
+        case SHIMEVENT_GETCURRENTGAMELANGUAGE:
             strcpy(event.name, (const char *) buf);
             break;
 
@@ -440,5 +446,18 @@ void STEAMSHIM_getStatF(const char *name)
     writeStatThing(SHIMCMD_GETSTATF, name, NULL, 0);
 } /* STEAMSHIM_getStatF */
 
-/* end of steamshim_child.c ... */
+void STEAMSHIM_getPersonaName()
+{
+    if (isDead()) return;
+    dbgpipe("Child sending SHIMCMD_GETPERSONANAME().\n");
+    write1ByteCmd(SHIMCMD_GETPERSONANAME);
+} /* STEAMSHIM_getPersonaName */
 
+void STEAMSHIM_getCurrentGameLanguage()
+{
+    if (isDead()) return;
+    dbgpipe("Child sending SHIMCMD_GETCURRENTGAMELANGUAGE().\n");
+    write1ByteCmd(SHIMCMD_GETCURRENTGAMELANGUAGE);
+} /* STEAMSHIM_getCurrentGameLanguage */
+
+/* end of steamshim_child.c ... */

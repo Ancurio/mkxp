@@ -1,3 +1,10 @@
+This is a modified version of Steamshim used in [OneShot](https://github.com/elizagamedev/mkxp-oneshot)
+which should be compatible with Windows, further modified  (not by much, at the moment) for mkxp-z.
+
+
+## Original Steamshim README:
+
+```
 What is this?
 
 - This is a small piece of code, written in C++, that acts as a bridge between
@@ -62,5 +69,4 @@ Questions? Ask me.
 
 --ryan.
 icculus@icculus.org
-
-
+```
