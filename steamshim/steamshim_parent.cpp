@@ -593,11 +593,15 @@ static bool setEnvironmentVars(PipeType pipeChildRead, PipeType pipeChildWrite)
 
 static bool initSteamworks(PipeType fd)
 {
+#ifndef STEAM_APPID
     // this can fail for many reasons:
     //  - you forgot a steam_appid.txt in the current working directory.
     //  - you don't have Steam running
     //  - you don't own the game listed in steam_appid.txt
     if (!SteamAPI_Init())
+#else
+    if (SteamAPI_RestartAppIfNecessary(STEAM_APPID))
+#endif
         return 0;
 
     GSteamStats = SteamUserStats();

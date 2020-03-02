@@ -165,11 +165,16 @@ if steamworks == true
     if build_static == true
         la = '-static-libgcc -static-libstdc++'
     endif
+    shim_args = ['-DGAME_LAUNCH_NAME="' + exe_name + '"']
+    if get_option('steam_appid') != ''
+        shim_args += '-DSTEAM_APPID=' + get_option('steam_appid')
+    endif
+
     executable(meson.project_name(),
         sources: files('steamshim/steamshim_parent.cpp'),
         dependencies: steamlib,
         include_directories: (steamworks_path + '/public'),
-        cpp_args: '-DGAME_LAUNCH_NAME="' + exe_name + '"',
+        cpp_args: shim_args,
         link_args: la.split(),
         install: (host_system != 'windows'))
 endif
