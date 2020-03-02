@@ -6,4 +6,4 @@ if steamworks == true
   swarg = steam_libpath
 endif
 
-meson.add_install_script('macpack.sh', swarg)
+meson.add_install_script('macpack.sh', swarg, meson.project_name())
