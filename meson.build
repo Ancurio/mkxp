@@ -176,6 +176,7 @@ if steamworks == true
         include_directories: (steamworks_path + '/public'),
         cpp_args: shim_args,
         link_args: la.split(),
+        gui_app: (get_option('console') == false),
         install: (host_system != 'windows'))
 endif
 
