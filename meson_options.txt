@@ -18,7 +18,6 @@ option('workdir_current', type: 'boolean', value: false, description: 'Keep curr
 
 option('static_executable', type: 'boolean', value: false, description: 'Build a static executable (Windows-only)')
 option('independent_appimage', type: 'boolean', value: true, description: 'Set current directory to the original location of the AppImage when contained within one')
-option('discord_sdk_path', type: 'string', value: '', description: 'Path to Discord GameSDK')
-option('steamworks_path', type: 'string', value: '', description: 'Path to Steamworks SDK')
+option('steamworks_path', type: 'string', value: '', description: 'Path to Steamshim')
 option('steam_appid', type: 'string', value: '0', description: 'Steam application ID.')
 option('appimagekit_path', type: 'string', value: '', description: 'Path to AppImageKit, used for building AppImages')

@@ -37,10 +37,6 @@ binding_source = [files(
     'tilemapvx-binding.cpp'
 )]
 
-if discord == true
-    binding_source += files('discord-binding.cpp')
-endif
-
 if steamworks == true
     binding_source += files('cusl-binding.cpp')
 endif

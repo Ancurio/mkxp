@@ -9,11 +9,6 @@
 #import "sdl-util.h"
 #import "util.h"
 
-#ifdef HAVE_DISCORDSDK
-#import "discordstate.h"
-#import <discord_game_sdk.h>
-#endif
-
 OFString *prefPath(const char *org, const char *app) {
   char *path = SDL_GetPrefPath(org, app);
   if (!path)
@@ -83,9 +78,6 @@ void Config::read(int argc, char *argv[]) {
     @"customScript" : @"",
     @"pathCache" : @true,
     @"encryptedGraphics" : @false,
-#ifdef HAVE_DISCORDSDK
-    @"discordClientId" : @DEFAULT_CLIENT_ID,
-#endif
 #ifdef HAVE_STEAMWORKS
     @"steamAppId" : @0,
 #endif
@@ -189,9 +181,6 @@ void Config::read(int argc, char *argv[]) {
     glVersion.major = 3;
     glVersion.minor = 3;
   }
-#ifdef HAVE_DISCORDSDK
-  SET_OPT(discordClientId, longLongValue);
-#endif
 #ifdef HAVE_STEAMWORKS
   SET_OPT(steamAppId, uInt32Value);
 #endif

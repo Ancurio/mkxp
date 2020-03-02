@@ -106,8 +106,4 @@ if get_option('use_fakeapi') == true and miniffi == true
     main_source += files('fake-api.mm')
 endif
 
-if discord == true
-    main_source += files('discordstate.cpp')
-endif
-
 global_sources += main_source

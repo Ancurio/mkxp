@@ -46,9 +46,6 @@ class GLState;
 class TexPool;
 class Font;
 class SharedFontState;
-#ifdef HAVE_DISCORDSDK
-class DiscordState;
-#endif
 struct GlobalIBO;
 struct Config;
 struct Vec2i;
@@ -82,9 +79,6 @@ struct SharedState
 
 	SharedFontState &fontState() const;
 	Font &defaultFont() const;
-#ifdef HAVE_DISCORDSDK
-    DiscordState &discord() const;
-#endif
 	SharedMidiState &midiState() const;
 
 	sigc::signal<void> prepareDraw;

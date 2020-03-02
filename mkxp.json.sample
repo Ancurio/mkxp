@@ -334,14 +334,6 @@
     //
     // "execName": "Game",
 
-
-    // The Discord Client ID for your application. If left undefined,
-    // mkxp-z's Client ID is used by default.
-    // Only has an effect if mkxp-z is built with Discord support.
-    //
-    // "discordClientId": 1234567890,
-
-
     // The game's Steam AppID.
     //
     // If the ID was specified at build time, this setting is

@@ -26,21 +26,6 @@ win64 = (sizeof['void*'] != sizeof['long'])
 # Ext libs
 # ====================
 
-# DISCORD
-
-discord = false
-discord_libpath = get_option('discord_sdk_path')
-if discord_libpath != ''
-    discordlib = compilers['cpp'].find_library('discord_game_sdk', required: false, dirs: [discord_libpath+'/lib/x86', discord_libpath+'/lib/x86_64'])
-
-    if discordlib.found() == true
-        global_include_dirs += include_directories(discord_libpath+'/c')
-        global_args += ['-I@0@/c'.format(discord_libpath), '-DHAVE_DISCORDSDK']
-        global_dependencies += discordlib
-        discord = true
-    endif
-endif
-
 # STEAMWORKS
 
 steamworks = false

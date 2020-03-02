@@ -57,15 +57,4 @@ DECL_TYPE(MiniFFI);
 #define MiniFFIType "MiniFFI"
 #endif
 
-#ifdef HAVE_DISCORDSDK
-
-#if RAPI_FULL > 187
-DECL_TYPE(DCActivity);
-
-#else
-#define DiscordActivityType "DCActivity"
-
-#endif
-#endif
-
 #endif // BINDINGTYPES_H

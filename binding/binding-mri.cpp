@@ -92,10 +92,6 @@ void fileIntBindingInit();
 void MiniFFIBindingInit();
 #endif
 
-#ifdef HAVE_DISCORDSDK
-void DiscordBindingInit();
-#endif
-
 #ifdef HAVE_STEAMWORKS
 void CUSLBindingInit();
 #endif
@@ -144,10 +140,6 @@ static void mriBindingInit() {
 
 #ifdef USE_MINIFFI
   MiniFFIBindingInit();
-#endif
-
-#ifdef HAVE_DISCORDSDK
-  DiscordBindingInit();
 #endif
 
 #ifdef HAVE_STEAMWORKS

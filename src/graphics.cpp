@@ -44,10 +44,6 @@
 #include <SDL_timer.h>
 #include <SDL_video.h>
 
-#ifdef HAVE_DISCORDSDK
-#include "discordstate.h"
-#endif
-
 #ifdef HAVE_STEAMWORKS
 #include "steam/steam_api.h"
 #endif
@@ -589,10 +585,6 @@ Graphics::~Graphics() { delete p; }
 void Graphics::update() {
   p->checkShutDownReset();
   p->checkSyncLock();
-
-#ifdef HAVE_DISCORDSDK
-  shState->discord().update();
-#endif
 
 #ifdef HAVE_STEAMWORKS
   if (SteamAPI_IsSteamRunning())

@@ -26,10 +26,6 @@
 #include <string>
 #include <vector>
 
-#ifdef HAVE_DISCORDSDK
-#include <discord_game_sdk.h>
-#endif
-
 struct Config {
   int rgssVersion;
 
@@ -86,10 +82,6 @@ struct Config {
   } SE;
 
   bool useScriptNames;
-
-#ifdef HAVE_DISCORDSDK
-  DiscordClientId discordClientId;
-#endif
 
 #ifdef HAVE_STEAMWORKS
   unsigned int steamAppId;

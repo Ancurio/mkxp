@@ -38,10 +38,6 @@
 #include "exception.h"
 #include "sharedmidistate.h"
 
-#ifdef HAVE_DISCORDSDK
-#include "discordstate.h"
-#endif
-
 #include <unistd.h>
 #include <stdio.h>
 #include <string>
@@ -89,10 +85,6 @@ struct SharedStatePrivate
 
 	SharedFontState fontState;
 	Font *defaultFont;
-    
-#ifdef HAVE_DISCORDSDK
-    DiscordState discord;
-#endif
 
 	TEX::ID globalTex;
 	int globalTexW, globalTexH;
@@ -114,9 +106,6 @@ struct SharedStatePrivate
 	      rtData(*threadData),
 	      config(threadData->config),
 	      midiState(threadData->config),
-#ifdef HAVE_DISCORDSDK
-          discord(threadData),
-#endif
 	      graphics(threadData),
 	      input(*threadData),
 	      audio(*threadData),
@@ -245,10 +234,6 @@ GSATT(TexPool&, texPool)
 GSATT(Quad&, gpQuad)
 GSATT(SharedFontState&, fontState)
 GSATT(SharedMidiState&, midiState)
-
-#ifdef HAVE_DISCORDSDK
-GSATT(DiscordState&, discord)
-#endif
 
 void SharedState::setBindingData(void *data)
 {
