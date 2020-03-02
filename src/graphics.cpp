@@ -44,8 +44,8 @@
 #include <SDL_timer.h>
 #include <SDL_video.h>
 
-#ifdef HAVE_STEAMWORKS
-#include "steam/steam_api.h"
+#ifdef HAVE_STEAMSHIM
+#include "steamshim_child.h"
 #endif
 
 #include <algorithm>
@@ -586,9 +586,9 @@ void Graphics::update() {
   p->checkShutDownReset();
   p->checkSyncLock();
 
-#ifdef HAVE_STEAMWORKS
-  if (SteamAPI_IsSteamRunning())
-    SteamAPI_RunCallbacks();
+#ifdef HAVE_STEAMSHIM
+  if (STEAMSHIM_alive())
+    STEAMSHIM_pump();
 #endif
 
   if (p->frozen)

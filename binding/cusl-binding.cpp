@@ -1,12 +1,35 @@
 #include "binding-util.h"
-#include <steam/isteamapps.h>
-#include <steam/isteamuserstats.h>
+#include "steamshim_child.h"
 
-// This is a simple implementation of Steam's user stats.
-// Basically, a C++ version of this:
-// https://github.com/GMMan/RGSS_SteamUserStatsLite
+#define STEAMSHIM_GETV(t, v, d)                                                \
+  while (STEAMSHIM_alive()) {                                                  \
+    const STEAMSHIM_Event *e = STEAMSHIM_pump();                               \
+    if (e && e->type == t) {                                                   \
+      d = e->v;                                                                \
+      break;                                                                   \
+    }                                                                          \
+  }
 
-// May or may not be expanded in the future.
+#define STEAMSHIM_GETV_EXP(t, exp)                                             \
+  while (STEAMSHIM_alive()) {                                                  \
+    const STEAMSHIM_Event *e = STEAMSHIM_pump();                               \
+    if (e && e->type == t) {                                                   \
+      exp;                                                                     \
+      break;                                                                   \
+    }                                                                          \
+  }
+
+#define STEAMSHIM_GET_OK(t, d) STEAMSHIM_GETV(t, okay, d)
+
+#define STEAMSHIM_GETV_AND_OK(t, v, dst, ok)                                   \
+  while (STEAMSHIM_alive()) {                                                  \
+    const STEAMSHIM_Event *e = STEAMSHIM_pump();                               \
+    if (e && e->type == t) {                                                   \
+      dst = e->v;                                                              \
+      ok = e->okay;                                                            \
+      break;                                                                   \
+    }                                                                          \
+  }
 
 RB_METHOD(CUSLSetStat) {
   RB_UNUSED_PARAM;
@@ -17,10 +40,11 @@ RB_METHOD(CUSLSetStat) {
 
   bool ret;
   if (RB_TYPE_P(stat, RUBY_T_FLOAT)) {
-    ret =
-        SteamUserStats()->SetStat(RSTRING_PTR(name), (float)RFLOAT_VALUE(stat));
+    STEAMSHIM_setStatF(RSTRING_PTR(name), (float)RFLOAT_VALUE(stat));
+    STEAMSHIM_GET_OK(SHIMEVENT_SETSTATF, ret);
   } else if (RB_TYPE_P(stat, RUBY_T_FIXNUM)) {
-    ret = SteamUserStats()->SetStat(RSTRING_PTR(name), (int)NUM2INT(stat));
+    STEAMSHIM_setStatI(RSTRING_PTR(name), (int)NUM2INT(stat));
+    STEAMSHIM_GET_OK(SHIMEVENT_SETSTATI, ret);
   } else {
     rb_raise(rb_eTypeError,
              "Statistic value must be either an integer or float.");
@@ -28,7 +52,7 @@ RB_METHOD(CUSLSetStat) {
   return rb_bool_new(ret);
 }
 
-RB_METHOD(CUSLGetStat) {
+RB_METHOD(CUSLGetStatI) {
   RB_UNUSED_PARAM;
 
   VALUE name;
@@ -36,30 +60,34 @@ RB_METHOD(CUSLGetStat) {
   SafeStringValue(name);
 
   int resi;
-  float resf;
+  bool valid;
 
-  if (SteamUserStats()->GetStat(RSTRING_PTR(name), &resi)) {
-    return INT2NUM(resi);
-  } else if (SteamUserStats()->GetStat(RSTRING_PTR(name), &resf)) {
-    return rb_float_new(resf);
-  } else {
+  STEAMSHIM_getStatI(RSTRING_PTR(name));
+  STEAMSHIM_GETV_AND_OK(SHIMEVENT_GETSTATI, ivalue, resi, valid);
+
+  if (!valid)
     return Qnil;
-  }
+
+  return INT2NUM(resi);
 }
 
-RB_METHOD(CUSLUpdateAvgRateStat) {
+RB_METHOD(CUSLGetStatF) {
   RB_UNUSED_PARAM;
 
-  VALUE name, sessioncount, sessionlength;
-  rb_scan_args(argc, argv, "3", &name, &sessioncount, &sessionlength);
+  VALUE name;
+  rb_scan_args(argc, argv, "1", &name);
   SafeStringValue(name);
-  Check_Type(sessioncount, RUBY_T_FLOAT);
-  Check_Type(sessionlength, RUBY_T_FLOAT);
 
-  bool ret = SteamUserStats()->UpdateAvgRateStat(
-      RSTRING_PTR(name), RFLOAT_VALUE(sessioncount), NUM2DBL(sessionlength));
+  float resf;
+  bool valid;
 
-  return rb_bool_new(ret);
+  STEAMSHIM_getStatI(RSTRING_PTR(name));
+  STEAMSHIM_GETV_AND_OK(SHIMEVENT_GETSTATI, fvalue, resf, valid);
+
+  if (!valid)
+    return Qnil;
+
+  return rb_float_new(resf);
 }
 
 RB_METHOD(CUSLGetAchievement) {
@@ -70,7 +98,10 @@ RB_METHOD(CUSLGetAchievement) {
   SafeStringValue(name);
 
   bool ret;
-  bool valid = SteamUserStats()->GetAchievement(RSTRING_PTR(name), &ret);
+  bool valid;
+
+  STEAMSHIM_getAchievement(RSTRING_PTR(name));
+  STEAMSHIM_GETV_AND_OK(SHIMEVENT_GETACHIEVEMENT, ivalue, ret, valid);
 
   if (!valid)
     return Qnil;
@@ -85,7 +116,9 @@ RB_METHOD(CUSLSetAchievement) {
   rb_scan_args(argc, argv, "1", &name);
   SafeStringValue(name);
 
-  bool ret = SteamUserStats()->SetAchievement(RSTRING_PTR(name));
+  bool ret;
+  STEAMSHIM_setAchievement(RSTRING_PTR(name), true);
+  STEAMSHIM_GET_OK(SHIMEVENT_SETACHIEVEMENT, ret);
   return rb_bool_new(ret);
 }
 
@@ -97,7 +130,9 @@ RB_METHOD(CUSLClearAchievement) {
   rb_scan_args(argc, argv, "1", &name);
   SafeStringValue(name);
 
-  bool ret = SteamUserStats()->ClearAchievement(RSTRING_PTR(name));
+  bool ret;
+  STEAMSHIM_setAchievement(RSTRING_PTR(name), false);
+  STEAMSHIM_GET_OK(SHIMEVENT_SETACHIEVEMENT, ret);
   return rb_bool_new(ret);
 }
 
@@ -110,10 +145,17 @@ RB_METHOD(CUSLGetAchievementAndUnlockTime) {
   SafeStringValue(name);
 
   bool achieved;
-  unsigned int time;
+  unsigned long long time;
+  bool valid;
 
-  if (!SteamUserStats()->GetAchievementAndUnlockTime(RSTRING_PTR(name),
-                                                     &achieved, &time))
+  STEAMSHIM_getAchievement(RSTRING_PTR(name));
+  STEAMSHIM_GETV_EXP(SHIMEVENT_GETACHIEVEMENT, {
+    valid = e->okay;
+    achieved = e->ivalue;
+    time = e->epochsecs;
+  });
+
+  if (!valid)
     return Qnil;
 
   VALUE ret = rb_ary_new();
@@ -124,66 +166,20 @@ RB_METHOD(CUSLGetAchievementAndUnlockTime) {
     return ret;
   }
 
-  VALUE t = rb_funcall(rb_cTime, rb_intern("at"), 1, UINT2NUM(time));
+  VALUE t = rb_funcall(rb_cTime, rb_intern("at"), 1, ULL2NUM(time));
   rb_ary_push(ret, t);
   return ret;
-}
-
-RB_METHOD(CUSLGetAchievementDisplayAttribute) {
-  RB_UNUSED_PARAM;
-
-  VALUE name, key;
-  rb_scan_args(argc, argv, "2", &name, &key);
-  SafeStringValue(name);
-  SafeStringValue(key);
-
-  const char *ret = SteamUserStats()->GetAchievementDisplayAttribute(
-      RSTRING_PTR(name), RSTRING_PTR(key));
-
-  return rb_str_new_cstr(ret);
-}
-
-RB_METHOD(CUSLIndicateAchievementProgress) {
-  RB_UNUSED_PARAM;
-
-  VALUE name, progress, max;
-
-  rb_scan_args(argc, argv, "3", &name, &progress, &max);
-  SafeStringValue(name);
-
-  bool ret = SteamUserStats()->IndicateAchievementProgress(
-      RSTRING_PTR(name), NUM2UINT(progress), NUM2UINT(max));
-
-  if (ret)
-    return rb_bool_new(SteamUserStats()->StoreStats());
-
-  return rb_bool_new(ret);
-}
-
-RB_METHOD(CUSLGetNumAchievements) {
-  RB_UNUSED_PARAM;
-
-  rb_check_argc(argc, 0);
-
-  return UINT2NUM(SteamUserStats()->GetNumAchievements());
-}
-
-RB_METHOD(CUSLGetAchievementName) {
-  RB_UNUSED_PARAM;
-
-  VALUE index;
-
-  rb_scan_args(argc, argv, "1", &index);
-
-  return rb_str_new_cstr(SteamUserStats()->GetAchievementName(NUM2UINT(index)));
 }
 
 RB_METHOD(CUSLStoreStats) {
   RB_UNUSED_PARAM;
 
   rb_check_argc(argc, 0);
+  bool ok;
 
-  return rb_bool_new(SteamUserStats()->StoreStats());
+  STEAMSHIM_storeStats();
+  STEAMSHIM_GET_OK(SHIMEVENT_STATSSTORED, ok);
+  return rb_bool_new(ok);
 }
 
 RB_METHOD(CUSLResetAllStats) {
@@ -193,53 +189,27 @@ RB_METHOD(CUSLResetAllStats) {
 
   rb_get_args(argc, argv, "b", &achievementsToo);
 
-  return rb_bool_new(SteamUserStats()->ResetAllStats(achievementsToo));
-}
-
-RB_METHOD(CUSLIsSubscribed) {
-  RB_UNUSED_PARAM;
-
-  rb_check_argc(argc, 0);
-
-  return rb_bool_new(SteamApps()->BIsSubscribed());
-}
-
-RB_METHOD(CUSLIsDlcInstalled) {
-  RB_UNUSED_PARAM;
-
-  VALUE appid;
-  rb_scan_args(argc, argv, "1", &appid);
-
-  return rb_bool_new(SteamApps()->BIsDlcInstalled(NUM2UINT(appid)));
+  STEAMSHIM_resetStats(achievementsToo);
+  STEAMSHIM_GET_OK(SHIMEVENT_RESETSTATS, achievementsToo);
+  return rb_bool_new(achievementsToo);
 }
 
 void CUSLBindingInit() {
 
-  SteamUserStats()->RequestCurrentStats();
+  STEAMSHIM_requestStats();
 
   VALUE mSteamLite = rb_define_module("SteamLite");
 
-  _rb_define_module_function(mSteamLite, "subscribed?", CUSLIsSubscribed);
-  _rb_define_module_function(mSteamLite, "dlc_installed?", CUSLIsDlcInstalled);
-
-  _rb_define_module_function(mSteamLite, "get_stat", CUSLGetStat);
+  _rb_define_module_function(mSteamLite, "get_stat_i", CUSLGetStatI);
+  _rb_define_module_function(mSteamLite, "get_stat_f", CUSLGetStatF);
   _rb_define_module_function(mSteamLite, "set_stat", CUSLSetStat);
 
-  _rb_define_module_function(mSteamLite, "update_avg_rate_stat",
-                             CUSLUpdateAvgRateStat);
   _rb_define_module_function(mSteamLite, "get_achievement", CUSLGetAchievement);
   _rb_define_module_function(mSteamLite, "set_achievement", CUSLSetAchievement);
   _rb_define_module_function(mSteamLite, "clear_achievement",
                              CUSLClearAchievement);
   _rb_define_module_function(mSteamLite, "get_achievement_and_unlock_time",
                              CUSLGetAchievementAndUnlockTime);
-  _rb_define_module_function(mSteamLite, "get_achievement_display_attribute",
-                             CUSLGetAchievementDisplayAttribute);
-  _rb_define_module_function(mSteamLite, "indicate_achievement_progress",
-                             CUSLIndicateAchievementProgress);
-  _rb_define_module_function(mSteamLite, "get_num_achievements",
-                             CUSLGetNumAchievements);
-  _rb_define_module_function(mSteamLite, "get_achievement_name",
-                             CUSLGetAchievementName);
+
   _rb_define_module_function(mSteamLite, "reset_all_stats", CUSLResetAllStats);
 }

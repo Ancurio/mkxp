@@ -78,9 +78,6 @@ void Config::read(int argc, char *argv[]) {
     @"customScript" : @"",
     @"pathCache" : @true,
     @"encryptedGraphics" : @false,
-#ifdef HAVE_STEAMWORKS
-    @"steamAppId" : @0,
-#endif
     @"useScriptNames" : @1,
     @"preloadScript" : @[],
     @"RTP" : @[],
@@ -181,9 +178,6 @@ void Config::read(int argc, char *argv[]) {
     glVersion.major = 3;
     glVersion.minor = 3;
   }
-#ifdef HAVE_STEAMWORKS
-  SET_OPT(steamAppId, uInt32Value);
-#endif
 }
 
 static void setupScreenSize(Config &conf) {

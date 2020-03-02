@@ -1,4 +1,4 @@
-project('mkxp-z', 'cpp', 'objc', 'objcpp', version: '1.2.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release', 'warning_level=0'])
+project('mkxp-z', 'c', 'cpp', 'objc', 'objcpp', version: '1.2.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release', 'warning_level=0'])
 
 minimum_macos_version = get_option('macos_min_version')
 
@@ -53,18 +53,9 @@ if steamworks_path != ''
     steamlib = compilers['cpp'].find_library(libname, required: false, dirs: [steam_libpath])
 
     if steamlib.found() == true
-        appid = get_option('steam_appid')
-        if appid == ''
-            appid = '0'
-        endif
-        if appid == '0'
-            warning('Steam support is enabled, but steam_appid is not set.')
-            warning('Please make sure to set the corresponding option in the configuration file.')
-        endif
-        global_args += ['-I@0@/public'.format(steamworks_path),
-                        '-DHAVE_STEAMWORKS',
-                        '-DSTEAM_APPID=' + appid]
-        global_dependencies += steamlib
+        global_include_dirs += include_directories('steamshim')
+        global_args += '-DHAVE_STEAMSHIM'
+        global_sources += 'steamshim/steamshim_child.c'
         steamworks = true
     endif
 endif
@@ -160,14 +151,30 @@ elif host_system == 'darwin'
     subdir('macos')
     add_project_arguments('-stdlib=libc++', language: ['cpp','objcpp'])
     add_project_arguments('-std=c++11', language: 'objcpp') # Meson's cpp_std doesn't work on ObjC for some reason
-    global_args += '-mmacosx-version-min='+minimum_macos_version
-    global_link_args += '-mmacosx-version-min='+minimum_macos_version
+    add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
+    add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
 else
     subdir('linux')
     add_project_arguments('-std=c++11', language: 'objcpp')
 endif
 
-executable(meson.project_name(),
+exe_name = meson.project_name()
+if steamworks == true
+    exe_name = meson.project_name() + '_child'
+    la = ''
+    if build_static == true
+        la = '-static-libgcc -static-libstdc++'
+    endif
+    executable(meson.project_name(),
+        sources: files('steamshim/steamshim_parent.cpp'),
+        dependencies: steamlib,
+        include_directories: (steamworks_path + '/public'),
+        cpp_args: '-DGAME_LAUNCH_NAME="' + exe_name + '"',
+        link_args: la.split(),
+        install: (host_system != 'windows'))
+endif
+
+executable(exe_name,
     sources: global_sources,
     dependencies: global_dependencies,
     include_directories: global_include_dirs,

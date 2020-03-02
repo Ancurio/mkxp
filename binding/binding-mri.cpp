@@ -92,7 +92,7 @@ void fileIntBindingInit();
 void MiniFFIBindingInit();
 #endif
 
-#ifdef HAVE_STEAMWORKS
+#ifdef HAVE_STEAMSHIM
 void CUSLBindingInit();
 #endif
 
@@ -142,7 +142,7 @@ static void mriBindingInit() {
   MiniFFIBindingInit();
 #endif
 
-#ifdef HAVE_STEAMWORKS
+#ifdef HAVE_STEAMSHIM
   CUSLBindingInit();
 #endif
 

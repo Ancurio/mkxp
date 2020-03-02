@@ -46,8 +46,8 @@
 #endif
 
 #import <ObjFW/ObjFW.h>
-#ifdef HAVE_STEAMWORKS
-#import <steam/steam_api.h>
+#ifdef HAVE_STEAMSHIM
+#import "steamshim_child.h"
 #endif
 #import "icon.png.xxd"
 
@@ -125,7 +125,8 @@ static void printRgssVersion(int ver) {
   const char *const makers[] = {"", "XP", "VX", "VX Ace"};
 
   char buf[128];
-  snprintf(buf, sizeof(buf), "RGSS version %d (RPG Maker %s)", ver, makers[ver]);
+  snprintf(buf, sizeof(buf), "RGSS version %d (RPG Maker %s)", ver,
+           makers[ver]);
 
   Debug() << buf;
 }
@@ -231,25 +232,10 @@ int main(int argc, char *argv[]) {
 
     conf.readGameINI();
 
-#ifdef HAVE_STEAMWORKS
-#if STEAM_APPID == 0
-    if (!conf.steamAppId) {
-      showInitError("Steam AppID is not set. The application cannot continue launching.");
-      SDL_Quit();
-      return 0;
-    }
-
-    if (SteamAPI_RestartAppIfNecessary(conf.steamAppId))
-#else
-    if (SteamAPI_RestartAppIfNecessary(STEAM_APPID))
-#endif
-    {
-      SDL_Quit();
-      return 0;
-    }
-
-    if (!SteamAPI_Init()) {
-      showInitError("Steamworks failed to initialize.");
+#ifdef HAVE_STEAMSHIM
+    if (!STEAMSHIM_init()) {
+      showInitError("Failed to initialize Steamworks. The application cannot "
+                    "continue launching.");
       SDL_Quit();
       return 0;
     }
@@ -267,6 +253,10 @@ int main(int argc, char *argv[]) {
                     SDL_GetError());
       SDL_Quit();
 
+#ifdef HAVE_STEAMSHIM
+      STEAMSHIM_deinit();
+#endif
+
       return 0;
     }
 
@@ -275,6 +265,10 @@ int main(int argc, char *argv[]) {
                     SDL_GetError());
       IMG_Quit();
       SDL_Quit();
+
+#ifdef HAVE_STEAMSHIM
+      STEAMSHIM_deinit();
+#endif
 
       return 0;
     }
@@ -285,6 +279,10 @@ int main(int argc, char *argv[]) {
       TTF_Quit();
       IMG_Quit();
       SDL_Quit();
+
+#ifdef HAVE_STEAMSHIM
+      STEAMSHIM_deinit();
+#endif
 
       return 0;
     }
@@ -316,6 +314,10 @@ int main(int argc, char *argv[]) {
 
     if (!win) {
       showInitError(std::string("Error creating window: ") + SDL_GetError());
+
+#ifdef HAVE_STEAMSHIM
+      STEAMSHIM_deinit();
+#endif
       return 0;
     }
 
@@ -336,6 +338,9 @@ int main(int argc, char *argv[]) {
       IMG_Quit();
       SDL_Quit();
 
+#ifdef HAVE_STEAMSHIM
+      STEAMSHIM_deinit();
+#endif
       return 0;
     }
 
@@ -417,8 +422,8 @@ int main(int argc, char *argv[]) {
       WSACleanup();
 #endif
 
-#ifdef HAVE_STEAMWORKS
-    SteamAPI_Shutdown();
+#ifdef HAVE_STEAMSHIM
+    STEAMSHIM_deinit();
 #endif
     Sound_Quit();
     TTF_Quit();
