@@ -1,6 +1,10 @@
 This is a modified version of Steamshim used in [OneShot](https://github.com/elizagamedev/mkxp-oneshot)
 which should be compatible with Windows, further modified  (not by much, at the moment) for mkxp-z.
 
+The key word, at the moment, is *"should"*. While it works fine on Unix, I found the Win32 code to be
+basically completely nonfunctional, and after some changes it will form the pipes just fine but will
+crash when the callback from requesting stats is called.
+
 
 ## Original Steamshim README:
 
