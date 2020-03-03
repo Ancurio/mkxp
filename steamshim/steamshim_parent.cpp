@@ -3,8 +3,13 @@
 #define UNICODE
 #include <cstdio>
 #include <windows.h>
-typedef PROCESS_INFORMATION ProcessType;
-typedef HANDLE PipeType;
+#include <io.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <shellapi.h>
+#include <process.h>
+typedef int ProcessType;
+typedef int PipeType;
 #define NULLPIPE NULL
 #define LLUFMT "%I64u"
 #else
@@ -51,40 +56,42 @@ static void fail(const char *err) {
 } // fail
 
 static bool writePipe(PipeType fd, const void *buf, const unsigned int _len) {
-  const DWORD len = (DWORD)_len;
-  DWORD bw = 0;
-  return ((WriteFile(fd, buf, len, &bw, NULL) != 0) && (bw == len));
+  const ssize_t len = (ssize_t)_len;
+  ssize_t bw;
+  while (((bw = _write(fd, buf, len)) == -1) && (errno == EINTR)) { /*spin*/
+  }
+  return (bw == len);
 } // writePipe
 
 static int readPipe(PipeType fd, void *buf, const unsigned int _len) {
-  const DWORD len = (DWORD)_len;
-  DWORD br = 0;
-  return ReadFile(fd, buf, len, &br, NULL) ? (int)br : -1;
+  const ssize_t len = (ssize_t)_len;
+  ssize_t br;
+  while (((br = _read(fd, buf, len)) == -1) && (errno == EINTR)) { /*spin*/
+  }
+  return (int)br;
 } // readPipe
 
 static bool createPipes(PipeType *pPipeParentRead, PipeType *pPipeParentWrite,
                         PipeType *pPipeChildRead, PipeType *pPipeChildWrite) {
-  SECURITY_ATTRIBUTES pipeAttr;
-
-  pipeAttr.nLength = sizeof(pipeAttr);
-  pipeAttr.lpSecurityDescriptor = NULL;
-  pipeAttr.bInheritHandle = TRUE;
-  if (!CreatePipe(pPipeParentRead, pPipeChildWrite, &pipeAttr, 0))
+  int fds[2];
+  if (_pipe(&fds[0], 1000, _O_BINARY) == -1)
     return 0;
+  *pPipeParentRead = fds[0];
+  *pPipeChildWrite = fds[1];
 
-  pipeAttr.nLength = sizeof(pipeAttr);
-  pipeAttr.lpSecurityDescriptor = NULL;
-  pipeAttr.bInheritHandle = TRUE;
-  if (!CreatePipe(pPipeChildRead, pPipeParentWrite, &pipeAttr, 0)) {
-    CloseHandle(*pPipeParentRead);
-    CloseHandle(*pPipeChildWrite);
+  if (_pipe(&fds[0], 1000, _O_BINARY) == -1) {
+    _close(*pPipeParentRead);
+    _close(*pPipeChildWrite);
     return 0;
   } // if
+
+  *pPipeChildRead = fds[0];
+  *pPipeParentWrite = fds[1];
 
   return 1;
 } // createPipes
 
-static void closePipe(PipeType fd) { CloseHandle(fd); } // closePipe
+static void closePipe(PipeType fd) { _close(fd); } // closePipe
 
 static bool setEnvVar(const char *key, const char *val) {
   return (SetEnvironmentVariableA(key, val) != 0);
@@ -129,15 +136,18 @@ static LPWSTR genCommandLine() {
 }
 
 static bool launchChild(ProcessType *pid) {
-  STARTUPINFOW si;
-  memset(&si, 0, sizeof(si));
-  return CreateProcessW(TEXT(".\\" GAME_LAUNCH_NAME ".exe"), genCommandLine(),
-                        NULL, NULL, TRUE, 0, NULL, NULL, &si, pid);
+  int nargs;
+  LPWSTR* argv = CommandLineToArgvW(genCommandLine(), &nargs);
+  ProcessType ret = (ProcessType)_wspawnv(1, TEXT(".\\" GAME_LAUNCH_NAME ".exe"), argv);   
+  if (ret == (ProcessType)-1)
+    return false;
+
+  *pid = ret; 
+  return true;
 } // launchChild
 
 static int closeProcess(ProcessType *pid) {
-  CloseHandle(pid->hProcess);
-  CloseHandle(pid->hThread);
+  _cwait(0, *pid, 0);
   return 0;
 } // closeProcess
 
@@ -641,8 +651,9 @@ static int initSteamworks(PipeType fd) {
   //  - you forgot a steam_appid.txt in the current working directory.
   //  - you don't have Steam running
   //  - you don't own the game listed in steam_appid.txt
-  if (!SteamAPI_Init())
-    return 0;
+printf("Init Steam\n");
+//  if (!SteamAPI_Init())
+//    return 0;
 
   GSteamStats = SteamUserStats();
   GSteamUtils = SteamUtils();
@@ -650,9 +661,13 @@ static int initSteamworks(PipeType fd) {
   GSteamFriends = SteamFriends();
   GSteamApps = SteamApps();
 
-  GAppID = GSteamUtils ? GSteamUtils->GetAppID() : 0;
-  GUserID = GSteamUser ? GSteamUser->GetSteamID().ConvertToUint64() : 0;
+  printf("Mobile phones!\n");
+
+  GAppID = GSteamUtils ? SteamUtils()->GetAppID() : 0;
+  //GUserID = GSteamUser ? SteamUser()->GetSteamID().ConvertToUint64() : 0;
+  printf("Hi!");
   GSteamBridge = new SteamBridge(fd);
+  printf(" It succeeded!\n");
 
   return 1;
 } // initSteamworks
@@ -672,6 +687,7 @@ static int mainline(void) {
   if (SteamAPI_RestartAppIfNecessary(STEAM_APPID))
     return 0;
 #endif
+  SteamAPI_Init();
 
   PipeType pipeParentRead = NULLPIPE;
   PipeType pipeParentWrite = NULLPIPE;
