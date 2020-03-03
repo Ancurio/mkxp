@@ -651,7 +651,6 @@ static int initSteamworks(PipeType fd) {
   //  - you forgot a steam_appid.txt in the current working directory.
   //  - you don't have Steam running
   //  - you don't own the game listed in steam_appid.txt
-printf("Init Steam\n");
 //  if (!SteamAPI_Init())
 //    return 0;
 
@@ -661,13 +660,11 @@ printf("Init Steam\n");
   GSteamFriends = SteamFriends();
   GSteamApps = SteamApps();
 
-  printf("Mobile phones!\n");
-
   GAppID = GSteamUtils ? SteamUtils()->GetAppID() : 0;
-  //GUserID = GSteamUser ? SteamUser()->GetSteamID().ConvertToUint64() : 0;
-  printf("Hi!");
+#ifndef _WIN32 //FIXME
+  GUserID = GSteamUser ? SteamUser()->GetSteamID().ConvertToUint64() : 0;
+#endif
   GSteamBridge = new SteamBridge(fd);
-  printf(" It succeeded!\n");
 
   return 1;
 } // initSteamworks
