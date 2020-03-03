@@ -197,6 +197,8 @@ RB_METHOD(CUSLResetAllStats) {
 void CUSLBindingInit() {
 
   STEAMSHIM_requestStats();
+  bool ok;
+  STEAMSHIM_GET_OK(SHIMEVENT_STATSRECEIVED, ok);
 
   VALUE mSteamLite = rb_define_module("SteamLite");
 

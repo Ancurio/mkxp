@@ -2,8 +2,11 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
-typedef HANDLE PipeType;
-#define NULLPIPE NULL
+#include <process.h>
+#include <io.h>
+#include <errno.h>
+typedef int PipeType;
+#define NULLPIPE 0
 typedef unsigned __int8 uint8;
 typedef __int32 int32;
 typedef unsigned __int64 uint64;
@@ -50,21 +53,23 @@ static int pipeReady(PipeType fd)
 
 static int writePipe(PipeType fd, const void *buf, const unsigned int _len)
 {
-    const DWORD len = (DWORD) _len;
-    DWORD bw = 0;
-    return ((WriteFile(fd, buf, len, &bw, NULL) != 0) && (bw == len));
+    const ssize_t len = (ssize_t) _len;
+    ssize_t bw;
+    while (((bw = _write(fd, buf, len)) == -1) && (errno == EINTR)) { /*spin*/ }
+    return (bw == len);
 } /* writePipe */
 
 static int readPipe(PipeType fd, void *buf, const unsigned int _len)
 {
-    const DWORD len = (DWORD) _len;
-    DWORD br = 0;
-    return ReadFile(fd, buf, len, &br, NULL) ? (int) br : -1;
+    const ssize_t len = (ssize_t) _len;
+    ssize_t br;
+    while (((br = _read(fd, buf, len)) == -1) && (errno == EINTR)) { /*spin*/ }
+    return (int) br;
 } /* readPipe */
 
 static void closePipe(PipeType fd)
 {
-    CloseHandle(fd);
+    _close(fd);
 } /* closePipe */
 
 static char *getEnvVar(const char *key, char *buf, const size_t buflen)

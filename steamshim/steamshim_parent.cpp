@@ -441,8 +441,10 @@ SteamBridge::SteamBridge(PipeType _fd)
 void SteamBridge::OnUserStatsReceived(UserStatsReceived_t *pCallback) {
   if (GAppID != pCallback->m_nGameID)
     return;
+#ifndef _WIN32 //FIXME
   if (GUserID != pCallback->m_steamIDUser.ConvertToUint64())
     return;
+#endif
   writeStatsReceived(fd, pCallback->m_eResult == k_EResultOK);
 } // SteamBridge::OnUserStatsReceived
 
