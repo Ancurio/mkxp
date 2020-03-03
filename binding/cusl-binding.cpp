@@ -206,6 +206,8 @@ void CUSLBindingInit() {
   _rb_define_module_function(mSteamLite, "get_stat_f", CUSLGetStatF);
   _rb_define_module_function(mSteamLite, "set_stat", CUSLSetStat);
 
+  _rb_define_module_function(mSteamLite, "store_stats", CUSLStoreStats);
+
   _rb_define_module_function(mSteamLite, "get_achievement", CUSLGetAchievement);
   _rb_define_module_function(mSteamLite, "set_achievement", CUSLSetAchievement);
   _rb_define_module_function(mSteamLite, "clear_achievement",
