@@ -2,12 +2,12 @@
 #define WIN32_LEAN_AND_MEAN 1
 #define UNICODE
 #include <cstdio>
-#include <windows.h>
-#include <io.h>
-#include <fcntl.h>
 #include <errno.h>
-#include <shellapi.h>
+#include <fcntl.h>
+#include <io.h>
 #include <process.h>
+#include <shellapi.h>
+#include <windows.h>
 typedef int ProcessType;
 typedef int PipeType;
 #define NULLPIPE NULL
@@ -137,12 +137,13 @@ static LPWSTR genCommandLine() {
 
 static bool launchChild(ProcessType *pid) {
   int nargs;
-  LPWSTR* argv = CommandLineToArgvW(genCommandLine(), &nargs);
-  ProcessType ret = (ProcessType)_wspawnv(1, TEXT(".\\" GAME_LAUNCH_NAME ".exe"), argv);   
+  LPWSTR *argv = CommandLineToArgvW(genCommandLine(), &nargs);
+  ProcessType ret =
+      (ProcessType)_wspawnv(1, TEXT(".\\" GAME_LAUNCH_NAME ".exe"), argv);
   if (ret == (ProcessType)-1)
     return false;
 
-  *pid = ret; 
+  *pid = ret;
   return true;
 } // launchChild
 
@@ -439,11 +440,13 @@ SteamBridge::SteamBridge(PipeType _fd)
       fd(_fd) {} // SteamBridge::SteamBridge
 
 void SteamBridge::OnUserStatsReceived(UserStatsReceived_t *pCallback) {
-  if (GAppID != pCallback->m_nGameID)
+  if (GAppID != pCallback->m_nGameID) {
     return;
-#ifndef _WIN32 //FIXME
-  if (GUserID != pCallback->m_steamIDUser.ConvertToUint64())
+  }
+#ifndef _WIN32 // FIXME
+  if (GUserID != pCallback->m_steamIDUser.ConvertToUint64()) {
     return;
+  }
 #endif
   writeStatsReceived(fd, pCallback->m_eResult == k_EResultOK);
 } // SteamBridge::OnUserStatsReceived
@@ -653,8 +656,8 @@ static int initSteamworks(PipeType fd) {
   //  - you forgot a steam_appid.txt in the current working directory.
   //  - you don't have Steam running
   //  - you don't own the game listed in steam_appid.txt
-//  if (!SteamAPI_Init())
-//    return 0;
+  if (!SteamAPI_Init())
+    return 0;
 
   GSteamStats = SteamUserStats();
   GSteamUtils = SteamUtils();
@@ -663,7 +666,7 @@ static int initSteamworks(PipeType fd) {
   GSteamApps = SteamApps();
 
   GAppID = GSteamUtils ? SteamUtils()->GetAppID() : 0;
-#ifndef _WIN32 //FIXME
+#ifndef _WIN32 // FIXME
   GUserID = GSteamUser ? SteamUser()->GetSteamID().ConvertToUint64() : 0;
 #endif
   GSteamBridge = new SteamBridge(fd);
@@ -686,7 +689,6 @@ static int mainline(void) {
   if (SteamAPI_RestartAppIfNecessary(STEAM_APPID))
     return 0;
 #endif
-  SteamAPI_Init();
 
   PipeType pipeParentRead = NULLPIPE;
   PipeType pipeParentWrite = NULLPIPE;
