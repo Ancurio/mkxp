@@ -6,8 +6,9 @@
 #include <fcntl.h>
 #include <io.h>
 #include <process.h>
-#include <shellapi.h>
 #include <windows.h>
+
+#include <shellapi.h>
 typedef int ProcessType;
 typedef int PipeType;
 #define NULLPIPE NULL
