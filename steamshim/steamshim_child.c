@@ -47,6 +47,7 @@ static int pipeReady(PipeType fd);
 
 static int pipeReady(PipeType fd)
 {
+    return 1;
     DWORD avail = 0;
     return (PeekNamedPipe(fd, NULL, 0, NULL, &avail, NULL) && (avail > 0));
 } /* pipeReady */
@@ -63,7 +64,7 @@ static int readPipe(PipeType fd, void *buf, const unsigned int _len)
 {
     const ssize_t len = (ssize_t) _len;
     ssize_t br;
-    while (((br = _read(fd, buf, len)) == -1) && (errno == EINTR)) { /*spin*/ }
+    while (((br = _read(fd, buf, len)) == 0)) { /*spin*/ }
     return (int) br;
 } /* readPipe */
 

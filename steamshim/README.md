@@ -1,10 +1,5 @@
 This is a modified version of Steamshim used in [OneShot](https://github.com/elizagamedev/mkxp-oneshot)
-which should be compatible with Windows, further modified  (not by much, at the moment) for mkxp-z.
-
-The key word, at the moment, is *"should"*. While it works fine on Unix, I found the Win32 code to be
-basically completely nonfunctional. After some changes it will form the pipes and spawn the process
-just fine, but steam_api will raise a memory access violation once it calls the shim's callbacks.
-
+further modified for mkxp-z.
 
 ## Original Steamshim README:
 
