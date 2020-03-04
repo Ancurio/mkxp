@@ -439,16 +439,13 @@ SteamBridge::SteamBridge(PipeType _fd)
     : m_CallbackUserStatsReceived(this, &SteamBridge::OnUserStatsReceived),
       m_CallbackUserStatsStored(this, &SteamBridge::OnUserStatsStored),
       fd(_fd) {} // SteamBridge::SteamBridge
-
 void SteamBridge::OnUserStatsReceived(UserStatsReceived_t *pCallback) {
   if (GAppID != pCallback->m_nGameID) {
     return;
   }
-#ifndef _WIN32 // FIXME
   if (GUserID != pCallback->m_steamIDUser.ConvertToUint64()) {
     return;
   }
-#endif
   writeStatsReceived(fd, pCallback->m_eResult == k_EResultOK);
 } // SteamBridge::OnUserStatsReceived
 
@@ -457,7 +454,6 @@ void SteamBridge::OnUserStatsStored(UserStatsStored_t *pCallback) {
     return;
   writeStatsStored(fd, pCallback->m_eResult == k_EResultOK);
 } // SteamBridge::OnUserStatsStored
-
 static bool processCommand(const uint8 *buf, unsigned int buflen, PipeType fd) {
   if (buflen == 0)
     return true;
@@ -667,9 +663,7 @@ static int initSteamworks(PipeType fd) {
   GSteamApps = SteamApps();
 
   GAppID = GSteamUtils ? SteamUtils()->GetAppID() : 0;
-#ifndef _WIN32 // FIXME
   GUserID = GSteamUser ? SteamUser()->GetSteamID().ConvertToUint64() : 0;
-#endif
   GSteamBridge = new SteamBridge(fd);
 
   return 1;

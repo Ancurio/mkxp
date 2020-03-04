@@ -8,8 +8,8 @@ host_system = host_machine.system()
 
 compilers = {'cpp': meson.get_compiler('cpp'), 'objc': meson.get_compiler('objc'), 'objcpp': meson.get_compiler('objcpp')}
 
-if compilers['objc'].get_id() != 'clang'
-    error('This program must be built with Clang! ( try: OBJC=clang CXX=clang++ OBJCXX=clang++ meson build )')
+if compilers['objc'].get_id() != 'clang' or compilers['objcpp'].get_id() != 'clang'
+    error('This program must be built with Clang! ( try: OBJC=clang OBJCXX=clang++ meson build )')
 endif
 
 global_sources = []
