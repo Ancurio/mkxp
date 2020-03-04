@@ -396,13 +396,17 @@ int main(int argc, char *argv[]) {
       SDL_WaitThread(rgssThread, 0);
     else
       SDL_ShowSimpleMessageBox(
-          SDL_MESSAGEBOX_ERROR, conf.windowTitle.c_str(),
-          "The RGSS script seems to be stuck and mkxp will now force quit",
+          SDL_MESSAGEBOX_ERROR, conf.game.title.c_str(),
+          [OFString
+              stringWithFormat:
+                  @"The RGSS script seems to be stuck. %s will now force quit.",
+                  conf.game.title.c_str()]
+              .UTF8String,
           win);
 
     if (!rtData.rgssErrorMsg.empty()) {
       Debug() << rtData.rgssErrorMsg;
-      SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, conf.windowTitle.c_str(),
+      SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, conf.game.title.c_str(),
                                rtData.rgssErrorMsg.c_str(), win);
     }
 
