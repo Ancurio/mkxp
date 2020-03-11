@@ -332,18 +332,6 @@
     // "Game.rgssad", but specifying the executable name here
     // is a tiny bit less intrusive.
     //
-    // "execName": "Game",
-
-    // The game's Steam AppID.
-    //
-    // If the ID was specified at build time, this setting is
-    // ignored. If the ID is specified neither here nor in
-    // the build itself, the program will raise an error
-    // at startup.
-    //
-    // Only has an effect if mkxp-z was built with
-    // Steam support.
-    //
-    // "steamAppId": 0
+    // "execName": "Game"
 
 }
