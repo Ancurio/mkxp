@@ -29,6 +29,15 @@ foreach l : explicit_libs.split(';')
         endif
 endforeach
 
+alcdev_struct = 'ALCdevice_struct'
+if openal.type_name() == 'pkgconfig'
+    if openal.version().version_compare('>=1.20.1')
+        alcdev_struct = 'ALCdevice'
+    endif
+endif
+
+global_args += '-DALCDEVICE_STRUCT=' + alcdev_struct
+
 global_include_dirs += include_directories('.')
 global_dependencies += [sigcxx, openal, opengl, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
 if host_system == 'darwin'
