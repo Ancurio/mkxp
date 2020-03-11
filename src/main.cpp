@@ -220,6 +220,14 @@ int main(int argc, char *argv[])
 	}
 #endif
 
+#ifdef __ANDROID__
+	const char *android_path = SDL_AndroidGetInternalStoragePath();
+	if (!android_path || chdir(android_path) != 0) {
+		showInitError(std::string("Unable to switch into ") + std::string((android_path ? android_path : "NULL")));
+		return 0;
+	}
+#endif
+
 	/* now we load the config */
 	Config conf;
 	conf.read(argc, argv);
