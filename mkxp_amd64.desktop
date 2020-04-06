@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Game
+Exec=sh -c "./mkxp.amd64"
+Terminal=false
+Type=Application
