@@ -1,3 +1,5 @@
+Info: A fork of Ancurio's mkxp for resolutions higher than 640/480
+
 # mkxp
 
 mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP", "RPG Maker VX" and "RPG Maker VX Ace" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file.
