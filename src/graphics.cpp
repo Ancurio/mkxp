@@ -926,8 +926,8 @@ int Graphics::height() const
 
 void Graphics::resizeScreen(int width, int height)
 {
-	width = clamp(width, 1, 640);
-	height = clamp(height, 1, 480);
+	width = clamp(width, 1, p->threadData->config.defScreenW);
+	height = clamp(height, 1, p->threadData->config.defScreenH);
 
 	Vec2i size(width, height);
 
