@@ -440,6 +440,7 @@ target_link_libraries(${PROJECT_NAME}
 	${ZLIB_LIBRARY}
 
 	${PLATFORM_LIBRARIES}
+	/usr/local/lib/libruby-static.a
 )
 
 PostBuildMacBundle(${PROJECT_NAME} "" "${PLATFORM_COPY_LIBS}")
