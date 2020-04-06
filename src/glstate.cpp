@@ -120,9 +120,16 @@ GLState::GLState(const Config &conf)
 	blendMode.init(BlendNormal);
 	blend.init(true);
 	scissorTest.init(false);
-	scissorBox.init(IntRect(0, 0, 640, 480));
+	scissorBox.init(IntRect(0, 0, conf.defScreenW, conf.defScreenH));
 	program.init(0);
 
 	if (conf.maxTextureSize > 0)
 		caps.maxTexSize = conf.maxTextureSize;
+	
+	//Set max texture size to 16384 if conf.maxTextureSize is 0
+	if (conf.maxTextureSize > 0){
+		caps.maxTexSize = conf.maxTextureSize;
+	} else {
+		caps.maxTexSize = 16384;
+	}
 }
