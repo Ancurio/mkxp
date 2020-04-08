@@ -125,11 +125,4 @@ GLState::GLState(const Config &conf)
 
 	if (conf.maxTextureSize > 0)
 		caps.maxTexSize = conf.maxTextureSize;
-	
-	//Set max texture size to 16384 if conf.maxTextureSize is 0
-	if (conf.maxTextureSize > 0){
-		caps.maxTexSize = conf.maxTextureSize;
-	} else {
-		caps.maxTexSize = 16384;
-	}
 }
