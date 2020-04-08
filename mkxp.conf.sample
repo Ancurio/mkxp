@@ -51,7 +51,7 @@
 # Enable/disable cursor (mouse)
 # (default: disabled)
 #
-# winResizable=false
+# showCursor=false
 
 
 # Preserve game screen aspect ratio,
