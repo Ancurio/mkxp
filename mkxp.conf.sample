@@ -48,6 +48,12 @@
 # fullscreen=false
 
 
+# Enable/disable cursor (mouse)
+# (default: disabled)
+#
+# winResizable=false
+
+
 # Preserve game screen aspect ratio,
 # as opposed to stretch-to-fill
 # (default: enabled)
