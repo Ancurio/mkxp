@@ -312,7 +312,7 @@ RB_METHOD(MiniFFI_call) {
                "test esp, ebx\n"
                "movnz esp, ebx"
                : "+a"(ret)
-               : "c"(nimport * 4), "b"(&sp), "S"(&param), "D"(ApiFunction)
+               : "c"(nimport * 4), "S"(&param), "D"(ApiFunction)
                : "memory");
 #endif
 
