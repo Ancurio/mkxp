@@ -284,7 +284,6 @@ RB_METHOD(MiniFFI_call) {
 // dynamic location than this
 #else
   unsigned long ret = 0;
-  unsigned long sp = 0;
   asm volatile(".intel_syntax noprefix\n"
                ".data\n"
                "esp_store: .int 0\n"
@@ -296,7 +295,6 @@ RB_METHOD(MiniFFI_call) {
                "jz call_void\n"
                "sub ecx, 4\n"
                "test ecx, ecx\n"
-               "mov esp_store, esp\n"
                "jz loop_end\n"
                "loop_start:\n"
                "mov eax, [esi+ecx]\n"
