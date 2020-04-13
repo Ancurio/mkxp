@@ -273,13 +273,30 @@ RB_METHOD(MiniFFI_call) {
 // apparently doesn't work anymore, so assembly is used instead.
 // Technically also allows for an unlimited number of arguments,
 // but the above code does not
+
+// if esp isn't the same as it was before the stack
+// setup and call, this'll try to reset it, which should let
+// cdecl functions work as well as stdcall ones.
+// ...On paper, anyway.
+
+// Do not do not DO NOT try to run this from multiple
+// threads at once, esp would need to be stored in a more
+// dynamic location than this
 #else
   unsigned long ret = 0;
+  unsigned long sp = 0;
   asm volatile(".intel_syntax noprefix\n"
+               ".data\n"
+               "esp_store: .int 0\n"
+               ".text\n"
+               "MiniFFI_call_asm:\n"
+               "lea ebx, esp_store\n"
+               "mov [ebx], esp\n"
                "test ecx, ecx\n"
                "jz call_void\n"
                "sub ecx, 4\n"
                "test ecx, ecx\n"
+               "mov esp_store, esp\n"
                "jz loop_end\n"
                "loop_start:\n"
                "mov eax, [esi+ecx]\n"
@@ -291,9 +308,13 @@ RB_METHOD(MiniFFI_call) {
                "mov eax, [esi]\n"
                "push eax\n"
                "call_void:\n"
-               "call edi"
+               "call edi\n"
+               "lea ebx, esp_store\n"
+               "mov ebx, [ebx]\n"
+               "test esp, ebx\n"
+               "movnz esp, ebx"
                : "+a"(ret)
-               : "c"(nimport * 4), "S"(&param), "D"(ApiFunction)
+               : "c"(nimport * 4), "b"(&sp), "S"(&param), "D"(ApiFunction)
                : "memory");
 #endif
 
