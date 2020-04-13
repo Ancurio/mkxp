@@ -310,7 +310,7 @@ RB_METHOD(MiniFFI_call) {
                "lea ebx, esp_store\n"
                "mov ebx, [ebx]\n"
                "test esp, ebx\n"
-               "movnz esp, ebx"
+               "cmovnz esp, ebx"
                : "+a"(ret)
                : "c"(nimport * 4), "S"(&param), "D"(ApiFunction)
                : "memory");
