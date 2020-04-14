@@ -106,6 +106,8 @@ EventThread::EventThread()
       showCursor(false)
 {}
 
+SDL_DisplayMode dm = {0};
+
 void EventThread::process(RGSSThreadData &rtData)
 {
 	SDL_Event event;
@@ -541,6 +543,9 @@ void EventThread::resetInputStates()
 
 void EventThread::setFullscreen(SDL_Window *win, bool mode)
 {
+	SDL_GetDesktopDisplayMode(0, &dm);
+	SDL_SetWindowSize(win, dm.w, dm.h);
+	SDL_WINDOWEVENT_SIZE_CHANGED;
 	SDL_SetWindowFullscreen
 	        (win, mode ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 	fullscreen = mode;
