@@ -14,6 +14,8 @@
 #define _T_INTEGER 3
 #define _T_BOOL 4
 
+#define INTEL_ASM ".intel_syntax noprefix\n"
+
 // Might need to let MiniFFI.initialize set calling convention
 // as an optional arg, this won't work with everything
 // Maybe libffi would help out with this
@@ -273,47 +275,45 @@ RB_METHOD(MiniFFI_call) {
 // apparently doesn't work anymore, so assembly is used instead.
 // Technically also allows for an unlimited number of arguments,
 // but the above code does not
-
-// if esp isn't the same as it was before the stack
-// setup and call, this'll try to reset it, which should let
-// cdecl functions work as well as stdcall ones.
-// ...On paper, anyway.
-
-// Do not do not DO NOT try to run this from multiple
-// threads at once, esp would need to be stored in a more
-// dynamic location than this
 #else
   unsigned long ret = 0;
-  asm volatile(".intel_syntax noprefix\n"
-               ".data\n"
-               "esp_store: .int 0\n"
-               ".text\n"
+  void *old_esp = 0;
+
+  asm volatile(INTEL_ASM
+
                "MiniFFI_call_asm:\n"
-               "lea ebx, esp_store\n"
-               "mov [ebx], esp\n"
-               "test ecx, ecx\n"
-               "jz call_void\n"
+               "mov [edi], esp\n"
+               "test ebx, ebx\n"
+               "jz mffi_call_void\n"
+
+               "shl ebx, 2\n"
+               "mov ecx, ebx\n"
+
+               "mffi_call_loop:\n"
                "sub ecx, 4\n"
+               "mov ebx, [esi+ecx]\n"
+               "push ebx\n"
                "test ecx, ecx\n"
-               "jz loop_end\n"
-               "loop_start:\n"
-               "mov eax, [esi+ecx]\n"
-               "push eax\n"
-               "sub ecx, 4\n"
-               "test ecx, ecx\n"
-               "jnz loop_start\n"
-               "loop_end:\n"
-               "mov eax, [esi]\n"
-               "push eax\n"
-               "call_void:\n"
-               "call edi\n"
-               "lea ebx, esp_store\n"
-               "mov ebx, [ebx]\n"
-               "test esp, ebx\n"
-               "cmovnz esp, ebx"
-               : "+a"(ret)
-               : "c"(nimport * 4), "S"(&param), "D"(ApiFunction)
-               : "memory");
+               "jnz mffi_call_loop\n"
+
+               "mffi_call_void:\n"
+               "call edx\n"
+
+               : "=a"(ret)
+               : "b"(nimport), "S"(&param), "d"(ApiFunction), "D"(&old_esp)
+               : "ecx");
+
+
+  // If esp doesn't match, this was probably a cdecl and not a stdcall.
+  // Move the stack pointer back to where it should be
+  asm volatile(INTEL_ASM
+               "mov edx, [edi]\n"
+               "cmp edx, esp\n"
+               "cmovne esp, edx"
+               :
+               : "D"(&old_esp)
+               : "edx"
+  );
 #endif
 
   switch (FIX2INT(own_exports)) {
