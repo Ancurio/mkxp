@@ -11,6 +11,7 @@
 // ... Oh, and by the way, Windows was a mistake
 
 // #define PREFABI ABI(stdcall)
+#define PREFABI
 #else
 #define PREFABI
 #endif
