@@ -114,7 +114,9 @@
     // "fixedFramerate": 0,
 
 
-    // Skip (don't draw) frames when behind
+    // Skip (don't draw) frames when behind.
+    // Can be changed at runtime, but this is the
+    // default value when the game starts.
     // (default: disabled)
     //
     // "frameSkip": false,

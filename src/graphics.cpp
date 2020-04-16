@@ -425,6 +425,9 @@ struct GraphicsPrivate {
 
   FPSLimiter fpsLimiter;
 
+  // Can be set from Ruby. Takes priority over config setting.
+  bool useFrameSkip;
+
   bool frozen;
   TEXFBO frozenScene;
   Quad screenQuad;
@@ -438,7 +441,8 @@ struct GraphicsPrivate {
         winSize(rtData->config.defScreenW, rtData->config.defScreenH),
         screen(scRes.x, scRes.y), threadData(rtData),
         glCtx(SDL_GL_GetCurrentContext()), frameRate(DEF_FRAMERATE),
-        frameCount(0), brightness(255), fpsLimiter(frameRate), frozen(false) {
+        frameCount(0), brightness(255), fpsLimiter(frameRate),
+        useFrameSkip(rtData->config.frameSkip), frozen(false) {
     recalculateScreenSize(rtData);
     updateScreenResoRatio(rtData);
 
@@ -595,7 +599,7 @@ void Graphics::update() {
     return;
 
   if (p->fpsLimiter.frameSkipRequired()) {
-    if (p->threadData->config.frameSkip) {
+    if (p->useFrameSkip) {
       /* Skip frame */
       p->fpsLimiter.delay();
       ++p->frameCount;
@@ -928,7 +932,11 @@ void Graphics::reset() {
   setBrightness(255);
 }
 
-void Graphics::center() { p->threadData->ethread->requestWindowCenter(); }
+void Graphics::center() {
+  if (getFullscreen())
+    return;
+  p->threadData->ethread->requestWindowCenter();
+}
 
 bool Graphics::getFullscreen() const {
   return p->threadData->ethread->getFullscreen();
@@ -967,6 +975,10 @@ void Graphics::setScale(double factor) {
     update();
   }
 }
+
+bool Graphics::getFrameskip() const { return p->useFrameSkip; }
+
+void Graphics::setFrameskip(bool value) { p->useFrameSkip = value; }
 
 Scene *Graphics::getScreen() const { return &p->screen; }
 
