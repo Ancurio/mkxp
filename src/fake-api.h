@@ -2,7 +2,15 @@
 
 #define ABI(x) __attribute__((x))
 #if defined(__WIN32__)
-#define PREFABI ABI(stdcall)
+
+// Before, it needed to be ensured that functions called from
+// MiniFFI/Win32API were using stdcall as a calling convention,
+// but now that the stack pointer is automatically reset after
+// getting the result, cdecl should work just fine too
+
+// ... Oh, and by the way, Windows was a mistake
+
+// #define PREFABI ABI(stdcall)
 #else
 #define PREFABI
 #endif
