@@ -122,24 +122,6 @@ PREFABI BOOL MKXP_GetWindowRect(HWND hWnd, LPRECT lpRect) {
   return true;
 }
 
-PREFABI BOOL MKXP_RegisterHotKey(HWND hWnd, int id, UINT fsModifiers, UINT vk)
-    NOP_VAL(true)
-
-        PREFABI LONG MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong) {
-#ifdef __WIN32__
-  return SetWindowLong(hWnd, nIndex, dwNewLong);
-#else
-  if (nIndex == -16) {
-    if (dwNewLong == 0) {
-      shState->eThread().requestFullscreenMode(true);
-    } else if (dwNewLong == 0x14ca0000) {
-      shState->eThread().requestFullscreenMode(false);
-    }
-  }
-  return DUMMY_VAL;
-#endif
-};
-
 // Shift key with GetKeyboardState doesn't work for whatever reason,
 // so Windows needs this too
 #define ks(sc) shState->eThread().keyStates[SDL_SCANCODE_##sc]
@@ -383,5 +365,19 @@ PREFABI BOOL MKXP_GetUserName(LPSTR lpBuffer, LPDWORD pcbBuffer) {
 #endif
   return true;
 }
+
+PREFABI BOOL MKXP_RegisterHotKey(HWND hWnd, int id, UINT fsModifiers, UINT vk)
+    NOP_VAL(true);
+
+PREFABI LONG MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong) {
+  if (nIndex == -16) {
+    if (dwNewLong == 0) {
+      shState->eThread().requestFullscreenMode(true);
+    } else if (dwNewLong == 0x14ca0000) {
+      shState->eThread().requestFullscreenMode(false);
+    }
+  }
+  return DUMMY_VAL;
+};
 
 #endif

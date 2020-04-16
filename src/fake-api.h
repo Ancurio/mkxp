@@ -87,10 +87,6 @@ PREFABI BOOL MKXP_SetWindowTextA(HWND hWnd, LPCSTR lpString);
 
 PREFABI BOOL MKXP_GetWindowRect(HWND hWnd, LPRECT lpRect);
 
-PREFABI BOOL MKXP_RegisterHotKey(HWND hWnd, int id, UINT fsModifiers, UINT vk);
-
-PREFABI LONG MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong);
-
 PREFABI BOOL MKXP_GetKeyboardState(PBYTE lpKeyState);
 
 #ifndef __WIN32__
@@ -124,6 +120,10 @@ PREFABI DWORD MKXP_GetPrivateProfileString(LPCTSTR lpAppName, LPCTSTR lpKeyName,
 PREFABI short MKXP_GetUserDefaultLangID(void);
 
 PREFABI BOOL MKXP_GetUserName(LPSTR lpBuffer, LPDWORD pcbBuffer);
+
+PREFABI BOOL MKXP_RegisterHotKey(HWND hWnd, int id, UINT fsModifiers, UINT vk);
+
+PREFABI LONG MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong);
 
 #endif
 #endif

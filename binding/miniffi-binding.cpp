@@ -60,8 +60,6 @@ static void *MiniFFI_GetFunctionHandle(void *libhandle, const char *func) {
   CAPTURE(SetWindowPos);
   CAPTURE(SetWindowTextA);
   CAPTURE(GetWindowRect);
-  CAPTURE(RegisterHotKey);
-  CAPTURE(SetWindowLong);
   CAPTURE(GetKeyboardState);
 #ifndef __WIN32__
   // Functions only needed on Linux and macOS go here
@@ -78,6 +76,8 @@ static void *MiniFFI_GetFunctionHandle(void *libhandle, const char *func) {
   CAPTURE(GetPrivateProfileString);
   CAPTURE(GetUserDefaultLangID);
   CAPTURE(GetUserName);
+  CAPTURE(RegisterHotKey);
+  CAPTURE(SetWindowLong);
 #endif
 #endif
   if (!libhandle)
