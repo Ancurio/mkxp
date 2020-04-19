@@ -23,6 +23,7 @@
 #define FILESYSTEM_H
 
 #include <SDL_rwops.h>
+#include <string>
 
 struct FileSystemPrivate;
 class SharedFontState;
@@ -68,6 +69,8 @@ public:
 
 	/* Does not perform extension supplementing */
 	bool exists(const char *filename);
+
+	const char *desensitize(const char *filename);
 
 private:
 	FileSystemPrivate *p;

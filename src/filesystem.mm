@@ -622,10 +622,11 @@ void FileSystem::openRead(OpenHandler &handler, const char *filename) {
     throw Exception(Exception::NoFileError, "%s", filename);
 }
 
-// FIXME: This is (a) slower than RGSS and (b) case-sensitive
+// FIXME: This is slower than RGSS
 void FileSystem::openReadRaw(SDL_RWops &ops, const char *filename,
                              bool freeOnClose) {
-  PHYSFS_File *handle = PHYSFS_openRead(filename);
+
+  PHYSFS_File *handle = PHYSFS_openRead(desensitize(filename));
 
   // assert(handle);
   if (!handle)
@@ -668,4 +669,11 @@ char *FileSystem::normalize(const char *pathname, bool preferred,
 
 bool FileSystem::exists(const char *filename) {
   return PHYSFS_exists(filename);
+}
+
+const char *FileSystem::desensitize(const char *filename) {
+  OFString *fn_lower = @(filename).lowercaseString;
+  if (p->havePathCache && p->pathCache.contains(fn_lower.UTF8String))
+    return p->pathCache[fn_lower.UTF8String].c_str();
+  return filename;
 }
