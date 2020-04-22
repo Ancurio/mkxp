@@ -61,6 +61,7 @@ extern const char module_rpg1[];
 extern const char module_rpg2[];
 extern const char module_rpg3[];
 
+// Scripts to run at some point during Ruby execution
 #include "EssentialsTilemapHack.rb.xxd"
 
 static void mriBindingExecute();
@@ -610,16 +611,20 @@ static void runRMXPScripts(BacktraceData &btData) {
       btData.scriptNames.insert(buf, scriptName);
 
       // There is 0 reason for anything other than Essentials to have this class
-      if (rb_const_defined(rb_cObject, rb_intern("PokemonMapMetadata")) && minimonsters == 0)
+      if (minimonsters == 0 && rb_const_defined(rb_cObject, rb_intern("PokemonMapMetadata")))
         minimonsters = 1;
 
       // Before checking to see if the next script should be skipped,
       // make sure to check whether it's the last one or not and run
-      // any extra stuff before the end (primarily stupid Essentials stuff)
-      // Will be placed within a build option later
+      // any extra stuff before the end (primarily stupid Essentials fixes)
+      // Will be placed within a build option later if I decide to add more
       #define SCRIPT(name) rb_str_new((const char*)&___scripts_##name##_rb, ___scripts_##name##_rb_len), #name " (Internal)"
+      #define EVALFILE(name) if (!evalScript(SCRIPT(name))) break;
       if (minimonsters > 0 && i + 2 == scriptCount && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){
-        evalScript(SCRIPT(EssentialsTilemapHack));
+      if (i + 2 == scriptCount){
+        if (minimonsters > 0 && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){
+          EVALFILE(EssentialsTilemapHack);
+        }
         minimonsters = -1;
       }
 
