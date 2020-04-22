@@ -61,6 +61,8 @@ extern const char module_rpg1[];
 extern const char module_rpg2[];
 extern const char module_rpg3[];
 
+#include "EssentialsTilemapHack.rb.xxd"
+
 static void mriBindingExecute();
 static void mriBindingTerminate();
 static void mriBindingReset();
@@ -473,6 +475,14 @@ struct BacktraceData {
   BoostHash<std::string, std::string> scriptNames;
 };
 
+bool evalScript(VALUE string, const char *filename)
+{
+  int state;
+  evalString(string, rb_str_new_cstr(filename), &state);
+  if (state) return false;
+  return true;
+}
+
 #ifndef MARIN
 #define SCRIPT_SECTION_FMT (rgssVer >= 3 ? "{%04ld}" : "Section%03ld")
 
@@ -570,6 +580,9 @@ static void runRMXPScripts(BacktraceData &btData) {
     return;
 #endif
 
+  // Used to try and fix Essentials garbage later if it's detected
+  int minimonsters = 0;
+
   while (true) {
 #if RAPI_FULL < 200 && defined(NO_CONSOLE)
     VALUE iostr = rb_str_new2(NULL_IO);
@@ -595,6 +608,20 @@ static void runRMXPScripts(BacktraceData &btData) {
 
       fname = newStringUTF8(buf, len);
       btData.scriptNames.insert(buf, scriptName);
+
+      // There is 0 reason for anything other than Essentials to have this class
+      if (rb_const_defined(rb_cObject, rb_intern("PokemonMapMetadata")) && minimonsters == 0)
+        minimonsters = 1;
+
+      // Before checking to see if the next script should be skipped,
+      // make sure to check whether it's the last one or not and run
+      // any extra stuff before the end (primarily stupid Essentials stuff)
+      // Will be placed within a build option later
+      #define SCRIPT(name) rb_str_new((const char*)&___scripts_##name##_rb, ___scripts_##name##_rb_len), #name " (Internal)"
+      if (minimonsters > 0 && i + 2 == scriptCount && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){
+        evalScript(SCRIPT(EssentialsTilemapHack));
+        minimonsters = -1;
+      }
 
       // if the script name starts with |s|, only execute
       // it if "s" is the same first letter as the platform
