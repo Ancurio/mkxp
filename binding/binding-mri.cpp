@@ -620,7 +620,6 @@ static void runRMXPScripts(BacktraceData &btData) {
       // Will be placed within a build option later if I decide to add more
       #define SCRIPT(name) rb_str_new((const char*)&___scripts_##name##_rb, ___scripts_##name##_rb_len), #name " (Internal)"
       #define EVALFILE(name) if (!evalScript(SCRIPT(name))) break;
-      if (minimonsters > 0 && i + 2 == scriptCount && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){
       if (i + 2 == scriptCount){
         if (minimonsters > 0 && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){
           EVALFILE(EssentialsTilemapHack);
