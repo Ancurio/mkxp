@@ -100,7 +100,6 @@ main_source = files(
     'sdlsoundsource.cpp',
     'alstream.cpp',
     'audiostream.cpp',
-    'rgssad.cpp',
     'vorbissource.cpp',
     'windowvx.cpp',
     'tilemapvx.cpp',

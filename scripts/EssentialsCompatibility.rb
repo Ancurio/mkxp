@@ -136,9 +136,3 @@ def pbScreenCapture
     nil
   end
 end
-
-alias old_pbDrawTextPositions pbDrawTextPositions
-def pbDrawTextPositions(bitmap,textpos)
-  old_pbDrawTextPositions(bitmap, textpos.each{|i|i[2] += 4})
-end
-
