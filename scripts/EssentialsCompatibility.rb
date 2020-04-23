@@ -29,7 +29,7 @@
 
 module VWrap
 
-  MAX_TEX_SIZE = Bitmap.max_size
+  MAX_TEX_SIZE = Bitmap.max_size()
   TILESET_WIDTH = 0x100
 
   def self.clamp(val, min, max)
@@ -139,5 +139,6 @@ end
 
 alias old_pbDrawTextPositions pbDrawTextPositions
 def pbDrawTextPositions(bitmap,textpos)
-  old_pbDrawTextPositions(bitmap,textpos.map{|n|n+4})
+  old_pbDrawTextPositions(bitmap, textpos.each{|i|i[2] += 4})
 end
+
