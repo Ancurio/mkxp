@@ -98,8 +98,8 @@ if get_option('independent_appimage')
     global_args += '-DINDEPENDENT_APPIMAGE'
 endif
 
-if get_option('use_fakeapi') == true and miniffi == true
-    global_args += '-DUSE_FAKEAPI'
+if get_option('easypoke') == true and miniffi == true
+    global_args += '-DEASY_POKE'
 endif
 
 if not get_option('console')

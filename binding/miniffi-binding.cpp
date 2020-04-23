@@ -46,7 +46,7 @@ DEF_ALLOCFUNC_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
 #endif
 
 static void *MiniFFI_GetFunctionHandle(void *libhandle, const char *func) {
-#ifdef USE_FAKEAPI
+#ifdef EASY_POKE
 #define CAPTURE(n)                                                             \
   if (!strcmp(#n, func))                                                       \
   return (void *)&MKXP_##n

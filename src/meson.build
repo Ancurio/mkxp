@@ -111,7 +111,7 @@ main_source = files(
     'lang-fun.mm'
 )
 
-if get_option('use_fakeapi') == true and miniffi == true
+if get_option('easypoke') == true and miniffi == true
     main_source += files('fake-api.mm')
 endif
 

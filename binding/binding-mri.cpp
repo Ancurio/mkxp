@@ -62,7 +62,10 @@ extern const char module_rpg2[];
 extern const char module_rpg3[];
 
 // Scripts to run at some point during Ruby execution
+
+#ifdef EASY_POKE
 #include "EssentialsTilemapHack.rb.xxd"
+#endif
 
 static void mriBindingExecute();
 static void mriBindingTerminate();
@@ -581,8 +584,10 @@ static void runRMXPScripts(BacktraceData &btData) {
     return;
 #endif
 
+#ifdef EASY_POKE
   // Used to try and fix Essentials garbage later if it's detected
   int minimonsters = 0;
+#endif
 
   while (true) {
 #if RAPI_FULL < 200 && defined(NO_CONSOLE)
@@ -610,9 +615,11 @@ static void runRMXPScripts(BacktraceData &btData) {
       fname = newStringUTF8(buf, len);
       btData.scriptNames.insert(buf, scriptName);
 
+#ifdef EASY_POKE
       // There is 0 reason for anything other than Essentials to have this class
       if (minimonsters == 0 && rb_const_defined(rb_cObject, rb_intern("PokemonMapMetadata")))
         minimonsters = 1;
+#endif
 
       // Before checking to see if the next script should be skipped,
       // make sure to check whether it's the last one or not and run
@@ -621,10 +628,12 @@ static void runRMXPScripts(BacktraceData &btData) {
       #define SCRIPT(name) rb_str_new((const char*)&___scripts_##name##_rb, ___scripts_##name##_rb_len), #name " (Internal)"
       #define EVALFILE(name) if (!evalScript(SCRIPT(name))) break;
       if (i + 2 == scriptCount){
+#ifdef EASY_POKE
         if (minimonsters > 0 && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){
           EVALFILE(EssentialsTilemapHack);
+          minimonsters = -1;
         }
-        minimonsters = -1;
+#endif
       }
 
       // if the script name starts with |s|, only execute
@@ -740,7 +749,7 @@ static void mriBindingExecute() {
   rb_eval_string("$KCODE='U'");
 #endif
 
-#if defined(USE_FAKEAPI) && !defined(__WIN32__)
+#if defined(EASY_POKE) && !defined(__WIN32__)
   char *tmpdir = getenv("TMPDIR");
   if (tmpdir)
     setenv("TEMP", tmpdir, false);

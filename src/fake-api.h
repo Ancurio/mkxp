@@ -16,7 +16,7 @@
 #define PREFABI
 #endif
 
-#ifdef USE_FAKEAPI
+#ifdef EASY_POKE
 #include <stddef.h>
 
 #ifdef __WIN32__
