@@ -47,6 +47,8 @@ public:
 
 	int width()  const;
 	int height() const;
+	bool isMega() const;
+
 	IntRect rect() const;
 
 	void blt(int x, int y,
@@ -123,6 +125,8 @@ public:
 	void taintArea(const IntRect &rect);
 
 	sigc::signal<void> modified;
+
+	static int maxSize();
 
 private:
 	void releaseResources();

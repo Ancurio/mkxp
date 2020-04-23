@@ -426,6 +426,24 @@ RB_METHOD(bitmapSaveToFile) {
   return RUBY_Qnil;
 }
 
+RB_METHOD(bitmapGetMega){
+  RB_UNUSED_PARAM;
+
+  rb_check_argc(argc, 0);
+
+  Bitmap *b = getPrivateData<Bitmap>(self);
+
+  return rb_bool_new(b->isMega());
+}
+
+RB_METHOD(bitmapGetMaxSize){
+  RB_UNUSED_PARAM;
+
+  rb_check_argc(argc, 0);
+
+  return INT2NUM(Bitmap::maxSize());
+}
+
 RB_METHOD(bitmapInitializeCopy) {
   rb_check_argc(argc, 1);
   VALUE origObj = argv[0];
@@ -479,6 +497,9 @@ void bitmapBindingInit() {
   _rb_define_method(klass, "clear_rect", bitmapClearRect);
   _rb_define_method(klass, "blur", bitmapBlur);
   _rb_define_method(klass, "radial_blur", bitmapRadialBlur);
+
+  _rb_define_method(klass, "mega?", bitmapGetMega);
+  rb_define_singleton_method(klass, "max_size", RUBY_METHOD_FUNC(bitmapGetMaxSize), 0);
 
   INIT_PROP_BIND(Bitmap, Font, "font");
 }

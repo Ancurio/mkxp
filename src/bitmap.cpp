@@ -389,6 +389,12 @@ int Bitmap::height() const
 	return p->gl.height;
 }
 
+bool Bitmap::isMega() const{
+	guardDisposed();
+
+	return p->megaSurface;
+}
+
 IntRect Bitmap::rect() const
 {
 	guardDisposed();
@@ -1405,6 +1411,10 @@ void Bitmap::bindTex(ShaderBase &shader)
 void Bitmap::taintArea(const IntRect &rect)
 {
 	p->addTaintedArea(rect);
+}
+
+int Bitmap::maxSize(){
+	return glState.caps.maxTexSize;
 }
 
 void Bitmap::releaseResources()

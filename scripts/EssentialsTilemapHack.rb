@@ -24,13 +24,13 @@
 # but that's work for another day.
 #
 # For now, I'm just happy I can finally test whatever game I like.
-#
-$GL_TEX_CAP = 16384 # << This should be automatically set at some point.
-#
 #                             ~Zoro
 #=======================================================================
 
 module VWrap
+
+  MAX_TEX_SIZE = Bitmap.max_size
+  TILESET_WIDTH = 0x100
 
   def self.clamp(val, min, max)
     val = max if val > max
@@ -41,16 +41,16 @@ module VWrap
   def self.makeVWrappedTileset(originalbmp)
     width = originalbmp.width
     height = originalbmp.height
-    if width == 256 && height > $GL_TEX_CAP
-      columns = (height / $GL_TEX_CAP.to_f).ceil
+    if width == TILESET_WIDTH && originalbmp.mega?
+      columns = (height / MAX_TEX_SIZE.to_f).ceil
       
-      return nil if columns * 256 > $GL_TEX_CAP
-      bmp = Bitmap.new(256*columns, $GL_TEX_CAP)
-      remainder = height % $GL_TEX_CAP
+      return nil if columns * TILESET_WIDTH > MAX_TEX_SIZE
+      bmp = Bitmap.new(TILESET_WIDTH*columns, MAX_TEX_SIZE)
+      remainder = height % MAX_TEX_SIZE
       
       columns.times{|col|
-        srcrect = Rect.new(0, col * $GL_TEX_CAP, width, (col + 1 == columns) ? remainder : $GL_TEX_CAP)
-        bmp.blt(col*256, 0, originalbmp, srcrect)
+        srcrect = Rect.new(0, col * MAX_TEX_SIZE, width, (col + 1 == columns) ? remainder : MAX_TEX_SIZE)
+        bmp.blt(col*TILESET_WIDTH, 0, originalbmp, srcrect)
       }
       return bmp
     end
@@ -59,22 +59,22 @@ module VWrap
   end
 
   def self.blitVWrappedPixels(destX, destY, dest, src, srcrect)
-    merge = (srcrect.y % $GL_TEX_CAP) > ((srcrect.y + srcrect.height) % $GL_TEX_CAP)
+    merge = (srcrect.y % MAX_TEX_SIZE) > ((srcrect.y + srcrect.height) % MAX_TEX_SIZE)
 
-    srcrect.x = clamp(srcrect.x, 0,256)
-    srcrect.width = clamp(srcrect.width, 0, 256 - srcrect.x)
-    col = (srcrect.y / $GL_TEX_CAP.to_f).floor
-    srcX = col * 256 + srcrect.x
-    srcY = srcrect.y % $GL_TEX_CAP
+    srcrect.x = clamp(srcrect.x, 0,TILESET_WIDTH)
+    srcrect.width = clamp(srcrect.width, 0, TILESET_WIDTH - srcrect.x)
+    col = (srcrect.y / MAX_TEX_SIZE.to_f).floor
+    srcX = col * TILESET_WIDTH + srcrect.x
+    srcY = srcrect.y % MAX_TEX_SIZE
 
     if !merge
       dest.blt(destX, destY, src, Rect.new(srcX, srcY, srcrect.width, srcrect.height))
     else
       #FIXME won't work on heights longer than two columns, but nobody should need
       # more than 32k pixels high at once anyway
-      side = {:a => $GL_TEX_CAP - srcY, :b => srcrect.height - ($GL_TEX_CAP - srcY)}
+      side = {:a => MAX_TEX_SIZE - srcY, :b => srcrect.height - (MAX_TEX_SIZE - srcY)}
       dest.blt(destX, destY, src, Rect.new(srcX, srcY, srcrect.width, side[:a]))
-      dest.blt(destX, destY + side[:a], src, Rect.new(srcX + 256, 0, srcrect.width, side[:b]))
+      dest.blt(destX, destY + side[:a], src, Rect.new(srcX + TILESET_WIDTH, 0, srcrect.width, side[:b]))
     end
   end
 end
@@ -83,7 +83,7 @@ end
 if $MKXP == true
   class CustomTilemap
     def tileset=(value)
-      if value.height > $GL_TEX_CAP || value.width > $GL_TEX_CAP
+      if value.mega?
         @tileset = VWrap::makeVWrappedTileset(value)
       else
         @tileset = value
@@ -93,7 +93,7 @@ if $MKXP == true
 
     alias old_getRegularTile getRegularTile
     def getRegularTile(sprite, id)
-      return old_getRegularTile(sprite, id) if @tileset.width <= 256
+      return old_getRegularTile(sprite, id) if @tileset.width <= VWrap::TILESET_WIDTH
 
       bitmap = @regularTileInfo[id]
       if !bitmap
