@@ -14,6 +14,12 @@
 #define _T_INTEGER 3
 #define _T_BOOL 4
 
+#ifndef __WIN32__
+#define MINIFFI_MAX_ARGS 8
+#else
+#define MINIFFI_MAX_ARGS 32
+#endif
+
 #define INTEL_ASM ".intel_syntax noprefix\n"
 
 // Might need to let MiniFFI.initialize set calling convention
@@ -26,16 +32,19 @@
 // that many arguments anyway
 
 typedef struct {
-  unsigned long params[8];
+  unsigned long params[MINIFFI_MAX_ARGS];
 } MiniFFIFuncArgs;
 
+#ifndef __WIN32__
 // L O N G, but variables won't get set up correctly otherwise
 // should allow for __fastcalls (macOS likes these) and whatever else
 typedef PREFABI void *(*MINIFFI_FUNC)(unsigned long, unsigned long,
                                       unsigned long, unsigned long,
                                       unsigned long, unsigned long,
                                       unsigned long, unsigned long);
-
+#else
+typedef PREFABI void *(*MINIFFI_FUNC)(...);
+#endif
 // MiniFFI class, also named Win32API on Windows
 // Uses LoadLibrary/GetProcAddress on Windows, dlopen/dlsym everywhere else
 
@@ -175,9 +184,9 @@ RB_METHOD(MiniFFI_initialize) {
     break;
   }
 
-  if (8 < RARRAY_LEN(ary_imports))
-    rb_raise(rb_eRuntimeError, "too many parameters: %ld\n",
-             RARRAY_LEN(ary_imports));
+  if (MINIFFI_MAX_ARGS < RARRAY_LEN(ary_imports))
+    rb_raise(rb_eRuntimeError, "too many parameters: %ld/%ld\n",
+             RARRAY_LEN(ary_imports), MINIFFI_MAX_ARGS);
 
   rb_iv_set(self, "_imports", ary_imports);
   int ex;
