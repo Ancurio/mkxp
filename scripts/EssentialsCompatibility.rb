@@ -118,9 +118,6 @@ module Graphics
   def self.snap_to_bitmap
     return Graphics.mkxp_snap_to_bitmap
   end
-  def self.resize_screen(w,h)
-    return Graphics.mkxp_resize_screen(w,h)
-  end
 end
 
 def pbScreenCapture
@@ -144,4 +141,3 @@ alias old_pbDrawTextPositions pbDrawTextPositions
 def pbDrawTextPositions(bitmap,textpos)
   old_pbDrawTextPositions(bitmap,textpos.map{|n|n+4})
 end
-
