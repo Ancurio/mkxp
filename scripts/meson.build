@@ -1,6 +1,6 @@
 
 embedded_scripts = [
-    'EssentialsTilemapHack.rb'
+    'EssentialsCompatibility.rb'
 ]
 
 embedded_scripts_f = files(embedded_scripts)

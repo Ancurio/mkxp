@@ -107,3 +107,41 @@ if $MKXP == true
     end
   end
 end
+
+# =================================================================
+# Any extra overrides to fix a bunch of break-y things.
+# This should allow someone to load up games on Windows just fine.
+# Maybe not perfect compatibility, but better.
+# =================================================================
+
+module Graphics
+  def self.snap_to_bitmap
+    return Graphics.mkxp_snap_to_bitmap
+  end
+  def self.resize_screen(w,h)
+    return Graphics.mkxp_resize_screen(w,h)
+  end
+end
+
+def pbScreenCapture
+  capturefile = nil
+  500.times{|i|
+    filename = RTP.getSaveFileName(sprintf("capture%03d.bmp",i))
+    if !safeExists?(filename)
+      capturefile = filename
+      break
+    end
+  }
+  begin
+    Graphics.screenshot(capturefile)
+    pbSEPlay("expfull") if FileTest.audio_exist?("Audio/SE/expfull")
+  rescue
+    nil
+  end
+end
+
+alias old_pbDrawTextPositions pbDrawTextPositions
+def pbDrawTextPositions(bitmap,textpos)
+  old_pbDrawTextPositions(bitmap,textpos.map{|n|n+4})
+end
+

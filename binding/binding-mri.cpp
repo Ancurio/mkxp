@@ -64,7 +64,7 @@ extern const char module_rpg3[];
 // Scripts to run at some point during Ruby execution
 
 #ifdef EASY_POKE
-#include "EssentialsTilemapHack.rb.xxd"
+#include "EssentialsCompatibility.rb.xxd"
 #endif
 
 static void mriBindingExecute();
@@ -630,7 +630,7 @@ static void runRMXPScripts(BacktraceData &btData) {
       if (i + 2 == scriptCount){
 #ifdef EASY_POKE
         if (minimonsters > 0 && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){
-          EVALFILE(EssentialsTilemapHack);
+          EVALFILE(EssentialsCompatibility);
           minimonsters = -1;
         }
 #endif
