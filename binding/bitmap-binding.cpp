@@ -499,7 +499,7 @@ void bitmapBindingInit() {
   _rb_define_method(klass, "radial_blur", bitmapRadialBlur);
 
   _rb_define_method(klass, "mega?", bitmapGetMega);
-  rb_define_singleton_method(klass, "max_size", RUBY_METHOD_FUNC(bitmapGetMaxSize), 0);
+  rb_define_singleton_method(klass, "max_size", RUBY_METHOD_FUNC(bitmapGetMaxSize), -1);
 
   INIT_PROP_BIND(Bitmap, Font, "font");
 }
