@@ -1,5 +1,5 @@
 # ======================================================================
-# TILEMAP VERTICAL WRAPPER
+# SUPER TILEMAP VERTICAL WRAPPER THING
 #
 # This is a little fix for Pokemon Essentials' custom tilemap code
 # that works around MKXP's GPU texture size limit that would normally
@@ -9,6 +9,12 @@
 # bitmap will be constructed with all the excess pixels sent to the
 # image's right side. This basically means that you now have a limit
 # far higher than you should ever actually need.
+#
+# 1024  -> 4096
+# 2048  -> 16384   (enough to get the normal limit)
+# 4096  -> 65536   (enough to load pretty much any tileset)
+# 8192  -> 262144
+# 16384 -> 1048576 (what most people have at this point)
 #
 # Because of the extra math the game will have to do to find the right
 # pixels, this will probably cause a performance hit while on these
@@ -29,8 +35,9 @@
 
 module VWrap
 
-  MAX_TEX_SIZE = Bitmap.max_size
-  TILESET_WIDTH = 0x100
+  MAX_TEX_SIZE         = Bitmap.max_size
+  TILESET_WIDTH        = 0x100
+  MAX_TEX_SIZE_BOOSTED = MAX_TEX_SIZE**2/TILESET_WIDTH
 
   def self.clamp(val, min, max)
     val = max if val > max
@@ -44,7 +51,9 @@ module VWrap
     if width == TILESET_WIDTH && originalbmp.mega?
       columns = (height / MAX_TEX_SIZE.to_f).ceil
       
-      return nil if columns * TILESET_WIDTH > MAX_TEX_SIZE
+      if columns * TILESET_WIDTH > MAX_TEX_SIZE
+        raise "Tilemap is too long!\n\nSIZE: #{originalbmp.height}px\nHARDWARE LIMIT: #{MAX_TEX_SIZE}px\nBOOSTED LIMIT: #{MAX_TEX_SIZE_BOOSTED}px"
+      end
       bmp = Bitmap.new(TILESET_WIDTH*columns, MAX_TEX_SIZE)
       remainder = height % MAX_TEX_SIZE
       
@@ -111,7 +120,9 @@ if $MKXP == true
       sprite.bitmap = bitmap if sprite.bitmap != bitmap
     end
 
+    alias old_rlayer0 refreshLayer0
     def refreshLayer0(autotiles=false)
+      return old_rlayer0(autotiles) if @tileset.width <= VWrap::TILESET_WIDTH
       if autotiles
         return true if !shown?
       end
@@ -193,15 +204,7 @@ if $MKXP == true
                     @tileSrcWidth,@tileSrcHeight)
                   xpos=(x*twidth)-@oxLayer0
                   ypos=(y*theight)-@oyLayer0
-                  if @tileset.width <= VWrap::TILESET_WIDTH
-                    if @diffsizes
-                      bitmap.stretch_blt(Rect.new(xpos,ypos,twidth,theight),@tileset,temprect)
-                    else
-                      bitmap.blt(xpos,ypos,@tileset,temprect)
-                    end
-                  else
-                    VWrap::blitVWrappedPixels(xpos,ypos, bitmap, @tileset, temprect)
-                  end
+                  VWrap::blitVWrappedPixels(xpos,ypos, bitmap, @tileset, temprect)
                 else
                   tilebitmap=@autotileInfo[id]
                   if !tilebitmap
@@ -250,11 +253,7 @@ if $MKXP == true
               if id>=384
                 temprect.set(((id - 384)&7)*@tileSrcWidth,((id - 384)>>3)*@tileSrcHeight,
                   @tileSrcWidth,@tileSrcHeight)
-                if @diffsizes
-                  bitmap.stretch_blt(Rect.new(xpos,ypos,twidth,theight),@tileset,temprect)
-                else
-                  bitmap.blt(xpos,ypos,@tileset,temprect)
-                end
+                  VWrap::blitVWrappedPixels(xpos,ypos, bitmap, @tileset, temprect)
               else
                 tilebitmap=@autotileInfo[id]
                 if !tilebitmap
@@ -311,15 +310,7 @@ if $MKXP == true
               if id>=384
                 tmprect.set( ((id - 384)&7)*@tileSrcWidth,((id - 384)>>3)*@tileSrcHeight,
                   @tileSrcWidth,@tileSrcHeight)
-                if @tileset.width <= VWrap::TILESET_WIDTH
-                  if @diffsizes
-                    bitmap.stretch_blt(Rect.new(xpos,ypos,twidth,theight),@tileset,tmprect)
-                  else
-                    bitmap.blt(xpos,ypos,@tileset,tmprect)
-                  end
-                else
                   VWrap::blitVWrappedPixels(xpos,ypos, bitmap, @tileset, tmprect)
-                end
               else
                 frames=@framecount[id/48-1]
                 if frames<=1
