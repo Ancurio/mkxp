@@ -98,6 +98,7 @@ if $MKXP == true
     def tileset=(value)
       if value.mega?
         @tileset = VWrap::makeVWrappedTileset(value)
+        value.dispose
       else
         @tileset = value
       end
