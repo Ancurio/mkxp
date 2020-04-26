@@ -1,4 +1,6 @@
 Info: A fork of Ancurio's mkxp for resolutions higher than 640/480
+edit the config settings 'defScreenW' and 'defScreenH' according to your game resolution.
+e.g. 640/480, 800/600, 1024/768, 1280/960, etc.
 
 # mkxp
 
@@ -7,9 +9,8 @@ mkxp is a project that seeks to provide a fully open source implementation of th
 It is licensed under the GNU General Public License v2+.
 
 ## Prebuilt binaries
-[**Linux (32bit/64bit)**](http://ancurio.bplaced.net/mkxp/generic/)  
-[**OSX**](https://app.box.com/mkxpmacbuilds) by Ali  
-[**Windows (mingw-w64 32bit)**](http://ancurio.bplaced.net/mkxp/mingw32/)
+Linux & Windows
+https://github.com/pk-2000/Falcon-mkxp/releases
 
 ## Should I use mkxp
 mkxp primarily targets technically versed users that are comfortable with Ruby / RGSS, and ideally know how to compile the project themselves. The reason for this is that for most games, due to Win32-API usage, mkxp is simply not a plug-and-play solution, but a building block with which a fully cross-platform version can be created in time.
