@@ -122,6 +122,10 @@ void EventThread::process(RGSSThreadData &rtData)
 #endif
 
 	fullscreen = rtData.config.fullscreen;
+	showCursor = rtData.config.showCursor;
+	int defScreenW, defScreenH;
+	defScreenW = rtData.config.defScreenW;
+	defScreenH = rtData.config.defScreenH;
 	int toggleFSMod = rtData.config.anyAltToggleFS ? KMOD_ALT : KMOD_LALT;
 
 	fps.lastFrame = SDL_GetPerformanceCounter();
@@ -264,6 +268,11 @@ void EventThread::process(RGSSThreadData &rtData)
 					SDL_SetWindowTitle(win, pendingTitle);
 					pendingTitle[0] = '\0';
 					havePendingTitle = false;
+				}
+				else
+				{
+					SDL_SetWindowSize(win, defScreenW, defScreenH);
+					SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 				}
 
 				break;
