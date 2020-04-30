@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
 #ifndef WORKDIR_CURRENT
     char dataDir[512]{};
     char *tmp{};
-#if defined(__linux__) && defined(INDEPENDENT_APPIMAGE)
+#if defined(__linux__)
     tmp = getenv("SRCDIR");
     if (tmp) {
       strncpy(dataDir, tmp, sizeof(dataDir));

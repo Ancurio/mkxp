@@ -18,7 +18,7 @@ option('no_preload_scripts', type: 'boolean', value: false, description: 'Disabl
 option('workdir_current', type: 'boolean', value: false, description: 'Keep current directory on startup')
 
 option('static_executable', type: 'boolean', value: false, description: 'Build a static executable (Windows-only)')
-option('independent_appimage', type: 'boolean', value: true, description: 'Set current directory to the original location of the AppImage when contained within one')
+option('appimage', type: 'boolean', value: false, description: 'Whether to install to an AppImage or just copy everything')
 option('steamworks_path', type: 'string', value: '', description: 'Path to Steamshim')
 option('steam_appid', type: 'string', value: '', description: 'Steam AppID. Set this to use SteamAPI_RestartAppIfNecessary')
 option('appimagekit_path', type: 'string', value: '', description: 'Path to AppImageKit, used for building AppImages')

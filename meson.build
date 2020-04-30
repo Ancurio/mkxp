@@ -94,10 +94,6 @@ if get_option('workdir_current')
     global_args += '-DWORKDIR_CURRENT'
 endif
 
-if get_option('independent_appimage')
-    global_args += '-DINDEPENDENT_APPIMAGE'
-endif
-
 if get_option('easypoke') == true and miniffi == true
     global_args += '-DEASY_POKE'
 endif
@@ -161,6 +157,13 @@ elif host_system == 'darwin'
 else
     subdir('linux')
     add_project_arguments('-std=c++11', language: 'objcpp')
+    if get_option('appimage') != true
+        lnx_arch = ''
+        if sizeof['long'] == 8
+            lnx_arch = '64'
+        endif
+        add_project_link_arguments('-Wl,-rpath,$ORIGIN/lib' + lnx_arch, language: 'objcpp')
+    endif
 endif
 
 exe_name = meson.project_name()
@@ -187,6 +190,10 @@ if steamworks == true
         link_args: la.split(),
         gui_app: (get_option('console') == false),
         install: (host_system != 'windows'))
+endif
+
+if host_system == 'linux'
+    exe_name += '_' + host_machine.cpu_family()
 endif
 
 executable(exe_name,
