@@ -144,12 +144,15 @@ subdir('scripts')
 
 global_include_dirs += include_directories('src', 'binding')
 
+rpath = ''
+
 if host_system == 'windows'
     subdir('windows')
     global_sources += windows_resources
     global_include_dirs += include_directories('windows')
 elif host_system == 'darwin'
     subdir('macos')
+    rpath = '@executable_path/../libs'
     add_project_arguments('-stdlib=libc++', language: ['cpp','objcpp'])
     add_project_arguments('-std=c++11', language: 'objcpp') # Meson's cpp_std doesn't work on ObjC for some reason
     add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
@@ -157,12 +160,11 @@ elif host_system == 'darwin'
 else
     subdir('linux')
     add_project_arguments('-std=c++11', language: 'objcpp')
+    rpath = '$ORIGIN/lib'
     if get_option('appimage') != true
-        lnx_arch = ''
         if sizeof['long'] == 8
-            lnx_arch = '64'
+            rpath += '64'
         endif
-        add_project_link_arguments('-Wl,-rpath,$ORIGIN/lib' + lnx_arch, language: 'objcpp')
     endif
 endif
 
@@ -200,6 +202,7 @@ executable(exe_name,
     sources: global_sources,
     dependencies: global_dependencies,
     include_directories: global_include_dirs,
+    install_rpath: rpath,
     link_args: global_link_args,
     cpp_args: global_args,
     objc_args: global_args,
