@@ -106,6 +106,10 @@ if not get_option('console')
     global_args += '-DNO_CONSOLE'
 endif
 
+if get_option('force32') == true
+    global_args += '-m32'
+endif
+
 if get_option('mk')
     global_args += '-DMARIN'
 endif

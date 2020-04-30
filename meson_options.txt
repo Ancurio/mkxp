@@ -7,11 +7,12 @@ option('mk', type: 'boolean', value: false, description: 'Build to fit Marin\'s 
 option('console', type: 'boolean', value: false, description: 'Whether to debug information in the console')
 option('macos_min_version', type: 'string', value: '10.12', description: 'Minimum macOS system version to support')
 option('threaded_gl_init', type: 'boolean', value: true, description: 'Init GL on secondary thread')
+option('force32', type: 'boolean', value: false, description: 'Force compiler to build a 32-bit executable')
 
 option('shared_fluid', type: 'boolean', value: false, description: 'Dynamically link fluidsynth at build time')
 option('cjk_fallback_font', type: 'boolean', value: false, description: 'Use WenQuanYi Micro Hei as the fallback font')
 option('use_miniffi', type: 'boolean', value: true, description: 'Enable MiniFFI Ruby module (Win32API)')
-option('easypoke', type: 'boolean', value: false, description: 'Attempt to repair Win32API calls that do not work with MKXP. Requires MiniFFI')
+option('easypoke', type: 'boolean', value: false, description: '"Fix" any incompatibilities with Pkmn Essentials.')
 option('default_framerate', type: 'boolean', value: false, description: 'Disable syncToRefreshrate and fixedFramerate configuration options')
 option('no_preload_scripts', type: 'boolean', value: false, description: 'Disable the preloadScript configuration option')
 option('workdir_current', type: 'boolean', value: false, description: 'Keep current directory on startup')
