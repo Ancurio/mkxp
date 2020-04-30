@@ -1,6 +1,7 @@
 #!/bin/bash
-
 BINARY=$1
+APPIMAGETOOL=$2
+STEAM=$3
 function get_dep()
 {
 echo "Copying $1..."
@@ -33,11 +34,11 @@ get_dep libbsd
 get_dep tinfo
 get_dep readline
 
-if [ -n "$3" ]; then
+if [ -n "$STEAM" ]; then
   echo "Copying steam_api..."
-  cp "$3/libsteam_api.so" "${MESON_INSTALL_PREFIX}/usr/lib"
+  cp "$STEAM/libsteam_api.so" "${MESON_INSTALL_PREFIX}/usr/lib"
 fi
 
 cp ${MESON_INSTALL_PREFIX}/share/mkxp-z/* ${MESON_INSTALL_PREFIX}
 rm -rf ${MESON_INSTALL_PREFIX}/share
-$2 ${MESON_INSTALL_PREFIX}
+$APPIMAGETOOL ${MESON_INSTALL_PREFIX}

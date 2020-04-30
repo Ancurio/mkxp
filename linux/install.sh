@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 BINARY=$1
 STEAM=$2
 ARCH=$3
