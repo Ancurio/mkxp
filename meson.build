@@ -162,7 +162,7 @@ else
     add_project_arguments('-std=c++11', language: 'objcpp')
     rpath = '$ORIGIN/lib'
     if get_option('appimage') != true
-        if sizeof['long'] == 8
+        if sizeof['long'] == 8 and get_option('force32') != true
             rpath += '64'
         endif
     endif
