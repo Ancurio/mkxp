@@ -20,21 +20,6 @@
     //
     // "rgssVersion": 1,
 
-
-    // Request an OpenGL 4.1 context. This
-    // introduces these minimum requirements
-    // for GPUs:
-    //
-    // +    NVIDIA 400 Series+
-    // +    AMD Radeon HD 5000+
-    // +    Intel HD Graphics 4000+
-    //
-    // If disabled, OpenGL 3.3 is used instead.
-    // (default: disabled)
-    //
-    // "openGL4": false,
-
-
     // Create a debug context and log
     // OpenGL debug information to the console
     // (default: disabled)
