@@ -196,7 +196,7 @@ if steamworks == true
         install: (host_system != 'windows'))
 endif
 
-if host_system == 'linux'
+if host_system == 'linux' and get_option('appimage') == false
     exe_name += '.' + host_machine.cpu()
 endif
 

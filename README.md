@@ -48,7 +48,7 @@ By default, mkxp switches into the directory where its binary is contained and t
 
 These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
 
-To run mkxp, you should have a graphics card capable of at least **OpenGL 4.1** (or 3.3 with openGL4 set to false in mkxp.json) with an up-to-date driver installed.
+To run mkxp, you should have a graphics card capable of at least **OpenGL 3.3** with an up-to-date driver installed.
 
 ## Platform-specific scripts
 
