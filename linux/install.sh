@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 BINARY=$1
-STEAM=$2
-ARCH=$3
+ARCH=$2
+STEAM=$3
 function get_dep()
 {
 echo "Copying $1..."

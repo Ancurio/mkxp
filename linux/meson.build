@@ -13,7 +13,7 @@ else
   if sizeof['long'] == 8
     archarg = '64'
   else
-    archarg = ''
+    archarg = '32'
   endif
-  meson.add_install_script('install.sh', meson.project_name(), swarg, archarg)
+  meson.add_install_script('install.sh', meson.project_name(), archarg, swarg)
 endif
