@@ -197,7 +197,7 @@ if steamworks == true
 endif
 
 if host_system == 'linux'
-    exe_name += '_' + host_machine.cpu_family()
+    exe_name += '.' + host_machine.cpu()
 endif
 
 executable(exe_name,
