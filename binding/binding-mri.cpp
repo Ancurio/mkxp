@@ -767,6 +767,11 @@ static void mriBindingExecute() {
       rb_ary_push(lpaths, pathv);
     }
   }
+#ifndef WORKDIR_CURRENT
+  else {
+    rb_ary_push(lpaths, rb_str_new_cstr(getenv("PWD")));
+  }
+#endif
 #ifdef MARIN
   else {
     rb_ary_push(lpaths, rb_str_new_cstr("ruby/extensions/2.5.0"));
