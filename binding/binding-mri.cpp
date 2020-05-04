@@ -769,7 +769,7 @@ static void mriBindingExecute() {
   }
 #ifndef WORKDIR_CURRENT
   else {
-    rb_ary_push(lpaths, rb_str_new_cstr(getenv("PWD")));
+    rb_ary_push(lpaths, rb_str_new_cstr(getcwd(0,0)));
   }
 #endif
 #ifdef MARIN
