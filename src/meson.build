@@ -107,7 +107,8 @@ main_source = files(
     'autotilesvx.cpp',
     'midisource.cpp',
     'fluid-fun.cpp',
-    'lang-fun.mm'
+    'lang-fun.mm',
+    'rgssad.cpp'
 )
 
 if get_option('easypoke') == true and miniffi == true
