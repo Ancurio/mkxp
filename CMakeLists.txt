@@ -241,7 +241,7 @@ set(EMBEDDED_INPUT
 	shader/blurH.vert
 	shader/blurV.vert
 	shader/simpleMatrix.vert
-	assets/liberation.ttf
+	assets/monapo.ttf
 	assets/icon.png
 )
 
