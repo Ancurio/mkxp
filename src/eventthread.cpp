@@ -268,6 +268,8 @@ void EventThread::process(RGSSThreadData &rtData)
 					SDL_SetWindowTitle(win, pendingTitle);
 					pendingTitle[0] = '\0';
 					havePendingTitle = false;
+					SDL_SetWindowSize(win, defScreenW, defScreenH);
+					SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 				}
 				else
 				{
