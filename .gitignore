@@ -11,6 +11,7 @@ mkxp
 xxd+
 
 /build
+/builddir
 
 # VS Code
 /.vscode
