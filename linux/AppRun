@@ -9,6 +9,17 @@ else
   LD_LIBRARY_PATH="$LIBS_PATH:$LD_LIBRARY_PATH"
 fi
 
+# If this is ChromeOS...
+if [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
+  if [[ $(cat /sys/devices/virtual/dmi/id/product_name) == "crosvm" ]]; then  
+    # and the program needs to be scaled for a HiDPI display...
+    if DISPLAY=:1 xset q &>/dev/null; then
+    # ... do it
+      export DISPLAY=:1
+    fi
+  fi
+fi
+
 export LD_LIBRARY_PATH
 export SRCDIR=$PWD
 

@@ -8,7 +8,7 @@ if get_option('appimage') == true
   install_data('mkxp-z.png')
   install_data('mkxp-z.desktop')
 
-  meson.add_install_script('make_appimg.sh', meson.project_name() + '.' + host_machine.cpu(), get_option('appimagekit_path'), swarg)
+  meson.add_install_script('make_appimg.sh', meson.project_name(), get_option('appimagekit_path'), swarg)
 else
   if sizeof['long'] == 8
     archarg = '64'
