@@ -212,7 +212,7 @@ struct SpritePrivate
 		FloatRect pos = tex;
 		pos.x = chunkX;
 
-		Quad::setTexPosRect(vert, tex, pos);
+		Quad::setTexPosRect(vert, mirrored ? tex.hFlipped() : tex, pos);
 		vert += 4;
 	}
 

@@ -742,12 +742,22 @@ static void mriBindingExecute() {
   char **argv = 0;
   ruby_sysinit(&argc, &argv);
 
-  ruby_setup();
+  RUBY_INIT_STACK;
+  ruby_init();
   rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
 #else
   ruby_init();
   rb_eval_string("$KCODE='U'");
 #endif
+
+#ifdef JIT  
+  const char*  rboptions[]  =  {"", "--disable-gems", "--jit-verbose=1", "--jit-max-cache=100", "--jit-min-calls=100000", "-e "};
+  void* node = ruby_process_options(6, const_cast<char**>(rboptions));
+  int state;
+  bool valid = ruby_executable_node(node, &state);
+  state = ruby_exec_node(node);
+#endif
+
 
 #if defined(EASY_POKE) && !defined(__WIN32__)
   char *tmpdir = getenv("TMPDIR");

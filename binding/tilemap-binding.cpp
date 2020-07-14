@@ -85,11 +85,16 @@ RB_METHOD(tilemapInitialize) {
   /* Construct object */
   t = new Tilemap(viewport);
 
-  setPrivateData(self, t);
-
   rb_iv_set(self, "viewport", viewportObj);
 
+  setPrivateData(self, t);
+
+  t->initDynAttribs();
+
   wrapProperty(self, &t->getAutotiles(), "autotiles", TilemapAutotilesType);
+
+  wrapProperty(self, &t->getColor(), "color", ColorType);
+  wrapProperty(self, &t->getTone(), "tone", ToneType);
 
   VALUE autotilesObj = rb_iv_get(self, "autotiles");
 
@@ -137,10 +142,16 @@ DEF_PROP_OBJ_REF(Tilemap, Table, MapData, "map_data")
 DEF_PROP_OBJ_REF(Tilemap, Table, FlashData, "flash_data")
 DEF_PROP_OBJ_REF(Tilemap, Table, Priorities, "priorities")
 
+DEF_PROP_OBJ_VAL(Tilemap, Color, Color, "color")
+DEF_PROP_OBJ_VAL(Tilemap, Tone, Tone, "tone")
+
 DEF_PROP_B(Tilemap, Visible)
 
 DEF_PROP_I(Tilemap, OX)
 DEF_PROP_I(Tilemap, OY)
+
+DEF_PROP_I(Tilemap, Opacity)
+DEF_PROP_I(Tilemap, BlendType)
 
 void tilemapBindingInit() {
   VALUE klass = rb_define_class("TilemapAutotiles", rb_cObject);
@@ -173,4 +184,9 @@ void tilemapBindingInit() {
   INIT_PROP_BIND(Tilemap, Visible, "visible");
   INIT_PROP_BIND(Tilemap, OX, "ox");
   INIT_PROP_BIND(Tilemap, OY, "oy");
+
+  INIT_PROP_BIND(Tilemap, Opacity, "opacity");
+  INIT_PROP_BIND(Tilemap, BlendType, "blend_type");
+  INIT_PROP_BIND(Tilemap, Color, "color");
+  INIT_PROP_BIND(Tilemap, Tone, "tone");
 }

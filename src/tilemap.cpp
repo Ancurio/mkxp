@@ -58,10 +58,12 @@ static const int autotileH = 4 * 32;
 
 static const int autotileCount = 7;
 
-static const int atAreaW = autotileW * 4;
+static const int atFrames = 8;
+static const int atFrameDur = 15;
+static const int atAreaW = autotileW * atFrames;
 static const int atAreaH = autotileH * autotileCount;
 
-static const int tsLaneW = tilesetW / 2;
+static const int tsLaneW = tilesetW / 1;
 
 /* Map viewport size */
 static const int viewpW = 21;
@@ -155,15 +157,19 @@ static const size_t zlayersMax = viewpH + 5;
  */
 
 /* Autotile animation */
-static const uint8_t atAnimation[16*4] =
-{
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
-};
+// static const uint8_t atAnimation[16*8] =
+// {
+//     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+//     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+//     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+//     5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+//     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+//     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
+// };
 
-static elementsN(atAnimation);
+// static elementsN(atAnimation);
 
 /* Flash tiles pulsing opacity */
 static const uint8_t flashAlpha[] =
@@ -256,6 +262,12 @@ struct TilemapPrivate
 
 		/* Indices of animated autotiles */
 		std::vector<uint8_t> animatedATs;
+
+		/* Whether each autotile is 3x4 or not */
+		bool smallATs[autotileCount] = {false};
+
+		/* The number of frames for each autotile */
+		int nATFrames[autotileCount] = {1};
 	} atlas;
 
 	/* Map viewport position */
@@ -279,8 +291,7 @@ struct TilemapPrivate
 		bool animated;
 
 		/* Animation state */
-		uint8_t frameIdx;
-		uint8_t aniIdx;
+		uint32_t aniIdx;
 	} tiles;
 
 	FlashMap flashMap;
@@ -322,6 +333,13 @@ struct TilemapPrivate
 	/* Draw prepare call */
 	sigc::connection prepareCon;
 
+	NormValue opacity;
+	BlendType blendType;
+	Color *color;
+	Tone *tone;
+
+	EtcTemps tmp;
+
 	TilemapPrivate(Viewport *viewport)
 	    : viewport(viewport),
 	      tileset(0),
@@ -334,7 +352,12 @@ struct TilemapPrivate
 	      buffersDirty(false),
 	      mapViewportDirty(false),
 	      zOrderDirty(false),
-	      tilemapReady(false)
+	      tilemapReady(false),
+
+		  opacity(255),
+	      blendType(BlendNormal),
+	      color(&tmp.color),
+	      tone(&tmp.tone)
 	{
 		memset(autotiles, 0, sizeof(autotiles));
 
@@ -342,7 +365,6 @@ struct TilemapPrivate
 		atlas.efTilesetH = 0;
 
 		tiles.animated = false;
-		tiles.frameIdx = 0;
 		tiles.aniIdx = 0;
 
 		/* Init tile buffers */
@@ -432,8 +454,18 @@ struct TilemapPrivate
 
 			usableATs.push_back(i);
 
-			if (autotiles[i]->width() > autotileW)
+			if (autotiles[i]->height() == 32)
+			{
+				atlas.smallATs[i] = true;
+				atlas.nATFrames[i] = autotiles[i]->width()/32;
 				animatedATs.push_back(i);
+			}
+			else
+			{
+				atlas.nATFrames[i] = autotiles[i]->width()/autotileW;
+				if (atlas.nATFrames[i] > 1)
+					animatedATs.push_back(i);
+			}
 		}
 
 		tiles.animated = !animatedATs.empty();
@@ -509,23 +541,35 @@ struct TilemapPrivate
 			const uint8_t atInd = atlas.usableATs[i];
 			Bitmap *autotile = autotiles[atInd];
 
-			int blitW = std::min(autotile->width(), atAreaW);
-			int blitH = std::min(autotile->height(), atAreaH);
+			int atW = autotile->width();
+			int atH = autotile->height();
+			int blitW = std::min(atW, atAreaW);
+			int blitH = std::min(atH, autotileH);
 
 			GLMeta::blitSource(autotile->getGLTypes());
 
-			if (blitW <= autotileW && tiles.animated)
+			if (atW <= autotileW && tiles.animated && !atlas.smallATs[atInd])
 			{
 				/* Static autotile */
-				for (int j = 0; j < 4; ++j)
+				for (int j = 0; j < atFrames; ++j)
 					GLMeta::blitRectangle(IntRect(0, 0, blitW, blitH),
 					                      Vec2i(autotileW*j, atInd*autotileH));
 			}
 			else
 			{
 				/* Animated autotile */
-				GLMeta::blitRectangle(IntRect(0, 0, blitW, blitH),
-				                      Vec2i(0, atInd*autotileH));
+				if (atlas.smallATs[atInd])
+				{
+					int frames = atW/32;
+					for (int j = 0; j < atFrames*autotileH/32; ++j)
+					{
+						GLMeta::blitRectangle(IntRect(32*(j % frames), 0, 32, 32),
+						                      Vec2i(autotileW*(j % atFrames), atInd*autotileH + 32*(j / atFrames)));
+					}
+				}
+				else
+					GLMeta::blitRectangle(IntRect(0, 0, blitW, blitH),
+					                      Vec2i(0, atInd*autotileH));
 			}
 		}
 
@@ -627,28 +671,42 @@ struct TilemapPrivate
 	{
 		/* Which autotile [0-7] */
 		int atInd = tileInd / 48 - 1;
-		/* Which tile pattern of the autotile [0-47] */
-		int subInd = tileInd % 48;
-
-		const StaticRect *pieceRect = &autotileRects[subInd*4];
-
-		/* Iterate over the 4 tile pieces */
-		for (int i = 0; i < 4; ++i)
+		if (!atlas.smallATs[atInd])
 		{
-			FloatRect posRect(x*32, y*32, 16, 16);
-			atSelectSubPos(posRect, i);
+			/* Which tile pattern of the autotile [0-47] */
+			int subInd = tileInd % 48;
 
-			FloatRect texRect = pieceRect[i];
+			const StaticRect *pieceRect = &autotileRects[subInd*4];
 
-			/* Adjust to atlas coordinates */
-			texRect.y += atInd * autotileH;
+			/* Iterate over the 4 tile pieces */
+			for (int i = 0; i < 4; ++i)
+			{
+				FloatRect posRect(x*32, y*32, 16, 16);
+				atSelectSubPos(posRect, i);
 
+				FloatRect texRect = pieceRect[i];
+
+				/* Adjust to atlas coordinates */
+				texRect.y += atInd * autotileH;
+
+				SVertex v[4];
+				Quad::setTexPosRect(v, texRect, posRect);
+
+				/* Iterate over 4 vertices */
+				for (size_t j = 0; j < 4; ++j)
+					array->push_back(v[j]);
+			}
+		}
+		else
+		{
+			FloatRect posRect(x*32, y*32, 32, 32);
+			FloatRect texRect(0.5f, atInd * autotileH + 0.5f, 31, 31);
 			SVertex v[4];
 			Quad::setTexPosRect(v, texRect, posRect);
 
 			/* Iterate over 4 vertices */
-			for (size_t i = 0; i < 4; ++i)
-				array->push_back(v[i]);
+			for (size_t j = 0; j < 4; ++j)
+				array->push_back(v[j]);
 		}
 	}
 
@@ -677,6 +735,8 @@ struct TilemapPrivate
 		else
 		{
 			int layerInd = y + prio;
+			if (layerInd >= zlayersMax)
+				return;
 			targetArray = &zlayerVert[layerInd];
 		}
 
@@ -714,8 +774,30 @@ struct TilemapPrivate
 	{
 		clearQuadArrays();
 
-		for (int x = 0; x < viewpW; ++x)
-			for (int y = 0; y < viewpH; ++y)
+		int ox = viewpPos.x;
+		int oy = viewpPos.y;
+		int mapW = mapData->xSize();
+		int mapH = mapData->ySize();
+
+		int minX = 0;
+		int minY = 0;
+		if (ox < 0)
+			minX = -ox;
+		if (oy < 0)
+			minY = -oy;
+
+		// There could be off-by-one issues in these couple sections.
+		int maxX = viewpW;
+		int maxY = viewpH;
+		if (ox + maxX >= mapW)
+			maxX = mapW - ox - 1;
+		if (oy + maxY >= mapH)
+			maxY = mapH - oy - 1;
+
+		if ((minX > maxX) || (minY > maxY))
+			return;
+		for (int x = minX; x <= maxX; ++x)
+			for (int y = minY; y <= maxY; ++y)
 				for (int z = 0; z < mapData->zSize(); ++z)
 					handleTile(x, y, z);
 	}
@@ -766,11 +848,16 @@ struct TilemapPrivate
 
 	void bindShader(ShaderBase *&shaderVar)
 	{
-		if (tiles.animated)
+		if (tiles.animated || color->hasEffect() || tone->hasEffect() || opacity != 255)
 		{
 			TilemapShader &tilemapShader = shState->shaders().tilemap;
 			tilemapShader.bind();
-			tilemapShader.setAniIndex(tiles.frameIdx);
+			tilemapShader.applyViewportProj();
+			tilemapShader.setTone(tone->norm);
+			tilemapShader.setColor(color->norm);
+			tilemapShader.setOpacity(opacity.norm);
+			tilemapShader.setAniIndex(tiles.aniIdx / atFrameDur);
+			tilemapShader.setATFrames(atlas.nATFrames);
 			shaderVar = &tilemapShader;
 		}
 		else
@@ -974,10 +1061,15 @@ void GroundLayer::draw()
 	if (p->groundVert.size() == 0)
 		return;
 
+	if (!p->opacity)
+		return;
+
 	ShaderBase *shader;
 
 	p->bindShader(shader);
 	p->bindAtlas(*shader);
+
+	glState.blendMode.pushSet(p->blendType);
 
 	GLMeta::vaoBind(p->tiles.vao);
 
@@ -987,6 +1079,8 @@ void GroundLayer::draw()
 	GLMeta::vaoUnbind(p->tiles.vao);
 
 	p->flashMap.draw(flashAlpha[p->flashAlphaIdx] / 255.f, p->dispPos);
+
+	glState.blendMode.pop();
 }
 
 void GroundLayer::drawInt()
@@ -1029,12 +1123,16 @@ void ZLayer::draw()
 	p->bindShader(shader);
 	p->bindAtlas(*shader);
 
+	glState.blendMode.pushSet(p->blendType);
+
 	GLMeta::vaoBind(p->tiles.vao);
 
 	shader->setTranslation(p->dispPos);
 	drawInt();
 
 	GLMeta::vaoUnbind(p->tiles.vao);
+
+	glState.blendMode.pop();
 }
 
 void ZLayer::drawInt()
@@ -1125,10 +1223,7 @@ void Tilemap::update()
 	if (!p->tiles.animated)
 		return;
 
-	p->tiles.frameIdx = atAnimation[p->tiles.aniIdx];
-
-	if (++p->tiles.aniIdx >= atAnimationN)
-		p->tiles.aniIdx = 0;
+	++p->tiles.aniIdx;
 }
 
 Tilemap::Autotiles &Tilemap::getAutotiles()
@@ -1146,6 +1241,11 @@ DEF_ATTR_RD_SIMPLE(Tilemap, Priorities, Table*, p->priorities)
 DEF_ATTR_RD_SIMPLE(Tilemap, Visible, bool, p->visible)
 DEF_ATTR_RD_SIMPLE(Tilemap, OX, int, p->origin.x)
 DEF_ATTR_RD_SIMPLE(Tilemap, OY, int, p->origin.y)
+
+DEF_ATTR_RD_SIMPLE(Tilemap, BlendType, int, p->blendType)
+DEF_ATTR_SIMPLE(Tilemap, Opacity,   int,     p->opacity)
+DEF_ATTR_SIMPLE(Tilemap, Color,     Color&, *p->color)
+DEF_ATTR_SIMPLE(Tilemap, Tone,      Tone&,  *p->tone)
 
 void Tilemap::setTileset(Bitmap *value)
 {
@@ -1248,6 +1348,31 @@ void Tilemap::setOY(int value)
 	p->origin.y = value;
 	p->zOrderDirty = true;
 	p->mapViewportDirty = true;
+}
+
+void Tilemap::setBlendType(int value)
+{
+	guardDisposed();
+
+	switch (value)
+	{
+	default :
+	case BlendNormal :
+		p->blendType = BlendNormal;
+		return;
+	case BlendAddition :
+		p->blendType = BlendAddition;
+		return;
+	case BlendSubstraction :
+		p->blendType = BlendSubstraction;
+		return;
+	}
+}
+
+void Tilemap::initDynAttribs()
+{
+	p->color = new Color;
+	p->tone = new Tone;
 }
 
 void Tilemap::releaseResources()

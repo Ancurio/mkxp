@@ -13,6 +13,7 @@ embedded_shaders = [
     'simpleColor.frag',
     'simpleAlpha.frag',
     'simpleAlphaUni.frag',
+    'tilemap.frag',
     'flashMap.frag',
     'minimal.vert',
     'simple.vert',

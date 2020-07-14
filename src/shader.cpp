@@ -41,6 +41,7 @@
 #include "simpleColor.frag.xxd"
 #include "simpleAlpha.frag.xxd"
 #include "simpleAlphaUni.frag.xxd"
+#include "tilemap.frag.xxd"
 #include "flashMap.frag.xxd"
 #include "minimal.vert.xxd"
 #include "simple.vert.xxd"
@@ -515,16 +516,41 @@ void GrayShader::setGray(float value)
 
 TilemapShader::TilemapShader()
 {
-	INIT_SHADER(tilemap, simple, TilemapShader);
+	INIT_SHADER(tilemap, tilemap, TilemapShader);
 
 	ShaderBase::init();
 
+	GET_U(tone);
+	GET_U(color);
+	GET_U(opacity);
+
 	GET_U(aniIndex);
+	GET_U(atFrames);
+}
+
+void TilemapShader::setTone(const Vec4 &tone)
+{
+	setVec4Uniform(u_tone, tone);
+}
+
+void TilemapShader::setColor(const Vec4 &color)
+{
+	setVec4Uniform(u_color, color);
+}
+
+void TilemapShader::setOpacity(float value)
+{
+	gl.Uniform1f(u_opacity, value);
 }
 
 void TilemapShader::setAniIndex(int value)
 {
-	gl.Uniform1f(u_aniIndex, value);
+	gl.Uniform1i(u_aniIndex, value);
+}
+
+void TilemapShader::setATFrames(int values[7])
+{
+	gl.Uniform1iv(u_atFrames, 7, values);
 }
 
 
