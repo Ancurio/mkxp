@@ -30,8 +30,8 @@ void main()
 
 	lowp uint pred = uint(tex.x <= atAreaW && tex.y <= atAreaH);
 	lowp uint frame = uint(aniIndex % atFrames[atIndex]);
-	lowp uint col = frame % 8;
-	lowp uint row = frame / 8;
+	lowp uint col = frame % 8u;
+	lowp uint row = frame / 8u;
 	tex.x += atAniOffsetX * (col * pred);
 	tex.y += atAniOffsetY * (row * pred);
 
