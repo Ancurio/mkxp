@@ -473,8 +473,8 @@ read_value(MarshalContext *ctx)
 	mrb_state *mrb = ctx->mrb;
 	int8_t type = ctx->readByte();
 	mrb_value value;
-	if (mrb->arena_idx > maxArena)
-		maxArena = mrb->arena_idx;
+	if (mrb->gc.arena_idx > maxArena)
+		maxArena = mrb->gc.arena_idx;
 
 	int arena = mrb_gc_arena_save(mrb);
 
@@ -676,7 +676,7 @@ static void
 write_array(MarshalContext *ctx, mrb_value array)
 {
 	mrb_state *mrb = ctx->mrb;
-	int len = mrb_ary_len(mrb, array);
+	int len = RARRAY_LEN(array);
 	write_fixnum(ctx, len);
 
 	int i;
@@ -686,8 +686,6 @@ write_array(MarshalContext *ctx, mrb_value array)
 		write_value(ctx, value);
 	}
 }
-
-KHASH_DECLARE(ht, mrb_value, mrb_value, 1)
 
 static void
 write_hash(MarshalContext *ctx, mrb_value hash)
@@ -707,7 +705,7 @@ write_hash(MarshalContext *ctx, mrb_value hash)
 			continue;
 
 		write_value(ctx, kh_key(h, k));
-		write_value(ctx, kh_val(h, k));
+		write_value(ctx, kh_val(h, k).v);
 	}
 }
 
@@ -732,7 +730,7 @@ write_object(MarshalContext *ctx, mrb_value object)
 	write_value(ctx, mrb_str_intern(mrb, path));
 
 	mrb_value iv_ary = mrb_obj_instance_variables(mrb, object);
-	int iv_count = mrb_ary_len(mrb, iv_ary);
+	int iv_count = RARRAY_LEN(iv_ary);
 	write_fixnum(ctx, iv_count);
 
 	int i;

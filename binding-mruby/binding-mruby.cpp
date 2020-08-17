@@ -117,7 +117,7 @@ static void mrbBindingInit(mrb_state *mrb)
 	/* Load global constants */
 	mrb_define_global_const(mrb, "MKXP", mrb_true_value());
 
-	mrb_value debug = rb_bool_new(shState->config().editor.debug);
+	mrb_value debug = mrb_bool_value(shState->config().editor.debug);
 	if (rgssVer == 1)
 		mrb_define_global_const(mrb, "DEBUG", debug);
 	else if (rgssVer >= 2)
@@ -298,7 +298,7 @@ runRMXPScripts(mrb_state *mrb, mrbc_context *ctx)
 		return;
 	}
 
-	int scriptCount = mrb_ary_len(scriptMrb, scriptArray);
+	int scriptCount = RARRAY_LEN(scriptArray);
 
 	std::string decodeBuffer;
 	decodeBuffer.resize(0x1000);

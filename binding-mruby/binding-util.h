@@ -28,6 +28,7 @@
 #include <mruby/data.h>
 #include <mruby/variable.h>
 #include <mruby/class.h>
+#include <mruby/string.h>
 
 #include <stdio.h>
 
@@ -90,6 +91,7 @@ enum MrbException
 
 	TypeError,
 	ArgumentError,
+	IOError,
 
 	MrbExceptionsMax
 };
@@ -352,11 +354,13 @@ inline mrb_value
 objectLoad(mrb_state *mrb, mrb_value self, const mrb_data_type &type)
 {
 	RClass *klass = mrb_class_ptr(self);
-	char *data;
-	int data_len;
-	mrb_get_args(mrb, "s", &data, &data_len);
 
-	C *c = C::deserialize(data, data_len);
+	mrb_value data;
+	mrb_get_args(mrb, "S", &data);
+
+	int data_len = mrb_string_value_len(mrb, data);
+
+	C *c = C::deserialize(RSTRING_PTR(data), data_len);
 
 	RData *obj = mrb_data_object_alloc(mrb, klass, c, &type);
 	mrb_value obj_value = mrb_obj_value(obj);

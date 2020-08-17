@@ -172,7 +172,7 @@ MRB_FUNCTION(kernelLoadData)
 	mrb_get_args(mrb, "z", &filename);
 
 	SDL_RWops ops;
-	GUARD_EXC( shState->fileSystem().openRead(ops, filename); )
+	GUARD_EXC( shState->fileSystem().openReadRaw(ops, filename); )
 
 	mrb_value obj;
 	try { obj = marshalLoadInt(mrb, &ops); }
