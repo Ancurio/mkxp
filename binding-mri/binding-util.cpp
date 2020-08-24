@@ -90,7 +90,11 @@ void raiseRbExc(const Exception &exc)
 void
 raiseDisposedAccess(VALUE self)
 {
+#ifdef RUBY_LEGACY_VERSION
+	const char *klassName = rb_class2name(self);
+#else
 	const char *klassName = RTYPEDDATA_TYPE(self)->wrap_struct_name;
+#endif
 	char buf[32];
 
 	strncpy(buf, klassName, sizeof(buf));
@@ -319,3 +323,122 @@ rb_get_args(int argc, VALUE *argv, const char *format, ...)
 
 	return argI;
 }
+
+#if RUBY_API_VERSION_MAJOR == 1
+NORETURN(void rb_error_arity(int, int, int))
+{
+	assert(false);
+}
+
+#if RUBY_API_VERSION_MINOR == 8
+/*
+Functions providing Ruby 1.8 compatibililty.
+All encoding related functions return dummy values because mkxp only uses them
+to retrieve the UTF-8 encoding.
+*/
+VALUE rb_sprintf_vararg(const char* fmt, va_list args) {
+	char buf[4096];
+	int result = vsnprintf(buf, sizeof(buf), fmt, args);
+
+	if (result < 0) {
+		buf[0] = '\0';
+	}
+
+	return rb_str_new2(buf);
+}
+
+VALUE rb_sprintf(const char* fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	VALUE val = rb_sprintf_vararg(fmt, args);
+	va_end(args);
+
+	return val;
+}
+
+VALUE rb_data_typed_object_alloc(VALUE klass, void *datap, const rb_data_type_t *rbType)
+{
+	return rb_data_object_alloc(klass, 0, rbType->function.dmark, rbType->function.dfree);
+}
+
+void *rb_check_typeddata(VALUE value, const rb_data_type_t* typed)
+{
+// FIXME: Won't work because rb_typeddata_is_kind_of is not implemented
+	if (!rb_typeddata_is_kind_of(value, typed)) {
+		rb_raise(getRbData()->exc[RGSS],
+			"wrong data type %s (expected %s)", rb_class2name(value), typed->wrap_struct_name
+		);
+	}
+
+	return RTYPEDDATA_DATA(value);
+}
+
+VALUE rb_enc_str_new(const char* ch, long len, rb_encoding*)
+{
+	// Encoding is ignored
+	return rb_str_new(ch, len);
+}
+
+rb_encoding *rb_utf8_encoding(void)
+{
+	// not relevant
+	return NULL;
+}
+
+void rb_enc_set_default_external(VALUE)
+{
+	// not relevant
+}
+
+VALUE rb_enc_from_encoding(rb_encoding*)
+{
+	// not relevant
+	return Qnil;
+}
+
+VALUE rb_str_catf(VALUE value, const char* fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	VALUE second = rb_sprintf_vararg(fmt, args);
+	va_end(args);
+
+	return rb_str_concat(value, second);
+}
+
+VALUE rb_errinfo(void)
+{
+	return ruby_errinfo;
+}
+
+int rb_typeddata_is_kind_of(VALUE value, const rb_data_type_t* typed)
+{
+// FIXME: rb_typeddata_is_kind_of not implemented
+	return 1;
+}
+
+VALUE rb_file_open_str(VALUE filename, const char* mode)
+{
+	return rb_file_open(RB_OBJ_STRING(filename), mode);
+}
+
+VALUE rb_enc_associate_index(VALUE, int)
+{
+	// not relevant
+	return Qnil;
+}
+
+int rb_utf8_encindex(void)
+{
+	// not relevant
+	return 0;
+}
+
+VALUE rb_hash_lookup2(VALUE hash, VALUE key, VALUE def)
+{
+	VALUE v = rb_hash_lookup(hash, key);
+	return (v == Qnil) ? def : v;
+}
+#endif // RUBY_API_VERSION_MINOR == 8
+#endif // RUBY_API_VERSION_MAJOR == 1
