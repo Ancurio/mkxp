@@ -186,7 +186,7 @@ ALStream::State ALStream::queryState()
 
 float ALStream::queryOffset()
 {
-	if (state == Closed)
+	if (state == Closed || !source)
 		return 0;
 
 	float procOffset = static_cast<float>(procFrames) / source->sampleRate();
