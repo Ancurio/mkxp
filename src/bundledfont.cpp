@@ -1,1 +1,4 @@
-#include "liberation.ttf.xxd"
+#define BUNDLED_FONT_NAME BUNDLED_FONT.ttf.xxd
+#define STRINGIFY(x) #x
+#define INCLUDE_FILE(x) STRINGIFY(x)
+#include INCLUDE_FILE(BUNDLED_FONT_NAME)
