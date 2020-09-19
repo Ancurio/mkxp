@@ -1,0 +1,5 @@
+option('SHARED_FLUID', type : 'boolean', value : false, description : 'Dynamically link with fluidsynth at build time')
+option('WORKDIR_CURRENT', type : 'boolean', value : false, description : 'Keep current directory on startup')
+option('BINDING', type : 'combo', choices : ['MRI', 'MRUBY', 'NULL'], value : 'MRI', description : 'The Binding Type (MRI, MRUBY, NULL)')
+option('MRIVERSION', type : 'string', value : '2.1', description : 'Version of MRI to link with')
+option('RGSS2', type : 'boolean', value : false)
