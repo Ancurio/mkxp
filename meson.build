@@ -115,8 +115,7 @@ if get_option('static_executable') == true and host_system == 'windows'
     build_static = true
 endif
 
-# This MUST be disabled if building for macOS >= 10.15
-if get_option('threaded_gl_init')
+if host_system != 'darwin' or run_command('sw_vers', '-productVersion').stdout().version_compare('<10.15')
     global_args += '-DTHREADED_GLINIT'
 endif
 
