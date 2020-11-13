@@ -5,7 +5,7 @@ option('mri_library', type: 'string', value: '', description: 'Ruby manual link 
 
 option('mk', type: 'boolean', value: false, description: 'Build to fit Marin\'s MK standard')
 option('console', type: 'boolean', value: false, description: 'Whether to debug information in the console')
-option('macos_min_version', type: 'string', value: '10.12', description: 'Minimum macOS system version to support')
+option('macos_min_version', type: 'string', value: '', description: 'Minimum macOS system version to support (does not affect dependencies)')
 option('force32', type: 'boolean', value: false, description: 'Force compiler to build a 32-bit executable')
 
 option('shared_fluid', type: 'boolean', value: false, description: 'Dynamically link fluidsynth at build time')

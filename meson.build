@@ -1,7 +1,5 @@
 project('mkxp-z', 'c', 'cpp', 'objc', 'objcpp', version: '1.3.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release'])
 
-minimum_macos_version = get_option('macos_min_version')
-
 xxd = find_program('xxd', native: true)
 objfw = find_program('objfw-config', native: true)
 host_system = host_machine.system()
@@ -22,6 +20,17 @@ sizeof = {'void*': compilers['cpp'].sizeof('void*'),
           'long': compilers['cpp'].sizeof('long')
          }
 win64 = (sizeof['void*'] != sizeof['long'])
+
+# Fill macOS version info
+minimum_macos_version = ''
+current_macos_version = ''
+if host_system == 'darwin'
+    current_macos_version = run_command('sw_vers', '-productVersion').stdout()
+    macosx_version_min = get_option('macos_min_version')
+    if macosx_version_min != ''
+        minimum_macos_version = macosx_version_min
+    endif
+endif
 # ====================
 # Ext libs
 # ====================
@@ -115,7 +124,7 @@ if get_option('static_executable') == true and host_system == 'windows'
     build_static = true
 endif
 
-if host_system != 'darwin' or run_command('sw_vers', '-productVersion').stdout().version_compare('<10.15')
+if host_system != 'darwin' or current_macos_version.version_compare('<10.15')
     global_args += '-DTHREADED_GLINIT'
 endif
 
@@ -154,8 +163,10 @@ elif host_system == 'darwin'
     rpath = '@executable_path/../libs'
     add_project_arguments('-stdlib=libc++', language: ['cpp','objcpp'])
     add_project_arguments('-std=c++11', language: 'objcpp') # Meson's cpp_std doesn't work on ObjC for some reason
-    add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
-    add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
+    if minimum_macos_version != ''
+        add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
+        add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
+    endif
 else
     subdir('linux')
     add_project_arguments('-std=c++11', language: 'objcpp')
