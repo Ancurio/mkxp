@@ -15,9 +15,9 @@
 #define _T_BOOL 4
 
 #ifndef __WIN32__
-#define MINIFFI_MAX_ARGS 8
+#define MINIFFI_MAX_ARGS 8l
 #else
-#define MINIFFI_MAX_ARGS 32
+#define MINIFFI_MAX_ARGS 32l
 #endif
 
 #define INTEL_ASM ".intel_syntax noprefix\n"

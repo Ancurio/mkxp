@@ -1,7 +1,7 @@
 
 if get_option('mri_includes') == ''
     ver = get_option('mri_version')
-    if ver.version_compare('<=1.9')
+    if ver.version_compare('<=1.8')
         global_args += '-DLEGACY_RUBY'
     endif
     global_dependencies += dependency('ruby-' + ver)

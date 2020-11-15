@@ -87,7 +87,7 @@ void raiseRbExc(const Exception &exc);
 #endif
 #endif
 
-#if RAPI_MAJOR > 1
+#if RAPI_MAJOR > 1 || RAPI_MINOR <= 9
 #if RAPI_FULL < 270
 #define DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, Free)                        \
   rb_data_type_t Klass##Type = {                                               \
@@ -107,8 +107,9 @@ void raiseRbExc(const Exception &exc);
 #endif
 
 // Ruby 1.8 helper stuff
-#if RAPI_FULL <= 187
+#if RAPI_MAJOR < 2
 
+#if RAPI_MINOR < 9
 #define RUBY_T_FIXNUM T_FIXNUM
 #define RUBY_T_TRUE T_TRUE
 #define RUBY_T_FALSE T_FALSE
@@ -118,12 +119,26 @@ void raiseRbExc(const Exception &exc);
 #define RUBY_T_FLOAT T_FLOAT
 #define RUBY_T_STRING T_STRING
 #define RUBY_T_ARRAY T_ARRAY
+#else
+#define T_FIXNUM RUBY_T_FIXNUM
+#define T_TRUE RUBY_T_TRUE
+#define T_FALSE RUBY_T_FALSE
+#define T_NIL RUBY_T_NIL
+#define T_UNDEF RUBY_T_UNDEF
+#define T_SYMBOL RUBY_T_SYMBOL
+#define T_FLOAT RUBY_T_FLOAT
+#define T_STRING RUBY_T_STRING
+#define T_ARRAY RUBY_T_ARRAY
+#endif
 
+#if RAPI_MINOR < 9
 #define RUBY_Qtrue Qtrue
 #define RUBY_Qfalse Qfalse
 #define RUBY_Qnil Qnil
 #define RUBY_Qundef Qundef
+#endif
 
+#if RAPI_MINOR < 9
 #define RB_FIXNUM_P(obj) FIXNUM_P(obj)
 #define RB_SYMBOL_P(obj) SYMBOL_P(obj)
 
@@ -142,6 +157,7 @@ void raiseRbExc(const Exception &exc);
                                      ? RB_SYMBOL_P(obj)                        \
                                      : (!SPECIAL_CONST_P(obj) &&               \
                                         BUILTIN_TYPE(obj) == (type)))
+#endif
 
 #define OBJ_INIT_COPY(a, b) rb_obj_init_copy(a, b)
 
@@ -152,7 +168,10 @@ void raiseRbExc(const Exception &exc);
 
 #define DEF_ALLOCFUNC(type) DEF_ALLOCFUNC_CUSTOMFREE(type, freeInstance<type>)
 
+#if RAPI_MINOR < 9
 #define rb_str_new_cstr rb_str_new2
+#endif
+
 #define PRIsVALUE "s"
 
 #endif
@@ -363,12 +382,13 @@ inline void rb_check_argc(int actual, int expected) {
              expected);
 }
 
-#if RAPI_FULL <= 187
+#if RAPI_MAJOR < 2
 static inline void rb_error_arity(int argc, int min, int max) {
   if (argc > max || argc < min)
     rb_raise(rb_eArgError, "Finish me! rb_error_arity()"); // TODO
 }
 
+#if RAPI_MINOR < 9
 static inline VALUE rb_sprintf(const char *fmt, ...) {
   return rb_str_new2("Finish me! rb_sprintf()"); // TODO
 }
@@ -381,6 +401,7 @@ static inline VALUE rb_file_open_str(VALUE filename, const char *mode) {
   return rb_funcall(rb_cFile, rb_intern("open"), 2, filename,
                     rb_str_new2(mode));
 }
+#endif
 #endif
 
 #define RB_METHOD(name) static VALUE name(int argc, VALUE *argv, VALUE self)

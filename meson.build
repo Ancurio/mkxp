@@ -77,12 +77,14 @@ global_include_dirs += include_directories('boost-unordered')
 # ====================
 
 # Suppress warnings
-global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas', '-Wno-unknown-warning-option']
+global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas', '-Wno-unknown-warning-option', '-Wno-deprecated-register']
 if compilers['objc'].get_id() == 'clang'
     global_args += ['-Wno-undefined-var-template', '-Wno-delete-non-abstract-non-virtual-dtor']
 endif
 if host_system == 'windows'
     global_args += '-Wno-unknown-attributes'
+elif host_system == 'darwin'
+    global_args += '-Wno-deprecated-declarations'
 endif
 
 # Decide whether or not to use MiniFFI

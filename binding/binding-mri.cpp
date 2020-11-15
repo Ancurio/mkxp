@@ -681,11 +681,21 @@ static void showExc(VALUE exc, const BacktraceData &btData) {
   VALUE bt0 = rb_ary_entry(bt, 0);
   VALUE name = rb_class_path(rb_obj_class(exc));
 
-  VALUE ds = rb_sprintf("%" PRIsVALUE ": %" PRIsVALUE " (%" PRIsVALUE ")", bt0,
-                        exc, name);
+  VALUE ds = rb_sprintf("%" PRIsVALUE ": %" PRIsVALUE " (%" PRIsVALUE ")",
+#if RAPI_MAJOR >= 2
+                        bt0, exc, name);
+#else
+                        // Ruby 1.9's version of this function needs char*
+                        RSTRING_PTR(bt0), RSTRING_PTR(exc), RSTRING_PTR(name));
+#endif
   /* omit "useless" last entry (from ruby:1:in `eval') */
   for (long i = 1, btlen = RARRAY_LEN(bt) - 1; i < btlen; ++i)
-    rb_str_catf(ds, "\n\tfrom %" PRIsVALUE, rb_ary_entry(bt, i));
+    rb_str_catf(ds, "\n\tfrom %" PRIsVALUE,
+#if RAPI_MAJOR >= 2
+    rb_ary_entry(bt, i));
+#else
+    RSTRING_PTR(rb_ary_entry(bt, i)));
+#endif
   Debug() << StringValueCStr(ds);
 
   char *s = RSTRING_PTR(bt0);
