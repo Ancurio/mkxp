@@ -8,8 +8,8 @@ if [ -n "$1" ]; then
   cp "$1/libsteam_api.dylib" "${MESON_INSTALL_PREFIX}/Contents/Frameworks"
   install_name_tool -change "@loader_path/libsteam_api.dylib" "@executable_path/../Frameworks/libsteam_api.dylib" $EXE
   install_name_tool -add_rpath "@executable_path/../Frameworks" ${EXE}_rt
-  macpack -d "${MESON_INSTALL_PREFIX}/Contents/Frameworks" ${EXE}_rt
+  macpack -d "../Frameworks" ${EXE}_rt
 else
   install_name_tool -add_rpath "@executable_path/../Frameworks" ${EXE}
-  macpack -d "${MESON_INSTALL_PREFIX}/Contents/Frameworks" ${EXE}
+  macpack -d "../Frameworks" ${EXE}
 fi
