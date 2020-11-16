@@ -2,14 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSRequiresAquaSystemAppearance</key>
-	<string>False</string>
 	<key>CFBundleGetInfoString</key>
 	<string>mkxp-z</string>
 	<key>CFBundleExecutable</key>
 	<string>mkxp-z</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.inori.mkxpz</string>
+	<string>com.zoro.mkxpz</string>
 	<key>CFBundleName</key>
 	<string>mkxp-z</string>
 	<key>CFBundleIconFile</key>
@@ -24,5 +22,9 @@
 	<integer>0</integer>
 	<key>IFMinorVersion</key>
 	<integer>1</integer>
+	<key>NSRequiresAquaSystemAppearance</key>
+	<string>False</string>
+	<key>SDL_FILESYSTEM_BASE_DIR_TYPE</key>
+	<string>resource</string>
 </dict>
 </plist>

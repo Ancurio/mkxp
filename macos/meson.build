@@ -7,3 +7,7 @@ if steamworks == true
 endif
 
 meson.add_install_script('macpack.sh', swarg, meson.project_name())
+
+if get_option('codesign') == true
+  meson.add_install_script('codesign.sh', get_option('codesign_identity'))
+endif
