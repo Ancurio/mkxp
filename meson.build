@@ -72,6 +72,36 @@ endif
 # BOOST UNORDERED
 global_include_dirs += include_directories('boost-unordered')
 
+# METAL/GLES
+gfx_backend = get_option('gfx_backend')
+if gfx_backend == 'metal'
+    # Verify that we can use metal in the first place,
+    # so 10.13 SDK or higher
+    message('Verifying that Metal is available...')
+    if not dependency('Metal', required: false).found()
+        error('Could not find Metal. Ensure that you are building against the macOS 10.13+ or higher SDK.')
+    endif
+
+    global_args += '-DGLES2_HEADER'
+    global_args += '-F' + meson.source_root() + '/macos/lib'
+    mangle = dependency('MetalANGLE', required: false)
+
+    if not mangle.found()
+        warning('There is a pre-built archive of MetalANGLE located in macos/lib.')
+        warning('Simply extract it to the same directory, or build it yourself.')
+        error('Could not locate the MetalANGLE framework.')
+    endif
+    global_args += '-I' + meson.source_root() + '/macos/lib/MetalANGLE.framework/Headers'
+    global_link_args += '-F' + meson.source_root() + '/macos/lib'
+    global_dependencies += mangle
+elif gfx_backend == 'gles'
+    # Needs to be manually set up for now
+    global_args += '-DGLES2_HEADER'
+elif gfx_backend == 'gl'
+    global_dependencies += dependency('gl')
+    # boop
+endif
+
 # ====================
 # Main source
 # ====================
