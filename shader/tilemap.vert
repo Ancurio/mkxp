@@ -1,4 +1,3 @@
-
 uniform mat4 projMat;
 
 uniform vec2 texSizeInv;
@@ -17,7 +16,7 @@ const float tileH = 32.0;
 const float autotileW = 3.0*tileW;
 const float autotileH = 4.0*tileW;
 const float atAreaW = autotileW;
-const float atAreaH = autotileH*nAutotiles;
+const float atAreaH = autotileH*float(nAutotiles);
 const float atAniOffsetX = 3.0*tileW;
 const float atAniOffsetY = tileH;
 
@@ -25,17 +24,17 @@ uniform lowp int atFrames[nAutotiles];
 
 void main()
 {
-	vec2 tex = texCoord;
-	lowp uint atIndex = uint(tex.y / autotileH);
+    vec2 tex = texCoord;
+    lowp int atIndex = int(tex.y / autotileH);
 
-	lowp uint pred = uint(tex.x <= atAreaW && tex.y <= atAreaH);
-	lowp uint frame = uint(aniIndex % atFrames[atIndex]);
-	lowp uint col = frame % 8u;
-	lowp uint row = frame / 8u;
-	tex.x += atAniOffsetX * (col * pred);
-	tex.y += atAniOffsetY * (row * pred);
+    lowp int pred = int(tex.x <= atAreaW && tex.y <= atAreaH);
+    lowp int frame = int(aniIndex - atFrames[atIndex] * (aniIndex / atFrames[atIndex]));
+    lowp int row = frame / 8;
+    lowp int col = frame - 8 * row;
+    tex.x += atAniOffsetX * float(col * pred);
+    tex.y += atAniOffsetY * float(row * pred);
 
-	gl_Position = projMat * vec4(position + translation, 0, 1);
+    gl_Position = projMat * vec4(position + translation, 0, 1);
 
-	v_texCoord = tex * texSizeInv;
+    v_texCoord = tex * texSizeInv;
 }

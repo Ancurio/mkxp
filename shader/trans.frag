@@ -8,17 +8,16 @@ uniform float prog;
 /* Vague [0, 512] normalized */
 uniform float vague;
 
-in vec2 v_texCoord;
+varying vec2 v_texCoord;
 
-out vec4 fragColor;
-
-void main() {
-  float transV = texture(transMap, v_texCoord).r;
-  float cTransV = clamp(transV, prog, prog + vague);
-  lowp float alpha = (cTransV - prog) / vague;
-
-  vec4 newFrag = texture(currentScene, v_texCoord);
-  vec4 oldFrag = texture(frozenScene, v_texCoord);
-
-  fragColor = mix(newFrag, oldFrag, alpha);
+void main()
+{
+    float transV = texture2D(transMap, v_texCoord).r;
+    float cTransV = clamp(transV, prog, prog+vague);
+    lowp float alpha = (cTransV - prog) / vague;
+    
+    vec4 newFrag = texture2D(currentScene, v_texCoord);
+    vec4 oldFrag = texture2D(frozenScene, v_texCoord);
+    
+    gl_FragColor = mix(newFrag, oldFrag, alpha);
 }

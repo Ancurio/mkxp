@@ -1,11 +1,11 @@
 
-uniform sampler2D v_texture;
+uniform sampler2D texture;
 uniform lowp float alpha;
 
-in vec2 v_texCoord;
-out vec4 fragColor;
+varying vec2 v_texCoord;
 
-void main() {
-  fragColor = texture(v_texture, v_texCoord);
-  fragColor.a *= alpha;
+void main()
+{
+	gl_FragColor = texture2D(texture, v_texCoord);
+	gl_FragColor.a *= alpha;
 }

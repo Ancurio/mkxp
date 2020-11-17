@@ -5,13 +5,12 @@ uniform sampler2D frozenScene;
 uniform sampler2D currentScene;
 uniform float prog;
 
-in vec2 v_texCoord;
+varying vec2 v_texCoord;
 
-out vec4 fragColor;
+void main()
+{
+    vec4 newPixel = texture2D(currentScene, v_texCoord);
+    vec4 oldPixel = texture2D(frozenScene, v_texCoord);
 
-void main() {
-  vec4 newPixel = texture(currentScene, v_texCoord);
-  vec4 oldPixel = texture(frozenScene, v_texCoord);
-
-  fragColor = mix(oldPixel, newPixel, prog);
+    gl_FragColor = mix(oldPixel, newPixel, prog);
 }

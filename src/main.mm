@@ -448,13 +448,6 @@ static SDL_GLContext initGL(SDL_Window *win, Config &conf,
   if (conf.debugMode)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
-  // Core profile enables OpenGL4 on macOS
-  // Using OpenGL 4.1 requires a GPU with max texture size of 16384 or better
-
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, conf.glVersion.major);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, conf.glVersion.minor);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
   glCtx = SDL_GL_CreateContext(win);
 
   if (!glCtx) {

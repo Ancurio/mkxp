@@ -29,11 +29,6 @@
 struct Config {
   int rgssVersion;
 
-  struct {
-    char major;
-    char minor;
-  } glVersion;
-
   bool debugMode;
   bool printFPS;
 

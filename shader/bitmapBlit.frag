@@ -8,27 +8,26 @@ uniform vec4 subRect;
 
 uniform lowp float opacity;
 
-in vec2 v_texCoord;
+varying vec2 v_texCoord;
 
-out vec4 fragColor;
+void main()
+{
+	vec2 coor = v_texCoord;
+	vec2 dstCoor = (coor - subRect.xy) * subRect.zw;
 
-void main() {
-  vec2 coor = v_texCoord;
-  vec2 dstCoor = (coor - subRect.xy) * subRect.zw;
+	vec4 srcFrag = texture2D(source, coor);
+	vec4 dstFrag = texture2D(destination, dstCoor);
 
-  vec4 srcFrag = texture(source, coor);
-  vec4 dstFrag = texture(destination, dstCoor);
+	vec4 resFrag;
 
-  vec4 resFrag;
+	float co1 = srcFrag.a * opacity;
+	float co2 = dstFrag.a * (1.0 - co1);
+	resFrag.a = co1 + co2;
 
-  float co1 = srcFrag.a * opacity;
-  float co2 = dstFrag.a * (1.0 - co1);
-  resFrag.a = co1 + co2;
+	if (resFrag.a == 0.0)
+		resFrag.rgb = srcFrag.rgb;
+	else
+		resFrag.rgb = (co1*srcFrag.rgb + co2*dstFrag.rgb) / resFrag.a;
 
-  if (resFrag.a == 0.0)
-    resFrag.rgb = srcFrag.rgb;
-  else
-    resFrag.rgb = (co1 * srcFrag.rgb + co2 * dstFrag.rgb) / resFrag.a;
-
-  fragColor = resFrag;
+	gl_FragColor = resFrag;
 }

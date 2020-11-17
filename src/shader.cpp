@@ -115,20 +115,20 @@ void Shader::unbind()
 static void setupShaderSource(GLuint shader, GLenum type,
                               const unsigned char *body, int bodySize)
 {
-	//static const char glesDefine[] = "#define GLSLES\n";
-	static const char fragDefine[] = "";//#define FRAGMENT_SHADER\n";
+	static const char glesDefine[] = "#define GLSLES\n";
+	static const char fragDefine[] = "#define FRAGMENT_SHADER\n";
 
 	const GLchar *shaderSrc[4];
 	GLint shaderSrcSize[4];
 	size_t i = 0;
-/*
+
 	if (gl.glsles)
 	{
 		shaderSrc[i] = glesDefine;
 		shaderSrcSize[i] = sizeof(glesDefine)-1;
 		++i;
 	}
-*/
+
 	if (type == GL_FRAGMENT_SHADER)
 	{
 		shaderSrc[i] = fragDefine;

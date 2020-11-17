@@ -170,14 +170,6 @@ void Config::read(int argc, char *argv[]) {
   fillStringVec(opts[@"rubyLoadpath"], rubyLoadpaths);
   rgssVersion = clamp(rgssVersion, 0, 3);
   SE.sourceCount = clamp(SE.sourceCount, 1, 64);
-
-  if ([opts[@"openGL4"] boolValue]) {
-    glVersion.major = 4;
-    glVersion.minor = 1;
-  } else {
-    glVersion.major = 3;
-    glVersion.minor = 3;
-  }
 }
 
 static void setupScreenSize(Config &conf) {
