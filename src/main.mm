@@ -19,7 +19,13 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#import <alc.h>
+#ifdef MKXPZ_BUILD_XCODE
+#include <OpenAL/alc.h>
+#include "CocoaHelpers.hpp"
+#else
+#include <alc.h>
+#import "icon.png.xxd"
+#endif
 
 #import <SDL.h>
 #import <SDL_image.h>
@@ -40,7 +46,7 @@
 
 #import "binding.h"
 
-#ifdef __WINDOWS__
+#if defined(__WINDOWS__)
 #import "resource.h"
 #import <Winsock2.h>
 #endif
@@ -49,7 +55,6 @@
 #ifdef HAVE_STEAMSHIM
 #import "steamshim_child.h"
 #endif
-#import "icon.png.xxd"
 
 #ifndef THREADED_GLINIT
 #define GLINIT_SHOWERROR(s) showInitError(s)
@@ -146,7 +151,11 @@ static void setupWindowIcon(const Config &conf, SDL_Window *win) {
   SDL_RWops *iconSrc;
 
   if (conf.iconPath.empty())
+#ifndef MKXPZ_BUILD_XCODE
     iconSrc = SDL_RWFromConstMem(___assets_icon_png, ___assets_icon_png_len);
+#else
+    iconSrc = SDL_RWFromFile(Cocoa::getFilePath("icon", "png").c_str(), "rb");
+#endif
   else
     iconSrc = SDL_RWFromFile(conf.iconPath.c_str(), "rb");
 
@@ -211,18 +220,18 @@ int main(int argc, char *argv[]) {
       }
     }
     @try {
-      [fm changeCurrentDirectoryPath:@(dataDir)];
+      [fm changeCurrentDirectoryPath: [OFString stringWithUTF8String:dataDir ]];
     } @catch (...) {
     }
 #endif
-
+    
     /* now we load the config */
     Config conf;
     conf.read(argc, argv);
 
     if (!conf.gameFolder.empty()) {
       @try {
-        [fm changeCurrentDirectoryPath:@(conf.gameFolder.c_str())];
+        [fm changeCurrentDirectoryPath: [OFString stringWithUTF8String: conf.gameFolder.c_str()]];
       } @catch (...) {
         showInitError(std::string("Unable to switch into gameFolder ") +
                       conf.gameFolder);

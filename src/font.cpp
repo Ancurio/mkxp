@@ -31,8 +31,13 @@
 #include <string>
 #include <utility>
 
+#ifdef MKXPZ_BUILD_XCODE
+#include "CocoaHelpers.hpp"
+#endif
+
 #include <SDL_ttf.h>
 
+#ifndef MKXPZ_BUILD_XCODE
 #ifndef CJK_FALLBACK
 #include "liberation.ttf.xxd"
 #else
@@ -59,12 +64,20 @@ BUNDLED_FONT_DECL(liberation)
 #define BNDL_F_D(f) BUNDLED_FONT_D(f)
 #define BNDL_F_L(f) BUNDLED_FONT_L(f)
 
-typedef std::pair<std::string, int> FontKey;
+#endif
 
 static SDL_RWops *openBundledFont()
 {
-	return SDL_RWFromConstMem(BNDL_F_D(BUNDLED_FONT), BNDL_F_L(BUNDLED_FONT));
+#ifndef MKXPZ_BUILD_XCODE
+    return SDL_RWFromConstMem(BNDL_F_D(BUNDLED_FONT), BNDL_F_L(BUNDLED_FONT));
+#else
+    return SDL_RWFromFile(Cocoa::getFilePath("liberation", "ttf").c_str(), "rb");
+#endif
 }
+
+
+
+typedef std::pair<std::string, int> FontKey;
 
 struct FontSet
 {

@@ -5,7 +5,6 @@ vorbisfile = dependency('vorbisfile', static: build_static)
 sdl2 = dependency('sdl2', static: build_static)
 sdl2_ttf = dependency('SDL2_ttf', static: build_static)
 sdl2_image = dependency('SDL2_image', static: build_static)
-sdl_sound = dependency('SDL_sound', static: build_static)
 openal = dependency('openal', static: build_static)
 zlib = dependency('zlib', static: build_static)
 
@@ -38,7 +37,7 @@ endif
 global_args += '-DALCDEVICE_STRUCT=' + alcdev_struct
 
 global_include_dirs += include_directories('.')
-global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image, sdl_sound]
+global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image]
 if host_system == 'darwin'
     global_dependencies += compilers['cpp'].find_library('iconv')
     global_dependencies += dependency('Foundation')

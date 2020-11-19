@@ -38,13 +38,15 @@ public:
 		TexCoord = 1,
 		Color = 2
 	};
+    
+    static std::string &commonHeader();
 
 protected:
 	Shader();
 	~Shader();
 
-	void init(const unsigned char *vert, int vertSize,
-	          const unsigned char *frag, int fragSize,
+    void init(const unsigned char *vert, int vertSize,
+              const unsigned char *frag, int fragSize,
 	          const char *vertName, const char *fragName,
 	          const char *programName);
 	void initFromFile(const char *vertFile, const char *fragFile,
@@ -55,6 +57,11 @@ protected:
 
 	GLuint vertShader, fragShader;
 	GLuint program;
+    
+private:
+#ifdef MKXPZ_BUILD_XCODE
+    static std::string shaderCommon;
+#endif
 };
 
 class ShaderBase : public Shader

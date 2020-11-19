@@ -1,0 +1,55 @@
+//
+//  Config.xcconfig
+//  PlayerLegacy
+//
+//  Created by ゾロアーク on 11/17/20.
+//
+
+// Uncomment this for the Essentials crap
+// GCC_PREPROCESSOR_DEFINITIONS = $(inherited) EASY_POKE
+
+// The path to your build dependencies, or the included (and mounted) .dmg
+DEPENDENCY_SEARCH_PATH = $(PROJECT_DIR)/MKXPZ-Dependencies/mac
+
+// The version of Ruby to use
+// It's really only important for the disk image,
+// if you install Ruby yourself just change paths in the project on your own
+RUBY_INSTALL_PREFIX = $(DEPENDENCY_SEARCH_PATH)/prefix/opt/ruby$(MRI_VERSION)
+
+// Default, don't change this here, change it in the target settings
+MRI_VERSION=2.7.0
+
+INFOPLIST_FILE = $(PROJECT_DIR)/Info.plist
+CODE_SIGN_ENTITLEMENTS = $(PROJECT_DIR)/entitlements.plist
+OTHER_CFLAGS = -fconstant-string-class=OFConstantString -fno-constant-cfstrings $(inherited)
+CLANG_ENABLE_MODULES = NO
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) MKXPZ_BUILD_XCODE GLES2_HEADER ALCDEVICE_STRUCT=ALCdevice_struct SHARED_FLUID
+
+GCC_C_LANGUAGE_STANDARD = gnu11
+GCC_CXX_LANGUAGE_STANDARD = c++11
+
+LIBRARY_SEARCH_PATHS = "$(RUBY_INSTALL_PREFIX)/lib" "$(DEPENDENCY_SEARCH_PATH)/prefix/lib" "$(DEPENDENCY_SEARCH_PATH)/prefix/lib64"
+HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../**" "$(DEPENDENCY_SEARCH_PATH)/prefix/include" "$(DEPENDENCY_SEARCH_PATH)/prefix/lib/**"
+
+
+// Project includes
+EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = $(inherited) MKXPZ-Dependencies ../build
+
+// sigc++
+HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/prefix/include/sigc++-2.0"
+
+// pixman
+HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/prefix/include/pixman-1"
+
+// Usually you need to access Framework headers like "SDL2/SDL.h"
+// MKXP's source isn't written with macOS in mind though,
+// so gotta search the framework headers
+HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/frameworks/SDL2.framework/Headers/**"
+HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/frameworks/SDL2_ttf.framework/Headers/**"
+HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/frameworks/SDL2_image.framework/Headers/**"
+HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/frameworks/MetalANGLE.framework/Headers/**"
+
+FRAMEWORK_SEARCH_PATHS = "$(DEPENDENCY_SEARCH_PATH)/frameworks" $(inherited)
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974

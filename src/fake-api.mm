@@ -1,3 +1,4 @@
+#ifdef EASY_POKE
 #import <SDL.h>
 #ifdef __APPLE__
 #import <Foundation/Foundation.h>
@@ -380,4 +381,5 @@ PREFABI LONG MKXP_SetWindowLong(HWND hWnd, int nIndex, LONG dwNewLong) {
   return DUMMY_VAL;
 };
 
+#endif
 #endif

@@ -2,15 +2,7 @@
 
 EXE=${MESON_INSTALL_PREFIX}/Contents/MacOS/$2
 
-ANGLE="${MESON_SOURCE_ROOT}/macos/lib/MetalANGLE.framework"
 FRAMEWORKS="${MESON_INSTALL_PREFIX}/Contents/Frameworks"
-
-if [ -n "$(otool -L $EXE | grep ANGLE)" ] && [ -d $ANGLE ]; then
-  if [ ! -d $FRAMEWORKS ]; then
-    mkdir -p $FRAMEWORKS
-  fi
-  cp -a $ANGLE $FRAMEWORKS
-fi
 
 if [ -n "$1" ]; then
   echo "Setting up steam_api manually..."

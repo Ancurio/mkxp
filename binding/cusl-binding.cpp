@@ -1,3 +1,4 @@
+#ifdef HAVE_STEAMSHIM
 #include "binding-util.h"
 #include "steamshim_child.h"
 
@@ -217,3 +218,4 @@ void CUSLBindingInit() {
 
   _rb_define_module_function(mSteamLite, "reset_all_stats", CUSLResetAllStats);
 }
+#endif

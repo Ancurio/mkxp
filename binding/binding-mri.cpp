@@ -64,7 +64,11 @@ extern const char module_rpg3[];
 // Scripts to run at some point during Ruby execution
 
 #ifdef EASY_POKE
+#ifndef MKXPZ_BUILD_XCODE
 #include "EssentialsCompatibility.rb.xxd"
+#else
+#include "CocoaHelpers.hpp"
+#endif
 #endif
 
 static void mriBindingExecute();
@@ -625,8 +629,15 @@ static void runRMXPScripts(BacktraceData &btData) {
       // make sure to check whether it's the last one or not and run
       // any extra stuff before the end (primarily stupid Essentials fixes)
       // Will be placed within a build option later if I decide to add more
+#ifndef MKXPZ_BUILD_XCODE
       #define SCRIPT(name) rb_str_new((const char*)&___scripts_##name##_rb, ___scripts_##name##_rb_len), #name " (Internal)"
       #define EVALFILE(name) if (!evalScript(SCRIPT(name))) break;
+#else
+      #define EVALFILE(name) { \
+    std::string s = Cocoa::getFile("BindingScripts/" #name, "rb"); \
+        if (!evalScript(rb_str_new_cstr(s.c_str()), #name)) break; \
+      }
+#endif
       if (i + 2 == scriptCount){
 #ifdef EASY_POKE
         if (minimonsters > 0 && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){

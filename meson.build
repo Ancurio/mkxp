@@ -25,12 +25,16 @@ win64 = (sizeof['void*'] != sizeof['long'])
 minimum_macos_version = ''
 current_macos_version = ''
 if host_system == 'darwin'
-    current_macos_version = run_command('sw_vers', '-productVersion').stdout()
+    current_macos_version = run_command('sw_vers', '-productVersion').stdout().strip()
     macosx_version_min = get_option('macos_min_version')
     if macosx_version_min != ''
         minimum_macos_version = macosx_version_min
+    else
+        minimum_macos_version = current_macos_version
     endif
 endif
+
+global_args += '-DMKXPZ_BUILD_MESON'
 # ====================
 # Ext libs
 # ====================
@@ -72,29 +76,12 @@ endif
 # BOOST UNORDERED
 global_include_dirs += include_directories('boost-unordered')
 
-# METAL/GLES
+# SDL2_SOUND
+subdir('SDL2_sound')
+
+# GLES
 gfx_backend = get_option('gfx_backend')
-if gfx_backend == 'metal'
-    # Verify that we can use metal in the first place,
-    # so 10.13 SDK or higher
-    message('Verifying that Metal is available...')
-    if not dependency('Metal', required: false).found()
-        error('Could not find Metal. Ensure that you are building against the macOS 10.13+ or higher SDK.')
-    endif
-
-    global_args += '-DGLES2_HEADER'
-    global_args += '-F' + meson.source_root() + '/macos/lib'
-    mangle = dependency('MetalANGLE', required: false)
-
-    if not mangle.found()
-        warning('There is a pre-built archive of MetalANGLE located in macos/lib.')
-        warning('Simply extract it to the same directory, or build it yourself.')
-        error('Could not locate the MetalANGLE framework.')
-    endif
-    global_args += '-I' + meson.source_root() + '/macos/lib/MetalANGLE.framework/Headers'
-    global_link_args += '-F' + meson.source_root() + '/macos/lib'
-    global_dependencies += mangle
-elif gfx_backend == 'gles'
+if gfx_backend == 'gles'
     # Needs to be manually set up for now
     global_args += '-DGLES2_HEADER'
 elif gfx_backend == 'gl'
@@ -147,10 +134,6 @@ if get_option('force32') == true
     global_args += '-m32'
 endif
 
-if get_option('mk')
-    global_args += '-DMARIN'
-endif
-
 build_static = false
 if get_option('static_executable') == true and host_system == 'windows'
     build_static = true
@@ -198,6 +181,9 @@ elif host_system == 'darwin'
     if minimum_macos_version != ''
         add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
         add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
+    endif
+    if minimum_macos_version.version_compare('>=10.13') == true
+        warning('\nIt seems like you are trying to build for macOS versions that include Metal support.\nPlease consider using the Xcode project located in the `macos` directory instead.')
     endif
 else
     subdir('linux')

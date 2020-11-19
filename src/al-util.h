@@ -22,7 +22,12 @@
 #ifndef ALUTIL_H
 #define ALUTIL_H
 
+#ifdef MKXPZ_BUILD_XCODE
+#include <OpenAL/al.h>
+#else
 #include <al.h>
+#endif
+
 #include <SDL_audio.h>
 #include <assert.h>
 
