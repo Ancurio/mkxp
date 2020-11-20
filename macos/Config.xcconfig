@@ -23,7 +23,7 @@ INFOPLIST_FILE = $(PROJECT_DIR)/Info.plist
 CODE_SIGN_ENTITLEMENTS = $(PROJECT_DIR)/entitlements.plist
 OTHER_CFLAGS = -fconstant-string-class=OFConstantString -fno-constant-cfstrings $(inherited)
 CLANG_ENABLE_MODULES = NO
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) MKXPZ_BUILD_XCODE GLES2_HEADER ALCDEVICE_STRUCT=ALCdevice_struct SHARED_FLUID
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) MKXPZ_BUILD_XCODE ALCDEVICE_STRUCT=ALCdevice_struct SHARED_FLUID USE_MINIFFI
 
 GCC_C_LANGUAGE_STANDARD = gnu11
 GCC_CXX_LANGUAGE_STANDARD = c++11
@@ -47,7 +47,6 @@ HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/prefix/include/pix
 HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/frameworks/SDL2.framework/Headers/**"
 HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/frameworks/SDL2_ttf.framework/Headers/**"
 HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/frameworks/SDL2_image.framework/Headers/**"
-HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/frameworks/MetalANGLE.framework/Headers/**"
 
 FRAMEWORK_SEARCH_PATHS = "$(DEPENDENCY_SEARCH_PATH)/frameworks" $(inherited)
 

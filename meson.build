@@ -183,7 +183,7 @@ elif host_system == 'darwin'
         add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
     endif
     if minimum_macos_version.version_compare('>=10.13') == true
-        warning('\nIt seems like you are trying to build for macOS versions that include Metal support.\nPlease consider using the Xcode project located in the `macos` directory instead.')
+        warning('Please consider using the Xcode project located in the `macos` directory instead.')
     endif
 else
     subdir('linux')
