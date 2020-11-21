@@ -1,14 +1,14 @@
 SDKROOT := $(shell xcrun -sdk $(SDK) --show-sdk-path)
 TARGETFLAGS := $(TARGETFLAGS) -m$(SDK)-version-min=$(MINIMUM_REQUIRED)
 DEPLOYMENT_TARGET_ENV := $(shell ruby -e 'puts "$(SDK)".upcase')_DEPLOYMENT_TARGET=$(MINIMUM_REQUIRED)
-BUILD_PREFIX := ${PWD}/build-$(ARCH)
+BUILD_PREFIX := ${PWD}/build-$(SDK)-$(ARCH)
 LIBDIR := $(BUILD_PREFIX)/lib
 INCLUDEDIR := $(BUILD_PREFIX)/include
 DOWNLOADS := ${PWD}/downloads/$(HOST)
 NPROC := $(shell sysctl -n hw.ncpu)
-CFLAGS := -arch $(ARCH) -isysroot $(SDKROOT) -I$(INCLUDEDIR) $(TARGETFLAGS) $(DEFINES)
+CFLAGS := -I$(INCLUDEDIR) $(TARGETFLAGS) $(DEFINES)
 LDFLAGS := -L$(LIBDIR)
-CC      := $(shell xcrun -sdk $(SDK) --find clang)
+CC      := xcrun -sdk $(SDK) clang -arch $(ARCH) -isysroot $(SDKROOT)
 PKG_CONFIG_LIBDIR := $(BUILD_PREFIX)/lib/pkgconfig
 GIT := git
 CLONE := $(GIT) clone
@@ -18,22 +18,16 @@ GITLAB := https://gitlab.com
 CONFIGURE_ENV := \
 	$(DEPLOYMENT_TARGET_ENV) \
 	PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR) \
-	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) \
-	CC="$(CC)" CXX="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+	CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 CONFIGURE_ARGS := \
 	--prefix="$(BUILD_PREFIX)" \
-	--host=$(HOST) \
-	--with-sysroot=$(SDKROOT)
-
-CMAKE_ENV := LDFLAGS="$(LDFLAGS)"
+	--host=$(HOST)
 
 CMAKE_ARGS := \
 	-DCMAKE_INSTALL_PREFIX="$(BUILD_PREFIX)" \
-	-DCMAKE_C_COMPILER=$(CC) \
-	-DCMAKE_CXX_COMPILER=$(CC) \
 	-DCMAKE_OSX_SYSROOT=$(SDKROOT) \
-	-DCMAKE_C_FLAGS="$(CFLAGS)"
+	-DCMAKE_C_FLAGS="$(CFLAGS)" 
 
 RUBY_CONFIGURE_ARGS := \
 	--enable-install-static-library \
@@ -48,11 +42,9 @@ RUBY_CONFIGURE_ARGS := \
 
 CONFIGURE := $(CONFIGURE_ENV) ./configure $(CONFIGURE_ARGS)
 AUTOGEN   := $(CONFIGURE_ENV) ./autogen.sh $(CONFIGURE_ARGS)
-CMAKE     := $(CMAKE_ENV) cmake .. $(CMAKE_ARGS)
+CMAKE     := $(CONFIGURE_ENV) cmake .. $(CMAKE_ARGS)
 
-MESON     := $(CONFIGURE_ENV) meson build --prefix=$(BUILD_PREFIX) -Ddefault_library=static
-
-default: deps-core
+default:
 
 # Vorbis
 libvorbis: init_dirs libogg $(LIBDIR)/libvorbis.a
@@ -300,7 +292,7 @@ clean-downloads:
 	-rm -rf downloads/$(HOST)
 
 clean-compiled:
-	-rm -rf build-$(ARCH)/
+	-rm -rf build-$(SDK)-$(ARCH)
 
 deps-core: libvorbis sigcxx pixman libpng libjpeg objfw physfs sdl2 sdl2image sdl2ttf 
 deps-binding: ruby

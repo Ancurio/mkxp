@@ -8,8 +8,8 @@
 // Uncomment this for the Essentials crap
 // GCC_PREPROCESSOR_DEFINITIONS = $(inherited) EASY_POKE
 
-// The path to your build dependencies, or the included (and mounted) .dmg
-DEPENDENCY_SEARCH_PATH = $(PROJECT_DIR)/Dependencies/build-$(CURRENT_ARCH)
+// The path to your build dependencies
+DEPENDENCY_SEARCH_PATH = $(PROJECT_DIR)/Dependencies/build-$(SDKROOT)-$(CURRENT_ARCH)
 
 // Don't change this here
 MRI_VERSION = 2.6.0
