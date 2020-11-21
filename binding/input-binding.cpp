@@ -23,7 +23,7 @@
 #include "exception.h"
 #include "input.h"
 #include "sharedstate.h"
-#include "src/util.h"
+#include "src/util/util.h"
 
 #include <SDL_joystick.h>
 #include <string>

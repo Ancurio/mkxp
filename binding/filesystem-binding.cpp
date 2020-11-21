@@ -24,7 +24,7 @@
 #include "filesystem.h"
 #include "sharedstate.h"
 #include "src/config.h"
-#include "src/util.h"
+#include "src/util/util.h"
 
 #if RAPI_FULL > 187
 #include "ruby/encoding.h"

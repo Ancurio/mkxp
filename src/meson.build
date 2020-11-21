@@ -36,7 +36,18 @@ endif
 
 global_args += '-DALCDEVICE_STRUCT=' + alcdev_struct
 
-global_include_dirs += include_directories('.')
+
+global_include_dirs += include_directories('.',
+    'audio',
+    'crypto',
+    'display', 'display/gl',
+    'etc',
+    'filesystem',
+    'input',
+    'system',
+    'util'
+)
+
 global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image]
 if host_system == 'darwin'
     global_dependencies += compilers['cpp'].find_library('iconv')
@@ -65,52 +76,57 @@ endif
 
 main_source = files(
     'main.mm',
-    'audio.cpp',
-    'bitmap.cpp',
-    'eventthread.cpp',
-    'filesystem.mm',
-    'font.cpp',
-    'input.cpp',
-    'plane.cpp',
-    'scene.cpp',
-    'sprite.cpp',
-    'table.cpp',
-    'tilequad.cpp',
-    'viewport.cpp',
-    'window.cpp',
-    'texpool.cpp',
-    'shader.cpp',
-    'glstate.cpp',
-    'tilemap.cpp',
-    'autotiles.cpp',
-    'graphics.cpp',
-    'gl-debug.cpp',
-    'etc.cpp',
     'config.mm',
+    'eventthread.cpp',
     'settingsmenu.cpp',
-    'keybindings.cpp',
-    'tileatlas.cpp',
     'sharedstate.cpp',
-    'gl-fun.cpp',
-    'gl-meta.cpp',
-    'vertex.cpp',
-    'soundemitter.cpp',
-    'sdlsoundsource.cpp',
-    'alstream.cpp',
-    'audiostream.cpp',
-    'vorbissource.cpp',
-    'windowvx.cpp',
-    'tilemapvx.cpp',
-    'tileatlasvx.cpp',
-    'autotilesvx.cpp',
-    'midisource.cpp',
-    'fluid-fun.cpp',
-    'lang-fun.mm',
-    'rgssad.cpp'
-)
+    
+    'audio/alstream.cpp',
+    'audio/audio.cpp',
+    'audio/audiostream.cpp',
+    'audio/fluid-fun.cpp',
+    'audio/midisource.cpp',
+    'audio/sdlsoundsource.cpp',
+    'audio/soundemitter.cpp',
+    'audio/vorbissource.cpp',
 
-if get_option('easypoke') == true and miniffi == true
-    main_source += files('fake-api.mm')
-endif
+    'crypto/rgssad.cpp',
+
+    'display/autotiles.cpp',
+    'display/autotilesvx.cpp',
+    'display/bitmap.cpp',
+    'display/font.cpp',
+    'display/graphics.cpp',
+    'display/plane.cpp',
+    'display/sprite.cpp',
+    'display/tilemap.cpp',
+    'display/tilemapvx.cpp',
+    'display/viewport.cpp',
+    'display/window.cpp',
+    'display/windowvx.cpp',
+
+    'display/gl/gl-debug.cpp',
+    'display/gl/gl-fun.cpp',
+    'display/gl/gl-meta.cpp',
+    'display/gl/glstate.cpp',
+    'display/gl/scene.cpp',
+    'display/gl/shader.cpp',
+    'display/gl/texpool.cpp',
+    'display/gl/tileatlas.cpp',
+    'display/gl/tileatlasvx.cpp',
+    'display/gl/tilequad.cpp',
+    'display/gl/vertex.cpp',
+    
+    'etc/etc.cpp',
+    'etc/table.cpp',
+
+    'filesystem/filesystem.mm',
+    
+    'input/input.cpp',
+    'input/keybindings.cpp',
+
+    'system/fake-api.mm',
+    'system/lang-fun.mm'
+)
 
 global_sources += main_source

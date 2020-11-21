@@ -30,7 +30,7 @@
 #include "sdl-util.h"
 #include "sharedstate.h"
 #include "src/config.h"
-#include "src/util.h"
+#include "src/util/util.h"
 
 #include "boost-hash.h"
 #include <vector>

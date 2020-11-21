@@ -184,7 +184,7 @@ $(DOWNLOADS)/sdl2_image/Makefile: $(DOWNLOADS)/sdl2_image/configure
 	$(CONFIGURE) --enable-static=true --enable-shared=false \
 	--disable-imageio \
 	--enable-png=yes --enable-png-shared=no \
-	--enable-jpeg=yes --enable-jpeg-shared=no \
+	--enable-jpg=yes --enable-jpg-shared=no \
 	--enable-webp=no
 
 $(DOWNLOADS)/sdl2_image/configure: $(DOWNLOADS)/sdl2_image/autogen.sh

@@ -23,7 +23,7 @@
 
 #include "exception.h"
 #include "sharedstate.h"
-#include "src/util.h"
+#include "src/util/util.h"
 
 #include <assert.h>
 #include <stdarg.h>
