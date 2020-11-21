@@ -409,6 +409,7 @@
 		3B10EDF42568E96A00372D13 /* viewport-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "viewport-binding.cpp"; sourceTree = "<group>"; };
 		3B10EE122568EA0900372D13 /* CocoaHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaHelpers.mm; sourceTree = SOURCE_ROOT; };
 		3B10EE132568EA0900372D13 /* CocoaHelpers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CocoaHelpers.hpp; sourceTree = SOURCE_ROOT; };
+		3B10EE1F2569348E00372D13 /* json5pp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json5pp.hpp; sourceTree = "<group>"; };
 		3BA08EA4256641ED00449CFF /* Assets.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Assets.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BA08EA6256641EE00449CFF /* Assets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Assets.plist; sourceTree = "<group>"; };
 		3BA08FA425674C9400449CFF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -426,24 +427,24 @@
 		3BDB23E22564546E00C4A63D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		3BDB240A2564715C00C4A63D /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		3BDB25C52565184600C4A63D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3BE080E4256879FC0006849F /* libSDL2main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2main.a; path = "Dependencies/build-x86_64/lib/libSDL2main.a"; sourceTree = "<group>"; };
-		3BE080E6256879FC0006849F /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "Dependencies/build-x86_64/lib/libvorbis.a"; sourceTree = "<group>"; };
-		3BE080E7256879FC0006849F /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "Dependencies/build-x86_64/lib/libvorbisfile.a"; sourceTree = "<group>"; };
-		3BE080E9256879FC0006849F /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-x86_64/lib/libpixman-1.a"; sourceTree = "<group>"; };
-		3BE080EB256879FC0006849F /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = "Dependencies/build-x86_64/lib/libSDL2.a"; sourceTree = "<group>"; };
-		3BE080ED256879FD0006849F /* libobjfwbridge.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjfwbridge.a; path = "Dependencies/build-x86_64/lib/libobjfwbridge.a"; sourceTree = "<group>"; };
-		3BE080EF256879FD0006849F /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = "Dependencies/build-x86_64/lib/libSDL2_ttf.a"; sourceTree = "<group>"; };
-		3BE080F0256879FD0006849F /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-x86_64/lib/libSDL2_image.a"; sourceTree = "<group>"; };
-		3BE080F2256879FD0006849F /* libobjfw.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjfw.a; path = "Dependencies/build-x86_64/lib/libobjfw.a"; sourceTree = "<group>"; };
-		3BE080F4256879FD0006849F /* libruby.2.6-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.2.6-static.a"; path = "Dependencies/build-x86_64/lib/libruby.2.6-static.a"; sourceTree = "<group>"; };
-		3BE080FA256879FE0006849F /* libSDL2_test.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_test.a; path = "Dependencies/build-x86_64/lib/libSDL2_test.a"; sourceTree = "<group>"; };
-		3BE080FB256879FE0006849F /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = "Dependencies/build-x86_64/lib/libvorbisenc.a"; sourceTree = "<group>"; };
-		3BE080FC256879FE0006849F /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = "Dependencies/build-x86_64/lib/libfreetype.a"; sourceTree = "<group>"; };
-		3BE080FD256879FE0006849F /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "Dependencies/build-x86_64/lib/libogg.a"; sourceTree = "<group>"; };
-		3BE080FF256879FE0006849F /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = "Dependencies/build-x86_64/lib/libphysfs.a"; sourceTree = "<group>"; };
-		3BE08100256879FE0006849F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
-		3BE081452568A5C60006849F /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = "Dependencies/build-x86_64/lib/libpng.a"; sourceTree = "<group>"; };
-		3BE081492568A5F60006849F /* libturbojpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libturbojpeg.a; path = "Dependencies/build-x86_64/lib/libturbojpeg.a"; sourceTree = "<group>"; };
+		3BE080E4256879FC0006849F /* libSDL2main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2main.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2main.a"; sourceTree = "<group>"; };
+		3BE080E6256879FC0006849F /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "Dependencies/build-macosx-x86_64/lib/libvorbis.a"; sourceTree = "<group>"; };
+		3BE080E7256879FC0006849F /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "Dependencies/build-macosx-x86_64/lib/libvorbisfile.a"; sourceTree = "<group>"; };
+		3BE080E9256879FC0006849F /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-macosx-x86_64/lib/libpixman-1.a"; sourceTree = "<group>"; };
+		3BE080EB256879FC0006849F /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2.a"; sourceTree = "<group>"; };
+		3BE080ED256879FD0006849F /* libobjfwbridge.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjfwbridge.a; path = "Dependencies/build-macosx-x86_64/lib/libobjfwbridge.a"; sourceTree = "<group>"; };
+		3BE080EF256879FD0006849F /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_ttf.a"; sourceTree = "<group>"; };
+		3BE080F0256879FD0006849F /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_image.a"; sourceTree = "<group>"; };
+		3BE080F2256879FD0006849F /* libobjfw.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjfw.a; path = "Dependencies/build-macosx-x86_64/lib/libobjfw.a"; sourceTree = "<group>"; };
+		3BE080F4256879FD0006849F /* libruby.2.6-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.2.6-static.a"; path = "Dependencies/build-macosx-x86_64/lib/libruby.2.6-static.a"; sourceTree = "<group>"; };
+		3BE080FA256879FE0006849F /* libSDL2_test.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_test.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_test.a"; sourceTree = "<group>"; };
+		3BE080FB256879FE0006849F /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = "Dependencies/build-macosx-x86_64/lib/libvorbisenc.a"; sourceTree = "<group>"; };
+		3BE080FC256879FE0006849F /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = "Dependencies/build-macosx-x86_64/lib/libfreetype.a"; sourceTree = "<group>"; };
+		3BE080FD256879FE0006849F /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "Dependencies/build-macosx-x86_64/lib/libogg.a"; sourceTree = "<group>"; };
+		3BE080FF256879FE0006849F /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = "Dependencies/build-macosx-x86_64/lib/libphysfs.a"; sourceTree = "<group>"; };
+		3BE08100256879FE0006849F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
+		3BE081452568A5C60006849F /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = "Dependencies/build-macosx-x86_64/lib/libpng.a"; sourceTree = "<group>"; };
+		3BE081492568A5F60006849F /* libturbojpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libturbojpeg.a; path = "Dependencies/build-macosx-x86_64/lib/libturbojpeg.a"; sourceTree = "<group>"; };
 		3BE081502568D3A50006849F /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		3BE081512568D3A60006849F /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		3BE081522568D3A60006849F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -634,6 +635,7 @@
 				3B10ED402568E95D00372D13 /* util.h */,
 				3B10ED412568E95D00372D13 /* exception.h */,
 				3B10ED422568E95D00372D13 /* debugwriter.h */,
+				3B10EE1F2569348E00372D13 /* json5pp.hpp */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -1326,7 +1328,11 @@
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MKXPZ_BUILD_XCODE,
+					"ALCDEVICE_STRUCT=ALCdevice_struct",
+					USE_MINIFFI,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1334,9 +1340,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)\"",
-					"\"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/x86_64-darwin\"",
+					"$(PROJECT_DIR)/../**",
+					"$(DEPENDENCY_SEARCH_PATH)/include",
+					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
+					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
+					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
+					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1344,8 +1355,8 @@
 					"@executable_path/../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = (
+					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/build-x86_64/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 2.0;
@@ -1355,6 +1366,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
+					"-fconstant-string-class=OFConstantString",
+					"-fno-constant-cfstrings",
 					"-w",
 				);
 				OTHER_CODE_SIGN_FLAGS = "--deep --force";
@@ -1417,7 +1430,11 @@
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MKXPZ_BUILD_XCODE,
+					"ALCDEVICE_STRUCT=ALCdevice_struct",
+					USE_MINIFFI,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1425,9 +1442,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)\"",
-					"\"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/x86_64-darwin\"",
+					"$(PROJECT_DIR)/../**",
+					"$(DEPENDENCY_SEARCH_PATH)/include",
+					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
+					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
+					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
+					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1435,8 +1457,8 @@
 					"@executable_path/../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = (
+					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/build-x86_64/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 2.0;
@@ -1445,6 +1467,8 @@
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
+					"-fconstant-string-class=OFConstantString",
+					"-fno-constant-cfstrings",
 					"-w",
 				);
 				OTHER_CODE_SIGN_FLAGS = "--deep --force";

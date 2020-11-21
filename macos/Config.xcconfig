@@ -8,34 +8,16 @@
 // Uncomment this for the Essentials crap
 // GCC_PREPROCESSOR_DEFINITIONS = $(inherited) EASY_POKE
 
+SDK_ROOT = macosx
+BUILD_ARCH = x86_64
+
 // The path to your build dependencies
-DEPENDENCY_SEARCH_PATH = $(PROJECT_DIR)/Dependencies/build-$(SDKROOT)-$(CURRENT_ARCH)
+DEPENDENCY_SEARCH_PATH = $(PROJECT_DIR)/Dependencies/build-$(SDK_ROOT)-$(BUILD_ARCH)
 
 // Don't change this here
 MRI_VERSION = 2.6.0
 
-INFOPLIST_FILE = $(PROJECT_DIR)/Info.plist
-CODE_SIGN_ENTITLEMENTS = $(PROJECT_DIR)/entitlements.plist
-OTHER_CFLAGS = -fconstant-string-class=OFConstantString -fno-constant-cfstrings $(inherited)
-CLANG_ENABLE_MODULES = NO
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) MKXPZ_BUILD_XCODE ALCDEVICE_STRUCT=ALCdevice_struct USE_MINIFFI
-
-GCC_C_LANGUAGE_STANDARD = gnu11
-GCC_CXX_LANGUAGE_STANDARD = c++11
-
-HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../**" "$(DEPENDENCY_SEARCH_PATH)/include" "$(DEPENDENCY_SEARCH_PATH)/lib/**"
-LIBRARY_SEARCH_PATHS = "$(DEPENDENCY_SEARCH_PATH)/lib"
-
-// Project includes
-EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = $(inherited) Dependencies ../build
-
-HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/include/SDL2"
-
-// sigc++
-HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0"
-
-// pixman
-HEADER_SEARCH_PATHS = $(inherited) "$(DEPENDENCY_SEARCH_PATH)/include/pixman-1"
+EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = $(inherited) Dependencies ../build DerivedData 
 
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
