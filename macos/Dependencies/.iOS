@@ -1,0 +1,6 @@
+SDK := iphoneos
+ARCH := armv7
+HOST := $(ARCH)-iphone-darwin
+MINIMUM_REQUIRED := 10.0
+
+include dependencies.make

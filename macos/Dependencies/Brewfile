@@ -1,0 +1,8 @@
+# https://github.com/Homebrew/homebrew-bundle
+
+brew "libtool"
+brew "mm-common"
+brew "cmake"
+brew "automake"
+brew "autoconf"
+brew "nasm"

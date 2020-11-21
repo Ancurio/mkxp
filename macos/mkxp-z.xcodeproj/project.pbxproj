@@ -7,25 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3BA08E5825661C4700449CFF /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5225661C4600449CFF /* Vorbis.framework */; };
-		3BA08E5925661C4700449CFF /* Vorbis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5225661C4600449CFF /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3BA08E5A25661C4700449CFF /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5325661C4700449CFF /* SDL2_ttf.framework */; };
-		3BA08E5B25661C4700449CFF /* SDL2_ttf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5325661C4700449CFF /* SDL2_ttf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3BA08E5E25661C4800449CFF /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5525661C4700449CFF /* Ogg.framework */; };
-		3BA08E5F25661C4800449CFF /* Ogg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5525661C4700449CFF /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3BA08E6025661C4800449CFF /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5625661C4700449CFF /* SDL2.framework */; };
-		3BA08E6125661C4800449CFF /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5625661C4700449CFF /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3BA08E6225661C4800449CFF /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5725661C4700449CFF /* SDL2_image.framework */; };
-		3BA08E6325661C4800449CFF /* SDL2_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E5725661C4700449CFF /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3BA08E6525661CA600449CFF /* libfluidsynth.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E6425661CA600449CFF /* libfluidsynth.3.dylib */; };
-		3BA08E6725661CAA00449CFF /* libfluidsynth.3.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E6425661CA600449CFF /* libfluidsynth.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3BA08E7025661CDA00449CFF /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E6925661CD900449CFF /* libphysfs.a */; };
-		3BA08E7225661CDA00449CFF /* libobjfwbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E6A25661CD900449CFF /* libobjfwbridge.a */; };
-		3BA08E7425661CDA00449CFF /* libobjfw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E6B25661CD900449CFF /* libobjfw.a */; };
-		3BA08E7625661CDA00449CFF /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E6C25661CD900449CFF /* libsigc-2.0.a */; };
-		3BA08E7825661CDA00449CFF /* libpixman-1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E6D25661CD900449CFF /* libpixman-1.a */; };
-		3BA08E7E25661D3700449CFF /* libruby.2.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E7D25661D3700449CFF /* libruby.2.7.dylib */; };
-		3BA08E7F25661D5600449CFF /* libruby.2.7.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08E7D25661D3700449CFF /* libruby.2.7.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */; };
 		3BA08EAD256642A300449CFF /* bitmapBlit.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B4BB25654AD7003DAD8A /* bitmapBlit.frag */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3BA08EAE256642A300449CFF /* blur.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B4AC25654AD6003DAD8A /* blur.frag */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -208,6 +189,32 @@
 		3BD2B6F12565AEC0003DAD8A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46725651C00003DAD8A /* Foundation.framework */; };
 		3BD2B6F32565AEC0003DAD8A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46525651BF3003DAD8A /* libz.tbd */; };
 		3BD2B6F92565AEC0003DAD8A /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
+		3BE08102256879FE0006849F /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E4256879FC0006849F /* libSDL2main.a */; };
+		3BE08104256879FE0006849F /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E6256879FC0006849F /* libvorbis.a */; };
+		3BE08105256879FE0006849F /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E7256879FC0006849F /* libvorbisfile.a */; };
+		3BE08107256879FE0006849F /* libpixman-1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E9256879FC0006849F /* libpixman-1.a */; };
+		3BE08109256879FE0006849F /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080EB256879FC0006849F /* libSDL2.a */; };
+		3BE0810B256879FE0006849F /* libobjfwbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080ED256879FD0006849F /* libobjfwbridge.a */; };
+		3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080EF256879FD0006849F /* libSDL2_ttf.a */; };
+		3BE0810E256879FE0006849F /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080F0256879FD0006849F /* libSDL2_image.a */; };
+		3BE08110256879FE0006849F /* libobjfw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080F2256879FD0006849F /* libobjfw.a */; };
+		3BE08112256879FE0006849F /* libruby.2.6-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080F4256879FD0006849F /* libruby.2.6-static.a */; };
+		3BE08118256879FE0006849F /* libSDL2_test.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FA256879FE0006849F /* libSDL2_test.a */; };
+		3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FB256879FE0006849F /* libvorbisenc.a */; };
+		3BE0811A256879FE0006849F /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FC256879FE0006849F /* libfreetype.a */; };
+		3BE0811B256879FE0006849F /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FD256879FE0006849F /* libogg.a */; };
+		3BE0811D256879FE0006849F /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FF256879FE0006849F /* libphysfs.a */; };
+		3BE0811E256879FE0006849F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE08100256879FE0006849F /* libsigc-2.0.a */; };
+		3BE0812525687EFF0006849F /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE0812425687EFF0006849F /* CoreAudio.framework */; };
+		3BE0812725687F070006849F /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE0812625687F070006849F /* libbz2.tbd */; };
+		3BE0812A25687F130006849F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE0812925687F130006849F /* CoreGraphics.framework */; };
+		3BE0812D25687F390006849F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE0812C25687F390006849F /* CoreVideo.framework */; };
+		3BE0812F25687F4F0006849F /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE0812E25687F4F0006849F /* ForceFeedback.framework */; };
+		3BE0813125687F640006849F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE0813025687F640006849F /* Metal.framework */; };
+		3BE0813325687F700006849F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE0813225687F700006849F /* AppKit.framework */; };
+		3BE0813625687FA30006849F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE0813525687FA30006849F /* Carbon.framework */; };
+		3BE081462568A5C60006849F /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081452568A5C60006849F /* libpng.a */; };
+		3BE0814A2568A5F60006849F /* libturbojpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081492568A5F60006849F /* libturbojpeg.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -217,97 +224,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3BA08EA3256641ED00449CFF;
 			remoteInfo = "mkxpz-resources";
-		};
-		3BA08F5E25673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BECDF66C0761BA81005FE872;
-			remoteInfo = Framework;
-		};
-		3BA08F6025673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88B5423E2437C00DCD162;
-			remoteInfo = "Framework-iOS";
-		};
-		3BA08F6225673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88D1523E24BED00DCD162;
-			remoteInfo = "Framework-tvOS";
-		};
-		3BA08F6425673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BECDF6B30761BA81005FE872;
-			remoteInfo = "Static Library";
-		};
-		3BA08F6625673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7D88E5423E24D3B00DCD162;
-			remoteInfo = "Static Library-iOS";
-		};
-		3BA08F6825673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A769B23D23E259AE00872273;
-			remoteInfo = "Static Library-tvOS";
-		};
-		3BA08F6A25673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DB31407717554B71006C0E22;
-			remoteInfo = "Shared Library";
-		};
-		3BA08F6C25673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FCEB323E25AB700529352;
-			remoteInfo = "Shared Library-iOS";
-		};
-		3BA08F6E25673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FD06C23E25AC700529352;
-			remoteInfo = "Shared Library-tvOS";
-		};
-		3BA08F7025673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BECDF6BE0761BA81005FE872;
-			remoteInfo = "Standard DMG";
-		};
-		3BA08F7225673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FDB8C23E4C74400529352;
-			remoteInfo = hidapi;
-		};
-		3BA08F7425673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FDB4923E399AC00529352;
-			remoteInfo = "hidapi-iOS";
-		};
-		3BA08F7625673BA600449CFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A75FDB6E23E3A2C900529352;
-			remoteInfo = "hidapi-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -367,38 +283,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3BD2B6FA2565AEC0003DAD8A /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				3BA08E6125661C4800449CFF /* SDL2.framework in Embed Frameworks */,
-				3BA08E7F25661D5600449CFF /* libruby.2.7.dylib in Embed Frameworks */,
-				3BA08E5B25661C4700449CFF /* SDL2_ttf.framework in Embed Frameworks */,
-				3BA08E6325661C4800449CFF /* SDL2_image.framework in Embed Frameworks */,
-				3BA08E6725661CAA00449CFF /* libfluidsynth.3.dylib in Embed Frameworks */,
-				3BA08E5F25661C4800449CFF /* Ogg.framework in Embed Frameworks */,
-				3BA08E5925661C4700449CFF /* Vorbis.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3BA08E5225661C4600449CFF /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = "MKXPZ-Dependencies/mac/frameworks/Vorbis.framework"; sourceTree = "<group>"; };
-		3BA08E5325661C4700449CFF /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = "MKXPZ-Dependencies/mac/frameworks/SDL2_ttf.framework"; sourceTree = "<group>"; };
-		3BA08E5525661C4700449CFF /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = "MKXPZ-Dependencies/mac/frameworks/Ogg.framework"; sourceTree = "<group>"; };
-		3BA08E5625661C4700449CFF /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = "MKXPZ-Dependencies/mac/frameworks/SDL2.framework"; sourceTree = "<group>"; };
-		3BA08E5725661C4700449CFF /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = "MKXPZ-Dependencies/mac/frameworks/SDL2_image.framework"; sourceTree = "<group>"; };
-		3BA08E6425661CA600449CFF /* libfluidsynth.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfluidsynth.3.dylib; path = "MKXPZ-Dependencies/mac/prefix/lib64/libfluidsynth.3.dylib"; sourceTree = "<group>"; };
-		3BA08E6925661CD900449CFF /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = "MKXPZ-Dependencies/mac/prefix/lib/libphysfs.a"; sourceTree = "<group>"; };
-		3BA08E6A25661CD900449CFF /* libobjfwbridge.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjfwbridge.a; path = "MKXPZ-Dependencies/mac/prefix/lib/libobjfwbridge.a"; sourceTree = "<group>"; };
-		3BA08E6B25661CD900449CFF /* libobjfw.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjfw.a; path = "MKXPZ-Dependencies/mac/prefix/lib/libobjfw.a"; sourceTree = "<group>"; };
-		3BA08E6C25661CD900449CFF /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "MKXPZ-Dependencies/mac/prefix/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
-		3BA08E6D25661CD900449CFF /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "MKXPZ-Dependencies/mac/prefix/lib/libpixman-1.a"; sourceTree = "<group>"; };
-		3BA08E7D25661D3700449CFF /* libruby.2.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.2.7.dylib; path = "MKXPZ-Dependencies/mac/prefix/opt/ruby2.7.0/lib/libruby.2.7.dylib"; sourceTree = "<group>"; };
 		3BA08EA4256641ED00449CFF /* Assets.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Assets.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BA08EA6256641EE00449CFF /* Assets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Assets.plist; sourceTree = "<group>"; };
 		3BA08EE725664BCC00449CFF /* SDL_sound_shn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_shn.c; sourceTree = "<group>"; };
@@ -419,7 +306,6 @@
 		3BA08EF625664BCC00449CFF /* SDL_sound_aiff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_aiff.c; sourceTree = "<group>"; };
 		3BA08EF725664BCC00449CFF /* SDL_sound_flac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_flac.c; sourceTree = "<group>"; };
 		3BA08EF825664BCC00449CFF /* stb_vorbis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_vorbis.h; sourceTree = "<group>"; };
-		3BA08F4E25673BA600449CFF /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = "../../../../../Users/zoroark/SDL-mirror/Xcode/SDL/SDL.xcodeproj"; sourceTree = "<group>"; };
 		3BA08FA425674C9400449CFF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		3BD2B3AF25651885003DAD8A /* entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
 		3BD2B46525651BF3003DAD8A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -596,6 +482,34 @@
 		3BDB23E22564546E00C4A63D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		3BDB240A2564715C00C4A63D /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		3BDB25C52565184600C4A63D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3BE080E4256879FC0006849F /* libSDL2main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2main.a; path = "Dependencies/build-x86_64/lib/libSDL2main.a"; sourceTree = "<group>"; };
+		3BE080E6256879FC0006849F /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "Dependencies/build-x86_64/lib/libvorbis.a"; sourceTree = "<group>"; };
+		3BE080E7256879FC0006849F /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "Dependencies/build-x86_64/lib/libvorbisfile.a"; sourceTree = "<group>"; };
+		3BE080E9256879FC0006849F /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-x86_64/lib/libpixman-1.a"; sourceTree = "<group>"; };
+		3BE080EB256879FC0006849F /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = "Dependencies/build-x86_64/lib/libSDL2.a"; sourceTree = "<group>"; };
+		3BE080ED256879FD0006849F /* libobjfwbridge.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjfwbridge.a; path = "Dependencies/build-x86_64/lib/libobjfwbridge.a"; sourceTree = "<group>"; };
+		3BE080EF256879FD0006849F /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = "Dependencies/build-x86_64/lib/libSDL2_ttf.a"; sourceTree = "<group>"; };
+		3BE080F0256879FD0006849F /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-x86_64/lib/libSDL2_image.a"; sourceTree = "<group>"; };
+		3BE080F2256879FD0006849F /* libobjfw.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjfw.a; path = "Dependencies/build-x86_64/lib/libobjfw.a"; sourceTree = "<group>"; };
+		3BE080F4256879FD0006849F /* libruby.2.6-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.2.6-static.a"; path = "Dependencies/build-x86_64/lib/libruby.2.6-static.a"; sourceTree = "<group>"; };
+		3BE080FA256879FE0006849F /* libSDL2_test.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_test.a; path = "Dependencies/build-x86_64/lib/libSDL2_test.a"; sourceTree = "<group>"; };
+		3BE080FB256879FE0006849F /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = "Dependencies/build-x86_64/lib/libvorbisenc.a"; sourceTree = "<group>"; };
+		3BE080FC256879FE0006849F /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = "Dependencies/build-x86_64/lib/libfreetype.a"; sourceTree = "<group>"; };
+		3BE080FD256879FE0006849F /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "Dependencies/build-x86_64/lib/libogg.a"; sourceTree = "<group>"; };
+		3BE080FF256879FE0006849F /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = "Dependencies/build-x86_64/lib/libphysfs.a"; sourceTree = "<group>"; };
+		3BE08100256879FE0006849F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
+		3BE0812425687EFF0006849F /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		3BE0812625687F070006849F /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		3BE0812925687F130006849F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		3BE0812C25687F390006849F /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		3BE0812E25687F4F0006849F /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
+		3BE0813025687F640006849F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		3BE0813225687F700006849F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		3BE0813525687FA30006849F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		3BE0813F25689EAC0006849F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		3BE0814025689EB70006849F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		3BE081452568A5C60006849F /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = "Dependencies/build-x86_64/lib/libpng.a"; sourceTree = "<group>"; };
+		3BE081492568A5F60006849F /* libturbojpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libturbojpeg.a; path = "Dependencies/build-x86_64/lib/libturbojpeg.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -610,40 +524,46 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3BE0813625687FA30006849F /* Carbon.framework in Frameworks */,
+				3BE0813325687F700006849F /* AppKit.framework in Frameworks */,
+				3BE0813125687F640006849F /* Metal.framework in Frameworks */,
+				3BE0812D25687F390006849F /* CoreVideo.framework in Frameworks */,
+				3BE0812F25687F4F0006849F /* ForceFeedback.framework in Frameworks */,
+				3BE0812A25687F130006849F /* CoreGraphics.framework in Frameworks */,
+				3BE0812725687F070006849F /* libbz2.tbd in Frameworks */,
+				3BE0812525687EFF0006849F /* CoreAudio.framework in Frameworks */,
 				3BD2B6E72565AEC0003DAD8A /* IOKit.framework in Frameworks */,
-				3BA08E5825661C4700449CFF /* Vorbis.framework in Frameworks */,
-				3BA08E6025661C4800449CFF /* SDL2.framework in Frameworks */,
+				3BE08112256879FE0006849F /* libruby.2.6-static.a in Frameworks */,
 				3BD2B6ED2565AEC0003DAD8A /* libiconv.tbd in Frameworks */,
+				3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */,
 				3BD2B6EE2565AEC0003DAD8A /* OpenAL.framework in Frameworks */,
-				3BA08E5E25661C4800449CFF /* Ogg.framework in Frameworks */,
-				3BA08E5A25661C4700449CFF /* SDL2_ttf.framework in Frameworks */,
-				3BA08E6225661C4800449CFF /* SDL2_image.framework in Frameworks */,
+				3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */,
 				3BD2B6EF2565AEC0003DAD8A /* CoreFoundation.framework in Frameworks */,
 				3BD2B6F12565AEC0003DAD8A /* Foundation.framework in Frameworks */,
+				3BE08102256879FE0006849F /* libSDL2main.a in Frameworks */,
+				3BE08107256879FE0006849F /* libpixman-1.a in Frameworks */,
+				3BE0811B256879FE0006849F /* libogg.a in Frameworks */,
+				3BE08109256879FE0006849F /* libSDL2.a in Frameworks */,
+				3BE0814A2568A5F60006849F /* libturbojpeg.a in Frameworks */,
+				3BE081462568A5C60006849F /* libpng.a in Frameworks */,
+				3BE08104256879FE0006849F /* libvorbis.a in Frameworks */,
 				3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */,
-				3BA08E6525661CA600449CFF /* libfluidsynth.3.dylib in Frameworks */,
+				3BE0811E256879FE0006849F /* libsigc-2.0.a in Frameworks */,
+				3BE08118256879FE0006849F /* libSDL2_test.a in Frameworks */,
+				3BE08105256879FE0006849F /* libvorbisfile.a in Frameworks */,
+				3BE0810E256879FE0006849F /* libSDL2_image.a in Frameworks */,
+				3BE0811A256879FE0006849F /* libfreetype.a in Frameworks */,
+				3BE0810B256879FE0006849F /* libobjfwbridge.a in Frameworks */,
 				3BD2B6F32565AEC0003DAD8A /* libz.tbd in Frameworks */,
-				3BA08E7625661CDA00449CFF /* libsigc-2.0.a in Frameworks */,
-				3BA08E7425661CDA00449CFF /* libobjfw.a in Frameworks */,
 				3BA08FA525674C9900449CFF /* OpenGL.framework in Frameworks */,
-				3BA08E7225661CDA00449CFF /* libobjfwbridge.a in Frameworks */,
-				3BA08E7025661CDA00449CFF /* libphysfs.a in Frameworks */,
-				3BA08E7E25661D3700449CFF /* libruby.2.7.dylib in Frameworks */,
-				3BA08E7825661CDA00449CFF /* libpixman-1.a in Frameworks */,
+				3BE0811D256879FE0006849F /* libphysfs.a in Frameworks */,
+				3BE08110256879FE0006849F /* libobjfw.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3BA08E7A25661D0E00449CFF /* Ruby */ = {
-			isa = PBXGroup;
-			children = (
-				3BA08E7D25661D3700449CFF /* libruby.2.7.dylib */,
-			);
-			name = Ruby;
-			sourceTree = "<group>";
-		};
 		3BA08EA5256641ED00449CFF /* misc */ = {
 			isa = PBXGroup;
 			children = (
@@ -676,26 +596,6 @@
 			);
 			name = SDL2_sound;
 			path = ../SDL2_sound;
-			sourceTree = "<group>";
-		};
-		3BA08F4F25673BA600449CFF /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3BA08F5F25673BA600449CFF /* SDL2.framework */,
-				3BA08F6125673BA600449CFF /* SDL2.framework */,
-				3BA08F6325673BA600449CFF /* SDL2.framework */,
-				3BA08F6525673BA600449CFF /* libSDL2.a */,
-				3BA08F6725673BA600449CFF /* libSDL2.a */,
-				3BA08F6925673BA600449CFF /* libSDL2.a */,
-				3BA08F6B25673BA600449CFF /* libSDL2.dylib */,
-				3BA08F6D25673BA600449CFF /* libSDL2.dylib */,
-				3BA08F6F25673BA600449CFF /* libSDL2.dylib */,
-				3BA08F7125673BA600449CFF /* SDL2 */,
-				3BA08F7325673BA600449CFF /* hidapi.framework */,
-				3BA08F7525673BA600449CFF /* hidapi.framework */,
-				3BA08F7725673BA600449CFF /* hidapi.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		3BD2B3B2256518A1003DAD8A /* Configuration */ = {
@@ -776,7 +676,6 @@
 		3BDB22EB25644FBF00C4A63D = {
 			isa = PBXGroup;
 			children = (
-				3BA08F4E25673BA600449CFF /* SDL.xcodeproj */,
 				3BD2B7272565B343003DAD8A /* README.md */,
 				3BDB2409256470AE00C4A63D /* Player */,
 				3BA08EA5256641ED00449CFF /* misc */,
@@ -955,19 +854,17 @@
 		3BDB23E5256455A400C4A63D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3BA08E7A25661D0E00449CFF /* Ruby */,
+				3BE0813525687FA30006849F /* Carbon.framework */,
+				3BE0813225687F700006849F /* AppKit.framework */,
+				3BE0813025687F640006849F /* Metal.framework */,
+				3BE0812E25687F4F0006849F /* ForceFeedback.framework */,
+				3BE0812C25687F390006849F /* CoreVideo.framework */,
+				3BE0814025689EB70006849F /* Carbon.framework */,
+				3BE0812925687F130006849F /* CoreGraphics.framework */,
+				3BE0812625687F070006849F /* libbz2.tbd */,
+				3BE0812425687EFF0006849F /* CoreAudio.framework */,
+				3BE080CA256829FE0006849F /* Temp-IntelOnly */,
 				3BD2B46425651BEB003DAD8A /* System */,
-				3BA08E5525661C4700449CFF /* Ogg.framework */,
-				3BA08E5725661C4700449CFF /* SDL2_image.framework */,
-				3BA08E5325661C4700449CFF /* SDL2_ttf.framework */,
-				3BA08E5625661C4700449CFF /* SDL2.framework */,
-				3BA08E5225661C4600449CFF /* Vorbis.framework */,
-				3BA08E6425661CA600449CFF /* libfluidsynth.3.dylib */,
-				3BA08E6B25661CD900449CFF /* libobjfw.a */,
-				3BA08E6A25661CD900449CFF /* libobjfwbridge.a */,
-				3BA08E6925661CD900449CFF /* libphysfs.a */,
-				3BA08E6D25661CD900449CFF /* libpixman-1.a */,
-				3BA08E6C25661CD900449CFF /* libsigc-2.0.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -984,36 +881,48 @@
 			name = Player;
 			sourceTree = "<group>";
 		};
+		3BE080CA256829FE0006849F /* Temp-IntelOnly */ = {
+			isa = PBXGroup;
+			children = (
+				3BE080FC256879FE0006849F /* libfreetype.a */,
+				3BE080F2256879FD0006849F /* libobjfw.a */,
+				3BE080ED256879FD0006849F /* libobjfwbridge.a */,
+				3BE0813F25689EAC0006849F /* Carbon.framework */,
+				3BE080FD256879FE0006849F /* libogg.a */,
+				3BE081452568A5C60006849F /* libpng.a */,
+				3BE081492568A5F60006849F /* libturbojpeg.a */,
+				3BE080FF256879FE0006849F /* libphysfs.a */,
+				3BE080E9256879FC0006849F /* libpixman-1.a */,
+				3BE080F4256879FD0006849F /* libruby.2.6-static.a */,
+				3BE080F0256879FD0006849F /* libSDL2_image.a */,
+				3BE080FA256879FE0006849F /* libSDL2_test.a */,
+				3BE080EF256879FD0006849F /* libSDL2_ttf.a */,
+				3BE080EB256879FC0006849F /* libSDL2.a */,
+				3BE080E4256879FC0006849F /* libSDL2main.a */,
+				3BE08100256879FE0006849F /* libsigc-2.0.a */,
+				3BE080E6256879FC0006849F /* libvorbis.a */,
+				3BE080FB256879FE0006849F /* libvorbisenc.a */,
+				3BE080E7256879FC0006849F /* libvorbisfile.a */,
+			);
+			name = "Temp-IntelOnly";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
 		3BA08E902566314300449CFF /* Obtain Dependencies */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "-f Deps.make $(ACTION)";
+			buildArgumentsString = "everything ruby -f .Intel";
 			buildConfigurationList = 3BA08E912566314300449CFF /* Build configuration list for PBXLegacyTarget "Obtain Dependencies" */;
 			buildPhases = (
 			);
 			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "";
+			buildWorkingDirectory = "$(PROJECT_DIR)/Dependencies";
 			dependencies = (
 			);
 			name = "Obtain Dependencies";
 			passBuildSettingsInEnvironment = 1;
 			productName = gen;
-		};
-		3BA08E9C25663C2E00449CFF /* Remove Dependencies */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "clean -f Deps.make";
-			buildConfigurationList = 3BA08E9D25663C2E00449CFF /* Build configuration list for PBXLegacyTarget "Remove Dependencies" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "";
-			dependencies = (
-			);
-			name = "Remove Dependencies";
-			passBuildSettingsInEnvironment = 1;
-			productName = "Remove Dependencies";
 		};
 /* End PBXLegacyTarget section */
 
@@ -1045,7 +954,6 @@
 				3BD2B64C2565AEC0003DAD8A /* Sources */,
 				3BD2B6E12565AEC0003DAD8A /* Frameworks */,
 				3BD2B6F82565AEC0003DAD8A /* Resources */,
-				3BD2B6FA2565AEC0003DAD8A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1068,9 +976,6 @@
 					3BA08E902566314300449CFF = {
 						CreatedOnToolsVersion = 12.2;
 					};
-					3BA08E9C25663C2E00449CFF = {
-						CreatedOnToolsVersion = 12.2;
-					};
 					3BA08EA3256641ED00449CFF = {
 						CreatedOnToolsVersion = 12.2;
 					};
@@ -1087,115 +992,14 @@
 			mainGroup = 3BDB22EB25644FBF00C4A63D;
 			productRefGroup = 3BDB22F72564501400C4A63D /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 3BA08F4F25673BA600449CFF /* Products */;
-					ProjectRef = 3BA08F4E25673BA600449CFF /* SDL.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				3BA08EA3256641ED00449CFF /* Assets */,
 				3BA08E902566314300449CFF /* Obtain Dependencies */,
 				3BD2B64B2565AEC0003DAD8A /* Player */,
-				3BA08E9C25663C2E00449CFF /* Remove Dependencies */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		3BA08F5F25673BA600449CFF /* SDL2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = 3BA08F5E25673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F6125673BA600449CFF /* SDL2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = 3BA08F6025673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F6325673BA600449CFF /* SDL2.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL2.framework;
-			remoteRef = 3BA08F6225673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F6525673BA600449CFF /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = 3BA08F6425673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F6725673BA600449CFF /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = 3BA08F6625673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F6925673BA600449CFF /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = 3BA08F6825673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F6B25673BA600449CFF /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = 3BA08F6A25673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F6D25673BA600449CFF /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = 3BA08F6C25673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F6F25673BA600449CFF /* libSDL2.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libSDL2.dylib;
-			remoteRef = 3BA08F6E25673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F7125673BA600449CFF /* SDL2 */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = SDL2;
-			remoteRef = 3BA08F7025673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F7325673BA600449CFF /* hidapi.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = hidapi.framework;
-			remoteRef = 3BA08F7225673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F7525673BA600449CFF /* hidapi.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = hidapi.framework;
-			remoteRef = 3BA08F7425673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3BA08F7725673BA600449CFF /* hidapi.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = hidapi.framework;
-			remoteRef = 3BA08F7625673BA600449CFF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3BA08EA2256641ED00449CFF /* Resources */ = {
@@ -1502,122 +1306,6 @@
 			};
 			name = Release;
 		};
-		3BA08E9E25663C2E00449CFF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUGGING_SYMBOLS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		3BA08E9F25663C2E00449CFF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		3BA08EA7256641EE00449CFF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1801,10 +1489,7 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/MKXPZ-Dependencies/mac/frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INPUT_FILETYPE = automatic;
@@ -1819,8 +1504,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(RUBY_INSTALL_PREFIX)/include/ruby-$(MRI_VERSION)/x86_64-darwin17",
-					"$(RUBY_INSTALL_PREFIX)/include/ruby-$(MRI_VERSION)",
+					"\"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)\"",
+					"\"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/x86_64-darwin\"",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1829,9 +1514,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/MKXPZ-Dependencies/mac/prefix/lib64",
-					"$(PROJECT_DIR)/MKXPZ-Dependencies/mac/prefix/lib",
-					"$(PROJECT_DIR)/MKXPZ-Dependencies/mac/prefix/opt/ruby2.7.0/lib",
+					"$(PROJECT_DIR)/Dependencies/build-x86_64/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 2.0;
@@ -1899,10 +1582,7 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/MKXPZ-Dependencies/mac/frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1915,8 +1595,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(RUBY_INSTALL_PREFIX)/include/ruby-$(MRI_VERSION)/x86_64-darwin17",
-					"$(RUBY_INSTALL_PREFIX)/include/ruby-$(MRI_VERSION)",
+					"\"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)\"",
+					"\"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/x86_64-darwin\"",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1925,9 +1605,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/MKXPZ-Dependencies/mac/prefix/lib64",
-					"$(PROJECT_DIR)/MKXPZ-Dependencies/mac/prefix/lib",
-					"$(PROJECT_DIR)/MKXPZ-Dependencies/mac/prefix/opt/ruby2.7.0/lib",
+					"$(PROJECT_DIR)/Dependencies/build-x86_64/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 2.0;
@@ -1951,7 +1629,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
 			buildSettings = {
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 			};
@@ -1961,7 +1639,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
 			buildSettings = {
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 			};
@@ -1975,15 +1653,6 @@
 			buildConfigurations = (
 				3BA08E922566314300449CFF /* Debug */,
 				3BA08E932566314300449CFF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3BA08E9D25663C2E00449CFF /* Build configuration list for PBXLegacyTarget "Remove Dependencies" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3BA08E9E25663C2E00449CFF /* Debug */,
-				3BA08E9F25663C2E00449CFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
