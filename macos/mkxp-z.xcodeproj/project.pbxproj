@@ -674,8 +674,8 @@
 			isa = PBXGroup;
 			children = (
 				3B10ED592568E95D00372D13 /* lang-fun.h */,
-				3B10ED5A2568E95D00372D13 /* fake-api.mm */,
 				3B10ED5B2568E95D00372D13 /* lang-fun.mm */,
+				3B10ED5A2568E95D00372D13 /* fake-api.mm */,
 				3B10ED5C2568E95D00372D13 /* fake-api.h */,
 			);
 			path = system;
