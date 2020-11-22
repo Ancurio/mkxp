@@ -65,7 +65,6 @@
 		3B10EDAC2568E95E00372D13 /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
 		3B10EDAD2568E95E00372D13 /* filesystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.mm */; };
 		3B10EDAF2568E95E00372D13 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED562568E95D00372D13 /* main.mm */; };
-		3B10EDB02568E95E00372D13 /* config.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED572568E95D00372D13 /* config.mm */; };
 		3B10EDB12568E95E00372D13 /* fake-api.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.mm */; };
 		3B10EDB22568E95E00372D13 /* lang-fun.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5B2568E95D00372D13 /* lang-fun.mm */; };
 		3B10EDB32568E95E00372D13 /* midisource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5E2568E95D00372D13 /* midisource.cpp */; };
@@ -108,7 +107,6 @@
 		3B10EDFA2568E96A00372D13 /* windowvx-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDD2568E96A00372D13 /* windowvx-binding.cpp */; };
 		3B10EDFB2568E96A00372D13 /* sprite-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDF2568E96A00372D13 /* sprite-binding.cpp */; };
 		3B10EDFC2568E96A00372D13 /* tilemapvx-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */; };
-		3B10EDFD2568E96A00372D13 /* module_rpg2.rb.xxd in Resources */ = {isa = PBXBuildFile; fileRef = 3B10EDE22568E96A00372D13 /* module_rpg2.rb.xxd */; };
 		3B10EDFF2568E96A00372D13 /* bitmap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE42568E96A00372D13 /* bitmap-binding.cpp */; };
 		3B10EE002568E96A00372D13 /* table-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE52568E96A00372D13 /* table-binding.cpp */; };
 		3B10EE012568E96A00372D13 /* etc-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE62568E96A00372D13 /* etc-binding.cpp */; };
@@ -117,19 +115,20 @@
 		3B10EE042568E96A00372D13 /* graphics-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE92568E96A00372D13 /* graphics-binding.cpp */; };
 		3B10EE052568E96A00372D13 /* plane-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEA2568E96A00372D13 /* plane-binding.cpp */; };
 		3B10EE062568E96A00372D13 /* font-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEC2568E96A00372D13 /* font-binding.cpp */; };
-		3B10EE072568E96A00372D13 /* module_rpg1.rb.xxd in Resources */ = {isa = PBXBuildFile; fileRef = 3B10EDED2568E96A00372D13 /* module_rpg1.rb.xxd */; };
 		3B10EE082568E96A00372D13 /* binding-util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEF2568E96A00372D13 /* binding-util.cpp */; };
 		3B10EE092568E96A00372D13 /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
-		3B10EE0A2568E96A00372D13 /* module_rpg3.rb.xxd in Resources */ = {isa = PBXBuildFile; fileRef = 3B10EDF22568E96A00372D13 /* module_rpg3.rb.xxd */; };
 		3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF32568E96A00372D13 /* module_rpg.cpp */; };
 		3B10EE0C2568E96A00372D13 /* viewport-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF42568E96A00372D13 /* viewport-binding.cpp */; };
 		3B10EE142568EA0900372D13 /* CocoaHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EE122568EA0900372D13 /* CocoaHelpers.mm */; };
+		3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
+		3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
+		3B5A84342569F82C00BAF2E5 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
+		3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5A8444256A0F6300BAF2E5 /* libopenal.a */; };
 		3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */; };
-		3BA08ED4256643C200449CFF /* Assets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; };
+		3BA08ED4256643C200449CFF /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BA08FA525674C9900449CFF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08FA425674C9400449CFF /* OpenGL.framework */; };
 		3BD2B6E72565AEC0003DAD8A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
 		3BD2B6ED2565AEC0003DAD8A /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46825651C12003DAD8A /* libiconv.tbd */; };
-		3BD2B6EE2565AEC0003DAD8A /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46A25651C2D003DAD8A /* OpenAL.framework */; };
 		3BD2B6EF2565AEC0003DAD8A /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46625651BFC003DAD8A /* CoreFoundation.framework */; };
 		3BD2B6F12565AEC0003DAD8A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46725651C00003DAD8A /* Foundation.framework */; };
 		3BD2B6F32565AEC0003DAD8A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46525651BF3003DAD8A /* libz.tbd */; };
@@ -166,6 +165,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		3B5A843B2569F95A00BAF2E5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				3B5A84342569F82C00BAF2E5 /* mkxp.json in CopyFiles */,
+				3BA08ED4256643C200449CFF /* Assets.bundle in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3BA08EAC2566426200449CFF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -410,6 +420,12 @@
 		3B10EE122568EA0900372D13 /* CocoaHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaHelpers.mm; sourceTree = SOURCE_ROOT; };
 		3B10EE132568EA0900372D13 /* CocoaHelpers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CocoaHelpers.hpp; sourceTree = SOURCE_ROOT; };
 		3B10EE1F2569348E00372D13 /* json5pp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json5pp.hpp; sourceTree = "<group>"; };
+		3B5A84052569B56F00BAF2E5 /* config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
+		3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = filesystemImplApple.mm; sourceTree = "<group>"; };
+		3B5A84132569C28B00BAF2E5 /* filesystemImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filesystemImpl.cpp; sourceTree = "<group>"; };
+		3B5A84142569C28B00BAF2E5 /* filesystemImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = filesystemImpl.h; sourceTree = "<group>"; };
+		3B5A842B2569E8BA00BAF2E5 /* mINI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mINI.h; sourceTree = "<group>"; };
+		3B5A8444256A0F6300BAF2E5 /* libopenal.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libopenal.a; path = "Dependencies/build-macosx-x86_64/lib/libopenal.a"; sourceTree = "<group>"; };
 		3BA08EA4256641ED00449CFF /* Assets.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Assets.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BA08EA6256641EE00449CFF /* Assets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Assets.plist; sourceTree = "<group>"; };
 		3BA08FA425674C9400449CFF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -419,7 +435,6 @@
 		3BD2B46725651C00003DAD8A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3BD2B46825651C12003DAD8A /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		3BD2B46A25651C2D003DAD8A /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		3BD2B47A256534BA003DAD8A /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		3BD2B7252565AEC0003DAD8A /* mkxp-z.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mkxp-z.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD2B7272565B343003DAD8A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -472,6 +487,7 @@
 				3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */,
 				3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */,
 				3BE08102256879FE0006849F /* libSDL2main.a in Frameworks */,
+				3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */,
 				3BE08107256879FE0006849F /* libpixman-1.a in Frameworks */,
 				3BE0811B256879FE0006849F /* libogg.a in Frameworks */,
 				3BE08109256879FE0006849F /* libSDL2.a in Frameworks */,
@@ -482,7 +498,6 @@
 				3BE08118256879FE0006849F /* libSDL2_test.a in Frameworks */,
 				3BA08FA525674C9900449CFF /* OpenGL.framework in Frameworks */,
 				3BD2B6E72565AEC0003DAD8A /* IOKit.framework in Frameworks */,
-				3BD2B6EE2565AEC0003DAD8A /* OpenAL.framework in Frameworks */,
 				3B10EC5D2568D40C00372D13 /* Carbon.framework in Frameworks */,
 				3B10EC5E2568D40C00372D13 /* AppKit.framework in Frameworks */,
 				3B10EC5F2568D40C00372D13 /* Metal.framework in Frameworks */,
@@ -599,13 +614,14 @@
 				3B10ED5D2568E95D00372D13 /* audio */,
 				3B10ED6F2568E95D00372D13 /* display */,
 				3B10ED352568E95D00372D13 /* eventthread.cpp */,
-				3B10ED432568E95D00372D13 /* config.h */,
 				3B10ED492568E95D00372D13 /* eventthread.h */,
+				3B10ED432568E95D00372D13 /* config.h */,
+				3B10ED572568E95D00372D13 /* config.mm */,
+				3B5A84052569B56F00BAF2E5 /* config.cpp */,
 				3B10ED502568E95D00372D13 /* settingsmenu.h */,
 				3B10ED512568E95D00372D13 /* sharedstate.cpp */,
 				3B10ED552568E95D00372D13 /* meson.build */,
 				3B10ED562568E95D00372D13 /* main.mm */,
-				3B10ED572568E95D00372D13 /* config.mm */,
 				3B10ED6E2568E95D00372D13 /* settingsmenu.cpp */,
 				3B10EDA42568E95E00372D13 /* sharedstate.h */,
 				3B10EDA52568E95E00372D13 /* binding.h */,
@@ -636,6 +652,7 @@
 				3B10ED412568E95D00372D13 /* exception.h */,
 				3B10ED422568E95D00372D13 /* debugwriter.h */,
 				3B10EE1F2569348E00372D13 /* json5pp.hpp */,
+				3B5A842B2569E8BA00BAF2E5 /* mINI.h */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -668,6 +685,9 @@
 			children = (
 				3B10ED532568E95D00372D13 /* filesystem.h */,
 				3B10ED542568E95D00372D13 /* filesystem.mm */,
+				3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */,
+				3B5A84132569C28B00BAF2E5 /* filesystemImpl.cpp */,
+				3B5A84142569C28B00BAF2E5 /* filesystemImpl.h */,
 			);
 			path = filesystem;
 			sourceTree = "<group>";
@@ -843,7 +863,6 @@
 			children = (
 				3BA08FA425674C9400449CFF /* OpenGL.framework */,
 				3BD2B47A256534BA003DAD8A /* IOKit.framework */,
-				3BD2B46A25651C2D003DAD8A /* OpenAL.framework */,
 				3BE081552568D3A60006849F /* Carbon.framework */,
 				3BE081582568D3A60006849F /* AppKit.framework */,
 				3BE081542568D3A60006849F /* Metal.framework */,
@@ -919,6 +938,7 @@
 			isa = PBXGroup;
 			children = (
 				3BE080FC256879FE0006849F /* libfreetype.a */,
+				3B5A8444256A0F6300BAF2E5 /* libopenal.a */,
 				3BE080F2256879FD0006849F /* libobjfw.a */,
 				3BE080ED256879FD0006849F /* libobjfwbridge.a */,
 				3BE080FD256879FE0006849F /* libogg.a */,
@@ -970,6 +990,7 @@
 				3BD2B64C2565AEC0003DAD8A /* Sources */,
 				3BD2B6E12565AEC0003DAD8A /* Frameworks */,
 				3BD2B6F82565AEC0003DAD8A /* Resources */,
+				3B5A843B2569F95A00BAF2E5 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1026,11 +1047,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B10EE072568E96A00372D13 /* module_rpg1.rb.xxd in Resources */,
-				3B10EDFD2568E96A00372D13 /* module_rpg2.rb.xxd in Resources */,
-				3BA08ED4256643C200449CFF /* Assets.bundle in Resources */,
 				3BD2B6F92565AEC0003DAD8A /* icon.icns in Resources */,
-				3B10EE0A2568E96A00372D13 /* module_rpg3.rb.xxd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1059,6 +1076,7 @@
 				3B10EDB42568E95E00372D13 /* alstream.cpp in Sources */,
 				3B10EDAA2568E95E00372D13 /* table.cpp in Sources */,
 				3B10EE002568E96A00372D13 /* table-binding.cpp in Sources */,
+				3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */,
 				3B10EDFF2568E96A00372D13 /* bitmap-binding.cpp in Sources */,
 				3B10EDBA2568E95E00372D13 /* vorbissource.cpp in Sources */,
 				3B10ED1D2568E8F100372D13 /* SDL_sound_raw.c in Sources */,
@@ -1122,9 +1140,9 @@
 				3B10EDC02568E95E00372D13 /* font.cpp in Sources */,
 				3B10ED272568E8F100372D13 /* SDL_sound_flac.c in Sources */,
 				3B10ED1E2568E8F100372D13 /* SDL_sound_modplug.c in Sources */,
+				3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */,
 				3B10EDB12568E95E00372D13 /* fake-api.mm in Sources */,
 				3B10EDAC2568E95E00372D13 /* sharedstate.cpp in Sources */,
-				3B10EDB02568E95E00372D13 /* config.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1319,7 +1337,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -1328,11 +1346,7 @@
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"ALCDEVICE_STRUCT=ALCdevice_struct",
-					USE_MINIFFI,
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1340,12 +1354,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../**",
-					"$(DEPENDENCY_SEARCH_PATH)/include",
-					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
-					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
-					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
-					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
+					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 				);
@@ -1355,8 +1364,8 @@
 					"@executable_path/../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 2.0;
@@ -1370,7 +1379,7 @@
 					"-fno-constant-cfstrings",
 					"-w",
 				);
-				OTHER_CODE_SIGN_FLAGS = "--deep --force";
+				OTHER_CODE_SIGN_FLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoro.mkxpz;
 				PRODUCT_NAME = "mkxp-z";
@@ -1423,18 +1432,14 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"ALCDEVICE_STRUCT=ALCdevice_struct",
-					USE_MINIFFI,
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1442,12 +1447,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../**",
-					"$(DEPENDENCY_SEARCH_PATH)/include",
-					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
-					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
-					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
-					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
+					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 				);
@@ -1457,8 +1457,8 @@
 					"@executable_path/../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 2.0;
@@ -1471,7 +1471,7 @@
 					"-fno-constant-cfstrings",
 					"-w",
 				);
-				OTHER_CODE_SIGN_FLAGS = "--deep --force";
+				OTHER_CODE_SIGN_FLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoro.mkxpz;
 				PRODUCT_NAME = "mkxp-z";
@@ -1485,6 +1485,27 @@
 			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MKXPZ_BUILD_XCODE,
+					"ALCDEVICE_STRUCT=ALCdevice",
+					USE_MINIFFI,
+					AL_LIBTYPE_STATIC,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../**",
+					"$(DEPENDENCY_SEARCH_PATH)/include",
+					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
+					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
+					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
+					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(DEPENDENCY_SEARCH_PATH)/lib",
+					"$(inherited)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 			};
@@ -1495,6 +1516,27 @@
 			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MKXPZ_BUILD_XCODE,
+					"ALCDEVICE_STRUCT=ALCdevice",
+					USE_MINIFFI,
+					AL_LIBTYPE_STATIC,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../**",
+					"$(DEPENDENCY_SEARCH_PATH)/include",
+					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
+					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
+					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
+					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(DEPENDENCY_SEARCH_PATH)/lib",
+					"$(inherited)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 			};

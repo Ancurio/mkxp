@@ -71,7 +71,7 @@ static SDL_RWops *openBundledFont()
 #ifndef MKXPZ_BUILD_XCODE
     return SDL_RWFromConstMem(BNDL_F_D(BUNDLED_FONT), BNDL_F_L(BUNDLED_FONT));
 #else
-    return SDL_RWFromFile(Cocoa::getFilePath("liberation", "ttf").c_str(), "rb");
+    return SDL_RWFromFile(Cocoa::getFilePath("Fonts/liberation", "ttf").c_str(), "rb");
 #endif
 }
 

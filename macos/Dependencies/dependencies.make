@@ -230,6 +230,20 @@ $(DOWNLOADS)/freetype/configure: $(DOWNLOADS)/freetype/autogen.sh
 $(DOWNLOADS)/freetype/autogen.sh:
 	$(CLONE) $(GITHUB)/aseprite/freetype2 $(DOWNLOADS)/freetype
 
+# OpenAL
+openal: init_dirs libogg $(LIBDIR)/libopenal-soft.a
+
+$(LIBDIR)/libopenal-soft.a: $(DOWNLOADS)/openal/cmakebuild/Makefile
+	cd $(DOWNLOADS)/openal/cmakebuild; \
+	make -j$(NPROC); make install
+
+$(DOWNLOADS)/openal/cmakebuild/Makefile: $(DOWNLOADS)/openal/CMakeLists.txt
+	cd $(DOWNLOADS)/openal; mkdir cmakebuild; cd cmakebuild; \
+	$(CMAKE) -DLIBTYPE=STATIC
+
+$(DOWNLOADS)/openal/CMakeLists.txt:
+	$(CLONE) $(GITHUB)/kcat/openal-soft $(DOWNLOADS)/openal
+
 # ObjFW
 objfw: init_dirs $(LIBDIR)/libobjfw.a
 
@@ -294,6 +308,6 @@ clean-downloads:
 clean-compiled:
 	-rm -rf build-$(SDK)-$(ARCH)
 
-deps-core: libvorbis sigcxx pixman libpng libjpeg objfw physfs sdl2 sdl2image sdl2ttf 
+deps-core: libvorbis sigcxx pixman libpng libjpeg objfw physfs sdl2 sdl2image sdl2ttf openal
 deps-binding: ruby
 everything: deps-core deps-binding

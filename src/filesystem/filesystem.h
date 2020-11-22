@@ -25,6 +25,8 @@
 #include <SDL_rwops.h>
 #include <string>
 
+#include "filesystemImpl.h"
+
 struct FileSystemPrivate;
 class SharedFontState;
 

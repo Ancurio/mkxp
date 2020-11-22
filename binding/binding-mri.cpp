@@ -803,12 +803,6 @@ static void mriBindingExecute() {
     rb_ary_push(lpaths, rb_str_new_cstr(getcwd(0,0)));
   }
 #endif
-#ifdef MARIN
-  else {
-    rb_ary_push(lpaths, rb_str_new_cstr("ruby/extensions/2.5.0"));
-    rb_ary_push(lpaths, rb_str_new_cstr("ruby/extensions/2.5.0/i386-mingw32"));
-  }
-#endif
 
   RbData rbData;
   shState->setBindingData(&rbData);
