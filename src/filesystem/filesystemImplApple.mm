@@ -70,7 +70,7 @@ std::string filesystemImpl::getPathForAsset(const char *baseName, const char *ex
     if (assetPath == nil)
         throw new Exception(Exception::NoFileError, "Failed to find the asset named %s.%s", baseName, ext);
     
-    return std::string(getPathForAsset_internal(baseName, ext).UTF8String);
+    return std::string(NSTOPATH(getPathForAsset_internal(baseName, ext)));
 }
 
 std::string filesystemImpl::contentsOfAssetAsString(const char *baseName, const char *ext) {

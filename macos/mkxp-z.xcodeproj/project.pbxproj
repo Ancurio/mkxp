@@ -690,7 +690,6 @@
 		3B10EC6C2568E5EA00372D13 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				3B10EE112568E9FF00372D13 /* Temp */,
 				3B10ED342568E95D00372D13 /* src */,
 				3B10EDD52568E96A00372D13 /* binding */,
 				3B10ED062568E8F100372D13 /* SDL2_sound */,
@@ -994,13 +993,6 @@
 			path = ../binding;
 			sourceTree = "<group>";
 		};
-		3B10EE112568E9FF00372D13 /* Temp */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Temp;
-			sourceTree = "<group>";
-		};
 		3BA08EA5256641ED00449CFF /* misc */ = {
 			isa = PBXGroup;
 			children = (
@@ -1048,8 +1040,8 @@
 				3BD2B7272565B343003DAD8A /* README.md */,
 				3BDB23E22564546E00C4A63D /* icon.icns */,
 				3BDB240A2564715C00C4A63D /* Config.xcconfig */,
-				3BDB23E12564545F00C4A63D /* Assets */,
 				3BDB2409256470AE00C4A63D /* Player */,
+				3BDB23E12564545F00C4A63D /* Assets */,
 				3BA08EA5256641ED00449CFF /* misc */,
 				3BDB22F72564501400C4A63D /* Products */,
 				3BDB23E5256455A400C4A63D /* Frameworks */,
