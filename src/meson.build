@@ -5,7 +5,7 @@ vorbisfile = dependency('vorbisfile', static: build_static)
 sdl2 = dependency('sdl2', static: build_static)
 sdl2_ttf = dependency('SDL2_ttf', static: build_static)
 sdl2_image = dependency('SDL2_image', static: build_static)
-openal = dependency('openal', static: build_static)
+openal = dependency('openal', static: build_static, method: 'pkg-config')
 zlib = dependency('zlib', static: build_static)
 
 

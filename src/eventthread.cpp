@@ -30,16 +30,10 @@
 #include <SDL_rect.h>
 
 
-#ifdef MKXPZ_BUILD_XCODE
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#else
+
 #include <al.h>
 #include <alc.h>
-#ifndef USE_MAC_OPENAL
 #include <alext.h>
-#endif
-#endif
 
 #include "sharedstate.h"
 #include "graphics.h"

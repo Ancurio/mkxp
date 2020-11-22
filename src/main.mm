@@ -20,12 +20,12 @@
 */
 
 #ifdef MKXPZ_BUILD_XCODE
-#include <OpenAL/alc.h>
 #include "CocoaHelpers.hpp"
 #else
-#include <alc.h>
 #import "icon.png.xxd"
 #endif
+
+#include <alc.h>
 
 #import <SDL.h>
 #import <SDL_image.h>
