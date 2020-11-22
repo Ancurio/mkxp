@@ -71,7 +71,7 @@ void Config::read(int argc, char *argv[]) {
         {"subImageFix", false},
         {"enableBlitting", true},
         {"maxTextureSize", 0},
-        {"gameFolder", "."},
+        {"gameFolder", ""},
         {"anyAltToggleFS", false},
         {"enableReset", true},
         {"allowSymlinks", false},
@@ -106,9 +106,14 @@ try { exp } catch (...) {}
             editor.battleTest = true;
     }
     
-    if (filesystemImpl::fileExists(CONF_FILE)) {
+    if (mkxp_fs::fileExists(CONF_FILE)) {
         
-        json::value confData =  json::parse5(filesystemImpl::contentsOfFileAsString(CONF_FILE));
+        json::value confData = json::value(0);
+        try {
+            confData = json::parse5(mkxp_fs::contentsOfFileAsString(CONF_FILE));
+        } catch (...) {
+            Debug() << "Failed to parse JSON configuration";
+        }
         
         if (!confData.is_object())
             confData = json::object({});
@@ -200,11 +205,10 @@ void Config::readGameINI() {
     
     std::string iniFileName(execName + ".ini");
     
-    if (filesystemImpl::fileExists(iniFileName.c_str())) {
-        ini::INIFile iniFile(iniFileName);
+    if (mkxp_fs::fileExists(iniFileName.c_str())) {
         ini::INIStructure iniStruct;
         
-        if (!iniFile.read(iniStruct)) {
+        if (!ini::INIFile(iniFileName).read(iniStruct)) {
             Debug() << "Failed to read INI file" << iniFileName;
         }
         else if (!iniStruct.has("Game")){

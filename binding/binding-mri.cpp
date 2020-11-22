@@ -19,20 +19,24 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "audio.h"
+#include "audio/audio.h"
+#include "filesystem/filesystem.h"
+#include "display/graphics.h"
+#include "system/system.h"
+
+#include "util/util.h"
+#include "util/sdl-util.h"
+#include "util/debugwriter.h"
+#include "util/boost-hash.h"
+
+
 #include "binding-util.h"
 #include "binding.h"
-#include "debugwriter.h"
-#include "eventthread.h"
-#include "filesystem.h"
-#include "graphics.h"
-#include "lang-fun.h"
-#include "sdl-util.h"
-#include "sharedstate.h"
-#include "src/config.h"
-#include "src/util/util.h"
 
-#include "boost-hash.h"
+#include "sharedstate.h"
+#include "config.h"
+#include "eventthread.h"
+
 #include <vector>
 
 extern "C" {
@@ -250,9 +254,8 @@ RB_METHOD(mkxpDataDirectory) {
   const std::string &path = shState->config().customDataPath;
   const char *s = path.empty() ? "." : path.c_str();
 
-  char *s_nml = shState->fileSystem().normalize(s, 1, 1);
-  VALUE ret = rb_str_new_cstr(s_nml);
-  delete s_nml;
+  std::string s_nml = shState->fileSystem().normalize(s, 1, 1);
+  VALUE ret = rb_str_new_cstr(s_nml.c_str());
 
   return ret;
 }
@@ -304,7 +307,7 @@ RB_METHOD(mkxpPlatform) {
 RB_METHOD(mkxpUserLanguage) {
   RB_UNUSED_PARAM;
 
-  return rb_str_new_cstr(getUserLanguage());
+  return rb_str_new_cstr(mkxp_sys::getSystemLanguage().c_str());
 }
 
 RB_METHOD(mkxpGameTitle) {
@@ -491,7 +494,7 @@ bool evalScript(VALUE string, const char *filename)
   return true;
 }
 
-#ifndef MARIN
+
 #define SCRIPT_SECTION_FMT (rgssVer >= 3 ? "{%04ld}" : "Section%03ld")
 
 static void runRMXPScripts(BacktraceData &btData) {
@@ -586,7 +589,6 @@ static void runRMXPScripts(BacktraceData &btData) {
   VALUE exc = rb_gv_get("$!");
   if (exc != Qnil)
     return;
-#endif
 
 #ifdef EASY_POKE
   // Used to try and fix Essentials garbage later if it's detected
@@ -800,7 +802,7 @@ static void mriBindingExecute() {
   }
 #ifndef WORKDIR_CURRENT
   else {
-    rb_ary_push(lpaths, rb_str_new_cstr(getcwd(0,0)));
+    rb_ary_push(lpaths, rb_str_new_cstr(mkxp_fs::getCurrentDirectory().c_str()));
   }
 #endif
 
@@ -814,11 +816,7 @@ static void mriBindingExecute() {
   if (!customScript.empty())
     runCustomScript(customScript);
   else
-#ifdef MARIN
-    runCustomScript("ruby/scripts/requires.rb");
-#else
     runRMXPScripts(btData);
-#endif
 
 #if RAPI_FULL > 187
   VALUE exc = rb_errinfo();

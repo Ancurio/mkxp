@@ -75,8 +75,8 @@ if get_option('cjk_fallback_font') == true
 endif
 
 main_source = files(
-    'main.mm',
-    'config.mm',
+    'main.cpp',
+    'config.cpp',
     'eventthread.cpp',
     'settingsmenu.cpp',
     'sharedstate.cpp',
@@ -120,13 +120,14 @@ main_source = files(
     'etc/etc.cpp',
     'etc/table.cpp',
 
-    'filesystem/filesystem.mm',
+    'filesystem/filesystem.cpp',
+    'filesystem/filesystemImpl.cpp',
     
     'input/input.cpp',
     'input/keybindings.cpp',
 
-    'system/fake-api.mm',
-    'system/lang-fun.mm'
+    'system/fake-api.cpp',
+    'system/systemImpl.cpp'
 )
 
 global_sources += main_source

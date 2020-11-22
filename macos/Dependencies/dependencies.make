@@ -244,26 +244,6 @@ $(DOWNLOADS)/openal/cmakebuild/Makefile: $(DOWNLOADS)/openal/CMakeLists.txt
 $(DOWNLOADS)/openal/CMakeLists.txt:
 	$(CLONE) $(GITHUB)/kcat/openal-soft $(DOWNLOADS)/openal
 
-# ObjFW
-objfw: init_dirs $(LIBDIR)/libobjfw.a
-
-$(LIBDIR)/libobjfw.a: $(DOWNLOADS)/ObjFW/Makefile
-	cd $(DOWNLOADS)/ObjFW; \
-	make -j$(NPROC); make install
-
-$(DOWNLOADS)/ObjFW/Makefile: $(DOWNLOADS)/ObjFW/configure
-	cd $(DOWNLOADS)/ObjFW; \
-	$(CONFIGURE) --enable-static --disable-shared
-
-$(DOWNLOADS)/ObjFW/configure: $(DOWNLOADS)/ObjFW/autogen.sh
-	cd $(DOWNLOADS)/ObjFW; \
-	./autogen.sh
-
-$(DOWNLOADS)/ObjFW/autogen.sh:
-	$(CLONE) $(GITHUB)/ObjFW/ObjFW $(DOWNLOADS)/ObjFW; \
-	cd $(DOWNLOADS)/ObjFW; \
-	git checkout 7ff624a09675925f08222499249ef25f325bee41
-
 # Standard ruby
 ruby: init_dirs $(LIBDIR)/libruby*.a
 
@@ -308,6 +288,6 @@ clean-downloads:
 clean-compiled:
 	-rm -rf build-$(SDK)-$(ARCH)
 
-deps-core: libvorbis sigcxx pixman libpng libjpeg objfw physfs sdl2 sdl2image sdl2ttf openal
+deps-core: libvorbis sigcxx pixman libpng libjpeg physfs sdl2 sdl2image sdl2ttf openal
 deps-binding: ruby
 everything: deps-core deps-binding

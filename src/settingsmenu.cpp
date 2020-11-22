@@ -70,18 +70,10 @@ struct VButton
 	BTN_STRING(R),
 	BTN_STRING(A),
 	BTN_STRING(B),
-#ifdef MARIN
-	BTN_STRING(ZL),
-#else
     BTN_STRING_CUSTOM(ZL, "C"),
-#endif
 	BTN_STRING(X),
 	BTN_STRING(Y),
-#ifdef MARIN
-	BTN_STRING(ZR),
-#else
     BTN_STRING_CUSTOM(ZR, "Z"),
-#endif
 };
 
 static elementsN(vButtons);

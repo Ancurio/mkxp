@@ -27,6 +27,8 @@
 
 #include "filesystemImpl.h"
 
+namespace mkxp_fs = filesystemImpl;
+
 struct FileSystemPrivate;
 class SharedFontState;
 
@@ -67,7 +69,7 @@ public:
 	                 const char *filename,
 	                 bool freeOnClose = false);
 
-	char *normalize(const char *pathname, bool preferred, bool absolute);
+	std::string normalize(const char *pathname, bool preferred, bool absolute);
 
 	/* Does not perform extension supplementing */
 	bool exists(const char *filename);

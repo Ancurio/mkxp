@@ -19,36 +19,35 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#import <ObjFW/ObjFW.h>
+#include "filesystem.h"
 
-#import "filesystem.h"
+#include "util/boost-hash.h"
+#include "util/debugwriter.h"
+#include "util/exception.h"
+#include "util/util.h"
+#include "display/font.h"
+#include "crypto/rgssad.h"
 
-#import "boost-hash.h"
-#import "debugwriter.h"
-#import "eventthread.h"
-#import "exception.h"
-#import "font.h"
-#import "rgssad.h"
-#import "sharedstate.h"
-#import "util.h"
+#include "eventthread.h"
+#include "sharedstate.h"
 
-#import <physfs.h>
+#include <physfs.h>
 
-#import <SDL_sound.h>
+#include <SDL_sound.h>
 
-#import <algorithm>
-#import <stack>
-#import <stdio.h>
-#import <string.h>
-#import <unistd.h>
-#import <vector>
+#include <algorithm>
+#include <stack>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <vector>
 
 #ifdef __APPLE__
-#import <iconv.h>
+#include <iconv.h>
 #endif
 
 #ifdef __WINDOWS__
-#import <direct.h>
+#include <direct.h>
 #endif
 
 struct SDLRWIoContext {
@@ -576,10 +575,9 @@ openReadEnumCB(void *d, const char *dirpath, const char *filename) {
 }
 
 void FileSystem::openRead(OpenHandler &handler, const char *filename) {
-  char *filename_nm = normalize(filename, false, false);
+  std::string filename_nm = normalize(filename, false, false);
   char buffer[512];
-  size_t len = strcpySafe(buffer, filename_nm, sizeof(buffer), -1);
-  delete filename_nm;
+  size_t len = strcpySafe(buffer, filename_nm.c_str(), sizeof(buffer), -1);
   char *delim;
 
   if (p->havePathCache)
@@ -642,31 +640,9 @@ void FileSystem::openReadRaw(SDL_RWops &ops, const char *filename,
 // (`Audio/BGM/../../Audio/ME/[file]`)
 
 // SDL_SaveBMP wants absolute paths
-char *FileSystem::normalize(const char *pathname, bool preferred,
+std::string FileSystem::normalize(const char *pathname, bool preferred,
                             bool absolute) {
-  @autoreleasepool {
-    OFMutableString *str = @(pathname).mutableCopy;
-
-    if (absolute && !str.absolutePath) {
-      [str prependString:@"/"];
-      [str prependString:OFFileManager.defaultManager.currentDirectoryPath];
-    }
-    str = str.stringByStandardizingPath.mutableCopy;
-#ifdef __WINDOWS__
-    if (preferred) {
-      [str replaceOccurrencesOfString:@"/" withString:@"\\"];
-    } else {
-      [str replaceOccurrencesOfString:@"\\" withString:@"/"];
-    }
-#else
-    [str replaceOccurrencesOfString:@"\\" withString:@"/"];
-#endif
-
-    [str makeImmutable];
-    char *ret = new char[300];
-    strncpy(ret, str.UTF8String, 300);
-    return ret;
-  };
+    return filesystemImpl::normalizePath(pathname, preferred, absolute);
 }
 
 bool FileSystem::exists(const char *filename) {
@@ -674,8 +650,12 @@ bool FileSystem::exists(const char *filename) {
 }
 
 const char *FileSystem::desensitize(const char *filename) {
-  OFString *fn_lower = @(filename).lowercaseString;
-  if (p->havePathCache && p->pathCache.contains(fn_lower.UTF8String))
-    return p->pathCache[fn_lower.UTF8String].c_str();
+  std::string fn_lower(filename);
+    
+  std::transform(fn_lower.begin(), fn_lower.end(), fn_lower.begin(), [](unsigned char c){
+      return std::tolower(c);
+  });
+  if (p->havePathCache && p->pathCache.contains(fn_lower))
+    return p->pathCache[fn_lower].c_str();
   return filename;
 }

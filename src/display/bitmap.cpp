@@ -931,11 +931,10 @@ void Bitmap::saveToFile(const char *filename)
     
     getRaw(surf->pixels, surf->w * surf->h * 4);
     
-    char *fn_normalized = shState->fileSystem().normalize(filename, 1, 1);
-    int rc = SDL_SaveBMP(surf, fn_normalized);
+    std::string fn_normalized = shState->fileSystem().normalize(filename, 1, 1);
+    int rc = SDL_SaveBMP(surf, fn_normalized.c_str());
     
     SDL_FreeSurface(surf);
-    delete fn_normalized;
     if (rc) throw new Exception(Exception::SDLError, "%s", SDL_GetError());
 }
 

@@ -10,11 +10,16 @@
 
 #include <string>
 
-class filesystemImpl {
-public:
-static bool fileExists(const char *path);
+namespace filesystemImpl {
+bool fileExists(const char *path);
 
-static std::string contentsOfFileAsString(const char *path);
+std::string contentsOfFileAsString(const char *path);
+
+bool setCurrentDirectory(const char *path);
+    
+std::string getCurrentDirectory();
+    
+std::string normalizePath(const char *path, bool preferred, bool absolute);
 
 };
 #endif /* filesystemImpl_h */

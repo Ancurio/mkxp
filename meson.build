@@ -1,14 +1,9 @@
-project('mkxp-z', 'c', 'cpp', 'objc', 'objcpp', version: '1.3.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release'])
+project('mkxp-z', 'c', 'cpp', version: '1.3.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++17', 'buildtype=release'])
 
 xxd = find_program('xxd', native: true)
-objfw = find_program('objfw-config', native: true)
 host_system = host_machine.system()
 
-compilers = {'cpp': meson.get_compiler('cpp'), 'objc': meson.get_compiler('objc'), 'objcpp': meson.get_compiler('objcpp')}
-
-if compilers['objc'].get_id() != 'clang' or compilers['objcpp'].get_id() != 'clang' or compilers['cpp'].get_id() != 'clang'
-    error('This program must be built with Clang! ( export CC=clang OBJC=clang CXX=clang++ OBJCXX=clang++ )')
-endif
+compilers = {'cpp': meson.get_compiler('cpp')}
 
 global_sources = []
 global_dependencies = []
@@ -95,7 +90,7 @@ endif
 
 # Suppress warnings
 global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas', '-Wno-unknown-warning-option', '-Wno-deprecated-register']
-if compilers['objc'].get_id() == 'clang'
+if compilers['cpp'].get_id() == 'clang'
     global_args += ['-Wno-undefined-var-template', '-Wno-delete-non-abstract-non-virtual-dtor']
 endif
 if host_system == 'windows'
@@ -143,22 +138,6 @@ if host_system != 'darwin' or current_macos_version.version_compare('<10.15')
     global_args += '-DTHREADED_GLINIT'
 endif
 
-# Objectify our C
-global_args += run_command(objfw,'--cppflags').stdout().split()
-add_project_arguments(run_command(objfw,'--objcflags').stdout().split(), language:['objc','objcpp'])
-add_project_link_arguments(run_command(objfw,'--libs','--ldflags').stdout().split(), language:['objc','objcpp'])
-
-# Make sure to use ARC
-add_project_arguments(run_command(objfw,'--arc').stdout().split(), language:['objc','objcpp'])
-if host_system != 'darwin'
-    add_project_arguments('-fobjc-runtime=objfw', language:['objc','objcpp'])
-endif
-
-# (Fix cquery thinking ObjC headers are C++ headers in VSCode)
-add_project_arguments('-ObjC', language:'objc')
-add_project_arguments('-ObjC++', language:'objcpp')
-
-
 subdir('src')
 subdir('binding')
 subdir('shader')
@@ -176,15 +155,12 @@ if host_system == 'windows'
 elif host_system == 'darwin'
     subdir('macos')
     rpath = '@executable_path/../libs'
-    add_project_arguments('-stdlib=libc++', language: ['cpp','objcpp'])
-    add_project_arguments('-std=c++11', language: 'objcpp') # Meson's cpp_std doesn't work on ObjC for some reason
+    add_project_arguments('-stdlib=libc++', language: ['cpp'])
     if minimum_macos_version != ''
-        add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
-        add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['cpp', 'objc', 'objcpp'])
+        add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['c', 'cpp'])
+        add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['c', 'cpp'])
     endif
-    if minimum_macos_version.version_compare('>=10.13') == true
-        warning('Please consider using the Xcode project located in the `macos` directory instead.')
-    endif
+    warning('Please consider using the Xcode project located in the `macos` directory instead.')
 else
     subdir('linux')
     add_project_arguments('-std=c++11', language: 'objcpp')

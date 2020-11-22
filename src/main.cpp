@@ -22,38 +22,38 @@
 #ifdef MKXPZ_BUILD_XCODE
 #include "CocoaHelpers.hpp"
 #else
-#import "icon.png.xxd"
+#include "icon.png.xxd"
 #endif
 
 #include <alc.h>
 
-#import <SDL.h>
-#import <SDL_image.h>
-#import <SDL_sound.h>
-#import <SDL_ttf.h>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_sound.h>
+#include <SDL_ttf.h>
 
-#import <assert.h>
-#import <string.h>
-#import <string>
-#import <unistd.h>
+#include <assert.h>
+#include <string.h>
+#include <string>
+#include <unistd.h>
 
-#import "debugwriter.h"
-#import "eventthread.h"
-#import "exception.h"
-#import "gl-debug.h"
-#import "gl-fun.h"
-#import "sharedstate.h"
+#include "binding.h"
+#include "sharedstate.h"
+#include "eventthread.h"
+#include "util/debugwriter.h"
+#include "util/exception.h"
+#include "display/gl/gl-debug.h"
+#include "display/gl/gl-fun.h"
 
-#import "binding.h"
+#include "filesystem/filesystem.h"
 
 #if defined(__WINDOWS__)
-#import "resource.h"
-#import <Winsock2.h>
+#include "resource.h"
+#include <Winsock2.h>
 #endif
 
-#import <ObjFW/ObjFW.h>
 #ifdef HAVE_STEAMSHIM
-#import "steamshim_child.h"
+#include "steamshim_child.h"
 #endif
 
 #ifndef THREADED_GLINIT
@@ -110,11 +110,8 @@ int rgssThreadFun(void *userdata) {
     return 0;
   }
 
-  @
-  autoreleasepool {
-    /* Start script execution */
-    scriptBinding->execute();
-  }
+  /* Start script execution */
+  scriptBinding->execute();
 
   threadData->rqTermAck.set();
   threadData->ethread->requestTerminate();
@@ -168,7 +165,6 @@ static void setupWindowIcon(const Config &conf, SDL_Window *win) {
 }
 
 int main(int argc, char *argv[]) {
-  @autoreleasepool {
     SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0");
     SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
 
@@ -186,26 +182,6 @@ int main(int argc, char *argv[]) {
       showInitError("Error allocating SDL user events");
       return 0;
     }
-    /*
-    #ifndef WORKDIR_CURRENT
-            // set working directory
-        char *dataDir{};
-        dataDir = SDL_GetBasePath();
-            if (dataDir)
-            {
-                    int result = chdir(dataDir);
-                    (void)result;
-                    SDL_free(dataDir);
-            }
-    #else
-    #ifdef __linux__
-        dataDir = getenv("OWD");
-        if (!dataDir)
-    #endif
-    #endif
-    */
-
-    OFFileManager *fm = [OFFileManager defaultManager];
 
 #ifndef WORKDIR_CURRENT
     char dataDir[512]{};
@@ -223,10 +199,7 @@ int main(int argc, char *argv[]) {
         SDL_free(tmp);
       }
     }
-    @try {
-      [fm changeCurrentDirectoryPath: [OFString stringWithUTF8String:dataDir ]];
-    } @catch (...) {
-    }
+    mkxp_fs::setCurrentDirectory(dataDir);
 #endif
     
     /* now we load the config */
@@ -234,9 +207,9 @@ int main(int argc, char *argv[]) {
     conf.read(argc, argv);
 
     if (!conf.gameFolder.empty()) {
-      @try {
-        [fm changeCurrentDirectoryPath: [OFString stringWithUTF8String: conf.gameFolder.c_str()]];
-      } @catch (...) {
+
+      if (!mkxp_fs::setCurrentDirectory(conf.gameFolder.c_str()))
+      {
         showInitError(std::string("Unable to switch into gameFolder ") +
                       conf.gameFolder);
         return 0;
@@ -410,11 +383,7 @@ int main(int argc, char *argv[]) {
     else
       SDL_ShowSimpleMessageBox(
           SDL_MESSAGEBOX_ERROR, conf.game.title.c_str(),
-          [OFString
-              stringWithFormat:
-                  @"The RGSS script seems to be stuck. %s will now force quit.",
-                  conf.game.title.c_str()]
-              .UTF8String,
+          std::string("The RGSS script seems to be stuck. "+conf.game.title+" will now force quit.").c_str(),
           win);
 
     if (!rtData.rgssErrorMsg.empty()) {
@@ -448,7 +417,6 @@ int main(int argc, char *argv[]) {
     SDL_Quit();
 
     return 0;
-  }
 }
 
 static SDL_GLContext initGL(SDL_Window *win, Config &conf,

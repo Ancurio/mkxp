@@ -292,26 +292,17 @@ struct {
                           {"LEFT", Input::Left},
                           {"RIGHT", Input::Right},
                           {"UP", Input::Up},
-
-#ifdef MARIN
-                          {"ZL", Input::ZL},
-                          {"ZR", Input::ZR},
-#else
                           {"C", Input::ZL},
                           {"Z", Input::ZR},
-#endif
-
                           {"A", Input::A},
                           {"B", Input::B},
                           {"X", Input::X},
                           {"Y", Input::Y},
                           {"L", Input::L},
                           {"R", Input::R},
-
                           {"SHIFT", Input::Shift},
                           {"CTRL", Input::Ctrl},
                           {"ALT", Input::Alt},
-
                           {"F5", Input::F5},
                           {"F6", Input::F6},
                           {"F7", Input::F7},

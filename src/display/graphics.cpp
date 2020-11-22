@@ -53,13 +53,9 @@
 #include <sys/time.h>
 #include <time.h>
 
-#ifdef MARIN
-#define DEF_SCREEN_W 480
-#define DEF_SCREEN_H 320
-#else
 #define DEF_SCREEN_W (rgssVer == 1 ? 640 : 544)
 #define DEF_SCREEN_H (rgssVer == 1 ? 480 : 416)
-#endif
+
 #define DEF_FRAMERATE (rgssVer == 1 ? 40 : 60)
 
 struct PingPong {

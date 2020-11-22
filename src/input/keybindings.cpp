@@ -72,7 +72,6 @@ static const KbBindingData defaultKbBindings[] =
 	{ SDL_SCANCODE_UP,     Input::Up    },
 	{ SDL_SCANCODE_DOWN,   Input::Down  },
     
-#ifndef MARIN
 	{ SDL_SCANCODE_SPACE,  Input::ZL    },
 	{ SDL_SCANCODE_RETURN, Input::ZL    },
 	{ SDL_SCANCODE_ESCAPE, Input::B     },
@@ -84,19 +83,8 @@ static const KbBindingData defaultKbBindings[] =
 	{ SDL_SCANCODE_W,      Input::R     },
 	{ SDL_SCANCODE_A,      Input::X     },
 	{ SDL_SCANCODE_S,      Input::Y     }
-#else
-    { SDL_SCANCODE_D,      Input::ZL    },
-    { SDL_SCANCODE_F,      Input::ZR    },
-    { SDL_SCANCODE_A,      Input::L     },
-    { SDL_SCANCODE_S,      Input::R     },
-    { SDL_SCANCODE_C,      Input::A     },
-    { SDL_SCANCODE_X,      Input::B     },
-    { SDL_SCANCODE_Z,      Input::X     },
-    { SDL_SCANCODE_V,      Input::Y     }
-#endif
 };
 
-#ifndef MARIN
 /* RGSS1 */
 static const KbBindingData defaultKbBindings1[] =
 {
@@ -109,14 +97,10 @@ static const KbBindingData defaultKbBindings2[] =
 {
 	{ SDL_SCANCODE_Z,      Input::ZL     }
 };
-#endif
 
 static elementsN(defaultKbBindings);
-
-#ifndef MARIN
 static elementsN(defaultKbBindings1);
 static elementsN(defaultKbBindings2);
-#endif
 
 static const JsBindingData defaultJsBindings[] =
 {
@@ -166,14 +150,14 @@ BDescVec genDefaultBindings(const Config &conf)
 
 	for (size_t i = 0; i < defaultKbBindingsN; ++i)
 		defaultKbBindings[i].add(d);
-#ifndef MARIN
+
 	if (conf.rgssVersion == 1)
 		for (size_t i = 0; i < defaultKbBindings1N; ++i)
 			defaultKbBindings1[i].add(d);
 	else
 		for (size_t i = 0; i < defaultKbBindings2N; ++i)
 			defaultKbBindings2[i].add(d);
-#endif
+
 	for (size_t i = 0; i < defaultJsBindingsN; ++i)
 		defaultJsBindings[i].add(d);
 

@@ -157,7 +157,7 @@
     // Set the base path of the game to '/path/to/game'
     // (default: executable directory)
     //
-    // "gameFolder": "/path/to/game",
+    "gameFolder": "/Users/zoroark/Downloads/Village of Nightmare [English 2.1]",
 
 
     // Use either right or left Alt + Enter to toggle
