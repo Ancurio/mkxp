@@ -19,9 +19,7 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef MKXPZ_BUILD_XCODE
-#include "CocoaHelpers.hpp"
-#else
+#ifndef MKXPZ_BUILD_XCODE
 #include "icon.png.xxd"
 #endif
 
@@ -151,7 +149,7 @@ static void setupWindowIcon(const Config &conf, SDL_Window *win) {
 #ifndef MKXPZ_BUILD_XCODE
     iconSrc = SDL_RWFromConstMem(___assets_icon_png, ___assets_icon_png_len);
 #else
-    iconSrc = SDL_RWFromFile(Cocoa::getFilePath("icon", "png").c_str(), "rb");
+    iconSrc = SDL_RWFromFile(mkxp_fs::getPathForAsset("icon", "png").c_str(), "rb");
 #endif
   else
     iconSrc = SDL_RWFromFile(conf.iconPath.c_str(), "rb");

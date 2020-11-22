@@ -57,11 +57,11 @@
 #endif
 
 #ifdef MKXPZ_BUILD_XCODE
-#include "CocoaHelpers.hpp"
+#include "filesystem/filesystem.h"
 #define INIT_SHADER(vert, frag, name) \
 { \
-    std::string v = Cocoa::getFile("Shaders/" #vert, "vert"); \
-    std::string f = Cocoa::getFile("Shaders/" #frag, "frag"); \
+    std::string v = mkxp_fs::contentsOfAssetAsString("Shaders/" #vert, "vert"); \
+    std::string f = mkxp_fs::contentsOfAssetAsString("Shaders/" #frag, "frag"); \
     Shader::init((const unsigned char*)v.c_str(), v.length(), (const unsigned char*)f.c_str(), f.length(), #vert, #frag, #name); \
 }
 #else
@@ -104,7 +104,7 @@ Shader::Shader()
 {
 #ifdef MKXPZ_BUILD_XCODE
     if (Shader::shaderCommon.empty())
-        Shader::shaderCommon = Cocoa::getFile("Shaders/common", "h");
+        Shader::shaderCommon = mkxp_fs::contentsOfAssetAsString("Shaders/common", "h");
 #endif
 	vertShader = gl.CreateShader(GL_VERTEX_SHADER);
 	fragShader = gl.CreateShader(GL_FRAGMENT_SHADER);

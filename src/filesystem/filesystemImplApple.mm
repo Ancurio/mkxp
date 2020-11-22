@@ -24,7 +24,7 @@ bool filesystemImpl::fileExists(const char *path) {
 std::string filesystemImpl::contentsOfFileAsString(const char *path) {
     NSString *fileContents = [NSString stringWithContentsOfFile: PATHTONS(path)];
     if (fileContents == nil)
-        throw new Exception(Exception::NoFileError, "Failed to locate file at %s", path);
+        throw new Exception(Exception::NoFileError, "Failed to read file at %s", path);
     
     return std::string(fileContents.UTF8String);
 
@@ -48,4 +48,39 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
         nspath = nspath.stringByStandardizingPath;
     }
     return std::string(NSTOPATH(nspath));
+}
+
+NSString *getPathForAsset_internal(const char *baseName, const char *ext) {
+    NSBundle *assetBundle = [NSBundle bundleWithPath:
+                             [NSString stringWithFormat:
+                              @"%@/%s",
+                              NSBundle.mainBundle.resourcePath,
+                              "Assets.bundle"
+                             ]
+                            ];
+    
+    if (assetBundle == nil)
+        return nil;
+    
+    return [assetBundle pathForResource: @(baseName) ofType: @(ext)];
+}
+
+std::string filesystemImpl::getPathForAsset(const char *baseName, const char *ext) {
+    NSString *assetPath = getPathForAsset_internal(baseName, ext);
+    if (assetPath == nil)
+        throw new Exception(Exception::NoFileError, "Failed to find the asset named %s.%s", baseName, ext);
+    
+    return std::string(getPathForAsset_internal(baseName, ext).UTF8String);
+}
+
+std::string filesystemImpl::contentsOfAssetAsString(const char *baseName, const char *ext) {
+    NSString *path = getPathForAsset_internal(baseName, ext);
+    NSString *fileContents = [NSString stringWithContentsOfFile: path];
+    
+    // This should never fail
+    if (fileContents == nil)
+        throw new Exception(Exception::MKXPError, "Failed to read file at %s", path.UTF8String);
+    
+    return std::string(fileContents.UTF8String);
+
 }

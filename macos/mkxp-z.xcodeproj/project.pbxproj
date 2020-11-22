@@ -118,13 +118,11 @@
 		3B10EE092568E96A00372D13 /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
 		3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF32568E96A00372D13 /* module_rpg.cpp */; };
 		3B10EE0C2568E96A00372D13 /* viewport-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF42568E96A00372D13 /* viewport-binding.cpp */; };
-		3B10EE142568EA0900372D13 /* CocoaHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EE122568EA0900372D13 /* CocoaHelpers.mm */; };
 		3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
 		3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3B5A84342569F82C00BAF2E5 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
 		3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5A8444256A0F6300BAF2E5 /* libopenal.a */; };
 		3B5A8464256A46B200BAF2E5 /* systemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */; };
-		3B83DC26256A51B9001991CB /* CocoaHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EE122568EA0900372D13 /* CocoaHelpers.mm */; };
 		3B83DC27256A51B9001991CB /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
 		3B83DC28256A51B9001991CB /* SDL_sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED112568E8F100372D13 /* SDL_sound.c */; };
 		3B83DC29256A51B9001991CB /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
@@ -544,8 +542,6 @@
 		3B10EDF22568E96A00372D13 /* module_rpg3.rb.xxd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = module_rpg3.rb.xxd; sourceTree = "<group>"; };
 		3B10EDF32568E96A00372D13 /* module_rpg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = module_rpg.cpp; sourceTree = "<group>"; };
 		3B10EDF42568E96A00372D13 /* viewport-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "viewport-binding.cpp"; sourceTree = "<group>"; };
-		3B10EE122568EA0900372D13 /* CocoaHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaHelpers.mm; sourceTree = SOURCE_ROOT; };
-		3B10EE132568EA0900372D13 /* CocoaHelpers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CocoaHelpers.hpp; sourceTree = SOURCE_ROOT; };
 		3B10EE1F2569348E00372D13 /* json5pp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json5pp.hpp; sourceTree = "<group>"; };
 		3B5A84052569B56F00BAF2E5 /* config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
 		3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = filesystemImplApple.mm; sourceTree = "<group>"; };
@@ -1001,8 +997,6 @@
 		3B10EE112568E9FF00372D13 /* Temp */ = {
 			isa = PBXGroup;
 			children = (
-				3B10EE132568EA0900372D13 /* CocoaHelpers.hpp */,
-				3B10EE122568EA0900372D13 /* CocoaHelpers.mm */,
 			);
 			path = Temp;
 			sourceTree = "<group>";
@@ -1252,7 +1246,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B83DC26256A51B9001991CB /* CocoaHelpers.mm in Sources */,
 				3B83DC27256A51B9001991CB /* tilemapvx.cpp in Sources */,
 				3B83DC28256A51B9001991CB /* SDL_sound.c in Sources */,
 				3B83DC29256A51B9001991CB /* rgssad.cpp in Sources */,
@@ -1344,7 +1337,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B10EE142568EA0900372D13 /* CocoaHelpers.mm in Sources */,
 				3B10EDC22568E95E00372D13 /* tilemapvx.cpp in Sources */,
 				3B10ED212568E8F100372D13 /* SDL_sound.c in Sources */,
 				3B10EDA72568E95E00372D13 /* rgssad.cpp in Sources */,

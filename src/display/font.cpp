@@ -32,7 +32,7 @@
 #include <utility>
 
 #ifdef MKXPZ_BUILD_XCODE
-#include "CocoaHelpers.hpp"
+#include "filesystem/filesystem.h"
 #endif
 
 #include <SDL_ttf.h>
@@ -71,7 +71,7 @@ static SDL_RWops *openBundledFont()
 #ifndef MKXPZ_BUILD_XCODE
     return SDL_RWFromConstMem(BNDL_F_D(BUNDLED_FONT), BNDL_F_L(BUNDLED_FONT));
 #else
-    return SDL_RWFromFile(Cocoa::getFilePath("Fonts/liberation", "ttf").c_str(), "rb");
+    return SDL_RWFromFile(mkxp_fs::getPathForAsset("Fonts/liberation", "ttf").c_str(), "rb");
 #endif
 }
 

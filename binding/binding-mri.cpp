@@ -636,7 +636,7 @@ static void runRMXPScripts(BacktraceData &btData) {
       #define EVALFILE(name) if (!evalScript(SCRIPT(name))) break;
 #else
       #define EVALFILE(name) { \
-    std::string s = Cocoa::getFile("BindingScripts/" #name, "rb"); \
+        std::string s = mkxp_fs::contentsOfAssetAsString("BindingScripts/" #name, "rb"); \
         if (!evalScript(rb_str_new_cstr(s.c_str()), #name)) break; \
       }
 #endif
