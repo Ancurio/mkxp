@@ -118,6 +118,7 @@
 		3B10EE092568E96A00372D13 /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
 		3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF32568E96A00372D13 /* module_rpg.cpp */; };
 		3B10EE0C2568E96A00372D13 /* viewport-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF42568E96A00372D13 /* viewport-binding.cpp */; };
+		3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
 		3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
 		3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3B5A84342569F82C00BAF2E5 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
@@ -417,6 +418,7 @@
 		3B426F6E256B8AC0009EA00F /* filesystem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = filesystem.hpp; sourceTree = "<group>"; };
 		3B426F6F256B8AC0009EA00F /* fs_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_impl.hpp; sourceTree = "<group>"; };
 		3B426F70256B8AC0009EA00F /* fs_std_fwd.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_fwd.hpp; sourceTree = "<group>"; };
+		3B426F76256BA847009EA00F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
 		3B5A84052569B56F00BAF2E5 /* config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
 		3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = filesystemImplApple.mm; sourceTree = "<group>"; };
 		3B5A84132569C28B00BAF2E5 /* filesystemImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filesystemImpl.cpp; sourceTree = "<group>"; };
@@ -494,6 +496,7 @@
 				3BE08118256879FE0006849F /* libSDL2_test.a in Frameworks */,
 				3BA08FA525674C9900449CFF /* OpenGL.framework in Frameworks */,
 				3BD2B6E72565AEC0003DAD8A /* IOKit.framework in Frameworks */,
+				3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */,
 				3B10EC5D2568D40C00372D13 /* Carbon.framework in Frameworks */,
 				3B10EC5E2568D40C00372D13 /* AppKit.framework in Frameworks */,
 				3B10EC5F2568D40C00372D13 /* Metal.framework in Frameworks */,
@@ -943,6 +946,7 @@
 				3BE080FF256879FE0006849F /* libphysfs.a */,
 				3BE080E9256879FC0006849F /* libpixman-1.a */,
 				3BE080F4256879FD0006849F /* libruby.2.6-static.a */,
+				3B426F76256BA847009EA00F /* libsigc-2.0.a */,
 				3BE080F0256879FD0006849F /* libSDL2_image.a */,
 				3BE080FA256879FE0006849F /* libSDL2_test.a */,
 				3BE080EF256879FD0006849F /* libSDL2_ttf.a */,
@@ -978,9 +982,9 @@
 			productReference = 3BA08EA4256641ED00449CFF /* Assets.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
-		3BD2B64B2565AEC0003DAD8A /* Player */ = {
+		3BD2B64B2565AEC0003DAD8A /* Mac App (Intel) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3BD2B7222565AEC0003DAD8A /* Build configuration list for PBXNativeTarget "Player" */;
+			buildConfigurationList = 3BD2B7222565AEC0003DAD8A /* Build configuration list for PBXNativeTarget "Mac App (Intel)" */;
 			buildPhases = (
 				3BD2B64C2565AEC0003DAD8A /* Sources */,
 				3BD2B6E12565AEC0003DAD8A /* Frameworks */,
@@ -992,7 +996,7 @@
 			dependencies = (
 				3BA08ED3256643AD00449CFF /* PBXTargetDependency */,
 			);
-			name = Player;
+			name = "Mac App (Intel)";
 			productName = PlayerLegacy;
 			productReference = 3BD2B7252565AEC0003DAD8A /* mkxp-z.app */;
 			productType = "com.apple.product-type.application";
@@ -1024,7 +1028,7 @@
 			projectRoot = "";
 			targets = (
 				3BA08EA3256641ED00449CFF /* Assets */,
-				3BD2B64B2565AEC0003DAD8A /* Player */,
+				3BD2B64B2565AEC0003DAD8A /* Mac App (Intel) */,
 			);
 		};
 /* End PBXProject section */
@@ -1327,6 +1331,7 @@
 				CURRENT_PROJECT_VERSION = 2.0;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -1349,7 +1354,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
+				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1360,7 +1368,6 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
-				PRODUCT_NAME = "mkxp-z";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -1406,6 +1413,7 @@
 				CURRENT_PROJECT_VERSION = 2.0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -1426,7 +1434,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
+				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -1436,7 +1447,6 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
-				PRODUCT_NAME = "mkxp-z";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -1447,7 +1457,7 @@
 			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MKXPZ_BUILD_XCODE,
 					"ALCDEVICE_STRUCT=ALCdevice",
@@ -1470,9 +1480,9 @@
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoro.mkxpz;
+				PRODUCT_NAME = "mkxp-z";
 			};
 			name = Debug;
 		};
@@ -1481,7 +1491,7 @@
 			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MKXPZ_BUILD_XCODE,
 					"ALCDEVICE_STRUCT=ALCdevice",
@@ -1504,9 +1514,9 @@
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoro.mkxpz;
+				PRODUCT_NAME = "mkxp-z";
 			};
 			name = Release;
 		};
@@ -1522,7 +1532,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3BD2B7222565AEC0003DAD8A /* Build configuration list for PBXNativeTarget "Player" */ = {
+		3BD2B7222565AEC0003DAD8A /* Build configuration list for PBXNativeTarget "Mac App (Intel)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3BD2B7232565AEC0003DAD8A /* Debug */,

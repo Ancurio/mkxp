@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
                BuildableName = "mkxp-z.app"
-               BlueprintName = "Player"
+               BlueprintName = "Mac App (Intel)"
                ReferencedContainer = "container:mkxp-z.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,7 +46,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
             BuildableName = "mkxp-z.app"
-            BlueprintName = "Player"
+            BlueprintName = "Mac App (Intel)"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -63,7 +63,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
             BuildableName = "mkxp-z.app"
-            BlueprintName = "Player"
+            BlueprintName = "Mac App (Intel)"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

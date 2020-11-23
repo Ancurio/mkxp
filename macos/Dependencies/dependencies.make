@@ -27,15 +27,15 @@ CONFIGURE_ARGS := \
 CMAKE_ARGS := \
 	-DCMAKE_INSTALL_PREFIX="$(BUILD_PREFIX)" \
 	-DCMAKE_OSX_SYSROOT=$(SDKROOT) \
+	-DCMAKE_OSX_ARCHITECTURES=$(ARCH) \
+	-DCMAKE_OSX_DEPLOYMENT_TARGET=$(MINIMUM_REQUIRED) \
 	-DCMAKE_C_FLAGS="$(CFLAGS)" 
 
 RUBY_CONFIGURE_ARGS := \
 	--enable-install-static-library \
 	--enable-shared \
 	--disable-install-doc \
-	--with-out-ext=openssl \
-	--with-out-ext=fiddle \
-	--with-out-ext=gdbm \
+	--with-out-ext=openssl,fiddle,gdbm,win32ole,win32 \
 	--disable-rubygems \
 	--with-static-linked-ext \
 	${EXTRA_RUBY_CONFIG_ARGS}
@@ -172,7 +172,8 @@ $(DOWNLOADS)/sdl2/configure: $(DOWNLOADS)/sdl2/autogen.sh
 	cd $(DOWNLOADS)/sdl2; ./autogen.sh
 
 $(DOWNLOADS)/sdl2/autogen.sh:
-	$(CLONE) $(GITHUB)/SDL-mirror/SDL $(DOWNLOADS)/sdl2
+	$(CLONE) $(GITHUB)/SDL-mirror/SDL $(DOWNLOADS)/sdl2; \
+	cd $(DOWNLOADS)/sdl2; git checkout 49052b8a81be445eb178be5270db6b3ed140d9f5
 
 # SDL2 (Image)
 sdl2image: init_dirs sdl2 libpng libjpeg $(LIBDIR)/libSDL2_image.a
@@ -231,15 +232,15 @@ $(DOWNLOADS)/freetype/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/freetype2 $(DOWNLOADS)/freetype
 
 # OpenAL
-openal: init_dirs libogg $(LIBDIR)/libopenal-soft.a
+openal: init_dirs libogg $(LIBDIR)/libopenal.a
 
-$(LIBDIR)/libopenal-soft.a: $(DOWNLOADS)/openal/cmakebuild/Makefile
+$(LIBDIR)/libopenal.a: $(DOWNLOADS)/openal/cmakebuild/Makefile
 	cd $(DOWNLOADS)/openal/cmakebuild; \
 	make -j$(NPROC); make install
 
 $(DOWNLOADS)/openal/cmakebuild/Makefile: $(DOWNLOADS)/openal/CMakeLists.txt
 	cd $(DOWNLOADS)/openal; mkdir cmakebuild; cd cmakebuild; \
-	$(CMAKE) -DLIBTYPE=STATIC $(OPENAL_FLAGS)
+	$(CMAKE) -DLIBTYPE=STATIC -DALSOFT_EXAMPLES=no -DALSOFT_UTILS=no $(OPENAL_FLAGS)
 
 $(DOWNLOADS)/openal/CMakeLists.txt:
 	$(CLONE) $(GITLAB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
