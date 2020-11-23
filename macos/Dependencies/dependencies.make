@@ -11,7 +11,7 @@ LDFLAGS := -L$(LIBDIR)
 CC      := xcrun -sdk $(SDK) clang -arch $(ARCH) -isysroot $(SDKROOT)
 PKG_CONFIG_LIBDIR := $(BUILD_PREFIX)/lib/pkgconfig
 GIT := git
-CLONE := $(GIT) clone
+CLONE := $(GIT) clone -q
 GITHUB := https://github.com
 GITLAB := https://gitlab.com
 
@@ -62,7 +62,7 @@ $(DOWNLOADS)/vorbis/configure: $(DOWNLOADS)/vorbis/autogen.sh
 	./autogen.sh
 
 $(DOWNLOADS)/vorbis/autogen.sh:
-	$(CLONE) $(GITHUB)/xiph/vorbis $(DOWNLOADS)/vorbis
+	$(CLONE) $(GITLAB)/mkxp-z/vorbis $(DOWNLOADS)/vorbis
 
 
 # Ogg, dependency of Vorbis
@@ -80,7 +80,7 @@ $(DOWNLOADS)/ogg/configure: $(DOWNLOADS)/ogg/autogen.sh
 	cd $(DOWNLOADS)/ogg; ./autogen.sh
 
 $(DOWNLOADS)/ogg/autogen.sh:
-	$(CLONE) $(GITHUB)/xiph/ogg $(DOWNLOADS)/ogg
+	$(CLONE) $(GITLAB)/mkxp-z/ogg $(DOWNLOADS)/ogg
 
 # sigc++-2
 sigcxx: init_dirs $(LIBDIR)/libsigc-2.0.a
@@ -94,7 +94,7 @@ $(DOWNLOADS)/sigcxx/Makefile: $(DOWNLOADS)/sigcxx/autogen.sh
 	$(AUTOGEN) --enable-static=yes --enable-shared=no
 
 $(DOWNLOADS)/sigcxx/autogen.sh:
-	$(CLONE) $(GITHUB)/libsigcplusplus/libsigcplusplus -b libsigc++-2-10 $(DOWNLOADS)/sigcxx
+	$(CLONE) $(GITLAB)/mkxp-z/libsigcplusplus $(DOWNLOADS)/sigcxx
 
 # Pixman
 pixman: init_dirs libpng $(LIBDIR)/libpixman-1.a
@@ -126,7 +126,7 @@ $(DOWNLOADS)/physfs/cmakebuild/Makefile: $(DOWNLOADS)/physfs/CMakeLists.txt
 	$(CMAKE) -DPHYSFS_BUILD_STATIC=true -DPHYSFS_BUILD_SHARED=false
 
 $(DOWNLOADS)/physfs/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/criptych/physfs $(DOWNLOADS)/physfs
+	$(CLONE) $(GITLAB)/mkxp-z/physfs $(DOWNLOADS)/physfs
 
 # libpng
 libpng: init_dirs $(LIBDIR)/libpng.a
@@ -141,7 +141,7 @@ $(DOWNLOADS)/libpng/Makefile: $(DOWNLOADS)/libpng/configure
 	--enable-shared=no --enable-static=yes
 
 $(DOWNLOADS)/libpng/configure:
-	$(CLONE) $(GITHUB)/glennrp/libpng $(DOWNLOADS)/libpng
+	$(CLONE) $(GITLAB)/mkxp-z/libpng $(DOWNLOADS)/libpng
 
 # libjpeg
 libjpeg: init_dirs $(LIBDIR)/libjpeg.a
@@ -155,7 +155,7 @@ $(DOWNLOADS)/libjpeg/cmakebuild/Makefile: $(DOWNLOADS)/libjpeg/CMakeLists.txt
 	$(CMAKE) -DENABLE_SHARED=no -DENABLE_STATIC=yes
 
 $(DOWNLOADS)/libjpeg/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/libjpeg-turbo/libjpeg-turbo $(DOWNLOADS)/libjpeg
+	$(CLONE) $(GITLAB)/mkxp-z/libjpeg-turbo $(DOWNLOADS)/libjpeg
 
 # SDL2
 sdl2: init_dirs $(LIBDIR)/libSDL2.a
@@ -188,13 +188,13 @@ $(DOWNLOADS)/sdl2_image/Makefile: $(DOWNLOADS)/sdl2_image/configure
 	--disable-imageio \
 	--enable-png=yes --enable-png-shared=no \
 	--enable-jpg=yes --enable-jpg-shared=no \
-	--enable-webp=no
+	--enable-webp=no $(SDL2_IMAGE_FLAGS)
 
 $(DOWNLOADS)/sdl2_image/configure: $(DOWNLOADS)/sdl2_image/autogen.sh
 	cd $(DOWNLOADS)/sdl2_image; ./autogen.sh
 
 $(DOWNLOADS)/sdl2_image/autogen.sh:
-	$(CLONE) $(GITHUB)/SDL-mirror/SDL_image $(DOWNLOADS)/sdl2_image
+	$(CLONE) $(GITLAB)/mkxp-z/SDL_image $(DOWNLOADS)/sdl2_image
 
 # SDL2 (ttf)
 sdl2ttf: init_dirs sdl2 freetype $(LIBDIR)/libSDL2_ttf.a
@@ -205,13 +205,13 @@ $(LIBDIR)/libSDL2_ttf.a: $(DOWNLOADS)/sdl2_ttf/Makefile
 
 $(DOWNLOADS)/sdl2_ttf/Makefile: $(DOWNLOADS)/sdl2_ttf/configure
 	cd $(DOWNLOADS)/sdl2_ttf; \
-	$(CONFIGURE) --enable-static=true --enable-shared=false
+	$(CONFIGURE) --enable-static=true --enable-shared=false $(SDL2_TTF_FLAGS)
 
 $(DOWNLOADS)/sdl2_ttf/configure: $(DOWNLOADS)/sdl2_ttf/autogen.sh
 	cd $(DOWNLOADS)/sdl2_ttf; ./autogen.sh
 
 $(DOWNLOADS)/sdl2_ttf/autogen.sh:
-	$(CLONE) $(GITHUB)/SDL-mirror/SDL_ttf $(DOWNLOADS)/sdl2_ttf
+	$(CLONE) $(GITLAB)/mkxp-z/SDL_ttf $(DOWNLOADS)/sdl2_ttf
 
 # Freetype (dependency of SDL2_ttf)
 freetype: init_dirs $(LIBDIR)/libfreetype.a
@@ -228,7 +228,7 @@ $(DOWNLOADS)/freetype/configure: $(DOWNLOADS)/freetype/autogen.sh
 	cd $(DOWNLOADS)/freetype; ./autogen.sh
 
 $(DOWNLOADS)/freetype/autogen.sh:
-	$(CLONE) $(GITHUB)/aseprite/freetype2 $(DOWNLOADS)/freetype
+	$(CLONE) $(GITLAB)/mkxp-z/freetype2 $(DOWNLOADS)/freetype
 
 # OpenAL
 openal: init_dirs libogg $(LIBDIR)/libopenal-soft.a
@@ -239,10 +239,10 @@ $(LIBDIR)/libopenal-soft.a: $(DOWNLOADS)/openal/cmakebuild/Makefile
 
 $(DOWNLOADS)/openal/cmakebuild/Makefile: $(DOWNLOADS)/openal/CMakeLists.txt
 	cd $(DOWNLOADS)/openal; mkdir cmakebuild; cd cmakebuild; \
-	$(CMAKE) -DLIBTYPE=STATIC
+	$(CMAKE) -DLIBTYPE=STATIC $(OPENAL_FLAGS)
 
 $(DOWNLOADS)/openal/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/kcat/openal-soft $(DOWNLOADS)/openal
+	$(CLONE) $(GITLAB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
 
 # Standard ruby
 ruby: init_dirs $(LIBDIR)/libruby*.a
@@ -253,13 +253,13 @@ $(LIBDIR)/libruby*.a: $(DOWNLOADS)/ruby/Makefile
 
 $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	cd $(DOWNLOADS)/ruby; \
-	$(CONFIGURE) $(RUBY_CONFIGURE_ARGS)
+	$(CONFIGURE) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
 	cd $(DOWNLOADS)/ruby; autoconf
 
 $(DOWNLOADS)/ruby/*.c:
-	$(CLONE) $(GITHUB)/ruby/ruby --single-branch --branch ruby_2_6 $(DOWNLOADS)/ruby
+	$(CLONE) $(GITLAB)/mkxp-z/ruby --single-branch --branch ruby_2_6 $(DOWNLOADS)/ruby
 
 # Build your own ruby!
 RUBY_PATH := ${RUBY_PATH}
@@ -268,7 +268,7 @@ custom-ruby: custom-ruby-makefile
 	make -j$(NPROC); make install
 
 custom-ruby-makefile: custom-ruby-configure
-	cd $(RUBY_PATH); $(CONFIGURE) ${RUBY_ARGS}
+	cd $(RUBY_PATH); $(CONFIGURE) $(RUBY_FLAGS)
 
 custom-ruby-configure: $(RUBY_PATH)/*.c
 	cd $(RUBY_PATH); autoconf

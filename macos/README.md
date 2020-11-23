@@ -19,7 +19,7 @@ make -f .AppleSilicon everything
 make -f .Intel ruby sdl2 objfw 
 
 # Use your own Ruby, and build everything else (for Intel Macs)
-make -f .Intel configure-ruby RUBY_PATH="Path to Ruby" RUBY_ARGS="extra configure arguments" 
+make -f .Intel configure-ruby RUBY_PATH="Path to Ruby" RUBY_FLAGS="extra configure arguments" 
 make -f .Intel deps-core
 ```
 
@@ -27,4 +27,4 @@ Afterwards, simply open the Xcode project and hit Command+B.
 
 If you built a version of ruby >= 2, change the MRI_VERSION build setting to match.
 
-If you built 1.8 or 1.9, you will probably need to redefine the header+library search paths.
+If you built 1.8, select the PlayerLegacy scheme.
