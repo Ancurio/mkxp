@@ -7,6 +7,7 @@ option('console', type: 'boolean', value: false, description: 'Whether to debug 
 option('macos_min_version', type: 'string', value: '', description: 'Minimum macOS system version to support (does not affect dependencies)')
 option('force32', type: 'boolean', value: false, description: 'Force compiler to build a 32-bit executable')
 
+option('cxx11_experimental', type: 'boolean', value: false, description: 'Toggles between using ghc/filesystem or C++11 <experimental/filesystem>')
 option('shared_fluid', type: 'boolean', value: false, description: 'Dynamically link fluidsynth at build time')
 option('cjk_fallback_font', type: 'boolean', value: false, description: 'Use WenQuanYi Micro Hei as the fallback font')
 option('use_miniffi', type: 'boolean', value: true, description: 'Enable MiniFFI Ruby module (Win32API)')

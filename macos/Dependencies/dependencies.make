@@ -94,7 +94,7 @@ $(DOWNLOADS)/sigcxx/Makefile: $(DOWNLOADS)/sigcxx/autogen.sh
 	$(AUTOGEN) --enable-static=yes --enable-shared=no
 
 $(DOWNLOADS)/sigcxx/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/libsigcplusplus $(DOWNLOADS)/sigcxx
+	$(CLONE) $(GITLAB)/mkxp-z/libsigcplusplus -b libsigc++-2-10 $(DOWNLOADS)/sigcxx
 
 # Pixman
 pixman: init_dirs libpng $(LIBDIR)/libpixman-1.a

@@ -42,7 +42,7 @@ global_include_dirs += include_directories('.',
     'crypto',
     'display', 'display/gl',
     'etc',
-    'filesystem',
+    'filesystem', 'filesystem/ghc',
     'input',
     'system',
     'util'

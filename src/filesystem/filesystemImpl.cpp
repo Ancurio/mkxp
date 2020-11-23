@@ -7,15 +7,22 @@
 
 #include "filesystemImpl.h"
 #include "util/exception.h"
+#include "util/debugwriter.h"
 
-#include <sys/stat.h>
-#include <unistd.h>
+#ifdef USE_EXPERIMENTAL_FILESYSTEM
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#else
+#include "ghc/filesystem.hpp"
+namespace fs = ghc::filesystem;
+#endif
+
 #include <fstream>
 
 // https://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
 bool filesystemImpl::fileExists(const char *path) {
-    struct stat buffer;   
-    return (stat (path, &buffer) == 0); 
+    fs::path stdPath(path);
+    return (fs::exists(stdPath) && !fs::is_directory(stdPath));
 }
 
 
@@ -35,14 +42,45 @@ std::string filesystemImpl::contentsOfFileAsString(const char *path) {
 
 // chdir and getcwd do not support unicode on Windows
 bool filesystemImpl::setCurrentDirectory(const char *path) {
-    return chdir(path);
+    fs::path stdPath(path);
+    fs::current_path(stdPath);
+    bool ret;
+
+    try {
+        ret = fs::equivalent(fs::current_path(), stdPath);
+    } catch (...) {
+        Debug() << "Failed to check current path." << path;
+        ret = false;
+    }
+    return ret;
 }
 
 std::string filesystemImpl::getCurrentDirectory() {
-    return std::string(getcwd(0,0));
+    std::string ret;
+    try {
+        ret = std::string(fs::current_path().string());
+    } catch (...) {
+        throw new Exception(Exception::MKXPError, "Failed to retrieve current path");
+    }
+    return ret;
 }
 
 
 std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool absolute) {
-    return std::string(path);
+    fs::path stdPath(path);
+    
+    if (!stdPath.is_absolute() && absolute)
+        stdPath = fs::current_path() / stdPath;
+
+    stdPath.lexically_normal();
+    std::string ret(stdPath);
+#ifdef __WINDOWS__
+    if (!preferred) {
+        for (int i = 0; i < ret.length(); i++) {
+            if (ret[i] == '\\')
+                ret[i] = '/';
+        }
+    }
+#endif
+    return ret;
 }

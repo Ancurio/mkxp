@@ -121,6 +121,10 @@ if get_option('easypoke') == true and miniffi == true
     global_args += '-DEASY_POKE'
 endif
 
+if get_option('cxx11_experimental') == true
+    global_args += '-DUSE_EXPERIMENTAL_FILESYSTEM'
+endif
+
 if not get_option('console')
     global_args += '-DNO_CONSOLE'
 endif
