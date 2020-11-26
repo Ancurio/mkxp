@@ -1,6 +1,6 @@
 SDK := iphoneos
 ARCH := armv7
-HOST := $(ARCH)-iphone-darwin
+HOST := $(ARCH)-ios-darwin
 MINIMUM_REQUIRED := 10.0
 
 SDL_FLAGS := ${SDL_FLAGS}

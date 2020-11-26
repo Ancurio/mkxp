@@ -172,8 +172,7 @@ $(DOWNLOADS)/sdl2/configure: $(DOWNLOADS)/sdl2/autogen.sh
 	cd $(DOWNLOADS)/sdl2; ./autogen.sh
 
 $(DOWNLOADS)/sdl2/autogen.sh:
-	$(CLONE) $(GITHUB)/SDL-mirror/SDL $(DOWNLOADS)/sdl2; \
-	cd $(DOWNLOADS)/sdl2; git checkout 49052b8a81be445eb178be5270db6b3ed140d9f5
+	$(CLONE) $(GITLAB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z; cd $(DOWNLOADS)/sdl2
 
 # SDL2 (Image)
 sdl2image: init_dirs sdl2 libpng libjpeg $(LIBDIR)/libSDL2_image.a
@@ -277,7 +276,7 @@ custom-ruby-configure: $(RUBY_PATH)/*.c
 
 # ====
 init_dirs:
-	mkdir -p $(LIBDIR) $(INCLUDEDIR)
+	@mkdir -p $(LIBDIR) $(INCLUDEDIR)
 
 clean: clean-compiled
 
