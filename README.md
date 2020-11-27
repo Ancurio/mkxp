@@ -18,7 +18,6 @@ This binding should support RGSS1, RGSS2 and RGSS3. Note that I've only tested t
 
 ## Dependencies / Building
 
-* [ObjFW](https://github.com/ObjFW/ObjFW)
 * libsigc++ 2.0
 * PhysFS (latest hg)
 * OpenAL
@@ -26,13 +25,11 @@ This binding should support RGSS1, RGSS2 and RGSS3. Note that I've only tested t
 * SDL2_image
 * SDL2_ttf
 * [Ancurio's SDL_sound fork](https://github.com/Ancurio/SDL_sound)
-* [My Ruby 1.8 fork](https://github.com/inori-z/ruby/tree/ruby_1_8_7), if using Ruby 1.8
+* [My Ruby 1.8 fork](https://gitlab.com/mkxp-z/ruby/-/tree/ruby_1_8_7), if using Ruby 1.8
 * vorbisfile
 * pixman
 * zlib
-* OpenGL header
-
-(* For the F1 menu to work correctly under Linux/X11, you need latest hg + [this patch](https://bugzilla.libsdl.org/show_bug.cgi?id=2745))
+* OpenGL/ES
 
 mkxp-z employs the meson build system, so you'll need to install that beforehand.
 
