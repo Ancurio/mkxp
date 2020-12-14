@@ -7,7 +7,8 @@
 
 #import <Foundation/Foundation.h>
 #import "filesystemImpl.h"
-#import "exception.h"
+#import "util/exception.h"
+#import "util/debugwriter.h"
 
 #define PATHTONS(str) [NSFileManager.defaultManager stringWithFileSystemRepresentation:str length:strlen(str)]
 
@@ -40,13 +41,12 @@ std::string filesystemImpl::getCurrentDirectory() {
 }
 
 std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool absolute) {
-    NSString *nspath = PATHTONS(path);
-    if (!nspath.isAbsolutePath && absolute) {
-        nspath = [NSURL fileURLWithPath: nspath].URLByStandardizingPath.path;
+    NSString *nspath = [NSURL fileURLWithPath: PATHTONS(path)].URLByStandardizingPath.path;
+    NSString *pwd = [NSString stringWithFormat:@"%@/", NSFileManager.defaultManager.currentDirectoryPath];
+    if (!absolute) {
+        nspath = [nspath stringByReplacingOccurrencesOfString:pwd withString:@""];
     }
-    else {
-        nspath = nspath.stringByStandardizingPath;
-    }
+    Debug() << nspath.UTF8String;
     return std::string(NSTOPATH(nspath));
 }
 
