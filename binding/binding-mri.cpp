@@ -70,8 +70,6 @@ extern const char module_rpg3[];
 #ifdef EASY_POKE
 #ifndef MKXPZ_BUILD_XCODE
 #include "EssentialsCompatibility.rb.xxd"
-#else
-#include "CocoaHelpers.hpp"
 #endif
 #endif
 

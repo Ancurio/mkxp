@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3BC65D8A2584F3AD0063AFF1"
+               BlueprintIdentifier = "3B8E43592587B200008218FC"
                BuildableName = "mkxp-z.app"
-               BlueprintName = "Mac App"
+               BlueprintName = "Mac App (M1, Legacy)"
                ReferencedContainer = "container:mkxp-z.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3BC65D8A2584F3AD0063AFF1"
+            BlueprintIdentifier = "3B8E43592587B200008218FC"
             BuildableName = "mkxp-z.app"
-            BlueprintName = "Mac App"
+            BlueprintName = "Mac App (M1, Legacy)"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3BC65D8A2584F3AD0063AFF1"
+            BlueprintIdentifier = "3B8E43592587B200008218FC"
             BuildableName = "mkxp-z.app"
-            BlueprintName = "Mac App"
+            BlueprintName = "Mac App (M1, Legacy)"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
