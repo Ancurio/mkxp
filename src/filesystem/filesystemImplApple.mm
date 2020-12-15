@@ -8,7 +8,6 @@
 #import <Foundation/Foundation.h>
 #import "filesystemImpl.h"
 #import "util/exception.h"
-#import "util/debugwriter.h"
 
 #define PATHTONS(str) [NSFileManager.defaultManager stringWithFileSystemRepresentation:str length:strlen(str)]
 
@@ -46,7 +45,6 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
     if (!absolute) {
         nspath = [nspath stringByReplacingOccurrencesOfString:pwd withString:@""];
     }
-    Debug() << nspath.UTF8String;
     return std::string(NSTOPATH(nspath));
 }
 
