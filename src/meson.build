@@ -9,7 +9,7 @@ zlib = dependency('zlib', static: build_static)
 
 # On Windows, SDL needs to be set up manually in order to avoid
 # the -mwindows flag
-if host_system != 'darwin'
+if host_system != 'windows'
     global_dependencies += dependency('sdl2')
 else
     sdl2cfg = find_program('sdl2-config')
