@@ -2,12 +2,30 @@ sigcxx = dependency('sigc++-2.0', version: '>=2.10.0', static: build_static)
 pixman = dependency('pixman-1', static: build_static)
 physfs = dependency('physfs', version: '>=2.1', static: build_static)
 vorbisfile = dependency('vorbisfile', static: build_static)
-sdl2 = dependency('sdl2', static: build_static)
 sdl2_ttf = dependency('SDL2_ttf', static: build_static)
 sdl2_image = dependency('SDL2_image', static: build_static)
 openal = dependency('openal', static: build_static, method: 'pkg-config')
 zlib = dependency('zlib', static: build_static)
 
+# On Windows, SDL needs to be set up manually in order to avoid
+# the -mwindows flag
+if host_system != 'darwin'
+    global_dependencies += dependency('sdl2')
+else
+    sdl2cfg = find_program('sdl2-config')
+    global_args += run_command(sdl2cfg, '--cflags').stdout().split()
+    if build_static == false
+        libarg = '--libs'
+    else
+        libarg = '--static-libs'
+    endif
+    link_args = run_command(sdl2cfg, libarg).stdout().split()
+    foreach arg : link_args
+        if arg != '-mwindows'
+            global_link_args += arg
+        endif
+    endforeach
+endif
 
 # Windows needs to be treated like a special needs child here
 explicit_libs = ''
@@ -48,7 +66,7 @@ global_include_dirs += include_directories('.',
     'util'
 )
 
-global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, sdl2, sdl2_ttf, sdl2_image]
+global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, sdl2_ttf, sdl2_image]
 if host_system == 'darwin'
     global_dependencies += compilers['cpp'].find_library('iconv')
     global_dependencies += dependency('Foundation')
