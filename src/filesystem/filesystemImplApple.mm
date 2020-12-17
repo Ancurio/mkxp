@@ -45,6 +45,7 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
     if (!absolute) {
         nspath = [nspath stringByReplacingOccurrencesOfString:pwd withString:@""];
     }
+    nspath = [nspath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
     return std::string(NSTOPATH(nspath));
 }
 

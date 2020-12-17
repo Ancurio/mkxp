@@ -74,13 +74,23 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
 
     stdPath.lexically_normal();
     std::string ret(stdPath);
+    for (int i = 0; i < ret.length(); i++) {
+        char sep;
+        char sep_alt;
 #ifdef __WINDOWS__
-    if (!preferred) {
-        for (int i = 0; i < ret.length(); i++) {
-            if (ret[i] == '\\')
-                ret[i] = '/';
+        if (!preferred) {
+            sep = '\\';
+            sep_alt = '/';
         }
-    }
+        else
 #endif
+        {
+            sep = '/';
+            sep_alt = '\\';
+        }
+        
+        if (ret[i] == sep_alt)
+            ret[i] = sep;
+    }
     return ret;
 }
