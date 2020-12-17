@@ -367,10 +367,8 @@ void ALStream::streamData()
 	if (threadTermReq)
 		return;
 
-	if (needsRewind)
-	{
+	//if (needsRewind)
 		source->seekToOffset(startOffset);
-	}
 
 	for (int i = 0; i < STREAM_BUFS; ++i)
 	{
