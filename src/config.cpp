@@ -195,7 +195,7 @@ void Config::readGameINI() {
     if (!customScript.empty()) {
         game.title = customScript.c_str();
         
-        if (rgssVersion = 0)
+        if (rgssVersion == 0)
             rgssVersion = 1;
         
         setupScreenSize(*this);
