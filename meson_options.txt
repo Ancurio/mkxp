@@ -1,4 +1,4 @@
-option('mri_version', type: 'string', value: '1.8', description: 'Version of MRI to link with')
+option('mri_version', type: 'string', value: '3.0', description: 'Version of MRI to link with')
 option('mri_includes', type: 'string', value: '', description: 'Ruby manual include path')
 option('mri_libpath', type: 'string', value: '', description: 'Ruby manual lib path')
 option('mri_library', type: 'string', value: '', description: 'Ruby manual link name')

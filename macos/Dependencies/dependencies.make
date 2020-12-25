@@ -259,7 +259,8 @@ $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
 	cd $(DOWNLOADS)/ruby; autoconf
 
 $(DOWNLOADS)/ruby/*.c:
-	$(CLONE) $(GITLAB)/mkxp-z/ruby --single-branch --branch ruby_2_6 $(DOWNLOADS)/ruby
+	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby; \
+	cd $(DOWNLOADS)/ruby; git checkout v3_0_0
 
 # Old geezer ruby
 legacy-ruby: init_dirs $(LIBDIR)/libruby.a

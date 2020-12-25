@@ -333,7 +333,6 @@
 		3BC65D5B2584EED10063AFF1 /* libpixman-1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D4B2584EED10063AFF1 /* libpixman-1.a */; };
 		3BC65D5C2584EED10063AFF1 /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D4C2584EED10063AFF1 /* libphysfs.a */; };
 		3BC65D5D2584EED10063AFF1 /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D4D2584EED10063AFF1 /* libvorbisenc.a */; };
-		3BC65D5E2584EED10063AFF1 /* libruby.2.6-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D4E2584EED10063AFF1 /* libruby.2.6-static.a */; };
 		3BC65D5F2584EED10063AFF1 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D4F2584EED10063AFF1 /* libfreetype.a */; };
 		3BC65D602584EED10063AFF1 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D502584EED10063AFF1 /* libSDL2main.a */; };
 		3BC65D612584EED10063AFF1 /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D512584EED10063AFF1 /* libogg.a */; };
@@ -449,7 +448,6 @@
 		3BC65E262584F4290063AFF1 /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D872584F3780063AFF1 /* libpng16.a */; };
 		3BC65E272584F4290063AFF1 /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7C2584F3780063AFF1 /* libSDL2_image.a */; };
 		3BC65E282584F4290063AFF1 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D892584F3910063AFF1 /* libSDL2main.a */; };
-		3BC65E292584F4290063AFF1 /* libruby.2.6-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7F2584F3780063AFF1 /* libruby.2.6-static.a */; };
 		3BC65E2A2584F4290063AFF1 /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D802584F3780063AFF1 /* libsigc-2.0.a */; };
 		3BC65E2B2584F4290063AFF1 /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7B2584F3780063AFF1 /* libphysfs.a */; };
 		3BC65E2C2584F4290063AFF1 /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7A2584F3780063AFF1 /* libvorbisenc.a */; };
@@ -468,7 +466,6 @@
 		3BE08109256879FE0006849F /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080EB256879FC0006849F /* libSDL2.a */; };
 		3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080EF256879FD0006849F /* libSDL2_ttf.a */; };
 		3BE0810E256879FE0006849F /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080F0256879FD0006849F /* libSDL2_image.a */; };
-		3BE08112256879FE0006849F /* libruby.2.6-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080F4256879FD0006849F /* libruby.2.6-static.a */; };
 		3BE08118256879FE0006849F /* libSDL2_test.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FA256879FE0006849F /* libSDL2_test.a */; };
 		3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FB256879FE0006849F /* libvorbisenc.a */; };
 		3BE0811A256879FE0006849F /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FC256879FE0006849F /* libfreetype.a */; };
@@ -698,6 +695,9 @@
 		3BF695E4259608050016920C /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
 		3BF695E7259608050016920C /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BF69603259608DB0016920C /* libruby.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF69602259608DB0016920C /* libruby.a */; };
+		3BF6965925962C8E0016920C /* libruby.3.0-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF6965825962C8E0016920C /* libruby.3.0-static.a */; };
+		3BF6965B25962CA50016920C /* libruby.3.0-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF6965A25962CA40016920C /* libruby.3.0-static.a */; };
+		3BF6965D25962CBD0016920C /* libruby.3.0-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF6965C25962CBD0016920C /* libruby.3.0-static.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1071,7 +1071,6 @@
 		3BC65D4B2584EED10063AFF1 /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-macosx-arm64/lib/libpixman-1.a"; sourceTree = "<group>"; };
 		3BC65D4C2584EED10063AFF1 /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = "Dependencies/build-macosx-arm64/lib/libphysfs.a"; sourceTree = "<group>"; };
 		3BC65D4D2584EED10063AFF1 /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = "Dependencies/build-macosx-arm64/lib/libvorbisenc.a"; sourceTree = "<group>"; };
-		3BC65D4E2584EED10063AFF1 /* libruby.2.6-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.2.6-static.a"; path = "Dependencies/build-macosx-arm64/lib/libruby.2.6-static.a"; sourceTree = "<group>"; };
 		3BC65D4F2584EED10063AFF1 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = "Dependencies/build-macosx-arm64/lib/libfreetype.a"; sourceTree = "<group>"; };
 		3BC65D502584EED10063AFF1 /* libSDL2main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2main.a; path = "Dependencies/build-macosx-arm64/lib/libSDL2main.a"; sourceTree = "<group>"; };
 		3BC65D512584EED10063AFF1 /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "Dependencies/build-macosx-arm64/lib/libogg.a"; sourceTree = "<group>"; };
@@ -1088,7 +1087,6 @@
 		3BC65D7C2584F3780063AFF1 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_image.a"; sourceTree = "<group>"; };
 		3BC65D7D2584F3780063AFF1 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = "Dependencies/build-macosx-universal/lib/libfreetype.a"; sourceTree = "<group>"; };
 		3BC65D7E2584F3780063AFF1 /* libturbojpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libturbojpeg.a; path = "Dependencies/build-macosx-universal/lib/libturbojpeg.a"; sourceTree = "<group>"; };
-		3BC65D7F2584F3780063AFF1 /* libruby.2.6-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.2.6-static.a"; path = "Dependencies/build-macosx-universal/lib/libruby.2.6-static.a"; sourceTree = "<group>"; };
 		3BC65D802584F3780063AFF1 /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-universal/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
 		3BC65D812584F3780063AFF1 /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "Dependencies/build-macosx-universal/lib/libvorbisfile.a"; sourceTree = "<group>"; };
 		3BC65D822584F3780063AFF1 /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "Dependencies/build-macosx-universal/lib/libogg.a"; sourceTree = "<group>"; };
@@ -1120,7 +1118,6 @@
 		3BE080EB256879FC0006849F /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2.a"; sourceTree = "<group>"; };
 		3BE080EF256879FD0006849F /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_ttf.a"; sourceTree = "<group>"; };
 		3BE080F0256879FD0006849F /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_image.a"; sourceTree = "<group>"; };
-		3BE080F4256879FD0006849F /* libruby.2.6-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.2.6-static.a"; path = "Dependencies/build-macosx-x86_64/lib/libruby.2.6-static.a"; sourceTree = "<group>"; };
 		3BE080FA256879FE0006849F /* libSDL2_test.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_test.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_test.a"; sourceTree = "<group>"; };
 		3BE080FB256879FE0006849F /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = "Dependencies/build-macosx-x86_64/lib/libvorbisenc.a"; sourceTree = "<group>"; };
 		3BE080FC256879FE0006849F /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = "Dependencies/build-macosx-x86_64/lib/libfreetype.a"; sourceTree = "<group>"; };
@@ -1141,6 +1138,9 @@
 		3BF695682596053C0016920C /* libruby.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libruby.a; path = "Dependencies/build-macosx-x86_64/lib/libruby.a"; sourceTree = "<group>"; };
 		3BF695EB259608050016920C /* mkxp-z.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mkxp-z.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BF69602259608DB0016920C /* libruby.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libruby.a; path = "Dependencies/build-macosx-universal/lib/libruby.a"; sourceTree = "<group>"; };
+		3BF6965825962C8E0016920C /* libruby.3.0-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.3.0-static.a"; path = "Dependencies/build-macosx-arm64/lib/libruby.3.0-static.a"; sourceTree = "<group>"; };
+		3BF6965A25962CA40016920C /* libruby.3.0-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.3.0-static.a"; path = "Dependencies/build-macosx-universal/lib/libruby.3.0-static.a"; sourceTree = "<group>"; };
+		3BF6965C25962CBD0016920C /* libruby.3.0-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.3.0-static.a"; path = "Dependencies/build-macosx-x86_64/lib/libruby.3.0-static.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1218,8 +1218,8 @@
 				3BC65D612584EED10063AFF1 /* libogg.a in Frameworks */,
 				3BC65D352584EDC60063AFF1 /* CoreFoundation.framework in Frameworks */,
 				3BC65D362584EDC60063AFF1 /* libz.tbd in Frameworks */,
-				3BC65D5E2584EED10063AFF1 /* libruby.2.6-static.a in Frameworks */,
 				3BC65D672584EED10063AFF1 /* libsigc-2.0.a in Frameworks */,
+				3BF6965925962C8E0016920C /* libruby.3.0-static.a in Frameworks */,
 				3BC65D5F2584EED10063AFF1 /* libfreetype.a in Frameworks */,
 				3BC65D372584EDC60063AFF1 /* libiconv.tbd in Frameworks */,
 				3BC65D602584EED10063AFF1 /* libSDL2main.a in Frameworks */,
@@ -1257,8 +1257,8 @@
 				3BC65E242584F4290063AFF1 /* libvorbisfile.a in Frameworks */,
 				3BC65E012584F3AD0063AFF1 /* CoreFoundation.framework in Frameworks */,
 				3BC65E022584F3AD0063AFF1 /* libz.tbd in Frameworks */,
+				3BF6965B25962CA50016920C /* libruby.3.0-static.a in Frameworks */,
 				3BC65E252584F4290063AFF1 /* libvorbis.a in Frameworks */,
-				3BC65E292584F4290063AFF1 /* libruby.2.6-static.a in Frameworks */,
 				3BC65E202584F4290063AFF1 /* libpixman-1.a in Frameworks */,
 				3BC65E062584F3AD0063AFF1 /* libiconv.tbd in Frameworks */,
 				3BC65E262584F4290063AFF1 /* libpng16.a in Frameworks */,
@@ -1269,7 +1269,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BE08112256879FE0006849F /* libruby.2.6-static.a in Frameworks */,
 				3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */,
 				3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */,
 				3BE08102256879FE0006849F /* libSDL2main.a in Frameworks */,
@@ -1286,6 +1285,7 @@
 				3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */,
 				3B10EC5D2568D40C00372D13 /* Carbon.framework in Frameworks */,
 				3B10EC5E2568D40C00372D13 /* AppKit.framework in Frameworks */,
+				3BF6965D25962CBD0016920C /* libruby.3.0-static.a in Frameworks */,
 				3B10EC5F2568D40C00372D13 /* Metal.framework in Frameworks */,
 				3B10EC602568D40C00372D13 /* ForceFeedback.framework in Frameworks */,
 				3B10EC612568D40C00372D13 /* CoreVideo.framework in Frameworks */,
@@ -1729,8 +1729,8 @@
 				3BC65D562584EED10063AFF1 /* libopenal.a */,
 				3BC65D4C2584EED10063AFF1 /* libphysfs.a */,
 				3BC65D4B2584EED10063AFF1 /* libpixman-1.a */,
+				3BF6965825962C8E0016920C /* libruby.3.0-static.a */,
 				3BC65D592584EED10063AFF1 /* libpng16.a */,
-				3BC65D4E2584EED10063AFF1 /* libruby.2.6-static.a */,
 				3BC65D522584EED10063AFF1 /* libSDL2_image.a */,
 				3BC65D532584EED10063AFF1 /* libSDL2_ttf.a */,
 				3BC65D552584EED10063AFF1 /* libSDL2.a */,
@@ -1754,7 +1754,7 @@
 				3BC65D7B2584F3780063AFF1 /* libphysfs.a */,
 				3BC65D882584F3780063AFF1 /* libpixman-1.a */,
 				3BC65D872584F3780063AFF1 /* libpng16.a */,
-				3BC65D7F2584F3780063AFF1 /* libruby.2.6-static.a */,
+				3BF6965A25962CA40016920C /* libruby.3.0-static.a */,
 				3BC65D7C2584F3780063AFF1 /* libSDL2_image.a */,
 				3BC65D832584F3780063AFF1 /* libSDL2_ttf.a */,
 				3BC65D862584F3780063AFF1 /* libSDL2.a */,
@@ -1870,9 +1870,9 @@
 				3BE080FD256879FE0006849F /* libogg.a */,
 				3BE081452568A5C60006849F /* libpng.a */,
 				3BE081492568A5F60006849F /* libturbojpeg.a */,
+				3BF6965C25962CBD0016920C /* libruby.3.0-static.a */,
 				3BE080FF256879FE0006849F /* libphysfs.a */,
 				3BE080E9256879FC0006849F /* libpixman-1.a */,
-				3BE080F4256879FD0006849F /* libruby.2.6-static.a */,
 				3B426F76256BA847009EA00F /* libsigc-2.0.a */,
 				3BE080F0256879FD0006849F /* libSDL2_image.a */,
 				3BE080FA256879FE0006849F /* libSDL2_test.a */,
@@ -2762,10 +2762,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
+				OTHER_CFLAGS = "-w";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2849,10 +2846,7 @@
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
+				OTHER_CFLAGS = "-w";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3053,7 +3047,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3068,10 +3062,6 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3134,7 +3124,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3148,10 +3138,6 @@
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3215,7 +3201,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3230,10 +3216,6 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3295,7 +3277,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3309,10 +3291,6 @@
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3391,10 +3369,6 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3470,10 +3444,6 @@
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3509,6 +3479,10 @@
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				OTHER_CFLAGS = (
+					"-fdeclspec",
+					"-w",
+				);
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoro.mkxpz;
 				PRODUCT_NAME = "mkxp-z";
@@ -3543,6 +3517,10 @@
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				OTHER_CFLAGS = (
+					"-fdeclspec",
+					"-w",
+				);
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoro.mkxpz;
 				PRODUCT_NAME = "mkxp-z";
@@ -3628,10 +3606,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
+				OTHER_CFLAGS = "-w";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3715,10 +3690,7 @@
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
+				OTHER_CFLAGS = "-w";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3805,10 +3777,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
+				OTHER_CFLAGS = "-w";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3892,10 +3861,7 @@
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-w",
-				);
+				OTHER_CFLAGS = "-w";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
