@@ -126,6 +126,10 @@ void EventThread::process(RGSSThreadData &rtData)
 	int defScreenW, defScreenH;
 	defScreenW = rtData.config.defScreenW;
 	defScreenH = rtData.config.defScreenH;
+	SDL_SetWindowSize(win, 544, 416);
+	int defScreenW_new, defScreenH_new;
+	int firstrun;
+	firstrun = 0;
 	int toggleFSMod = rtData.config.anyAltToggleFS ? KMOD_ALT : KMOD_LALT;
 
 	fps.lastFrame = SDL_GetPerformanceCounter();
@@ -212,7 +216,17 @@ void EventThread::process(RGSSThreadData &rtData)
 			{
 			case SDL_WINDOWEVENT_SIZE_CHANGED :
 				winW = event.window.data1;
-				winH = event.window.data2;
+				winH = event.window.data2;				
+				if (firstrun == 1)
+				{
+					firstrun = 2;
+					SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+				}
+				if (firstrun == 0)
+				{
+					firstrun = 1;
+					SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+				}
 
 				windowSizeMsg.post(Vec2i(winW, winH));
 				resetInputStates();
@@ -268,13 +282,11 @@ void EventThread::process(RGSSThreadData &rtData)
 					SDL_SetWindowTitle(win, pendingTitle);
 					pendingTitle[0] = '\0';
 					havePendingTitle = false;
-					SDL_SetWindowSize(win, defScreenW, defScreenH);
-					SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+					SDL_SetWindowSize(win, defScreenW_new, defScreenH_new);
 				}
 				else
 				{
-					SDL_SetWindowSize(win, defScreenW, defScreenH);
-					SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+					SDL_SetWindowSize(win, defScreenW_new, defScreenH_new);
 				}
 
 				break;
@@ -555,8 +567,6 @@ void EventThread::resetInputStates()
 void EventThread::setFullscreen(SDL_Window *win, bool mode)
 {
 	SDL_GetDesktopDisplayMode(0, &dm);
-	SDL_SetWindowSize(win, dm.w, dm.h);
-	SDL_WINDOWEVENT_SIZE_CHANGED;
 	SDL_SetWindowFullscreen
 	        (win, mode ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 	fullscreen = mode;
