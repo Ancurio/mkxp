@@ -23,11 +23,12 @@ basenames = {
 }
 
 def lipo(a, b)
-    FileUtils.mkdir_p(DESTINATION) if !Dir.exists?(DESTINATION)
     if `lipo -info #{a}`[/is architecture: arm64/] && `lipo -info #{b}`[/is architecture: x86_64/]
         `lipo -create #{a} #{b} -o #{File.join(DESTINATION, File.basename(a))}`
     end
 end
+
+FileUtils.rm_rf(DESTINATION) if Dir.exists?(DESTINATION); FileUtils.mkdir_p(DESTINATION)
 
 armfiles.length.times{|i|
     if basenames[:b].include?(basenames[:a][i])
@@ -41,3 +42,6 @@ src_includes = BUILD_ARM.sub(/lib$/, "include")
 dst = DESTINATION.sub(/lib$/, "include")
 FileUtils.ln_s(src_includes, dst) if !Dir.exists?(dst)
 FileUtils.ln_s(File.join(BUILD_ARM, "sigc++-2.0"), DESTINATION)
+
+rb = File.join(BUILD_ARM, "ruby")
+FileUtils.ln_s(rb, DESTINATION) if Dir.exists?(rb)

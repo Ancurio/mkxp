@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
+               BlueprintIdentifier = "3BF694D42595FE5F0016920C"
                BuildableName = "mkxp-z.app"
-               BlueprintName = "Mac App (Intel)"
+               BlueprintName = "Legacy, Intel"
                ReferencedContainer = "container:mkxp-z.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
+            BlueprintIdentifier = "3BF694D42595FE5F0016920C"
             BuildableName = "mkxp-z.app"
-            BlueprintName = "Mac App (Intel)"
+            BlueprintName = "Legacy, Intel"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
+            BlueprintIdentifier = "3BF694D42595FE5F0016920C"
             BuildableName = "mkxp-z.app"
-            BlueprintName = "Mac App (Intel)"
+            BlueprintName = "Legacy, Intel"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
