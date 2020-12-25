@@ -3478,7 +3478,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CFLAGS = (
 					"-fdeclspec",
 					"-w",
@@ -3516,7 +3516,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CFLAGS = (
 					"-fdeclspec",
 					"-w",
