@@ -24,5 +24,5 @@ option('steam_appid', type: 'string', value: '', description: 'Steam AppID. Set 
 
 option('gfx_backend', type: 'combo', value: 'gl', choices: ['gl', 'gles'], description: 'Graphics rendering API to use.')
 
-option('codesign', type: 'boolean', value: false, description: 'Whether to codesign the Mac app bundle upon creation. If codesign_identity is not set, signs for local use.')
+option('codesign', type: 'boolean', value: true, description: 'Whether to codesign the Mac app bundle upon creation. If codesign_identity is not set, signs for local use.')
 option('codesign_identity', type: 'string', value: '', description: 'A valid Apple Developer ID for signing Mac apps.')
