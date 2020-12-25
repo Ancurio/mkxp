@@ -292,10 +292,10 @@ static std::string baseName(const std::string &path)
 static void setupScreenSize(Config &conf)
 {
 	if (conf.defScreenW <= 0)
-		conf.defScreenW = (conf.rgssVersion == 1 ? 640 : 544);
+		conf.defScreenW = 2048;
 
 	if (conf.defScreenH <= 0)
-		conf.defScreenH = (conf.rgssVersion == 1 ? 480 : 416);
+		conf.defScreenH = 1536;
 }
 
 void Config::readGameINI()
