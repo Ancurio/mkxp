@@ -261,6 +261,26 @@ $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
 $(DOWNLOADS)/ruby/*.c:
 	$(CLONE) $(GITLAB)/mkxp-z/ruby --single-branch --branch ruby_2_6 $(DOWNLOADS)/ruby
 
+# Old geezer ruby
+legacy-ruby: init_dirs $(LIBDIR)/libruby.a
+
+$(LIBDIR)/libruby.a: $(DOWNLOADS)/ruby18/Makefile
+	cd $(DOWNLOADS)/ruby18; \
+	make -j$(NPROC); make install
+
+$(DOWNLOADS)/ruby18/Makefile: $(DOWNLOADS)/ruby18/configure
+	cd $(DOWNLOADS)/ruby18; \
+	$(CONFIGURE) \
+	--with-static-linked-ext; \
+	$(RUBY_FLAGS)
+
+$(DOWNLOADS)/ruby18/configure: $(DOWNLOADS)/ruby18/*.c
+	cd $(DOWNLOADS)/ruby18; autoconf
+
+$(DOWNLOADS)/ruby18/*.c:
+	$(CLONE) $(GITLAB)/mkxp-z/ruby --single-branch --branch ruby_1_8_7 $(DOWNLOADS)/ruby18; \
+	rm -rf $(DOWNLOADS)/ruby18/ext/tk
+
 # Build your own ruby!
 RUBY_PATH := ${RUBY_PATH}
 custom-ruby: custom-ruby-makefile
@@ -289,5 +309,5 @@ clean-compiled:
 	-rm -rf build-$(SDK)-$(ARCH)
 
 deps-core: libvorbis sigcxx pixman libpng libjpeg physfs sdl2 sdl2image sdl2ttf openal
-deps-binding: ruby
-everything: deps-core deps-binding
+everything: deps-core ruby
+legacy: deps-core legacy-ruby

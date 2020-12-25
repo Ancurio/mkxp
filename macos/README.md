@@ -22,7 +22,7 @@ arch -x86_64 make everything -f .Intel
 ./make_macuniversal.command
 
 # Use your own Ruby, and build everything else (for Intel Macs)
-make configure-ruby -f .Intel RUBY_PATH="Path to Ruby" RUBY_FLAGS="extra configure arguments" 
+make custom-ruby -f .Intel RUBY_PATH="Path to Ruby" RUBY_FLAGS="extra configure arguments" 
 make deps-core -f .Intel
 ```
 
