@@ -120,7 +120,6 @@
 		3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
 		3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
 		3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
-		3B5A84342569F82C00BAF2E5 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
 		3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5A8444256A0F6300BAF2E5 /* libopenal.a */; };
 		3B5A8464256A46B200BAF2E5 /* systemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */; };
 		3B8E435D2587B200008218FC /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
@@ -231,7 +230,6 @@
 		3B8E43C92587B200008218FC /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D502584EED10063AFF1 /* libSDL2main.a */; };
 		3B8E43CA2587B200008218FC /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D4D2584EED10063AFF1 /* libvorbisenc.a */; };
 		3B8E43CC2587B200008218FC /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
-		3B8E43CE2587B200008218FC /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
 		3B8E43CF2587B200008218FC /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B8E43DB2587B2BE008218FC /* libruby.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B8E43DA2587B2BE008218FC /* libruby.a */; };
 		3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */; };
@@ -330,7 +328,6 @@
 		3BC65D362584EDC60063AFF1 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46525651BF3003DAD8A /* libz.tbd */; };
 		3BC65D372584EDC60063AFF1 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46825651C12003DAD8A /* libiconv.tbd */; };
 		3BC65D3D2584EDC60063AFF1 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
-		3BC65D3F2584EDC60063AFF1 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
 		3BC65D402584EDC60063AFF1 /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BC65D5A2584EED10063AFF1 /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D4A2584EED10063AFF1 /* libvorbis.a */; };
 		3BC65D5B2584EED10063AFF1 /* libpixman-1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D4B2584EED10063AFF1 /* libpixman-1.a */; };
@@ -441,7 +438,6 @@
 		3BC65E022584F3AD0063AFF1 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46525651BF3003DAD8A /* libz.tbd */; };
 		3BC65E062584F3AD0063AFF1 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46825651C12003DAD8A /* libiconv.tbd */; };
 		3BC65E0E2584F3AD0063AFF1 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
-		3BC65E102584F3AD0063AFF1 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
 		3BC65E112584F3AD0063AFF1 /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BC65E1F2584F4290063AFF1 /* libturbojpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7E2584F3780063AFF1 /* libturbojpeg.a */; };
 		3BC65E202584F4290063AFF1 /* libpixman-1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D882584F3780063AFF1 /* libpixman-1.a */; };
@@ -590,7 +586,6 @@
 		3BF695442595FE5F0016920C /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FC256879FE0006849F /* libfreetype.a */; };
 		3BF695452595FE5F0016920C /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FF256879FE0006849F /* libphysfs.a */; };
 		3BF695472595FE5F0016920C /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
-		3BF695492595FE5F0016920C /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
 		3BF6954A2595FE5F0016920C /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BF695692596053C0016920C /* libruby.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF695682596053C0016920C /* libruby.a */; };
 		3BF69576259608050016920C /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
@@ -701,7 +696,6 @@
 		3BF695E1259608050016920C /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46825651C12003DAD8A /* libiconv.tbd */; };
 		3BF695E2259608050016920C /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D872584F3780063AFF1 /* libpng16.a */; };
 		3BF695E4259608050016920C /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
-		3BF695E6259608050016920C /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
 		3BF695E7259608050016920C /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BF69603259608DB0016920C /* libruby.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF69602259608DB0016920C /* libruby.a */; };
 /* End PBXBuildFile section */
@@ -758,7 +752,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				3B5A84342569F82C00BAF2E5 /* mkxp.json in CopyFiles */,
 				3BA08ED4256643C200449CFF /* Assets.bundle in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -769,7 +762,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				3B8E43CE2587B200008218FC /* mkxp.json in CopyFiles */,
 				3B8E43CF2587B200008218FC /* Assets.bundle in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -835,7 +827,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				3BC65D3F2584EDC60063AFF1 /* mkxp.json in CopyFiles */,
 				3BC65D402584EDC60063AFF1 /* Assets.bundle in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -846,7 +837,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				3BC65E102584F3AD0063AFF1 /* mkxp.json in CopyFiles */,
 				3BC65E112584F3AD0063AFF1 /* Assets.bundle in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -857,7 +847,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				3BF695492595FE5F0016920C /* mkxp.json in CopyFiles */,
 				3BF6954A2595FE5F0016920C /* Assets.bundle in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -868,7 +857,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				3BF695E6259608050016920C /* mkxp.json in CopyFiles */,
 				3BF695E7259608050016920C /* Assets.bundle in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
