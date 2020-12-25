@@ -1198,18 +1198,6 @@ int Input::getJoystickPowerLevel()
     SDL_JOYSTICK_POWER_UNKNOWN;
 }
 
-void Input::rumble(int duration, int strength, int attack, int fade)
-{
-    duration = clamp(duration, 0, 10000);
-    strength = clamp(strength, 1, 100);
-    attack   = clamp(attack,   0, 10000);
-    fade     = clamp(fade,     0, 10000);
-    shState->eThread().requestRumble(duration,
-                                     (short)((double)strength / 100 * 32767),
-                                     attack,
-                                     fade);
-}
-
 bool Input::getTextInputMode()
 {
     return (SDL_IsTextInputActive() == SDL_TRUE);

@@ -71,9 +71,7 @@ public:
     bool getJoystickConnected();
     const char *getJoystickName();
     int getJoystickPowerLevel();
-    
-    void rumble(int duration, int strength, int attack, int fade);
-    
+
     bool getTextInputMode();
     void setTextInputMode(bool mode);
     const char *getText();
