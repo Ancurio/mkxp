@@ -154,7 +154,17 @@ try { exp } catch (...) {}
     SET_OPT(syncToRefreshrate, boolean);
     SET_OPT(solidFonts, boolean);
     SET_OPT(subImageFix, boolean);
+
+    // On Apple Silicon macs, OpenGL is implemented on top of Metal.
+    // It isn't particularly happy with some of MKXP's code, and
+    // crashes fairly often. Forcing off 'enableBlitting' helps with
+    // this. Hopefully ANGLE will be buildable on ARM64 soon
+#if defined(__MACOSX__) && defined(__aarch64__)
+    enableBlitting = false;
+#else
     SET_OPT(enableBlitting, boolean);
+#endif
+    
     SET_OPT(maxTextureSize, integer);
     SET_STRINGOPT(gameFolder, gameFolder);
     SET_OPT(anyAltToggleFS, boolean);
