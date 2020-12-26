@@ -245,9 +245,9 @@ $(DOWNLOADS)/openal/CMakeLists.txt:
 	$(CLONE) $(GITLAB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
 
 # Standard ruby
-ruby: init_dirs $(LIBDIR)/libruby*.a
+ruby: init_dirs $(LIBDIR)/libruby.3.0-static.a
 
-$(LIBDIR)/libruby*.a: $(DOWNLOADS)/ruby/Makefile
+$(LIBDIR)/libruby.3.0-static.a: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
 	make -j$(NPROC); make install
 

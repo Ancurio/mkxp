@@ -51,6 +51,7 @@
 #include <algorithm>
 #include <errno.h>
 #include <sys/time.h>
+#include <unistd.h>
 #include <time.h>
 
 #define DEF_SCREEN_W (rgssVer == 1 ? 640 : 544)
@@ -839,13 +840,8 @@ void Graphics::resizeScreen(int width, int height) {
 
   int cur_sz = p->scSize.x;
   shState->eThread().requestWindowResize(width, height);
-
-  // Give things a little time to recalculate before continuing
-  for (int i = 0; i < p->frameRate; i++) {
-    if (cur_sz != p->scSize.x)
-      break;
-    update();
-  }
+  usleep(50000);
+  update();
 }
 
 void Graphics::playMovie(const char *filename) {
@@ -928,13 +924,8 @@ void Graphics::setScale(double factor) {
 
   int cur_sz = p->scSize.x;
   shState->eThread().requestWindowResize(widthpx, heightpx);
-
-  // Give things a little time to recalculate before continuing
-  for (int i = 0; i < p->frameRate; i++) {
-    if (cur_sz != p->scSize.x)
-      break;
-    update();
-  }
+  usleep(50000);
+  update();
 }
 
 bool Graphics::getFrameskip() const { return p->useFrameSkip; }
