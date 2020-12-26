@@ -646,7 +646,7 @@ std::string FileSystem::normalize(const char *pathname, bool preferred,
 }
 
 bool FileSystem::exists(const char *filename) {
-  return PHYSFS_exists(filename);
+  return PHYSFS_exists(normalize(filename, false, false).c_str());
 }
 
 const char *FileSystem::desensitize(const char *filename) {

@@ -5,14 +5,14 @@
 This is a fork of mkxp intended to be a little more than just a barebones recreation of RPG Maker. The original goal was successfully running games based on Pokemon Essentials, which is notoriously dependent on Windows APIs. I'd consider that mission accomplished.
 
 ## Bindings
-Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on MRI and as such the mruby and null bindings are not included. The original MRI bindings remain. Please see the original README for more details.
+Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on MRI and as such the mruby and null bindings are not included.
 
 ### MRI
 Website: https://www.ruby-lang.org/en/
 
 Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version of ruby. MRI 1.8.1 is what was used in RPG Maker XP, and 1.8.7 is the lowest that mkxp-z is prepared to let you go. 1.8.1 and 1.8.7 are for the most part identical, though there are a few differences that are ironed out in my fork of 1.8.7.
 
-Ruby versions 2.1 - 2.7 are also supported (and recommended for the capable).
+Ruby versions 1.9.3 and 2.1 - 3.0 are also supported (and recommended for the capable).
 
 This binding should support RGSS1, RGSS2 and RGSS3. Note that I've only tested the Ruby 1.8.7 bindings with RGSS1.
 
@@ -24,7 +24,6 @@ This binding should support RGSS1, RGSS2 and RGSS3. Note that I've only tested t
 * SDL2*
 * SDL2_image
 * SDL2_ttf
-* [Ancurio's SDL_sound fork](https://github.com/Ancurio/SDL_sound)
 * [My Ruby 1.8 fork](https://gitlab.com/mkxp-z/ruby/-/tree/ruby_1_8_7), if using Ruby 1.8
 * vorbisfile
 * pixman
@@ -39,13 +38,13 @@ Midi support is enabled by default and requires fluidsynth to be present at runt
 
 By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `-Dworkdir_current=true` to meson's build arguments.
 
-**MRI-Binding**: Meson will use pkg-config to look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-2.5.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y`. `mri-version` is set to `1.8` by default.
+**MRI-Binding**: Meson will use pkg-config to look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-1.8.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y`. `mri-version` is set to `3.0` by default.
 
 ## Supported image/audio formats
 
-These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support, and SDL_sound with oggvorbis/wav/mp3 support.
+These depend on the SDL auxiliary libraries. For maximum RGSS compliance, build SDL2_image with png/jpg support.
 
-To run mkxp, you should have a graphics card capable of at least **OpenGL 3.3** with an up-to-date driver installed.
+To run mkxp, you should have a graphics card capable of at least **OpenGL 2.1** with an up-to-date driver installed.
 
 ## Platform-specific scripts
 
