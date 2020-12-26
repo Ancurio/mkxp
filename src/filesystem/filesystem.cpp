@@ -626,7 +626,7 @@ void FileSystem::openRead(OpenHandler &handler, const char *filename) {
 void FileSystem::openReadRaw(SDL_RWops &ops, const char *filename,
                              bool freeOnClose) {
 
-  PHYSFS_File *handle = PHYSFS_openRead(desensitize(filename));
+  PHYSFS_File *handle = PHYSFS_openRead(normalize(filename, 0, 0).c_str());
 
   // assert(handle);
   if (!handle)
