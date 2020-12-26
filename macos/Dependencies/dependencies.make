@@ -272,7 +272,6 @@ $(LIBDIR)/libruby.a: $(DOWNLOADS)/ruby18/Makefile
 $(DOWNLOADS)/ruby18/Makefile: $(DOWNLOADS)/ruby18/configure
 	cd $(DOWNLOADS)/ruby18; \
 	$(CONFIGURE) \
-	--with-static-linked-ext; \
 	$(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby18/configure: $(DOWNLOADS)/ruby18/*.c
