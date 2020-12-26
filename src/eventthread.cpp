@@ -91,6 +91,8 @@ enum
     REQUEST_TEXTMODE,
     
     REQUEST_SETTINGS,
+    
+    REQUEST_RUMBLE,
 
 	UPDATE_FPS,
 	UPDATE_SCREEN_RECT,
@@ -112,9 +114,11 @@ bool EventThread::allocUserEvents()
 
 EventThread::EventThread()
     : js(0),
+      hapt(0),
       fullscreen(false),
       showCursor(true),
-      joystickConnected(false)
+      joystickConnected(false),
+      hapticEffectId(0)
 {}
 
 void EventThread::process(RGSSThreadData &rtData)
@@ -168,7 +172,9 @@ void EventThread::process(RGSSThreadData &rtData)
     SDL_DisplayMode dm = {0};
 
 	SDL_GetWindowSize(win, &winW, &winH);
-
+    
+    SDL_Haptic *hap;
+    memset(&hapticEffect, 0, sizeof(SDL_HapticEffect));
     textInputBuffer.clear();
 
 	SettingsMenu *sMenu = 0;
@@ -381,12 +387,25 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			js = SDL_JoystickOpen(0);
             joystickConnected = true;
+                
+            hap = SDL_HapticOpenFromJoystick(js);
+            Debug() << (hap ? "true" : "false");
+            if (hap && (SDL_HapticQuery(hap) & SDL_HAPTIC_SINE))
+            {
+                hapt = hap;
+                Debug() << "Haptic device initialized";
+            }
+            else
+            {
+                Debug() << "No haptic support found";
+            }
             
 			break;
 
 		case SDL_JOYDEVICEREMOVED :
 			resetInputStates();
             joystickConnected = false;
+            hapt = 0;
 			break;
 
 		case SDL_MOUSEBUTTONDOWN :
@@ -481,6 +500,25 @@ void EventThread::process(RGSSThreadData &rtData)
                 }
                 
                 sMenu->raise();
+                break;
+                    
+            case REQUEST_RUMBLE :
+                if (!hapt) break;
+                if (!hapticEffect.type)
+                {
+                    hapticEffect.type = SDL_HAPTIC_SINE;
+                    hapticEffect.constant.attack_level = 0;
+                    hapticEffect.constant.fade_level = 0;
+                    hapticEffectId = SDL_HapticNewEffect(hapt, &hapticEffect);
+                }
+                if (hapticEffect.constant.length == 0 && SDL_HapticGetEffectStatus(hapt, hapticEffectId) > 0)
+                {
+                    SDL_HapticStopEffect(hapt, hapticEffectId);
+                    break;
+                }
+                SDL_HapticUpdateEffect(hapt, hapticEffectId, &hapticEffect);
+                    
+                SDL_HapticRunEffect(hapt, hapticEffectId, 1);
                 break;
 
 			case UPDATE_FPS :
@@ -694,6 +732,19 @@ void EventThread::requestSettingsMenu()
     SDL_PushEvent(&event);
 }
 
+void EventThread::requestRumble(int duration, short strength, int attack, int fade)
+{
+    SDL_Event event;
+    event.type = usrIdStart + REQUEST_RUMBLE;
+    
+    hapticEffect.constant.length = duration;
+    hapticEffect.constant.level = strength;
+    hapticEffect.constant.attack_length = attack;
+    hapticEffect.constant.fade_length = fade;
+    
+    SDL_PushEvent(&event);
+}
+
 void EventThread::showMessageBox(const char *body, int flags)
 {
 	msgBoxDone.clear();
@@ -728,6 +779,11 @@ bool EventThread::getJoystickConnected() const
 SDL_Joystick *EventThread::joystick() const
 {
     return (joystickConnected) ? js : 0;
+}
+
+SDL_Haptic *EventThread::haptic() const
+{
+    return hapt;
 }
 
 void EventThread::notifyFrame()

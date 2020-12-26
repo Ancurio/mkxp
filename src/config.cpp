@@ -154,17 +154,7 @@ try { exp } catch (...) {}
     SET_OPT(syncToRefreshrate, boolean);
     SET_OPT(solidFonts, boolean);
     SET_OPT(subImageFix, boolean);
-    
-#if defined(__MACOSX__) && defined(__aarch64__)
-    // OpenGL on Apple Silicon Macs is implemented on top of Metal,
-    // and can crash unexpectedly with some of MKXP's GL code
-    // Should hurry up and find something open-source
-    // for GLES->Vulkan->Metal or GLES->Metal
-    enableBlitting = false;
-#else
     SET_OPT(enableBlitting, boolean);
-#endif
-    
     SET_OPT(maxTextureSize, integer);
     SET_STRINGOPT(gameFolder, gameFolder);
     SET_OPT(anyAltToggleFS, boolean);
