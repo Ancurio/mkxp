@@ -250,17 +250,6 @@ RB_METHOD(_marshalLoad) {
 }
 #endif
 
-RB_METHOD(fileIntDesensitize) {
-  RB_UNUSED_PARAM;
-
-  VALUE filename;
-  rb_scan_args(argc, argv, "1", &filename);
-  SafeStringValue(filename);
-
-  return rb_str_new_cstr(
-      shState->fileSystem().desensitize(RSTRING_PTR(filename)));
-}
-
 void fileIntBindingInit() {
   VALUE klass = rb_define_class("FileInt", rb_cIO);
 #if RAPI_FULL > 187
@@ -280,7 +269,6 @@ void fileIntBindingInit() {
 #endif
   _rb_define_method(klass, "binmode", fileIntBinmode);
   _rb_define_method(klass, "close", fileIntClose);
-  rb_define_singleton_method(klass, "desensitize", RUBY_METHOD_FUNC(fileIntDesensitize), -1);
 
   _rb_define_module_function(rb_mKernel, "load_data", kernelLoadData);
   _rb_define_module_function(rb_mKernel, "save_data", kernelSaveData);

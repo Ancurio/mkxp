@@ -112,6 +112,7 @@ RB_METHOD(mriPrint);
 RB_METHOD(mriP);
 RB_METHOD(mkxpDataDirectory);
 RB_METHOD(mkxpSetTitle);
+RB_METHOD(mkxpDesensitize);
 RB_METHOD(mkxpPuts);
 RB_METHOD(mkxpRawKeyStates);
 RB_METHOD(mkxpMouseInWindow);
@@ -189,6 +190,7 @@ static void mriBindingInit() {
   _rb_define_module_function(mod, "set_window_title", mkxpSetTitle);
   _rb_define_module_function(mod, "show_settings", mkxpSettingsMenu);
   _rb_define_module_function(mod, "puts", mkxpPuts);
+  _rb_define_module_function(mod, "desensitize", mkxpDesensitize);
   _rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
   _rb_define_module_function(mod, "mouse_in_window", mkxpMouseInWindow);
   _rb_define_module_function(mod, "platform", mkxpPlatform);
@@ -267,6 +269,17 @@ RB_METHOD(mkxpSetTitle) {
 
   shState->eThread().requestWindowRename(RSTRING_PTR(s));
   return s;
+}
+
+RB_METHOD(mkxpDesensitize) {
+  RB_UNUSED_PARAM;
+
+  VALUE filename;
+  rb_scan_args(argc, argv, "1", &filename);
+  SafeStringValue(filename);
+
+  return rb_str_new_cstr(
+      shState->fileSystem().desensitize(RSTRING_PTR(filename)));
 }
 
 RB_METHOD(mkxpPuts) {
