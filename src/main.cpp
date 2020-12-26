@@ -54,6 +54,13 @@
 #include "steamshim_child.h"
 #endif
 
+#ifdef MKXPZ_BUILD_XCODE
+#include <Availability.h>
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < __MAC_10_15
+#define THREADED_GLINIT
+#endif
+#endif
+
 #ifndef THREADED_GLINIT
 #define GLINIT_SHOWERROR(s) showInitError(s)
 #else
