@@ -37,6 +37,7 @@ if build_static == true
     explicit_libs += 'libfreetype;libbz2;libharfbuzz;libgraphite2;'
     explicit_libs += 'libjpeg;libpng;libtiff;libwebp;liblzma;libzstd;'
     global_link_args += '-static'
+    global_args += '-DAL_LIBTYPE_STATIC'
 endif
 
 foreach l : explicit_libs.split(';')
