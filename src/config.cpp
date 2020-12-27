@@ -56,7 +56,7 @@ void Config::read(int argc, char *argv[]) {
         {"rgssVersion", 0},
         {"debugMode", false},
         {"printFPS", false},
-        {"winResizable", false},
+        {"winResizable", true},
         {"fullscreen", false},
         {"fixedAspectRatio", true},
         {"smoothScaling", false},
