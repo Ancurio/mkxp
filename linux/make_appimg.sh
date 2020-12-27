@@ -22,8 +22,6 @@ get_dep SDL_sound
 get_dep fluidsynth
 get_dep ruby
 get_dep sndio
-get_dep objfw.so
-get_dep objfwrt.so
 
 # Required by Fedora & Manjaro
 get_dep libXss
