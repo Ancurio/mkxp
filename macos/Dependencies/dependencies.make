@@ -37,7 +37,6 @@ RUBY_CONFIGURE_ARGS := \
 	--disable-install-doc \
 	--with-out-ext=openssl,fiddle,gdbm,win32ole,win32 \
 	--disable-rubygems \
-	--with-static-linked-ext \
 	${EXTRA_RUBY_CONFIG_ARGS}
 
 CONFIGURE := $(CONFIGURE_ENV) ./configure $(CONFIGURE_ARGS)

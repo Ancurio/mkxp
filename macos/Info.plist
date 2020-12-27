@@ -26,7 +26,5 @@
 	<string>public.app-category.role-playing-games</string>
 	<key>NSRequiresAquaSystemAppearance</key>
 	<string>False</string>
-	<key>SDL_FILESYSTEM_BASE_DIR_TYPE</key>
-	<string>parent</string>
 </dict>
 </plist>
