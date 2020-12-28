@@ -98,7 +98,8 @@
 # windowTitle=Custom Title
 
 
-# Enforce a static frame rate
+# Enforce a static frame rate. If set to a negative
+# value deactivates the fps limiter.
 # (0 = disabled)
 #
 # fixedFramerate=0
@@ -114,6 +115,7 @@
 # native screen refresh rate. This is different from
 # "fixedFramerate" because the actual frame rate is
 # reported back to the game, ensuring correct timers.
+# When enabled, the "fixedFramerate" setting is ignored.
 # If the screen refresh rate cannot be determined,
 # this option is force-disabled
 # (default: disabled)
