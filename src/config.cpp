@@ -141,7 +141,6 @@ try { exp } catch (...) {}
     SET_OPT(rgssVersion, integer);
     SET_OPT(debugMode, boolean);
     SET_OPT(printFPS, boolean);
-    SET_OPT(winResizable, boolean);
     SET_OPT(fullscreen, boolean);
     SET_OPT(fixedAspectRatio, boolean);
     SET_OPT(smoothScaling, boolean);
@@ -157,12 +156,14 @@ try { exp } catch (...) {}
 
     // On Apple Silicon macs, OpenGL is implemented on top of Metal.
     // It isn't particularly happy with some of MKXP's code, and
-    // crashes fairly often. Forcing off 'enableBlitting' helps with
+    // crashes fairly often. Forcing off a couple of settings helps with
     // this. Hopefully ANGLE will be buildable on ARM64 soon
 #if defined(__MACOSX__) && defined(__aarch64__)
     enableBlitting = false;
+    winResizable = false;
 #else
     SET_OPT(enableBlitting, boolean);
+    SET_OPT(winResizable, boolean);
 #endif
     
     SET_OPT(maxTextureSize, integer);

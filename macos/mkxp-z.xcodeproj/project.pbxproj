@@ -118,6 +118,12 @@
 		3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF32568E96A00372D13 /* module_rpg.cpp */; };
 		3B10EE0C2568E96A00372D13 /* viewport-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF42568E96A00372D13 /* viewport-binding.cpp */; };
 		3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
+		3B522DA9259BAA42003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B522DAA259BAA4A003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B522DAB259BAA4C003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B522DAC259BAA4E003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B522DAE259BAA56003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B522DAF259BAA58003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
 		3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5A8444256A0F6300BAF2E5 /* libopenal.a */; };
@@ -746,6 +752,72 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		3B522D79259BA0E3003301C4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3B522DA9259BAA42003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B522D7C259BA0E8003301C4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3B522DAA259BAA4A003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B522D7F259BA0EC003301C4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3B522DAB259BAA4C003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B522D82259BA0EE003301C4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3B522DAC259BAA4E003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B522D88259BA0F2003301C4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3B522DAE259BAA56003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B522D8D259BA0F5003301C4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3B522DAF259BAA58003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3B5A843B2569F95A00BAF2E5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1052,6 +1124,7 @@
 		3B426F6F256B8AC0009EA00F /* fs_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_impl.hpp; sourceTree = "<group>"; };
 		3B426F70256B8AC0009EA00F /* fs_std_fwd.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_fwd.hpp; sourceTree = "<group>"; };
 		3B426F76256BA847009EA00F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
+		3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfluidsynth.dylib; path = Dependencies/Frameworks/libfluidsynth.dylib; sourceTree = "<group>"; };
 		3B5A84052569B56F00BAF2E5 /* config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
 		3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = filesystemImplApple.mm; sourceTree = "<group>"; };
 		3B5A84132569C28B00BAF2E5 /* filesystemImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filesystemImpl.cpp; sourceTree = "<group>"; };
@@ -1749,6 +1822,7 @@
 			children = (
 				3BF69571259607D20016920C /* Legacy */,
 				3BC65D7D2584F3780063AFF1 /* libfreetype.a */,
+				3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */,
 				3BC65D822584F3780063AFF1 /* libogg.a */,
 				3BC65D842584F3780063AFF1 /* libopenal.a */,
 				3BC65D7B2584F3780063AFF1 /* libphysfs.a */,
@@ -1913,6 +1987,7 @@
 				3B8E43AA2587B200008218FC /* Frameworks */,
 				3B8E43CB2587B200008218FC /* Resources */,
 				3B8E43CD2587B200008218FC /* CopyFiles */,
+				3B522D8D259BA0F5003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1952,6 +2027,7 @@
 				3BC65D1A2584EDC60063AFF1 /* Frameworks */,
 				3BC65D3C2584EDC60063AFF1 /* Resources */,
 				3BC65D3E2584EDC60063AFF1 /* CopyFiles */,
+				3B522D7F259BA0EC003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1971,6 +2047,7 @@
 				3BC65DDB2584F3AD0063AFF1 /* Frameworks */,
 				3BC65E0D2584F3AD0063AFF1 /* Resources */,
 				3BC65E0F2584F3AD0063AFF1 /* CopyFiles */,
+				3B522D79259BA0E3003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1990,6 +2067,7 @@
 				3BD2B6E12565AEC0003DAD8A /* Frameworks */,
 				3BD2B6F82565AEC0003DAD8A /* Resources */,
 				3B5A843B2569F95A00BAF2E5 /* CopyFiles */,
+				3B522D7C259BA0E8003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2009,6 +2087,7 @@
 				3BF695252595FE5F0016920C /* Frameworks */,
 				3BF695462595FE5F0016920C /* Resources */,
 				3BF695482595FE5F0016920C /* CopyFiles */,
+				3B522D88259BA0F2003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2028,6 +2107,7 @@
 				3BF695C3259608050016920C /* Frameworks */,
 				3BF695E3259608050016920C /* Resources */,
 				3BF695E5259608050016920C /* CopyFiles */,
+				3B522D82259BA0EE003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2727,15 +2807,15 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"ALCDEVICE_STRUCT=ALCdevice",
-					USE_MINIFFI,
-					AL_LIBTYPE_STATIC,
+					"$(inherited)",
 					LEGACY_RUBY,
 					EASY_POKE,
 				);
@@ -2757,6 +2837,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -2814,13 +2895,13 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"ALCDEVICE_STRUCT=ALCdevice",
-					USE_MINIFFI,
-					AL_LIBTYPE_STATIC,
+					"$(inherited)",
 					LEGACY_RUBY,
 					EASY_POKE,
 				);
@@ -2842,6 +2923,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3034,7 +3116,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3057,6 +3142,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3113,7 +3199,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3134,6 +3223,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3188,7 +3278,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3211,6 +3304,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3266,7 +3360,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3287,6 +3384,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3341,7 +3439,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3364,6 +3465,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3419,7 +3521,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3440,6 +3545,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3570,15 +3676,15 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"ALCDEVICE_STRUCT=ALCdevice",
-					USE_MINIFFI,
-					AL_LIBTYPE_STATIC,
+					"$(inherited)",
 					LEGACY_RUBY,
 					EASY_POKE,
 				);
@@ -3601,6 +3707,7 @@
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3657,13 +3764,13 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"ALCDEVICE_STRUCT=ALCdevice",
-					USE_MINIFFI,
-					AL_LIBTYPE_STATIC,
+					"$(inherited)",
 					LEGACY_RUBY,
 					EASY_POKE,
 				);
@@ -3686,6 +3793,7 @@
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3741,15 +3849,15 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"ALCDEVICE_STRUCT=ALCdevice",
-					USE_MINIFFI,
-					AL_LIBTYPE_STATIC,
+					"$(inherited)",
 					LEGACY_RUBY,
 					EASY_POKE,
 				);
@@ -3772,6 +3880,7 @@
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3828,13 +3937,13 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
+				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"ALCDEVICE_STRUCT=ALCdevice",
-					USE_MINIFFI,
-					AL_LIBTYPE_STATIC,
+					"$(inherited)",
 					LEGACY_RUBY,
 					EASY_POKE,
 				);
@@ -3857,6 +3966,7 @@
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
