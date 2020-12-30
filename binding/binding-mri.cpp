@@ -788,7 +788,7 @@ static void mriBindingExecute() {
   rb_eval_string("$KCODE='U'");
 #endif
 
-#ifdef JIT  
+#if RAPI_FULL >= 300 || defined(MKXPZ_JIT)
   const char*  rboptions[]  =  {"", "--disable-gems", "--jit-verbose=1", "--jit-max-cache=100", "--jit-min-calls=100000", "-e "};
   void* node = ruby_process_options(6, const_cast<char**>(rboptions));
   int state;
