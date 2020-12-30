@@ -1,7 +1,12 @@
-project('mkxp-z', 'c', 'cpp', version: '1.3.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++17', 'buildtype=release'])
+project('mkxp-z', 'c', 'cpp', version: '2.0.0', meson_version: '>=0.47.0', default_options: ['cpp_std=c++11', 'buildtype=release'])
+
+host_system = host_machine.system()
+
+if host_system == 'darwin'
+    error('\nThis Meson project no longer supports macOS. Please use the Xcode project instead.')
+endif
 
 xxd = find_program('xxd', native: true)
-host_system = host_machine.system()
 
 compilers = {'cpp': meson.get_compiler('cpp')}
 
@@ -15,19 +20,6 @@ sizeof = {'void*': compilers['cpp'].sizeof('void*'),
           'long': compilers['cpp'].sizeof('long')
          }
 win64 = (sizeof['void*'] != sizeof['long'])
-
-# Fill macOS version info
-minimum_macos_version = ''
-current_macos_version = ''
-if host_system == 'darwin'
-    current_macos_version = run_command('sw_vers', '-productVersion').stdout().strip()
-    macosx_version_min = get_option('macos_min_version')
-    if macosx_version_min != ''
-        minimum_macos_version = macosx_version_min
-    else
-        minimum_macos_version = current_macos_version
-    endif
-endif
 
 global_args += '-DMKXPZ_BUILD_MESON'
 # ====================
@@ -46,15 +38,13 @@ if steamworks_path != ''
         else
             bindir = 'linux64'
         endif
-    elif host_system == 'windows'
+    else
         if win64 == true
             bindir = 'win64'
             libname += '64'
         else
             bindir = ''
         endif
-    else
-        bindir = 'osx'
     endif
 
     steam_libpath = steamworks_path + '/redistributable_bin/' + bindir
@@ -95,8 +85,6 @@ if compilers['cpp'].get_id() == 'clang'
 endif
 if host_system == 'windows'
     global_args += '-Wno-unknown-attributes'
-elif host_system == 'darwin'
-    global_args += '-Wno-deprecated-declarations'
 endif
 
 # Decide whether or not to use MiniFFI
@@ -138,9 +126,7 @@ if get_option('static_executable') == true and host_system == 'windows'
     build_static = true
 endif
 
-if host_system != 'darwin' or current_macos_version.version_compare('<10.15')
-    global_args += '-DTHREADED_GLINIT'
-endif
+global_args += '-DTHREADED_GLINIT'
 
 subdir('src')
 subdir('binding')
@@ -156,15 +142,6 @@ if host_system == 'windows'
     subdir('windows')
     global_sources += windows_resources
     global_include_dirs += include_directories('windows')
-elif host_system == 'darwin'
-    subdir('macos')
-    rpath = '@executable_path/../libs'
-    add_project_arguments('-stdlib=libc++', language: ['cpp'])
-    if minimum_macos_version != ''
-        add_project_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['c', 'cpp'])
-        add_project_link_arguments('-mmacosx-version-min='+minimum_macos_version, language: ['c', 'cpp'])
-    endif
-    warning('Please consider using the Xcode project located in the `macos` directory instead.')
 else
     subdir('linux')
     rpath = '$ORIGIN/lib'

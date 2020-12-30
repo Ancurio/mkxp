@@ -1,9 +1,5 @@
 global_include_dirs += include_directories('.')
 
-if host_system == 'darwin'
-    global_dependencies += dependency('AudioToolbox')
-endif
-
 global_sources += files(
     'dr_flac.h',
     'dr_mp3.h',

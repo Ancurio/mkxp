@@ -80,14 +80,7 @@ global_include_dirs += include_directories('.',
 )
 
 global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, sdl2_ttf, sdl2_image]
-if host_system == 'darwin'
-    global_dependencies += compilers['cpp'].find_library('iconv')
-    global_dependencies += dependency('Foundation')
-
-    if openal.type_name() != 'pkgconfig'
-        add_project_arguments('-DUSE_MAC_OPENAL', language: 'cpp')
-    endif
-elif host_system == 'windows'
+if host_system == 'windows'
     global_dependencies += compilers['cpp'].find_library('wsock32')
 endif
 
