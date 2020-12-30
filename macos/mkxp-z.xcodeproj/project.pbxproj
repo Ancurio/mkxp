@@ -124,6 +124,42 @@
 		3B522DAC259BAA4E003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B522DAE259BAA56003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B522DAF259BAA58003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B522DC0259BD072003301C4 /* net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DBF259BD072003301C4 /* net.cpp */; };
+		3B522DC1259BD072003301C4 /* net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DBF259BD072003301C4 /* net.cpp */; };
+		3B522DC2259BD072003301C4 /* net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DBF259BD072003301C4 /* net.cpp */; };
+		3B522DC3259BD072003301C4 /* net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DBF259BD072003301C4 /* net.cpp */; };
+		3B522DC4259BD072003301C4 /* net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DBF259BD072003301C4 /* net.cpp */; };
+		3B522DC5259BD072003301C4 /* net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DBF259BD072003301C4 /* net.cpp */; };
+		3B522DCA259BFEE0003301C4 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DC8259BFEDF003301C4 /* libcrypto.a */; };
+		3B522DCB259BFEE0003301C4 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DC8259BFEDF003301C4 /* libcrypto.a */; };
+		3B522DCC259BFEE0003301C4 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DC9259BFEDF003301C4 /* libssl.a */; };
+		3B522DCD259BFEE0003301C4 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DC9259BFEDF003301C4 /* libssl.a */; };
+		3B522DD0259BFF0B003301C4 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DCE259BFF0B003301C4 /* libcrypto.a */; };
+		3B522DD1259BFF0B003301C4 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DCE259BFF0B003301C4 /* libcrypto.a */; };
+		3B522DD2259BFF0B003301C4 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DCF259BFF0B003301C4 /* libssl.a */; };
+		3B522DD3259BFF0B003301C4 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DCF259BFF0B003301C4 /* libssl.a */; };
+		3B522DD6259BFF2D003301C4 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DD4259BFF2D003301C4 /* libssl.a */; };
+		3B522DD7259BFF2D003301C4 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DD4259BFF2D003301C4 /* libssl.a */; };
+		3B522DD8259BFF2D003301C4 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DD5259BFF2D003301C4 /* libcrypto.a */; };
+		3B522DD9259BFF2D003301C4 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DD5259BFF2D003301C4 /* libcrypto.a */; };
+		3B522DDC259C1E53003301C4 /* http-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DDB259C1E53003301C4 /* http-binding.cpp */; };
+		3B522DDD259C1E53003301C4 /* http-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DDB259C1E53003301C4 /* http-binding.cpp */; };
+		3B522DDE259C1E53003301C4 /* http-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DDB259C1E53003301C4 /* http-binding.cpp */; };
+		3B522DDF259C1E53003301C4 /* http-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DDB259C1E53003301C4 /* http-binding.cpp */; };
+		3B522DE0259C1E53003301C4 /* http-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DDB259C1E53003301C4 /* http-binding.cpp */; };
+		3B522DE1259C1E53003301C4 /* http-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DDB259C1E53003301C4 /* http-binding.cpp */; };
+		3B522DE5259C2039003301C4 /* LUrlParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DE4259C2039003301C4 /* LUrlParser.cpp */; };
+		3B522DE6259C2039003301C4 /* LUrlParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DE4259C2039003301C4 /* LUrlParser.cpp */; };
+		3B522DE7259C2039003301C4 /* LUrlParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DE4259C2039003301C4 /* LUrlParser.cpp */; };
+		3B522DE8259C2039003301C4 /* LUrlParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DE4259C2039003301C4 /* LUrlParser.cpp */; };
+		3B522DE9259C2039003301C4 /* LUrlParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DE4259C2039003301C4 /* LUrlParser.cpp */; };
+		3B522DEA259C2039003301C4 /* LUrlParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DE4259C2039003301C4 /* LUrlParser.cpp */; };
+		3B522DED259C3E97003301C4 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
+		3B522DEF259C3E9D003301C4 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
+		3B522DF1259C3E9F003301C4 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
+		3B522DF3259C3EA2003301C4 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
+		3B522DF5259C3EA4003301C4 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
+		3B522DF8259C3EAA003301C4 /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
 		3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
 		3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5A8444256A0F6300BAF2E5 /* libopenal.a */; };
@@ -825,6 +861,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				3BA08ED4256643C200449CFF /* Assets.bundle in CopyFiles */,
+				3B522DEF259C3E9D003301C4 /* mkxp.json in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -835,6 +872,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				3B8E43CF2587B200008218FC /* Assets.bundle in CopyFiles */,
+				3B522DF8259C3EAA003301C4 /* mkxp.json in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -900,6 +938,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				3BC65D402584EDC60063AFF1 /* Assets.bundle in CopyFiles */,
+				3B522DF1259C3E9F003301C4 /* mkxp.json in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -910,6 +949,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				3BC65E112584F3AD0063AFF1 /* Assets.bundle in CopyFiles */,
+				3B522DED259C3E97003301C4 /* mkxp.json in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -920,6 +960,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				3BF6954A2595FE5F0016920C /* Assets.bundle in CopyFiles */,
+				3B522DF5259C3EA4003301C4 /* mkxp.json in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -930,6 +971,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				3BF695E7259608050016920C /* Assets.bundle in CopyFiles */,
+				3B522DF3259C3EA2003301C4 /* mkxp.json in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1125,6 +1167,18 @@
 		3B426F70256B8AC0009EA00F /* fs_std_fwd.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_fwd.hpp; sourceTree = "<group>"; };
 		3B426F76256BA847009EA00F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
 		3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfluidsynth.dylib; path = Dependencies/Frameworks/libfluidsynth.dylib; sourceTree = "<group>"; };
+		3B522DB2259BC037003301C4 /* net.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = net.h; sourceTree = "<group>"; };
+		3B522DBD259BD046003301C4 /* httplib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = httplib.h; sourceTree = "<group>"; };
+		3B522DBF259BD072003301C4 /* net.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = net.cpp; sourceTree = "<group>"; };
+		3B522DC8259BFEDF003301C4 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "Dependencies/build-macosx-universal/lib/libcrypto.a"; sourceTree = "<group>"; };
+		3B522DC9259BFEDF003301C4 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "Dependencies/build-macosx-universal/lib/libssl.a"; sourceTree = "<group>"; };
+		3B522DCE259BFF0B003301C4 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "Dependencies/build-macosx-arm64/lib/libcrypto.a"; sourceTree = "<group>"; };
+		3B522DCF259BFF0B003301C4 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "Dependencies/build-macosx-arm64/lib/libssl.a"; sourceTree = "<group>"; };
+		3B522DD4259BFF2D003301C4 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "Dependencies/build-macosx-x86_64/lib/libssl.a"; sourceTree = "<group>"; };
+		3B522DD5259BFF2D003301C4 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "Dependencies/build-macosx-x86_64/lib/libcrypto.a"; sourceTree = "<group>"; };
+		3B522DDB259C1E53003301C4 /* http-binding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "http-binding.cpp"; sourceTree = "<group>"; };
+		3B522DE3259C2017003301C4 /* LUrlParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LUrlParser.h; sourceTree = "<group>"; };
+		3B522DE4259C2039003301C4 /* LUrlParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LUrlParser.cpp; sourceTree = "<group>"; };
 		3B5A84052569B56F00BAF2E5 /* config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
 		3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = filesystemImplApple.mm; sourceTree = "<group>"; };
 		3B5A84132569C28B00BAF2E5 /* filesystemImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filesystemImpl.cpp; sourceTree = "<group>"; };
@@ -1223,6 +1277,7 @@
 			files = (
 				3B8E43AB2587B200008218FC /* libSDL2_image.a in Frameworks */,
 				3B8E43AC2587B200008218FC /* libvorbis.a in Frameworks */,
+				3B522DD3259BFF0B003301C4 /* libssl.a in Frameworks */,
 				3B8E43AD2587B200008218FC /* OpenGL.framework in Frameworks */,
 				3B8E43AE2587B200008218FC /* IOKit.framework in Frameworks */,
 				3B8E43AF2587B200008218FC /* Carbon.framework in Frameworks */,
@@ -1239,6 +1294,7 @@
 				3B8E43BA2587B200008218FC /* libphysfs.a in Frameworks */,
 				3B8E43DB2587B2BE008218FC /* libruby.a in Frameworks */,
 				3B8E43BC2587B200008218FC /* CoreGraphics.framework in Frameworks */,
+				3B522DD1259BFF0B003301C4 /* libcrypto.a in Frameworks */,
 				3B8E43BD2587B200008218FC /* libbz2.tbd in Frameworks */,
 				3B8E43BE2587B200008218FC /* CoreAudio.framework in Frameworks */,
 				3B8E43BF2587B200008218FC /* AudioToolbox.framework in Frameworks */,
@@ -1268,6 +1324,7 @@
 			files = (
 				3BC65D622584EED10063AFF1 /* libSDL2_image.a in Frameworks */,
 				3BC65D5A2584EED10063AFF1 /* libvorbis.a in Frameworks */,
+				3B522DD2259BFF0B003301C4 /* libssl.a in Frameworks */,
 				3BC65D272584EDC60063AFF1 /* OpenGL.framework in Frameworks */,
 				3BC65D282584EDC60063AFF1 /* IOKit.framework in Frameworks */,
 				3BC65D2A2584EDC60063AFF1 /* Carbon.framework in Frameworks */,
@@ -1284,6 +1341,7 @@
 				3BC65D5C2584EED10063AFF1 /* libphysfs.a in Frameworks */,
 				3BC65D302584EDC60063AFF1 /* CoreGraphics.framework in Frameworks */,
 				3BC65D312584EDC60063AFF1 /* libbz2.tbd in Frameworks */,
+				3B522DD0259BFF0B003301C4 /* libcrypto.a in Frameworks */,
 				3BC65D322584EDC60063AFF1 /* CoreAudio.framework in Frameworks */,
 				3BC65D332584EDC60063AFF1 /* AudioToolbox.framework in Frameworks */,
 				3BC65D642584EED10063AFF1 /* libvorbisfile.a in Frameworks */,
@@ -1306,6 +1364,7 @@
 			files = (
 				3BC65E2C2584F4290063AFF1 /* libvorbisenc.a in Frameworks */,
 				3BC65E2D2584F4290063AFF1 /* libogg.a in Frameworks */,
+				3B522DCC259BFEE0003301C4 /* libssl.a in Frameworks */,
 				3BC65E222584F4290063AFF1 /* libSDL2_ttf.a in Frameworks */,
 				3BC65E2B2584F4290063AFF1 /* libphysfs.a in Frameworks */,
 				3BC65DEA2584F3AD0063AFF1 /* OpenGL.framework in Frameworks */,
@@ -1322,6 +1381,7 @@
 				3BC65E232584F4290063AFF1 /* libfreetype.a in Frameworks */,
 				3BC65E2A2584F4290063AFF1 /* libsigc-2.0.a in Frameworks */,
 				3BC65DFA2584F3AD0063AFF1 /* CoreGraphics.framework in Frameworks */,
+				3B522DCA259BFEE0003301C4 /* libcrypto.a in Frameworks */,
 				3BC65DFB2584F3AD0063AFF1 /* libbz2.tbd in Frameworks */,
 				3BC65DFC2584F3AD0063AFF1 /* CoreAudio.framework in Frameworks */,
 				3BC65DFD2584F3AD0063AFF1 /* AudioToolbox.framework in Frameworks */,
@@ -1344,7 +1404,9 @@
 			files = (
 				3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */,
 				3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */,
+				3B522DD6259BFF2D003301C4 /* libssl.a in Frameworks */,
 				3BE08102256879FE0006849F /* libSDL2main.a in Frameworks */,
+				3B522DD8259BFF2D003301C4 /* libcrypto.a in Frameworks */,
 				3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */,
 				3BE08107256879FE0006849F /* libpixman-1.a in Frameworks */,
 				3BE0811B256879FE0006849F /* libogg.a in Frameworks */,
@@ -1383,7 +1445,9 @@
 			files = (
 				3BF695272595FE5F0016920C /* libSDL2_ttf.a in Frameworks */,
 				3BF695282595FE5F0016920C /* libvorbisenc.a in Frameworks */,
+				3B522DD7259BFF2D003301C4 /* libssl.a in Frameworks */,
 				3BF695292595FE5F0016920C /* libSDL2main.a in Frameworks */,
+				3B522DD9259BFF2D003301C4 /* libcrypto.a in Frameworks */,
 				3BF6952A2595FE5F0016920C /* libopenal.a in Frameworks */,
 				3BF695692596053C0016920C /* libruby.a in Frameworks */,
 				3BF6952B2595FE5F0016920C /* libpixman-1.a in Frameworks */,
@@ -1422,6 +1486,7 @@
 			files = (
 				3BF695C4259608050016920C /* libvorbisenc.a in Frameworks */,
 				3BF695C5259608050016920C /* libogg.a in Frameworks */,
+				3B522DCD259BFEE0003301C4 /* libssl.a in Frameworks */,
 				3BF695C6259608050016920C /* libSDL2_ttf.a in Frameworks */,
 				3BF695C7259608050016920C /* libphysfs.a in Frameworks */,
 				3BF695C8259608050016920C /* OpenGL.framework in Frameworks */,
@@ -1438,6 +1503,7 @@
 				3BF695D3259608050016920C /* libfreetype.a in Frameworks */,
 				3BF695D4259608050016920C /* libsigc-2.0.a in Frameworks */,
 				3BF69603259608DB0016920C /* libruby.a in Frameworks */,
+				3B522DCB259BFEE0003301C4 /* libcrypto.a in Frameworks */,
 				3BF695D5259608050016920C /* CoreGraphics.framework in Frameworks */,
 				3BF695D6259608050016920C /* libbz2.tbd in Frameworks */,
 				3BF695D7259608050016920C /* CoreAudio.framework in Frameworks */,
@@ -1537,6 +1603,7 @@
 		3B10ED342568E95D00372D13 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				3B522DB1259BBFE9003301C4 /* net */,
 				3B10ED362568E95D00372D13 /* crypto */,
 				3B10ED392568E95D00372D13 /* util */,
 				3B10ED442568E95D00372D13 /* input */,
@@ -1759,6 +1826,7 @@
 				3B10EDF22568E96A00372D13 /* module_rpg3.rb.xxd */,
 				3B10EDF32568E96A00372D13 /* module_rpg.cpp */,
 				3B10EDF42568E96A00372D13 /* viewport-binding.cpp */,
+				3B522DDB259C1E53003301C4 /* http-binding.cpp */,
 			);
 			name = binding;
 			path = ../binding;
@@ -1775,6 +1843,18 @@
 				3B426F70256B8AC0009EA00F /* fs_std_fwd.hpp */,
 			);
 			path = ghc;
+			sourceTree = "<group>";
+		};
+		3B522DB1259BBFE9003301C4 /* net */ = {
+			isa = PBXGroup;
+			children = (
+				3B522DBD259BD046003301C4 /* httplib.h */,
+				3B522DB2259BC037003301C4 /* net.h */,
+				3B522DBF259BD072003301C4 /* net.cpp */,
+				3B522DE3259C2017003301C4 /* LUrlParser.h */,
+				3B522DE4259C2039003301C4 /* LUrlParser.cpp */,
+			);
+			path = net;
 			sourceTree = "<group>";
 		};
 		3B8E43582587B1E7008218FC /* Legacy */ = {
@@ -1813,6 +1893,8 @@
 				3BC65D4A2584EED10063AFF1 /* libvorbis.a */,
 				3BC65D4D2584EED10063AFF1 /* libvorbisenc.a */,
 				3BC65D542584EED10063AFF1 /* libvorbisfile.a */,
+				3B522DCE259BFF0B003301C4 /* libcrypto.a */,
+				3B522DCF259BFF0B003301C4 /* libssl.a */,
 			);
 			name = ARM64;
 			sourceTree = "<group>";
@@ -1838,6 +1920,8 @@
 				3BC65D852584F3780063AFF1 /* libvorbis.a */,
 				3BC65D7A2584F3780063AFF1 /* libvorbisenc.a */,
 				3BC65D812584F3780063AFF1 /* libvorbisfile.a */,
+				3B522DC8259BFEDF003301C4 /* libcrypto.a */,
+				3B522DC9259BFEDF003301C4 /* libssl.a */,
 			);
 			name = Universal;
 			sourceTree = "<group>";
@@ -1956,6 +2040,8 @@
 				3BE080E6256879FC0006849F /* libvorbis.a */,
 				3BE080FB256879FE0006849F /* libvorbisenc.a */,
 				3BE080E7256879FC0006849F /* libvorbisfile.a */,
+				3B522DD5259BFF2D003301C4 /* libcrypto.a */,
+				3B522DD4259BFF2D003301C4 /* libssl.a */,
 			);
 			name = Intel;
 			sourceTree = "<group>";
@@ -2220,6 +2306,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B522DE1259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3B8E435D2587B200008218FC /* tilemapvx.cpp in Sources */,
 				3B8E435E2587B200008218FC /* SDL_sound.c in Sources */,
 				3B8E435F2587B200008218FC /* rgssad.cpp in Sources */,
@@ -2229,6 +2316,7 @@
 				3B8E43632587B200008218FC /* main.cpp in Sources */,
 				3B8E43642587B200008218FC /* alstream.cpp in Sources */,
 				3B8E43652587B200008218FC /* table.cpp in Sources */,
+				3B522DC5259BD072003301C4 /* net.cpp in Sources */,
 				3B8E43662587B200008218FC /* table-binding.cpp in Sources */,
 				3B8E43672587B200008218FC /* config.cpp in Sources */,
 				3B8E43682587B200008218FC /* bitmap-binding.cpp in Sources */,
@@ -2245,6 +2333,7 @@
 				3B8E43732587B200008218FC /* viewport-binding.cpp in Sources */,
 				3B8E43742587B200008218FC /* windowvx-binding.cpp in Sources */,
 				3B8E43752587B200008218FC /* windowvx.cpp in Sources */,
+				3B522DEA259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3B8E43762587B200008218FC /* module_rpg.cpp in Sources */,
 				3B8E43772587B200008218FC /* autotiles.cpp in Sources */,
 				3B8E43782587B200008218FC /* audiostream.cpp in Sources */,
@@ -2311,6 +2400,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B522DDE259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3BC65CCD2584EDC60063AFF1 /* tilemapvx.cpp in Sources */,
 				3BC65CCE2584EDC60063AFF1 /* SDL_sound.c in Sources */,
 				3BC65CCF2584EDC60063AFF1 /* rgssad.cpp in Sources */,
@@ -2320,6 +2410,7 @@
 				3BC65CD32584EDC60063AFF1 /* main.cpp in Sources */,
 				3BC65CD42584EDC60063AFF1 /* alstream.cpp in Sources */,
 				3BC65CD52584EDC60063AFF1 /* table.cpp in Sources */,
+				3B522DC2259BD072003301C4 /* net.cpp in Sources */,
 				3BC65CD62584EDC60063AFF1 /* table-binding.cpp in Sources */,
 				3BC65CD72584EDC60063AFF1 /* config.cpp in Sources */,
 				3BC65CD82584EDC60063AFF1 /* bitmap-binding.cpp in Sources */,
@@ -2336,6 +2427,7 @@
 				3BC65CE32584EDC60063AFF1 /* viewport-binding.cpp in Sources */,
 				3BC65CE42584EDC60063AFF1 /* windowvx-binding.cpp in Sources */,
 				3BC65CE52584EDC60063AFF1 /* windowvx.cpp in Sources */,
+				3B522DE7259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3BC65CE62584EDC60063AFF1 /* module_rpg.cpp in Sources */,
 				3BC65CE72584EDC60063AFF1 /* autotiles.cpp in Sources */,
 				3BC65CE82584EDC60063AFF1 /* audiostream.cpp in Sources */,
@@ -2395,6 +2487,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B522DDC259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3BC65D8E2584F3AD0063AFF1 /* tilemapvx.cpp in Sources */,
 				3BC65D8F2584F3AD0063AFF1 /* SDL_sound.c in Sources */,
 				3BC65D902584F3AD0063AFF1 /* rgssad.cpp in Sources */,
@@ -2404,6 +2497,7 @@
 				3BC65D942584F3AD0063AFF1 /* main.cpp in Sources */,
 				3BC65D952584F3AD0063AFF1 /* alstream.cpp in Sources */,
 				3BC65D962584F3AD0063AFF1 /* table.cpp in Sources */,
+				3B522DC0259BD072003301C4 /* net.cpp in Sources */,
 				3BC65D972584F3AD0063AFF1 /* table-binding.cpp in Sources */,
 				3BC65D982584F3AD0063AFF1 /* config.cpp in Sources */,
 				3BC65D992584F3AD0063AFF1 /* bitmap-binding.cpp in Sources */,
@@ -2420,6 +2514,7 @@
 				3BC65DA42584F3AD0063AFF1 /* viewport-binding.cpp in Sources */,
 				3BC65DA52584F3AD0063AFF1 /* windowvx-binding.cpp in Sources */,
 				3BC65DA62584F3AD0063AFF1 /* windowvx.cpp in Sources */,
+				3B522DE5259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3BC65DA72584F3AD0063AFF1 /* module_rpg.cpp in Sources */,
 				3BC65DA82584F3AD0063AFF1 /* autotiles.cpp in Sources */,
 				3BC65DA92584F3AD0063AFF1 /* audiostream.cpp in Sources */,
@@ -2479,6 +2574,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B522DDD259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3B10EDC22568E95E00372D13 /* tilemapvx.cpp in Sources */,
 				3B10ED212568E8F100372D13 /* SDL_sound.c in Sources */,
 				3B10EDA72568E95E00372D13 /* rgssad.cpp in Sources */,
@@ -2488,6 +2584,7 @@
 				3B10EDAF2568E95E00372D13 /* main.cpp in Sources */,
 				3B10EDB42568E95E00372D13 /* alstream.cpp in Sources */,
 				3B10EDAA2568E95E00372D13 /* table.cpp in Sources */,
+				3B522DC1259BD072003301C4 /* net.cpp in Sources */,
 				3B10EE002568E96A00372D13 /* table-binding.cpp in Sources */,
 				3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */,
 				3B10EDFF2568E96A00372D13 /* bitmap-binding.cpp in Sources */,
@@ -2504,6 +2601,7 @@
 				3B10EE0C2568E96A00372D13 /* viewport-binding.cpp in Sources */,
 				3B10EDFA2568E96A00372D13 /* windowvx-binding.cpp in Sources */,
 				3B10EDBC2568E95E00372D13 /* windowvx.cpp in Sources */,
+				3B522DE6259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */,
 				3B10EDD22568E95E00372D13 /* autotiles.cpp in Sources */,
 				3B10EDB92568E95E00372D13 /* audiostream.cpp in Sources */,
@@ -2563,6 +2661,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B522DE0259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3BF694D82595FE5F0016920C /* tilemapvx.cpp in Sources */,
 				3BF694D92595FE5F0016920C /* SDL_sound.c in Sources */,
 				3BF694DA2595FE5F0016920C /* rgssad.cpp in Sources */,
@@ -2572,6 +2671,7 @@
 				3BF694DE2595FE5F0016920C /* main.cpp in Sources */,
 				3BF694DF2595FE5F0016920C /* alstream.cpp in Sources */,
 				3BF694E02595FE5F0016920C /* table.cpp in Sources */,
+				3B522DC4259BD072003301C4 /* net.cpp in Sources */,
 				3BF694E12595FE5F0016920C /* table-binding.cpp in Sources */,
 				3BF694E22595FE5F0016920C /* config.cpp in Sources */,
 				3BF694E32595FE5F0016920C /* bitmap-binding.cpp in Sources */,
@@ -2588,6 +2688,7 @@
 				3BF694EE2595FE5F0016920C /* viewport-binding.cpp in Sources */,
 				3BF694EF2595FE5F0016920C /* windowvx-binding.cpp in Sources */,
 				3BF694F02595FE5F0016920C /* windowvx.cpp in Sources */,
+				3B522DE9259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3BF694F12595FE5F0016920C /* module_rpg.cpp in Sources */,
 				3BF694F22595FE5F0016920C /* autotiles.cpp in Sources */,
 				3BF694F32595FE5F0016920C /* audiostream.cpp in Sources */,
@@ -2647,6 +2748,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B522DDF259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3BF69576259608050016920C /* tilemapvx.cpp in Sources */,
 				3BF69577259608050016920C /* SDL_sound.c in Sources */,
 				3BF69578259608050016920C /* rgssad.cpp in Sources */,
@@ -2656,6 +2758,7 @@
 				3BF6957C259608050016920C /* main.cpp in Sources */,
 				3BF6957D259608050016920C /* alstream.cpp in Sources */,
 				3BF6957E259608050016920C /* table.cpp in Sources */,
+				3B522DC3259BD072003301C4 /* net.cpp in Sources */,
 				3BF6957F259608050016920C /* table-binding.cpp in Sources */,
 				3BF69580259608050016920C /* config.cpp in Sources */,
 				3BF69581259608050016920C /* bitmap-binding.cpp in Sources */,
@@ -2672,6 +2775,7 @@
 				3BF6958C259608050016920C /* viewport-binding.cpp in Sources */,
 				3BF6958D259608050016920C /* windowvx-binding.cpp in Sources */,
 				3BF6958E259608050016920C /* windowvx.cpp in Sources */,
+				3B522DE8259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3BF6958F259608050016920C /* module_rpg.cpp in Sources */,
 				3BF69590259608050016920C /* autotiles.cpp in Sources */,
 				3BF69591259608050016920C /* audiostream.cpp in Sources */,
@@ -2838,6 +2942,7 @@
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -2924,6 +3029,7 @@
 					"$(inherited)",
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3579,6 +3685,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
+					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
@@ -3617,6 +3724,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
+					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(DEPENDENCY_SEARCH_PATH)/lib",

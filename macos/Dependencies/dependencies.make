@@ -243,6 +243,23 @@ $(DOWNLOADS)/openal/cmakebuild/Makefile: $(DOWNLOADS)/openal/CMakeLists.txt
 $(DOWNLOADS)/openal/CMakeLists.txt:
 	$(CLONE) $(GITLAB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
 
+# OpenSSL
+openssl: init_dirs $(LIBDIR)/libssl.a
+$(LIBDIR)/libssl.a: $(DOWNLOADS)/openssl/Makefile
+	cd $(DOWNLOADS)/openssl; \
+	make -j$(NPROC); make install_sw
+
+$(DOWNLOADS)/openssl/Makefile: $(DOWNLOADS)/openssl/Configure
+	cd $(DOWNLOADS)/openssl; \
+	./Configure $(OPENSSL_FLAGS) \
+	no-shared \
+	--prefix="$(BUILD_PREFIX)" \
+	--openssldir="$(BUILD_PREFIX)"
+
+$(DOWNLOADS)/openssl/Configure:
+	$(CLONE) $(GITHUB)/openssl/openssl $(DOWNLOADS)/openssl; \
+	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
+
 # Standard ruby
 ruby: init_dirs $(LIBDIR)/libruby.3.0-static.a
 
@@ -307,6 +324,6 @@ clean-downloads:
 clean-compiled:
 	-rm -rf build-$(SDK)-$(ARCH)
 
-deps-core: libvorbis sigcxx pixman libpng libjpeg physfs sdl2 sdl2image sdl2ttf openal
+deps-core: libvorbis sigcxx pixman libpng libjpeg physfs sdl2 sdl2image sdl2ttf openal openssl
 everything: deps-core ruby
 legacy: deps-core legacy-ruby

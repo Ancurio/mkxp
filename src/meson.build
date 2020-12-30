@@ -27,6 +27,15 @@ else
     endforeach
 endif
 
+# If OpenSSL is present, you get HTTPS support
+openssl = dependency('openssl', required: false, static: build_static)
+if openssl.found() == true
+    global_dependencies += openssl
+    global_args += '-DMKXPZ_SSL'
+else
+    warning('Could not locate OpenSSL. HTTPS will be disabled.')
+endif
+
 # Windows needs to be treated like a special needs child here
 explicit_libs = ''
 if host_system == 'windows'
