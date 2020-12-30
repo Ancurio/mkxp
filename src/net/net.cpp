@@ -112,8 +112,6 @@ StringMap &HTTPRequest::headers() {
 HTTPResponse HTTPRequest::get() {
     HTTPResponse ret;
     auto target = readURL(destination.c_str());
-    auto t = getHost(target).c_str();
-    auto tt = getPath(target).c_str();
     httplib::Client client(getHost(target).c_str());
     httplib::Headers head;
     

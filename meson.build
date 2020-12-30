@@ -167,7 +167,6 @@ elif host_system == 'darwin'
     warning('Please consider using the Xcode project located in the `macos` directory instead.')
 else
     subdir('linux')
-    add_project_arguments('-std=c++11', language: 'objcpp')
     rpath = '$ORIGIN/lib'
     if get_option('appimage') != true
         if sizeof['long'] == 8 and get_option('force32') != true

@@ -772,7 +772,7 @@ static void showExc(VALUE exc, const BacktraceData &btData) {
 }
 
 static void mriBindingExecute() {
-#if RAPI_FULL > 200
+#if RAPI_MAJOR > 2
   /* Normally only a ruby executable would do a sysinit,
    * but not doing it will lead to crashes due to closed
    * stdio streams on some platforms (eg. Windows) */
@@ -788,9 +788,8 @@ static void mriBindingExecute() {
   rb_eval_string("$KCODE='U'");
 #endif
 
-#if RAPI_FULL >= 300 || defined(MKXPZ_JIT)
-  const char*  rboptions[]  =  {"", "--disable-gems", "--jit-verbose=1", "--jit-max-cache=100", "--jit-min-calls=100000", "-e "};
-  void* node = ruby_process_options(6, const_cast<char**>(rboptions));
+#if RAPI_MAJOR >= 3
+  void* node = ruby_process_options(argc, argv);
   int state;
   bool valid = ruby_executable_node(node, &state);
   state = ruby_exec_node(node);
