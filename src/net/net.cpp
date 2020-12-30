@@ -56,6 +56,12 @@ std::string getHost(LUrlParser::ParseURL url) {
     host += url.scheme_;
     host += "://";
     host += url.host_;
+    
+    int port;
+    if (!url.port_.empty() && url.getPort(&port)) {
+        host += ":";
+        host += std::to_string(port);
+    }
     return host;
 }
 
