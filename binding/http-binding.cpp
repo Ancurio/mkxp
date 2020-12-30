@@ -12,30 +12,52 @@
 
 #include "net/net.h"
 
+VALUE stringMap2hash(mkxp_net::StringMap &map) {
+    VALUE ret = rb_hash_new();
+    for (auto const &item : map) {
+        VALUE key = rb_str_new_cstr(item.first.c_str());
+        VALUE val = rb_str_new_cstr(item.second.c_str());
+        rb_hash_aset(ret, key, val);
+    }
+    return ret;
+}
+
+mkxp_net::StringMap hash2StringMap(VALUE hash) {
+    mkxp_net::StringMap ret;
+    Check_Type(hash, RUBY_T_HASH);
+    
+    VALUE keys = rb_funcall(hash, rb_intern("keys"), 0);
+    for (int i = 0; i < RARRAY_LEN(keys); i++) {
+        VALUE key = rb_ary_entry(keys, i);
+        VALUE val = rb_hash_aref(hash, key);
+        SafeStringValue(key);
+        SafeStringValue(val);
+        
+        ret.emplace(RSTRING_PTR(key), RSTRING_PTR(val));
+    }
+    return ret;
+}
+
 RB_METHOD(httpGet) {
     RB_UNUSED_PARAM;
     
-    VALUE path;
-    rb_scan_args(argc, argv, "1", &path);
+    VALUE path, rheaders;
+    rb_scan_args(argc, argv, "11", &path, &rheaders);
     SafeStringValue(path);
     
     VALUE ret;
 
     try {
         mkxp_net::HTTPRequest req(RSTRING_PTR(path));
+        if (rheaders != Qnil) {
+            auto headers = hash2StringMap(rheaders);
+            req.headers().insert(headers.begin(), headers.end());
+        }
         auto res = req.get();
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
         rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_str_new_cstr(res.body().c_str()));
-        
-        VALUE headers = rb_hash_new();
-        for (auto header : res.headers()) {
-            VALUE key = rb_str_new_cstr(header.first.c_str());
-            VALUE val = rb_str_new_cstr(header.second.c_str());
-            rb_hash_aset(headers, key, val);
-        }
-        
-        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), headers);
+        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);
     }
@@ -46,41 +68,27 @@ RB_METHOD(httpGet) {
 RB_METHOD(httpPost) {
     RB_UNUSED_PARAM;
     
-    VALUE path, postDataHash;
-    rb_scan_args(argc, argv, "2", &path, &postDataHash);
+    VALUE path, postDataHash, rheaders;
+    rb_scan_args(argc, argv, "2", &path, &postDataHash, &rheaders);
     SafeStringValue(path);
-    Check_Type(postDataHash, T_HASH);
     
     VALUE ret;
 
     try {
         mkxp_net::HTTPRequest req(RSTRING_PTR(path));
-        mkxp_net::StringMap postData;
+        if (rheaders != Qnil) {
+            auto headers = hash2StringMap(rheaders);
+            req.headers().insert(headers.begin(), headers.end());
+        }
         
         VALUE keys = NUM2INT(rb_funcall(postDataHash, rb_intern("keys"), 0));
         
-        for (int i = 0; i < RARRAY_LEN(keys); i++) {
-            VALUE k = rb_ary_entry(keys, i);
-            VALUE v = rb_hash_aref(postDataHash, k);
-            SafeStringValue(k);
-            SafeStringValue(v);
-            
-            postData.emplace(RSTRING_PTR(k), RSTRING_PTR(v));
-        }
-        
+        auto postData = hash2StringMap(postDataHash);
         auto res = req.post(postData);
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
         rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_str_new_cstr(res.body().c_str()));
-        
-        VALUE headers = rb_hash_new();
-        for (auto header : res.headers()) {
-            VALUE key = rb_str_new_cstr(header.first.c_str());
-            VALUE val = rb_str_new_cstr(header.second.c_str());
-            rb_hash_aset(headers, key, val);
-        }
-        
-        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), headers);
+        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);
     }
@@ -91,8 +99,8 @@ RB_METHOD(httpPost) {
 RB_METHOD(httpPostBody) {
     RB_UNUSED_PARAM;
     
-    VALUE path, body, ctype;
-    rb_scan_args(argc, argv, "3", &path, &body, &ctype);
+    VALUE path, body, ctype, rheaders;
+    rb_scan_args(argc, argv, "3", &path, &body, &ctype, &rheaders);
     SafeStringValue(path);
     SafeStringValue(body);
     SafeStringValue(ctype);
@@ -101,21 +109,15 @@ RB_METHOD(httpPostBody) {
 
     try {
         mkxp_net::HTTPRequest req(RSTRING_PTR(path));
-        mkxp_net::StringMap postData;
-        
+        if (rheaders != Qnil) {
+            auto headers = hash2StringMap(rheaders);
+            req.headers().insert(headers.begin(), headers.end());
+        }
         auto res = req.post(RSTRING_PTR(body), RSTRING_PTR(ctype));
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
         rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_str_new_cstr(res.body().c_str()));
-        
-        VALUE headers = rb_hash_new();
-        for (auto header : res.headers()) {
-            VALUE key = rb_str_new_cstr(header.first.c_str());
-            VALUE val = rb_str_new_cstr(header.second.c_str());
-            rb_hash_aset(headers, key, val);
-        }
-        
-        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), headers);
+        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);
     }
@@ -123,7 +125,7 @@ RB_METHOD(httpPostBody) {
     return ret;
 }
 
-VALUE json2rb(json5pp::value v) {
+VALUE json2rb(json5pp::value const &v) {
     if (v.is_null())
         return Qnil;
     
@@ -151,7 +153,7 @@ VALUE json2rb(json5pp::value v) {
     if (v.is_object()) {
         auto &o = v.as_object();
         VALUE ret = rb_hash_new();
-        for (auto pair : o) {
+        for (auto const &pair : o) {
             rb_hash_aset(ret, rb_str_new_cstr(pair.first.c_str()), json2rb(pair.second));
         }
         return ret;
