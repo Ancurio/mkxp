@@ -7,10 +7,10 @@
 
 #include <stdio.h>
 
+#include "util/json5pp.hpp"
 #include "binding-util.h"
 
 #include "net/net.h"
-#include "util/json5pp.hpp"
 
 RB_METHOD(httpGet) {
     RB_UNUSED_PARAM;
