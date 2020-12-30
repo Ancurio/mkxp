@@ -3697,7 +3697,7 @@
 					"-w",
 				);
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoro.mkxpz;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zoro.mkxp-z";
 				PRODUCT_NAME = "mkxp-z";
 			};
 			name = Debug;
@@ -3736,7 +3736,7 @@
 					"-w",
 				);
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoro.mkxpz;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zoro.mkxp-z";
 				PRODUCT_NAME = "mkxp-z";
 			};
 			name = Release;
