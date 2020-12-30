@@ -69,7 +69,7 @@ RB_METHOD(httpPost) {
     RB_UNUSED_PARAM;
     
     VALUE path, postDataHash, rheaders;
-    rb_scan_args(argc, argv, "2", &path, &postDataHash, &rheaders);
+    rb_scan_args(argc, argv, "21", &path, &postDataHash, &rheaders);
     SafeStringValue(path);
     
     VALUE ret;
@@ -100,7 +100,7 @@ RB_METHOD(httpPostBody) {
     RB_UNUSED_PARAM;
     
     VALUE path, body, ctype, rheaders;
-    rb_scan_args(argc, argv, "3", &path, &body, &ctype, &rheaders);
+    rb_scan_args(argc, argv, "31", &path, &body, &ctype, &rheaders);
     SafeStringValue(path);
     SafeStringValue(body);
     SafeStringValue(ctype);
