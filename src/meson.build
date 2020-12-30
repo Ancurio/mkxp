@@ -28,12 +28,14 @@ else
 endif
 
 # If OpenSSL is present, you get HTTPS support
-openssl = dependency('openssl', required: false, static: build_static)
-if openssl.found() == true
-    global_dependencies += openssl
-    global_args += '-DMKXPZ_SSL'
-else
-    warning('Could not locate OpenSSL. HTTPS will be disabled.')
+if get_option('enable-https') == true
+    openssl = dependency('openssl', required: false, static: build_static)
+    if openssl.found() == true
+        global_dependencies += openssl
+        global_args += '-DMKXPZ_SSL'
+    else
+        warning('Could not locate OpenSSL. HTTPS will be disabled.')
+    endif
 endif
 
 # Windows needs to be treated like a special needs child here
@@ -72,6 +74,7 @@ global_include_dirs += include_directories('.',
     'etc',
     'filesystem', 'filesystem/ghc',
     'input',
+    'net',
     'system',
     'util'
 )
@@ -153,6 +156,9 @@ main_source = files(
     
     'input/input.cpp',
     'input/keybindings.cpp',
+
+    'net/LUrlParser.cpp',
+    'net/net.cpp',
 
     'system/fake-api.cpp',
     'system/systemImpl.cpp'

@@ -36,7 +36,8 @@ binding_source = [files(
     'module_rpg.cpp',
     'filesystem-binding.cpp',
     'windowvx-binding.cpp',
-    'tilemapvx-binding.cpp'
+    'tilemapvx-binding.cpp',
+    'http-binding.cpp'
 )]
 
 if steamworks == true
