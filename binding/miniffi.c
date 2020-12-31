@@ -8,13 +8,13 @@ mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int npar
                                  p->params[4], p->params[5], p->params[6], p->params[7]);
 }
 #else
-mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *params, size_t nparams) {
-    return call_asm(target, params, nparams);
+mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, size_t nparams) {
+    return call_asm(target, p, nparams);
 }
 
 #define INTEL_ASM ".intel_syntax noprefix\n"
 #ifdef _WIN32
-mffi_value call_asm(MINIFFI_FUNC target, MINIFFIFuncArgs *params, size_t nparams) {
+mffi_value call_asm(MINIFFI_FUNC target, MINIFFIFuncArgs *p, size_t nparams) {
     mffi_value ret;
     void *old_esp = 0;
 
@@ -57,7 +57,7 @@ mffi_value call_asm(MINIFFI_FUNC target, MINIFFIFuncArgs *params, size_t nparams
     return ret;
 }
 #else
-mffi_value call_asm(MINIFFI_FUNC target, MINIFFIFuncArgs *params, size_t nparams) {
+mffi_value call_asm(MINIFFI_FUNC target, MINIFFIFuncArgs *p, size_t nparams) {
     mffi_value ret;
     void *old_rsp = 0;
     asm volatile(INTEL_ASM

@@ -61,6 +61,8 @@ extern "C" {
 #define NULL_IO "/dev/null"
 #endif
 
+#define MACRO_STRINGIFY(x) #x
+
 extern const char module_rpg1[];
 extern const char module_rpg2[];
 extern const char module_rpg3[];
@@ -206,6 +208,7 @@ static void mriBindingInit() {
 
   /* Load global constants */
   rb_gv_set("MKXP", Qtrue);
+  rb_const_set(mod, rb_intern("VERSION"), rb_str_new_cstr(MACRO_STRINGIFY(MKXPZ_VERSION)));
 
   VALUE debug = rb_bool_new(shState->config().editor.debug);
   if (rgssVer == 1)
