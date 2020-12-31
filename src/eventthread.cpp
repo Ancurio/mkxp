@@ -126,6 +126,9 @@ void EventThread::process(RGSSThreadData &rtData)
 	int defScreenW, defScreenH;
 	defScreenW = rtData.config.defScreenW;
 	defScreenH = rtData.config.defScreenH;
+	SDL_GetDesktopDisplayMode(0, &dm);
+	SDL_SetWindowMaximumSize(win, dm.w, dm.h);
+	SDL_SetWindowMinimumSize(win, 544, 416);
 	SDL_SetWindowSize(win, 544, 416);
 	int defScreenW_new, defScreenH_new;
 	int firstrun;
@@ -216,7 +219,7 @@ void EventThread::process(RGSSThreadData &rtData)
 			{
 			case SDL_WINDOWEVENT_SIZE_CHANGED :
 				winW = event.window.data1;
-				winH = event.window.data2;				
+				winH = event.window.data2;
 				if (firstrun == 1)
 				{
 					firstrun = 2;
