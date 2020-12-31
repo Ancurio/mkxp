@@ -1,52 +1,31 @@
 // Most of the MiniFFI class was taken from Ruby 1.8's Win32API.c,
 // it's just as basic but should work fine for the moment
 
-#include "fake-api.h"
+#include "system/fake-api.h"
 #include <SDL.h>
 #include <cstdint>
 
+#include "miniffi.h"
 #include "binding-util.h"
-#include "debugwriter.h"
+
+#if defined(__linux__) || defined(__APPLE__)
+  #define MVAL2RB(v) ULONG2NUM(v)
+  #define RB2MVAL(v) (mffi_value)NUM2ULONG(v)
+#else
+  #ifdef _WIN64
+    #define MVAL2RB(v) ULL2NUM(v)
+    #define RB2MVAL(v) (mffi_value)NUM2ULL(v)
+  #else
+    #define MVAL2RB(v) UINT2NUM(v)
+    #define RB2MVAL(v) (mffi_value)NUM2UINT(v)
+  #endif
+#endif
 
 #define _T_VOID 0
 #define _T_NUMBER 1
 #define _T_POINTER 2
 #define _T_INTEGER 3
 #define _T_BOOL 4
-
-#ifndef __WIN32__
-#define MINIFFI_MAX_ARGS 8l
-#else
-#define MINIFFI_MAX_ARGS 32l
-#endif
-
-#define INTEL_ASM ".intel_syntax noprefix\n"
-
-// Might need to let MiniFFI.initialize set calling convention
-// as an optional arg, this won't work with everything
-// Maybe libffi would help out with this
-
-// Only using 8 max args instead of 16 to reduce the time taken
-// to set all those variables up and ease the eyesore, and I don't
-// think there are many functions one would need to use that require
-// that many arguments anyway
-
-typedef struct {
-  unsigned long params[MINIFFI_MAX_ARGS];
-} MiniFFIFuncArgs;
-
-#ifndef __WIN32__
-// L O N G, but variables won't get set up correctly otherwise
-// should allow for __fastcalls (macOS likes these) and whatever else
-typedef PREFABI void *(*MINIFFI_FUNC)(unsigned long, unsigned long,
-                                      unsigned long, unsigned long,
-                                      unsigned long, unsigned long,
-                                      unsigned long, unsigned long);
-#else
-typedef PREFABI void *(*MINIFFI_FUNC)(...);
-#endif
-// MiniFFI class, also named Win32API on Windows
-// Uses LoadLibrary/GetProcAddress on Windows, dlopen/dlsym everywhere else
 
 #if RAPI_FULL > 187
 DEF_TYPE_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
@@ -115,7 +94,7 @@ RB_METHOD(MiniFFI_initialize) {
   if (!hfunc)
     rb_raise(rb_eRuntimeError, "%s", SDL_GetError());
 
-  rb_iv_set(self, "_func", ULONG2NUM((unsigned long)hfunc));
+  rb_iv_set(self, "_func", MVAL2RB((mffi_value)hfunc));
   rb_iv_set(self, "_funcname", func);
   rb_iv_set(self, "_libname", libname);
 
@@ -251,7 +230,7 @@ RB_METHOD(MiniFFI_call) {
       if (NIL_P(str)) {
         lParam = 0;
       } else if (FIXNUM_P(str)) {
-        lParam = NUM2ULONG(str);
+        lParam = RB2MVAL(str);
       } else {
         StringValue(str);
         rb_str_modify(str);
@@ -265,70 +244,22 @@ RB_METHOD(MiniFFI_call) {
 
     case _T_INTEGER:
 #if INTPTR_MAX == INT64_MAX
-      lParam = NUM2UINT(rb_ary_entry(args, i)) & UINT32_MAX;
+      lParam = RB2MVAL(rb_ary_entry(args, i)) & UINT32_MAX;
       break;
 #endif
     case _T_NUMBER:
     default:
-      lParam = NUM2ULONG(rb_ary_entry(args, i));
+      lParam = RB2MVAL(rb_ary_entry(args, i));
       break;
     }
     params[i] = lParam;
   }
-#ifndef __WINDOWS__
-  unsigned long ret =
-      (unsigned long)ApiFunction(params[0], params[1], params[2], params[3],
-                                 params[4], params[5], params[6], params[7]);
-
-// Telling the compiler that the called function uses stdcall
-// apparently doesn't work anymore, so assembly is used instead.
-// Technically also allows for an unlimited number of arguments,
-// but the above code does not
-#else
-  unsigned long ret = 0;
-  void *old_esp = 0;
-
-  asm volatile(INTEL_ASM
-
-               "MiniFFI_call_asm:\n"
-               "mov [edi], esp\n"
-               "test ebx, ebx\n"
-               "jz mffi_call_void\n"
-
-               "shl ebx, 2\n"
-               "mov ecx, ebx\n"
-
-               "mffi_call_loop:\n"
-               "sub ecx, 4\n"
-               "mov ebx, [esi+ecx]\n"
-               "push ebx\n"
-               "test ecx, ecx\n"
-               "jnz mffi_call_loop\n"
-
-               "mffi_call_void:\n"
-               "call edx\n"
-
-               : "=a"(ret)
-               : "b"(nimport), "S"(&param), "d"(ApiFunction), "D"(&old_esp)
-               : "ecx");
-
-
-  // If esp doesn't match, this was probably a cdecl and not a stdcall.
-  // Move the stack pointer back to where it should be
-  asm volatile(INTEL_ASM
-               "mov edx, [edi]\n"
-               "cmp edx, esp\n"
-               "cmovne esp, edx"
-               :
-               : "D"(&old_esp)
-               : "edx"
-  );
-#endif
+  mffi_value ret = miniffi_call_intern(ApiFunction, &param, nimport);
 
   switch (FIX2INT(own_exports)) {
   case _T_NUMBER:
   case _T_INTEGER:
-    return ULONG2NUM(ret);
+    return MVAL2RB(ret);
 
   case _T_POINTER:
     return rb_str_new_cstr((char *)ret);
@@ -338,7 +269,7 @@ RB_METHOD(MiniFFI_call) {
 
   case _T_VOID:
   default:
-    return ULONG2NUM(0);
+    return MVAL2RB(0);
   }
 }
 

@@ -93,14 +93,8 @@ endif
 # Decide whether or not to use MiniFFI
 miniffi = get_option('use_miniffi')
 if miniffi == true
-    if win64 != true
-        miniffi = true
-        global_args += '-DMKXPZ_MINIFFI'
-    else
-        warning('64-bit MiniFFI is only supported on Linux and macOS.')
-        warning('To use MiniFFI/Win32API on Windows, target 32-bit.')
-        miniffi = false
-    endif
+    miniffi = true
+    global_args += '-DMKXPZ_MINIFFI'
 endif
 
 # Defines

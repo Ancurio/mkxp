@@ -117,6 +117,12 @@
 		3B10EE092568E96A00372D13 /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
 		3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF32568E96A00372D13 /* module_rpg.cpp */; };
 		3B10EE0C2568E96A00372D13 /* viewport-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF42568E96A00372D13 /* viewport-binding.cpp */; };
+		3B312843259E7DC1002EAB43 /* miniffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.c */; };
+		3B312844259E7DC1002EAB43 /* miniffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.c */; };
+		3B312845259E7DC1002EAB43 /* miniffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.c */; };
+		3B312846259E7DC1002EAB43 /* miniffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.c */; };
+		3B312847259E7DC1002EAB43 /* miniffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.c */; };
+		3B312848259E7DC1002EAB43 /* miniffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.c */; };
 		3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
 		3B522DA9259BAA42003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B522DAA259BAA4A003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1159,6 +1165,8 @@
 		3B10EDF32568E96A00372D13 /* module_rpg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = module_rpg.cpp; sourceTree = "<group>"; };
 		3B10EDF42568E96A00372D13 /* viewport-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "viewport-binding.cpp"; sourceTree = "<group>"; };
 		3B10EE1F2569348E00372D13 /* json5pp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json5pp.hpp; sourceTree = "<group>"; };
+		3B312841259E7DC1002EAB43 /* miniffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniffi.h; sourceTree = "<group>"; };
+		3B312842259E7DC1002EAB43 /* miniffi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = miniffi.c; sourceTree = "<group>"; };
 		3B426F6B256B8AC0009EA00F /* fs_std_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_impl.hpp; sourceTree = "<group>"; };
 		3B426F6C256B8AC0009EA00F /* fs_fwd.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_fwd.hpp; sourceTree = "<group>"; };
 		3B426F6D256B8AC0009EA00F /* fs_std.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std.hpp; sourceTree = "<group>"; };
@@ -1814,6 +1822,8 @@
 				3B10EDE62568E96A00372D13 /* etc-binding.cpp */,
 				3B10EDE72568E96A00372D13 /* tilemap-binding.cpp */,
 				3B10EDE82568E96A00372D13 /* miniffi-binding.cpp */,
+				3B312842259E7DC1002EAB43 /* miniffi.c */,
+				3B312841259E7DC1002EAB43 /* miniffi.h */,
 				3B10EDE92568E96A00372D13 /* graphics-binding.cpp */,
 				3B10EDEA2568E96A00372D13 /* plane-binding.cpp */,
 				3B10EDEB2568E96A00372D13 /* binding-types.h */,
@@ -2335,6 +2345,7 @@
 				3B8E43752587B200008218FC /* windowvx.cpp in Sources */,
 				3B522DEA259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3B8E43762587B200008218FC /* module_rpg.cpp in Sources */,
+				3B312848259E7DC1002EAB43 /* miniffi.c in Sources */,
 				3B8E43772587B200008218FC /* autotiles.cpp in Sources */,
 				3B8E43782587B200008218FC /* audiostream.cpp in Sources */,
 				3B8E43792587B200008218FC /* binding-util.cpp in Sources */,
@@ -2429,6 +2440,7 @@
 				3BC65CE52584EDC60063AFF1 /* windowvx.cpp in Sources */,
 				3B522DE7259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3BC65CE62584EDC60063AFF1 /* module_rpg.cpp in Sources */,
+				3B312845259E7DC1002EAB43 /* miniffi.c in Sources */,
 				3BC65CE72584EDC60063AFF1 /* autotiles.cpp in Sources */,
 				3BC65CE82584EDC60063AFF1 /* audiostream.cpp in Sources */,
 				3BC65CE92584EDC60063AFF1 /* binding-util.cpp in Sources */,
@@ -2516,6 +2528,7 @@
 				3BC65DA62584F3AD0063AFF1 /* windowvx.cpp in Sources */,
 				3B522DE5259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3BC65DA72584F3AD0063AFF1 /* module_rpg.cpp in Sources */,
+				3B312843259E7DC1002EAB43 /* miniffi.c in Sources */,
 				3BC65DA82584F3AD0063AFF1 /* autotiles.cpp in Sources */,
 				3BC65DA92584F3AD0063AFF1 /* audiostream.cpp in Sources */,
 				3BC65DAA2584F3AD0063AFF1 /* binding-util.cpp in Sources */,
@@ -2603,6 +2616,7 @@
 				3B10EDBC2568E95E00372D13 /* windowvx.cpp in Sources */,
 				3B522DE6259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */,
+				3B312844259E7DC1002EAB43 /* miniffi.c in Sources */,
 				3B10EDD22568E95E00372D13 /* autotiles.cpp in Sources */,
 				3B10EDB92568E95E00372D13 /* audiostream.cpp in Sources */,
 				3B10EE082568E96A00372D13 /* binding-util.cpp in Sources */,
@@ -2690,6 +2704,7 @@
 				3BF694F02595FE5F0016920C /* windowvx.cpp in Sources */,
 				3B522DE9259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3BF694F12595FE5F0016920C /* module_rpg.cpp in Sources */,
+				3B312847259E7DC1002EAB43 /* miniffi.c in Sources */,
 				3BF694F22595FE5F0016920C /* autotiles.cpp in Sources */,
 				3BF694F32595FE5F0016920C /* audiostream.cpp in Sources */,
 				3BF694F42595FE5F0016920C /* binding-util.cpp in Sources */,
@@ -2777,6 +2792,7 @@
 				3BF6958E259608050016920C /* windowvx.cpp in Sources */,
 				3B522DE8259C2039003301C4 /* LUrlParser.cpp in Sources */,
 				3BF6958F259608050016920C /* module_rpg.cpp in Sources */,
+				3B312846259E7DC1002EAB43 /* miniffi.c in Sources */,
 				3BF69590259608050016920C /* autotiles.cpp in Sources */,
 				3BF69591259608050016920C /* audiostream.cpp in Sources */,
 				3BF69592259608050016920C /* binding-util.cpp in Sources */,
