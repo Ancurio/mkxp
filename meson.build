@@ -52,7 +52,7 @@ if steamworks_path != ''
 
     if steamlib.found() == true
         global_include_dirs += include_directories('steamshim')
-        global_args += '-DHAVE_STEAMSHIM'
+        global_args += '-DMKXPZ_STEAM'
         global_sources += 'steamshim/steamshim_child.c'
         steamworks = true
     endif
@@ -82,10 +82,12 @@ endif
 global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas', '-Wno-unknown-warning-option', '-Wno-deprecated-register']
 if compilers['cpp'].get_id() == 'clang'
     global_args += ['-Wno-undefined-var-template', '-Wno-delete-non-abstract-non-virtual-dtor']
-    global_args += '-masm=intel'
 endif
 if host_system == 'windows'
     global_args += '-Wno-unknown-attributes'
+    if compilers['cpp'].get_id() != 'clang'
+        global_args += '-masm=intel'
+    endif
 endif
 
 # Decide whether or not to use MiniFFI
@@ -93,7 +95,7 @@ miniffi = get_option('use_miniffi')
 if miniffi == true
     if win64 != true
         miniffi = true
-        global_args += '-DUSE_MINIFFI'
+        global_args += '-DMKXPZ_MINIFFI'
     else
         warning('64-bit MiniFFI is only supported on Linux and macOS.')
         warning('To use MiniFFI/Win32API on Windows, target 32-bit.')
@@ -107,15 +109,15 @@ if get_option('workdir_current')
 endif
 
 if get_option('easypoke') == true and miniffi == true
-    global_args += '-DEASY_POKE'
+    global_args += '-DMKXPZ_ESSENTIALS_DEBUG'
 endif
 
 if get_option('cxx11_experimental') == true
-    global_args += '-DUSE_EXPERIMENTAL_FILESYSTEM'
+    global_args += '-DMKXPZ_EXP_FS'
 endif
 
 if not get_option('console')
-    global_args += '-DNO_CONSOLE'
+    global_args += '-DMKXPZ_DISABLE_CONSOLE'
 endif
 
 if get_option('force32') == true
@@ -127,7 +129,7 @@ if get_option('static_executable') == true and host_system == 'windows'
     build_static = true
 endif
 
-global_args += '-DTHREADED_GLINIT'
+global_args += '-DMKXPZ_INIT_GL_LATER'
 
 subdir('src')
 subdir('binding')

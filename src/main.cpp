@@ -50,18 +50,18 @@
 #include <Winsock2.h>
 #endif
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
 #include "steamshim_child.h"
 #endif
 
 #ifdef MKXPZ_BUILD_XCODE
 #include <Availability.h>
 #if __MAC_OS_X_VERSION_MAX_ALLOWED < __MAC_10_15
-#define THREADED_GLINIT
+#define MKXPZ_INIT_GL_LATER
 #endif
 #endif
 
-#ifndef THREADED_GLINIT
+#ifndef MKXPZ_INIT_GL_LATER
 #define GLINIT_SHOWERROR(s) showInitError(s)
 #else
 #define GLINIT_SHOWERROR(s) rgssThreadError(threadData, s)
@@ -87,7 +87,7 @@ static SDL_GLContext initGL(SDL_Window *win, Config &conf,
 int rgssThreadFun(void *userdata) {
   RGSSThreadData *threadData = static_cast<RGSSThreadData *>(userdata);
 
-#ifdef THREADED_GLINIT
+#ifdef MKXPZ_INIT_GL_LATER
   threadData->glContext =
       initGL(threadData->window, threadData->config, threadData);
   if (!threadData->glContext)
@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
 
     conf.readGameINI();
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
     if (!STEAMSHIM_init()) {
       showInitError("Failed to initialize Steamworks. The application cannot "
                     "continue launching.");
@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
                     SDL_GetError());
       SDL_Quit();
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
       STEAMSHIM_deinit();
 #endif
 
@@ -257,7 +257,7 @@ int main(int argc, char *argv[]) {
       IMG_Quit();
       SDL_Quit();
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
       STEAMSHIM_deinit();
 #endif
 
@@ -271,7 +271,7 @@ int main(int argc, char *argv[]) {
       IMG_Quit();
       SDL_Quit();
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
       STEAMSHIM_deinit();
 #endif
 
@@ -306,7 +306,7 @@ int main(int argc, char *argv[]) {
     if (!win) {
       showInitError(std::string("Error creating window: ") + SDL_GetError());
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
       STEAMSHIM_deinit();
 #endif
       return 0;
@@ -329,7 +329,7 @@ int main(int argc, char *argv[]) {
       IMG_Quit();
       SDL_Quit();
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
       STEAMSHIM_deinit();
 #endif
       return 0;
@@ -344,7 +344,7 @@ int main(int argc, char *argv[]) {
 
     EventThread eventThread;
 
-#ifndef THREADED_GLINIT
+#ifndef MKXPZ_INIT_GL_LATER
     SDL_GLContext glCtx = initGL(win, conf, 0);
 #else
     SDL_GLContext glCtx = NULL;
@@ -413,7 +413,7 @@ int main(int argc, char *argv[]) {
       WSACleanup();
 #endif
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
     STEAMSHIM_deinit();
 #endif
     Sound_Quit();

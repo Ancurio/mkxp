@@ -23,7 +23,7 @@
 #define BINDING_UTIL_H
 
 #include <ruby.h>
-#ifndef LEGACY_RUBY
+#ifndef MKXPZ_LEGACY_RUBY
 #include <ruby/version.h>
 #else
 #include <version.h>

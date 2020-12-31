@@ -64,7 +64,7 @@ if openal.type_name() == 'pkgconfig'
     endif
 endif
 
-global_args += '-DALCDEVICE_STRUCT=' + alcdev_struct
+global_args += '-DMKXPZ_ALCDEVICE=' + alcdev_struct
 
 
 global_include_dirs += include_directories('.',
@@ -91,11 +91,11 @@ if get_option('shared_fluid') == true
 endif
 
 if get_option('default_framerate') == true
-    add_project_arguments('-DDEFAULT_FRAMERATE', language: 'cpp')
+    add_project_arguments('-DMKXPZ_STATIC_FRAMERATE', language: 'cpp')
 endif
 
 if get_option('cjk_fallback_font') == true
-    add_project_arguments('-DCJK_FALLBACK', language: 'cpp')
+    add_project_arguments('-DMKXPZ_CJK_FONT', language: 'cpp')
 endif
 
 main_source = files(

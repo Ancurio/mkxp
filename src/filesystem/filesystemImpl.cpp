@@ -9,7 +9,7 @@
 #include "util/exception.h"
 #include "util/debugwriter.h"
 
-#ifdef USE_EXPERIMENTAL_FILESYSTEM
+#ifdef MKXPZ_EXP_FS
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #else

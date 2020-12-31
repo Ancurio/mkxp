@@ -38,14 +38,14 @@
 #include <SDL_ttf.h>
 
 #ifndef MKXPZ_BUILD_XCODE
-#ifndef CJK_FALLBACK
+#ifndef MKXPZ_CJK_FONT
 #include "liberation.ttf.xxd"
 #else
 #include "wqymicrohei.ttf.xxd"
 #endif
 
 
-#ifndef CJK_FALLBACK
+#ifndef MKXPZ_CJK_FONT
 #define BUNDLED_FONT liberation
 #else
 #define BUNDLED_FONT wqymicrohei

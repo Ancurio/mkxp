@@ -2,7 +2,7 @@
 if get_option('mri_includes') == ''
     ver = get_option('mri_version')
     if ver.version_compare('<=1.8')
-        global_args += '-DLEGACY_RUBY'
+        global_args += '-DMKXPZ_LEGACY_RUBY'
     elif ver.version_compare('>=3.0')
         global_args += '-fdeclspec'
     endif
@@ -13,7 +13,7 @@ else
 endif
 
 if get_option('no_preload_scripts') == true
-    add_project_arguments('-DNO_PRELOAD_SCRIPTS', language: ['cpp','objc','objcpp'])
+    add_project_arguments('-DMKXPZ_NO_PRELOADSCRIPTS', language: ['cpp','objc','objcpp'])
 endif
 
 global_include_dirs += include_directories('.')

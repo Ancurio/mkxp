@@ -1,4 +1,4 @@
-#ifdef EASY_POKE
+#ifdef MKXPZ_ESSENTIALS_DEBUG
 #include <SDL.h>
 
 #ifdef __WIN32__

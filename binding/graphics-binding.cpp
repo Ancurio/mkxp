@@ -273,7 +273,7 @@ void graphicsBindingInit()
     _rb_define_module_function(module, "fadein", graphicsFadein);
     _rb_define_module_function(module, "snap_to_bitmap", graphicsSnapToBitmap);
     _rb_define_module_function(module, "resize_screen", graphicsResizeScreen);
-#ifdef EASY_POKE
+#ifdef MKXPZ_ESSENTIALS_DEBUG
     // The other two are overridden by default, which is super
     _rb_define_module_function(module, "mkxp_snap_to_bitmap", graphicsSnapToBitmap);
     _rb_define_module_function(module, "mkxp_resize_screen", graphicsResizeScreen);

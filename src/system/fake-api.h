@@ -16,7 +16,7 @@
 #define PREFABI
 #endif
 
-#ifdef EASY_POKE
+#ifdef MKXPZ_ESSENTIALS_DEBUG
 #include <stddef.h>
 
 #ifdef __WIN32__

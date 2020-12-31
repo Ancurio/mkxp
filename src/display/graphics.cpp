@@ -44,7 +44,7 @@
 #include <SDL_timer.h>
 #include <SDL_video.h>
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
 #include "steamshim_child.h"
 #endif
 
@@ -569,7 +569,7 @@ Graphics::Graphics(RGSSThreadData *data) {
   // emulator-like speedups
   // Nothing stops anybody from building with this
   // enabled though and I'm not removing this stuff
-#ifndef DEFAULT_FRAMERATE
+#ifndef MKXPZ_STATIC_FRAMERATE
   if (data->config.syncToRefreshrate) {
     p->frameRate = data->refreshRate;
     p->fpsLimiter.disabled = true;
@@ -587,7 +587,7 @@ void Graphics::update() {
   p->checkShutDownReset();
   p->checkSyncLock();
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
   if (STEAMSHIM_alive())
     STEAMSHIM_pump();
 #endif

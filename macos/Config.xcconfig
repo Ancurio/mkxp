@@ -6,7 +6,7 @@
 //
 
 // Uncomment this for the Essentials crap
-// GCC_PREPROCESSOR_DEFINITIONS = $(inherited) EASY_POKE
+// GCC_PREPROCESSOR_DEFINITIONS = $(inherited) MKXPZ_ESSENTIALS_DEBUG
 
 SDK_ROOT = macosx
 BUILD_ARCH = x86_64

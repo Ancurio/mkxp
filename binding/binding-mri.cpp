@@ -67,7 +67,7 @@ extern const char module_rpg3[];
 
 // Scripts to run at some point during Ruby execution
 
-#ifdef EASY_POKE
+#ifdef MKXPZ_ESSENTIALS_DEBUG
 #ifndef MKXPZ_BUILD_XCODE
 #include "EssentialsCompatibility.rb.xxd"
 #endif
@@ -100,11 +100,11 @@ void graphicsBindingInit();
 
 void fileIntBindingInit();
 
-#ifdef USE_MINIFFI
+#ifdef MKXPZ_MINIFFI
 void MiniFFIBindingInit();
 #endif
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
 void CUSLBindingInit();
 #endif
 
@@ -153,11 +153,11 @@ static void mriBindingInit() {
 
   fileIntBindingInit();
 
-#ifdef USE_MINIFFI
+#ifdef MKXPZ_MINIFFI
   MiniFFIBindingInit();
 #endif
 
-#ifdef HAVE_STEAMSHIM
+#ifdef MKXPZ_STEAM
   CUSLBindingInit();
 #endif
     
@@ -595,7 +595,7 @@ static void runRMXPScripts(BacktraceData &btData) {
   }
 
   // Can be force-disabled similarly to framerate options
-#ifndef NO_PRELOAD_SCRIPTS
+#ifndef MKXPZ_NO_PRELOADSCRIPTS
   /* Execute preloaded scripts */
   for (std::vector<std::string>::const_iterator i = conf.preloadScripts.begin();
        i != conf.preloadScripts.end(); ++i)
@@ -605,13 +605,13 @@ static void runRMXPScripts(BacktraceData &btData) {
   if (exc != Qnil)
     return;
 
-#ifdef EASY_POKE
+#ifdef MKXPZ_ESSENTIALS_DEBUG
   // Used to try and fix Essentials garbage later if it's detected
   int minimonsters = 0;
 #endif
 
   while (true) {
-#if RAPI_FULL < 200 && defined(NO_CONSOLE)
+#if RAPI_FULL < 200 && defined(MKXPZ_DISABLE_CONSOLE)
     VALUE iostr = rb_str_new2(NULL_IO);
     // Sysinit isn't a thing yet, so send io to /dev/null instead
     rb_funcall(rb_gv_get("$stderr"), rb_intern("reopen"), 1, iostr);
@@ -636,7 +636,7 @@ static void runRMXPScripts(BacktraceData &btData) {
       fname = newStringUTF8(buf, len);
       btData.scriptNames.insert(buf, scriptName);
 
-#ifdef EASY_POKE
+#ifdef MKXPZ_ESSENTIALS_DEBUG
       // There is 0 reason for anything other than Essentials to have this class
       if (minimonsters == 0 && rb_const_defined(rb_cObject, rb_intern("PokemonMapMetadata")))
         minimonsters = 1;
@@ -656,7 +656,7 @@ static void runRMXPScripts(BacktraceData &btData) {
       }
 #endif
       if (i + 2 == scriptCount){
-#ifdef EASY_POKE
+#ifdef MKXPZ_ESSENTIALS_DEBUG
         if (minimonsters > 0 && !RTEST(rb_gv_get("Z_NOPOKEFIX"))){
           EVALFILE(EssentialsCompatibility);
           minimonsters = -1;
@@ -796,7 +796,7 @@ static void mriBindingExecute() {
 #endif
 
 
-#if defined(EASY_POKE) && !defined(__WIN32__)
+#if defined(MKXPZ_ESSENTIALS_DEBUG) && !defined(__WIN32__)
   char *tmpdir = getenv("TMPDIR");
   if (tmpdir)
     setenv("TEMP", tmpdir, false);

@@ -55,7 +55,7 @@ DEF_ALLOCFUNC_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
 #endif
 
 static void *MiniFFI_GetFunctionHandle(void *libhandle, const char *func) {
-#ifdef EASY_POKE
+#ifdef MKXPZ_ESSENTIALS_DEBUG
 #define CAPTURE(n)                                                             \
   if (!strcmp(#n, func))                                                       \
   return (void *)&MKXP_##n
