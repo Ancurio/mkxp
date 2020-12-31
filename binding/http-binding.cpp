@@ -24,7 +24,7 @@ VALUE stringMap2hash(mkxp_net::StringMap &map) {
 
 mkxp_net::StringMap hash2StringMap(VALUE hash) {
     mkxp_net::StringMap ret;
-    Check_Type(hash, RUBY_T_HASH);
+    Check_Type(hash, T_HASH);
     
     VALUE keys = rb_funcall(hash, rb_intern("keys"), 0);
     for (int i = 0; i < RARRAY_LEN(keys); i++) {

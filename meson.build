@@ -82,6 +82,7 @@ endif
 global_args += ['-Wno-non-virtual-dtor', '-Wno-reorder', '-Wno-uninitialized', '-Wno-unknown-pragmas', '-Wno-unknown-warning-option', '-Wno-deprecated-register']
 if compilers['cpp'].get_id() == 'clang'
     global_args += ['-Wno-undefined-var-template', '-Wno-delete-non-abstract-non-virtual-dtor']
+    global_args += '-masm=intel'
 endif
 if host_system == 'windows'
     global_args += '-Wno-unknown-attributes'
