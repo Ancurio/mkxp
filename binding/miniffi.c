@@ -13,7 +13,7 @@ mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, size_t n
 }
 
 #define INTEL_ASM ".intel_syntax noprefix\n"
-#ifdef _WIN32
+#ifndef __MINGW64__
 mffi_value call_asm(MINIFFI_FUNC target, MINIFFIFuncArgs *p, size_t nparams) {
     mffi_value ret;
     void *old_esp = 0;

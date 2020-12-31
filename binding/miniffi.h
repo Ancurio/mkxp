@@ -13,7 +13,7 @@ extern "C" {
                                   mffi_value, mffi_value);
 #else // Windows
     #define MINIFFI_MAX_ARGS 32l
-    #ifdef _WIN64
+    #ifdef __MINGW64__
         typedef uint64_t mffi_value;
     #else
         typedef uint32_t mffi_value;
