@@ -17,7 +17,6 @@ mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int npar
 
     asm volatile(INTEL_ASM
 
-                "MiniFFI_call_asm:\n"
                 "mov [edi], esp\n"
                 "test ebx, ebx\n"
                 "jz mffi_call_void\n"
@@ -56,38 +55,34 @@ mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int npar
 #else
 mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int nparams) {
     mffi_value ret;
-    void *old_rsp = 0;
     asm volatile(INTEL_ASM
 
-                "MiniFFI_call_asm:\n"
-                "mov [rdi], rsp\n"
-                "test rbx, rbx\n"
+                "test rax, rax\n"
                 "jz mffi_call_void\n"
-                
-                "shl rbx, 2\n"
-                "mov rcx, rbx\n"
+
+                "shl rax, 3\n"
+                "cmp rax, 32\n"
+                "jle mffi_call_low\n"
                 
                 "mffi_call_loop:\n"
-                "sub rcx, 4\n"
-                "mov rbx, [rsi+rcx]\n"
+                "sub rax, 8\n"
+                "mov rbx, [rsi+rax]\n"
                 "push rbx\n"
-                "test rcx, rcx\n"
-                "jnz mffi_call_loop\n"
+                "cmp rax, 32\n"
+                "jne mffi_call_loop\n"
                 
+                "mffi_call_low:\n"
+                "mov rcx, [rsi]\n"
+                "mov rdx, [rsi+8]\n"
+                "mov r8, [rsi+16]\n"
+                "mov r9, [rsi+24]\n"
+
                 "mffi_call_void:\n"
-                "call rdx\n"
+                "call rdi\n"
                 
                 : "=a"(ret)
-                : "b"(nparams), "S"(p), "d"(target), "D"(&old_rsp)
-                : "rcx"
-    );
-    asm volatile(INTEL_ASM
-                "mov rdx, [rdi]\n"
-                "cmp rdx, rsp\n"
-                "cmovne rsp, rdx"
-                :
-                : "D"(&old_rsp)
-                : "rdx"
+                : "a"(nparams), "S"(p), "D"(target)
+                : "r8", "r9", "rbx", "rcx", "rdx"
     );
     return ret;
 }
