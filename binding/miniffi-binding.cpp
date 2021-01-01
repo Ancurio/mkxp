@@ -97,6 +97,7 @@ RB_METHOD(MiniFFI_initialize) {
   rb_iv_set(self, "_func", MVAL2RB((mffi_value)hfunc));
   rb_iv_set(self, "_funcname", func);
   rb_iv_set(self, "_libname", libname);
+  rb_iv_set(self, "_64bit", rb_bool_new(libIs64(RSTRING_PTR(func))));
 
   VALUE ary_imports = rb_ary_new();
   VALUE *entry;
