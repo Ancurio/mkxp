@@ -23,6 +23,4 @@ typedef struct {
   mffi_value params[MINIFFI_MAX_ARGS];
 } MiniFFIFuncArgs;
 
-mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int nparams, bool is64);
-
-bool libIs64(void *handle);
+mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int nparams);
