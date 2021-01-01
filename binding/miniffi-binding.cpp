@@ -12,7 +12,7 @@
   #define MVAL2RB(v) ULONG2NUM(v)
   #define RB2MVAL(v) (mffi_value)NUM2ULONG(v)
 #else
-  #ifdef _WIN64
+  #ifdef __MINGW64__
     #define MVAL2RB(v) ULL2NUM(v)
     #define RB2MVAL(v) (mffi_value)NUM2ULL(v)
   #else
@@ -214,7 +214,7 @@ RB_METHOD(MiniFFI_call) {
   VALUE func = rb_iv_get(self, "_func");
   VALUE own_imports = rb_iv_get(self, "_imports");
   VALUE own_exports = rb_iv_get(self, "_exports");
-  MINIFFI_FUNC ApiFunction = (MINIFFI_FUNC)NUM2ULONG(func);
+  MINIFFI_FUNC ApiFunction = (MINIFFI_FUNC)RB2MVAL(func);
   VALUE args;
   int items = rb_scan_args(argc, argv, "0*", &args);
   int nimport = RARRAY_LEN(own_imports);
@@ -234,7 +234,7 @@ RB_METHOD(MiniFFI_call) {
       } else {
         StringValue(str);
         rb_str_modify(str);
-        lParam = (unsigned long)RSTRING_PTR(str);
+        lParam = (mffi_value)RSTRING_PTR(str);
       }
       break;
 

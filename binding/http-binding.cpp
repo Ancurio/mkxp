@@ -81,8 +81,6 @@ RB_METHOD(httpPost) {
             req.headers().insert(headers.begin(), headers.end());
         }
         
-        VALUE keys = NUM2INT(rb_funcall(postDataHash, rb_intern("keys"), 0));
-        
         auto postData = hash2StringMap(postDataHash);
         auto res = req.post(postData);
         ret = rb_hash_new();

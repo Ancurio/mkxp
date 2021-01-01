@@ -1,8 +1,6 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <cstdint>
 
 #if defined(__linux__) || defined(__APPLE__)
     #define MINIFFI_MAX_ARGS 8l
@@ -26,7 +24,3 @@ typedef struct {
 } MiniFFIFuncArgs;
 
 mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int nparams);
-
-#ifdef __cplusplus
-}
-#endif
