@@ -17,13 +17,10 @@ option('default_framerate', type: 'boolean', value: false, description: 'Disable
 option('no_preload_scripts', type: 'boolean', value: false, description: 'Disable the preloadScript configuration option')
 option('workdir_current', type: 'boolean', value: false, description: 'Keep current directory on startup')
 
-option('static_executable', type: 'boolean', value: false, description: 'Build a static executable (Windows-only)')
+option('static_executable', type: 'boolean', value: true, description: 'Build a static executable (Windows-only)')
 option('appimagekit_path', type: 'string', value: '', description: 'Path to AppImageKit, used for building AppImages')
 option('appimage', type: 'boolean', value: false, description: 'Whether to install to an AppImage or just copy everything')
 option('steamworks_path', type: 'string', value: '', description: 'Path to Steamshim')
 option('steam_appid', type: 'string', value: '', description: 'Steam AppID. Set this to use SteamAPI_RestartAppIfNecessary')
 
 option('gfx_backend', type: 'combo', value: 'gl', choices: ['gl', 'gles'], description: 'Graphics rendering API to use.')
-
-option('codesign', type: 'boolean', value: true, description: 'Whether to codesign the Mac app bundle upon creation. If codesign_identity is not set, signs for local use.')
-option('codesign_identity', type: 'string', value: '', description: 'A valid Apple Developer ID for signing Mac apps.')

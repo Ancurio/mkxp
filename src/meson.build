@@ -1,10 +1,16 @@
 sigcxx = dependency('sigc++-2.0', version: '>=2.10.0', static: build_static)
 pixman = dependency('pixman-1', static: build_static)
 physfs = dependency('physfs', version: '>=2.1', static: build_static)
-vorbisfile = dependency('vorbisfile', static: build_static)
 sdl2_ttf = dependency('SDL2_ttf', static: build_static)
+freetype = dependency('freetype2', static: build_static)
 sdl2_image = dependency('SDL2_image', static: build_static)
+jpeg = dependency('libjpeg', static: build_static)
+png = dependency('libpng', static: build_static)
 openal = dependency('openal', static: build_static, method: 'pkg-config')
+vorbisfile = dependency('vorbisfile', static: build_static)
+vorbis = dependency('vorbis', static: build_static)
+ogg = dependency('ogg', static: build_static)
+bz2 = dependency('bzip2', static: build_static)
 zlib = dependency('zlib', static: build_static)
 
 # On Windows, SDL needs to be set up manually in order to avoid
@@ -48,9 +54,7 @@ if host_system == 'windows'
     explicit_libs += 'libmsvcrt;libgcc;libmingwex;libgmp;'
 endif
 if build_static == true
-    explicit_libs += 'libfreetype;libbz2;libharfbuzz;libgraphite2;'
-    explicit_libs += 'libjpeg;libpng;libtiff;libwebp;liblzma;libzstd;'
-    global_link_args += '-static'
+    global_link_args += ['-Wl,-Bstatic', '-lstdc++', '-lpthread', '-lgcc', '-Wl,-Bdynamic']
     global_args += '-DAL_LIBTYPE_STATIC'
 endif
 
@@ -82,7 +86,7 @@ global_include_dirs += include_directories('.',
     'util'
 )
 
-global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, sdl2_ttf, sdl2_image]
+global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg, vorbis, bz2]
 if host_system == 'windows'
     global_dependencies += compilers['cpp'].find_library('wsock32')
 endif
