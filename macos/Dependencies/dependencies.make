@@ -35,7 +35,8 @@ RUBY_CONFIGURE_ARGS := \
 	--enable-install-static-library \
 	--enable-shared \
 	--disable-install-doc \
-	--with-out-ext=openssl,fiddle,gdbm,win32ole,win32 \
+	--with-out-ext=fiddle,gdbm,win32ole,win32 \
+	--with-static-linked-ext \
 	--disable-rubygems \
 	${EXTRA_RUBY_CONFIG_ARGS}
 
@@ -287,6 +288,7 @@ $(LIBDIR)/libruby.a: $(DOWNLOADS)/ruby18/Makefile
 $(DOWNLOADS)/ruby18/Makefile: $(DOWNLOADS)/ruby18/configure
 	cd $(DOWNLOADS)/ruby18; \
 	$(CONFIGURE) \
+	--with-static-linked-ext \
 	$(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby18/configure: $(DOWNLOADS)/ruby18/*.c

@@ -775,7 +775,7 @@ static void showExc(VALUE exc, const BacktraceData &btData) {
 }
 
 static void mriBindingExecute() {
-#if RAPI_MAJOR > 2
+#if RAPI_MAJOR >= 2
   /* Normally only a ruby executable would do a sysinit,
    * but not doing it will lead to crashes due to closed
    * stdio streams on some platforms (eg. Windows) */
@@ -789,15 +789,14 @@ static void mriBindingExecute() {
 #else
   ruby_init();
   rb_eval_string("$KCODE='U'");
+#ifdef MKXPZ_JIT
+  const char *rubyOpts[] = {"--jit-verbose=1"};
+    void *node = ruby_process_options(1, const_cast<char**>(rubyOpts);
+    int state;
+    bool valid = ruby_executable_node(node, &state);
+    state = ruby_exec_node(node);
 #endif
-
-#if RAPI_MAJOR >= 3
-  void* node = ruby_process_options(argc, argv);
-  int state;
-  bool valid = ruby_executable_node(node, &state);
-  state = ruby_exec_node(node);
 #endif
-
 
 #if defined(MKXPZ_ESSENTIALS_DEBUG) && !defined(__WIN32__)
   char *tmpdir = getenv("TMPDIR");
