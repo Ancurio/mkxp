@@ -1,37 +1,18 @@
 sigcxx = dependency('sigc++-2.0', version: '>=2.10.0', static: build_static)
-pixman = dependency('pixman-1', static: build_static)
 physfs = dependency('physfs', version: '>=2.1', static: build_static)
-sdl2_ttf = dependency('SDL2_ttf', static: build_static)
-freetype = dependency('freetype2', static: build_static)
-sdl2_image = dependency('SDL2_image', static: build_static)
-jpeg = dependency('libjpeg', static: build_static)
-png = dependency('libpng', static: build_static)
 openal = dependency('openal', static: build_static, method: 'pkg-config')
 vorbisfile = dependency('vorbisfile', static: build_static)
 vorbis = dependency('vorbis', static: build_static)
 ogg = dependency('ogg', static: build_static)
-bz2 = dependency('bzip2', static: build_static)
+sdl2 = dependency('SDL2', static: build_static)
+sdl2_ttf = dependency('SDL2_ttf', static: build_static)
+freetype = dependency('freetype2', static: build_static)
+sdl2_image = dependency('SDL2_image', static: build_static)
+pixman = dependency('pixman-1', static: build_static)
+png = dependency('libpng', static: build_static)
+jpeg = dependency('libjpeg', static: build_static)
 zlib = dependency('zlib', static: build_static)
-
-# On Windows, SDL needs to be set up manually in order to avoid
-# the -mwindows flag
-if host_system != 'windows'
-    global_dependencies += dependency('sdl2')
-else
-    sdl2cfg = find_program('sdl2-config')
-    global_args += run_command(sdl2cfg, '--cflags').stdout().split()
-    if build_static == false
-        libarg = '--libs'
-    else
-        libarg = '--static-libs'
-    endif
-    link_args = run_command(sdl2cfg, libarg).stdout().split()
-    foreach arg : link_args
-        if arg != '-mwindows'
-            global_link_args += arg
-        endif
-    endforeach
-endif
+bz2 = dependency('bzip2', static: build_static)
 
 # If OpenSSL is present, you get HTTPS support
 if get_option('enable-https') == true
@@ -54,7 +35,7 @@ if host_system == 'windows'
     explicit_libs += 'libmsvcrt;libgcc;libmingwex;libgmp;'
 endif
 if build_static == true
-    global_link_args += ['-Wl,-Bstatic', '-lstdc++', '-lpthread', '-lgcc', '-Wl,-Bdynamic']
+    global_link_args += ['-Wl,-Bstatic', '-lgcc', '-lstdc++', '-lpthread', '-Wl,-Bdynamic']
     global_args += '-DAL_LIBTYPE_STATIC'
 endif
 
@@ -86,7 +67,7 @@ global_include_dirs += include_directories('.',
     'util'
 )
 
-global_dependencies += [sigcxx, openal, zlib, pixman, physfs, vorbisfile, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg, vorbis, bz2]
+global_dependencies += [sigcxx, openal, zlib, bz2, sdl2, pixman, physfs, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg]
 if host_system == 'windows'
     global_dependencies += compilers['cpp'].find_library('wsock32')
 endif

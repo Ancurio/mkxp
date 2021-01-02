@@ -262,7 +262,7 @@ $(DOWNLOADS)/openssl/Configure:
 	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
 
 # Standard ruby
-ruby: init_dirs $(LIBDIR)/libruby.3.0-static.a
+ruby: init_dirs $(LIBDIR)/libruby.3.0-static.a openssl
 
 $(LIBDIR)/libruby.3.0-static.a: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
@@ -279,7 +279,7 @@ $(DOWNLOADS)/ruby/*.c:
 	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby -b mkxp-z;
 
 # Old geezer ruby
-legacy-ruby: init_dirs $(LIBDIR)/libruby.a
+legacy-ruby: init_dirs $(LIBDIR)/libruby.a openssl
 
 $(LIBDIR)/libruby.a: $(DOWNLOADS)/ruby18/Makefile
 	cd $(DOWNLOADS)/ruby18; \

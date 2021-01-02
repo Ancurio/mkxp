@@ -20,13 +20,10 @@ GITHUB := https://github.com
 GITLAB := https://gitlab.com
 
 CONFIGURE_ENV := \
-	$(DEPLOYMENT_TARGET_ENV) \
 	PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR) \
 	CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
-CONFIGURE_ARGS := \
-	--prefix="$(BUILD_PREFIX)" \
-	--host=$(HOST)
+CONFIGURE_ARGS := --prefix="$(BUILD_PREFIX)"
 
 CMAKE_ARGS := \
 	-DCMAKE_INSTALL_PREFIX="$(BUILD_PREFIX)" \
@@ -38,7 +35,8 @@ RUBY_CONFIGURE_ARGS := \
 	--disable-install-doc \
 	--with-out-ext=openssl \
 	--with-static-linked-ext \
-	--disable-rubygems
+	--disable-rubygems \
+	--without-gmp
 
 CONFIGURE := $(CONFIGURE_ENV) ./configure $(CONFIGURE_ARGS)
 AUTOGEN   := $(CONFIGURE_ENV) ./autogen.sh $(CONFIGURE_ARGS)
@@ -248,7 +246,7 @@ $(DOWNLOADS)/openssl/Configure:
 	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
 
 # Standard ruby
-ruby: init_dirs $(LIBDIR)/libx64-msvcrt-ruby300-static.a
+ruby: init_dirs $(LIBDIR)/libx64-msvcrt-ruby300-static.a openssl
 
 $(LIBDIR)/libx64-msvcrt-ruby300-static.a: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
@@ -265,7 +263,7 @@ $(DOWNLOADS)/ruby/*.c:
 	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby -b mkxp-z;
 
 # Old geezer ruby
-legacy-ruby: init_dirs $(LIBDIR)/libruby18.a
+legacy-ruby: init_dirs $(LIBDIR)/libruby18.a openssl
 
 $(LIBDIR)/libruby18.a: $(DOWNLOADS)/ruby18/Makefile
 	cd $(DOWNLOADS)/ruby18; \
@@ -274,7 +272,6 @@ $(LIBDIR)/libruby18.a: $(DOWNLOADS)/ruby18/Makefile
 $(DOWNLOADS)/ruby18/Makefile: $(DOWNLOADS)/ruby18/configure
 	cd $(DOWNLOADS)/ruby18; \
 	$(CONFIGURE) \
-	--with-static-linked-ext \
 	$(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby18/configure: $(DOWNLOADS)/ruby18/*.c
