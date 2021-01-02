@@ -1,14 +1,16 @@
+ARCH := $(shell ruby -e "puts (\`gcc -dumpmachine\`[/i686/].nil?) ? 'mingw64' : 'mingw'")
+
 SDL_FLAGS := ${SDL_FLAGS}
 SDL2_IMAGE_FLAGS := ${SDL2_IMAGE_FLAGS}
 SDL2_TTF_FLAGS := ${SDL2_TTF_FLAGS}
 OPENAL_FLAGS := ${OPENAL_FLAGS}
-OPENSSL_FLAGS := ${OPENSSL_FLAGS}
+OPENSSL_FLAGS := $(ARCH) ${OPENSSL_FLAGS}
 RUBY_FLAGS := ${RUBY_FLAGS}
 
-BUILD_PREFIX := /opt/mkxp
+BUILD_PREFIX := /opt/mkxp-$(ARCH)
 LIBDIR := $(BUILD_PREFIX)/lib
 INCLUDEDIR := $(BUILD_PREFIX)/include
-DOWNLOADS := ${PWD}/downloads
+DOWNLOADS := ${PWD}/downloads/$(ARCH)
 NPROC := $(shell nproc)
 CFLAGS := -I$(INCLUDEDIR)
 LDFLAGS := -L$(LIBDIR)
