@@ -33,7 +33,7 @@ CMAKE_ARGS := \
 RUBY_CONFIGURE_ARGS := \
 	--enable-install-static-library \
 	--disable-install-doc \
-	--with-out-ext=openssl \
+	--with-out-ext=openssl,readline,dbm,gdbm \
 	--with-static-linked-ext \
 	--disable-rubygems \
 	--without-gmp
