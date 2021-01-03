@@ -3291,6 +3291,7 @@
 					MKXPZ_MINIFFI,
 					MKXPZ_DEBUG,
 					AL_LIBTYPE_STATIC,
+					"$(MKXPZ_EXTRA_ARGS)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../**",
@@ -3331,6 +3332,7 @@
 					"MKXPZ_VERSION=\"$(MARKETING_VERSION)\"",
 					MKXPZ_MINIFFI,
 					AL_LIBTYPE_STATIC,
+					"$(MKXPZ_EXTRA_ARGS)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../**",
