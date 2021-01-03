@@ -5,5 +5,4 @@ export PATH="$PWD/build-${MKXPZ_PREFIX}/bin:$PATH"
 MKXPZ_OLD_PC=$(pkg-config --variable pc_path pkg-config)
 
 # Try to load the stuff we built first
-export PKG_CONFIG_LIBDIR="$PWD/build-${MKXPZ_PREFIX}/lib/pkgconfig"
-export PKG_CONFIG_PATH=${MKXPZ_OLD_PC}
+export PKG_CONFIG_PATH="$PWD/build-${MKXPZ_PREFIX}/lib/pkgconfig"
