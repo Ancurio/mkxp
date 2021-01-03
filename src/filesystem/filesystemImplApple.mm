@@ -91,6 +91,7 @@ std::string filesystemImpl::contentsOfAssetAsString(const char *baseName, const 
 
 }
 
+#ifdef MKXPZ_DEBUG
 std::string filesystemImpl::selectPath(SDL_Window *win) {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.canChooseDirectories = true;
@@ -110,3 +111,4 @@ std::string filesystemImpl::selectPath(SDL_Window *win) {
     
     return std::string();
 }
+#endif
