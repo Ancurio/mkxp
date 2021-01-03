@@ -249,7 +249,7 @@ $(DOWNLOADS)/openssl/Configure:
 	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
 
 # Standard ruby
-ruby: init_dirs $(BUILD_PREFIX)/$(RB_PREFIX)-ruby300.dll openssl
+ruby: init_dirs openssl $(BUILD_PREFIX)/$(RB_PREFIX)-ruby300.dll
 
 $(BUILD_PREFIX)/$(RB_PREFIX)-ruby300.dll: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
