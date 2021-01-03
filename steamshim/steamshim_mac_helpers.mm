@@ -9,9 +9,12 @@
 #import "steamshim_mac_helpers.h"
 
 std::string execPath() {
-    std::string ret([NSString pathWithComponents:@[
-        NSBundle.mainBundle.executablePath,
-        @(GAME_LAUNCH_NAME)
-    ]].UTF8String);
-    
+    NSString *p = [NSBundle.mainBundle.executablePath stringByDeletingLastPathComponent];
+    std::string ret([NSString pathWithComponents:@[p, @(GAME_LAUNCH_NAME)]].UTF8String);
+    return ret;
+}
+
+std::string appParentPath() {
+    std::string ret([NSBundle.mainBundle.bundlePath stringByDeletingLastPathComponent].UTF8String);
+    return ret;
 }

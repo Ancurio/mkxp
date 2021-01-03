@@ -12,4 +12,5 @@
 
 std::string execPath();
 
+std::string appParentPath();
 #endif /* steamshim_mac_helpers_h */

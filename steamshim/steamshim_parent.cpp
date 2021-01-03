@@ -221,7 +221,6 @@ static bool launchChild(ProcessType *pid) {
 #ifdef __APPLE__
   char buf[300];
   strncpy(buf, execPath().c_str(), sizeof(buf));
-  strcat(buf, "_rt");
   GArgv[0] = buf;
 #else
   GArgv[0] = strdup("./" GAME_LAUNCH_NAME);
@@ -659,9 +658,12 @@ static void deinitSteamworks(void) {
 
 static int mainline(void) {
 
-#ifdef STEAM_APPID
+#if (defined(MKXPZ_BUILD_XCODE) && !defined(MKXPZ_DEBUG)) || \
+    (!defined(MKXPZ_BUILD_XCODE) && defined(STEAM_APPID))
   if (SteamAPI_RestartAppIfNecessary(STEAM_APPID))
     return 0;
+#elif defined(MKXPZ_BUILD_XCODE) && defined(MKXPZ_DEBUG)
+    chdir(appParentPath().c_str());
 #endif
 
   PipeType pipeParentRead = NULLPIPE;

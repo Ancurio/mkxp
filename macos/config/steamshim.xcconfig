@@ -5,7 +5,11 @@
 //  Created by ゾロアーク on 1/3/21.
 //
 
-STEAMSHIM_DEFINES = "GAME_LAUNCH_NAME=\"Z.steam\"" //STEAM_APPID=12345678
+// Will be used when building releases. Make sure to set it correctly.
+// Debug builds require steam_appid.txt
+STEAM_APP_ID = 435150
+
+STEAMSHIM_DEFINES = "GAME_LAUNCH_NAME=\"Z.steam\"" STEAM_APPID=$(STEAM_APP_ID)
 
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
