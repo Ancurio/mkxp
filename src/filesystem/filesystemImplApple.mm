@@ -5,7 +5,13 @@
 //  Created by ゾロアーク on 11/21/20.
 //
 
+#ifdef MKXPZ_DEBUG
+#import <AppKit/AppKit.h>
+#import <SDL_syswm.h>
+#else
 #import <Foundation/Foundation.h>
+#endif
+
 #import "filesystemImpl.h"
 #import "util/exception.h"
 
@@ -52,8 +58,9 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
 NSString *getPathForAsset_internal(const char *baseName, const char *ext) {
     NSBundle *assetBundle = [NSBundle bundleWithPath:
                              [NSString stringWithFormat:
-                              @"%@/%s",
-                              NSBundle.mainBundle.resourcePath,
+                              @"%@/%s/%s",
+                              NSBundle.mainBundle.bundlePath,
+                              "Contents/PrivateAssets",
                               "Assets.bundle"
                              ]
                             ];
@@ -82,4 +89,24 @@ std::string filesystemImpl::contentsOfAssetAsString(const char *baseName, const 
     
     return std::string(fileContents.UTF8String);
 
+}
+
+std::string filesystemImpl::selectPath(SDL_Window *win) {
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.canChooseDirectories = true;
+    panel.canChooseFiles = false;
+    //panel.directoryURL = [NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath];
+    
+    SDL_SysWMinfo windowinfo{};
+    SDL_GetWindowWMInfo(win, &windowinfo);
+    
+    [panel beginSheetModalForWindow:windowinfo.info.cocoa.window completionHandler:^(NSModalResponse res){
+        [NSApp stopModalWithCode:res];
+    }];
+    
+    [NSApp runModalForWindow:windowinfo.info.cocoa.window];
+    if (panel.URLs.count > 0)
+        return std::string(NSTOPATH(panel.URLs[0].path));
+    
+    return std::string();
 }

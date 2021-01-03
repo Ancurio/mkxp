@@ -311,6 +311,19 @@ int main(int argc, char *argv[]) {
 #endif
       return 0;
     }
+    
+// Temporary fix for easier debugging
+#if defined(MKXPZ_BUILD_XCODE) && defined(MKXPZ_DEBUG)
+    std::string dataDirStr = mkxp_fs::selectPath(win);
+    if (!dataDirStr.empty()) {
+        conf.gameFolder = dataDirStr;
+        mkxp_fs::setCurrentDirectory(dataDirStr.c_str());
+        Debug() << "DEBUG: Current directory set to" << dataDirStr;
+        conf.read(argc, argv);
+        conf.readGameINI();
+    }
+    
+#endif
 
     /* OSX and Windows have their own native ways of
      * dealing with icons; don't interfere with them */
