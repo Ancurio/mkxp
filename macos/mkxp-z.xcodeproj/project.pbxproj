@@ -129,6 +129,133 @@
 		3B1C233525A17C670075EF5D /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B1C233925A17CB80075EF5D /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B1C233C25A17CC40075EF5D /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3B1C236A25A19BB10075EF5D /* steamshim_parent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B1C236725A19B960075EF5D /* steamshim_parent.cpp */; };
+		3B1C237125A19C600075EF5D /* http-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DDB259C1E53003301C4 /* http-binding.cpp */; };
+		3B1C237225A19C600075EF5D /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
+		3B1C237325A19C600075EF5D /* SDL_sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED112568E8F100372D13 /* SDL_sound.c */; };
+		3B1C237425A19C600075EF5D /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
+		3B1C237525A19C600075EF5D /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED462568E95D00372D13 /* input.cpp */; };
+		3B1C237625A19C600075EF5D /* tilemap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE72568E96A00372D13 /* tilemap-binding.cpp */; };
+		3B1C237725A19C600075EF5D /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED642568E95D00372D13 /* audio.cpp */; };
+		3B1C237825A19C600075EF5D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED562568E95D00372D13 /* main.cpp */; };
+		3B1C237925A19C600075EF5D /* alstream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5F2568E95D00372D13 /* alstream.cpp */; };
+		3B1C237A25A19C600075EF5D /* table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED4C2568E95D00372D13 /* table.cpp */; };
+		3B1C237B25A19C600075EF5D /* net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DBF259BD072003301C4 /* net.cpp */; };
+		3B1C237C25A19C600075EF5D /* table-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE52568E96A00372D13 /* table-binding.cpp */; };
+		3B1C237D25A19C600075EF5D /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
+		3B1C237E25A19C600075EF5D /* bitmap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE42568E96A00372D13 /* bitmap-binding.cpp */; };
+		3B1C237F25A19C600075EF5D /* vorbissource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6A2568E95D00372D13 /* vorbissource.cpp */; };
+		3B1C238025A19C600075EF5D /* SDL_sound_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0C2568E8F100372D13 /* SDL_sound_raw.c */; };
+		3B1C238125A19C600075EF5D /* filesystem-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDD72568E96A00372D13 /* filesystem-binding.cpp */; };
+		3B1C238225A19C600075EF5D /* SDL_sound_shn.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED072568E8F100372D13 /* SDL_sound_shn.c */; };
+		3B1C238325A19C600075EF5D /* glstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED8A2568E95E00372D13 /* glstate.cpp */; };
+		3B1C238425A19C600075EF5D /* gl-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED922568E95E00372D13 /* gl-fun.cpp */; };
+		3B1C238525A19C600075EF5D /* sprite-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDF2568E96A00372D13 /* sprite-binding.cpp */; };
+		3B1C238625A19C600075EF5D /* sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED762568E95D00372D13 /* sprite.cpp */; };
+		3B1C238725A19C600075EF5D /* cusl-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDD92568E96A00372D13 /* cusl-binding.cpp */; };
+		3B1C238825A19C600075EF5D /* sdlsoundsource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED632568E95D00372D13 /* sdlsoundsource.cpp */; };
+		3B1C238925A19C600075EF5D /* viewport-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF42568E96A00372D13 /* viewport-binding.cpp */; };
+		3B1C238A25A19C600075EF5D /* windowvx-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDD2568E96A00372D13 /* windowvx-binding.cpp */; };
+		3B1C238B25A19C600075EF5D /* windowvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED722568E95D00372D13 /* windowvx.cpp */; };
+		3B1C238C25A19C600075EF5D /* LUrlParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DE4259C2039003301C4 /* LUrlParser.cpp */; };
+		3B1C238D25A19C600075EF5D /* module_rpg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF32568E96A00372D13 /* module_rpg.cpp */; };
+		3B1C238E25A19C600075EF5D /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
+		3B1C238F25A19C600075EF5D /* autotiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDA22568E95E00372D13 /* autotiles.cpp */; };
+		3B1C239025A19C600075EF5D /* audiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED662568E95D00372D13 /* audiostream.cpp */; };
+		3B1C239125A19C600075EF5D /* binding-util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEF2568E96A00372D13 /* binding-util.cpp */; };
+		3B1C239225A19C600075EF5D /* plane-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEA2568E96A00372D13 /* plane-binding.cpp */; };
+		3B1C239325A19C600075EF5D /* gl-meta.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED882568E95E00372D13 /* gl-meta.cpp */; };
+		3B1C239425A19C600075EF5D /* etc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED4D2568E95D00372D13 /* etc.cpp */; };
+		3B1C239525A19C600075EF5D /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED8C2568E95E00372D13 /* shader.cpp */; };
+		3B1C239625A19C600075EF5D /* tilemap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9C2568E95E00372D13 /* tilemap.cpp */; };
+		3B1C239725A19C600075EF5D /* SDL_sound_au.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED152568E8F100372D13 /* SDL_sound_au.c */; };
+		3B1C239825A19C600075EF5D /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED742568E95D00372D13 /* window.cpp */; };
+		3B1C239925A19C600075EF5D /* SDL_sound_wav.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED142568E8F100372D13 /* SDL_sound_wav.c */; };
+		3B1C239A25A19C600075EF5D /* input-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDC2568E96A00372D13 /* input-binding.cpp */; };
+		3B1C239B25A19C600075EF5D /* keybindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED472568E95D00372D13 /* keybindings.cpp */; };
+		3B1C239C25A19C600075EF5D /* filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.cpp */; };
+		3B1C239D25A19C600075EF5D /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
+		3B1C239E25A19C600075EF5D /* settingsmenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6E2568E95D00372D13 /* settingsmenu.cpp */; };
+		3B1C239F25A19C600075EF5D /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
+		3B1C23A025A19C600075EF5D /* viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9E2568E95E00372D13 /* viewport.cpp */; };
+		3B1C23A125A19C600075EF5D /* gl-debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED832568E95E00372D13 /* gl-debug.cpp */; };
+		3B1C23A225A19C600075EF5D /* SDL_sound_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED102568E8F100372D13 /* SDL_sound_vorbis.c */; };
+		3B1C23A325A19C600075EF5D /* tileatlasvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED892568E95E00372D13 /* tileatlasvx.cpp */; };
+		3B1C23A425A19C600075EF5D /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED732568E95D00372D13 /* bitmap.cpp */; };
+		3B1C23A525A19C600075EF5D /* tilemapvx-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */; };
+		3B1C23A625A19C600075EF5D /* window-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDD62568E96A00372D13 /* window-binding.cpp */; };
+		3B1C23A725A19C600075EF5D /* midisource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5E2568E95D00372D13 /* midisource.cpp */; };
+		3B1C23A825A19C600075EF5D /* graphics-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE92568E96A00372D13 /* graphics-binding.cpp */; };
+		3B1C23A925A19C600075EF5D /* plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDA12568E95E00372D13 /* plane.cpp */; };
+		3B1C23AA25A19C600075EF5D /* tilequad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED802568E95D00372D13 /* tilequad.cpp */; };
+		3B1C23AB25A19C600075EF5D /* SDL_sound_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED162568E8F100372D13 /* SDL_sound_mp3.c */; };
+		3B1C23AC25A19C600075EF5D /* SDL_sound_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED172568E8F100372D13 /* SDL_sound_aiff.c */; };
+		3B1C23AD25A19C600075EF5D /* tileatlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED912568E95E00372D13 /* tileatlas.cpp */; };
+		3B1C23AE25A19C600075EF5D /* fluid-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED602568E95D00372D13 /* fluid-fun.cpp */; };
+		3B1C23AF25A19C600075EF5D /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED842568E95E00372D13 /* scene.cpp */; };
+		3B1C23B025A19C600075EF5D /* texpool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED812568E95D00372D13 /* texpool.cpp */; };
+		3B1C23B125A19C600075EF5D /* font-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEC2568E96A00372D13 /* font-binding.cpp */; };
+		3B1C23B225A19C600075EF5D /* SDL_sound_coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED092568E8F100372D13 /* SDL_sound_coreaudio.c */; };
+		3B1C23B325A19C600075EF5D /* audio-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDA2568E96A00372D13 /* audio-binding.cpp */; };
+		3B1C23B425A19C600075EF5D /* autotilesvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9D2568E95E00372D13 /* autotilesvx.cpp */; };
+		3B1C23B525A19C600075EF5D /* SDL_sound_voc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED122568E8F100372D13 /* SDL_sound_voc.c */; };
+		3B1C23B625A19C600075EF5D /* vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED982568E95E00372D13 /* vertex.cpp */; };
+		3B1C23B725A19C600075EF5D /* miniffi-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE82568E96A00372D13 /* miniffi-binding.cpp */; };
+		3B1C23B825A19C600075EF5D /* soundemitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED652568E95D00372D13 /* soundemitter.cpp */; };
+		3B1C23B925A19C600075EF5D /* etc-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE62568E96A00372D13 /* etc-binding.cpp */; };
+		3B1C23BA25A19C600075EF5D /* systemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */; };
+		3B1C23BB25A19C600075EF5D /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7B2568E95D00372D13 /* graphics.cpp */; };
+		3B1C23BC25A19C600075EF5D /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED772568E95D00372D13 /* font.cpp */; };
+		3B1C23BD25A19C600075EF5D /* SDL_sound_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED182568E8F100372D13 /* SDL_sound_flac.c */; };
+		3B1C23BE25A19C600075EF5D /* SDL_sound_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0D2568E8F100372D13 /* SDL_sound_modplug.c */; };
+		3B1C23BF25A19C600075EF5D /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
+		3B1C23C025A19C600075EF5D /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
+		3B1C23C125A19C600075EF5D /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
+		3B1C23C325A19C600075EF5D /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080EF256879FD0006849F /* libSDL2_ttf.a */; };
+		3B1C23C425A19C600075EF5D /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FB256879FE0006849F /* libvorbisenc.a */; };
+		3B1C23C525A19C600075EF5D /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DD4259BFF2D003301C4 /* libssl.a */; };
+		3B1C23C625A19C600075EF5D /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E4256879FC0006849F /* libSDL2main.a */; };
+		3B1C23C725A19C600075EF5D /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DD5259BFF2D003301C4 /* libcrypto.a */; };
+		3B1C23C825A19C600075EF5D /* libopenal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5A8444256A0F6300BAF2E5 /* libopenal.a */; };
+		3B1C23C925A19C600075EF5D /* libpixman-1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E9256879FC0006849F /* libpixman-1.a */; };
+		3B1C23CA25A19C600075EF5D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
+		3B1C23CB25A19C600075EF5D /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FD256879FE0006849F /* libogg.a */; };
+		3B1C23CC25A19C600075EF5D /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080EB256879FC0006849F /* libSDL2.a */; };
+		3B1C23CD25A19C600075EF5D /* libturbojpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081492568A5F60006849F /* libturbojpeg.a */; };
+		3B1C23CE25A19C600075EF5D /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081452568A5C60006849F /* libpng.a */; };
+		3B1C23CF25A19C600075EF5D /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E6256879FC0006849F /* libvorbis.a */; };
+		3B1C23D025A19C600075EF5D /* libSDL2_test.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FA256879FE0006849F /* libSDL2_test.a */; };
+		3B1C23D125A19C600075EF5D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08FA425674C9400449CFF /* OpenGL.framework */; };
+		3B1C23D225A19C600075EF5D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
+		3B1C23D325A19C600075EF5D /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
+		3B1C23D425A19C600075EF5D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
+		3B1C23D525A19C600075EF5D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
+		3B1C23D625A19C600075EF5D /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081542568D3A60006849F /* Metal.framework */; };
+		3B1C23D725A19C600075EF5D /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081572568D3A60006849F /* ForceFeedback.framework */; };
+		3B1C23D825A19C600075EF5D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081532568D3A60006849F /* CoreVideo.framework */; };
+		3B1C23D925A19C600075EF5D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081562568D3A60006849F /* CoreGraphics.framework */; };
+		3B1C23DA25A19C600075EF5D /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081502568D3A50006849F /* libbz2.tbd */; };
+		3B1C23DB25A19C600075EF5D /* libruby.3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */; };
+		3B1C23DC25A19C600075EF5D /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081512568D3A60006849F /* CoreAudio.framework */; };
+		3B1C23DD25A19C600075EF5D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */; };
+		3B1C23DE25A19C600075EF5D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46725651C00003DAD8A /* Foundation.framework */; };
+		3B1C23DF25A19C600075EF5D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46625651BFC003DAD8A /* CoreFoundation.framework */; };
+		3B1C23E025A19C600075EF5D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46525651BF3003DAD8A /* libz.tbd */; };
+		3B1C23E125A19C600075EF5D /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46825651C12003DAD8A /* libiconv.tbd */; };
+		3B1C23E225A19C600075EF5D /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E7256879FC0006849F /* libvorbisfile.a */; };
+		3B1C23E325A19C600075EF5D /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080F0256879FD0006849F /* libSDL2_image.a */; };
+		3B1C23E425A19C600075EF5D /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FC256879FE0006849F /* libfreetype.a */; };
+		3B1C23E525A19C600075EF5D /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FF256879FE0006849F /* libphysfs.a */; };
+		3B1C23E725A19C600075EF5D /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
+		3B1C23E925A19C600075EF5D /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3B1C23EB25A19C600075EF5D /* mkxp.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BD2B7282565B35D003DAD8A /* mkxp.json */; };
+		3B1C23ED25A19C600075EF5D /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B1C23EE25A19C600075EF5D /* libruby.3.0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B1C23FD25A19FB40075EF5D /* steamshim_mac_helpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B1C23FC25A19FB40075EF5D /* steamshim_mac_helpers.mm */; };
+		3B1C241225A1A7120075EF5D /* libsteam_api.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C241125A1A7120075EF5D /* libsteam_api.dylib */; };
+		3B1C242025A1A8660075EF5D /* libsteam_api.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C241125A1A7120075EF5D /* libsteam_api.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B1C242625A1A90B0075EF5D /* shim in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B1C235625A199370075EF5D /* shim */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B1C242B25A1AA1F0075EF5D /* steamshim_child.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B1C236925A19B960075EF5D /* steamshim_child.c */; };
 		3B312843259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
 		3B312844259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
 		3B312845259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
@@ -400,6 +527,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3B1C236F25A19C600075EF5D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3BDB22EC25644FBF00C4A63D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3BA08EA3256641ED00449CFF;
+			remoteInfo = "mkxpz-resources";
+		};
+		3B1C243225A1B1290075EF5D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3BDB22EC25644FBF00C4A63D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B1C235525A199370075EF5D;
+			remoteInfo = shim;
+		};
 		3BA08ED2256643AD00449CFF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3BDB22EC25644FBF00C4A63D /* Project object */;
@@ -451,6 +592,58 @@
 			dstSubfolderSpec = 1;
 			files = (
 				3B1C233C25A17CC40075EF5D /* Assets.bundle in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B1C235425A199370075EF5D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		3B1C23E825A19C600075EF5D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/PrivateAssets;
+			dstSubfolderSpec = 1;
+			files = (
+				3B1C23E925A19C600075EF5D /* Assets.bundle in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B1C23EA25A19C600075EF5D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				3B1C23EB25A19C600075EF5D /* mkxp.json in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B1C23EC25A19C600075EF5D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3B1C23ED25A19C600075EF5D /* libfluidsynth.dylib in Embed Frameworks */,
+				3B1C23EE25A19C600075EF5D /* libruby.3.0.dylib in Embed Frameworks */,
+				3B1C242025A1A8660075EF5D /* libsteam_api.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B1C242525A1A8F00075EF5D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				3B1C242625A1A90B0075EF5D /* shim in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -762,10 +955,19 @@
 		3B1C230625A142620075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-arm64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
 		3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-x86_64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
 		3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-universal/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
-		3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mkxp.xcconfig; sourceTree = "<group>"; };
-		3B1C231F25A15FB20075EF5D /* mkxp.Intel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mkxp.Intel.xcconfig; sourceTree = "<group>"; };
-		3B1C232025A15FB20075EF5D /* mkxp.Universal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mkxp.Universal.xcconfig; sourceTree = "<group>"; };
-		3B1C232125A15FB20075EF5D /* mkxp.AppleSilicon.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mkxp.AppleSilicon.xcconfig; sourceTree = "<group>"; };
+		3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mkxp.xcconfig; path = config/mkxp.xcconfig; sourceTree = "<group>"; };
+		3B1C231F25A15FB20075EF5D /* mkxp.Intel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mkxp.Intel.xcconfig; path = config/mkxp.Intel.xcconfig; sourceTree = "<group>"; };
+		3B1C232025A15FB20075EF5D /* mkxp.Universal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mkxp.Universal.xcconfig; path = config/mkxp.Universal.xcconfig; sourceTree = "<group>"; };
+		3B1C232125A15FB20075EF5D /* mkxp.AppleSilicon.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = mkxp.AppleSilicon.xcconfig; path = config/mkxp.AppleSilicon.xcconfig; sourceTree = "<group>"; };
+		3B1C235625A199370075EF5D /* shim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = shim; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B1C236725A19B960075EF5D /* steamshim_parent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = steamshim_parent.cpp; path = ../steamshim/steamshim_parent.cpp; sourceTree = "<group>"; };
+		3B1C236825A19B960075EF5D /* steamshim_child.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = steamshim_child.h; path = ../steamshim/steamshim_child.h; sourceTree = "<group>"; };
+		3B1C236925A19B960075EF5D /* steamshim_child.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = steamshim_child.c; path = ../steamshim/steamshim_child.c; sourceTree = "<group>"; };
+		3B1C23F225A19C600075EF5D /* Z.steam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Z.steam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B1C23FC25A19FB40075EF5D /* steamshim_mac_helpers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = steamshim_mac_helpers.mm; path = ../steamshim/steamshim_mac_helpers.mm; sourceTree = "<group>"; };
+		3B1C240025A19FD60075EF5D /* steamshim_mac_helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = steamshim_mac_helpers.h; path = ../steamshim/steamshim_mac_helpers.h; sourceTree = "<group>"; };
+		3B1C240C25A1A4C50075EF5D /* steamshim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = steamshim.xcconfig; path = config/steamshim.xcconfig; sourceTree = "<group>"; };
+		3B1C241125A1A7120075EF5D /* libsteam_api.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsteam_api.dylib; path = Dependencies/Frameworks/steam/sdk/redistributable_bin/osx/libsteam_api.dylib; sourceTree = "<group>"; };
 		3B312841259E7DC1002EAB43 /* miniffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniffi.h; sourceTree = "<group>"; };
 		3B312842259E7DC1002EAB43 /* miniffi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = miniffi.cpp; sourceTree = "<group>"; };
 		3B426F6B256B8AC0009EA00F /* fs_std_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_impl.hpp; sourceTree = "<group>"; };
@@ -870,6 +1072,56 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3B1C235325A199370075EF5D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B1C241225A1A7120075EF5D /* libsteam_api.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B1C23C225A19C600075EF5D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B1C23C325A19C600075EF5D /* libSDL2_ttf.a in Frameworks */,
+				3B1C23C425A19C600075EF5D /* libvorbisenc.a in Frameworks */,
+				3B1C23C525A19C600075EF5D /* libssl.a in Frameworks */,
+				3B1C23C625A19C600075EF5D /* libSDL2main.a in Frameworks */,
+				3B1C23C725A19C600075EF5D /* libcrypto.a in Frameworks */,
+				3B1C23C825A19C600075EF5D /* libopenal.a in Frameworks */,
+				3B1C23C925A19C600075EF5D /* libpixman-1.a in Frameworks */,
+				3B1C23CA25A19C600075EF5D /* AppKit.framework in Frameworks */,
+				3B1C23CB25A19C600075EF5D /* libogg.a in Frameworks */,
+				3B1C23CC25A19C600075EF5D /* libSDL2.a in Frameworks */,
+				3B1C23CD25A19C600075EF5D /* libturbojpeg.a in Frameworks */,
+				3B1C23CE25A19C600075EF5D /* libpng.a in Frameworks */,
+				3B1C23CF25A19C600075EF5D /* libvorbis.a in Frameworks */,
+				3B1C23D025A19C600075EF5D /* libSDL2_test.a in Frameworks */,
+				3B1C23D125A19C600075EF5D /* OpenGL.framework in Frameworks */,
+				3B1C23D225A19C600075EF5D /* IOKit.framework in Frameworks */,
+				3B1C23D325A19C600075EF5D /* libsigc-2.0.a in Frameworks */,
+				3B1C23D425A19C600075EF5D /* Carbon.framework in Frameworks */,
+				3B1C23D525A19C600075EF5D /* AppKit.framework in Frameworks */,
+				3B1C23D625A19C600075EF5D /* Metal.framework in Frameworks */,
+				3B1C23D725A19C600075EF5D /* ForceFeedback.framework in Frameworks */,
+				3B1C23D825A19C600075EF5D /* CoreVideo.framework in Frameworks */,
+				3B1C23D925A19C600075EF5D /* CoreGraphics.framework in Frameworks */,
+				3B1C23DA25A19C600075EF5D /* libbz2.tbd in Frameworks */,
+				3B1C23DB25A19C600075EF5D /* libruby.3.0.dylib in Frameworks */,
+				3B1C23DC25A19C600075EF5D /* CoreAudio.framework in Frameworks */,
+				3B1C23DD25A19C600075EF5D /* AudioToolbox.framework in Frameworks */,
+				3B1C23DE25A19C600075EF5D /* Foundation.framework in Frameworks */,
+				3B1C23DF25A19C600075EF5D /* CoreFoundation.framework in Frameworks */,
+				3B1C23E025A19C600075EF5D /* libz.tbd in Frameworks */,
+				3B1C23E125A19C600075EF5D /* libiconv.tbd in Frameworks */,
+				3B1C23E225A19C600075EF5D /* libvorbisfile.a in Frameworks */,
+				3B1C23E325A19C600075EF5D /* libSDL2_image.a in Frameworks */,
+				3B1C23E425A19C600075EF5D /* libfreetype.a in Frameworks */,
+				3B1C23E525A19C600075EF5D /* libphysfs.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3BA08EA1256641ED00449CFF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1008,6 +1260,7 @@
 			isa = PBXGroup;
 			children = (
 				3B10ED342568E95D00372D13 /* src */,
+				3B1C236625A19B780075EF5D /* steamshim */,
 				3B10EDD52568E96A00372D13 /* binding */,
 				3B10ED062568E8F100372D13 /* SDL2_sound */,
 			);
@@ -1315,7 +1568,7 @@
 			path = ../binding;
 			sourceTree = "<group>";
 		};
-		3B1C231D25A15F8F0075EF5D /* Xcode */ = {
+		3B1C231D25A15F8F0075EF5D /* mkxp */ = {
 			isa = PBXGroup;
 			children = (
 				3B1C232125A15FB20075EF5D /* mkxp.AppleSilicon.xcconfig */,
@@ -1323,7 +1576,35 @@
 				3B1C232025A15FB20075EF5D /* mkxp.Universal.xcconfig */,
 				3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */,
 			);
-			name = Xcode;
+			name = mkxp;
+			sourceTree = "<group>";
+		};
+		3B1C236625A19B780075EF5D /* steamshim */ = {
+			isa = PBXGroup;
+			children = (
+				3B1C236925A19B960075EF5D /* steamshim_child.c */,
+				3B1C236825A19B960075EF5D /* steamshim_child.h */,
+				3B1C236725A19B960075EF5D /* steamshim_parent.cpp */,
+				3B1C23FC25A19FB40075EF5D /* steamshim_mac_helpers.mm */,
+				3B1C240025A19FD60075EF5D /* steamshim_mac_helpers.h */,
+			);
+			name = steamshim;
+			sourceTree = "<group>";
+		};
+		3B1C240B25A1A43B0075EF5D /* steamshim */ = {
+			isa = PBXGroup;
+			children = (
+				3B1C240C25A1A4C50075EF5D /* steamshim.xcconfig */,
+			);
+			name = steamshim;
+			sourceTree = "<group>";
+		};
+		3B1C241F25A1A84D0075EF5D /* Steam */ = {
+			isa = PBXGroup;
+			children = (
+				3B1C241125A1A7120075EF5D /* libsteam_api.dylib */,
+			);
+			name = Steam;
 			sourceTree = "<group>";
 		};
 		3B426F6A256B8AC0009EA00F /* ghc */ = {
@@ -1413,7 +1694,8 @@
 		3BD2B3B2256518A1003DAD8A /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				3B1C231D25A15F8F0075EF5D /* Xcode */,
+				3B1C240B25A1A43B0075EF5D /* steamshim */,
+				3B1C231D25A15F8F0075EF5D /* mkxp */,
 				3BD2B7282565B35D003DAD8A /* mkxp.json */,
 				3BD2B3AF25651885003DAD8A /* entitlements.plist */,
 				3BDB25C52565184600C4A63D /* Info.plist */,
@@ -1464,6 +1746,8 @@
 				3BA08EA4256641ED00449CFF /* Assets.bundle */,
 				3BC65D442584EDC60063AFF1 /* Z.arm.app */,
 				3BC65E152584F3AD0063AFF1 /* Z.universal.app */,
+				3B1C235625A199370075EF5D /* shim */,
+				3B1C23F225A19C600075EF5D /* Z.steam.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1483,6 +1767,7 @@
 		3BDB23E5256455A400C4A63D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3B1C241F25A1A84D0075EF5D /* Steam */,
 				3BC65D792584F3030063AFF1 /* Universal */,
 				3BC65D492584EE690063AFF1 /* ARM64 */,
 				3BE080CA256829FE0006849F /* Intel */,
@@ -1529,6 +1814,46 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3B1C235525A199370075EF5D /* shim */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B1C235A25A199370075EF5D /* Build configuration list for PBXNativeTarget "shim" */;
+			buildPhases = (
+				3B1C235225A199370075EF5D /* Sources */,
+				3B1C235325A199370075EF5D /* Frameworks */,
+				3B1C235425A199370075EF5D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = shim;
+			productName = steamshim;
+			productReference = 3B1C235625A199370075EF5D /* shim */;
+			productType = "com.apple.product-type.tool";
+		};
+		3B1C236D25A19C600075EF5D /* Z.steam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B1C23EF25A19C600075EF5D /* Build configuration list for PBXNativeTarget "Z.steam" */;
+			buildPhases = (
+				3B1C237025A19C600075EF5D /* Sources */,
+				3B1C23C225A19C600075EF5D /* Frameworks */,
+				3B1C23E625A19C600075EF5D /* Resources */,
+				3B1C242525A1A8F00075EF5D /* CopyFiles */,
+				3B1C23E825A19C600075EF5D /* CopyFiles */,
+				3B1C23EA25A19C600075EF5D /* CopyFiles */,
+				3B1C23EC25A19C600075EF5D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3B1C243325A1B1290075EF5D /* PBXTargetDependency */,
+				3B1C236E25A19C600075EF5D /* PBXTargetDependency */,
+			);
+			name = Z.steam;
+			productName = PlayerLegacy;
+			productReference = 3B1C23F225A19C600075EF5D /* Z.steam.app */;
+			productType = "com.apple.product-type.application";
+		};
 		3BA08EA3256641ED00449CFF /* Assets */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3BA08EA9256641EE00449CFF /* Build configuration list for PBXNativeTarget "Assets" */;
@@ -1620,6 +1945,9 @@
 			attributes = {
 				LastUpgradeCheck = 1230;
 				TargetAttributes = {
+					3B1C235525A199370075EF5D = {
+						CreatedOnToolsVersion = 12.3;
+					};
 					3BA08EA3256641ED00449CFF = {
 						CreatedOnToolsVersion = 12.2;
 					};
@@ -1642,11 +1970,21 @@
 				3BC65D8A2584F3AD0063AFF1 /* Z.universal */,
 				3BD2B64B2565AEC0003DAD8A /* Z.intel */,
 				3BC65CC92584EDC60063AFF1 /* Z.arm */,
+				3B1C236D25A19C600075EF5D /* Z.steam */,
+				3B1C235525A199370075EF5D /* shim */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		3B1C23E625A19C600075EF5D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B1C23E725A19C600075EF5D /* icon.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3BA08EA2256641ED00449CFF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1682,6 +2020,104 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3B1C235225A199370075EF5D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B1C236A25A19BB10075EF5D /* steamshim_parent.cpp in Sources */,
+				3B1C23FD25A19FB40075EF5D /* steamshim_mac_helpers.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B1C237025A19C600075EF5D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B1C237125A19C600075EF5D /* http-binding.cpp in Sources */,
+				3B1C237225A19C600075EF5D /* tilemapvx.cpp in Sources */,
+				3B1C237325A19C600075EF5D /* SDL_sound.c in Sources */,
+				3B1C237425A19C600075EF5D /* rgssad.cpp in Sources */,
+				3B1C237525A19C600075EF5D /* input.cpp in Sources */,
+				3B1C237625A19C600075EF5D /* tilemap-binding.cpp in Sources */,
+				3B1C237725A19C600075EF5D /* audio.cpp in Sources */,
+				3B1C237825A19C600075EF5D /* main.cpp in Sources */,
+				3B1C237925A19C600075EF5D /* alstream.cpp in Sources */,
+				3B1C237A25A19C600075EF5D /* table.cpp in Sources */,
+				3B1C237B25A19C600075EF5D /* net.cpp in Sources */,
+				3B1C237C25A19C600075EF5D /* table-binding.cpp in Sources */,
+				3B1C237D25A19C600075EF5D /* config.cpp in Sources */,
+				3B1C237E25A19C600075EF5D /* bitmap-binding.cpp in Sources */,
+				3B1C237F25A19C600075EF5D /* vorbissource.cpp in Sources */,
+				3B1C238025A19C600075EF5D /* SDL_sound_raw.c in Sources */,
+				3B1C238125A19C600075EF5D /* filesystem-binding.cpp in Sources */,
+				3B1C238225A19C600075EF5D /* SDL_sound_shn.c in Sources */,
+				3B1C238325A19C600075EF5D /* glstate.cpp in Sources */,
+				3B1C238425A19C600075EF5D /* gl-fun.cpp in Sources */,
+				3B1C238525A19C600075EF5D /* sprite-binding.cpp in Sources */,
+				3B1C238625A19C600075EF5D /* sprite.cpp in Sources */,
+				3B1C238725A19C600075EF5D /* cusl-binding.cpp in Sources */,
+				3B1C238825A19C600075EF5D /* sdlsoundsource.cpp in Sources */,
+				3B1C238925A19C600075EF5D /* viewport-binding.cpp in Sources */,
+				3B1C238A25A19C600075EF5D /* windowvx-binding.cpp in Sources */,
+				3B1C238B25A19C600075EF5D /* windowvx.cpp in Sources */,
+				3B1C238C25A19C600075EF5D /* LUrlParser.cpp in Sources */,
+				3B1C238D25A19C600075EF5D /* module_rpg.cpp in Sources */,
+				3B1C238E25A19C600075EF5D /* miniffi.cpp in Sources */,
+				3B1C238F25A19C600075EF5D /* autotiles.cpp in Sources */,
+				3B1C239025A19C600075EF5D /* audiostream.cpp in Sources */,
+				3B1C239125A19C600075EF5D /* binding-util.cpp in Sources */,
+				3B1C239225A19C600075EF5D /* plane-binding.cpp in Sources */,
+				3B1C239325A19C600075EF5D /* gl-meta.cpp in Sources */,
+				3B1C239425A19C600075EF5D /* etc.cpp in Sources */,
+				3B1C239525A19C600075EF5D /* shader.cpp in Sources */,
+				3B1C239625A19C600075EF5D /* tilemap.cpp in Sources */,
+				3B1C239725A19C600075EF5D /* SDL_sound_au.c in Sources */,
+				3B1C239825A19C600075EF5D /* window.cpp in Sources */,
+				3B1C239925A19C600075EF5D /* SDL_sound_wav.c in Sources */,
+				3B1C239A25A19C600075EF5D /* input-binding.cpp in Sources */,
+				3B1C239B25A19C600075EF5D /* keybindings.cpp in Sources */,
+				3B1C239C25A19C600075EF5D /* filesystem.cpp in Sources */,
+				3B1C239D25A19C600075EF5D /* binding-mri.cpp in Sources */,
+				3B1C239E25A19C600075EF5D /* settingsmenu.cpp in Sources */,
+				3B1C239F25A19C600075EF5D /* eventthread.cpp in Sources */,
+				3B1C23A025A19C600075EF5D /* viewport.cpp in Sources */,
+				3B1C23A125A19C600075EF5D /* gl-debug.cpp in Sources */,
+				3B1C23A225A19C600075EF5D /* SDL_sound_vorbis.c in Sources */,
+				3B1C23A325A19C600075EF5D /* tileatlasvx.cpp in Sources */,
+				3B1C23A425A19C600075EF5D /* bitmap.cpp in Sources */,
+				3B1C23A525A19C600075EF5D /* tilemapvx-binding.cpp in Sources */,
+				3B1C23A625A19C600075EF5D /* window-binding.cpp in Sources */,
+				3B1C23A725A19C600075EF5D /* midisource.cpp in Sources */,
+				3B1C23A825A19C600075EF5D /* graphics-binding.cpp in Sources */,
+				3B1C23A925A19C600075EF5D /* plane.cpp in Sources */,
+				3B1C23AA25A19C600075EF5D /* tilequad.cpp in Sources */,
+				3B1C23AB25A19C600075EF5D /* SDL_sound_mp3.c in Sources */,
+				3B1C23AC25A19C600075EF5D /* SDL_sound_aiff.c in Sources */,
+				3B1C23AD25A19C600075EF5D /* tileatlas.cpp in Sources */,
+				3B1C23AE25A19C600075EF5D /* fluid-fun.cpp in Sources */,
+				3B1C23AF25A19C600075EF5D /* scene.cpp in Sources */,
+				3B1C23B025A19C600075EF5D /* texpool.cpp in Sources */,
+				3B1C23B125A19C600075EF5D /* font-binding.cpp in Sources */,
+				3B1C23B225A19C600075EF5D /* SDL_sound_coreaudio.c in Sources */,
+				3B1C23B325A19C600075EF5D /* audio-binding.cpp in Sources */,
+				3B1C23B425A19C600075EF5D /* autotilesvx.cpp in Sources */,
+				3B1C23B525A19C600075EF5D /* SDL_sound_voc.c in Sources */,
+				3B1C23B625A19C600075EF5D /* vertex.cpp in Sources */,
+				3B1C23B725A19C600075EF5D /* miniffi-binding.cpp in Sources */,
+				3B1C23B825A19C600075EF5D /* soundemitter.cpp in Sources */,
+				3B1C23B925A19C600075EF5D /* etc-binding.cpp in Sources */,
+				3B1C23BA25A19C600075EF5D /* systemImplApple.mm in Sources */,
+				3B1C23BB25A19C600075EF5D /* graphics.cpp in Sources */,
+				3B1C23BC25A19C600075EF5D /* font.cpp in Sources */,
+				3B1C242B25A1AA1F0075EF5D /* steamshim_child.c in Sources */,
+				3B1C23BD25A19C600075EF5D /* SDL_sound_flac.c in Sources */,
+				3B1C23BE25A19C600075EF5D /* SDL_sound_modplug.c in Sources */,
+				3B1C23BF25A19C600075EF5D /* filesystemImplApple.mm in Sources */,
+				3B1C23C025A19C600075EF5D /* fake-api.cpp in Sources */,
+				3B1C23C125A19C600075EF5D /* sharedstate.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3BA08EA0256641ED00449CFF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1956,6 +2392,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3B1C236E25A19C600075EF5D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3BA08EA3256641ED00449CFF /* Assets */;
+			targetProxy = 3B1C236F25A19C600075EF5D /* PBXContainerItemProxy */;
+		};
+		3B1C243325A1B1290075EF5D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B1C235525A199370075EF5D /* shim */;
+			targetProxy = 3B1C243225A1B1290075EF5D /* PBXContainerItemProxy */;
+		};
 		3BA08ED3256643AD00449CFF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3BA08EA3256641ED00449CFF /* Assets */;
@@ -1974,6 +2420,286 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		3B1C235B25A199370075EF5D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3B1C240C25A1A4C50075EF5D /* steamshim.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(STEAMSHIM_DEFINES)",
+					STEAMSHIM_DEBUG,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/Frameworks/steam/sdk/public\"";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/Frameworks/steam/sdk/redistributable_bin/osx";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3B1C235C25A199370075EF5D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3B1C240C25A1A4C50075EF5D /* steamshim.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(STEAMSHIM_DEFINES)";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Dependencies/Frameworks/steam/sdk/public\"";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/Frameworks/steam/sdk/redistributable_bin/osx";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3B1C23F025A19C600075EF5D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3B1C231F25A15FB20075EF5D /* mkxp.Intel.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2.0;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MKXPZ_BUILD_XCODE,
+					"MKXPZ_ALCDEVICE=ALCdevice",
+					"MKXPZ_VERSION=\"$(MARKETING_VERSION)\"",
+					MKXPZ_MINIFFI,
+					MKXPZ_DEBUG,
+					MKXPZ_STEAM,
+					AL_LIBTYPE_STATIC,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 2.0;
+				MKXPZ_EXECUTABLE_NAME = shim;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CODE_SIGN_FLAGS = "--ignore-resources --deep";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = Z.steam;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3B1C23F125A19C600075EF5D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3B1C231F25A15FB20075EF5D /* mkxp.Intel.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MKXPZ_BUILD_XCODE,
+					"MKXPZ_ALCDEVICE=ALCdevice",
+					"MKXPZ_VERSION=\"$(MARKETING_VERSION)\"",
+					MKXPZ_MINIFFI,
+					MKXPZ_STEAM,
+					AL_LIBTYPE_STATIC,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 2.0;
+				MKXPZ_EXECUTABLE_NAME = shim;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CODE_SIGN_FLAGS = "--ignore-resources --deep";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = Z.steam;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3BA08EA7256641EE00449CFF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2613,6 +3339,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3B1C235A25A199370075EF5D /* Build configuration list for PBXNativeTarget "shim" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B1C235B25A199370075EF5D /* Debug */,
+				3B1C235C25A199370075EF5D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3B1C23EF25A19C600075EF5D /* Build configuration list for PBXNativeTarget "Z.steam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B1C23F025A19C600075EF5D /* Debug */,
+				3B1C23F125A19C600075EF5D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3BA08EA9256641EE00449CFF /* Build configuration list for PBXNativeTarget "Assets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

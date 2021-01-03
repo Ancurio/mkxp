@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleExecutable</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>$(MKXPZ_EXECUTABLE_NAME)</string>
 	<key>CFBundleGetInfoString</key>
 	<string>mkxp-z</string>
 	<key>CFBundleIconFile</key>

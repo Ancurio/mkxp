@@ -23,6 +23,7 @@ typedef int PipeType;
 #endif
 #include <stdlib.h>
 
+#include "steamshim_mac_helpers.h"
 #include "steam/steam_api_flat.h"
 
 #ifdef STEAMSHIM_DEBUG
@@ -216,7 +217,7 @@ static bool launchChild(ProcessType *pid) {
     // we're the child.
 #ifdef __APPLE__
   char buf[300];
-  strncpy(buf, GArgv[0], sizeof(buf));
+  strncpy(buf, execPath().c_str(), sizeof(buf));
   strcat(buf, "_rt");
   GArgv[0] = buf;
 #else

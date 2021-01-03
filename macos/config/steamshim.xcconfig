@@ -1,0 +1,11 @@
+//
+//  steamshim.xcconfig
+//  mkxp-z
+//
+//  Created by ゾロアーク on 1/3/21.
+//
+
+STEAMSHIM_DEFINES = "GAME_LAUNCH_NAME=\"Z.steam\"" //STEAM_APPID=12345678
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
