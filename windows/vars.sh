@@ -8,3 +8,4 @@ MKXPZ_OLD_PC=$(pkg-config --variable pc_path pkg-config)
 
 # Try to load the stuff we built first
 export PKG_CONFIG_PATH="$DIR/build-${MKXPZ_PREFIX}/lib/pkgconfig"
+export MKXPZ_PREFIX="$DIR/build-${MKXPZ_PREFIX}"
