@@ -248,11 +248,11 @@ $(DOWNLOADS)/openal/CMakeLists.txt:
 openssl: init_dirs $(LIBDIR)/libssl.a
 $(LIBDIR)/libssl.a: $(DOWNLOADS)/openssl/Makefile
 	cd $(DOWNLOADS)/openssl; \
-	make -j$(NPROC); make install_sw
+	$(CONFIGURE_ENV) make -j$(NPROC); make install_sw
 
 $(DOWNLOADS)/openssl/Makefile: $(DOWNLOADS)/openssl/Configure
 	cd $(DOWNLOADS)/openssl; \
-	./Configure $(OPENSSL_FLAGS) \
+	$(CONFIGURE_ENV) ./Configure $(OPENSSL_FLAGS) \
 	no-shared \
 	--prefix="$(BUILD_PREFIX)" \
 	--openssldir="$(BUILD_PREFIX)"
@@ -262,11 +262,13 @@ $(DOWNLOADS)/openssl/Configure:
 	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
 
 # Standard ruby
-ruby: init_dirs $(LIBDIR)/libruby.3.0-static.a openssl
+ruby: init_dirs $(LIBDIR)/libruby.3.0.dylib openssl
 
-$(LIBDIR)/libruby.3.0-static.a: $(DOWNLOADS)/ruby/Makefile
+$(LIBDIR)/libruby.3.0.dylib: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
 	make -j$(NPROC); make install
+	# Make the dylib relative
+	install_name_tool -id @rpath/libruby.3.0.dylib $(LIBDIR)/libruby.3.0.dylib
 
 $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	cd $(DOWNLOADS)/ruby; \
@@ -276,40 +278,7 @@ $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
 	cd $(DOWNLOADS)/ruby; autoconf
 
 $(DOWNLOADS)/ruby/*.c:
-	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby -b mkxp-z;
-
-# Old geezer ruby
-legacy-ruby: init_dirs $(LIBDIR)/libruby.a openssl
-
-$(LIBDIR)/libruby.a: $(DOWNLOADS)/ruby18/Makefile
-	cd $(DOWNLOADS)/ruby18; \
-	make -j$(NPROC); make install
-
-$(DOWNLOADS)/ruby18/Makefile: $(DOWNLOADS)/ruby18/configure
-	cd $(DOWNLOADS)/ruby18; \
-	$(CONFIGURE) \
-	--with-static-linked-ext \
-	$(RUBY_FLAGS)
-
-$(DOWNLOADS)/ruby18/configure: $(DOWNLOADS)/ruby18/*.c
-	cd $(DOWNLOADS)/ruby18; autoconf
-
-$(DOWNLOADS)/ruby18/*.c:
-	$(CLONE) $(GITLAB)/mkxp-z/ruby --single-branch --branch ruby_1_8_7 $(DOWNLOADS)/ruby18; \
-	rm -rf $(DOWNLOADS)/ruby18/ext/tk
-
-# Build your own ruby!
-RUBY_PATH := ${RUBY_PATH}
-custom-ruby: custom-ruby-makefile
-	cd $(RUBY_PATH); \
-	make -j$(NPROC); make install
-
-custom-ruby-makefile: custom-ruby-configure
-	cd $(RUBY_PATH); $(CONFIGURE) $(RUBY_FLAGS)
-
-custom-ruby-configure: $(RUBY_PATH)/*.c
-	cd $(RUBY_PATH); autoconf
-
+	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby --single-branch -b mkxp-z;
 
 # ====
 init_dirs:

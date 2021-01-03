@@ -1,4 +1,5 @@
 ARCH := $(shell ruby -e "puts (\`gcc -dumpmachine\`[/i686/].nil?) ? 'mingw64' : 'mingw'")
+RB_PREFIX := $(shell ruby -e "puts ('$(ARCH)' == 'mingw64') ? 'x64-msvcrt' : 'msvcrt'")
 
 SDL_FLAGS := ${SDL_FLAGS}
 SDL2_IMAGE_FLAGS := ${SDL2_IMAGE_FLAGS}
@@ -7,7 +8,7 @@ OPENAL_FLAGS := ${OPENAL_FLAGS}
 OPENSSL_FLAGS := $(ARCH) ${OPENSSL_FLAGS}
 RUBY_FLAGS := ${RUBY_FLAGS}
 
-BUILD_PREFIX := /opt/mkxp-$(ARCH)
+BUILD_PREFIX := ${PWD}/build-$(ARCH)
 LIBDIR := $(BUILD_PREFIX)/lib
 INCLUDEDIR := $(BUILD_PREFIX)/include
 DOWNLOADS := ${PWD}/downloads/$(ARCH)
@@ -248,9 +249,9 @@ $(DOWNLOADS)/openssl/Configure:
 	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
 
 # Standard ruby
-ruby: init_dirs $(LIBDIR)/libx64-msvcrt-ruby300-static.a openssl
+ruby: init_dirs $(BUILD_PREFIX)/$(RB_PREFIX)-ruby300.dll openssl
 
-$(LIBDIR)/libx64-msvcrt-ruby300-static.a: $(DOWNLOADS)/ruby/Makefile
+$(BUILD_PREFIX)/$(RB_PREFIX)-ruby300.dll: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
 	make -j$(NPROC); make install
 
@@ -263,38 +264,6 @@ $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
 
 $(DOWNLOADS)/ruby/*.c:
 	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby -b mkxp-z;
-
-# Old geezer ruby
-legacy-ruby: init_dirs $(LIBDIR)/libruby18.a openssl
-
-$(LIBDIR)/libruby18.a: $(DOWNLOADS)/ruby18/Makefile
-	cd $(DOWNLOADS)/ruby18; \
-	make -j$(NPROC); make install
-
-$(DOWNLOADS)/ruby18/Makefile: $(DOWNLOADS)/ruby18/configure
-	cd $(DOWNLOADS)/ruby18; \
-	$(CONFIGURE) \
-	$(RUBY_FLAGS)
-
-$(DOWNLOADS)/ruby18/configure: $(DOWNLOADS)/ruby18/*.c
-	cd $(DOWNLOADS)/ruby18; autoconf
-
-$(DOWNLOADS)/ruby18/*.c:
-	$(CLONE) $(GITLAB)/mkxp-z/ruby --single-branch --branch ruby_1_8_7 $(DOWNLOADS)/ruby18; \
-	rm -rf $(DOWNLOADS)/ruby18/ext/tk $(DOWNLOADS)/ruby18/ext/openssl
-
-# Build your own ruby!
-RUBY_PATH := ${RUBY_PATH}
-custom-ruby: custom-ruby-makefile
-	cd $(RUBY_PATH); \
-	make -j$(NPROC); make install
-
-custom-ruby-makefile: custom-ruby-configure
-	cd $(RUBY_PATH); $(CONFIGURE) $(RUBY_FLAGS)
-
-custom-ruby-configure: $(RUBY_PATH)/*.c
-	cd $(RUBY_PATH); autoconf
-
 
 # ====
 init_dirs:

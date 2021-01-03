@@ -117,6 +117,12 @@
 		3B10EE092568E96A00372D13 /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
 		3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF32568E96A00372D13 /* module_rpg.cpp */; };
 		3B10EE0C2568E96A00372D13 /* viewport-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF42568E96A00372D13 /* viewport-binding.cpp */; };
+		3B1C230725A142620075EF5D /* libruby.3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230625A142620075EF5D /* libruby.3.0.dylib */; };
+		3B1C230825A1426C0075EF5D /* libruby.3.0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230625A142620075EF5D /* libruby.3.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B1C230B25A144A10075EF5D /* libruby.3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */; };
+		3B1C230C25A144A40075EF5D /* libruby.3.0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B1C230E25A144BF0075EF5D /* libruby.3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */; };
+		3B1C230F25A144C90075EF5D /* libruby.3.0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B312843259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
 		3B312844259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
 		3B312845259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
@@ -743,9 +749,6 @@
 		3BF695E4259608050016920C /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB23E22564546E00C4A63D /* icon.icns */; };
 		3BF695E7259608050016920C /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3BF69603259608DB0016920C /* libruby.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF69602259608DB0016920C /* libruby.a */; };
-		3BF6965925962C8E0016920C /* libruby.3.0-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF6965825962C8E0016920C /* libruby.3.0-static.a */; };
-		3BF6965B25962CA50016920C /* libruby.3.0-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF6965A25962CA40016920C /* libruby.3.0-static.a */; };
-		3BF6965D25962CBD0016920C /* libruby.3.0-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF6965C25962CBD0016920C /* libruby.3.0-static.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -801,6 +804,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3B522DA9259BAA42003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+				3B1C230F25A144C90075EF5D /* libruby.3.0.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -812,6 +816,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3B522DAA259BAA4A003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+				3B1C230C25A144A40075EF5D /* libruby.3.0.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -823,6 +828,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3B522DAB259BAA4C003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
+				3B1C230825A1426C0075EF5D /* libruby.3.0.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1165,6 +1171,9 @@
 		3B10EDF32568E96A00372D13 /* module_rpg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = module_rpg.cpp; sourceTree = "<group>"; };
 		3B10EDF42568E96A00372D13 /* viewport-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "viewport-binding.cpp"; sourceTree = "<group>"; };
 		3B10EE1F2569348E00372D13 /* json5pp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json5pp.hpp; sourceTree = "<group>"; };
+		3B1C230625A142620075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-arm64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
+		3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-x86_64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
+		3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-universal/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
 		3B312841259E7DC1002EAB43 /* miniffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniffi.h; sourceTree = "<group>"; };
 		3B312842259E7DC1002EAB43 /* miniffi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = miniffi.cpp; sourceTree = "<group>"; };
 		3B426F6B256B8AC0009EA00F /* fs_std_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_impl.hpp; sourceTree = "<group>"; };
@@ -1273,9 +1282,6 @@
 		3BF695682596053C0016920C /* libruby.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libruby.a; path = "Dependencies/build-macosx-x86_64/lib/libruby.a"; sourceTree = "<group>"; };
 		3BF695EB259608050016920C /* mkxp-z.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mkxp-z.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BF69602259608DB0016920C /* libruby.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libruby.a; path = "Dependencies/build-macosx-universal/lib/libruby.a"; sourceTree = "<group>"; };
-		3BF6965825962C8E0016920C /* libruby.3.0-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.3.0-static.a"; path = "Dependencies/build-macosx-arm64/lib/libruby.3.0-static.a"; sourceTree = "<group>"; };
-		3BF6965A25962CA40016920C /* libruby.3.0-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.3.0-static.a"; path = "Dependencies/build-macosx-universal/lib/libruby.3.0-static.a"; sourceTree = "<group>"; };
-		3BF6965C25962CBD0016920C /* libruby.3.0-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libruby.3.0-static.a"; path = "Dependencies/build-macosx-x86_64/lib/libruby.3.0-static.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1354,11 +1360,11 @@
 				3BC65D332584EDC60063AFF1 /* AudioToolbox.framework in Frameworks */,
 				3BC65D642584EED10063AFF1 /* libvorbisfile.a in Frameworks */,
 				3BC65D342584EDC60063AFF1 /* Foundation.framework in Frameworks */,
+				3B1C230725A142620075EF5D /* libruby.3.0.dylib in Frameworks */,
 				3BC65D612584EED10063AFF1 /* libogg.a in Frameworks */,
 				3BC65D352584EDC60063AFF1 /* CoreFoundation.framework in Frameworks */,
 				3BC65D362584EDC60063AFF1 /* libz.tbd in Frameworks */,
 				3BC65D672584EED10063AFF1 /* libsigc-2.0.a in Frameworks */,
-				3BF6965925962C8E0016920C /* libruby.3.0-static.a in Frameworks */,
 				3BC65D5F2584EED10063AFF1 /* libfreetype.a in Frameworks */,
 				3BC65D372584EDC60063AFF1 /* libiconv.tbd in Frameworks */,
 				3BC65D602584EED10063AFF1 /* libSDL2main.a in Frameworks */,
@@ -1394,11 +1400,11 @@
 				3BC65DFC2584F3AD0063AFF1 /* CoreAudio.framework in Frameworks */,
 				3BC65DFD2584F3AD0063AFF1 /* AudioToolbox.framework in Frameworks */,
 				3BC65E212584F4290063AFF1 /* libopenal.a in Frameworks */,
+				3B1C230E25A144BF0075EF5D /* libruby.3.0.dylib in Frameworks */,
 				3BC65DFF2584F3AD0063AFF1 /* Foundation.framework in Frameworks */,
 				3BC65E242584F4290063AFF1 /* libvorbisfile.a in Frameworks */,
 				3BC65E012584F3AD0063AFF1 /* CoreFoundation.framework in Frameworks */,
 				3BC65E022584F3AD0063AFF1 /* libz.tbd in Frameworks */,
-				3BF6965B25962CA50016920C /* libruby.3.0-static.a in Frameworks */,
 				3BC65E252584F4290063AFF1 /* libvorbis.a in Frameworks */,
 				3BC65E202584F4290063AFF1 /* libpixman-1.a in Frameworks */,
 				3BC65E062584F3AD0063AFF1 /* libiconv.tbd in Frameworks */,
@@ -1428,12 +1434,12 @@
 				3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */,
 				3B10EC5D2568D40C00372D13 /* Carbon.framework in Frameworks */,
 				3B10EC5E2568D40C00372D13 /* AppKit.framework in Frameworks */,
-				3BF6965D25962CBD0016920C /* libruby.3.0-static.a in Frameworks */,
 				3B10EC5F2568D40C00372D13 /* Metal.framework in Frameworks */,
 				3B10EC602568D40C00372D13 /* ForceFeedback.framework in Frameworks */,
 				3B10EC612568D40C00372D13 /* CoreVideo.framework in Frameworks */,
 				3B10EC5C2568D40500372D13 /* CoreGraphics.framework in Frameworks */,
 				3BE081592568D3A60006849F /* libbz2.tbd in Frameworks */,
+				3B1C230B25A144A10075EF5D /* libruby.3.0.dylib in Frameworks */,
 				3B10EC632568D40C00372D13 /* CoreAudio.framework in Frameworks */,
 				3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */,
 				3BD2B6F12565AEC0003DAD8A /* Foundation.framework in Frameworks */,
@@ -1892,8 +1898,8 @@
 				3BC65D562584EED10063AFF1 /* libopenal.a */,
 				3BC65D4C2584EED10063AFF1 /* libphysfs.a */,
 				3BC65D4B2584EED10063AFF1 /* libpixman-1.a */,
-				3BF6965825962C8E0016920C /* libruby.3.0-static.a */,
 				3BC65D592584EED10063AFF1 /* libpng16.a */,
+				3B1C230625A142620075EF5D /* libruby.3.0.dylib */,
 				3BC65D522584EED10063AFF1 /* libSDL2_image.a */,
 				3BC65D532584EED10063AFF1 /* libSDL2_ttf.a */,
 				3BC65D552584EED10063AFF1 /* libSDL2.a */,
@@ -1915,12 +1921,12 @@
 				3BF69571259607D20016920C /* Legacy */,
 				3BC65D7D2584F3780063AFF1 /* libfreetype.a */,
 				3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */,
+				3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */,
 				3BC65D822584F3780063AFF1 /* libogg.a */,
 				3BC65D842584F3780063AFF1 /* libopenal.a */,
 				3BC65D7B2584F3780063AFF1 /* libphysfs.a */,
 				3BC65D882584F3780063AFF1 /* libpixman-1.a */,
 				3BC65D872584F3780063AFF1 /* libpng16.a */,
-				3BF6965A25962CA40016920C /* libruby.3.0-static.a */,
 				3BC65D7C2584F3780063AFF1 /* libSDL2_image.a */,
 				3BC65D832584F3780063AFF1 /* libSDL2_ttf.a */,
 				3BC65D862584F3780063AFF1 /* libSDL2.a */,
@@ -2038,8 +2044,8 @@
 				3BE080FD256879FE0006849F /* libogg.a */,
 				3BE081452568A5C60006849F /* libpng.a */,
 				3BE081492568A5F60006849F /* libturbojpeg.a */,
-				3BF6965C25962CBD0016920C /* libruby.3.0-static.a */,
 				3BE080FF256879FE0006849F /* libphysfs.a */,
+				3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */,
 				3BE080E9256879FC0006849F /* libpixman-1.a */,
 				3B426F76256BA847009EA00F /* libsigc-2.0.a */,
 				3BE080F0256879FD0006849F /* libSDL2_image.a */,
