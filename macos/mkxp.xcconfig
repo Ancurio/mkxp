@@ -1,0 +1,15 @@
+//
+//  mkxp.xcconfig
+//
+//  Created by ゾロアーク on 1/2/21.
+//
+
+// -----------------------------
+// Don't change any of this
+// -----------------------------
+MRI_VERSION = 3.0.0
+DEPENDENCY_SEARCH_PATH = $(PROJECT_DIR)/Dependencies/build-$(SDK_ROOT)-$(BUILD_ARCH)
+EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = $(inherited) Dependencies ../build DerivedData
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974

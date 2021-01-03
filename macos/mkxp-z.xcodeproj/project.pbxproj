@@ -732,6 +732,10 @@
 		3B1C230625A142620075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-arm64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
 		3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-x86_64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
 		3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-universal/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
+		3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mkxp.xcconfig; sourceTree = "<group>"; };
+		3B1C231F25A15FB20075EF5D /* mkxp.Intel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mkxp.Intel.xcconfig; sourceTree = "<group>"; };
+		3B1C232025A15FB20075EF5D /* mkxp.Universal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mkxp.Universal.xcconfig; sourceTree = "<group>"; };
+		3B1C232125A15FB20075EF5D /* mkxp.AppleSilicon.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mkxp.AppleSilicon.xcconfig; sourceTree = "<group>"; };
 		3B312841259E7DC1002EAB43 /* miniffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniffi.h; sourceTree = "<group>"; };
 		3B312842259E7DC1002EAB43 /* miniffi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = miniffi.cpp; sourceTree = "<group>"; };
 		3B426F6B256B8AC0009EA00F /* fs_std_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_impl.hpp; sourceTree = "<group>"; };
@@ -809,7 +813,6 @@
 		3BD2B7272565B343003DAD8A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		3BD2B7282565B35D003DAD8A /* mkxp.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mkxp.json; path = ../mkxp.json; sourceTree = "<group>"; };
 		3BDB23E22564546E00C4A63D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
-		3BDB240A2564715C00C4A63D /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		3BDB25C52565184600C4A63D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3BE080E4256879FC0006849F /* libSDL2main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2main.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2main.a"; sourceTree = "<group>"; };
 		3BE080E6256879FC0006849F /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "Dependencies/build-macosx-x86_64/lib/libvorbis.a"; sourceTree = "<group>"; };
@@ -1279,6 +1282,17 @@
 			path = ../binding;
 			sourceTree = "<group>";
 		};
+		3B1C231D25A15F8F0075EF5D /* Xcode */ = {
+			isa = PBXGroup;
+			children = (
+				3B1C232125A15FB20075EF5D /* mkxp.AppleSilicon.xcconfig */,
+				3B1C231F25A15FB20075EF5D /* mkxp.Intel.xcconfig */,
+				3B1C232025A15FB20075EF5D /* mkxp.Universal.xcconfig */,
+				3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */,
+			);
+			name = Xcode;
+			sourceTree = "<group>";
+		};
 		3B426F6A256B8AC0009EA00F /* ghc */ = {
 			isa = PBXGroup;
 			children = (
@@ -1366,6 +1380,7 @@
 		3BD2B3B2256518A1003DAD8A /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
+				3B1C231D25A15F8F0075EF5D /* Xcode */,
 				3BD2B7282565B35D003DAD8A /* mkxp.json */,
 				3BD2B3AF25651885003DAD8A /* entitlements.plist */,
 				3BDB25C52565184600C4A63D /* Info.plist */,
@@ -1401,7 +1416,6 @@
 			children = (
 				3BD2B7272565B343003DAD8A /* README.md */,
 				3BDB23E22564546E00C4A63D /* icon.icns */,
-				3BDB240A2564715C00C4A63D /* Config.xcconfig */,
 				3BDB2409256470AE00C4A63D /* Player */,
 				3BDB23E12564545F00C4A63D /* Assets */,
 				3BA08EA5256641ED00449CFF /* misc */,
@@ -2062,7 +2076,7 @@
 		};
 		3BC65D422584EDC60063AFF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
+			baseConfigurationReference = 3B1C232125A15FB20075EF5D /* mkxp.AppleSilicon.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
@@ -2104,10 +2118,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
-				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2117,20 +2127,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
-				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -2145,7 +2145,7 @@
 		};
 		3BC65D432584EDC60063AFF1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
+			baseConfigurationReference = 3B1C232125A15FB20075EF5D /* mkxp.AppleSilicon.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
@@ -2187,10 +2187,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
-				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -2198,20 +2194,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
-				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2225,7 +2211,7 @@
 		};
 		3BC65E132584F3AD0063AFF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
+			baseConfigurationReference = 3B1C232025A15FB20075EF5D /* mkxp.Universal.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2266,10 +2252,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
-				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2280,19 +2262,21 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
+					"$(PROJECT_DIR)/../**",
+					"$(DEPENDENCY_SEARCH_PATH)/include",
+					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
+					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
+					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
+					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
+					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -2307,7 +2291,7 @@
 		};
 		3BC65E142584F3AD0063AFF1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
+			baseConfigurationReference = 3B1C232025A15FB20075EF5D /* mkxp.Universal.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2348,10 +2332,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
-				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -2360,19 +2340,21 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
+					"$(PROJECT_DIR)/../**",
+					"$(DEPENDENCY_SEARCH_PATH)/include",
+					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
+					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
+					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
+					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
+					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2386,7 +2368,7 @@
 		};
 		3BD2B7232565AEC0003DAD8A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
+			baseConfigurationReference = 3B1C231F25A15FB20075EF5D /* mkxp.Intel.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = x86_64;
@@ -2427,10 +2409,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
-				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2440,20 +2418,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
-				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -2468,7 +2436,7 @@
 		};
 		3BD2B7242565AEC0003DAD8A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
+			baseConfigurationReference = 3B1C231F25A15FB20075EF5D /* mkxp.Intel.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = x86_64;
@@ -2509,10 +2477,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
-				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -2520,20 +2484,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
-				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
-					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2547,7 +2501,7 @@
 		};
 		3BDB22F025644FBF00C4A63D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
+			baseConfigurationReference = 3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
@@ -2572,7 +2526,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
-					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CFLAGS = (
@@ -2587,7 +2541,7 @@
 		};
 		3BDB22F125644FBF00C4A63D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3BDB240A2564715C00C4A63D /* Config.xcconfig */;
+			baseConfigurationReference = 3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
@@ -2612,7 +2566,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
-					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CFLAGS = (
