@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3BC65CC92584EDC60063AFF1"
-               BuildableName = "mkxp-z.app"
-               BlueprintName = "Apple Silicon"
+               BuildableName = "Z.arm.app"
+               BlueprintName = "Z.arm"
                ReferencedContainer = "container:mkxp-z.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3BC65CC92584EDC60063AFF1"
-            BuildableName = "mkxp-z.app"
-            BlueprintName = "Apple Silicon"
+            BuildableName = "Z.arm.app"
+            BlueprintName = "Z.arm"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3BC65CC92584EDC60063AFF1"
-            BuildableName = "mkxp-z.app"
-            BlueprintName = "Apple Silicon"
+            BuildableName = "Z.arm.app"
+            BlueprintName = "Z.arm"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

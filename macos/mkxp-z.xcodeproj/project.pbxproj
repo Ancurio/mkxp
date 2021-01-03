@@ -800,7 +800,7 @@
 		3BA08EA4256641ED00449CFF /* Assets.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Assets.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BA08EA6256641EE00449CFF /* Assets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Assets.plist; sourceTree = "<group>"; };
 		3BA08FA425674C9400449CFF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		3BC65D442584EDC60063AFF1 /* mkxp-z.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mkxp-z.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BC65D442584EDC60063AFF1 /* Z.arm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Z.arm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BC65D4A2584EED10063AFF1 /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "Dependencies/build-macosx-arm64/lib/libvorbis.a"; sourceTree = "<group>"; };
 		3BC65D4B2584EED10063AFF1 /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-macosx-arm64/lib/libpixman-1.a"; sourceTree = "<group>"; };
 		3BC65D4C2584EED10063AFF1 /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = "Dependencies/build-macosx-arm64/lib/libphysfs.a"; sourceTree = "<group>"; };
@@ -831,7 +831,7 @@
 		3BC65D872584F3780063AFF1 /* libpng16.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng16.a; path = "Dependencies/build-macosx-universal/lib/libpng16.a"; sourceTree = "<group>"; };
 		3BC65D882584F3780063AFF1 /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-macosx-universal/lib/libpixman-1.a"; sourceTree = "<group>"; };
 		3BC65D892584F3910063AFF1 /* libSDL2main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2main.a; path = "Dependencies/build-macosx-universal/lib/libSDL2main.a"; sourceTree = "<group>"; };
-		3BC65E152584F3AD0063AFF1 /* mkxp-z.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mkxp-z.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BC65E152584F3AD0063AFF1 /* Z.universal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Z.universal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD2B3AF25651885003DAD8A /* entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
 		3BD2B46525651BF3003DAD8A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		3BD2B46625651BFC003DAD8A /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -839,7 +839,7 @@
 		3BD2B46825651C12003DAD8A /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		3BD2B47A256534BA003DAD8A /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		3BD2B7252565AEC0003DAD8A /* mkxp-z.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mkxp-z.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BD2B7252565AEC0003DAD8A /* Z.intel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Z.intel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD2B7272565B343003DAD8A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		3BD2B7282565B35D003DAD8A /* mkxp.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mkxp.json; path = ../mkxp.json; sourceTree = "<group>"; };
 		3BDB23E22564546E00C4A63D /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
@@ -1460,10 +1460,10 @@
 		3BDB22F72564501400C4A63D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3BD2B7252565AEC0003DAD8A /* mkxp-z.app */,
+				3BD2B7252565AEC0003DAD8A /* Z.intel.app */,
 				3BA08EA4256641ED00449CFF /* Assets.bundle */,
-				3BC65D442584EDC60063AFF1 /* mkxp-z.app */,
-				3BC65E152584F3AD0063AFF1 /* mkxp-z.app */,
+				3BC65D442584EDC60063AFF1 /* Z.arm.app */,
+				3BC65E152584F3AD0063AFF1 /* Z.universal.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1549,9 +1549,9 @@
 			productReference = 3BA08EA4256641ED00449CFF /* Assets.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
-		3BC65CC92584EDC60063AFF1 /* Apple Silicon */ = {
+		3BC65CC92584EDC60063AFF1 /* Z.arm */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3BC65D412584EDC60063AFF1 /* Build configuration list for PBXNativeTarget "Apple Silicon" */;
+			buildConfigurationList = 3BC65D412584EDC60063AFF1 /* Build configuration list for PBXNativeTarget "Z.arm" */;
 			buildPhases = (
 				3BC65CCC2584EDC60063AFF1 /* Sources */,
 				3BC65D1A2584EDC60063AFF1 /* Frameworks */,
@@ -1565,14 +1565,14 @@
 			dependencies = (
 				3BC65CCA2584EDC60063AFF1 /* PBXTargetDependency */,
 			);
-			name = "Apple Silicon";
+			name = Z.arm;
 			productName = PlayerLegacy;
-			productReference = 3BC65D442584EDC60063AFF1 /* mkxp-z.app */;
+			productReference = 3BC65D442584EDC60063AFF1 /* Z.arm.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3BC65D8A2584F3AD0063AFF1 /* Universal */ = {
+		3BC65D8A2584F3AD0063AFF1 /* Z.universal */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3BC65E122584F3AD0063AFF1 /* Build configuration list for PBXNativeTarget "Universal" */;
+			buildConfigurationList = 3BC65E122584F3AD0063AFF1 /* Build configuration list for PBXNativeTarget "Z.universal" */;
 			buildPhases = (
 				3BC65D8D2584F3AD0063AFF1 /* Sources */,
 				3BC65DDB2584F3AD0063AFF1 /* Frameworks */,
@@ -1586,14 +1586,14 @@
 			dependencies = (
 				3BC65D8B2584F3AD0063AFF1 /* PBXTargetDependency */,
 			);
-			name = Universal;
+			name = Z.universal;
 			productName = PlayerLegacy;
-			productReference = 3BC65E152584F3AD0063AFF1 /* mkxp-z.app */;
+			productReference = 3BC65E152584F3AD0063AFF1 /* Z.universal.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3BD2B64B2565AEC0003DAD8A /* Intel */ = {
+		3BD2B64B2565AEC0003DAD8A /* Z.intel */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3BD2B7222565AEC0003DAD8A /* Build configuration list for PBXNativeTarget "Intel" */;
+			buildConfigurationList = 3BD2B7222565AEC0003DAD8A /* Build configuration list for PBXNativeTarget "Z.intel" */;
 			buildPhases = (
 				3BD2B64C2565AEC0003DAD8A /* Sources */,
 				3BD2B6E12565AEC0003DAD8A /* Frameworks */,
@@ -1607,9 +1607,9 @@
 			dependencies = (
 				3BA08ED3256643AD00449CFF /* PBXTargetDependency */,
 			);
-			name = Intel;
+			name = Z.intel;
 			productName = PlayerLegacy;
-			productReference = 3BD2B7252565AEC0003DAD8A /* mkxp-z.app */;
+			productReference = 3BD2B7252565AEC0003DAD8A /* Z.intel.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1639,9 +1639,9 @@
 			projectRoot = "";
 			targets = (
 				3BA08EA3256641ED00449CFF /* Assets */,
-				3BC65D8A2584F3AD0063AFF1 /* Universal */,
-				3BD2B64B2565AEC0003DAD8A /* Intel */,
-				3BC65CC92584EDC60063AFF1 /* Apple Silicon */,
+				3BC65D8A2584F3AD0063AFF1 /* Z.universal */,
+				3BD2B64B2565AEC0003DAD8A /* Z.intel */,
+				3BC65CC92584EDC60063AFF1 /* Z.arm */,
 			);
 		};
 /* End PBXProject section */
@@ -2173,7 +2173,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -2239,7 +2238,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -2319,7 +2317,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -2396,7 +2393,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -2464,7 +2460,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -2529,7 +2524,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
@@ -2571,8 +2565,8 @@
 					"-w",
 				);
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zoro.mkxp-z";
-				PRODUCT_NAME = "mkxp-z";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -2611,8 +2605,8 @@
 					"-w",
 				);
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.zoro.mkxp-z";
-				PRODUCT_NAME = "mkxp-z";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -2628,7 +2622,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3BC65D412584EDC60063AFF1 /* Build configuration list for PBXNativeTarget "Apple Silicon" */ = {
+		3BC65D412584EDC60063AFF1 /* Build configuration list for PBXNativeTarget "Z.arm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3BC65D422584EDC60063AFF1 /* Debug */,
@@ -2637,7 +2631,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3BC65E122584F3AD0063AFF1 /* Build configuration list for PBXNativeTarget "Universal" */ = {
+		3BC65E122584F3AD0063AFF1 /* Build configuration list for PBXNativeTarget "Z.universal" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3BC65E132584F3AD0063AFF1 /* Debug */,
@@ -2646,7 +2640,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3BD2B7222565AEC0003DAD8A /* Build configuration list for PBXNativeTarget "Intel" */ = {
+		3BD2B7222565AEC0003DAD8A /* Build configuration list for PBXNativeTarget "Z.intel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3BD2B7232565AEC0003DAD8A /* Debug */,

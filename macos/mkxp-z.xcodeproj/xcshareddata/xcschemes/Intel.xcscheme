@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
-               BuildableName = "mkxp-z.app"
-               BlueprintName = "Intel"
+               BuildableName = "Z.intel.app"
+               BlueprintName = "Z.intel"
                ReferencedContainer = "container:mkxp-z.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
-            BuildableName = "mkxp-z.app"
-            BlueprintName = "Intel"
+            BuildableName = "Z.intel.app"
+            BlueprintName = "Z.intel"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3BD2B64B2565AEC0003DAD8A"
-            BuildableName = "mkxp-z.app"
-            BlueprintName = "Intel"
+            BuildableName = "Z.intel.app"
+            BlueprintName = "Z.intel"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

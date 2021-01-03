@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3BC65D8A2584F3AD0063AFF1"
-               BuildableName = "mkxp-z.app"
-               BlueprintName = "Universal"
+               BuildableName = "Z.universal.app"
+               BlueprintName = "Z.universal"
                ReferencedContainer = "container:mkxp-z.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3BC65D8A2584F3AD0063AFF1"
-            BuildableName = "mkxp-z.app"
-            BlueprintName = "Universal"
+            BuildableName = "Z.universal.app"
+            BlueprintName = "Z.universal"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3BC65D8A2584F3AD0063AFF1"
-            BuildableName = "mkxp-z.app"
-            BlueprintName = "Universal"
+            BuildableName = "Z.universal.app"
+            BlueprintName = "Z.universal"
             ReferencedContainer = "container:mkxp-z.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
