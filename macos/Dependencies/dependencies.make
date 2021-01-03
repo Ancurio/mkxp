@@ -87,7 +87,7 @@ sigcxx: init_dirs $(LIBDIR)/libsigc-2.0.a
 
 $(LIBDIR)/libsigc-2.0.a: $(DOWNLOADS)/sigcxx/Makefile
 	cd $(DOWNLOADS)/sigcxx; \
-	make; make install
+	$(CONFIGURE_ENV) make; $(CONFIGURE_ENV) make install
 
 $(DOWNLOADS)/sigcxx/Makefile: $(DOWNLOADS)/sigcxx/autogen.sh
 	cd $(DOWNLOADS)/sigcxx; \
@@ -262,11 +262,11 @@ $(DOWNLOADS)/openssl/Configure:
 	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
 
 # Standard ruby
-ruby: init_dirs $(LIBDIR)/libruby.3.0.dylib openssl
+ruby: init_dirs openssl $(LIBDIR)/libruby.3.0.dylib
 
 $(LIBDIR)/libruby.3.0.dylib: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
-	make -j$(NPROC); make install
+	$(CONFIGURE_ENV) make -j$(NPROC); $(CONFIGURE_ENV) make install
 	# Make the dylib relative
 	install_name_tool -id @rpath/libruby.3.0.dylib $(LIBDIR)/libruby.3.0.dylib
 

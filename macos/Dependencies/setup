@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+HOST = `clang -dumpmachine`.strip
+ARCH = HOST[/x86_64|arm64/]
+
+def run_build(arch)
+    case arch
+    when "x86_64"
+        return system("make everything -f .Intel")
+    when "arm64"
+        code = system("make everything -f .AppleSilicon")
+        return code if !code
+        code = (system("arch -x86_64 make everything -f .Intel"))
+        return code if !code
+        return system("./make_macuniversal")
+    else
+        raise "Unsupported architecture"
+    end
+end
+
+exit(run_build(ARCH) ? 0 : 1)
