@@ -29,6 +29,7 @@ This binding should support RGSS1, RGSS2 and RGSS3. Note that I've only tested t
 * pixman
 * zlib
 * openssl (for HTTPS, optional)
+* Steamworks SDK (for Steam, optional)
 * OpenGL/ES
 
 mkxp-z employs the meson build system, so you'll need to install that beforehand.

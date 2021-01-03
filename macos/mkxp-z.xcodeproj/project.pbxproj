@@ -2617,7 +2617,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CODE_SIGN_FLAGS = "--ignore-resources --deep";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Z.steam;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2692,7 +2692,7 @@
 				MKXPZ_EXECUTABLE_NAME = shim;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CODE_SIGN_FLAGS = "--ignore-resources --deep";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Z.steam;
 				PROVISIONING_PROFILE_SPECIFIER = "";
