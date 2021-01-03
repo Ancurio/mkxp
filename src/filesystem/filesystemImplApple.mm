@@ -24,7 +24,7 @@ bool filesystemImpl::fileExists(const char *path) {
 std::string filesystemImpl::contentsOfFileAsString(const char *path) {
     NSString *fileContents = [NSString stringWithContentsOfFile: PATHTONS(path)];
     if (fileContents == nil)
-        throw new Exception(Exception::NoFileError, "Failed to read file at %s", path);
+        throw Exception(Exception::NoFileError, "Failed to read file at %s", path);
     
     return std::string(fileContents.UTF8String);
 
@@ -67,7 +67,7 @@ NSString *getPathForAsset_internal(const char *baseName, const char *ext) {
 std::string filesystemImpl::getPathForAsset(const char *baseName, const char *ext) {
     NSString *assetPath = getPathForAsset_internal(baseName, ext);
     if (assetPath == nil)
-        throw new Exception(Exception::NoFileError, "Failed to find the asset named %s.%s", baseName, ext);
+        throw Exception(Exception::NoFileError, "Failed to find the asset named %s.%s", baseName, ext);
     
     return std::string(NSTOPATH(getPathForAsset_internal(baseName, ext)));
 }
@@ -78,7 +78,7 @@ std::string filesystemImpl::contentsOfAssetAsString(const char *baseName, const 
     
     // This should never fail
     if (fileContents == nil)
-        throw new Exception(Exception::MKXPError, "Failed to read file at %s", path.UTF8String);
+        throw Exception(Exception::MKXPError, "Failed to read file at %s", path.UTF8String);
     
     return std::string(fileContents.UTF8String);
 

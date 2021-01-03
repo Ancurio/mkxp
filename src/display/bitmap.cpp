@@ -927,7 +927,7 @@ void Bitmap::saveToFile(const char *filename)
     SDL_Surface *surf = SDL_CreateRGBSurface(0, width(), height(),p->format->BitsPerPixel, p->format->Rmask,p->format->Gmask,p->format->Bmask,p->format->Amask);
     
     if (!surf)
-        throw new Exception(Exception::SDLError, "Failed to save bitmap: %s", SDL_GetError());
+        throw Exception(Exception::SDLError, "Failed to save bitmap: %s", SDL_GetError());
     
     getRaw(surf->pixels, surf->w * surf->h * 4);
     
@@ -935,7 +935,7 @@ void Bitmap::saveToFile(const char *filename)
     int rc = SDL_SaveBMP(surf, fn_normalized.c_str());
     
     SDL_FreeSurface(surf);
-    if (rc) throw new Exception(Exception::SDLError, "%s", SDL_GetError());
+    if (rc) throw Exception(Exception::SDLError, "%s", SDL_GetError());
 }
 
 void Bitmap::hueChange(int hue)

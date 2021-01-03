@@ -1234,14 +1234,14 @@ char *Input::getClipboardText()
 {
     char *tx = SDL_GetClipboardText();
     if (!tx)
-        throw new Exception(Exception::SDLError, "Failed to get clipboard text: %s", SDL_GetError());
+        throw Exception(Exception::SDLError, "Failed to get clipboard text: %s", SDL_GetError());
     return tx;
 }
 
 void Input::setClipboardText(char *text)
 {
     if (SDL_SetClipboardText(text) < 0)
-        throw new Exception(Exception::SDLError, "Failed to set clipboard text: %s", SDL_GetError());
+        throw Exception(Exception::SDLError, "Failed to set clipboard text: %s", SDL_GetError());
 }
 
 Input::~Input()

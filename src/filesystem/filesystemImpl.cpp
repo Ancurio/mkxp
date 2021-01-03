@@ -34,7 +34,7 @@ std::string filesystemImpl::contentsOfFileAsString(const char *path) {
         ret = std::string ( (std::istreambuf_iterator<char>(ifs) ),
                        (std::istreambuf_iterator<char>()    ) );
     } catch (...) {
-        throw new Exception(Exception::NoFileError, "Failed to read file at %s", path);
+        throw Exception(Exception::NoFileError, "Failed to read file at %s", path);
     }
 
     return ret;
@@ -60,7 +60,7 @@ std::string filesystemImpl::getCurrentDirectory() {
     try {
         ret = std::string(fs::current_path().string());
     } catch (...) {
-        throw new Exception(Exception::MKXPError, "Failed to retrieve current path");
+        throw Exception(Exception::MKXPError, "Failed to retrieve current path");
     }
     return ret;
 }

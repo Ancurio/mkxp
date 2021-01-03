@@ -46,7 +46,7 @@ const char *urlErrorNames[] = {
 LUrlParser::ParseURL readURL(const char *url) {
     LUrlParser::ParseURL p = LUrlParser::ParseURL::parseURL(std::string(url));
     if (!p.isValid() || p.errorCode_){
-        throw new Exception(Exception::MKXPError, "Invalid URL: %s", urlErrorNames[p.errorCode_]);
+        throw Exception(Exception::MKXPError, "Invalid URL: %s", urlErrorNames[p.errorCode_]);
     }
     return p;
 }
@@ -132,7 +132,7 @@ HTTPResponse HTTPRequest::get() {
     else {
         int err = result.error();
         const char *errname = httpErrorNames[err];
-        throw new Exception(Exception::MKXPError, "Failed to GET %s (%i: %s)", destination.c_str(), err, errname);
+        throw Exception(Exception::MKXPError, "Failed to GET %s (%i: %s)", destination.c_str(), err, errname);
     }
     
     return ret;
@@ -165,7 +165,7 @@ HTTPResponse HTTPRequest::post(StringMap &postData) {
     else {
         int err = result.error();
         const char *errname = httpErrorNames[err];
-        throw new Exception(Exception::MKXPError, "Failed to POST %s (%i: %s)", destination.c_str(), err, errname);
+        throw Exception(Exception::MKXPError, "Failed to POST %s (%i: %s)", destination.c_str(), err, errname);
     }
     return ret;
 }
@@ -192,7 +192,7 @@ HTTPResponse HTTPRequest::post(const char *body, const char *content_type) {
     }
     else {
         int err = result.error();
-        throw new Exception(Exception::MKXPError, "Failed to POST %s (%i: %s)", destination.c_str(), err, httpErrorNames[err]);
+        throw Exception(Exception::MKXPError, "Failed to POST %s (%i: %s)", destination.c_str(), err, httpErrorNames[err]);
     }
     return ret;
 }
