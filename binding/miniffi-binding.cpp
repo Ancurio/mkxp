@@ -224,7 +224,7 @@ RB_METHOD(MiniFFI_call) {
 
   for (int i = 0; i < nimport; i++) {
     VALUE str = rb_ary_entry(args, i);
-    unsigned long lParam = 0;
+    mffi_value lParam = 0;
     switch (FIX2INT(rb_ary_entry(own_imports, i))) {
     case _T_POINTER:
       if (NIL_P(str)) {
