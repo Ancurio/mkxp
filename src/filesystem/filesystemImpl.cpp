@@ -72,7 +72,7 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
     if (!stdPath.is_absolute() && absolute)
         stdPath = fs::current_path() / stdPath;
 
-    stdPath.lexically_normal();
+    stdPath = stdPath.lexically_normal();
     std::string ret(stdPath);
     for (int i = 0; i < ret.length(); i++) {
         char sep;
