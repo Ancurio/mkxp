@@ -70,7 +70,7 @@ mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int npar
                 "mov rbx, [rsi+rax]\n"
                 "push rbx\n"
                 "cmp rax, 32\n"
-                "jne mffi_call_loop\n"
+                "jg mffi_call_loop\n"
                 
                 "mffi_call_low:\n"
                 "mov rcx, [rsi]\n"
