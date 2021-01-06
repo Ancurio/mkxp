@@ -60,10 +60,11 @@ mffi_value miniffi_call_intern(MINIFFI_FUNC target, MiniFFIFuncArgs *p, int npar
                 "test rax, rax\n"
                 "jz mffi_call_void\n"
 
-                "shl rax, 3\n"
-                "cmp rax, 32\n"
+                "cmp rax, 4\n"
                 "jle mffi_call_low\n"
                 
+                "shl rax, 3\n"
+                 
                 "mffi_call_loop:\n"
                 "sub rax, 8\n"
                 "mov rbx, [rsi+rax]\n"
