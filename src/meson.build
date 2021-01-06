@@ -76,6 +76,7 @@ if get_option('shared_fluid') == true
     fluidsynth = dependency('fluidsynth', static: build_static)
     add_project_arguments('-DSHARED_FLUID', language: 'cpp')
     global_dependencies += fluidsynth
+    global_dependencies += compilers['cpp'].find_library('dsound')
 endif
 
 if get_option('default_framerate') == true
