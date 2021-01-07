@@ -217,6 +217,11 @@ static void mriBindingInit() {
     rb_gv_set("TEST", debug);
 
   rb_gv_set("BTEST", rb_bool_new(shState->config().editor.battleTest));
+    
+  // Load zlib, if it's present. Requires --with-static-linked-ext or zlib.so.
+  // It's okay if it fails, normally it wouldn't be defined anyway.
+  // It's included with normal RGSS though, so I'd prefer if it's loaded at the start.
+  rb_eval_string("begin;require 'zlib';rescue;nil;end");
 }
 
 static void showMsg(const std::string &msg) {
