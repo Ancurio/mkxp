@@ -225,7 +225,6 @@
 		3B1C23CE25A19C600075EF5D /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081452568A5C60006849F /* libpng.a */; };
 		3B1C23CF25A19C600075EF5D /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E6256879FC0006849F /* libvorbis.a */; };
 		3B1C23D025A19C600075EF5D /* libSDL2_test.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FA256879FE0006849F /* libSDL2_test.a */; };
-		3B1C23D125A19C600075EF5D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08FA425674C9400449CFF /* OpenGL.framework */; };
 		3B1C23D225A19C600075EF5D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
 		3B1C23D325A19C600075EF5D /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
 		3B1C23D425A19C600075EF5D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
@@ -286,8 +285,23 @@
 		3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5A8444256A0F6300BAF2E5 /* libopenal.a */; };
 		3B5A8464256A46B200BAF2E5 /* systemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */; };
+		3B5E1F0B25A881FB0086FFDC /* libEGL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; };
+		3B5E1F0C25A881FB0086FFDC /* libEGL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; };
+		3B5E1F0D25A881FB0086FFDC /* libEGL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; };
+		3B5E1F0E25A881FB0086FFDC /* libEGL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; };
+		3B5E1F0F25A881FB0086FFDC /* libGLESv2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; };
+		3B5E1F1025A881FB0086FFDC /* libGLESv2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; };
+		3B5E1F1125A881FB0086FFDC /* libGLESv2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; };
+		3B5E1F1225A881FB0086FFDC /* libGLESv2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; };
+		3B5E1F1525A881FE0086FFDC /* libEGL.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B5E1F1825A882000086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B5E1F1925A882030086FFDC /* libEGL.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B5E1F1C25A882060086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B5E1F1D25A882090086FFDC /* libEGL.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B5E1F1E25A8820B0086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B5E1F1F25A8820D0086FFDC /* libEGL.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B5E1F2025A8820F0086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */; };
-		3BA08FA525674C9900449CFF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08FA425674C9400449CFF /* OpenGL.framework */; };
 		3BC65CCD2584EDC60063AFF1 /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
 		3BC65CCE2584EDC60063AFF1 /* SDL_sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED112568E8F100372D13 /* SDL_sound.c */; };
 		3BC65CCF2584EDC60063AFF1 /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
@@ -365,7 +379,6 @@
 		3BC65D172584EDC60063AFF1 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3BC65D182584EDC60063AFF1 /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3BC65D192584EDC60063AFF1 /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
-		3BC65D272584EDC60063AFF1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08FA425674C9400449CFF /* OpenGL.framework */; };
 		3BC65D282584EDC60063AFF1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
 		3BC65D2A2584EDC60063AFF1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
 		3BC65D2B2584EDC60063AFF1 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
@@ -473,7 +486,6 @@
 		3BC65DD82584F3AD0063AFF1 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3BC65DD92584F3AD0063AFF1 /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3BC65DDA2584F3AD0063AFF1 /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
-		3BC65DEA2584F3AD0063AFF1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BA08FA425674C9400449CFF /* OpenGL.framework */; };
 		3BC65DEB2584F3AD0063AFF1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
 		3BC65DED2584F3AD0063AFF1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
 		3BC65DEF2584F3AD0063AFF1 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
@@ -632,8 +644,10 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3B1C23ED25A19C600075EF5D /* libfluidsynth.dylib in Embed Frameworks */,
+				3B5E1F1525A881FE0086FFDC /* libEGL.dylib in Embed Frameworks */,
 				3B1C23EE25A19C600075EF5D /* libruby.3.0.dylib in Embed Frameworks */,
 				3B1C242025A1A8660075EF5D /* libsteam_api.dylib in Embed Frameworks */,
+				3B5E1F1825A882000086FFDC /* libGLESv2.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -664,8 +678,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				3B5E1F1F25A8820D0086FFDC /* libEGL.dylib in Embed Frameworks */,
 				3B522DA9259BAA42003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
 				3B1C230F25A144C90075EF5D /* libruby.3.0.dylib in Embed Frameworks */,
+				3B5E1F2025A8820F0086FFDC /* libGLESv2.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -676,8 +692,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				3B5E1F1D25A882090086FFDC /* libEGL.dylib in Embed Frameworks */,
 				3B522DAA259BAA4A003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
 				3B1C230C25A144A40075EF5D /* libruby.3.0.dylib in Embed Frameworks */,
+				3B5E1F1E25A8820B0086FFDC /* libGLESv2.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -688,8 +706,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				3B5E1F1925A882030086FFDC /* libEGL.dylib in Embed Frameworks */,
 				3B522DAB259BAA4C003301C4 /* libfluidsynth.dylib in Embed Frameworks */,
 				3B1C230825A1426C0075EF5D /* libruby.3.0.dylib in Embed Frameworks */,
+				3B5E1F1C25A882060086FFDC /* libGLESv2.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1011,9 +1031,10 @@
 		3B5A845C256A465700BAF2E5 /* system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		3B5A845D256A465700BAF2E5 /* systemImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = systemImpl.cpp; sourceTree = "<group>"; };
 		3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = systemImplApple.mm; sourceTree = "<group>"; };
+		3B5E1F0925A881FB0086FFDC /* libEGL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libEGL.dylib; path = Dependencies/Frameworks/ANGLE/libEGL.dylib; sourceTree = "<group>"; };
+		3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLESv2.dylib; path = Dependencies/Frameworks/ANGLE/libGLESv2.dylib; sourceTree = "<group>"; };
 		3BA08EA4256641ED00449CFF /* Assets.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Assets.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BA08EA6256641EE00449CFF /* Assets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Assets.plist; sourceTree = "<group>"; };
-		3BA08FA425674C9400449CFF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		3BC65D442584EDC60063AFF1 /* Z.arm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Z.arm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BC65D4A2584EED10063AFF1 /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "Dependencies/build-macosx-arm64/lib/libvorbis.a"; sourceTree = "<group>"; };
 		3BC65D4B2584EED10063AFF1 /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-macosx-arm64/lib/libpixman-1.a"; sourceTree = "<group>"; };
@@ -1103,14 +1124,15 @@
 				3B1C23C725A19C600075EF5D /* libcrypto.a in Frameworks */,
 				3B1C23C825A19C600075EF5D /* libopenal.a in Frameworks */,
 				3B1C23C925A19C600075EF5D /* libpixman-1.a in Frameworks */,
+				3B5E1F1225A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3B1C23CA25A19C600075EF5D /* AppKit.framework in Frameworks */,
 				3B1C23CB25A19C600075EF5D /* libogg.a in Frameworks */,
 				3B1C23CC25A19C600075EF5D /* libSDL2.a in Frameworks */,
 				3B1C23CD25A19C600075EF5D /* libturbojpeg.a in Frameworks */,
 				3B1C23CE25A19C600075EF5D /* libpng.a in Frameworks */,
+				3B5E1F0E25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3B1C23CF25A19C600075EF5D /* libvorbis.a in Frameworks */,
 				3B1C23D025A19C600075EF5D /* libSDL2_test.a in Frameworks */,
-				3B1C23D125A19C600075EF5D /* OpenGL.framework in Frameworks */,
 				3B1C23D225A19C600075EF5D /* IOKit.framework in Frameworks */,
 				3B1C23D325A19C600075EF5D /* libsigc-2.0.a in Frameworks */,
 				3B1C23D425A19C600075EF5D /* Carbon.framework in Frameworks */,
@@ -1148,7 +1170,7 @@
 				3BC65D622584EED10063AFF1 /* libSDL2_image.a in Frameworks */,
 				3BC65D5A2584EED10063AFF1 /* libvorbis.a in Frameworks */,
 				3B522DD2259BFF0B003301C4 /* libssl.a in Frameworks */,
-				3BC65D272584EDC60063AFF1 /* OpenGL.framework in Frameworks */,
+				3B5E1F0D25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3BC65D282584EDC60063AFF1 /* IOKit.framework in Frameworks */,
 				3BC65D2A2584EDC60063AFF1 /* Carbon.framework in Frameworks */,
 				3BC65D662584EED10063AFF1 /* libopenal.a in Frameworks */,
@@ -1169,6 +1191,7 @@
 				3BC65D322584EDC60063AFF1 /* CoreAudio.framework in Frameworks */,
 				3BC65D332584EDC60063AFF1 /* AudioToolbox.framework in Frameworks */,
 				3BC65D642584EED10063AFF1 /* libvorbisfile.a in Frameworks */,
+				3B5E1F1125A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3BC65D342584EDC60063AFF1 /* Foundation.framework in Frameworks */,
 				3B1C230725A142620075EF5D /* libruby.3.0.dylib in Frameworks */,
 				3BC65D612584EED10063AFF1 /* libogg.a in Frameworks */,
@@ -1189,9 +1212,9 @@
 				3BC65E2C2584F4290063AFF1 /* libvorbisenc.a in Frameworks */,
 				3BC65E2D2584F4290063AFF1 /* libogg.a in Frameworks */,
 				3B522DCC259BFEE0003301C4 /* libssl.a in Frameworks */,
+				3B5E1F0B25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3BC65E222584F4290063AFF1 /* libSDL2_ttf.a in Frameworks */,
 				3BC65E2B2584F4290063AFF1 /* libphysfs.a in Frameworks */,
-				3BC65DEA2584F3AD0063AFF1 /* OpenGL.framework in Frameworks */,
 				3BC65DEB2584F3AD0063AFF1 /* IOKit.framework in Frameworks */,
 				3BC65E2E2584F4290063AFF1 /* libSDL2.a in Frameworks */,
 				3BC65DED2584F3AD0063AFF1 /* Carbon.framework in Frameworks */,
@@ -1210,6 +1233,7 @@
 				3BC65DFB2584F3AD0063AFF1 /* libbz2.tbd in Frameworks */,
 				3BC65DFC2584F3AD0063AFF1 /* CoreAudio.framework in Frameworks */,
 				3BC65DFD2584F3AD0063AFF1 /* AudioToolbox.framework in Frameworks */,
+				3B5E1F0F25A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3BC65E212584F4290063AFF1 /* libopenal.a in Frameworks */,
 				3B1C230E25A144BF0075EF5D /* libruby.3.0.dylib in Frameworks */,
 				3BC65DFF2584F3AD0063AFF1 /* Foundation.framework in Frameworks */,
@@ -1234,14 +1258,15 @@
 				3B522DD8259BFF2D003301C4 /* libcrypto.a in Frameworks */,
 				3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */,
 				3BE08107256879FE0006849F /* libpixman-1.a in Frameworks */,
+				3B5E1F1025A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3B1C233025A16CB20075EF5D /* AppKit.framework in Frameworks */,
 				3BE0811B256879FE0006849F /* libogg.a in Frameworks */,
 				3BE08109256879FE0006849F /* libSDL2.a in Frameworks */,
 				3BE0814A2568A5F60006849F /* libturbojpeg.a in Frameworks */,
 				3BE081462568A5C60006849F /* libpng.a in Frameworks */,
+				3B5E1F0C25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3BE08104256879FE0006849F /* libvorbis.a in Frameworks */,
 				3BE08118256879FE0006849F /* libSDL2_test.a in Frameworks */,
-				3BA08FA525674C9900449CFF /* OpenGL.framework in Frameworks */,
 				3BD2B6E72565AEC0003DAD8A /* IOKit.framework in Frameworks */,
 				3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */,
 				3B10EC5D2568D40C00372D13 /* Carbon.framework in Frameworks */,
@@ -1645,6 +1670,15 @@
 			path = net;
 			sourceTree = "<group>";
 		};
+		3B5E1EF425A880D50086FFDC /* OpenGL ES */ = {
+			isa = PBXGroup;
+			children = (
+				3B5E1F0925A881FB0086FFDC /* libEGL.dylib */,
+				3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */,
+			);
+			name = "OpenGL ES";
+			sourceTree = "<group>";
+		};
 		3BA08EA5256641ED00449CFF /* misc */ = {
 			isa = PBXGroup;
 			children = (
@@ -1681,6 +1715,7 @@
 		3BC65D792584F3030063AFF1 /* Universal */ = {
 			isa = PBXGroup;
 			children = (
+				3B5E1EF425A880D50086FFDC /* OpenGL ES */,
 				3BC65D7D2584F3780063AFF1 /* libfreetype.a */,
 				3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */,
 				3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */,
@@ -1719,7 +1754,6 @@
 		3BD2B46425651BEB003DAD8A /* System */ = {
 			isa = PBXGroup;
 			children = (
-				3BA08FA425674C9400449CFF /* OpenGL.framework */,
 				3BD2B47A256534BA003DAD8A /* IOKit.framework */,
 				3BE081552568D3A60006849F /* Carbon.framework */,
 				3BE081582568D3A60006849F /* AppKit.framework */,
@@ -2616,13 +2650,8 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"MKXPZ_ALCDEVICE=ALCdevice",
-					"MKXPZ_VERSION=\"$(MARKETING_VERSION)\"",
-					MKXPZ_MINIFFI,
-					MKXPZ_DEBUG,
+					"$(inherited)",
 					MKXPZ_STEAM,
-					AL_LIBTYPE_STATIC,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -2634,6 +2663,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				MARKETING_VERSION = 2.0;
 				MKXPZ_EXECUTABLE_NAME = shim;
@@ -2693,12 +2726,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					MKXPZ_BUILD_XCODE,
-					"MKXPZ_ALCDEVICE=ALCdevice",
-					"MKXPZ_VERSION=\"$(MARKETING_VERSION)\"",
-					MKXPZ_MINIFFI,
+					"$(inherited)",
 					MKXPZ_STEAM,
-					AL_LIBTYPE_STATIC,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -2710,6 +2739,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				MARKETING_VERSION = 2.0;
 				MKXPZ_EXECUTABLE_NAME = shim;
@@ -2917,6 +2950,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -2982,6 +3019,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3061,6 +3102,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -3138,6 +3183,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -3204,6 +3253,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -3269,6 +3322,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -3291,6 +3348,7 @@
 					MKXPZ_MINIFFI,
 					MKXPZ_DEBUG,
 					AL_LIBTYPE_STATIC,
+					GLES2_HEADER,
 					"$(MKXPZ_EXTRA_ARGS)",
 				);
 				HEADER_SEARCH_PATHS = (
@@ -3304,6 +3362,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
+					"$(PROJECT_DIR)/Frameworks/ANGLE",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
@@ -3332,6 +3391,7 @@
 					"MKXPZ_VERSION=\"$(MARKETING_VERSION)\"",
 					MKXPZ_MINIFFI,
 					AL_LIBTYPE_STATIC,
+					GLES2_HEADER,
 					"$(MKXPZ_EXTRA_ARGS)",
 				);
 				HEADER_SEARCH_PATHS = (
@@ -3345,6 +3405,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
+					"$(PROJECT_DIR)/Frameworks/ANGLE",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
