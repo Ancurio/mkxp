@@ -144,6 +144,7 @@ try { exp } catch (...) {}
     SET_OPT(fullscreen, boolean);
     SET_OPT(fixedAspectRatio, boolean);
     SET_OPT(smoothScaling, boolean);
+    SET_OPT(winResizable, boolean);
     SET_OPT(vsync, boolean);
     SET_OPT(defScreenW, integer);
     SET_OPT(defScreenH, integer);
@@ -153,19 +154,7 @@ try { exp } catch (...) {}
     SET_OPT(syncToRefreshrate, boolean);
     SET_OPT(solidFonts, boolean);
     SET_OPT(subImageFix, boolean);
-
-    // On Apple Silicon macs, OpenGL is implemented on top of Metal.
-    // It isn't particularly happy with some of MKXP's code, and
-    // crashes fairly often. Forcing off a couple of settings helps with
-    // this. Hopefully ANGLE will be buildable on ARM64 soon
-#if defined(__MACOSX__) && defined(__aarch64__)
-    enableBlitting = false;
-    winResizable = false;
-#else
     SET_OPT(enableBlitting, boolean);
-    SET_OPT(winResizable, boolean);
-#endif
-    
     SET_OPT(maxTextureSize, integer);
     SET_STRINGOPT(gameFolder, gameFolder);
     SET_OPT(anyAltToggleFS, boolean);
