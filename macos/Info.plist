@@ -24,6 +24,8 @@
 	<integer>1</integer>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.role-playing-games</string>
+	<key>NSHighResolutionCapable</key>
+	<false/>
 	<key>NSRequiresAquaSystemAppearance</key>
 	<string>False</string>
 </dict>

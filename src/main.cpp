@@ -298,7 +298,19 @@ int main(int argc, char *argv[]) {
       winFlags |= SDL_WINDOW_RESIZABLE;
     if (conf.fullscreen)
       winFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    
+#ifdef GLES2_HEADER
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
+    // LoadLibrary properly initializes EGL, it won't work otherwise.
+    // Doesn't completely do it though, needs a small patch to SDL
+#ifdef MKXPZ_BUILD_XCODE
+    SDL_GL_LoadLibrary("@rpath/libEGL.dylib");
+#endif
+#endif
+    
     win = SDL_CreateWindow(conf.windowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED,
                            SDL_WINDOWPOS_UNDEFINED, conf.defScreenW,
                            conf.defScreenH, winFlags);
@@ -443,12 +455,6 @@ static SDL_GLContext initGL(SDL_Window *win, Config &conf,
 
   /* Setup GL context. Must be done in main thread since macOS 10.15 */
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-#ifdef GLES2_HEADER
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#endif
     
   if (conf.debugMode)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
