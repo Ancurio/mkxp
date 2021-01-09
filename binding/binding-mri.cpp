@@ -826,6 +826,8 @@ static void showExc(VALUE exc, const BacktraceData &btData) {
 }
 
 static void mriBindingExecute() {
+  Config &conf = shState->rtData().config;
+
 #if RAPI_MAJOR >= 2
   /* Normally only a ruby executable would do a sysinit,
    * but not doing it will lead to crashes due to closed
@@ -837,16 +839,36 @@ static void mriBindingExecute() {
   RUBY_INIT_STACK;
   ruby_init();
   rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
+
+  std::vector<const char*> rubyArgsC{""};
+  for(const auto& string : conf.rubyArgs)
+    rubyArgsC.push_back(string.c_str());
+  rubyArgsC.push_back("-e ");
+
+  void *node = ruby_process_options(rubyArgsC.size(), const_cast<char**>(rubyArgsC.data()));
+  int state;
+  bool valid = ruby_executable_node(node, &state);
+  if (valid)
+    state = ruby_exec_node(node);
+  if (state || !valid) {
+  #if RAPI_FULL > 187
+    VALUE exc = rb_errinfo();
+  #else
+    VALUE exc = rb_gv_get("$!");
+  #endif
+  #if RAPI_FULL >= 250
+    VALUE msg = rb_funcall(exc, rb_intern("full_message"), 0);
+  #else
+    VALUE msg = rb_funcall(exc, rb_intern("message"), 0);
+  #endif
+    showMsg(std::string("An argument passed to Ruby via 'rubyArg' is invalid:\n") + StringValueCStr(msg));
+    ruby_cleanup(state);
+    shState->rtData().rqTermAck.set();
+    return;
+  }
 #else
   ruby_init();
   rb_eval_string("$KCODE='U'");
-#ifdef MKXPZ_JIT
-  const char *rubyOpts[] = {"--jit-verbose=1"};
-    void *node = ruby_process_options(1, const_cast<char**>(rubyOpts);
-    int state;
-    bool valid = ruby_executable_node(node, &state);
-    state = ruby_exec_node(node);
-#endif
 #endif
 
 #if defined(MKXPZ_ESSENTIALS_DEBUG) && !defined(__WIN32__)
@@ -854,8 +876,6 @@ static void mriBindingExecute() {
   if (tmpdir)
     setenv("TEMP", tmpdir, false);
 #endif
-
-  Config &conf = shState->rtData().config;
 
   VALUE lpaths = rb_gv_get(":");
   if (!conf.rubyLoadpaths.empty()) {
