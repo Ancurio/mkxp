@@ -300,15 +300,15 @@
     
     // Determines how many compiled methods that Ruby
     // will keep in its cache.
-    // (default: 1000)
+    // (default: 100)
     //
-    // "JITMaxCache": 1000,
+    // "JITMaxCache": 100,
     
     // Determines how many times a function has to be
     // called before it is compiled.
-    // (default: 5)
+    // (default: 10000)
     //
-    // "JITMinCalls": 5,
+    // "JITMinCalls": 10000,
 
 
     // SoundFont to use for midi playback (via fluidsynth)

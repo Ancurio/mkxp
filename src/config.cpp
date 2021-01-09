@@ -93,8 +93,8 @@ void Config::read(int argc, char *argv[]) {
         {"rubyLoadpath", json::array({})},
         {"JITEnable", false},
         {"JITVerboseLevel", 0},
-        {"JITMaxCache", 1000},
-        {"JITMinCalls", 5}
+        {"JITMaxCache", 100},
+        {"JITMinCalls", 10000}
     }).as_object();
     
 #define GUARD(exp) \
