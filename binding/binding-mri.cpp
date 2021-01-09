@@ -802,7 +802,24 @@ static void mriBindingExecute() {
   void *node = ruby_process_options(rubyArgsC.size(), const_cast<char**>(rubyArgsC.data()));
   int state;
   bool valid = ruby_executable_node(node, &state);
-  state = ruby_exec_node(node);
+  if (valid)
+    state = ruby_exec_node(node);
+  if (state || !valid) {
+  #if RAPI_FULL > 187
+    VALUE exc = rb_errinfo();
+  #else
+    VALUE exc = rb_gv_get("$!");
+  #endif
+  #if RAPI_FULL >= 250
+    VALUE msg = rb_funcall(exc, rb_intern("full_message"), 0);
+  #else
+    VALUE msg = rb_funcall(exc, rb_intern("message"), 0);
+  #endif
+    showMsg(std::string("An argument passed to Ruby via 'rubyArg' is invalid:\n") + StringValueCStr(msg));
+    ruby_cleanup(state);
+    shState->rtData().rqTermAck.set();
+    return;
+  }
 #else
   ruby_init();
   rb_eval_string("$KCODE='U'");
