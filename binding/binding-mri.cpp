@@ -127,6 +127,9 @@ RB_METHOD(mkxpPowerState);
 RB_METHOD(mkxpSettingsMenu);
 RB_METHOD(mkxpCpuCount);
 RB_METHOD(mkxpSystemMemory);
+RB_METHOD(mkxpReloadPathCache);
+RB_METHOD(mkxpAddPath);
+RB_METHOD(mkxpRemovePath);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -205,6 +208,9 @@ static void mriBindingInit() {
   _rb_define_module_function(mod, "power_state", mkxpPowerState);
   _rb_define_module_function(mod, "nproc", mkxpCpuCount);
   _rb_define_module_function(mod, "memory", mkxpSystemMemory);
+    _rb_define_module_function(mod, "reload_cache", mkxpReloadPathCache);
+    _rb_define_module_function(mod, "mount", mkxpAddPath);
+    _rb_define_module_function(mod, "unmount", mkxpRemovePath);
 
   /* Load global constants */
   rb_gv_set("MKXP", Qtrue);
@@ -377,6 +383,46 @@ RB_METHOD(mkxpSystemMemory) {
   RB_UNUSED_PARAM;
 
   return INT2NUM(SDL_GetSystemRAM());
+}
+
+RB_METHOD(mkxpReloadPathCache) {
+    RB_UNUSED_PARAM;
+    
+    shState->fileSystem().reloadPathCache();
+    return Qnil;
+}
+
+RB_METHOD(mkxpAddPath) {
+    RB_UNUSED_PARAM;
+    
+    VALUE path, mountpoint;
+    rb_scan_args(argc, argv, "11", &path, &mountpoint);
+    SafeStringValue(path);
+    if (mountpoint != Qnil) SafeStringValue(mountpoint);
+    
+    const char *mp = (mountpoint == Qnil) ? 0 : RSTRING_PTR(mountpoint);
+    
+    try {
+        shState->fileSystem().addPath(RSTRING_PTR(path), mp, 1);
+    } catch (Exception &e) {
+        raiseRbExc(e);
+    }
+    return path;
+}
+
+RB_METHOD(mkxpRemovePath) {
+    RB_UNUSED_PARAM;
+    
+    VALUE path;
+    rb_scan_args(argc, argv, "1", &path);
+    SafeStringValue(path);
+    
+    try {
+        shState->fileSystem().removePath(RSTRING_PTR(path), 1);
+    } catch (Exception &e) {
+        raiseRbExc(e);
+    }
+    return path;
 }
 
 static VALUE rgssMainCb(VALUE block) {

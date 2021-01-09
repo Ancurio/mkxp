@@ -92,6 +92,11 @@ public:
 	{
 		return p.cend();
 	}
+    
+    inline void clear()
+    {
+        p.clear();
+    }
 };
 
 template<typename K>

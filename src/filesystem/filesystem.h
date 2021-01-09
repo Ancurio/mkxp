@@ -39,10 +39,13 @@ public:
 	           bool allowSymlinks);
 	~FileSystem();
 
-	void addPath(const char *path);
+	void addPath(const char *path, const char *mountpoint = 0, bool reload = false);
+    void removePath(const char *path, bool reload = false);
 
 	/* Call these after the last 'addPath()' */
 	void createPathCache();
+    
+    void reloadPathCache();
 
 	/* Scans "Fonts/" and creates inventory of
 	 * available font assets */

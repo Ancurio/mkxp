@@ -318,16 +318,33 @@ FileSystem::~FileSystem() {
     Debug() << "PhyFS failed to deinit.";
 }
 
-void FileSystem::addPath(const char *path) {
+void FileSystem::addPath(const char *path, const char *mountpoint, bool reload) {
   /* Try the normal mount first */
-  if (!PHYSFS_mount(path, 0, 1)) {
+    int state = PHYSFS_mount(path, mountpoint, 1);
+  if (!state) {
     /* If it didn't work, try mounting via a wrapped
      * SDL_RWops */
     PHYSFS_Io *io = createSDLRWIo(path);
 
     if (io)
-      PHYSFS_mountIo(io, path, 0, 1);
+      state = PHYSFS_mountIo(io, path, 0, 1);
   }
+    if (!state) {
+        PHYSFS_ErrorCode err = PHYSFS_getLastErrorCode();
+        throw Exception(Exception::PHYSFSError, "Failed to mount %s (%s)", path, PHYSFS_getErrorByCode(err));
+    }
+    
+    if (reload) reloadPathCache();
+}
+
+void FileSystem::removePath(const char *path, bool reload) {
+    
+    if (!PHYSFS_unmount(path)) {
+        PHYSFS_ErrorCode err = PHYSFS_getLastErrorCode();
+        throw Exception(Exception::PHYSFSError, "Failed to unmount %s (%s)", path, PHYSFS_getErrorByCode(err));
+    }
+    
+    if (reload) reloadPathCache();
 }
 
 struct CacheEnumData {
@@ -422,6 +439,14 @@ void FileSystem::createPathCache() {
   PHYSFS_enumerate("", cacheEnumCB, &data);
 
   p->havePathCache = true;
+}
+
+void FileSystem::reloadPathCache() {
+    if (!p->havePathCache) return;
+    
+    p->fileLists.clear();
+    p->pathCache.clear();
+    createPathCache();
 }
 
 struct FontSetsCBData {
