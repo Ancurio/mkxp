@@ -840,28 +840,38 @@ static void mriBindingExecute() {
   ruby_init();
   rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
 
-  std::vector<const char*> rubyArgsC{""};
-  for(const auto& string : conf.rubyArgs)
-    rubyArgsC.push_back(string.c_str());
-  rubyArgsC.push_back("-e ");
-
-  void *node = ruby_process_options(rubyArgsC.size(), const_cast<char**>(rubyArgsC.data()));
+  std::vector<const char*> rubyArgsC{"mkxp-z"};
+    rubyArgsC.push_back("-e ");
+    void *node;
+    if (conf.jit.enabled) {
+        std::string verboseLevel("--jit-verbose="); verboseLevel += std::to_string(conf.jit.verboseLevel);
+        std::string maxCache("--jit-max-cache="); maxCache += std::to_string(conf.jit.maxCache);
+        std::string minCalls("--jit-min-calls="); minCalls += std::to_string(conf.jit.minCalls);
+        rubyArgsC.push_back("--jit");
+        rubyArgsC.push_back(verboseLevel.c_str());
+        rubyArgsC.push_back(maxCache.c_str());
+        rubyArgsC.push_back(minCalls.c_str());
+        node = ruby_options(rubyArgsC.size(), const_cast<char**>(rubyArgsC.data()));
+    } else {
+        node = ruby_options(rubyArgsC.size(), const_cast<char**>(rubyArgsC.data()));
+    }
+    
   int state;
   bool valid = ruby_executable_node(node, &state);
   if (valid)
     state = ruby_exec_node(node);
   if (state || !valid) {
-  #if RAPI_FULL > 187
+      // The message is formatted for and automatically spits
+      // out to the terminal, so let's leave it that way for now
+/*
     VALUE exc = rb_errinfo();
-  #else
-    VALUE exc = rb_gv_get("$!");
-  #endif
   #if RAPI_FULL >= 250
     VALUE msg = rb_funcall(exc, rb_intern("full_message"), 0);
   #else
     VALUE msg = rb_funcall(exc, rb_intern("message"), 0);
   #endif
-    showMsg(std::string("An argument passed to Ruby via 'rubyArg' is invalid:\n") + StringValueCStr(msg));
+*/
+    showMsg("An error occurred while initializing Ruby. (Invalid JIT settings?)");
     ruby_cleanup(state);
     shState->rtData().rqTermAck.set();
     return;

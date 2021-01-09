@@ -86,8 +86,6 @@ struct Config {
 
   std::vector<std::string> rubyLoadpaths;
 
-  std::vector<std::string> rubyArgs;
-
   /* Editor flags */
   struct {
     bool debug;
@@ -99,6 +97,14 @@ struct Config {
     std::string scripts;
     std::string title;
   } game;
+    
+  // JIT Options
+  struct {
+      bool enabled;
+      int verboseLevel;
+      int maxCache;
+      int minCalls;
+  } jit;
 
   /* Internal */
   std::string customDataPath;

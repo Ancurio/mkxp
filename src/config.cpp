@@ -91,7 +91,10 @@ void Config::read(int argc, char *argv[]) {
         {"RTP", json::array({})},
         {"fontSub", json::array({})},
         {"rubyLoadpath", json::array({})},
-        {"rubyArg", json::array({})}
+        {"JITEnable", false},
+        {"JITVerboseLevel", 0},
+        {"JITMaxCache", 1000},
+        {"JITMinCalls", 5}
     }).as_object();
     
 #define GUARD(exp) \
@@ -173,12 +176,15 @@ try { exp } catch (...) {}
     SET_OPT(pathCache, boolean);
     SET_OPT(encryptedGraphics, boolean);
     SET_OPT(useScriptNames, boolean);
+    SET_OPT_CUSTOMKEY(jit.enabled, JITEnable, boolean);
+    SET_OPT_CUSTOMKEY(jit.verboseLevel, JITVerboseLevel, integer);
+    SET_OPT_CUSTOMKEY(jit.maxCache, JITMaxCache, integer);
+    SET_OPT_CUSTOMKEY(jit.minCalls, JITMinCalls, integer);
     
     fillStringVec(opts["preloadScript"], preloadScripts);
     fillStringVec(opts["RTP"], rtps);
     fillStringVec(opts["fontSub"], fontSubs);
     fillStringVec(opts["rubyLoadpath"], rubyLoadpaths);
-    fillStringVec(opts["rubyArg"], rubyArgs);
     rgssVersion = clamp(rgssVersion, 0, 3);
     SE.sourceCount = clamp(SE.sourceCount, 1, 64);
     

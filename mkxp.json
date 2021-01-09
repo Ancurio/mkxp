@@ -284,11 +284,31 @@
     // "rubyLoadpath": ["/usr/lib64/ruby/",
     //                  "/usr/local/share/ruby/site_ruby"],
 
-    // Commandline arguments to pass to Ruby, such as to enable JIT.
-    // Only supported for Ruby ≥2.
-    // (default: none)
+    // Determines whether JIT is enabled. This probably
+    // won't work unless you also have the header file
+    // that it needs. Only works with Ruby 2.6 or higher.
+    // (default: false)
     //
-    // "rubyArg": ["--jit-verbose=1"],
+    // "JITEnable": false,
+    
+    // Determines what level of verbosity to use when
+    // logging JIT events. Starts at 0, which is next
+    // to nothing. Set it higher to see more.
+    // (default: 0)
+    //
+    // "JITVerboseLevel": 0,
+    
+    // Determines how many compiled methods that Ruby
+    // will keep in its cache.
+    // (default: 1000)
+    //
+    // "JITMaxCache": 1000,
+    
+    // Determines how many times a function has to be
+    // called before it is compiled.
+    // (default: 5)
+    //
+    // "JITMinCalls": 5,
 
 
     // SoundFont to use for midi playback (via fluidsynth)
