@@ -118,7 +118,7 @@ HTTPResponse HTTPRequest::get() {
     // Seems to need to be disabled for now, at least on macOS
     client.enable_server_certificate_verification(false);
     
-    for (auto h : _headers)
+    for (auto const h : _headers)
         head.emplace(h.first, h.second);
         
     if (auto result = client.Get(getPath(target).c_str(), head)) {
@@ -126,7 +126,7 @@ HTTPResponse HTTPRequest::get() {
         ret._status = response.status;
         ret._body = response.body;
         
-        for (auto h : response.headers)
+        for (auto const h : response.headers)
             ret._headers.emplace(h.first, h.second);
     }
     else {
@@ -148,10 +148,10 @@ HTTPResponse HTTPRequest::post(StringMap &postData) {
     // Seems to need to be disabled for now, at least on macOS
     client.enable_server_certificate_verification(false);
     
-    for (auto h : _headers)
+    for (auto const h : _headers)
         head.emplace(h.first, h.second);
     
-    for (auto p : postData)
+    for (auto const &p : postData)
         params.emplace(p.first, p.second);
     
     if (auto result = client.Post(getPath(target).c_str(), head, params)) {
@@ -179,7 +179,7 @@ HTTPResponse HTTPRequest::post(const char *body, const char *content_type) {
     // Seems to need to be disabled for now, at least on macOS
     client.enable_server_certificate_verification(false);
     
-    for (auto h : _headers)
+    for (auto const h : _headers)
         head.emplace(h.first, h.second);
 
     if (auto result = client.Post(getPath(target).c_str(), head, body, content_type)) {
@@ -187,7 +187,7 @@ HTTPResponse HTTPRequest::post(const char *body, const char *content_type) {
         ret._status = response.status;
         ret._body = response.body;
         
-        for (auto h : response.headers)
+        for (auto const h : response.headers)
             ret._headers.emplace(h.first, h.second);
     }
     else {
