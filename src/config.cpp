@@ -90,7 +90,8 @@ void Config::read(int argc, char *argv[]) {
         {"preloadScript", json::array({})},
         {"RTP", json::array({})},
         {"fontSub", json::array({})},
-        {"rubyLoadpath", json::array({})}
+        {"rubyLoadpath", json::array({})},
+        {"rubyArg", json::array({})}
     }).as_object();
     
 #define GUARD(exp) \
@@ -177,6 +178,7 @@ try { exp } catch (...) {}
     fillStringVec(opts["RTP"], rtps);
     fillStringVec(opts["fontSub"], fontSubs);
     fillStringVec(opts["rubyLoadpath"], rubyLoadpaths);
+    fillStringVec(opts["rubyArg"], rubyArgs);
     rgssVersion = clamp(rgssVersion, 0, 3);
     SE.sourceCount = clamp(SE.sourceCount, 1, 64);
     

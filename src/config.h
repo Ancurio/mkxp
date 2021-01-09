@@ -86,6 +86,8 @@ struct Config {
 
   std::vector<std::string> rubyLoadpaths;
 
+  std::vector<std::string> rubyArgs;
+
   /* Editor flags */
   struct {
     bool debug;

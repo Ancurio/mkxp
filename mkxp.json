@@ -284,6 +284,12 @@
     // "rubyLoadpath": ["/usr/lib64/ruby/",
     //                  "/usr/local/share/ruby/site_ruby"],
 
+    // Commandline arguments to pass to Ruby, such as to enable JIT.
+    // Only supported for Ruby ≥2.
+    // (default: none)
+    //
+    // "rubyArg": ["--jit-verbose=1"],
+
 
     // SoundFont to use for midi playback (via fluidsynth)
     // (default: none)
