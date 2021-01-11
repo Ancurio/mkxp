@@ -5,6 +5,7 @@ vorbisfile = dependency('vorbisfile', static: build_static)
 vorbis = dependency('vorbis', static: build_static)
 ogg = dependency('ogg', static: build_static)
 sdl2 = dependency('SDL2', static: build_static)
+sdl_sound = dependency('SDL_sound', static: build_static)
 sdl2_ttf = dependency('SDL2_ttf', static: build_static)
 freetype = dependency('freetype2', static: build_static)
 sdl2_image = dependency('SDL2_image', static: build_static)
@@ -67,7 +68,7 @@ global_include_dirs += include_directories('.',
     'util'
 )
 
-global_dependencies += [sigcxx, openal, zlib, bz2, sdl2, pixman, physfs, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg]
+global_dependencies += [sigcxx, openal, zlib, bz2, sdl2, sdl_sound, pixman, physfs, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg]
 if host_system == 'windows'
     global_dependencies += compilers['cpp'].find_library('wsock32')
 endif

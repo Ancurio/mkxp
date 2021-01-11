@@ -43,18 +43,6 @@
 		3B10ECF52568E86B00372D13 /* liberation.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B10EC842568E78400372D13 /* liberation.ttf */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B10ECF62568E86B00372D13 /* wqymicrohei.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B10EC852568E78400372D13 /* wqymicrohei.ttf */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B10ECFB2568E88900372D13 /* EssentialsCompatibility.rb in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B10ECA62568E7CB00372D13 /* EssentialsCompatibility.rb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3B10ED1A2568E8F100372D13 /* SDL_sound_shn.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED072568E8F100372D13 /* SDL_sound_shn.c */; };
-		3B10ED1B2568E8F100372D13 /* SDL_sound_coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED092568E8F100372D13 /* SDL_sound_coreaudio.c */; };
-		3B10ED1D2568E8F100372D13 /* SDL_sound_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0C2568E8F100372D13 /* SDL_sound_raw.c */; };
-		3B10ED1E2568E8F100372D13 /* SDL_sound_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0D2568E8F100372D13 /* SDL_sound_modplug.c */; };
-		3B10ED202568E8F100372D13 /* SDL_sound_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED102568E8F100372D13 /* SDL_sound_vorbis.c */; };
-		3B10ED212568E8F100372D13 /* SDL_sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED112568E8F100372D13 /* SDL_sound.c */; };
-		3B10ED222568E8F100372D13 /* SDL_sound_voc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED122568E8F100372D13 /* SDL_sound_voc.c */; };
-		3B10ED232568E8F100372D13 /* SDL_sound_wav.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED142568E8F100372D13 /* SDL_sound_wav.c */; };
-		3B10ED242568E8F100372D13 /* SDL_sound_au.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED152568E8F100372D13 /* SDL_sound_au.c */; };
-		3B10ED252568E8F100372D13 /* SDL_sound_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED162568E8F100372D13 /* SDL_sound_mp3.c */; };
-		3B10ED262568E8F100372D13 /* SDL_sound_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED172568E8F100372D13 /* SDL_sound_aiff.c */; };
-		3B10ED272568E8F100372D13 /* SDL_sound_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED182568E8F100372D13 /* SDL_sound_flac.c */; };
 		3B10EDA62568E95E00372D13 /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
 		3B10EDA72568E95E00372D13 /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
 		3B10EDA82568E95E00372D13 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED462568E95D00372D13 /* input.cpp */; };
@@ -132,7 +120,6 @@
 		3B1C236A25A19BB10075EF5D /* steamshim_parent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B1C236725A19B960075EF5D /* steamshim_parent.cpp */; };
 		3B1C237125A19C600075EF5D /* http-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B522DDB259C1E53003301C4 /* http-binding.cpp */; };
 		3B1C237225A19C600075EF5D /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
-		3B1C237325A19C600075EF5D /* SDL_sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED112568E8F100372D13 /* SDL_sound.c */; };
 		3B1C237425A19C600075EF5D /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
 		3B1C237525A19C600075EF5D /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED462568E95D00372D13 /* input.cpp */; };
 		3B1C237625A19C600075EF5D /* tilemap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE72568E96A00372D13 /* tilemap-binding.cpp */; };
@@ -145,9 +132,7 @@
 		3B1C237D25A19C600075EF5D /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
 		3B1C237E25A19C600075EF5D /* bitmap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE42568E96A00372D13 /* bitmap-binding.cpp */; };
 		3B1C237F25A19C600075EF5D /* vorbissource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6A2568E95D00372D13 /* vorbissource.cpp */; };
-		3B1C238025A19C600075EF5D /* SDL_sound_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0C2568E8F100372D13 /* SDL_sound_raw.c */; };
 		3B1C238125A19C600075EF5D /* filesystem-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDD72568E96A00372D13 /* filesystem-binding.cpp */; };
-		3B1C238225A19C600075EF5D /* SDL_sound_shn.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED072568E8F100372D13 /* SDL_sound_shn.c */; };
 		3B1C238325A19C600075EF5D /* glstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED8A2568E95E00372D13 /* glstate.cpp */; };
 		3B1C238425A19C600075EF5D /* gl-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED922568E95E00372D13 /* gl-fun.cpp */; };
 		3B1C238525A19C600075EF5D /* sprite-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDF2568E96A00372D13 /* sprite-binding.cpp */; };
@@ -168,9 +153,7 @@
 		3B1C239425A19C600075EF5D /* etc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED4D2568E95D00372D13 /* etc.cpp */; };
 		3B1C239525A19C600075EF5D /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED8C2568E95E00372D13 /* shader.cpp */; };
 		3B1C239625A19C600075EF5D /* tilemap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9C2568E95E00372D13 /* tilemap.cpp */; };
-		3B1C239725A19C600075EF5D /* SDL_sound_au.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED152568E8F100372D13 /* SDL_sound_au.c */; };
 		3B1C239825A19C600075EF5D /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED742568E95D00372D13 /* window.cpp */; };
-		3B1C239925A19C600075EF5D /* SDL_sound_wav.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED142568E8F100372D13 /* SDL_sound_wav.c */; };
 		3B1C239A25A19C600075EF5D /* input-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDC2568E96A00372D13 /* input-binding.cpp */; };
 		3B1C239B25A19C600075EF5D /* keybindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED472568E95D00372D13 /* keybindings.cpp */; };
 		3B1C239C25A19C600075EF5D /* filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.cpp */; };
@@ -179,7 +162,6 @@
 		3B1C239F25A19C600075EF5D /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
 		3B1C23A025A19C600075EF5D /* viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9E2568E95E00372D13 /* viewport.cpp */; };
 		3B1C23A125A19C600075EF5D /* gl-debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED832568E95E00372D13 /* gl-debug.cpp */; };
-		3B1C23A225A19C600075EF5D /* SDL_sound_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED102568E8F100372D13 /* SDL_sound_vorbis.c */; };
 		3B1C23A325A19C600075EF5D /* tileatlasvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED892568E95E00372D13 /* tileatlasvx.cpp */; };
 		3B1C23A425A19C600075EF5D /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED732568E95D00372D13 /* bitmap.cpp */; };
 		3B1C23A525A19C600075EF5D /* tilemapvx-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */; };
@@ -188,17 +170,13 @@
 		3B1C23A825A19C600075EF5D /* graphics-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE92568E96A00372D13 /* graphics-binding.cpp */; };
 		3B1C23A925A19C600075EF5D /* plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDA12568E95E00372D13 /* plane.cpp */; };
 		3B1C23AA25A19C600075EF5D /* tilequad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED802568E95D00372D13 /* tilequad.cpp */; };
-		3B1C23AB25A19C600075EF5D /* SDL_sound_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED162568E8F100372D13 /* SDL_sound_mp3.c */; };
-		3B1C23AC25A19C600075EF5D /* SDL_sound_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED172568E8F100372D13 /* SDL_sound_aiff.c */; };
 		3B1C23AD25A19C600075EF5D /* tileatlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED912568E95E00372D13 /* tileatlas.cpp */; };
 		3B1C23AE25A19C600075EF5D /* fluid-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED602568E95D00372D13 /* fluid-fun.cpp */; };
 		3B1C23AF25A19C600075EF5D /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED842568E95E00372D13 /* scene.cpp */; };
 		3B1C23B025A19C600075EF5D /* texpool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED812568E95D00372D13 /* texpool.cpp */; };
 		3B1C23B125A19C600075EF5D /* font-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEC2568E96A00372D13 /* font-binding.cpp */; };
-		3B1C23B225A19C600075EF5D /* SDL_sound_coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED092568E8F100372D13 /* SDL_sound_coreaudio.c */; };
 		3B1C23B325A19C600075EF5D /* audio-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDA2568E96A00372D13 /* audio-binding.cpp */; };
 		3B1C23B425A19C600075EF5D /* autotilesvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9D2568E95E00372D13 /* autotilesvx.cpp */; };
-		3B1C23B525A19C600075EF5D /* SDL_sound_voc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED122568E8F100372D13 /* SDL_sound_voc.c */; };
 		3B1C23B625A19C600075EF5D /* vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED982568E95E00372D13 /* vertex.cpp */; };
 		3B1C23B725A19C600075EF5D /* miniffi-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE82568E96A00372D13 /* miniffi-binding.cpp */; };
 		3B1C23B825A19C600075EF5D /* soundemitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED652568E95D00372D13 /* soundemitter.cpp */; };
@@ -206,8 +184,6 @@
 		3B1C23BA25A19C600075EF5D /* systemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */; };
 		3B1C23BB25A19C600075EF5D /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7B2568E95D00372D13 /* graphics.cpp */; };
 		3B1C23BC25A19C600075EF5D /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED772568E95D00372D13 /* font.cpp */; };
-		3B1C23BD25A19C600075EF5D /* SDL_sound_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED182568E8F100372D13 /* SDL_sound_flac.c */; };
-		3B1C23BE25A19C600075EF5D /* SDL_sound_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0D2568E8F100372D13 /* SDL_sound_modplug.c */; };
 		3B1C23BF25A19C600075EF5D /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3B1C23C025A19C600075EF5D /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3B1C23C125A19C600075EF5D /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
@@ -303,7 +279,6 @@
 		3B5E1F2025A8820F0086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */; };
 		3BC65CCD2584EDC60063AFF1 /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
-		3BC65CCE2584EDC60063AFF1 /* SDL_sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED112568E8F100372D13 /* SDL_sound.c */; };
 		3BC65CCF2584EDC60063AFF1 /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
 		3BC65CD02584EDC60063AFF1 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED462568E95D00372D13 /* input.cpp */; };
 		3BC65CD12584EDC60063AFF1 /* tilemap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE72568E96A00372D13 /* tilemap-binding.cpp */; };
@@ -315,9 +290,7 @@
 		3BC65CD72584EDC60063AFF1 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
 		3BC65CD82584EDC60063AFF1 /* bitmap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE42568E96A00372D13 /* bitmap-binding.cpp */; };
 		3BC65CD92584EDC60063AFF1 /* vorbissource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6A2568E95D00372D13 /* vorbissource.cpp */; };
-		3BC65CDA2584EDC60063AFF1 /* SDL_sound_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0C2568E8F100372D13 /* SDL_sound_raw.c */; };
 		3BC65CDB2584EDC60063AFF1 /* filesystem-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDD72568E96A00372D13 /* filesystem-binding.cpp */; };
-		3BC65CDC2584EDC60063AFF1 /* SDL_sound_shn.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED072568E8F100372D13 /* SDL_sound_shn.c */; };
 		3BC65CDD2584EDC60063AFF1 /* glstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED8A2568E95E00372D13 /* glstate.cpp */; };
 		3BC65CDE2584EDC60063AFF1 /* gl-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED922568E95E00372D13 /* gl-fun.cpp */; };
 		3BC65CDF2584EDC60063AFF1 /* sprite-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDF2568E96A00372D13 /* sprite-binding.cpp */; };
@@ -336,9 +309,7 @@
 		3BC65CEC2584EDC60063AFF1 /* etc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED4D2568E95D00372D13 /* etc.cpp */; };
 		3BC65CED2584EDC60063AFF1 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED8C2568E95E00372D13 /* shader.cpp */; };
 		3BC65CEE2584EDC60063AFF1 /* tilemap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9C2568E95E00372D13 /* tilemap.cpp */; };
-		3BC65CEF2584EDC60063AFF1 /* SDL_sound_au.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED152568E8F100372D13 /* SDL_sound_au.c */; };
 		3BC65CF02584EDC60063AFF1 /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED742568E95D00372D13 /* window.cpp */; };
-		3BC65CF12584EDC60063AFF1 /* SDL_sound_wav.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED142568E8F100372D13 /* SDL_sound_wav.c */; };
 		3BC65CF22584EDC60063AFF1 /* input-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDC2568E96A00372D13 /* input-binding.cpp */; };
 		3BC65CF32584EDC60063AFF1 /* keybindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED472568E95D00372D13 /* keybindings.cpp */; };
 		3BC65CF42584EDC60063AFF1 /* filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.cpp */; };
@@ -347,7 +318,6 @@
 		3BC65CF72584EDC60063AFF1 /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
 		3BC65CF82584EDC60063AFF1 /* viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9E2568E95E00372D13 /* viewport.cpp */; };
 		3BC65CF92584EDC60063AFF1 /* gl-debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED832568E95E00372D13 /* gl-debug.cpp */; };
-		3BC65CFA2584EDC60063AFF1 /* SDL_sound_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED102568E8F100372D13 /* SDL_sound_vorbis.c */; };
 		3BC65CFB2584EDC60063AFF1 /* tileatlasvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED892568E95E00372D13 /* tileatlasvx.cpp */; };
 		3BC65CFC2584EDC60063AFF1 /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED732568E95D00372D13 /* bitmap.cpp */; };
 		3BC65CFD2584EDC60063AFF1 /* tilemapvx-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */; };
@@ -356,17 +326,13 @@
 		3BC65D002584EDC60063AFF1 /* graphics-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE92568E96A00372D13 /* graphics-binding.cpp */; };
 		3BC65D012584EDC60063AFF1 /* plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDA12568E95E00372D13 /* plane.cpp */; };
 		3BC65D022584EDC60063AFF1 /* tilequad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED802568E95D00372D13 /* tilequad.cpp */; };
-		3BC65D032584EDC60063AFF1 /* SDL_sound_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED162568E8F100372D13 /* SDL_sound_mp3.c */; };
-		3BC65D042584EDC60063AFF1 /* SDL_sound_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED172568E8F100372D13 /* SDL_sound_aiff.c */; };
 		3BC65D052584EDC60063AFF1 /* tileatlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED912568E95E00372D13 /* tileatlas.cpp */; };
 		3BC65D062584EDC60063AFF1 /* fluid-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED602568E95D00372D13 /* fluid-fun.cpp */; };
 		3BC65D072584EDC60063AFF1 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED842568E95E00372D13 /* scene.cpp */; };
 		3BC65D082584EDC60063AFF1 /* texpool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED812568E95D00372D13 /* texpool.cpp */; };
 		3BC65D092584EDC60063AFF1 /* font-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEC2568E96A00372D13 /* font-binding.cpp */; };
-		3BC65D0A2584EDC60063AFF1 /* SDL_sound_coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED092568E8F100372D13 /* SDL_sound_coreaudio.c */; };
 		3BC65D0B2584EDC60063AFF1 /* audio-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDA2568E96A00372D13 /* audio-binding.cpp */; };
 		3BC65D0C2584EDC60063AFF1 /* autotilesvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9D2568E95E00372D13 /* autotilesvx.cpp */; };
-		3BC65D0D2584EDC60063AFF1 /* SDL_sound_voc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED122568E8F100372D13 /* SDL_sound_voc.c */; };
 		3BC65D0E2584EDC60063AFF1 /* vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED982568E95E00372D13 /* vertex.cpp */; };
 		3BC65D0F2584EDC60063AFF1 /* miniffi-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE82568E96A00372D13 /* miniffi-binding.cpp */; };
 		3BC65D102584EDC60063AFF1 /* soundemitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED652568E95D00372D13 /* soundemitter.cpp */; };
@@ -374,8 +340,6 @@
 		3BC65D122584EDC60063AFF1 /* systemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */; };
 		3BC65D132584EDC60063AFF1 /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7B2568E95D00372D13 /* graphics.cpp */; };
 		3BC65D142584EDC60063AFF1 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED772568E95D00372D13 /* font.cpp */; };
-		3BC65D152584EDC60063AFF1 /* SDL_sound_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED182568E8F100372D13 /* SDL_sound_flac.c */; };
-		3BC65D162584EDC60063AFF1 /* SDL_sound_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0D2568E8F100372D13 /* SDL_sound_modplug.c */; };
 		3BC65D172584EDC60063AFF1 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3BC65D182584EDC60063AFF1 /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3BC65D192584EDC60063AFF1 /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
@@ -410,7 +374,6 @@
 		3BC65D682584EED10063AFF1 /* libturbojpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D582584EED10063AFF1 /* libturbojpeg.a */; };
 		3BC65D692584EED10063AFF1 /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D592584EED10063AFF1 /* libpng16.a */; };
 		3BC65D8E2584F3AD0063AFF1 /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
-		3BC65D8F2584F3AD0063AFF1 /* SDL_sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED112568E8F100372D13 /* SDL_sound.c */; };
 		3BC65D902584F3AD0063AFF1 /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
 		3BC65D912584F3AD0063AFF1 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED462568E95D00372D13 /* input.cpp */; };
 		3BC65D922584F3AD0063AFF1 /* tilemap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE72568E96A00372D13 /* tilemap-binding.cpp */; };
@@ -422,9 +385,7 @@
 		3BC65D982584F3AD0063AFF1 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A84052569B56F00BAF2E5 /* config.cpp */; };
 		3BC65D992584F3AD0063AFF1 /* bitmap-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE42568E96A00372D13 /* bitmap-binding.cpp */; };
 		3BC65D9A2584F3AD0063AFF1 /* vorbissource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6A2568E95D00372D13 /* vorbissource.cpp */; };
-		3BC65D9B2584F3AD0063AFF1 /* SDL_sound_raw.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0C2568E8F100372D13 /* SDL_sound_raw.c */; };
 		3BC65D9C2584F3AD0063AFF1 /* filesystem-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDD72568E96A00372D13 /* filesystem-binding.cpp */; };
-		3BC65D9D2584F3AD0063AFF1 /* SDL_sound_shn.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED072568E8F100372D13 /* SDL_sound_shn.c */; };
 		3BC65D9E2584F3AD0063AFF1 /* glstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED8A2568E95E00372D13 /* glstate.cpp */; };
 		3BC65D9F2584F3AD0063AFF1 /* gl-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED922568E95E00372D13 /* gl-fun.cpp */; };
 		3BC65DA02584F3AD0063AFF1 /* sprite-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDF2568E96A00372D13 /* sprite-binding.cpp */; };
@@ -443,9 +404,7 @@
 		3BC65DAD2584F3AD0063AFF1 /* etc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED4D2568E95D00372D13 /* etc.cpp */; };
 		3BC65DAE2584F3AD0063AFF1 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED8C2568E95E00372D13 /* shader.cpp */; };
 		3BC65DAF2584F3AD0063AFF1 /* tilemap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9C2568E95E00372D13 /* tilemap.cpp */; };
-		3BC65DB02584F3AD0063AFF1 /* SDL_sound_au.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED152568E8F100372D13 /* SDL_sound_au.c */; };
 		3BC65DB12584F3AD0063AFF1 /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED742568E95D00372D13 /* window.cpp */; };
-		3BC65DB22584F3AD0063AFF1 /* SDL_sound_wav.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED142568E8F100372D13 /* SDL_sound_wav.c */; };
 		3BC65DB32584F3AD0063AFF1 /* input-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDC2568E96A00372D13 /* input-binding.cpp */; };
 		3BC65DB42584F3AD0063AFF1 /* keybindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED472568E95D00372D13 /* keybindings.cpp */; };
 		3BC65DB52584F3AD0063AFF1 /* filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.cpp */; };
@@ -454,7 +413,6 @@
 		3BC65DB82584F3AD0063AFF1 /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
 		3BC65DB92584F3AD0063AFF1 /* viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9E2568E95E00372D13 /* viewport.cpp */; };
 		3BC65DBA2584F3AD0063AFF1 /* gl-debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED832568E95E00372D13 /* gl-debug.cpp */; };
-		3BC65DBB2584F3AD0063AFF1 /* SDL_sound_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED102568E8F100372D13 /* SDL_sound_vorbis.c */; };
 		3BC65DBC2584F3AD0063AFF1 /* tileatlasvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED892568E95E00372D13 /* tileatlasvx.cpp */; };
 		3BC65DBD2584F3AD0063AFF1 /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED732568E95D00372D13 /* bitmap.cpp */; };
 		3BC65DBE2584F3AD0063AFF1 /* tilemapvx-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */; };
@@ -463,17 +421,13 @@
 		3BC65DC12584F3AD0063AFF1 /* graphics-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE92568E96A00372D13 /* graphics-binding.cpp */; };
 		3BC65DC22584F3AD0063AFF1 /* plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDA12568E95E00372D13 /* plane.cpp */; };
 		3BC65DC32584F3AD0063AFF1 /* tilequad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED802568E95D00372D13 /* tilequad.cpp */; };
-		3BC65DC42584F3AD0063AFF1 /* SDL_sound_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED162568E8F100372D13 /* SDL_sound_mp3.c */; };
-		3BC65DC52584F3AD0063AFF1 /* SDL_sound_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED172568E8F100372D13 /* SDL_sound_aiff.c */; };
 		3BC65DC62584F3AD0063AFF1 /* tileatlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED912568E95E00372D13 /* tileatlas.cpp */; };
 		3BC65DC72584F3AD0063AFF1 /* fluid-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED602568E95D00372D13 /* fluid-fun.cpp */; };
 		3BC65DC82584F3AD0063AFF1 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED842568E95E00372D13 /* scene.cpp */; };
 		3BC65DC92584F3AD0063AFF1 /* texpool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED812568E95D00372D13 /* texpool.cpp */; };
 		3BC65DCA2584F3AD0063AFF1 /* font-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDEC2568E96A00372D13 /* font-binding.cpp */; };
-		3BC65DCB2584F3AD0063AFF1 /* SDL_sound_coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED092568E8F100372D13 /* SDL_sound_coreaudio.c */; };
 		3BC65DCC2584F3AD0063AFF1 /* audio-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDDA2568E96A00372D13 /* audio-binding.cpp */; };
 		3BC65DCD2584F3AD0063AFF1 /* autotilesvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9D2568E95E00372D13 /* autotilesvx.cpp */; };
-		3BC65DCE2584F3AD0063AFF1 /* SDL_sound_voc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED122568E8F100372D13 /* SDL_sound_voc.c */; };
 		3BC65DCF2584F3AD0063AFF1 /* vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED982568E95E00372D13 /* vertex.cpp */; };
 		3BC65DD02584F3AD0063AFF1 /* miniffi-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDE82568E96A00372D13 /* miniffi-binding.cpp */; };
 		3BC65DD12584F3AD0063AFF1 /* soundemitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED652568E95D00372D13 /* soundemitter.cpp */; };
@@ -481,8 +435,6 @@
 		3BC65DD32584F3AD0063AFF1 /* systemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */; };
 		3BC65DD42584F3AD0063AFF1 /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7B2568E95D00372D13 /* graphics.cpp */; };
 		3BC65DD52584F3AD0063AFF1 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED772568E95D00372D13 /* font.cpp */; };
-		3BC65DD62584F3AD0063AFF1 /* SDL_sound_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED182568E8F100372D13 /* SDL_sound_flac.c */; };
-		3BC65DD72584F3AD0063AFF1 /* SDL_sound_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED0D2568E8F100372D13 /* SDL_sound_modplug.c */; };
 		3BC65DD82584F3AD0063AFF1 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
 		3BC65DD92584F3AD0063AFF1 /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3BC65DDA2584F3AD0063AFF1 /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
@@ -509,7 +461,6 @@
 		3BC65E242584F4290063AFF1 /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D812584F3780063AFF1 /* libvorbisfile.a */; };
 		3BC65E252584F4290063AFF1 /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D852584F3780063AFF1 /* libvorbis.a */; };
 		3BC65E262584F4290063AFF1 /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D872584F3780063AFF1 /* libpng16.a */; };
-		3BC65E272584F4290063AFF1 /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7C2584F3780063AFF1 /* libSDL2_image.a */; };
 		3BC65E282584F4290063AFF1 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D892584F3910063AFF1 /* libSDL2main.a */; };
 		3BC65E2A2584F4290063AFF1 /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D802584F3780063AFF1 /* libsigc-2.0.a */; };
 		3BC65E2B2584F4290063AFF1 /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7B2584F3780063AFF1 /* libphysfs.a */; };
@@ -537,6 +488,11 @@
 		3BE081462568A5C60006849F /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081452568A5C60006849F /* libpng.a */; };
 		3BE0814A2568A5F60006849F /* libturbojpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081492568A5F60006849F /* libturbojpeg.a */; };
 		3BE081592568D3A60006849F /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081502568D3A50006849F /* libbz2.tbd */; };
+		3BEA5D7225AC3CE300B6E359 /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D7125AC3CE300B6E359 /* libSDL2_image.a */; };
+		3BEA5D7525AC3CE800B6E359 /* libSDL_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D6D25AC3CB800B6E359 /* libSDL_sound.a */; };
+		3BEA5D7725AC3D1D00B6E359 /* libSDL_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D7625AC3D1D00B6E359 /* libSDL_sound.a */; };
+		3BEA5D7825AC3D1D00B6E359 /* libSDL_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D7625AC3D1D00B6E359 /* libSDL_sound.a */; };
+		3BEA5D7C25AC3D8800B6E359 /* libSDL_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D7B25AC3D8800B6E359 /* libSDL_sound.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -831,25 +787,6 @@
 		3B10ECA42568E7B600372D13 /* gray.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = gray.frag; path = ../shader/gray.frag; sourceTree = "<group>"; };
 		3B10ECA52568E7B600372D13 /* simpleColor.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = simpleColor.vert; path = ../shader/simpleColor.vert; sourceTree = "<group>"; };
 		3B10ECA62568E7CB00372D13 /* EssentialsCompatibility.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; name = EssentialsCompatibility.rb; path = ../scripts/EssentialsCompatibility.rb; sourceTree = "<group>"; };
-		3B10ED072568E8F100372D13 /* SDL_sound_shn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_shn.c; sourceTree = "<group>"; };
-		3B10ED082568E8F100372D13 /* SDL_sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_sound.h; sourceTree = "<group>"; };
-		3B10ED092568E8F100372D13 /* SDL_sound_coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_coreaudio.c; sourceTree = "<group>"; };
-		3B10ED0A2568E8F100372D13 /* SDL_sound_skeleton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_skeleton.c; sourceTree = "<group>"; };
-		3B10ED0B2568E8F100372D13 /* SDL_sound_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_sound_internal.h; sourceTree = "<group>"; };
-		3B10ED0C2568E8F100372D13 /* SDL_sound_raw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_raw.c; sourceTree = "<group>"; };
-		3B10ED0D2568E8F100372D13 /* SDL_sound_modplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_modplug.c; sourceTree = "<group>"; };
-		3B10ED0E2568E8F100372D13 /* dr_mp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dr_mp3.h; sourceTree = "<group>"; };
-		3B10ED0F2568E8F100372D13 /* meson.build */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = meson.build; sourceTree = "<group>"; };
-		3B10ED102568E8F100372D13 /* SDL_sound_vorbis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_vorbis.c; sourceTree = "<group>"; };
-		3B10ED112568E8F100372D13 /* SDL_sound.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound.c; sourceTree = "<group>"; };
-		3B10ED122568E8F100372D13 /* SDL_sound_voc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_voc.c; sourceTree = "<group>"; };
-		3B10ED132568E8F100372D13 /* dr_flac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dr_flac.h; sourceTree = "<group>"; };
-		3B10ED142568E8F100372D13 /* SDL_sound_wav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_wav.c; sourceTree = "<group>"; };
-		3B10ED152568E8F100372D13 /* SDL_sound_au.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_au.c; sourceTree = "<group>"; };
-		3B10ED162568E8F100372D13 /* SDL_sound_mp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_mp3.c; sourceTree = "<group>"; };
-		3B10ED172568E8F100372D13 /* SDL_sound_aiff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_aiff.c; sourceTree = "<group>"; };
-		3B10ED182568E8F100372D13 /* SDL_sound_flac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_sound_flac.c; sourceTree = "<group>"; };
-		3B10ED192568E8F100372D13 /* stb_vorbis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_vorbis.h; sourceTree = "<group>"; };
 		3B10ED352568E95D00372D13 /* eventthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = eventthread.cpp; sourceTree = "<group>"; };
 		3B10ED372568E95D00372D13 /* rgssad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgssad.h; sourceTree = "<group>"; };
 		3B10ED382568E95D00372D13 /* rgssad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rgssad.cpp; sourceTree = "<group>"; };
@@ -1053,7 +990,6 @@
 		3BC65D592584EED10063AFF1 /* libpng16.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng16.a; path = "Dependencies/build-macosx-arm64/lib/libpng16.a"; sourceTree = "<group>"; };
 		3BC65D7A2584F3780063AFF1 /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = "Dependencies/build-macosx-universal/lib/libvorbisenc.a"; sourceTree = "<group>"; };
 		3BC65D7B2584F3780063AFF1 /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = "Dependencies/build-macosx-universal/lib/libphysfs.a"; sourceTree = "<group>"; };
-		3BC65D7C2584F3780063AFF1 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_image.a"; sourceTree = "<group>"; };
 		3BC65D7D2584F3780063AFF1 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = "Dependencies/build-macosx-universal/lib/libfreetype.a"; sourceTree = "<group>"; };
 		3BC65D7E2584F3780063AFF1 /* libturbojpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libturbojpeg.a; path = "Dependencies/build-macosx-universal/lib/libturbojpeg.a"; sourceTree = "<group>"; };
 		3BC65D802584F3780063AFF1 /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-universal/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
@@ -1102,6 +1038,10 @@
 		3BE081562568D3A60006849F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		3BE081572568D3A60006849F /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
 		3BE081582568D3A60006849F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		3BEA5D6D25AC3CB800B6E359 /* libSDL_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL_sound.a; path = "Dependencies/build-macosx-arm64/lib/libSDL_sound.a"; sourceTree = "<group>"; };
+		3BEA5D7125AC3CE300B6E359 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_image.a"; sourceTree = "<group>"; };
+		3BEA5D7625AC3D1D00B6E359 /* libSDL_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL_sound.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL_sound.a"; sourceTree = "<group>"; };
+		3BEA5D7B25AC3D8800B6E359 /* libSDL_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL_sound.a; path = "Dependencies/build-macosx-universal/lib/libSDL_sound.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1119,6 +1059,7 @@
 			files = (
 				3B1C23C325A19C600075EF5D /* libSDL2_ttf.a in Frameworks */,
 				3B1C23C425A19C600075EF5D /* libvorbisenc.a in Frameworks */,
+				3BEA5D7825AC3D1D00B6E359 /* libSDL_sound.a in Frameworks */,
 				3B1C23C525A19C600075EF5D /* libssl.a in Frameworks */,
 				3B1C23C625A19C600075EF5D /* libSDL2main.a in Frameworks */,
 				3B1C23C725A19C600075EF5D /* libcrypto.a in Frameworks */,
@@ -1202,6 +1143,7 @@
 				3BC65D372584EDC60063AFF1 /* libiconv.tbd in Frameworks */,
 				3BC65D602584EED10063AFF1 /* libSDL2main.a in Frameworks */,
 				3BC65D5D2584EED10063AFF1 /* libvorbisenc.a in Frameworks */,
+				3BEA5D7525AC3CE800B6E359 /* libSDL_sound.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1221,13 +1163,13 @@
 				3BC65DEF2584F3AD0063AFF1 /* AppKit.framework in Frameworks */,
 				3BC65E282584F4290063AFF1 /* libSDL2main.a in Frameworks */,
 				3BC65E1F2584F4290063AFF1 /* libturbojpeg.a in Frameworks */,
-				3BC65E272584F4290063AFF1 /* libSDL2_image.a in Frameworks */,
 				3BC65DF42584F3AD0063AFF1 /* Metal.framework in Frameworks */,
 				3BC65DF52584F3AD0063AFF1 /* ForceFeedback.framework in Frameworks */,
 				3BC65DF62584F3AD0063AFF1 /* CoreVideo.framework in Frameworks */,
 				3BC65E232584F4290063AFF1 /* libfreetype.a in Frameworks */,
 				3BC65E2A2584F4290063AFF1 /* libsigc-2.0.a in Frameworks */,
 				3BC65DFA2584F3AD0063AFF1 /* CoreGraphics.framework in Frameworks */,
+				3BEA5D7225AC3CE300B6E359 /* libSDL2_image.a in Frameworks */,
 				3B1C232F25A16CAC0075EF5D /* AppKit.framework in Frameworks */,
 				3B522DCA259BFEE0003301C4 /* libcrypto.a in Frameworks */,
 				3BC65DFB2584F3AD0063AFF1 /* libbz2.tbd in Frameworks */,
@@ -1244,6 +1186,7 @@
 				3BC65E202584F4290063AFF1 /* libpixman-1.a in Frameworks */,
 				3BC65E062584F3AD0063AFF1 /* libiconv.tbd in Frameworks */,
 				3BC65E262584F4290063AFF1 /* libpng16.a in Frameworks */,
+				3BEA5D7C25AC3D8800B6E359 /* libSDL_sound.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1253,6 +1196,7 @@
 			files = (
 				3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */,
 				3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */,
+				3BEA5D7725AC3D1D00B6E359 /* libSDL_sound.a in Frameworks */,
 				3B522DD6259BFF2D003301C4 /* libssl.a in Frameworks */,
 				3BE08102256879FE0006849F /* libSDL2main.a in Frameworks */,
 				3B522DD8259BFF2D003301C4 /* libcrypto.a in Frameworks */,
@@ -1299,7 +1243,6 @@
 				3B10ED342568E95D00372D13 /* src */,
 				3B1C236625A19B780075EF5D /* steamshim */,
 				3B10EDD52568E96A00372D13 /* binding */,
-				3B10ED062568E8F100372D13 /* SDL2_sound */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1342,33 +1285,6 @@
 				3B10ECA62568E7CB00372D13 /* EssentialsCompatibility.rb */,
 			);
 			name = BindingScripts;
-			sourceTree = "<group>";
-		};
-		3B10ED062568E8F100372D13 /* SDL2_sound */ = {
-			isa = PBXGroup;
-			children = (
-				3B10ED072568E8F100372D13 /* SDL_sound_shn.c */,
-				3B10ED082568E8F100372D13 /* SDL_sound.h */,
-				3B10ED092568E8F100372D13 /* SDL_sound_coreaudio.c */,
-				3B10ED0A2568E8F100372D13 /* SDL_sound_skeleton.c */,
-				3B10ED0B2568E8F100372D13 /* SDL_sound_internal.h */,
-				3B10ED0C2568E8F100372D13 /* SDL_sound_raw.c */,
-				3B10ED0D2568E8F100372D13 /* SDL_sound_modplug.c */,
-				3B10ED0E2568E8F100372D13 /* dr_mp3.h */,
-				3B10ED0F2568E8F100372D13 /* meson.build */,
-				3B10ED102568E8F100372D13 /* SDL_sound_vorbis.c */,
-				3B10ED112568E8F100372D13 /* SDL_sound.c */,
-				3B10ED122568E8F100372D13 /* SDL_sound_voc.c */,
-				3B10ED132568E8F100372D13 /* dr_flac.h */,
-				3B10ED142568E8F100372D13 /* SDL_sound_wav.c */,
-				3B10ED152568E8F100372D13 /* SDL_sound_au.c */,
-				3B10ED162568E8F100372D13 /* SDL_sound_mp3.c */,
-				3B10ED172568E8F100372D13 /* SDL_sound_aiff.c */,
-				3B10ED182568E8F100372D13 /* SDL_sound_flac.c */,
-				3B10ED192568E8F100372D13 /* stb_vorbis.h */,
-			);
-			name = SDL2_sound;
-			path = ../SDL2_sound;
 			sourceTree = "<group>";
 		};
 		3B10ED342568E95D00372D13 /* src */ = {
@@ -1698,6 +1614,7 @@
 				3BC65D592584EED10063AFF1 /* libpng16.a */,
 				3B1C230625A142620075EF5D /* libruby.3.0.dylib */,
 				3BC65D522584EED10063AFF1 /* libSDL2_image.a */,
+				3BEA5D6D25AC3CB800B6E359 /* libSDL_sound.a */,
 				3BC65D532584EED10063AFF1 /* libSDL2_ttf.a */,
 				3BC65D552584EED10063AFF1 /* libSDL2.a */,
 				3BC65D502584EED10063AFF1 /* libSDL2main.a */,
@@ -1724,7 +1641,8 @@
 				3BC65D7B2584F3780063AFF1 /* libphysfs.a */,
 				3BC65D882584F3780063AFF1 /* libpixman-1.a */,
 				3BC65D872584F3780063AFF1 /* libpng16.a */,
-				3BC65D7C2584F3780063AFF1 /* libSDL2_image.a */,
+				3BEA5D7125AC3CE300B6E359 /* libSDL2_image.a */,
+				3BEA5D7B25AC3D8800B6E359 /* libSDL_sound.a */,
 				3BC65D832584F3780063AFF1 /* libSDL2_ttf.a */,
 				3BC65D862584F3780063AFF1 /* libSDL2.a */,
 				3BC65D892584F3910063AFF1 /* libSDL2main.a */,
@@ -1846,6 +1764,7 @@
 				3B426F76256BA847009EA00F /* libsigc-2.0.a */,
 				3BE080F0256879FD0006849F /* libSDL2_image.a */,
 				3BE080FA256879FE0006849F /* libSDL2_test.a */,
+				3BEA5D7625AC3D1D00B6E359 /* libSDL_sound.a */,
 				3BE080EF256879FD0006849F /* libSDL2_ttf.a */,
 				3BE080EB256879FC0006849F /* libSDL2.a */,
 				3BE080E4256879FC0006849F /* libSDL2main.a */,
@@ -2083,7 +2002,6 @@
 			files = (
 				3B1C237125A19C600075EF5D /* http-binding.cpp in Sources */,
 				3B1C237225A19C600075EF5D /* tilemapvx.cpp in Sources */,
-				3B1C237325A19C600075EF5D /* SDL_sound.c in Sources */,
 				3B1C237425A19C600075EF5D /* rgssad.cpp in Sources */,
 				3B1C237525A19C600075EF5D /* input.cpp in Sources */,
 				3B1C237625A19C600075EF5D /* tilemap-binding.cpp in Sources */,
@@ -2096,9 +2014,7 @@
 				3B1C237D25A19C600075EF5D /* config.cpp in Sources */,
 				3B1C237E25A19C600075EF5D /* bitmap-binding.cpp in Sources */,
 				3B1C237F25A19C600075EF5D /* vorbissource.cpp in Sources */,
-				3B1C238025A19C600075EF5D /* SDL_sound_raw.c in Sources */,
 				3B1C238125A19C600075EF5D /* filesystem-binding.cpp in Sources */,
-				3B1C238225A19C600075EF5D /* SDL_sound_shn.c in Sources */,
 				3B1C238325A19C600075EF5D /* glstate.cpp in Sources */,
 				3B1C238425A19C600075EF5D /* gl-fun.cpp in Sources */,
 				3B1C238525A19C600075EF5D /* sprite-binding.cpp in Sources */,
@@ -2119,9 +2035,7 @@
 				3B1C239425A19C600075EF5D /* etc.cpp in Sources */,
 				3B1C239525A19C600075EF5D /* shader.cpp in Sources */,
 				3B1C239625A19C600075EF5D /* tilemap.cpp in Sources */,
-				3B1C239725A19C600075EF5D /* SDL_sound_au.c in Sources */,
 				3B1C239825A19C600075EF5D /* window.cpp in Sources */,
-				3B1C239925A19C600075EF5D /* SDL_sound_wav.c in Sources */,
 				3B1C239A25A19C600075EF5D /* input-binding.cpp in Sources */,
 				3B1C239B25A19C600075EF5D /* keybindings.cpp in Sources */,
 				3B1C239C25A19C600075EF5D /* filesystem.cpp in Sources */,
@@ -2130,7 +2044,6 @@
 				3B1C239F25A19C600075EF5D /* eventthread.cpp in Sources */,
 				3B1C23A025A19C600075EF5D /* viewport.cpp in Sources */,
 				3B1C23A125A19C600075EF5D /* gl-debug.cpp in Sources */,
-				3B1C23A225A19C600075EF5D /* SDL_sound_vorbis.c in Sources */,
 				3B1C23A325A19C600075EF5D /* tileatlasvx.cpp in Sources */,
 				3B1C23A425A19C600075EF5D /* bitmap.cpp in Sources */,
 				3B1C23A525A19C600075EF5D /* tilemapvx-binding.cpp in Sources */,
@@ -2139,17 +2052,13 @@
 				3B1C23A825A19C600075EF5D /* graphics-binding.cpp in Sources */,
 				3B1C23A925A19C600075EF5D /* plane.cpp in Sources */,
 				3B1C23AA25A19C600075EF5D /* tilequad.cpp in Sources */,
-				3B1C23AB25A19C600075EF5D /* SDL_sound_mp3.c in Sources */,
-				3B1C23AC25A19C600075EF5D /* SDL_sound_aiff.c in Sources */,
 				3B1C23AD25A19C600075EF5D /* tileatlas.cpp in Sources */,
 				3B1C23AE25A19C600075EF5D /* fluid-fun.cpp in Sources */,
 				3B1C23AF25A19C600075EF5D /* scene.cpp in Sources */,
 				3B1C23B025A19C600075EF5D /* texpool.cpp in Sources */,
 				3B1C23B125A19C600075EF5D /* font-binding.cpp in Sources */,
-				3B1C23B225A19C600075EF5D /* SDL_sound_coreaudio.c in Sources */,
 				3B1C23B325A19C600075EF5D /* audio-binding.cpp in Sources */,
 				3B1C23B425A19C600075EF5D /* autotilesvx.cpp in Sources */,
-				3B1C23B525A19C600075EF5D /* SDL_sound_voc.c in Sources */,
 				3B1C23B625A19C600075EF5D /* vertex.cpp in Sources */,
 				3B1C23B725A19C600075EF5D /* miniffi-binding.cpp in Sources */,
 				3B1C23B825A19C600075EF5D /* soundemitter.cpp in Sources */,
@@ -2158,8 +2067,6 @@
 				3B1C23BB25A19C600075EF5D /* graphics.cpp in Sources */,
 				3B1C23BC25A19C600075EF5D /* font.cpp in Sources */,
 				3B1C242B25A1AA1F0075EF5D /* steamshim_child.c in Sources */,
-				3B1C23BD25A19C600075EF5D /* SDL_sound_flac.c in Sources */,
-				3B1C23BE25A19C600075EF5D /* SDL_sound_modplug.c in Sources */,
 				3B1C23BF25A19C600075EF5D /* filesystemImplApple.mm in Sources */,
 				3B1C23C025A19C600075EF5D /* fake-api.cpp in Sources */,
 				3B1C23C125A19C600075EF5D /* sharedstate.cpp in Sources */,
@@ -2179,7 +2086,6 @@
 			files = (
 				3B522DDE259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3BC65CCD2584EDC60063AFF1 /* tilemapvx.cpp in Sources */,
-				3BC65CCE2584EDC60063AFF1 /* SDL_sound.c in Sources */,
 				3BC65CCF2584EDC60063AFF1 /* rgssad.cpp in Sources */,
 				3BC65CD02584EDC60063AFF1 /* input.cpp in Sources */,
 				3BC65CD12584EDC60063AFF1 /* tilemap-binding.cpp in Sources */,
@@ -2192,9 +2098,7 @@
 				3BC65CD72584EDC60063AFF1 /* config.cpp in Sources */,
 				3BC65CD82584EDC60063AFF1 /* bitmap-binding.cpp in Sources */,
 				3BC65CD92584EDC60063AFF1 /* vorbissource.cpp in Sources */,
-				3BC65CDA2584EDC60063AFF1 /* SDL_sound_raw.c in Sources */,
 				3BC65CDB2584EDC60063AFF1 /* filesystem-binding.cpp in Sources */,
-				3BC65CDC2584EDC60063AFF1 /* SDL_sound_shn.c in Sources */,
 				3BC65CDD2584EDC60063AFF1 /* glstate.cpp in Sources */,
 				3BC65CDE2584EDC60063AFF1 /* gl-fun.cpp in Sources */,
 				3BC65CDF2584EDC60063AFF1 /* sprite-binding.cpp in Sources */,
@@ -2215,9 +2119,7 @@
 				3BC65CEC2584EDC60063AFF1 /* etc.cpp in Sources */,
 				3BC65CED2584EDC60063AFF1 /* shader.cpp in Sources */,
 				3BC65CEE2584EDC60063AFF1 /* tilemap.cpp in Sources */,
-				3BC65CEF2584EDC60063AFF1 /* SDL_sound_au.c in Sources */,
 				3BC65CF02584EDC60063AFF1 /* window.cpp in Sources */,
-				3BC65CF12584EDC60063AFF1 /* SDL_sound_wav.c in Sources */,
 				3BC65CF22584EDC60063AFF1 /* input-binding.cpp in Sources */,
 				3BC65CF32584EDC60063AFF1 /* keybindings.cpp in Sources */,
 				3BC65CF42584EDC60063AFF1 /* filesystem.cpp in Sources */,
@@ -2226,7 +2128,6 @@
 				3BC65CF72584EDC60063AFF1 /* eventthread.cpp in Sources */,
 				3BC65CF82584EDC60063AFF1 /* viewport.cpp in Sources */,
 				3BC65CF92584EDC60063AFF1 /* gl-debug.cpp in Sources */,
-				3BC65CFA2584EDC60063AFF1 /* SDL_sound_vorbis.c in Sources */,
 				3BC65CFB2584EDC60063AFF1 /* tileatlasvx.cpp in Sources */,
 				3BC65CFC2584EDC60063AFF1 /* bitmap.cpp in Sources */,
 				3BC65CFD2584EDC60063AFF1 /* tilemapvx-binding.cpp in Sources */,
@@ -2235,17 +2136,13 @@
 				3BC65D002584EDC60063AFF1 /* graphics-binding.cpp in Sources */,
 				3BC65D012584EDC60063AFF1 /* plane.cpp in Sources */,
 				3BC65D022584EDC60063AFF1 /* tilequad.cpp in Sources */,
-				3BC65D032584EDC60063AFF1 /* SDL_sound_mp3.c in Sources */,
-				3BC65D042584EDC60063AFF1 /* SDL_sound_aiff.c in Sources */,
 				3BC65D052584EDC60063AFF1 /* tileatlas.cpp in Sources */,
 				3BC65D062584EDC60063AFF1 /* fluid-fun.cpp in Sources */,
 				3BC65D072584EDC60063AFF1 /* scene.cpp in Sources */,
 				3BC65D082584EDC60063AFF1 /* texpool.cpp in Sources */,
 				3BC65D092584EDC60063AFF1 /* font-binding.cpp in Sources */,
-				3BC65D0A2584EDC60063AFF1 /* SDL_sound_coreaudio.c in Sources */,
 				3BC65D0B2584EDC60063AFF1 /* audio-binding.cpp in Sources */,
 				3BC65D0C2584EDC60063AFF1 /* autotilesvx.cpp in Sources */,
-				3BC65D0D2584EDC60063AFF1 /* SDL_sound_voc.c in Sources */,
 				3BC65D0E2584EDC60063AFF1 /* vertex.cpp in Sources */,
 				3BC65D0F2584EDC60063AFF1 /* miniffi-binding.cpp in Sources */,
 				3BC65D102584EDC60063AFF1 /* soundemitter.cpp in Sources */,
@@ -2253,8 +2150,6 @@
 				3BC65D122584EDC60063AFF1 /* systemImplApple.mm in Sources */,
 				3BC65D132584EDC60063AFF1 /* graphics.cpp in Sources */,
 				3BC65D142584EDC60063AFF1 /* font.cpp in Sources */,
-				3BC65D152584EDC60063AFF1 /* SDL_sound_flac.c in Sources */,
-				3BC65D162584EDC60063AFF1 /* SDL_sound_modplug.c in Sources */,
 				3BC65D172584EDC60063AFF1 /* filesystemImplApple.mm in Sources */,
 				3BC65D182584EDC60063AFF1 /* fake-api.cpp in Sources */,
 				3BC65D192584EDC60063AFF1 /* sharedstate.cpp in Sources */,
@@ -2267,7 +2162,6 @@
 			files = (
 				3B522DDC259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3BC65D8E2584F3AD0063AFF1 /* tilemapvx.cpp in Sources */,
-				3BC65D8F2584F3AD0063AFF1 /* SDL_sound.c in Sources */,
 				3BC65D902584F3AD0063AFF1 /* rgssad.cpp in Sources */,
 				3BC65D912584F3AD0063AFF1 /* input.cpp in Sources */,
 				3BC65D922584F3AD0063AFF1 /* tilemap-binding.cpp in Sources */,
@@ -2280,9 +2174,7 @@
 				3BC65D982584F3AD0063AFF1 /* config.cpp in Sources */,
 				3BC65D992584F3AD0063AFF1 /* bitmap-binding.cpp in Sources */,
 				3BC65D9A2584F3AD0063AFF1 /* vorbissource.cpp in Sources */,
-				3BC65D9B2584F3AD0063AFF1 /* SDL_sound_raw.c in Sources */,
 				3BC65D9C2584F3AD0063AFF1 /* filesystem-binding.cpp in Sources */,
-				3BC65D9D2584F3AD0063AFF1 /* SDL_sound_shn.c in Sources */,
 				3BC65D9E2584F3AD0063AFF1 /* glstate.cpp in Sources */,
 				3BC65D9F2584F3AD0063AFF1 /* gl-fun.cpp in Sources */,
 				3BC65DA02584F3AD0063AFF1 /* sprite-binding.cpp in Sources */,
@@ -2303,9 +2195,7 @@
 				3BC65DAD2584F3AD0063AFF1 /* etc.cpp in Sources */,
 				3BC65DAE2584F3AD0063AFF1 /* shader.cpp in Sources */,
 				3BC65DAF2584F3AD0063AFF1 /* tilemap.cpp in Sources */,
-				3BC65DB02584F3AD0063AFF1 /* SDL_sound_au.c in Sources */,
 				3BC65DB12584F3AD0063AFF1 /* window.cpp in Sources */,
-				3BC65DB22584F3AD0063AFF1 /* SDL_sound_wav.c in Sources */,
 				3BC65DB32584F3AD0063AFF1 /* input-binding.cpp in Sources */,
 				3BC65DB42584F3AD0063AFF1 /* keybindings.cpp in Sources */,
 				3BC65DB52584F3AD0063AFF1 /* filesystem.cpp in Sources */,
@@ -2314,7 +2204,6 @@
 				3BC65DB82584F3AD0063AFF1 /* eventthread.cpp in Sources */,
 				3BC65DB92584F3AD0063AFF1 /* viewport.cpp in Sources */,
 				3BC65DBA2584F3AD0063AFF1 /* gl-debug.cpp in Sources */,
-				3BC65DBB2584F3AD0063AFF1 /* SDL_sound_vorbis.c in Sources */,
 				3BC65DBC2584F3AD0063AFF1 /* tileatlasvx.cpp in Sources */,
 				3BC65DBD2584F3AD0063AFF1 /* bitmap.cpp in Sources */,
 				3BC65DBE2584F3AD0063AFF1 /* tilemapvx-binding.cpp in Sources */,
@@ -2323,17 +2212,13 @@
 				3BC65DC12584F3AD0063AFF1 /* graphics-binding.cpp in Sources */,
 				3BC65DC22584F3AD0063AFF1 /* plane.cpp in Sources */,
 				3BC65DC32584F3AD0063AFF1 /* tilequad.cpp in Sources */,
-				3BC65DC42584F3AD0063AFF1 /* SDL_sound_mp3.c in Sources */,
-				3BC65DC52584F3AD0063AFF1 /* SDL_sound_aiff.c in Sources */,
 				3BC65DC62584F3AD0063AFF1 /* tileatlas.cpp in Sources */,
 				3BC65DC72584F3AD0063AFF1 /* fluid-fun.cpp in Sources */,
 				3BC65DC82584F3AD0063AFF1 /* scene.cpp in Sources */,
 				3BC65DC92584F3AD0063AFF1 /* texpool.cpp in Sources */,
 				3BC65DCA2584F3AD0063AFF1 /* font-binding.cpp in Sources */,
-				3BC65DCB2584F3AD0063AFF1 /* SDL_sound_coreaudio.c in Sources */,
 				3BC65DCC2584F3AD0063AFF1 /* audio-binding.cpp in Sources */,
 				3BC65DCD2584F3AD0063AFF1 /* autotilesvx.cpp in Sources */,
-				3BC65DCE2584F3AD0063AFF1 /* SDL_sound_voc.c in Sources */,
 				3BC65DCF2584F3AD0063AFF1 /* vertex.cpp in Sources */,
 				3BC65DD02584F3AD0063AFF1 /* miniffi-binding.cpp in Sources */,
 				3BC65DD12584F3AD0063AFF1 /* soundemitter.cpp in Sources */,
@@ -2341,8 +2226,6 @@
 				3BC65DD32584F3AD0063AFF1 /* systemImplApple.mm in Sources */,
 				3BC65DD42584F3AD0063AFF1 /* graphics.cpp in Sources */,
 				3BC65DD52584F3AD0063AFF1 /* font.cpp in Sources */,
-				3BC65DD62584F3AD0063AFF1 /* SDL_sound_flac.c in Sources */,
-				3BC65DD72584F3AD0063AFF1 /* SDL_sound_modplug.c in Sources */,
 				3BC65DD82584F3AD0063AFF1 /* filesystemImplApple.mm in Sources */,
 				3BC65DD92584F3AD0063AFF1 /* fake-api.cpp in Sources */,
 				3BC65DDA2584F3AD0063AFF1 /* sharedstate.cpp in Sources */,
@@ -2355,7 +2238,6 @@
 			files = (
 				3B522DDD259C1E53003301C4 /* http-binding.cpp in Sources */,
 				3B10EDC22568E95E00372D13 /* tilemapvx.cpp in Sources */,
-				3B10ED212568E8F100372D13 /* SDL_sound.c in Sources */,
 				3B10EDA72568E95E00372D13 /* rgssad.cpp in Sources */,
 				3B10EDA82568E95E00372D13 /* input.cpp in Sources */,
 				3B10EE022568E96A00372D13 /* tilemap-binding.cpp in Sources */,
@@ -2368,9 +2250,7 @@
 				3B5A84062569B56F00BAF2E5 /* config.cpp in Sources */,
 				3B10EDFF2568E96A00372D13 /* bitmap-binding.cpp in Sources */,
 				3B10EDBA2568E95E00372D13 /* vorbissource.cpp in Sources */,
-				3B10ED1D2568E8F100372D13 /* SDL_sound_raw.c in Sources */,
 				3B10EDF62568E96A00372D13 /* filesystem-binding.cpp in Sources */,
-				3B10ED1A2568E8F100372D13 /* SDL_sound_shn.c in Sources */,
 				3B10EDC92568E95E00372D13 /* glstate.cpp in Sources */,
 				3B10EDCC2568E95E00372D13 /* gl-fun.cpp in Sources */,
 				3B10EDFB2568E96A00372D13 /* sprite-binding.cpp in Sources */,
@@ -2391,9 +2271,7 @@
 				3B10EDAB2568E95E00372D13 /* etc.cpp in Sources */,
 				3B10EDCA2568E95E00372D13 /* shader.cpp in Sources */,
 				3B10EDCE2568E95E00372D13 /* tilemap.cpp in Sources */,
-				3B10ED242568E8F100372D13 /* SDL_sound_au.c in Sources */,
 				3B10EDBE2568E95E00372D13 /* window.cpp in Sources */,
-				3B10ED232568E8F100372D13 /* SDL_sound_wav.c in Sources */,
 				3B10EDF92568E96A00372D13 /* input-binding.cpp in Sources */,
 				3B10EDA92568E95E00372D13 /* keybindings.cpp in Sources */,
 				3B10EDAD2568E95E00372D13 /* filesystem.cpp in Sources */,
@@ -2402,7 +2280,6 @@
 				3B10EDA62568E95E00372D13 /* eventthread.cpp in Sources */,
 				3B10EDD02568E95E00372D13 /* viewport.cpp in Sources */,
 				3B10EDC52568E95E00372D13 /* gl-debug.cpp in Sources */,
-				3B10ED202568E8F100372D13 /* SDL_sound_vorbis.c in Sources */,
 				3B10EDC82568E95E00372D13 /* tileatlasvx.cpp in Sources */,
 				3B10EDBD2568E95E00372D13 /* bitmap.cpp in Sources */,
 				3B10EDFC2568E96A00372D13 /* tilemapvx-binding.cpp in Sources */,
@@ -2411,17 +2288,13 @@
 				3B10EE042568E96A00372D13 /* graphics-binding.cpp in Sources */,
 				3B10EDD12568E95E00372D13 /* plane.cpp in Sources */,
 				3B10EDC32568E95E00372D13 /* tilequad.cpp in Sources */,
-				3B10ED252568E8F100372D13 /* SDL_sound_mp3.c in Sources */,
-				3B10ED262568E8F100372D13 /* SDL_sound_aiff.c in Sources */,
 				3B10EDCB2568E95E00372D13 /* tileatlas.cpp in Sources */,
 				3B10EDB52568E95E00372D13 /* fluid-fun.cpp in Sources */,
 				3B10EDC62568E95E00372D13 /* scene.cpp in Sources */,
 				3B10EDC42568E95E00372D13 /* texpool.cpp in Sources */,
 				3B10EE062568E96A00372D13 /* font-binding.cpp in Sources */,
-				3B10ED1B2568E8F100372D13 /* SDL_sound_coreaudio.c in Sources */,
 				3B10EDF82568E96A00372D13 /* audio-binding.cpp in Sources */,
 				3B10EDCF2568E95E00372D13 /* autotilesvx.cpp in Sources */,
-				3B10ED222568E8F100372D13 /* SDL_sound_voc.c in Sources */,
 				3B10EDCD2568E95E00372D13 /* vertex.cpp in Sources */,
 				3B10EE032568E96A00372D13 /* miniffi-binding.cpp in Sources */,
 				3B10EDB82568E95E00372D13 /* soundemitter.cpp in Sources */,
@@ -2429,8 +2302,6 @@
 				3B5A8464256A46B200BAF2E5 /* systemImplApple.mm in Sources */,
 				3B10EDC12568E95E00372D13 /* graphics.cpp in Sources */,
 				3B10EDC02568E95E00372D13 /* font.cpp in Sources */,
-				3B10ED272568E8F100372D13 /* SDL_sound_flac.c in Sources */,
-				3B10ED1E2568E8F100372D13 /* SDL_sound_modplug.c in Sources */,
 				3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */,
 				3B10EDB12568E95E00372D13 /* fake-api.cpp in Sources */,
 				3B10EDAC2568E95E00372D13 /* sharedstate.cpp in Sources */,
@@ -2667,6 +2538,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MKXPZ_EXECUTABLE_NAME = shim;
@@ -2743,6 +2615,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MKXPZ_EXECUTABLE_NAME = shim;
@@ -2953,6 +2826,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3023,6 +2897,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3105,6 +2980,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3186,6 +3063,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3256,6 +3135,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3325,6 +3205,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
 				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
