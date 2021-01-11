@@ -196,7 +196,7 @@ $(DOWNLOADS)/sdl2_image/configure: $(DOWNLOADS)/sdl2_image/autogen.sh
 $(DOWNLOADS)/sdl2_image/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/SDL_image $(DOWNLOADS)/sdl2_image -b mkxp-z
 
-# SDL2_sound
+# SDL_sound
 sdlsound: init_dirs sdl2 libogg libvorbis $(LIBDIR)/libSDL_sound.a
 
 $(LIBDIR)/libSDL_sound.a: $(DOWNLOADS)/sdl_sound/Makefile
