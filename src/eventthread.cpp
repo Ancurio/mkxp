@@ -128,8 +128,8 @@ void EventThread::process(RGSSThreadData &rtData)
 	defScreenH = rtData.config.defScreenH;
 	SDL_GetDesktopDisplayMode(0, &dm);
 	SDL_SetWindowMaximumSize(win, dm.w, dm.h);
-	SDL_SetWindowMinimumSize(win, 320, 240);
-	SDL_SetWindowSize(win, 320, 240);
+	SDL_SetWindowMinimumSize(win, 256, 192);
+	SDL_SetWindowSize(win, 256, 192);
 	int defScreenW_new, defScreenH_new;
 	int firstrun;
 	firstrun = 0;
