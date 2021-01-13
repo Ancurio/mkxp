@@ -1,9 +1,7 @@
 # Falcon-mkxp
 
-info: A fork of Ancurio's mkxp for HD and higher resolutions.
-
-You can remove the limit of 640/480 by editing the config file 'mkxp.conf' and changing the settings 'defScreenW' and 'defScreenH' according to your game resolution.
-e.g. 640/480, 800/600, 1024/768, 1280/960, 1920/1080, etc.
+info: A fork of Ancurio's mkxp with unlocked resolution.
+Supports all games resolutions.
 
 # mkxp
 
