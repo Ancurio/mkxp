@@ -128,8 +128,8 @@ void EventThread::process(RGSSThreadData &rtData)
 	defScreenH = rtData.config.defScreenH;
 	SDL_GetDesktopDisplayMode(0, &dm);
 	SDL_SetWindowMaximumSize(win, dm.w, dm.h);
-	SDL_SetWindowMinimumSize(win, 256, 192);
-	SDL_SetWindowSize(win, 256, 192);
+	SDL_SetWindowMinimumSize(win, 800, 600);
+	SDL_SetWindowSize(win, 800, 600);
 	int defScreenW_new, defScreenH_new;
 	int firstrun;
 	firstrun = 0;
@@ -279,6 +279,11 @@ void EventThread::process(RGSSThreadData &rtData)
 			if (event.key.keysym.scancode == SDL_SCANCODE_RETURN &&
 			    (event.key.keysym.mod & toggleFSMod))
 			{
+				if (!fullscreen && firstrun < 2)
+				{
+					firstrun = 2;
+					SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+				}
 				setFullscreen(win, !fullscreen);
 				if (!fullscreen && havePendingTitle)
 				{
@@ -290,6 +295,11 @@ void EventThread::process(RGSSThreadData &rtData)
 				else
 				{
 					SDL_SetWindowSize(win, defScreenW_new, defScreenH_new);
+				}
+				if (firstrun < 2)
+				{
+					firstrun = 2;
+					SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 				}
 
 				break;
