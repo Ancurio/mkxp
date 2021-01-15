@@ -235,6 +235,14 @@
 		3B312843259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
 		3B312844259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
 		3B312845259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
+		3B3F7D1D25B19F6E00EA5F1C /* settingsmenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */; };
+		3B3F7D2025B19F6E00EA5F1C /* settingsmenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */; };
+		3B3F7D2325B19F6F00EA5F1C /* settingsmenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */; };
+		3B3F7D2625B19F7000EA5F1C /* settingsmenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */; };
+		3B3F7D2A25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
+		3B3F7D2B25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
+		3B3F7D2C25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
+		3B3F7D2D25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
 		3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
 		3B522DA9259BAA42003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B522DAA259BAA4A003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -939,6 +947,9 @@
 		3B1C243E25A1B8D20075EF5D /* steam_appid.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = steam_appid.txt; path = config/steam_appid.txt; sourceTree = "<group>"; };
 		3B312841259E7DC1002EAB43 /* miniffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniffi.h; sourceTree = "<group>"; };
 		3B312842259E7DC1002EAB43 /* miniffi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = miniffi.cpp; sourceTree = "<group>"; };
+		3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = settingsmenu.xib; path = views/settingsmenu.xib; sourceTree = "<group>"; };
+		3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = SettingsMenuController.mm; path = views/SettingsMenuController.mm; sourceTree = "<group>"; };
+		3B3F7D3025B1A79F00EA5F1C /* SettingsMenuController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SettingsMenuController.h; path = views/SettingsMenuController.h; sourceTree = "<group>"; };
 		3B426F6B256B8AC0009EA00F /* fs_std_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_impl.hpp; sourceTree = "<group>"; };
 		3B426F6C256B8AC0009EA00F /* fs_fwd.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_fwd.hpp; sourceTree = "<group>"; };
 		3B426F6D256B8AC0009EA00F /* fs_std.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std.hpp; sourceTree = "<group>"; };
@@ -1565,6 +1576,9 @@
 		3B3F7D1325B19C5A00EA5F1C /* MacOS */ = {
 			isa = PBXGroup;
 			children = (
+				3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */,
+				3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */,
+				3B3F7D3025B1A79F00EA5F1C /* SettingsMenuController.h */,
 			);
 			name = MacOS;
 			sourceTree = "<group>";
@@ -1957,6 +1971,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B1C23E725A19C600075EF5D /* icon.icns in Resources */,
+				3B3F7D2625B19F7000EA5F1C /* settingsmenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1973,6 +1988,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BC65D3D2584EDC60063AFF1 /* icon.icns in Resources */,
+				3B3F7D2325B19F6F00EA5F1C /* settingsmenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1981,6 +1997,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BC65E0E2584F3AD0063AFF1 /* icon.icns in Resources */,
+				3B3F7D1D25B19F6E00EA5F1C /* settingsmenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1989,6 +2006,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BD2B6F92565AEC0003DAD8A /* icon.icns in Resources */,
+				3B3F7D2025B19F6E00EA5F1C /* settingsmenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2075,6 +2093,7 @@
 				3B1C23BB25A19C600075EF5D /* graphics.cpp in Sources */,
 				3B1C23BC25A19C600075EF5D /* font.cpp in Sources */,
 				3B1C242B25A1AA1F0075EF5D /* steamshim_child.c in Sources */,
+				3B3F7D2D25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */,
 				3B1C23BF25A19C600075EF5D /* filesystemImplApple.mm in Sources */,
 				3B1C23C025A19C600075EF5D /* fake-api.cpp in Sources */,
 				3B1C23C125A19C600075EF5D /* sharedstate.cpp in Sources */,
@@ -2141,6 +2160,7 @@
 				3BC65CFD2584EDC60063AFF1 /* tilemapvx-binding.cpp in Sources */,
 				3BC65CFE2584EDC60063AFF1 /* window-binding.cpp in Sources */,
 				3BC65CFF2584EDC60063AFF1 /* midisource.cpp in Sources */,
+				3B3F7D2C25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */,
 				3BC65D002584EDC60063AFF1 /* graphics-binding.cpp in Sources */,
 				3BC65D012584EDC60063AFF1 /* plane.cpp in Sources */,
 				3BC65D022584EDC60063AFF1 /* tilequad.cpp in Sources */,
@@ -2217,6 +2237,7 @@
 				3BC65DBE2584F3AD0063AFF1 /* tilemapvx-binding.cpp in Sources */,
 				3BC65DBF2584F3AD0063AFF1 /* window-binding.cpp in Sources */,
 				3BC65DC02584F3AD0063AFF1 /* midisource.cpp in Sources */,
+				3B3F7D2A25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */,
 				3BC65DC12584F3AD0063AFF1 /* graphics-binding.cpp in Sources */,
 				3BC65DC22584F3AD0063AFF1 /* plane.cpp in Sources */,
 				3BC65DC32584F3AD0063AFF1 /* tilequad.cpp in Sources */,
@@ -2293,6 +2314,7 @@
 				3B10EDFC2568E96A00372D13 /* tilemapvx-binding.cpp in Sources */,
 				3B10EDF52568E96A00372D13 /* window-binding.cpp in Sources */,
 				3B10EDB32568E95E00372D13 /* midisource.cpp in Sources */,
+				3B3F7D2B25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */,
 				3B10EE042568E96A00372D13 /* graphics-binding.cpp in Sources */,
 				3B10EDD12568E95E00372D13 /* plane.cpp in Sources */,
 				3B10EDC32568E95E00372D13 /* tilequad.cpp in Sources */,

@@ -15,6 +15,10 @@ std::string getSystemLanguage();
 std::string getUserName();
 }
 
+#ifdef MKXPZ_BUILD_XCODE
+void openSettingsWindow();
+#endif
+
 namespace mkxp_sys = systemImpl;
 
 #endif /* system_h */

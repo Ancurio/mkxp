@@ -5,8 +5,9 @@
 //  Created by ゾロアーク on 11/22/20.
 //
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 #import "system.h"
+#import "SettingsMenuController.h"
 
 std::string systemImpl::getSystemLanguage() {
     NSString *languageCode = NSLocale.currentLocale.languageCode;
@@ -16,4 +17,9 @@ std::string systemImpl::getSystemLanguage() {
 
 std::string systemImpl::getUserName() {
     return std::string(NSUserName().UTF8String);
+}
+
+
+void openSettingsWindow() {
+    [SettingsMenu openWindow];
 }
