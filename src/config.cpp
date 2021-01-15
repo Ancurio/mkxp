@@ -7,6 +7,7 @@
 
 #include "config.h"
 #include <SDL_filesystem.h>
+#include <assert.h>
 
 #include <stdint.h>
 #include <vector>
@@ -47,12 +48,42 @@ void fillStringVec(json::value &item, std::vector<std::string> &vector) {
     }
 }
 
+bool copyObject(json::value &dest, json::value &src, const char *objectName = "") {
+    assert(dest.is_object());
+    if (src.is_null())
+        return false;
+    
+    if (!src.is_object())
+        return false;
+    
+    auto &srcVec = src.as_object();
+    auto &destVec = dest.as_object();
+    
+    for (auto it : srcVec) {
+        // Specifically processs this object later.
+        if (it.second.is_object() && destVec[it.first].is_object())
+            continue;
+        
+        if (it.second.is_array() && destVec[it.first].is_array() ||
+            it.second.is_number() && destVec[it.first].is_number() ||
+            it.second.is_string() && destVec[it.first].is_string() ||
+            it.second.is_boolean() && destVec[it.first].is_boolean())
+        {
+            destVec[it.first] = it.second;
+        }
+        else {
+            Debug() << "Invalid or unrecognized variable in configuration:" << objectName << it.first;
+        }
+    }
+    return true;
+}
+
 #define CONF_FILE "mkxp.json"
 
 Config::Config() {}
 
 void Config::read(int argc, char *argv[]) {
-    auto opts = json::object({
+    auto optsJ = json::object({
         {"rgssVersion", 0},
         {"debugMode", false},
         {"printFPS", false},
@@ -94,8 +125,20 @@ void Config::read(int argc, char *argv[]) {
         {"JITEnable", false},
         {"JITVerboseLevel", 0},
         {"JITMaxCache", 100},
-        {"JITMinCalls", 10000}
-    }).as_object();
+        {"JITMinCalls", 10000},
+        {"bindingNames", json::object({
+            {"a", "A"},
+            {"b", "B"},
+            {"c", "C"},
+            {"x", "X"},
+            {"y", "Y"},
+            {"z", "Z"},
+            {"l", "L"},
+            {"r", "R"}
+        })}
+    });
+    
+    auto &opts = optsJ.as_object();
     
 #define GUARD(exp) \
 try { exp } catch (...) {}
@@ -122,20 +165,8 @@ try { exp } catch (...) {}
         if (!confData.is_object())
             confData = json::object({});
         
-        auto &cdObject = confData.as_object();
-        
-        for (auto it : cdObject) {
-            if (it.second.is_array() && opts[it.first].is_array() ||
-                it.second.is_number() && opts[it.first].is_number() ||
-                it.second.is_string() && opts[it.first].is_string() ||
-                it.second.is_boolean() && opts[it.first].is_boolean())
-            {
-                opts[it.first] = it.second;
-            }
-            else {
-                Debug() << "Invalid or unrecognized variable in configuration:" << it.first;
-            }
-        }
+        copyObject(optsJ, confData);
+        copyObject(opts["bindingNames"], confData.as_object()["bindingNames"], "bindingNames .");
     }
     
 #define SET_OPT_CUSTOMKEY(var, key, type) GUARD(var = opts[#key].as_##type();)
@@ -185,6 +216,19 @@ try { exp } catch (...) {}
     fillStringVec(opts["RTP"], rtps);
     fillStringVec(opts["fontSub"], fontSubs);
     fillStringVec(opts["rubyLoadpath"], rubyLoadpaths);
+    
+    auto &bnames = opts["bindingNames"].as_object();
+    
+#define BINDING_NAME(btn) kbActionNames.btn = bnames[#btn].as_string()
+    BINDING_NAME(a);
+    BINDING_NAME(b);
+    BINDING_NAME(c);
+    BINDING_NAME(x);
+    BINDING_NAME(y);
+    BINDING_NAME(z);
+    BINDING_NAME(l);
+    BINDING_NAME(r);
+    
     rgssVersion = clamp(rgssVersion, 0, 3);
     SE.sourceCount = clamp(SE.sourceCount, 1, 64);
     

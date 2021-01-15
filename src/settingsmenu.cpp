@@ -60,7 +60,7 @@ struct VButton
 {
 	Input::ButtonCode code;
 	const char *str;
-} static const vButtons[] =
+} static vButtons[] =
 {
 	BTN_STRING(Up),
 	BTN_STRING(Down),
@@ -181,7 +181,9 @@ struct BindingWidget : Widget
 	    : Widget(p, rect),
 	      vb(vButtons[vbIndex]),
 	      hoveredCell(-1)
-	{}
+	{
+        
+    }
 
 	void appendBindings(BDescVec &d) const;
 
@@ -949,6 +951,20 @@ void Label::drawHandler(SDL_Surface *surf)
 
 SettingsMenu::SettingsMenu(RGSSThreadData &rtData)
 {
+    // Set names to be shown in the menu
+    {
+#define SET_BUTTON_NAME(n, b) vButtons[n].str = rtData.config.kbActionNames.b.c_str();
+        SET_BUTTON_NAME(2, l);
+        SET_BUTTON_NAME(5, r);
+        SET_BUTTON_NAME(6, a);
+        SET_BUTTON_NAME(7, b);
+        SET_BUTTON_NAME(8, c);
+        SET_BUTTON_NAME(9, x);
+        SET_BUTTON_NAME(10, y);
+        SET_BUTTON_NAME(11, z);
+#undef SET_BUTTON_NAME
+    }
+    
 	p = new SettingsMenuPrivate(rtData);
 	p->state = Idle;
 

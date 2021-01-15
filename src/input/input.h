@@ -24,6 +24,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 extern std::unordered_map<int, int> vKeyToScancode;
 extern std::unordered_map<std::string, int> strToScancode;
@@ -53,6 +54,11 @@ public:
 	};
 
 	void update();
+    
+    std::vector<std::string> getBindings(ButtonCode code);
+    
+    std::string &getActionName(int button);
+    void setActionName(int button, const char *name);
 
 	bool isPressed(int button);
 	bool isTriggered(int button);

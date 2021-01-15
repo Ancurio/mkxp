@@ -1125,6 +1125,37 @@ void Input::update()
 	p->repeating = None;
 }
 
+std::vector<std::string> Input::getBindings(ButtonCode code) {
+    std::vector<std::string> ret;
+    for (const auto &b : p->kbBindings) {
+        if (b.target != code) continue;
+        ret.push_back(SDL_GetScancodeName(b.source));
+    }
+    
+    for (const auto &b : p->jsBBindings) {
+        if (b.target != code) continue;
+        ret.push_back(std::string("JSBUTTON") + std::to_string(b.source));
+    }
+    
+    for (const auto &b : p->jsABindings) {
+        if (b.target != code) continue;
+        ret.push_back(std::string("JSAXIS") + std::to_string(b.source));
+    }
+    
+    for (const auto &b : p->jsHBindings) {
+        if (b.target != code) continue;
+        ret.push_back(std::string("JSHAT") + std::to_string(b.source));
+    }
+    
+    return ret;
+}
+
+std::string &Input::getActionName(int button) {
+    for (const auto &b : p->kbBindings) {
+        
+    }
+}
+
 bool Input::isPressed(int button)
 {
 	return p->getStateCheck(button).pressed;

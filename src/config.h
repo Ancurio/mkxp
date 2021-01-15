@@ -105,6 +105,20 @@ struct Config {
       int maxCache;
       int minCalls;
   } jit;
+    
+  // Keybinding action name mappings
+    struct {
+        std::string a;
+        std::string b;
+        std::string c;
+        
+        std::string x;
+        std::string y;
+        std::string z;
+        
+        std::string l;
+        std::string r;
+    } kbActionNames;
 
   /* Internal */
   std::string customDataPath;

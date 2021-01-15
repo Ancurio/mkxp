@@ -1240,6 +1240,7 @@
 		3B10EC6C2568E5EA00372D13 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				3B3F7D1325B19C5A00EA5F1C /* MacOS */,
 				3B10ED342568E95D00372D13 /* src */,
 				3B1C236625A19B780075EF5D /* steamshim */,
 				3B10EDD52568E96A00372D13 /* binding */,
@@ -1559,6 +1560,13 @@
 				3B1C241125A1A7120075EF5D /* libsteam_api.dylib */,
 			);
 			name = Steam;
+			sourceTree = "<group>";
+		};
+		3B3F7D1325B19C5A00EA5F1C /* MacOS */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = MacOS;
 			sourceTree = "<group>";
 		};
 		3B426F6A256B8AC0009EA00F /* ghc */ = {
