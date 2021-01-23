@@ -443,6 +443,7 @@ struct TilemapPrivate
 		std::vector<uint8_t> &animatedATs = atlas.animatedATs;
 
 		usableATs.clear();
+		animatedATs.clear();
 
 		for (int i = 0; i < autotileCount; ++i)
 		{
@@ -462,6 +463,7 @@ struct TilemapPrivate
 			}
 			else
 			{
+				atlas.smallATs[i] = false;
 				atlas.nATFrames[i] = autotiles[i]->width()/autotileW;
 				if (atlas.nATFrames[i] > 1)
 					animatedATs.push_back(i);
