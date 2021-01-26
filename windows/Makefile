@@ -34,6 +34,7 @@ CMAKE_ARGS := \
 	-G "MSYS Makefiles"
 
 RUBY_CONFIGURE_ARGS := \
+	--prefix="$(shell cygpath -m ${BUILD_PREFIX})" \
 	--enable-install-static-library \
 	--disable-install-doc \
 	--with-out-ext=openssl,readline,dbm,gdbm \
@@ -282,8 +283,7 @@ $(DOWNLOADS)/openssl/Makefile: $(DOWNLOADS)/openssl/Configure
 	--openssldir="$(BUILD_PREFIX)"
 
 $(DOWNLOADS)/openssl/Configure:
-	$(CLONE) $(GITHUB)/openssl/openssl $(DOWNLOADS)/openssl; \
-	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
+	$(CLONE) $(GITHUB)/openssl/openssl $(DOWNLOADS)/openssl -c advice.detachedHead=false --branch OpenSSL_1_1_1i
 
 # Standard ruby
 ruby: init_dirs openssl $(BUILD_PREFIX)/$(RB_PREFIX)-ruby300.dll
