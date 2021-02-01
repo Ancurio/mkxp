@@ -447,11 +447,11 @@ struct TilemapPrivate
 
 		for (int i = 0; i < autotileCount; ++i)
 		{
-			if (nullOrDisposed(autotiles[i]))
+			if (nullOrDisposed(autotiles[i]) || autotiles[i]->megaSurface())
+			{
+				atlas.nATFrames[i] = 1;
 				continue;
-
-			if (autotiles[i]->megaSurface())
-				continue;
+			}
 
 			usableATs.push_back(i);
 
