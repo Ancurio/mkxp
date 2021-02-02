@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3B10EC5C2568D40500372D13 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081562568D3A60006849F /* CoreGraphics.framework */; };
 		3B10EC5D2568D40C00372D13 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
-		3B10EC5E2568D40C00372D13 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
 		3B10EC5F2568D40C00372D13 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081542568D3A60006849F /* Metal.framework */; };
 		3B10EC602568D40C00372D13 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081572568D3A60006849F /* ForceFeedback.framework */; };
 		3B10EC612568D40C00372D13 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081532568D3A60006849F /* CoreVideo.framework */; };
@@ -111,9 +110,7 @@
 		3B1C230C25A144A40075EF5D /* libruby.3.0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B1C230E25A144BF0075EF5D /* libruby.3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */; };
 		3B1C230F25A144C90075EF5D /* libruby.3.0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3B1C232F25A16CAC0075EF5D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
 		3B1C233025A16CB20075EF5D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
-		3B1C233125A16CB70075EF5D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
 		3B1C233525A17C670075EF5D /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B1C233925A17CB80075EF5D /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B1C233C25A17CC40075EF5D /* Assets.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3BA08EA4256641ED00449CFF /* Assets.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -204,7 +201,6 @@
 		3B1C23D225A19C600075EF5D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
 		3B1C23D325A19C600075EF5D /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
 		3B1C23D425A19C600075EF5D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
-		3B1C23D525A19C600075EF5D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
 		3B1C23D625A19C600075EF5D /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081542568D3A60006849F /* Metal.framework */; };
 		3B1C23D725A19C600075EF5D /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081572568D3A60006849F /* ForceFeedback.framework */; };
 		3B1C23D825A19C600075EF5D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081532568D3A60006849F /* CoreVideo.framework */; };
@@ -1088,7 +1084,6 @@
 				3B1C23D225A19C600075EF5D /* IOKit.framework in Frameworks */,
 				3B1C23D325A19C600075EF5D /* libsigc-2.0.a in Frameworks */,
 				3B1C23D425A19C600075EF5D /* Carbon.framework in Frameworks */,
-				3B1C23D525A19C600075EF5D /* AppKit.framework in Frameworks */,
 				3B1C23D625A19C600075EF5D /* Metal.framework in Frameworks */,
 				3B1C23D725A19C600075EF5D /* ForceFeedback.framework in Frameworks */,
 				3B1C23D825A19C600075EF5D /* CoreVideo.framework in Frameworks */,
@@ -1138,7 +1133,6 @@
 				3BC65D5C2584EED10063AFF1 /* libphysfs.a in Frameworks */,
 				3BC65D302584EDC60063AFF1 /* CoreGraphics.framework in Frameworks */,
 				3BC65D312584EDC60063AFF1 /* libbz2.tbd in Frameworks */,
-				3B1C233125A16CB70075EF5D /* AppKit.framework in Frameworks */,
 				3B522DD0259BFF0B003301C4 /* libcrypto.a in Frameworks */,
 				3BC65D322584EDC60063AFF1 /* CoreAudio.framework in Frameworks */,
 				3BC65D332584EDC60063AFF1 /* AudioToolbox.framework in Frameworks */,
@@ -1181,7 +1175,6 @@
 				3BC65E2A2584F4290063AFF1 /* libsigc-2.0.a in Frameworks */,
 				3BC65DFA2584F3AD0063AFF1 /* CoreGraphics.framework in Frameworks */,
 				3BEA5D7225AC3CE300B6E359 /* libSDL2_image.a in Frameworks */,
-				3B1C232F25A16CAC0075EF5D /* AppKit.framework in Frameworks */,
 				3B522DCA259BFEE0003301C4 /* libcrypto.a in Frameworks */,
 				3BC65DFB2584F3AD0063AFF1 /* libbz2.tbd in Frameworks */,
 				3BC65DFC2584F3AD0063AFF1 /* CoreAudio.framework in Frameworks */,
@@ -1225,7 +1218,6 @@
 				3BD2B6E72565AEC0003DAD8A /* IOKit.framework in Frameworks */,
 				3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */,
 				3B10EC5D2568D40C00372D13 /* Carbon.framework in Frameworks */,
-				3B10EC5E2568D40C00372D13 /* AppKit.framework in Frameworks */,
 				3B10EC5F2568D40C00372D13 /* Metal.framework in Frameworks */,
 				3B10EC602568D40C00372D13 /* ForceFeedback.framework in Frameworks */,
 				3B10EC612568D40C00372D13 /* CoreVideo.framework in Frameworks */,
@@ -1932,7 +1924,7 @@
 		3BDB22EC25644FBF00C4A63D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					3B1C235525A199370075EF5D = {
 						CreatedOnToolsVersion = 12.3;
@@ -3252,6 +3244,26 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MKXPZ_BUILD_XCODE,
 					"MKXPZ_ALCDEVICE=ALCdevice",
@@ -3262,6 +3274,12 @@
 					GLES2_HEADER,
 					"$(MKXPZ_EXTRA_ARGS)",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../**",
 					"$(DEPENDENCY_SEARCH_PATH)/include",
@@ -3280,6 +3298,7 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-fdeclspec",
 					"-w",
@@ -3296,6 +3315,26 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MKXPZ_BUILD_XCODE,
 					"MKXPZ_ALCDEVICE=ALCdevice",
@@ -3305,6 +3344,12 @@
 					GLES2_HEADER,
 					"$(MKXPZ_EXTRA_ARGS)",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../**",
 					"$(DEPENDENCY_SEARCH_PATH)/include",
