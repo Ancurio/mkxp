@@ -157,6 +157,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(printFPS, bool, false) \
 	PO_DESC(winResizable, bool, false) \
 	PO_DESC(fullscreen, bool, false) \
+	PO_DESC(showCursor, bool, false) \
 	PO_DESC(fixedAspectRatio, bool, true) \
 	PO_DESC(smoothScaling, bool, true) \
 	PO_DESC(vsync, bool, false) \
@@ -291,10 +292,10 @@ static std::string baseName(const std::string &path)
 static void setupScreenSize(Config &conf)
 {
 	if (conf.defScreenW <= 0)
-		conf.defScreenW = (conf.rgssVersion == 1 ? 640 : 544);
+		conf.defScreenW = 2048;
 
 	if (conf.defScreenH <= 0)
-		conf.defScreenH = (conf.rgssVersion == 1 ? 480 : 416);
+		conf.defScreenH = 1536;
 }
 
 void Config::readGameINI()
