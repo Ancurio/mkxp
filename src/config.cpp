@@ -380,7 +380,11 @@ void Config::readGameINI()
 			size_t inLen = game.title.size();
 			size_t outLen = inLen * 4;
 			std::string buf(outLen, '\0');
+#ifdef _MSC_VER
+			const char *inPtr = game.title.c_str();
+#else
 			char *inPtr = const_cast<char*>(game.title.c_str());
+#endif
 			char *outPtr = const_cast<char*>(buf.c_str());
 
 			errno = 0;

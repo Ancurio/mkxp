@@ -38,7 +38,9 @@
 #include "exception.h"
 #include "sharedmidistate.h"
 
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <string>
 

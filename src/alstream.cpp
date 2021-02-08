@@ -19,6 +19,7 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "crossplatform.h"
 #include "alstream.h"
 
 #include "sharedstate.h"

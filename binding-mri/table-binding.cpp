@@ -19,6 +19,10 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef _MSC_VER
+#define NOMINMAX
+#endif
+
 #include <algorithm>
 #include "table.h"
 #include "binding-util.h"

@@ -22,6 +22,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include "crossplatform.h"
+
 #include <stdio.h>
 #include <string>
 #include <algorithm>
