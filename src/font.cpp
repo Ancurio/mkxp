@@ -49,20 +49,12 @@ BUNDLED_FONT_DECL(liberation)
 #define BNDL_F_L(f) BUNDLED_FONT_L(f)
 
 typedef std::pair<std::string, int> FontKey;
+typedef BoostHash<int, std::string> FontSet;
 
 static SDL_RWops *openBundledFont()
 {
 	return SDL_RWFromConstMem(BNDL_F_D(BUNDLED_FONT), BNDL_F_L(BUNDLED_FONT));
 }
-
-struct FontSet
-{
-	/* 'Regular' style */
-	std::string regular;
-
-	/* Any other styles (used in case no 'Regular' exists) */
-	std::string other;
-};
 
 struct SharedFontStatePrivate
 {
@@ -117,20 +109,18 @@ void SharedFontState::initFontSetCB(SDL_RWops &ops,
 		return;
 
 	std::string family = TTF_FontFaceFamilyName(font);
-	std::string style = TTF_FontFaceStyleName(font);
+	int style = TTF_GetFontStyle(font);
 
 	TTF_CloseFont(font);
 
 	FontSet &set = p->sets[family];
 
-	if (style == "Regular")
-		set.regular = filename;
-	else
-		set.other = filename;
+	set[style] = filename;
 }
 
 _TTF_Font *SharedFontState::getFont(std::string family,
-                                    int size)
+                                    int size,
+                                    int style)
 {
 	/* Check for substitutions */
 	if (p->subs.contains(family))
@@ -139,7 +129,7 @@ _TTF_Font *SharedFontState::getFont(std::string family,
 	/* Find out if the font asset exists */
 	const FontSet &req = p->sets[family];
 
-	if (req.regular.empty() && req.other.empty())
+	if (req.cbegin() == req.cend())
 	{
 		/* Doesn't exist; use built-in font */
 		family = "";
@@ -162,10 +152,10 @@ _TTF_Font *SharedFontState::getFont(std::string family,
 	}
 	else
 	{
-		/* Use 'other' path as alternative in case
-		 * we have no 'regular' styled font asset */
-		const char *path = !req.regular.empty()
-		                 ? req.regular.c_str() : req.other.c_str();
+		/* Use the style path as default with the
+		 * first key we have as alternative */
+		const char *path = req.value(req.contains(style)
+		                 ? style : req.cbegin()->first).c_str();
 
 		ops = SDL_AllocRW();
 		shState->fileSystem().openReadRaw(*ops, path, true);
@@ -192,7 +182,7 @@ bool SharedFontState::fontPresent(std::string family) const
 
 	const FontSet &set = p->sets[family];
 
-	return !(set.regular.empty() && set.other.empty());
+	return !(set.cbegin() == set.cend());
 }
 
 _TTF_Font *SharedFontState::openBundled(int size)
@@ -443,10 +433,6 @@ void Font::initDefaults(const SharedFontState &sfs)
 
 _TTF_Font *Font::getSdlFont()
 {
-	if (!p->sdlFont)
-		p->sdlFont = shState->fontState().getFont(p->name.c_str(),
-		                                          p->size);
-
 	int style = TTF_STYLE_NORMAL;
 
 	if (p->bold)
@@ -454,6 +440,11 @@ _TTF_Font *Font::getSdlFont()
 
 	if (p->italic)
 		style |= TTF_STYLE_ITALIC;
+
+	if (!p->sdlFont)
+		p->sdlFont = shState->fontState().getFont(p->name.c_str(),
+		                                          p->size,
+		                                          style);
 
 	TTF_SetFontStyle(p->sdlFont, style);
 
