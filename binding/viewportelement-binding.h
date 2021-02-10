@@ -26,6 +26,7 @@
 #include "sharedstate.h"
 #include "binding-util.h"
 #include "binding-types.h"
+#include "debugwriter.h"
 
 #include "sceneelement-binding.h"
 #include "disposable-binding.h"
@@ -54,6 +55,12 @@ RB_METHOD(viewportElementSetViewport)
 
 	if (!NIL_P(viewportObj))
 		viewport = getPrivateDataCheck<Viewport>(viewportObj, ViewportType);
+    
+    if (rgssVer == 1) {
+        VALUE vp = viewportElementGetViewport<C>(0, 0, self);
+        disposableRemoveChild(vp, self);
+        disposableAddChild(viewportObj, self);
+    }
 
 	GUARD_EXC( ve->setViewport(viewport); );
 
@@ -83,6 +90,7 @@ viewportElementInitialize(int argc, VALUE *argv, VALUE self)
 	/* Construct object */
 	C *ve = new C(viewport);
 
+    
 	/* Set property objects */
 	rb_iv_set(self, "viewport", viewportObj);
 

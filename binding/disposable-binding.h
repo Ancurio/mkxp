@@ -31,16 +31,42 @@
 inline void
 disposableAddChild(VALUE disp, VALUE child)
 {
+    if (NIL_P(disp) || NIL_P(child))
+        return;
+    
 	VALUE children = rb_iv_get(disp, "children");
+    
+    bool exists = false;
 
 	if (NIL_P(children))
 	{
 		children = rb_ary_new();
 		rb_iv_set(disp, "children", children);
 	}
+    else {
+        exists = RTEST(rb_funcall(children, rb_intern("include?"), 1, child));
+    }
 
-	/* Assumes children are never removed until destruction */
-	rb_ary_push(children, child);
+	if (!exists)
+        rb_ary_push(children, child);
+}
+
+inline void
+disposableRemoveChild(VALUE disp, VALUE child)
+{
+    if (NIL_P(disp) || NIL_P(child))
+        return;
+    
+    VALUE children = rb_iv_get(disp, "children");
+    if (NIL_P(children))
+        return;
+    
+    VALUE index = rb_funcall(children, rb_intern("index"), 1, child);
+    if (NIL_P(index))
+        return;
+    
+    rb_funcall(children, rb_intern("delete_at"), 1, index);
+    
 }
 
 inline void
