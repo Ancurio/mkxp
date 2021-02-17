@@ -26,11 +26,26 @@ static const int inputMapRowToCode[] {
     Input::L, Input::R
 };
 
+typedef NSMutableArray<NSNumber*> BindingIndexArray;
+
 @implementation SettingsMenu {
     __weak IBOutlet NSWindow *_window;
-    
-    SettingsMenuDelegate *_sdelegate;
     __weak IBOutlet NSTableView *_table;
+    
+    // Binding buttons
+    __weak IBOutlet NSButton *bindingButton1;
+    __weak IBOutlet NSButton *bindingButton2;
+    __weak IBOutlet NSButton *bindingButton3;
+    __weak IBOutlet NSButton *bindingButton4;
+    
+    
+    // MKXP Keybindings
+    BDescVec *binds;
+    int currentButtonCode;
+    
+    // NSNumber (ButtonCode) -> NSArray (of BindingDesc pointers)
+    NSMutableDictionary<NSNumber*, BindingIndexArray*> *nsbinds;
+    NSMutableDictionary<NSNumber*, NSString*> *bindingNames;
 }
 
 +(SettingsMenu*)openWindow {
@@ -43,30 +58,33 @@ static const int inputMapRowToCode[] {
 }
 
 - (IBAction)acceptButton:(NSButton *)sender {
+    shState->rtData().bindingUpdateMsg.post(*binds);
+    storeBindings(*binds, shState->config());
 }
 - (IBAction)cancelButton:(NSButton *)sender {
     [self closeWindow];
 }
 - (IBAction)resetBindings:(NSButton *)sender {
+    binds->clear();
+    BDescVec tmp = genDefaultBindings(shState->config());
+    binds->assign(tmp.begin(), tmp.end());
+    
+    [self loadBinds];
+    [_table reloadData];
+    if (currentButtonCode) [self setButtonNames:currentButtonCode];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _sdelegate = [[SettingsMenuDelegate alloc] initWithThreadData:shState->rtData()];
-    _table.delegate = _sdelegate;
-    _table.dataSource = _sdelegate;
+    [self initDelegateWithTable:_table];
+    _table.delegate = self;
+    _table.dataSource = self;
     [_table reloadData];
 }
 
-@end
-
-@implementation SettingsMenuDelegate {
-    BDescVec *binds;
-    
-    // NSNumber (ButtonCode) -> NSArray (of BindingDesc pointers)
-    NSMutableDictionary<NSNumber*, NSArray<NSNumber*>*> *nsbinds;
-    NSMutableDictionary<NSNumber*, NSString*> *bindingNames;
+- (void)keyDown:(NSEvent *)event {
+    NSLog([NSString stringWithFormat:@"%d", event.keyCode]);
 }
 
 +(NSString*)nameForBinding:(SourceDesc&)desc {
@@ -93,7 +111,7 @@ static const int inputMapRowToCode[] {
                     dir = "-";
                     break;
             }
-            return [NSString stringWithFormat:@"JoyHat %d:%s", desc.d.jh.hat, dir];
+            return [NSString stringWithFormat:@"JS Hat %d:%s", desc.d.jh.hat, dir];
         case JAxis:
             return [NSString stringWithFormat:@"JS Axis %d%s", desc.d.ja.axis, desc.d.ja.dir == Negative ? "-" : "+"];
         case JButton:
@@ -103,31 +121,13 @@ static const int inputMapRowToCode[] {
     }
 }
 
--(id)initWithThreadData:(RGSSThreadData&)data {
-    self = [super init];
+-(id)initDelegateWithTable:(NSTableView*)tbl {
     binds = new BDescVec;
-    
-    BDescVec oldBinds;
-    data.bindingUpdateMsg.get(oldBinds);
-    
-    if (oldBinds.size() <= 0) {
-        BDescVec defaults = genDefaultBindings(data.config);
-        binds->assign(defaults.begin(), defaults.end());
-        return self;
-    }
-    
-    binds->assign(oldBinds.begin(), oldBinds.end());
-    
     nsbinds = [NSMutableDictionary new];
-    
-    for (int i = 0; i < binds->size(); i++) {
-        NSNumber *key = @(binds->at(i).target);
-        if (nsbinds[key] == nil) nsbinds[key] = [NSMutableArray new];
-        NSMutableArray *b = nsbinds[key];
-        [b addObject:@(i)];
-    }
-    
     bindingNames = [NSMutableDictionary new];
+    
+    RGSSThreadData &data = shState->rtData();
+    
 #define SET_BINDING(code) bindingNames[@(Input::code)] = @(#code)
 #define SET_BINDING_CUSTOM(code, value) bindingNames[@(Input::code)] = @(value)
     SET_BINDING(Down);
@@ -154,7 +154,35 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
     SET_BINDING_CONF(ZR,z);
     SET_BINDING_CONF(L,l);
     SET_BINDING_CONF(R,r);
+    
+    BDescVec oldBinds;
+    data.bindingUpdateMsg.get(oldBinds);
+    
+    if (oldBinds.size() <= 0) {
+        BDescVec defaults = genDefaultBindings(data.config);
+        binds->assign(defaults.begin(), defaults.end());
+    }
+    else {
+        binds->assign(oldBinds.begin(), oldBinds.end());
+    }
+    
+    [self loadBinds];
+    [self enableButtons:false];
+    
     return self;
+}
+
+- (void) loadBinds {
+    [nsbinds removeAllObjects];
+    
+    for (int i = 0; i < binds->size(); i++) {
+        NSNumber *key = @(binds->at(i).target);
+        if (nsbinds[key] == nil) {
+            nsbinds[key] = [NSMutableArray new];
+        }
+        NSMutableArray *b = nsbinds[key];
+        [b addObject:@(i)];
+    }
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
@@ -181,7 +209,7 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
     
     NSNumber *d = nsbinds[@(buttonCode)][col-1];
     BindingDesc &bind = binds->at(d.intValue);
-    cell.textField.stringValue = [SettingsMenuDelegate nameForBinding:bind.src];
+    cell.textField.stringValue = [SettingsMenu nameForBinding:bind.src];
     return cell;
 }
 
@@ -202,6 +230,68 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
     NSNumber *d = nsbinds[@(buttonCode)][col-1];
     BindingDesc &bind = binds->at(d.intValue);
     return @(bind.src.d.scan);
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification {
+    int buttonCode = inputMapRowToCode[_table.selectedRow];
+    currentButtonCode = buttonCode;
+    
+    [self setButtonNames:buttonCode];
+}
+
+- (int)setButtonNames:(int)input {
+    BindingIndexArray *nsbind = nsbinds[@(input)];
+    NSMutableArray<NSString*> *pnames = [NSMutableArray new];
+    for (int i = 0; i < 4; i++) {
+        if (i > nsbind.count - 1) {
+            [pnames addObject:@"N/A"];
+        }
+        else {
+            BindingDesc &b = binds->at(nsbind[i].intValue);
+            NSString *bindingName = [SettingsMenu nameForBinding:b.src];
+            [pnames addObject:bindingName];
+        }
+    }
+    
+    bindingButton1.title = pnames[0];
+    bindingButton2.title = pnames[1];
+    bindingButton3.title = pnames[2];
+    bindingButton4.title = pnames[3];
+    [self enableButtons:true];
+    
+    return pnames.count;
+}
+
+- (void)enableButtons:(bool)defaultSetting {
+    BindingIndexArray *currentBind = nsbinds[@(currentButtonCode)];
+    bindingButton1.enabled = defaultSetting;
+    bindingButton2.enabled = defaultSetting;
+    
+    bindingButton3.enabled = defaultSetting && currentBind.count > 1;
+    bindingButton4.enabled = defaultSetting && currentBind.count > 2;
+}
+
+- (IBAction)binding1Clicked:(NSButton *)sender {
+    [self removeBinding:0 forInput:currentButtonCode];
+}
+- (IBAction)binding2Clicked:(NSButton *)sender {
+    [self removeBinding:1 forInput:currentButtonCode];
+}
+- (IBAction)binding3Clicked:(NSButton *)sender {
+    [self removeBinding:2 forInput:currentButtonCode];
+}
+- (IBAction)binding4Clicked:(NSButton *)sender {
+    [self removeBinding:3 forInput:currentButtonCode];
+}
+
+- (void)removeBinding:(int)bindIndex forInput:(int)input {
+    NSMutableArray<NSNumber*> *bind = nsbinds[@(input)];
+    int bi = bind[bindIndex].intValue;
+    binds->erase(binds->begin() + bi);
+    
+    [self loadBinds];
+    [_table reloadData];
+    [self setButtonNames: input];
 }
 
 -(void)dealloc {

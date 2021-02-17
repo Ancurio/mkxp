@@ -15,14 +15,10 @@
 #import "eventthread.h"
 
 
-@interface SettingsMenu : NSViewController
+@interface SettingsMenu : NSViewController <NSTableViewDelegate, NSTableViewDataSource>
 
 +(SettingsMenu*)openWindow;
 
-@end
-
-@interface SettingsMenuDelegate : NSObject <NSTableViewDelegate, NSTableViewDataSource>
--(id)initWithThreadData:(RGSSThreadData&)data;
 @end
 
 #endif /* SettingsMenuController_h */
