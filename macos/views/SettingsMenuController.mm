@@ -302,6 +302,9 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
 - (void) loadBinds {
     [nsbinds removeAllObjects];
     
+    for (int i = 0; i < sizeof(inputMapRowToCode) / sizeof(Input::ButtonCode); i++)
+        nsbinds[@(inputMapRowToCode[i])] = [NSMutableArray new];
+    
     for (int i = 0; i < binds->size(); i++) {
         NSNumber *key = @(binds->at(i).target);
         if (nsbinds[key] == nil) {
@@ -395,7 +398,7 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
     BindingIndexArray *nsbind = nsbinds[@(input)];
     NSMutableArray<NSString*> *pnames = [NSMutableArray new];
     for (int i = 0; i < 4; i++) {
-        if (i > nsbind.count - 1) {
+        if (!nsbind.count || i > nsbind.count - 1) {
             [pnames addObject:@"(Empty)"];
         }
         else {
@@ -417,15 +420,14 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
 - (void)enableButtons:(bool)defaultSetting {
     BindingIndexArray *currentBind = nsbinds[@(currentButtonCode)];
     bindingButton1.enabled = defaultSetting;
-    bindingButton2.enabled = defaultSetting;
+    bindingButton2.enabled = defaultSetting && currentBind.count > 0;
     
     bindingButton3.enabled = defaultSetting && currentBind.count > 1;
     bindingButton4.enabled = defaultSetting && currentBind.count > 2;
 }
 
 - (IBAction)binding1Clicked:(NSButton *)sender {
-    // Need at least one binding, for now
-    if (nsbinds[@(currentButtonCode)].count > 1) {
+    if (nsbinds[@(currentButtonCode)].count > 0) {
         [self removeBinding:0 forInput:currentButtonCode];
         return;
     }
