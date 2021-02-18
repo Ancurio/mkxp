@@ -29,15 +29,19 @@
 #include <SDL_touch.h>
 #include <SDL_rect.h>
 
-
-
 #include <al.h>
 #include <alc.h>
 #include <alext.h>
 
 #include "sharedstate.h"
 #include "graphics.h"
+
+#ifndef MKXPZ_BUILD_XCODE
 #include "settingsmenu.h"
+#else
+#include "system/system.h"
+#endif
+
 #include "al-util.h"
 #include "debugwriter.h"
 
@@ -176,8 +180,12 @@ void EventThread::process(RGSSThreadData &rtData)
     SDL_Haptic *hap;
     memset(&hapticEffect, 0, sizeof(SDL_HapticEffect));
     textInputBuffer.clear();
-
+#ifndef MKXPZ_BUILD_XCODE
 	SettingsMenu *sMenu = 0;
+#else
+    // Will always be 0
+    void *sMenu = 0;
+#endif
 
 	while (true)
 	{
@@ -186,7 +194,7 @@ void EventThread::process(RGSSThreadData &rtData)
 			Debug() << "EventThread: Event error";
 			break;
 		}
-
+#ifndef MKXPZ_BUILD_XCODE
 		if (sMenu && sMenu->onEvent(event))
 		{
 			if (sMenu->destroyReq())
@@ -199,6 +207,7 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			continue;
 		}
+#endif
 
 		/* Preselect and discard unwanted events here */
 		switch (event.type)
@@ -294,6 +303,7 @@ void EventThread::process(RGSSThreadData &rtData)
 
 			if (event.key.keysym.scancode == SDL_SCANCODE_F1)
 			{
+#ifndef MKXPZ_BUILD_XCODE
 				if (!sMenu)
 				{
 					sMenu = new SettingsMenu(rtData);
@@ -301,6 +311,9 @@ void EventThread::process(RGSSThreadData &rtData)
 				}
 
 				sMenu->raise();
+#else
+                openSettingsWindow();
+#endif
 			}
 
 			if (event.key.keysym.scancode == SDL_SCANCODE_F2)
@@ -493,6 +506,7 @@ void EventThread::process(RGSSThreadData &rtData)
 				break;
                     
             case REQUEST_SETTINGS :
+#ifndef MKXPZ_BUILD_XCODE
                 if (!sMenu)
                 {
                     sMenu = new SettingsMenu(rtData);
@@ -500,6 +514,9 @@ void EventThread::process(RGSSThreadData &rtData)
                 }
                 
                 sMenu->raise();
+#else
+                openSettingsWindow();
+#endif
                 break;
                     
             case REQUEST_RUMBLE :

@@ -60,7 +60,6 @@
 		3B10EDB82568E95E00372D13 /* soundemitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED652568E95D00372D13 /* soundemitter.cpp */; };
 		3B10EDB92568E95E00372D13 /* audiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED662568E95D00372D13 /* audiostream.cpp */; };
 		3B10EDBA2568E95E00372D13 /* vorbissource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6A2568E95D00372D13 /* vorbissource.cpp */; };
-		3B10EDBB2568E95E00372D13 /* settingsmenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6E2568E95D00372D13 /* settingsmenu.cpp */; };
 		3B10EDBC2568E95E00372D13 /* windowvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED722568E95D00372D13 /* windowvx.cpp */; };
 		3B10EDBD2568E95E00372D13 /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED732568E95D00372D13 /* bitmap.cpp */; };
 		3B10EDBE2568E95E00372D13 /* window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED742568E95D00372D13 /* window.cpp */; };
@@ -155,7 +154,6 @@
 		3B1C239B25A19C600075EF5D /* keybindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED472568E95D00372D13 /* keybindings.cpp */; };
 		3B1C239C25A19C600075EF5D /* filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.cpp */; };
 		3B1C239D25A19C600075EF5D /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
-		3B1C239E25A19C600075EF5D /* settingsmenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6E2568E95D00372D13 /* settingsmenu.cpp */; };
 		3B1C239F25A19C600075EF5D /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
 		3B1C23A025A19C600075EF5D /* viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9E2568E95E00372D13 /* viewport.cpp */; };
 		3B1C23A125A19C600075EF5D /* gl-debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED832568E95E00372D13 /* gl-debug.cpp */; };
@@ -240,6 +238,10 @@
 		3B3F7D2C25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
 		3B3F7D2D25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
 		3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
+		3B480E9D25DCD166001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9C25DCD166001686B4 /* GameController.framework */; };
+		3B480E9F25DCD174001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
+		3B480EA025DCD175001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
+		3B480EA125DCD176001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
 		3B522DA9259BAA42003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B522DAA259BAA4A003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B522DAB259BAA4C003301C4 /* libfluidsynth.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -318,7 +320,6 @@
 		3BC65CF32584EDC60063AFF1 /* keybindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED472568E95D00372D13 /* keybindings.cpp */; };
 		3BC65CF42584EDC60063AFF1 /* filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.cpp */; };
 		3BC65CF52584EDC60063AFF1 /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
-		3BC65CF62584EDC60063AFF1 /* settingsmenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6E2568E95D00372D13 /* settingsmenu.cpp */; };
 		3BC65CF72584EDC60063AFF1 /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
 		3BC65CF82584EDC60063AFF1 /* viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9E2568E95E00372D13 /* viewport.cpp */; };
 		3BC65CF92584EDC60063AFF1 /* gl-debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED832568E95E00372D13 /* gl-debug.cpp */; };
@@ -413,7 +414,6 @@
 		3BC65DB42584F3AD0063AFF1 /* keybindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED472568E95D00372D13 /* keybindings.cpp */; };
 		3BC65DB52584F3AD0063AFF1 /* filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.cpp */; };
 		3BC65DB62584F3AD0063AFF1 /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
-		3BC65DB72584F3AD0063AFF1 /* settingsmenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED6E2568E95D00372D13 /* settingsmenu.cpp */; };
 		3BC65DB82584F3AD0063AFF1 /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
 		3BC65DB92584F3AD0063AFF1 /* viewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED9E2568E95E00372D13 /* viewport.cpp */; };
 		3BC65DBA2584F3AD0063AFF1 /* gl-debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED832568E95E00372D13 /* gl-debug.cpp */; };
@@ -953,6 +953,9 @@
 		3B426F6F256B8AC0009EA00F /* fs_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_impl.hpp; sourceTree = "<group>"; };
 		3B426F70256B8AC0009EA00F /* fs_std_fwd.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_fwd.hpp; sourceTree = "<group>"; };
 		3B426F76256BA847009EA00F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
+		3B480E9325DCBDD6001686B4 /* sdl_codes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sdl_codes.h; path = views/sdl_codes.h; sourceTree = "<group>"; };
+		3B480E9C25DCD166001686B4 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		3B480E9E25DCD16D001686B4 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfluidsynth.dylib; path = Dependencies/Frameworks/libfluidsynth.dylib; sourceTree = "<group>"; };
 		3B522DB2259BC037003301C4 /* net.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = net.h; sourceTree = "<group>"; };
 		3B522DBD259BD046003301C4 /* httplib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = httplib.h; sourceTree = "<group>"; };
@@ -1089,6 +1092,7 @@
 				3B1C23D825A19C600075EF5D /* CoreVideo.framework in Frameworks */,
 				3B1C23D925A19C600075EF5D /* CoreGraphics.framework in Frameworks */,
 				3B1C23DA25A19C600075EF5D /* libbz2.tbd in Frameworks */,
+				3B480EA125DCD176001686B4 /* GameController.framework in Frameworks */,
 				3B1C23DB25A19C600075EF5D /* libruby.3.0.dylib in Frameworks */,
 				3B1C23DC25A19C600075EF5D /* CoreAudio.framework in Frameworks */,
 				3B1C23DD25A19C600075EF5D /* AudioToolbox.framework in Frameworks */,
@@ -1140,6 +1144,7 @@
 				3B5E1F1125A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3BC65D342584EDC60063AFF1 /* Foundation.framework in Frameworks */,
 				3B1C230725A142620075EF5D /* libruby.3.0.dylib in Frameworks */,
+				3B480EA025DCD175001686B4 /* GameController.framework in Frameworks */,
 				3BC65D612584EED10063AFF1 /* libogg.a in Frameworks */,
 				3BC65D352584EDC60063AFF1 /* CoreFoundation.framework in Frameworks */,
 				3BC65D362584EDC60063AFF1 /* libz.tbd in Frameworks */,
@@ -1182,6 +1187,7 @@
 				3B5E1F0F25A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3BC65E212584F4290063AFF1 /* libopenal.a in Frameworks */,
 				3B1C230E25A144BF0075EF5D /* libruby.3.0.dylib in Frameworks */,
+				3B480E9D25DCD166001686B4 /* GameController.framework in Frameworks */,
 				3BC65DFF2584F3AD0063AFF1 /* Foundation.framework in Frameworks */,
 				3BC65E242584F4290063AFF1 /* libvorbisfile.a in Frameworks */,
 				3BC65E012584F3AD0063AFF1 /* CoreFoundation.framework in Frameworks */,
@@ -1223,6 +1229,7 @@
 				3B10EC612568D40C00372D13 /* CoreVideo.framework in Frameworks */,
 				3B10EC5C2568D40500372D13 /* CoreGraphics.framework in Frameworks */,
 				3BE081592568D3A60006849F /* libbz2.tbd in Frameworks */,
+				3B480E9F25DCD174001686B4 /* GameController.framework in Frameworks */,
 				3B1C230B25A144A10075EF5D /* libruby.3.0.dylib in Frameworks */,
 				3B10EC632568D40C00372D13 /* CoreAudio.framework in Frameworks */,
 				3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */,
@@ -1571,6 +1578,7 @@
 				3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */,
 				3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */,
 				3B3F7D3025B1A79F00EA5F1C /* SettingsMenuController.h */,
+				3B480E9325DCBDD6001686B4 /* sdl_codes.h */,
 			);
 			name = MacOS;
 			sourceTree = "<group>";
@@ -1686,6 +1694,7 @@
 		3BD2B46425651BEB003DAD8A /* System */ = {
 			isa = PBXGroup;
 			children = (
+				3B480E9E25DCD16D001686B4 /* GameController.framework */,
 				3BD2B47A256534BA003DAD8A /* IOKit.framework */,
 				3BE081552568D3A60006849F /* Carbon.framework */,
 				3BE081582568D3A60006849F /* AppKit.framework */,
@@ -1746,6 +1755,7 @@
 		3BDB23E5256455A400C4A63D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3B480E9C25DCD166001686B4 /* GameController.framework */,
 				3B1C241F25A1A84D0075EF5D /* Steam */,
 				3BC65D792584F3030063AFF1 /* Universal */,
 				3BC65D492584EE690063AFF1 /* ARM64 */,
@@ -2058,7 +2068,6 @@
 				3B1C239B25A19C600075EF5D /* keybindings.cpp in Sources */,
 				3B1C239C25A19C600075EF5D /* filesystem.cpp in Sources */,
 				3B1C239D25A19C600075EF5D /* binding-mri.cpp in Sources */,
-				3B1C239E25A19C600075EF5D /* settingsmenu.cpp in Sources */,
 				3B1C239F25A19C600075EF5D /* eventthread.cpp in Sources */,
 				3B1C23A025A19C600075EF5D /* viewport.cpp in Sources */,
 				3B1C23A125A19C600075EF5D /* gl-debug.cpp in Sources */,
@@ -2143,7 +2152,6 @@
 				3BC65CF32584EDC60063AFF1 /* keybindings.cpp in Sources */,
 				3BC65CF42584EDC60063AFF1 /* filesystem.cpp in Sources */,
 				3BC65CF52584EDC60063AFF1 /* binding-mri.cpp in Sources */,
-				3BC65CF62584EDC60063AFF1 /* settingsmenu.cpp in Sources */,
 				3BC65CF72584EDC60063AFF1 /* eventthread.cpp in Sources */,
 				3BC65CF82584EDC60063AFF1 /* viewport.cpp in Sources */,
 				3BC65CF92584EDC60063AFF1 /* gl-debug.cpp in Sources */,
@@ -2220,7 +2228,6 @@
 				3BC65DB42584F3AD0063AFF1 /* keybindings.cpp in Sources */,
 				3BC65DB52584F3AD0063AFF1 /* filesystem.cpp in Sources */,
 				3BC65DB62584F3AD0063AFF1 /* binding-mri.cpp in Sources */,
-				3BC65DB72584F3AD0063AFF1 /* settingsmenu.cpp in Sources */,
 				3BC65DB82584F3AD0063AFF1 /* eventthread.cpp in Sources */,
 				3BC65DB92584F3AD0063AFF1 /* viewport.cpp in Sources */,
 				3BC65DBA2584F3AD0063AFF1 /* gl-debug.cpp in Sources */,
@@ -2297,7 +2304,6 @@
 				3B10EDA92568E95E00372D13 /* keybindings.cpp in Sources */,
 				3B10EDAD2568E95E00372D13 /* filesystem.cpp in Sources */,
 				3B10EE092568E96A00372D13 /* binding-mri.cpp in Sources */,
-				3B10EDBB2568E95E00372D13 /* settingsmenu.cpp in Sources */,
 				3B10EDA62568E95E00372D13 /* eventthread.cpp in Sources */,
 				3B10EDD02568E95E00372D13 /* viewport.cpp in Sources */,
 				3B10EDC52568E95E00372D13 /* gl-debug.cpp in Sources */,

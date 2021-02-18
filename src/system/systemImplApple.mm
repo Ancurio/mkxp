@@ -20,6 +20,12 @@ std::string systemImpl::getUserName() {
 }
 
 
+// constant, if it's not nil then just raise the menu instead
+SettingsMenu *smenu = nil;
 void openSettingsWindow() {
-    [SettingsMenu openWindow];
+    if (smenu == nil) {
+        smenu = [SettingsMenu openWindow];
+        return;
+    }
+    [smenu raise];
 }

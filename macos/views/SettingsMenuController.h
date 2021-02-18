@@ -19,6 +19,8 @@
 
 +(SettingsMenu*)openWindow;
 
+-(SettingsMenu*)setWindow:(NSWindow*)window;
+-(SettingsMenu*)raise;
 @end
 
 #endif /* SettingsMenuController_h */

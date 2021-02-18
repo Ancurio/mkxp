@@ -5,9 +5,20 @@
 //  Created by ゾロアーク on 1/15/21.
 //
 
+// This is a pretty rudimentary keybinding menu, and it replaces the normal one
+// for macOS. The normal one basically just doesn't seem to work with ANGLE,
+// so I cooked this one up in a hurry despite knowing next to zero about Xcode's
+// interface builder in general.
+
+// Yes, it is still a mess, but it is working.
+
+#import <GameController/GameController.h>
+
 #import <SDL_scancode.h>
 #import <SDL_keyboard.h>
 #import <SDL_video.h>
+
+#import "sdl_codes.h"
 
 #import "SettingsMenuController.h"
 
@@ -31,6 +42,7 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
 @implementation SettingsMenu {
     __weak IBOutlet NSWindow *_window;
     __weak IBOutlet NSTableView *_table;
+    __weak IBOutlet NSBox *bindingBox;
     
     // Binding buttons
     __weak IBOutlet NSButton *bindingButton1;
@@ -43,23 +55,53 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
     BDescVec *binds;
     int currentButtonCode;
     
-    // NSNumber (ButtonCode) -> NSArray (of BindingDesc pointers)
+    // Whether currently waiting for some kind of input
+    bool isListening;
+    
+    // For the current binding selection when the table is
+    // reloaded from deleting/adding keybinds
+    bool keepCurrentButtonSelection;
+    
     NSMutableDictionary<NSNumber*, BindingIndexArray*> *nsbinds;
     NSMutableDictionary<NSNumber*, NSString*> *bindingNames;
 }
 
 +(SettingsMenu*)openWindow {
     SettingsMenu *s = [[SettingsMenu alloc] initWithNibName:@"settingsmenu" bundle:NSBundle.mainBundle];
-    [NSApplication.sharedApplication.mainWindow beginSheet:s.view.window completionHandler:^(NSModalResponse _){}];
+    // Show the window as a sheet, window events will be sucked up by SDL though
+    //[NSApplication.sharedApplication.mainWindow beginSheet:s.view.window completionHandler:^(NSModalResponse _){}];
+    
+    // Show the view in a new window instead, so key and controller events
+    // can be captured without SDL's interference
+    NSWindow *win = [NSWindow windowWithContentViewController:s];
+    win.styleMask &= ~NSWindowStyleMaskResizable;
+    win.styleMask &= ~NSWindowStyleMaskFullScreen;
+    win.styleMask &= NSWindowStyleMaskTitled;
+    win.title = @"Keybindings";
+    [s setWindow:win];
+    [win orderFront:self];
+    
+    return s;
+}
+
+-(void)raise {
+    if (_window)
+        [_window orderFront:self];
 }
 
 -(void)closeWindow {
+    [self setNotListening:true];
     [_window close];
+}
+
+-(SettingsMenu*)setWindow:(NSWindow*)window {
+    _window = window;
 }
 
 - (IBAction)acceptButton:(NSButton *)sender {
     shState->rtData().bindingUpdateMsg.post(*binds);
     storeBindings(*binds, shState->config());
+    [self closeWindow];
 }
 - (IBAction)cancelButton:(NSButton *)sender {
     [self closeWindow];
@@ -69,22 +111,107 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
     BDescVec tmp = genDefaultBindings(shState->config());
     binds->assign(tmp.begin(), tmp.end());
     
-    [self loadBinds];
-    [_table reloadData];
-    if (currentButtonCode) [self setButtonNames:currentButtonCode];
+    [self setNotListening:false];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    isListening = false;
+    keepCurrentButtonSelection = false;
+    
     [self initDelegateWithTable:_table];
     _table.delegate = self;
     _table.dataSource = self;
-    [_table reloadData];
+    [self setNotListening:true];
+    _table.enabled = true;
+    
+    bindingBox.title = @"";
+    [self setButtonNames:0];
 }
 
 - (void)keyDown:(NSEvent *)event {
-    NSLog([NSString stringWithFormat:@"%d", event.keyCode]);
+    [super keyDown:event];
+    if (!isListening) return;
+    
+    BindingDesc d;
+    d.target = (Input::ButtonCode)currentButtonCode;
+    SourceDesc s;
+    s.type = Key;
+    s.d.scan = darwin_scancode_table[event.keyCode];
+    d.src = s;
+    binds->push_back(d);
+    [self setNotListening:true];
+}
+
+#define checkButtonStart if (0) {}
+#define checkButtonEnd else { return; }
+#define checkButtonElement(e, b, n) \
+else if (element == gamepad.e && gamepad.b.isPressed) { \
+s.type = JButton; \
+s.d.jb = n; \
+}
+
+#define checkButtonAlt(b, n) checkButtonElement(b, b, n)
+
+#define checkButton(b, n) checkButtonAlt(button##b, n)
+
+#define setAxisData(a, n) \
+GCControllerAxisInput *axis = gamepad.a; \
+s.type = JAxis; \
+s.d.ja.axis = n; \
+s.d.ja.dir = (axis.value >= 0) ? AxisDir::Positive : AxisDir::Negative;
+
+#define checkAxis(el, a, n) else if (element == gamepad.el && (gamepad.el.a.value >= 0.5 || gamepad.el.a.value <= -0.5)) { setAxisData(el.a, n); }
+
+- (void)registerJoystickAction:(GCExtendedGamepad*)gamepad element:(GCControllerElement*)element {
+    if (!isListening) return;
+    
+    BindingDesc d;
+    d.target = (Input::ButtonCode)currentButtonCode;
+    SourceDesc s;
+    
+    checkButtonStart
+    checkButton(A, 0)
+    checkButton(B, 1)
+    checkButton(X, 2)
+    checkButton(Y, 3)
+    checkButtonElement(dpad, dpad.up, 11)
+    checkButtonElement(dpad, dpad.down, 12)
+    checkButtonElement(dpad, dpad.left, 13)
+    checkButtonElement(dpad, dpad.right, 14)
+    checkButtonAlt(leftShoulder, 9)
+    checkButtonAlt(rightShoulder, 10)
+    checkButtonAlt(leftThumbstickButton, 7)
+    checkButtonAlt(rightThumbstickButton, 8)
+    checkButton(Home, 5)
+    checkButton(Menu, 6)
+    checkButton(Options, 4)
+    
+    checkAxis(leftThumbstick, xAxis, 0)
+    checkAxis(leftThumbstick, yAxis, 1)
+    checkAxis(rightThumbstick, xAxis, 2)
+    checkAxis(rightThumbstick, yAxis, 3)
+    
+    else if (element == gamepad.leftTrigger && (gamepad.leftTrigger.value >= 0.5 || gamepad.leftTrigger.value <= -0.5)) {
+        GCControllerButtonInput *trigger = gamepad.leftTrigger;
+        s.type = JAxis;
+        s.d.ja.axis = 4;
+        s.d.ja.dir = AxisDir::Positive;
+    }
+    
+    else if (element == gamepad.rightTrigger && (gamepad.rightTrigger.value >= 0.5 || gamepad.rightTrigger.value <= -0.5)) {
+        GCControllerButtonInput *trigger = gamepad.rightTrigger;
+        s.type = JAxis;
+        s.d.ja.axis = 5;
+        s.d.ja.dir = AxisDir::Positive;
+    }
+    
+    checkButtonEnd;
+    
+    d.src = s;
+    binds->push_back(d);
+    [self setNotListening:true];
 }
 
 +(NSString*)nameForBinding:(SourceDesc&)desc {
@@ -233,18 +360,43 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
-    int buttonCode = inputMapRowToCode[_table.selectedRow];
-    currentButtonCode = buttonCode;
+    if (isListening)
+        isListening = false;
     
-    [self setButtonNames:buttonCode];
+    if (keepCurrentButtonSelection) {
+        if (keepCurrentButtonSelection) keepCurrentButtonSelection = false;
+        [_table deselectRow:_table.selectedRow];
+        [self setButtonNames:currentButtonCode];
+        bindingBox.title = bindingNames[@(currentButtonCode)];
+        return;
+    }
+    
+    if (_table.selectedRow > -1) {
+        int buttonCode = inputMapRowToCode[_table.selectedRow];
+        currentButtonCode = buttonCode;
+        [self setButtonNames:buttonCode];
+        bindingBox.title = bindingNames[@(currentButtonCode)];
+    }
+    else {
+        [self setButtonNames:0];
+        bindingBox.title = @"";
+    }
 }
 
 - (int)setButtonNames:(int)input {
+    if (!input) {
+        bindingButton1.title = @"";
+        bindingButton2.title = bindingButton1.title;
+        bindingButton3.title = bindingButton1.title;
+        bindingButton4.title = bindingButton1.title;
+        [self enableButtons:false];
+        return 0;
+    }
     BindingIndexArray *nsbind = nsbinds[@(input)];
     NSMutableArray<NSString*> *pnames = [NSMutableArray new];
     for (int i = 0; i < 4; i++) {
         if (i > nsbind.count - 1) {
-            [pnames addObject:@"N/A"];
+            [pnames addObject:@"(Empty)"];
         }
         else {
             BindingDesc &b = binds->at(nsbind[i].intValue);
@@ -272,16 +424,33 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
 }
 
 - (IBAction)binding1Clicked:(NSButton *)sender {
-    [self removeBinding:0 forInput:currentButtonCode];
+    // Need at least one binding, for now
+    if (nsbinds[@(currentButtonCode)].count > 1) {
+        [self removeBinding:0 forInput:currentButtonCode];
+        return;
+    }
+    [self setListening:sender];
 }
 - (IBAction)binding2Clicked:(NSButton *)sender {
-    [self removeBinding:1 forInput:currentButtonCode];
+    if (nsbinds[@(currentButtonCode)].count > 1) {
+        [self removeBinding:1 forInput:currentButtonCode];
+        return;
+    }
+    [self setListening:sender];
 }
 - (IBAction)binding3Clicked:(NSButton *)sender {
-    [self removeBinding:2 forInput:currentButtonCode];
+    if (nsbinds[@(currentButtonCode)].count > 2) {
+        [self removeBinding:2 forInput:currentButtonCode];
+        return;
+    }
+    [self setListening:sender];
 }
 - (IBAction)binding4Clicked:(NSButton *)sender {
-    [self removeBinding:3 forInput:currentButtonCode];
+    if (nsbinds[@(currentButtonCode)].count > 3) {
+        [self removeBinding:3 forInput:currentButtonCode];
+        return;
+    }
+    [self setListening:sender];
 }
 
 - (void)removeBinding:(int)bindIndex forInput:(int)input {
@@ -289,9 +458,42 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
     int bi = bind[bindIndex].intValue;
     binds->erase(binds->begin() + bi);
     
+    [self setNotListening:true];
+}
+
+- (void)setListening:(NSButton*)src {
+    if (isListening) {
+        [self setNotListening:true];
+        return;
+    }
+    
+    // Stops receiving keyDown events if it's disabled, apparently
+    //_table.enabled = false;
+    
+    [self enableButtons:false];
+    
+    if (src == nil) return;
+    
+    src.title = @"Click to Cancel...";
+    src.enabled = true;
+    isListening = true;
+    
+    NSArray<GCController*>* controllers = [GCController controllers];
+    if (controllers.count <= 0) return;
+    GCController *gamepad = controllers[0];
+    if (gamepad.extendedGamepad == nil || gamepad.extendedGamepad.valueChangedHandler != nil) return;
+    gamepad.extendedGamepad.valueChangedHandler = ^(GCExtendedGamepad *gamepad, GCControllerElement *element)
+    {[self registerJoystickAction:gamepad element:element];};
+}
+
+- (void)setNotListening:(bool)keepCurrentSelection {
     [self loadBinds];
+    
+    keepCurrentButtonSelection = keepCurrentSelection;
+    isListening = false;
     [_table reloadData];
-    [self setButtonNames: input];
+    [self setButtonNames:currentButtonCode];
+    
 }
 
 -(void)dealloc {
