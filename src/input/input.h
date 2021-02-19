@@ -63,9 +63,11 @@ public:
 	bool isPressed(int button);
 	bool isTriggered(int button);
 	bool isRepeated(int button);
+    bool isReleased(int button);
     bool isPressedEx(int code, bool isVKey);
     bool isTriggeredEx(int code, bool isVKey);
     bool isRepeatedEx(int code, bool isVKey);
+    bool isReleasedEx(int code, bool isVKey);
 
 	int dir4Value();
 	int dir8Value();

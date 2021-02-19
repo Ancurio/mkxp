@@ -426,11 +426,13 @@ struct ButtonState
 	bool pressed;
 	bool triggered;
 	bool repeated;
+    bool released;
 
 	ButtonState()
 		: pressed(false),
 		  triggered(false),
-		  repeated(false)
+		  repeated(false),
+          released(false)
 	{}
 };
 
@@ -786,6 +788,7 @@ struct InputPrivate
         
         b.pressed = rawStates[scancode];
         b.triggered = (rawStates[scancode] && !rawStatesOld[scancode]);
+        b.released = (!rawStates[scancode] && rawStatesOld[scancode]);
         
         bool repeated = false;
         if (scancode == rawRepeating)
@@ -929,8 +932,16 @@ struct InputPrivate
 
 	void pollBindings(Input::ButtonCode &repeatCand)
 	{
-		for (size_t i = 0; i < bindings.size(); ++i)
-			pollBindingPriv(*bindings[i], repeatCand);
+        for (Binding *bind : bindings) {
+            // Get all binding states
+            pollBindingPriv(*bind, repeatCand);
+            
+            // Check for released buttons
+            ButtonState &state = getState(bind->target);
+            ButtonState &oldState = getOldState(bind->target);
+            if (!state.pressed && oldState.pressed)
+                state.released = true;
+        }
 
 		updateDir4();
 		updateDir8();
@@ -938,7 +949,7 @@ struct InputPrivate
 
 	void pollBindingPriv(const Binding &b,
 	                     Input::ButtonCode &repeatCand)
-	{	
+	{
 		if (!b.sourceActive())
 			return;
 
@@ -1171,6 +1182,10 @@ bool Input::isRepeated(int button)
 	return p->getStateCheck(button).repeated;
 }
 
+bool Input::isReleased(int button) {
+    return p->getStateCheck(button).released;
+}
+
 bool Input::isPressedEx(int code, bool isVKey)
 {
     return p->getStateRaw(code, isVKey).pressed;
@@ -1184,6 +1199,11 @@ bool Input::isTriggeredEx(int code, bool isVKey)
 bool Input::isRepeatedEx(int code, bool isVKey)
 {
     return p->getStateRaw(code, isVKey).repeated;
+}
+
+bool Input::isReleasedEx(int code, bool isVKey)
+{
+    return p->getStateRaw(code, isVKey).released;
 }
 
 int Input::dir4Value()
