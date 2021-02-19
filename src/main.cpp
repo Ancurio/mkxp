@@ -198,11 +198,8 @@ int main(int argc, char *argv[]) {
     }
 #endif
     if (!dataDir[0]) {
-      tmp = SDL_GetBasePath();
-      if (tmp) {
-        strncpy(dataDir, tmp, sizeof(dataDir));
+        strncpy(dataDir, mkxp_fs::getDefaultGameRoot().c_str(), sizeof(dataDir));
         SDL_free(tmp);
-      }
     }
     mkxp_fs::setCurrentDirectory(dataDir);
 #endif

@@ -12,6 +12,8 @@
 #import <Foundation/Foundation.h>
 #endif
 
+#import <SDL_filesystem.h>
+
 #import "filesystemImpl.h"
 #import "util/exception.h"
 
@@ -55,12 +57,16 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
     return std::string(NSTOPATH(nspath));
 }
 
+std::string filesystemImpl::getDefaultGameRoot() {
+    NSString *p = [NSString stringWithFormat: @"%@/%s", NSBundle.mainBundle.bundlePath, "Contents/Game"];
+    return std::string(NSTOPATH(p));
+}
+
 NSString *getPathForAsset_internal(const char *baseName, const char *ext) {
     NSBundle *assetBundle = [NSBundle bundleWithPath:
                              [NSString stringWithFormat:
-                              @"%@/%s/%s",
-                              NSBundle.mainBundle.bundlePath,
-                              "Contents/PrivateAssets",
+                              @"%@/%s",
+                              NSBundle.mainBundle.resourcePath,
                               "Assets.bundle"
                              ]
                             ];

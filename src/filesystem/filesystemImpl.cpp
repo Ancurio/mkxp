@@ -5,6 +5,8 @@
 //  Created by ゾロアーク on 11/21/20.
 //
 
+#include <SDL_filesystem.h>
+
 #include "filesystemImpl.h"
 #include "util/exception.h"
 #include "util/debugwriter.h"
@@ -92,5 +94,12 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
         if (ret[i] == sep_alt)
             ret[i] = sep;
     }
+    return ret;
+}
+
+std::string filesystemImpl::getDefaultGamePath() {
+    char *p = SDL_GetBasePath();
+    std::string ret(p);
+    SDL_free(p);
     return ret;
 }
