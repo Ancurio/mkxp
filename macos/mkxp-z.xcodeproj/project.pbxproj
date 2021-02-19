@@ -541,8 +541,8 @@
 		3B1C233325A17C380075EF5D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = Contents/PrivateAssets;
-			dstSubfolderSpec = 1;
+			dstPath = "";
+			dstSubfolderSpec = 7;
 			files = (
 				3B1C233525A17C670075EF5D /* Assets.bundle in CopyFiles */,
 			);
@@ -551,8 +551,8 @@
 		3B1C233725A17CAB0075EF5D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = Contents/PrivateAssets;
-			dstSubfolderSpec = 1;
+			dstPath = "";
+			dstSubfolderSpec = 7;
 			files = (
 				3B1C233925A17CB80075EF5D /* Assets.bundle in CopyFiles */,
 			);
@@ -561,8 +561,8 @@
 		3B1C233B25A17CBE0075EF5D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = Contents/PrivateAssets;
-			dstSubfolderSpec = 1;
+			dstPath = "";
+			dstSubfolderSpec = 7;
 			files = (
 				3B1C233C25A17CC40075EF5D /* Assets.bundle in CopyFiles */,
 			);
@@ -580,8 +580,8 @@
 		3B1C23E825A19C600075EF5D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = Contents/PrivateAssets;
-			dstSubfolderSpec = 1;
+			dstPath = Resources;
+			dstSubfolderSpec = 7;
 			files = (
 				3B1C23E925A19C600075EF5D /* Assets.bundle in CopyFiles */,
 			);
@@ -590,8 +590,8 @@
 		3B1C23EA25A19C600075EF5D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
+			dstPath = Contents/Game;
+			dstSubfolderSpec = 1;
 			files = (
 				3B1C23EB25A19C600075EF5D /* mkxp.json in CopyFiles */,
 			);
@@ -677,8 +677,8 @@
 		3B5A843B2569F95A00BAF2E5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
+			dstPath = Contents/Game;
+			dstSubfolderSpec = 1;
 			files = (
 				3B522DEF259C3E9D003301C4 /* mkxp.json in CopyFiles */,
 			);
@@ -742,8 +742,8 @@
 		3BC65D3E2584EDC60063AFF1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
+			dstPath = Contents/Game;
+			dstSubfolderSpec = 1;
 			files = (
 				3B522DF1259C3E9F003301C4 /* mkxp.json in CopyFiles */,
 			);
@@ -752,8 +752,8 @@
 		3BC65E0F2584F3AD0063AFF1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
+			dstPath = Contents/Game;
+			dstSubfolderSpec = 1;
 			files = (
 				3B522DED259C3E97003301C4 /* mkxp.json in CopyFiles */,
 			);
@@ -3297,7 +3297,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
-					"$(PROJECT_DIR)/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
@@ -3367,7 +3367,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
-					"$(PROJECT_DIR)/Frameworks/ANGLE",
+					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
