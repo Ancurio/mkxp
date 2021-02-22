@@ -1180,6 +1180,13 @@ bool Input::isReleased(int button) {
     return p->getStateCheck(button).released;
 }
 
+unsigned int Input::count(int button) {
+    if (button != p->repeating)
+        return 0;
+    
+    return p->repeatCount;
+}
+
 bool Input::isPressedEx(int code, bool isVKey)
 {
     return p->getStateRaw(code, isVKey).pressed;
@@ -1198,6 +1205,22 @@ bool Input::isRepeatedEx(int code, bool isVKey)
 bool Input::isReleasedEx(int code, bool isVKey)
 {
     return p->getStateRaw(code, isVKey).released;
+}
+
+unsigned int Input::repeatcount(int code, bool isVKey) {
+    unsigned int c = code;
+    if (isVKey) {
+        try {
+            c = vKeyToScancode[code];
+        }
+        catch (...) {
+            return 0;
+        }
+    }
+    if (c != p->rawRepeating)
+        return 0;
+    
+    return p->rawRepeatCount;
 }
 
 int Input::dir4Value()
