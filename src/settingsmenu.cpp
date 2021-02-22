@@ -1167,8 +1167,7 @@ bool SettingsMenu::onEvent(const SDL_Event &event)
 
 void SettingsMenu::raise()
 {
-    openSettingsWindow();
-	//SDL_RaiseWindow(p->window);
+	SDL_RaiseWindow(p->window);
 }
 
 bool SettingsMenu::destroyReq() const
