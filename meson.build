@@ -116,7 +116,7 @@ if get_option('force32') == true
 endif
 
 build_static = false
-if get_option('static_executable') == true and host_system == 'windows'
+if get_option('static_executable') == true # and host_system == 'windows'
     build_static = true
 endif
 

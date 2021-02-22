@@ -13,7 +13,12 @@ pixman = dependency('pixman-1', static: build_static)
 png = dependency('libpng', static: build_static)
 jpeg = dependency('libjpeg', static: build_static)
 zlib = dependency('zlib', static: build_static)
-bz2 = dependency('bzip2', static: build_static)
+
+if host_system == 'windows'
+    bz2 = dependency('bzip2', static: build_static)
+else
+    bz2 = compilers['cpp'].find_library('bz2')
+endif
 
 # If OpenSSL is present, you get HTTPS support
 if get_option('enable-https') == true
@@ -37,6 +42,11 @@ if host_system == 'windows'
 endif
 if build_static == true
     global_link_args += ['-Wl,-Bstatic', '-lgcc', '-lstdc++', '-lpthread', '-Wl,-Bdynamic']
+    if host_system == 'windows'
+        global_link_args += ['-Wl,-Bstatic', '-lgcc', '-lstdc++', '-lpthread', '-Wl,-Bdynamic']
+    else
+        global_link_args += ['-static-libgcc', '-static-libstdc++']
+    endif
     global_args += '-DAL_LIBTYPE_STATIC'
 endif
 
@@ -77,7 +87,9 @@ if get_option('shared_fluid') == true
     fluidsynth = dependency('fluidsynth', static: build_static)
     add_project_arguments('-DSHARED_FLUID', language: 'cpp')
     global_dependencies += fluidsynth
-    global_dependencies += compilers['cpp'].find_library('dsound')
+    if host_system == 'windows'
+        global_dependencies += compilers['cpp'].find_library('dsound')
+    endif
 endif
 
 if get_option('default_framerate') == true

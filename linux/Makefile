@@ -256,7 +256,7 @@ $(DOWNLOADS)/freetype/autogen.sh:
 # OpenAL
 openal: init_dirs libogg $(LIBDIR)/libopenal.a
 
-$(LIBDIR)/libOpenAL32.a: $(DOWNLOADS)/openal/cmakebuild/Makefile
+$(LIBDIR)/libopenal.a: $(DOWNLOADS)/openal/cmakebuild/Makefile
 	cd $(DOWNLOADS)/openal/cmakebuild; \
 	make -j$(NPROC); make install
 
