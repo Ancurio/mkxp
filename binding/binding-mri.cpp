@@ -838,7 +838,6 @@ static void mriBindingExecute() {
 
   RUBY_INIT_STACK;
   ruby_init();
-  rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
 
   std::vector<const char*> rubyArgsC{"mkxp-z"};
     rubyArgsC.push_back("-e ");
@@ -876,6 +875,8 @@ static void mriBindingExecute() {
     shState->rtData().rqTermAck.set();
     return;
   }
+    rb_enc_set_default_internal(rb_enc_from_encoding(rb_utf8_encoding()));
+    rb_enc_set_default_external(rb_enc_from_encoding(rb_utf8_encoding()));
 #else
   ruby_init();
   rb_eval_string("$KCODE='U'");
