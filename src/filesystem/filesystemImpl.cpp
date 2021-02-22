@@ -97,7 +97,7 @@ std::string filesystemImpl::normalizePath(const char *path, bool preferred, bool
     return ret;
 }
 
-std::string filesystemImpl::getDefaultGamePath() {
+std::string filesystemImpl::getDefaultGameRoot() {
     char *p = SDL_GetBasePath();
     std::string ret(p);
     SDL_free(p);

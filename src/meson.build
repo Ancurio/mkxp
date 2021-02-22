@@ -41,7 +41,6 @@ if host_system == 'windows'
     explicit_libs += 'libmsvcrt;libgcc;libmingwex;libgmp;'
 endif
 if build_static == true
-    global_link_args += ['-Wl,-Bstatic', '-lgcc', '-lstdc++', '-lpthread', '-Wl,-Bdynamic']
     if host_system == 'windows'
         global_link_args += ['-Wl,-Bstatic', '-lgcc', '-lstdc++', '-lpthread', '-Wl,-Bdynamic']
     else
