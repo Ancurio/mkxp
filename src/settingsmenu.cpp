@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <assert.h>
 
-const Vec2i winSize(640, 356);
+const Vec2i winSize(840, 356);
 
 const uint8_t cBgNorm = 50;
 const uint8_t cBgDark = 20;
@@ -767,7 +767,7 @@ void Widget::click(int x, int y, uint8_t button)
 }
 
 /* Ratio of cell area to total widget width */
-#define BW_CELL_R 0.75f
+#define BW_CELL_R 0.55f
 
 void BindingWidget::drawHandler(SDL_Surface *surf)
 {
