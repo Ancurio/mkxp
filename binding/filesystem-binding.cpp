@@ -126,12 +126,14 @@ RB_METHOD(fileIntBinmode) {
   return Qnil;
 }
 
+#if RAPI_FULL <= 187
 RB_METHOD(fileIntPos) {
   SDL_RWops *ops = getPrivateData<SDL_RWops>(self);
 
   long long pos = SDL_RWtell(ops); // Will return -1 if it doesn't work
   return LL2NUM(pos);
 }
+#endif
 
 VALUE
 kernelLoadDataInt(const char *filename, bool rubyExc, bool raw) {

@@ -1161,12 +1161,6 @@ std::vector<std::string> Input::getBindings(ButtonCode code) {
     return ret;
 }
 
-std::string &Input::getActionName(int button) {
-    for (const auto &b : p->kbBindings) {
-        
-    }
-}
-
 bool Input::isPressed(int button)
 {
 	return p->getStateCheck(button).pressed;

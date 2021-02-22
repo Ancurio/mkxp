@@ -50,6 +50,9 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
     __weak IBOutlet NSButton *bindingButton3;
     __weak IBOutlet NSButton *bindingButton4;
     
+    // For keeping track of which buttons to check for
+    int sysver;
+    
     
     // MKXP Keybindings
     BDescVec *binds;
@@ -84,9 +87,10 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
     return s;
 }
 
--(void)raise {
+-(SettingsMenu*)raise {
     if (_window)
         [_window orderFront:self];
+    return self;
 }
 
 -(void)closeWindow {
@@ -96,6 +100,7 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
 
 -(SettingsMenu*)setWindow:(NSWindow*)window {
     _window = window;
+    return self;
 }
 
 - (IBAction)acceptButton:(NSButton *)sender {
@@ -116,6 +121,11 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    sysver = 12;
+    if (@available(macOS 10.14, *)) sysver += 2;
+    if (@available(macOS 10.15, *)) sysver++;
+    if (@available(macOS 11.0, *)) sysver++;
     
     isListening = false;
     keepCurrentButtonSelection = false;
@@ -146,15 +156,15 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
 
 #define checkButtonStart if (0) {}
 #define checkButtonEnd else { return; }
-#define checkButtonElement(e, b, n) \
-else if (element == gamepad.e && gamepad.b.isPressed) { \
+#define checkButtonElement(e, b, n, min) \
+else if (sysver >= min && element == gamepad.e && gamepad.b.isPressed) { \
 s.type = JButton; \
 s.d.jb = n; \
 }
 
-#define checkButtonAlt(b, n) checkButtonElement(b, b, n)
+#define checkButtonAlt(b, n, min) checkButtonElement(b, b, n, min)
 
-#define checkButton(b, n) checkButtonAlt(button##b, n)
+#define checkButton(b, n, min) checkButtonAlt(button##b, n, min)
 
 #define setAxisData(a, n) \
 GCControllerAxisInput *axis = gamepad.a; \
@@ -170,23 +180,31 @@ s.d.ja.dir = (axis.value >= 0) ? AxisDir::Positive : AxisDir::Negative;
     BindingDesc d;
     d.target = (Input::ButtonCode)currentButtonCode;
     SourceDesc s;
-    
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     checkButtonStart
-    checkButton(A, 0)
-    checkButton(B, 1)
-    checkButton(X, 2)
-    checkButton(Y, 3)
-    checkButtonElement(dpad, dpad.up, 11)
-    checkButtonElement(dpad, dpad.down, 12)
-    checkButtonElement(dpad, dpad.left, 13)
-    checkButtonElement(dpad, dpad.right, 14)
-    checkButtonAlt(leftShoulder, 9)
-    checkButtonAlt(rightShoulder, 10)
-    checkButtonAlt(leftThumbstickButton, 7)
-    checkButtonAlt(rightThumbstickButton, 8)
-    checkButton(Home, 5)
-    checkButton(Menu, 6)
-    checkButton(Options, 4)
+    checkButton(A, 0, 12)
+    checkButton(B, 1, 12)
+    checkButton(X, 2, 12)
+    checkButton(Y, 3, 12)
+    checkButtonElement(dpad, dpad.up, 11, 12)
+    checkButtonElement(dpad, dpad.down, 12, 12)
+    checkButtonElement(dpad, dpad.left, 13, 12)
+    checkButtonElement(dpad, dpad.right, 14, 12)
+    checkButtonAlt(leftShoulder, 9, 12)
+    checkButtonAlt(rightShoulder, 10, 12)
+    
+    // Requires macOS 10.14.1+
+    checkButtonAlt(leftThumbstickButton, 7, 14)
+    checkButtonAlt(rightThumbstickButton, 8, 14)
+    
+    // Requires macOS 10.15+
+    checkButton(Menu, 6, 15)
+    checkButton(Options, 4, 15)
+    
+    // Requires macOS 11.0+
+    checkButton(Home, 5, 16)
     
     checkAxis(leftThumbstick, xAxis, 0)
     checkAxis(leftThumbstick, yAxis, 1)
@@ -194,14 +212,12 @@ s.d.ja.dir = (axis.value >= 0) ? AxisDir::Positive : AxisDir::Negative;
     checkAxis(rightThumbstick, yAxis, 3)
     
     else if (element == gamepad.leftTrigger && (gamepad.leftTrigger.value >= 0.5 || gamepad.leftTrigger.value <= -0.5)) {
-        GCControllerButtonInput *trigger = gamepad.leftTrigger;
         s.type = JAxis;
         s.d.ja.axis = 4;
         s.d.ja.dir = AxisDir::Positive;
     }
     
     else if (element == gamepad.rightTrigger && (gamepad.rightTrigger.value >= 0.5 || gamepad.rightTrigger.value <= -0.5)) {
-        GCControllerButtonInput *trigger = gamepad.rightTrigger;
         s.type = JAxis;
         s.d.ja.axis = 5;
         s.d.ja.dir = AxisDir::Positive;
@@ -209,6 +225,7 @@ s.d.ja.dir = (axis.value >= 0) ? AxisDir::Positive : AxisDir::Negative;
     
     checkButtonEnd;
     
+#pragma clang diagnostic pop
     d.src = s;
     binds->push_back(d);
     [self setNotListening:true];
@@ -330,7 +347,7 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
         return cell;
     }
     
-    int col = tableID.integerValue;
+    long col = tableID.integerValue;
     
     if (nsbinds[@(buttonCode)].count < col) {
         cell.textField.stringValue = @"";
@@ -351,7 +368,7 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
         return @(buttonCode);
     }
     
-    int col = tableID.integerValue;
+    long col = tableID.integerValue;
     
     if (nsbinds[@(buttonCode)].count < col) {
         return 0;
@@ -414,7 +431,7 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
     bindingButton4.title = pnames[3];
     [self enableButtons:true];
     
-    return pnames.count;
+    return (int)pnames.count;
 }
 
 - (void)enableButtons:(bool)defaultSetting {

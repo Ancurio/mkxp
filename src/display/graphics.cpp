@@ -838,7 +838,6 @@ void Graphics::resizeScreen(int width, int height) {
 
   glState.scissorBox.set(IntRect(0, 0, p->scRes.x, p->scRes.y));
 
-  int cur_sz = p->scSize.x;
   shState->eThread().requestWindowResize(width, height);
   usleep(50000);
   update();
@@ -922,7 +921,6 @@ void Graphics::setScale(double factor) {
   int widthpx = p->scRes.x * factor;
   int heightpx = p->scRes.y * factor;
 
-  int cur_sz = p->scSize.x;
   shState->eThread().requestWindowResize(widthpx, heightpx);
   usleep(50000);
   update();

@@ -31,8 +31,9 @@
 inline void
 disposableAddChild(VALUE disp, VALUE child)
 {
-    if (NIL_P(disp) || NIL_P(child))
+    if (NIL_P(disp) || NIL_P(child)) {
         return;
+    }
     
 	VALUE children = rb_iv_get(disp, "children");
     
@@ -54,8 +55,9 @@ disposableAddChild(VALUE disp, VALUE child)
 inline void
 disposableRemoveChild(VALUE disp, VALUE child)
 {
-    if (NIL_P(disp) || NIL_P(child))
+    if (NIL_P(disp) || NIL_P(child)) {
         return;
+    }
     
     VALUE children = rb_iv_get(disp, "children");
     if (NIL_P(children))

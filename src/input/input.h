@@ -57,9 +57,6 @@ public:
     
     std::vector<std::string> getBindings(ButtonCode code);
     
-    std::string &getActionName(int button);
-    void setActionName(int button, const char *name);
-
 	bool isPressed(int button);
 	bool isTriggered(int button);
 	bool isRepeated(int button);

@@ -156,6 +156,9 @@ VALUE json2rb(json5pp::value const &v) {
         }
         return ret;
     }
+    
+    // This should be unreachable
+    return Qnil;
 }
 
 json5pp::value rb2json(VALUE v) {
@@ -200,6 +203,9 @@ json5pp::value rb2json(VALUE v) {
     }
     
     raiseRbExc(Exception(Exception::MKXPError, "Invalid value for JSON: %s", RSTRING_PTR(rb_inspect(v))));
+    
+    // This should be unreachable
+    return json5pp::value(0);
 }
 
 RB_METHOD(httpJsonParse) {

@@ -40,7 +40,7 @@ void fillStringVec(json::value &item, std::vector<std::string> &vector) {
         return;
     }
     auto &array = item.as_array();
-    for (int i = 0; i < array.size(); i++) {
+    for (size_t i = 0; i < array.size(); i++) {
         if (!array[i].is_string())
             continue;
         
@@ -64,10 +64,10 @@ bool copyObject(json::value &dest, json::value &src, const char *objectName = ""
         if (it.second.is_object() && destVec[it.first].is_object())
             continue;
         
-        if (it.second.is_array() && destVec[it.first].is_array() ||
-            it.second.is_number() && destVec[it.first].is_number() ||
-            it.second.is_string() && destVec[it.first].is_string() ||
-            it.second.is_boolean() && destVec[it.first].is_boolean())
+        if ((it.second.is_array() && destVec[it.first].is_array())    ||
+            (it.second.is_number() && destVec[it.first].is_number())  ||
+            (it.second.is_string() && destVec[it.first].is_string())  ||
+            (it.second.is_boolean() && destVec[it.first].is_boolean()) )
         {
             destVec[it.first] = it.second;
         }

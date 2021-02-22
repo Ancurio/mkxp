@@ -22,7 +22,6 @@
 #define NSTOPATH(str) [NSFileManager.defaultManager fileSystemRepresentationWithPath:str]
 
 bool filesystemImpl::fileExists(const char *path) {
-    NSString *nspath = PATHTONS(path);
     BOOL isDir;
     return  [NSFileManager.defaultManager fileExistsAtPath:PATHTONS(path) isDirectory: &isDir] && !isDir;
 }

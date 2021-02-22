@@ -61,7 +61,7 @@ static const int autotileCount = 7;
 static const int atFrames = 8;
 static const int atFrameDur = 15;
 static const int atAreaW = autotileW * atFrames;
-static const int atAreaH = autotileH * autotileCount;
+//static const int atAreaH = autotileH * autotileCount;
 
 static const int tsLaneW = tilesetW / 1;
 
@@ -737,7 +737,7 @@ struct TilemapPrivate
 		else
 		{
 			int layerInd = y + prio;
-			if (layerInd >= zlayersMax)
+			if ((size_t)layerInd >= zlayersMax)
 				return;
 			targetArray = &zlayerVert[layerInd];
 		}
