@@ -171,7 +171,7 @@ $(LIBDIR)/libSDL2_image.a: $(DOWNLOADS)/sdl2_image/Makefile
 
 $(DOWNLOADS)/sdl2_image/Makefile: $(DOWNLOADS)/sdl2_image/configure
 	cd $(DOWNLOADS)/sdl2_image; \
-	LIBPNG_LIBS=$(LIBDIR)/libpng.a \
+	LIBPNG_LIBS="-L$(LIBDIR) -lpng" LIBPNG_CFLAGS="-I$(INCLUDEDIR)" \
 	$(CONFIGURE) --enable-static=true --enable-shared=false \
 	--disable-imageio \
 	--enable-png=yes --enable-png-shared=no \
