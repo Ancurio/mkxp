@@ -30,7 +30,6 @@
 #include <SDL_keyboard.h>
 #include <SDL_mouse.h>
 #include <SDL_clipboard.h>
-#include <SDL_haptic.h>
 
 #include <vector>
 #include <unordered_map>
@@ -1264,18 +1263,6 @@ int Input::getJoystickPowerLevel()
     return (getJoystickConnected()) ?
     SDL_JoystickCurrentPowerLevel(shState->eThread().joystick()) :
     SDL_JOYSTICK_POWER_UNKNOWN;
-}
-
-void Input::rumble(int duration, int strength, int attack, int fade)
-{
-    duration = clamp(duration, 0, 10000);
-    strength = clamp(strength, 1, 100);
-    attack   = clamp(attack,   0, 10000);
-    fade     = clamp(fade,     0, 10000);
-    shState->eThread().requestRumble(duration,
-                                     (short)((double)strength / 100 * 32767),
-                                     attack,
-                                     fade);
 }
 
 bool Input::getTextInputMode()

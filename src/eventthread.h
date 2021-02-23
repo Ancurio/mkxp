@@ -29,7 +29,6 @@
 
 #include <SDL_scancode.h>
 #include <SDL_joystick.h>
-#include <SDL_haptic.h>
 #include <SDL_mouse.h>
 #include <SDL_mutex.h>
 
@@ -97,8 +96,6 @@ public:
     void requestTextInputMode(bool mode);
     
     void requestSettingsMenu();
-    
-    void requestRumble(int duration, short strength, int attack, int fade);
 
 	void requestTerminate();
 
@@ -107,7 +104,6 @@ public:
     bool getJoystickConnected() const;
     
     SDL_Joystick *joystick() const;
-    SDL_Haptic *haptic() const;
 
 	void showMessageBox(const char *body, int flags = 0);
 
@@ -130,9 +126,6 @@ private:
 	bool showCursor;
     
     SDL_Joystick *js;
-    SDL_Haptic *hapt;
-    SDL_HapticEffect hapticEffect;
-    int hapticEffectId;
     
 	AtomicFlag msgBoxDone;
 
