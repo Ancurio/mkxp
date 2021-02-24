@@ -4,7 +4,11 @@
 
 This is a fork of mkxp intended to be a little more than just a barebones recreation of RPG Maker. The original goal was successfully running games based on Pokemon Essentials, which is notoriously dependent on Windows APIs. I'd consider that mission accomplished.
 
+It supports Windows, Linux and both Intel and Apple Silicon versions of macOS.
+
 I'd highly recommend [checking the gitbook](https://roza-gb.gitbook.io/mkxp-z) for more information than this readme contains.
+
+Releases are [here](https://gitlab.com/mkxp-z/mkxp-z/-/releases). Requirements for running them are Windows 8.1+, Ubuntu 18.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.12+.
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on MRI and as such the mruby and null bindings are not included.
@@ -22,20 +26,20 @@ For more detailed build instructions, refer to the linked gitbook.
 
 Firstly, each platform has a set of tools and libraries that must be installed prior to building anything:
 
-+ *macOS (through Homebrew)*
++ **macOS (through Homebrew)**
 
 ```sh
 brew install libtool mm-common cmake automake autoconf pkg-config
 ```
 
-+ *Windows (MSYS 64-Bit)*
++ **Windows (MSYS 64-Bit)**
 
 ```sh
 # Assuming 64-bit
 pacman -S git ruby base-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-meson mingw-w64-x86_64-gcc mingw-w64-x86_64-libsigc++
 ```
 
-+ *Linux (Ubuntu/Debian)*
++ **Linux (Ubuntu/Debian)**
 
 ```sh
 sudo apt install git build-essential cmake meson autoconf automake mm-common libtool pkg-config ruby bison zlib1g-dev xorg-dev lib32z1 libasound2-dev libpulse-dev
@@ -66,6 +70,16 @@ By including `|p|` or `|!p|` at the very beginning of a script's title, you can 
 mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
 
 You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
+
+## macOS Controller Support
+
+Binding controller buttons on macOS is slightly different depending on which version you are running. Binding specific buttons requires different versions of the operating system:
+
++ **Thumbstick Button (L3/R3, LS/RS, L↓/R↓)**: macOS Mojave 10.14.1+
++ **Start/Select (Options/Share, Menu/Back, Plus/Minus)**: macOS Catalina 10.15+
++ **Home (Guide, PS)**: macOS Big Sur 11.0+
+
+Technically, while SDL itself might support these buttons, the keybinding menu had to be rewritten in Cocoa in a hurry, as switching away from native OpenGL broke the original keybinding menu. (ANGLE is used instead, to prevent crashing on Apple Silicon releases of macOS, and to help mkxp switch to Metal in the future)
 
 ## Fonts
 
