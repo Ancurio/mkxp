@@ -14,15 +14,10 @@ mkdir -p ${MESON_INSTALL_PREFIX}/usr/lib
 
 # Required by Ubuntu
 get_dep ruby
-get_dep sndio
 
 # Required by Fedora & Manjaro
-get_dep libXss
-get_dep libjpeg
 get_dep libcrypt
 get_dep libbsd
-get_dep tinfo
-get_dep readline
 
 if [ -n "$STEAM" ]; then
   echo "Copying steam_api..."
