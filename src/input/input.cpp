@@ -1207,7 +1207,7 @@ bool Input::isReleasedEx(int code, bool isVKey)
 }
 
 unsigned int Input::repeatcount(int code, bool isVKey) {
-    unsigned int c = code;
+    int c = code;
     if (isVKey) {
         try {
             c = vKeyToScancode[code];
