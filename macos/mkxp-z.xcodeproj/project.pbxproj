@@ -238,7 +238,6 @@
 		3B3F7D2C25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
 		3B3F7D2D25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
 		3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
-		3B480E9D25DCD166001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9C25DCD166001686B4 /* GameController.framework */; };
 		3B480E9F25DCD174001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
 		3B480EA025DCD175001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
 		3B480EA125DCD176001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
@@ -283,6 +282,11 @@
 		3B5E1F1E25A8820B0086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B5E1F1F25A8820D0086FFDC /* libEGL.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B5E1F2025A8820F0086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B97F77025E6178200A569B5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
+		3B97F77225E617E000A569B5 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B97F77125E617E000A569B5 /* libSDL2_sound.a */; };
+		3B97F77425E6180100A569B5 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B97F77325E6180100A569B5 /* libSDL2_sound.a */; };
+		3B97F77625E6182100A569B5 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B97F77525E6182100A569B5 /* libSDL2_sound.a */; };
+		3B97F77725E6182100A569B5 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B97F77525E6182100A569B5 /* libSDL2_sound.a */; };
 		3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */; };
 		3BC65CCD2584EDC60063AFF1 /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
 		3BC65CCF2584EDC60063AFF1 /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
@@ -493,10 +497,6 @@
 		3BE0814A2568A5F60006849F /* libturbojpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081492568A5F60006849F /* libturbojpeg.a */; };
 		3BE081592568D3A60006849F /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081502568D3A50006849F /* libbz2.tbd */; };
 		3BEA5D7225AC3CE300B6E359 /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D7125AC3CE300B6E359 /* libSDL2_image.a */; };
-		3BEA5D7525AC3CE800B6E359 /* libSDL_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D6D25AC3CB800B6E359 /* libSDL_sound.a */; };
-		3BEA5D7725AC3D1D00B6E359 /* libSDL_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D7625AC3D1D00B6E359 /* libSDL_sound.a */; };
-		3BEA5D7825AC3D1D00B6E359 /* libSDL_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D7625AC3D1D00B6E359 /* libSDL_sound.a */; };
-		3BEA5D7C25AC3D8800B6E359 /* libSDL_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BEA5D7B25AC3D8800B6E359 /* libSDL_sound.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -954,7 +954,6 @@
 		3B426F70256B8AC0009EA00F /* fs_std_fwd.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_fwd.hpp; sourceTree = "<group>"; };
 		3B426F76256BA847009EA00F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
 		3B480E9325DCBDD6001686B4 /* sdl_codes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sdl_codes.h; path = views/sdl_codes.h; sourceTree = "<group>"; };
-		3B480E9C25DCD166001686B4 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		3B480E9E25DCD16D001686B4 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfluidsynth.dylib; path = Dependencies/Frameworks/libfluidsynth.dylib; sourceTree = "<group>"; };
 		3B522DB2259BC037003301C4 /* net.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = net.h; sourceTree = "<group>"; };
@@ -980,6 +979,9 @@
 		3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = systemImplApple.mm; sourceTree = "<group>"; };
 		3B5E1F0925A881FB0086FFDC /* libEGL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libEGL.dylib; path = Dependencies/Frameworks/ANGLE/libEGL.dylib; sourceTree = "<group>"; };
 		3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLESv2.dylib; path = Dependencies/Frameworks/ANGLE/libGLESv2.dylib; sourceTree = "<group>"; };
+		3B97F77125E617E000A569B5 /* libSDL2_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_sound.a; path = "Dependencies/build-macosx-arm64/lib/libSDL2_sound.a"; sourceTree = "<group>"; };
+		3B97F77325E6180100A569B5 /* libSDL2_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_sound.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_sound.a"; sourceTree = "<group>"; };
+		3B97F77525E6182100A569B5 /* libSDL2_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_sound.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_sound.a"; sourceTree = "<group>"; };
 		3BA08EA4256641ED00449CFF /* Assets.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Assets.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BA08EA6256641EE00449CFF /* Assets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Assets.plist; sourceTree = "<group>"; };
 		3BC65D442584EDC60063AFF1 /* Z.arm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Z.arm.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1048,10 +1050,7 @@
 		3BE081562568D3A60006849F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		3BE081572568D3A60006849F /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
 		3BE081582568D3A60006849F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		3BEA5D6D25AC3CB800B6E359 /* libSDL_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL_sound.a; path = "Dependencies/build-macosx-arm64/lib/libSDL_sound.a"; sourceTree = "<group>"; };
 		3BEA5D7125AC3CE300B6E359 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_image.a"; sourceTree = "<group>"; };
-		3BEA5D7625AC3D1D00B6E359 /* libSDL_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL_sound.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL_sound.a"; sourceTree = "<group>"; };
-		3BEA5D7B25AC3D8800B6E359 /* libSDL_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL_sound.a; path = "Dependencies/build-macosx-universal/lib/libSDL_sound.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1069,11 +1068,11 @@
 			files = (
 				3B1C23C325A19C600075EF5D /* libSDL2_ttf.a in Frameworks */,
 				3B1C23C425A19C600075EF5D /* libvorbisenc.a in Frameworks */,
-				3BEA5D7825AC3D1D00B6E359 /* libSDL_sound.a in Frameworks */,
 				3B1C23C525A19C600075EF5D /* libssl.a in Frameworks */,
 				3B1C23C625A19C600075EF5D /* libSDL2main.a in Frameworks */,
 				3B1C23C725A19C600075EF5D /* libcrypto.a in Frameworks */,
 				3B1C23C825A19C600075EF5D /* libopenal.a in Frameworks */,
+				3B97F77725E6182100A569B5 /* libSDL2_sound.a in Frameworks */,
 				3B1C23C925A19C600075EF5D /* libpixman-1.a in Frameworks */,
 				3B5E1F1225A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3B1C23CA25A19C600075EF5D /* AppKit.framework in Frameworks */,
@@ -1124,6 +1123,7 @@
 				3B5E1F0D25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3BC65D282584EDC60063AFF1 /* IOKit.framework in Frameworks */,
 				3BC65D2A2584EDC60063AFF1 /* Carbon.framework in Frameworks */,
+				3B97F77225E617E000A569B5 /* libSDL2_sound.a in Frameworks */,
 				3BC65D662584EED10063AFF1 /* libopenal.a in Frameworks */,
 				3BC65D2B2584EDC60063AFF1 /* AppKit.framework in Frameworks */,
 				3BC65D5B2584EED10063AFF1 /* libpixman-1.a in Frameworks */,
@@ -1153,7 +1153,6 @@
 				3BC65D372584EDC60063AFF1 /* libiconv.tbd in Frameworks */,
 				3BC65D602584EED10063AFF1 /* libSDL2main.a in Frameworks */,
 				3BC65D5D2584EED10063AFF1 /* libvorbisenc.a in Frameworks */,
-				3BEA5D7525AC3CE800B6E359 /* libSDL_sound.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1167,6 +1166,7 @@
 				3B5E1F0B25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3BC65E222584F4290063AFF1 /* libSDL2_ttf.a in Frameworks */,
 				3BC65E2B2584F4290063AFF1 /* libphysfs.a in Frameworks */,
+				3B97F77425E6180100A569B5 /* libSDL2_sound.a in Frameworks */,
 				3BC65DEB2584F3AD0063AFF1 /* IOKit.framework in Frameworks */,
 				3BC65E2E2584F4290063AFF1 /* libSDL2.a in Frameworks */,
 				3BC65DED2584F3AD0063AFF1 /* Carbon.framework in Frameworks */,
@@ -1187,7 +1187,7 @@
 				3B5E1F0F25A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3BC65E212584F4290063AFF1 /* libopenal.a in Frameworks */,
 				3B1C230E25A144BF0075EF5D /* libruby.3.0.dylib in Frameworks */,
-				3B480E9D25DCD166001686B4 /* GameController.framework in Frameworks */,
+				3B97F77025E6178200A569B5 /* GameController.framework in Frameworks */,
 				3BC65DFF2584F3AD0063AFF1 /* Foundation.framework in Frameworks */,
 				3BC65E242584F4290063AFF1 /* libvorbisfile.a in Frameworks */,
 				3BC65E012584F3AD0063AFF1 /* CoreFoundation.framework in Frameworks */,
@@ -1196,7 +1196,6 @@
 				3BC65E202584F4290063AFF1 /* libpixman-1.a in Frameworks */,
 				3BC65E062584F3AD0063AFF1 /* libiconv.tbd in Frameworks */,
 				3BC65E262584F4290063AFF1 /* libpng16.a in Frameworks */,
-				3BEA5D7C25AC3D8800B6E359 /* libSDL_sound.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1206,11 +1205,11 @@
 			files = (
 				3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */,
 				3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */,
-				3BEA5D7725AC3D1D00B6E359 /* libSDL_sound.a in Frameworks */,
 				3B522DD6259BFF2D003301C4 /* libssl.a in Frameworks */,
 				3BE08102256879FE0006849F /* libSDL2main.a in Frameworks */,
 				3B522DD8259BFF2D003301C4 /* libcrypto.a in Frameworks */,
 				3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */,
+				3B97F77625E6182100A569B5 /* libSDL2_sound.a in Frameworks */,
 				3BE08107256879FE0006849F /* libpixman-1.a in Frameworks */,
 				3B5E1F1025A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3B1C233025A16CB20075EF5D /* AppKit.framework in Frameworks */,
@@ -1635,8 +1634,8 @@
 				3BC65D4B2584EED10063AFF1 /* libpixman-1.a */,
 				3BC65D592584EED10063AFF1 /* libpng16.a */,
 				3B1C230625A142620075EF5D /* libruby.3.0.dylib */,
+				3B97F77125E617E000A569B5 /* libSDL2_sound.a */,
 				3BC65D522584EED10063AFF1 /* libSDL2_image.a */,
-				3BEA5D6D25AC3CB800B6E359 /* libSDL_sound.a */,
 				3BC65D532584EED10063AFF1 /* libSDL2_ttf.a */,
 				3BC65D552584EED10063AFF1 /* libSDL2.a */,
 				3BC65D502584EED10063AFF1 /* libSDL2main.a */,
@@ -1664,7 +1663,7 @@
 				3BC65D882584F3780063AFF1 /* libpixman-1.a */,
 				3BC65D872584F3780063AFF1 /* libpng16.a */,
 				3BEA5D7125AC3CE300B6E359 /* libSDL2_image.a */,
-				3BEA5D7B25AC3D8800B6E359 /* libSDL_sound.a */,
+				3B97F77325E6180100A569B5 /* libSDL2_sound.a */,
 				3BC65D832584F3780063AFF1 /* libSDL2_ttf.a */,
 				3BC65D862584F3780063AFF1 /* libSDL2.a */,
 				3BC65D892584F3910063AFF1 /* libSDL2main.a */,
@@ -1755,7 +1754,6 @@
 		3BDB23E5256455A400C4A63D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3B480E9C25DCD166001686B4 /* GameController.framework */,
 				3B1C241F25A1A84D0075EF5D /* Steam */,
 				3BC65D792584F3030063AFF1 /* Universal */,
 				3BC65D492584EE690063AFF1 /* ARM64 */,
@@ -1787,8 +1785,8 @@
 				3BE080E9256879FC0006849F /* libpixman-1.a */,
 				3B426F76256BA847009EA00F /* libsigc-2.0.a */,
 				3BE080F0256879FD0006849F /* libSDL2_image.a */,
+				3B97F77525E6182100A569B5 /* libSDL2_sound.a */,
 				3BE080FA256879FE0006849F /* libSDL2_test.a */,
-				3BEA5D7625AC3D1D00B6E359 /* libSDL_sound.a */,
 				3BE080EF256879FD0006849F /* libSDL2_ttf.a */,
 				3BE080EB256879FC0006849F /* libSDL2.a */,
 				3BE080E4256879FC0006849F /* libSDL2main.a */,
@@ -3009,7 +3007,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
-					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 				);
 				MARKETING_VERSION = 2.1;
@@ -3093,7 +3090,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
-					"$(PROJECT_DIR)/Dependencies/build-macosx-arm64/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 				);
 				MARKETING_VERSION = 2.1;
