@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 
-#if defined(MKXPZ_SSL) || defined(MKXPZ_BUILD_XCODE)
+#if defined(MKXPZ_SSL)
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #endif
 #include "httplib.h"
@@ -116,7 +116,9 @@ HTTPResponse HTTPRequest::get() {
     httplib::Headers head;
     
     // Seems to need to be disabled for now, at least on macOS
+#ifdef MKXPZ_SSL
     client.enable_server_certificate_verification(false);
+#endif
     
     for (auto const h : _headers)
         head.emplace(h.first, h.second);
@@ -146,7 +148,9 @@ HTTPResponse HTTPRequest::post(StringMap &postData) {
     httplib::Params params;
     
     // Seems to need to be disabled for now, at least on macOS
+#ifdef MKXPZ_SSL
     client.enable_server_certificate_verification(false);
+#endif
     
     for (auto const h : _headers)
         head.emplace(h.first, h.second);
