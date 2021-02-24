@@ -583,7 +583,7 @@ struct MsBinding : public Binding
 
 	bool sourceRepeatable() const
 	{
-		return false;
+		return true;
 	}
 
 	int index;
