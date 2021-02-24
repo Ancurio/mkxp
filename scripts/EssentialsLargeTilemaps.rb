@@ -17,23 +17,18 @@
 # 16384 -> 1048576 (what most people have at this point)
 #
 # Because of the extra math the game will have to do to find the right
-# pixels, this will probably cause a performance hit while on these
+# pixels, this will probably cause a slight performance hit while on these
 # maps which would normally be megasurfaces.
 #
-# It can probably be improved by changing CustomTilemap.getRegularTile
-# to just find the correct pixels on its own, without having to
-# translate the coordinates afterwards, but this will satisfy me just
-# for the moment.
+# This script was written for games based on 17.1. It may or may not work
+# with 18, and I assume it'll become part of Essentials itself at some
+# point. Just place it anywhere after CustomTilemap gets defined and it
+# should work fine.
 #
-# Really, it'd be far better to cut up the image on the C++ end and
-# use a custom shader to get the image right or something like that,
-# but that's work for another day.
-#
-# For now, I'm just happy I can finally test whatever game I like.
-#                             ~Zoro
+#                             ~Roza/Zoroark
 #=======================================================================
 
-module VWrap
+module TileWrap
 
   MAX_TEX_SIZE         = Bitmap.max_size
   TILESET_WIDTH        = 0x100
@@ -45,7 +40,7 @@ module VWrap
     return val
   end
 
-  def self.makeVWrappedTileset(originalbmp)
+  def self.wrapTileset(originalbmp)
     width = originalbmp.width
     height = originalbmp.height
     if width == TILESET_WIDTH && originalbmp.mega?
@@ -67,7 +62,7 @@ module VWrap
     return originalbmp
   end
 
-  def self.blitVWrappedPixels(destX, destY, dest, src, srcrect)
+  def self.blitWrappedPixels(destX, destY, dest, src, srcrect)
     if (srcrect.y + srcrect.width < MAX_TEX_SIZE)
       # Save the processing power
       return dest.blt(destX, destY, src, srcrect)
@@ -97,7 +92,7 @@ if $MKXP == true
   class CustomTilemap
     def tileset=(value)
       if value.mega?
-        @tileset = VWrap::makeVWrappedTileset(value)
+        @tileset = TileWrap::wrapTileset(value)
         value.dispose
       else
         @tileset = value
@@ -107,14 +102,14 @@ if $MKXP == true
 
     alias old_getRegularTile getRegularTile
     def getRegularTile(sprite, id)
-      return old_getRegularTile(sprite, id) if @tileset.width <= VWrap::TILESET_WIDTH
+      return old_getRegularTile(sprite, id) if @tileset.width <= TileWrap::TILESET_WIDTH
 
       bitmap = @regularTileInfo[id]
       if !bitmap
         bitmap = Bitmap.new(@tileWidth, @tileHeight)
         rect=Rect.new(((id - 384)&7)*@tileSrcWidth,((id - 384)>>3)*@tileSrcHeight,
            @tileSrcWidth,@tileSrcHeight)
-           VWrap::blitVWrappedPixels(0,0, bitmap, @tileset, rect)
+           TileWrap::blitWrappedPixels(0,0, bitmap, @tileset, rect)
         
         @regularTileInfo[id]=bitmap
       end
@@ -123,7 +118,7 @@ if $MKXP == true
 
     alias old_rlayer0 refreshLayer0
     def refreshLayer0(autotiles=false)
-      return old_rlayer0(autotiles) if @tileset.width <= VWrap::TILESET_WIDTH
+      return old_rlayer0(autotiles) if @tileset.width <= TileWrap::TILESET_WIDTH
       if autotiles
         return true if !shown?
       end
@@ -205,7 +200,7 @@ if $MKXP == true
                     @tileSrcWidth,@tileSrcHeight)
                   xpos=(x*twidth)-@oxLayer0
                   ypos=(y*theight)-@oyLayer0
-                  VWrap::blitVWrappedPixels(xpos,ypos, bitmap, @tileset, temprect)
+                  TileWrap::blitWrappedPixels(xpos,ypos, bitmap, @tileset, temprect)
                 else
                   tilebitmap=@autotileInfo[id]
                   if !tilebitmap
@@ -254,7 +249,7 @@ if $MKXP == true
               if id>=384
                 temprect.set(((id - 384)&7)*@tileSrcWidth,((id - 384)>>3)*@tileSrcHeight,
                   @tileSrcWidth,@tileSrcHeight)
-                  VWrap::blitVWrappedPixels(xpos,ypos, bitmap, @tileset, temprect)
+                  TileWrap::blitWrappedPixels(xpos,ypos, bitmap, @tileset, temprect)
               else
                 tilebitmap=@autotileInfo[id]
                 if !tilebitmap
@@ -311,7 +306,7 @@ if $MKXP == true
               if id>=384
                 tmprect.set( ((id - 384)&7)*@tileSrcWidth,((id - 384)>>3)*@tileSrcHeight,
                   @tileSrcWidth,@tileSrcHeight)
-                  VWrap::blitVWrappedPixels(xpos,ypos, bitmap, @tileset, tmprect)
+                  TileWrap::blitWrappedPixels(xpos,ypos, bitmap, @tileset, tmprect)
               else
                 frames=@framecount[id/48-1]
                 if frames<=1
@@ -328,34 +323,5 @@ if $MKXP == true
       end
       return true
     end
-  end
-end
-
-# =================================================================
-# Any extra overrides to fix a bunch of break-y things.
-# This should allow someone to load up games on Windows just fine.
-# Maybe not perfect compatibility, but better.
-# =================================================================
-
-module Graphics
-  def self.snap_to_bitmap
-    return Graphics.mkxp_snap_to_bitmap
-  end
-end
-
-def pbScreenCapture
-  capturefile = nil
-  500.times{|i|
-    filename = RTP.getSaveFileName(sprintf("capture%03d.bmp",i))
-    if !safeExists?(filename)
-      capturefile = filename
-      break
-    end
-  }
-  begin
-    Graphics.screenshot(capturefile)
-    pbSEPlay("expfull") if FileTest.audio_exist?("Audio/SE/expfull")
-  rescue
-    nil
   end
 end

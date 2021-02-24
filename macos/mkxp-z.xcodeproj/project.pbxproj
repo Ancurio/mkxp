@@ -40,8 +40,6 @@
 		3B10ECE92568E83D00372D13 /* trans.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B10ECA22568E7B600372D13 /* trans.frag */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B10ECEA2568E83D00372D13 /* transSimple.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B10EC922568E7B500372D13 /* transSimple.frag */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B10ECF52568E86B00372D13 /* liberation.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B10EC842568E78400372D13 /* liberation.ttf */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3B10ECF62568E86B00372D13 /* wqymicrohei.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B10EC852568E78400372D13 /* wqymicrohei.ttf */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3B10ECFB2568E88900372D13 /* EssentialsCompatibility.rb in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B10ECA62568E7CB00372D13 /* EssentialsCompatibility.rb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B10EDA62568E95E00372D13 /* eventthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED352568E95D00372D13 /* eventthread.cpp */; };
 		3B10EDA72568E95E00372D13 /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
 		3B10EDA82568E95E00372D13 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED462568E95D00372D13 /* input.cpp */; };
@@ -725,17 +723,6 @@
 			dstSubfolderSpec = 7;
 			files = (
 				3B10ECF52568E86B00372D13 /* liberation.ttf in CopyFiles */,
-				3B10ECF62568E86B00372D13 /* wqymicrohei.ttf in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3BA08EE12566499400449CFF /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = BindingScripts;
-			dstSubfolderSpec = 7;
-			files = (
-				3B10ECFB2568E88900372D13 /* EssentialsCompatibility.rb in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -790,7 +777,6 @@
 		3B10ECA32568E7B600372D13 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../shader/common.h; sourceTree = "<group>"; };
 		3B10ECA42568E7B600372D13 /* gray.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = gray.frag; path = ../shader/gray.frag; sourceTree = "<group>"; };
 		3B10ECA52568E7B600372D13 /* simpleColor.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = simpleColor.vert; path = ../shader/simpleColor.vert; sourceTree = "<group>"; };
-		3B10ECA62568E7CB00372D13 /* EssentialsCompatibility.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; name = EssentialsCompatibility.rb; path = ../scripts/EssentialsCompatibility.rb; sourceTree = "<group>"; };
 		3B10ED352568E95D00372D13 /* eventthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = eventthread.cpp; sourceTree = "<group>"; };
 		3B10ED372568E95D00372D13 /* rgssad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgssad.h; sourceTree = "<group>"; };
 		3B10ED382568E95D00372D13 /* rgssad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rgssad.cpp; sourceTree = "<group>"; };
@@ -1289,14 +1275,6 @@
 			name = Shaders;
 			sourceTree = "<group>";
 		};
-		3B10EC8C2568E7A400372D13 /* BindingScripts */ = {
-			isa = PBXGroup;
-			children = (
-				3B10ECA62568E7CB00372D13 /* EssentialsCompatibility.rb */,
-			);
-			name = BindingScripts;
-			sourceTree = "<group>";
-		};
 		3B10ED342568E95D00372D13 /* src */ = {
 			isa = PBXGroup;
 			children = (
@@ -1742,7 +1720,6 @@
 		3BDB23E12564545F00C4A63D /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				3B10EC8C2568E7A400372D13 /* BindingScripts */,
 				3B10EC8B2568E79800372D13 /* Shaders */,
 				3B10EC832568E78400372D13 /* icon.png */,
 				3B10EC842568E78400372D13 /* liberation.ttf */,
@@ -1852,7 +1829,6 @@
 				3BA08EA2256641ED00449CFF /* Resources */,
 				3BA08EAC2566426200449CFF /* CopyFiles */,
 				3BA08EC8256642C900449CFF /* CopyFiles */,
-				3BA08EE12566499400449CFF /* CopyFiles */,
 			);
 			buildRules = (
 			);
