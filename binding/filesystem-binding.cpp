@@ -137,7 +137,7 @@ RB_METHOD(fileIntPos) {
 
 VALUE
 kernelLoadDataInt(const char *filename, bool rubyExc, bool raw) {
-  rb_gc_start();
+  //rb_gc_start();
 
   VALUE port = fileIntForPath(filename, rubyExc);
   VALUE result;
@@ -168,18 +168,7 @@ RB_METHOD(kernelLoadData) {
   if (raw != Qnil && raw != Qtrue && raw != Qfalse) {
     rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
   }
-
-  if (!shState->config().encryptedGraphics) {
-    VALUE isGraphicsFile = rb_funcall(filename, rb_intern("start_with?"), 1,
-                                      rb_str_new2("Graphics"));
-
-    if (isGraphicsFile == Qtrue) {
-      VALUE f = rb_file_open_str(filename, "rb");
-      VALUE ret = rb_funcall(f, rb_intern("read"), 0);
-      rb_funcall(f, rb_intern("close"), 0);
-      return ret;
-    }
-  }
+    
   return kernelLoadDataInt(RSTRING_PTR(filename), true, RTEST(raw));
 }
 

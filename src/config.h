@@ -57,7 +57,6 @@ struct Config {
   bool enableReset;
   bool allowSymlinks;
   bool pathCache;
-  bool encryptedGraphics;
 
   std::string dataPathOrg;
   std::string dataPathApp;

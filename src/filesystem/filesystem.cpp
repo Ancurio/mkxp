@@ -658,6 +658,7 @@ void FileSystem::openReadRaw(SDL_RWops &ops, const char *filename,
     throw Exception(Exception::NoFileError, "%s", filename);
 
   initReadOps(handle, ops, freeOnClose);
+    return;
 }
 
 // RGSS normalizes paths for at least audio

@@ -220,18 +220,6 @@
     //
     // "pathCache": true,
 
-    // Whether to load graphics files from the game's .rgssad
-    // and any RTP locations, or places mounted with System.mount
-    //
-    // Disabling this can speed up old versions of Essentials
-    // *massively*, and even current versions by a large amount.
-    // Applies to any sort of RTP or archive, not just RGSS
-    // archives.
-    // (default: true)
-    //
-    // "encryptedGraphics": true,
-
-
     // Add 'rtp1', 'rtp2.zip' and 'game.rgssad' to the
     // asset search path (multiple allowed)
     // (default: none)

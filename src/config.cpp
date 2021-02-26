@@ -205,7 +205,6 @@ try { exp } catch (...) {}
     SET_OPT_CUSTOMKEY(SE.sourceCount, SESourceCount, integer);
     SET_STRINGOPT(customScript, customScript);
     SET_OPT(pathCache, boolean);
-    SET_OPT(encryptedGraphics, boolean);
     SET_OPT(useScriptNames, boolean);
     SET_OPT_CUSTOMKEY(jit.enabled, JITEnable, boolean);
     SET_OPT_CUSTOMKEY(jit.verboseLevel, JITVerboseLevel, integer);
