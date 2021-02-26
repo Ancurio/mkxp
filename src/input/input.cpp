@@ -203,12 +203,13 @@ std::unordered_map<int, int> vKeyToScancode{
 };
 #undef m
 #define m(keycode) { #keycode, SDL_SCANCODE_##keycode }
+#define m_number(keycode) { "NUMBER_" #keycode, SDL_SCANCODE_##keycode }
 std::unordered_map<std::string, int> strToScancode{
-    m(0), m(1),
-    m(2), m(3),
-    m(4), m(5),
-    m(6), m(7),
-    m(8), m(9),
+    m_number(0), m_number(1),
+    m_number(2), m_number(3),
+    m_number(4), m_number(5),
+    m_number(6), m_number(7),
+    m_number(8), m_number(9),
     m(A),
     m(AC_BACK),
     m(AC_BOOKMARKS),
