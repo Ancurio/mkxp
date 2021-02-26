@@ -99,7 +99,7 @@ struct SharedStatePrivate
 
 	unsigned int stampCounter;
     
-    std::chrono::time_point<std::chrono::high_resolution_clock> startupTime;
+    std::chrono::time_point<std::chrono::steady_clock> startupTime;
 
 	SharedStatePrivate(RGSSThreadData *threadData)
 	    : bindingData(0),
@@ -117,7 +117,7 @@ struct SharedStatePrivate
 	      stampCounter(0)
 	{
         
-        startupTime = std::chrono::high_resolution_clock::now();
+        startupTime = std::chrono::steady_clock::now();
         
 		/* Shaders have been compiled in ShaderSet's constructor */
 		if (gl.ReleaseShaderCompiler)
@@ -365,7 +365,7 @@ Font &SharedState::defaultFont() const
 
 unsigned long long SharedState::runTime() {
     if (!p) return 0;
-    const auto now = std::chrono::high_resolution_clock::now();
+    const auto now = std::chrono::steady_clock::now();
     return std::chrono::duration_cast<std::chrono::microseconds>(now - p->startupTime).count();
 }
 
