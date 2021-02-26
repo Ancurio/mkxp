@@ -104,6 +104,7 @@ void CUSLBindingInit();
 
 void httpBindingInit();
 
+RB_METHOD(mkxpDelta);
 RB_METHOD(mriPrint);
 RB_METHOD(mriP);
 RB_METHOD(mkxpDataDirectory);
@@ -188,6 +189,7 @@ static void mriBindingInit() {
         assert(!"unreachable");
     
     VALUE mod = rb_define_module("System");
+    _rb_define_module_function(mod, "delta", mkxpDelta);
     _rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
     _rb_define_module_function(mod, "set_window_title", mkxpSetTitle);
     _rb_define_module_function(mod, "show_settings", mkxpSettingsMenu);
@@ -244,6 +246,7 @@ static void printP(int argc, VALUE *argv, const char *convMethod,
     showMsg(RSTRING_PTR(dispString));
 }
 
+
 RB_METHOD(mriPrint) {
     RB_UNUSED_PARAM;
     
@@ -258,6 +261,12 @@ RB_METHOD(mriP) {
     printP(argc, argv, "inspect", "\n");
     
     return Qnil;
+}
+
+RB_METHOD(mkxpDelta) {
+    RB_UNUSED_PARAM;
+    
+    return ULL2NUM(shState->runTime());
 }
 
 RB_METHOD(mkxpDataDirectory) {

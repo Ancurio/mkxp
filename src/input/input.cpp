@@ -680,9 +680,13 @@ struct InputPrivate
     int rawRepeating;
 	unsigned int repeatCount;
     unsigned int rawRepeatCount;
+    unsigned long long repeatTime;
+    unsigned long long rawRepeatTime;
     
     unsigned int repeatStart;
     unsigned int repeatDelay;
+    
+    unsigned long long last_update;
 
 	struct
 	{
@@ -708,6 +712,8 @@ struct InputPrivate
 
 	InputPrivate(const RGSSThreadData &rtData)
 	{
+        last_update = 0;
+        
 		initStaticKbBindings();
 		initMsBindings();
 
@@ -1005,12 +1011,15 @@ struct InputPrivate
                 else
                 {
                     rawRepeatCount = 0;
+                    rawRepeatTime = shState->runTime();
                     rawRepeating = i;
                 }
                 
-                break;
+                return;
             }
         }
+        
+        rawRepeating = -1;
     }
 
 	void updateDir4()
@@ -1101,6 +1110,10 @@ Input::Input(const RGSSThreadData &rtData)
 	p = new InputPrivate(rtData);
 }
 
+unsigned long long Input::getDelta() {
+    return shState->runTime() - p->last_update;
+}
+
 void Input::recalcRepeat(unsigned int fps) {
     p->recalcRepeatTime(fps);
 }
@@ -1126,8 +1139,10 @@ void Input::update()
 	{
 		p->repeating = repeatCand;
 		p->repeatCount = 0;
+        p->repeatTime = shState->runTime();
 		p->getState(repeatCand).repeated = true;
 
+        p->last_update = p->repeatTime;
 		return;
 	}
 
@@ -1146,10 +1161,12 @@ void Input::update()
         bool repeated = p->repeatCount >= p->repeatStart && ((p->repeatCount+1) & p->repeatDelay) == 0;
 		p->getState(p->repeating).repeated |= repeated;
 
+        p->last_update = shState->runTime();
 		return;
 	}
-
+    
 	p->repeating = None;
+    p->last_update = shState->runTime();
 }
 
 std::vector<std::string> Input::getBindings(ButtonCode code) {
@@ -1203,6 +1220,13 @@ unsigned int Input::count(int button) {
     return p->repeatCount;
 }
 
+unsigned long long Input::repeatTime(int button) {
+    if (button != p->repeating)
+        return 0;
+    
+    return shState->runTime() - p->repeatTime;
+}
+
 bool Input::isPressedEx(int code, bool isVKey)
 {
     return p->getStateRaw(code, isVKey).pressed;
@@ -1237,6 +1261,19 @@ unsigned int Input::repeatcount(int code, bool isVKey) {
         return 0;
     
     return p->rawRepeatCount;
+}
+
+unsigned long long Input::repeatTimeEx(int code, bool isVKey) {
+    int c = code;
+    if (isVKey) {
+        try { c = vKeyToScancode[code]; }
+        catch (...) { return 0; }
+    }
+    
+    if (c != p->rawRepeating)
+        return 0;
+    
+    return shState->runTime() - p->rawRepeatTime;
 }
 
 int Input::dir4Value()

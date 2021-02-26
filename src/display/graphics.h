@@ -34,6 +34,8 @@ struct AtomicFlag;
 class Graphics
 {
 public:
+    unsigned long long getDelta();
+    
 	void update();
 	void freeze();
 	void transition(int duration = 8,

@@ -28,6 +28,12 @@
 #include <SDL_joystick.h>
 #include <string>
 
+RB_METHOD(inputDelta) {
+    RB_UNUSED_PARAM;
+    
+    return ULL2NUM(shState->input().getDelta());
+}
+
 RB_METHOD(inputUpdate) {
     RB_UNUSED_PARAM;
     
@@ -138,6 +144,19 @@ RB_METHOD(inputCount) {
     return UINT2NUM(shState->input().count(num));
 }
 
+RB_METHOD(inputRepeatTime) {
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 1);
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    int num = getButtonArg(&button);
+    
+    return ULL2NUM(shState->input().repeatTime(num));
+}
+
 RB_METHOD(inputPressEx) {
     RB_UNUSED_PARAM;
     
@@ -206,6 +225,20 @@ RB_METHOD(inputCountEx) {
     }
     
     return UINT2NUM(shState->input().repeatcount(NUM2INT(button), 1));
+}
+
+RB_METHOD(inputRepeatTimeEx) {
+    RB_UNUSED_PARAM;
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    if (SYMBOL_P(button)) {
+        int num = getScancodeArg(&button);
+        return ULL2NUM(shState->input().repeatTimeEx(num, 0));
+    }
+    
+    return ULL2NUM(shState->input().repeatTimeEx(NUM2INT(button), 1));
 }
 
 RB_METHOD(inputDir4) {
@@ -357,17 +390,20 @@ static elementsN(buttonCodes);
 void inputBindingInit() {
     VALUE module = rb_define_module("Input");
     
+    _rb_define_module_function(module, "delta", inputDelta);
     _rb_define_module_function(module, "update", inputUpdate);
     _rb_define_module_function(module, "press?", inputPress);
     _rb_define_module_function(module, "trigger?", inputTrigger);
     _rb_define_module_function(module, "repeat?", inputRepeat);
     _rb_define_module_function(module, "release?", inputRelease);
     _rb_define_module_function(module, "count", inputCount);
+    _rb_define_module_function(module, "time?", inputRepeatTime);
     _rb_define_module_function(module, "pressex?", inputPressEx);
     _rb_define_module_function(module, "triggerex?", inputTriggerEx);
     _rb_define_module_function(module, "repeatex?", inputRepeatEx);
     _rb_define_module_function(module, "releaseex?", inputReleaseEx);
     _rb_define_module_function(module, "repeatcount", inputCountEx);
+    _rb_define_module_function(module, "timeex?", inputRepeatTimeEx);
     _rb_define_module_function(module, "dir4", inputDir4);
     _rb_define_module_function(module, "dir8", inputDir8);
     

@@ -84,6 +84,9 @@ struct SharedState
 	sigc::signal<void> prepareDraw;
 
 	unsigned int genTimeStamp();
+    
+    // Returns time since SharedState was constructed in microseconds
+    unsigned long long runTime();
 
 	/* Returns global quad IBO, and ensures it has indices
 	 * for at least minSize quads */

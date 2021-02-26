@@ -25,6 +25,12 @@
 #include "binding-types.h"
 #include "exception.h"
 
+RB_METHOD(graphicsDelta) {
+    RB_UNUSED_PARAM;
+    
+    return ULL2NUM(shState->graphics().getDelta());
+}
+
 RB_METHOD(graphicsUpdate)
 {
     RB_UNUSED_PARAM;
@@ -255,6 +261,7 @@ void graphicsBindingInit()
 {
     VALUE module = rb_define_module("Graphics");
     
+    _rb_define_module_function(module, "delta", graphicsDelta);
     _rb_define_module_function(module, "update", graphicsUpdate);
     _rb_define_module_function(module, "freeze", graphicsFreeze);
     _rb_define_module_function(module, "transition", graphicsTransition);

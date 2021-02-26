@@ -421,6 +421,9 @@ struct GraphicsPrivate {
     int frameCount;
     int brightness;
     
+    unsigned long long last_update;
+    
+    
     FPSLimiter fpsLimiter;
     
     // Can be set from Ruby. Takes priority over config setting.
@@ -440,7 +443,7 @@ struct GraphicsPrivate {
     screen(scRes.x, scRes.y), threadData(rtData),
     glCtx(SDL_GL_GetCurrentContext()), frameRate(DEF_FRAMERATE),
     frameCount(0), brightness(255), fpsLimiter(frameRate),
-    useFrameSkip(rtData->config.frameSkip), frozen(false) {
+    useFrameSkip(rtData->config.frameSkip), frozen(false), last_update() {
         recalculateScreenSize(rtData);
         updateScreenResoRatio(rtData);
         
@@ -584,6 +587,10 @@ Graphics::Graphics(RGSSThreadData *data) {
 
 Graphics::~Graphics() { delete p; }
 
+unsigned long long Graphics::getDelta() {
+    return shState->runTime() - p->last_update;
+}
+
 void Graphics::update() {
     p->checkShutDownReset();
     p->checkSyncLock();
@@ -612,6 +619,7 @@ void Graphics::update() {
     
     p->checkResize();
     p->redrawScreen();
+    p->last_update = shState->runTime();
 }
 
 void Graphics::freeze() {
