@@ -220,27 +220,16 @@
     //
     // "pathCache": true,
 
-    // In some versions of Essentials, overworld code
-    // requests the player's sprite texture from disk
-    // at least once every frame. The damage this
-    // causes is less perceptible in RPG Maker XP,
-    // but MKXP's RGSSAD code is much slower and will
-    // cause games to lag. Hard.
+    // Whether to load graphics files from the game's .rgssad
+    // and any RTP locations, or places mounted with System.mount
     //
-    // I have no interest in fixing it, because:
+    // Disabling this can speed up old versions of Essentials
+    // *massively*, and even current versions by a large amount.
+    // Applies to any sort of RTP or archive, not just RGSS
+    // archives.
+    // (default: true)
     //
-    // (A) I don't see any point in such frail encryption, and
-    // (B) One can easily replicate load_data entirely in Ruby
-    // (https://gist.github.com/inori-z/0800dbdc213b9936e0e81f64c9a98c4c)
-    //
-    // If you insist on using archives, you can use a
-    // version of Essentials that isn't broken,
-    // otherwise come up with your own solution
-    // (there are many), or leave your Graphics files
-    // loose and disable this option.
-    // (default: false)
-    //
-    // "compressedGraphics": false,
+    // "encryptedGraphics": true,
 
 
     // Add 'rtp1', 'rtp2.zip' and 'game.rgssad' to the

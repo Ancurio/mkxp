@@ -116,7 +116,7 @@ void Config::read(int argc, char *argv[]) {
         {"SESourceCount", 6},
         {"customScript", ""},
         {"pathCache", true},
-        {"encryptedGraphics", false},
+        {"encryptedGraphics", true},
         {"useScriptNames", 1},
         {"preloadScript", json::array({})},
         {"RTP", json::array({})},
