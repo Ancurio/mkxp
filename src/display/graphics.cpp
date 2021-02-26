@@ -593,6 +593,9 @@ unsigned long long Graphics::getDelta() {
 
 void Graphics::update() {
     p->checkShutDownReset();
+    
+    p->last_update = shState->runTime();
+    
     p->checkSyncLock();
     
 #ifdef MKXPZ_STEAM
@@ -619,7 +622,6 @@ void Graphics::update() {
     
     p->checkResize();
     p->redrawScreen();
-    p->last_update = shState->runTime();
 }
 
 void Graphics::freeze() {
