@@ -20,11 +20,12 @@
 */
 
 #include "input.h"
+#include "config.h"
 #include "sharedstate.h"
 #include "eventthread.h"
-#include "keybindings.h"
-#include "exception.h"
-#include "util.h"
+#include "input/keybindings.h"
+#include "util/exception.h"
+#include "util/util.h"
 
 #include <SDL_scancode.h>
 #include <SDL_keyboard.h>
@@ -32,6 +33,7 @@
 #include <SDL_clipboard.h>
 
 #include <vector>
+#include <cmath>
 #include <unordered_map>
 #include <string.h>
 #include <assert.h>
@@ -678,6 +680,9 @@ struct InputPrivate
     int rawRepeating;
 	unsigned int repeatCount;
     unsigned int rawRepeatCount;
+    
+    unsigned int repeatStart;
+    unsigned int repeatDelay;
 
 	struct
 	{
@@ -690,6 +695,16 @@ struct InputPrivate
 		int active;
 	} dir8Data;
 
+    void recalcRepeatTime(unsigned int fps) {
+        double framems = 1.f / fps;
+        
+        // Approximate time in milliseconds
+        double start = (rgssVer >= 2) ? 0.375 : 0.400;
+        double delay = 0.100;
+
+        repeatStart = ceil(start / framems);
+        repeatDelay = ceil(delay / framems);
+    }
 
 	InputPrivate(const RGSSThreadData &rtData)
 	{
@@ -698,6 +713,10 @@ struct InputPrivate
 
 		/* Main thread should have these posted by now */
 		checkBindingChange(rtData);
+        
+        int fps = rtData.config.fixedFramerate;
+        if (!fps) fps = (rgssVer >= 2) ? 60 : 40;
+        recalcRepeatTime(fps);
 
 		states    = stateArray;
 		statesOld = stateArray + BUTTON_CODE_COUNT;
@@ -712,7 +731,7 @@ struct InputPrivate
 
 		repeating = Input::None;
 		repeatCount = 0;
-
+        
 		dir4Data.active = 0;
 		dir4Data.previous = Input::None;
 
@@ -789,15 +808,7 @@ struct InputPrivate
         b.triggered = (rawStates[scancode] && !rawStatesOld[scancode]);
         b.released = (!rawStates[scancode] && rawStatesOld[scancode]);
         
-        bool repeated = false;
-        if (scancode == rawRepeating)
-        {
-            if (rgssVer >= 2)
-            repeated = rawRepeatCount >= 23 && ((rawRepeatCount+1) % 6) == 0;
-            else
-            repeated = rawRepeatCount >= 15 && ((rawRepeatCount+1) % 4) == 0;
-        }
-        b.repeated = repeated;
+        b.repeated = rawRepeatCount >= repeatStart && ((rawRepeatCount+1) % repeatDelay) == 0;
         
         return b;
     }
@@ -1090,6 +1101,10 @@ Input::Input(const RGSSThreadData &rtData)
 	p = new InputPrivate(rtData);
 }
 
+void Input::recalcRepeat(unsigned int fps) {
+    p->recalcRepeatTime(fps);
+}
+
 void Input::update()
 {
 	shState->checkShutdown();
@@ -1121,12 +1136,14 @@ void Input::update()
 	{
 		p->repeatCount++;
 
+        /*
 		bool repeated;
 		if (rgssVer >= 2)
 			repeated = p->repeatCount >= 23 && ((p->repeatCount+1) % 6) == 0;
 		else
 			repeated = p->repeatCount >= 15 && ((p->repeatCount+1) % 4) == 0;
-
+         */
+        bool repeated = p->repeatCount >= p->repeatStart && ((p->repeatCount+1) & p->repeatDelay) == 0;
 		p->getState(p->repeating).repeated |= repeated;
 
 		return;

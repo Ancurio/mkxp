@@ -52,6 +52,8 @@ public:
 		/* Non-standard extensions */
 		MouseLeft = 38, MouseMiddle = 39, MouseRight = 40
 	};
+    
+    void recalcRepeat(unsigned int fps);
 
 	void update();
     
