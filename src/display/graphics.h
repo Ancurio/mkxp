@@ -67,6 +67,7 @@ public:
 	DECL_ATTR( ShowCursor, bool )
   DECL_ATTR( Scale,    double )
 	DECL_ATTR( Frameskip, bool )
+    double averageFrameRate();
 
 	/* <internal> */
 	Scene *getScreen() const;

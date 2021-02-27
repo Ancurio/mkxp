@@ -55,6 +55,7 @@
 #include <unistd.h>
 #include <time.h>
 
+
 #define DEF_SCREEN_W (rgssVer == 1 ? 640 : 544)
 #define DEF_SCREEN_H (rgssVer == 1 ? 480 : 416)
 
@@ -433,6 +434,8 @@ struct GraphicsPrivate {
     TEXFBO frozenScene;
     Quad screenQuad;
     
+    std::vector<unsigned long long> avgFPSData;
+    
     /* Global list of all live Disposables
      * (disposed on reset) */
     IntruList<Disposable> dispList;
@@ -444,6 +447,8 @@ struct GraphicsPrivate {
     glCtx(SDL_GL_GetCurrentContext()), frameRate(DEF_FRAMERATE),
     frameCount(0), brightness(255), fpsLimiter(frameRate),
     useFrameSkip(rtData->config.frameSkip), frozen(false), last_update() {
+        avgFPSData = std::vector<unsigned long long>();
+        
         recalculateScreenSize(rtData);
         updateScreenResoRatio(rtData);
         
@@ -549,6 +554,15 @@ struct GraphicsPrivate {
         GLMeta::blitEnd();
         
         swapGLBuffer();
+        
+        
+        if (avgFPSData.size() > 30)
+            avgFPSData.erase(avgFPSData.begin());
+        
+        unsigned long long time = shState->runTime();
+        avgFPSData.push_back(time - last_update);
+        
+        last_update = time;
     }
     
     void checkSyncLock() {
@@ -563,6 +577,14 @@ struct GraphicsPrivate {
         SDL_GL_MakeCurrent(threadData->window, glCtx);
         
         fpsLimiter.resetFrameAdjust();
+    }
+    
+    double averageFPS() {
+        double ret;
+        for (unsigned long long times : avgFPSData)
+            ret += times;
+        
+        return 1 / (ret / avgFPSData.size() / 1000 / 1000);
     }
 };
 
@@ -593,9 +615,10 @@ unsigned long long Graphics::getDelta() {
 
 void Graphics::update() {
     p->checkShutDownReset();
-    
-    p->last_update = shState->runTime();
-    
+    auto test = p->averageFPS();
+    if (test > 30) {
+        int a = 1;
+    }
     p->checkSyncLock();
     
 #ifdef MKXPZ_STEAM
@@ -756,6 +779,10 @@ void Graphics::setFrameRate(int value) {
     
     p->fpsLimiter.setDesiredFPS(p->frameRate);
     shState->input().recalcRepeat((unsigned int)p->frameRate);
+}
+
+double Graphics::averageFrameRate() {
+    return p->averageFPS();
 }
 
 void Graphics::wait(int duration) {

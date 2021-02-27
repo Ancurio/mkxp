@@ -40,6 +40,13 @@ RB_METHOD(graphicsUpdate)
     return Qnil;
 }
 
+RB_METHOD(graphicsAverageFrameRate)
+{
+    RB_UNUSED_PARAM;
+    
+    return rb_float_new(shState->graphics().averageFrameRate());
+}
+
 RB_METHOD(graphicsFreeze)
 {
     RB_UNUSED_PARAM;
@@ -272,6 +279,7 @@ void graphicsBindingInit()
     
     INIT_GRA_PROP_BIND( FrameRate,  "frame_rate"  );
     INIT_GRA_PROP_BIND( FrameCount, "frame_count" );
+    _rb_define_module_function(module, "average_frame_rate", graphicsAverageFrameRate);
 
     _rb_define_module_function(module, "width", graphicsWidth);
     _rb_define_module_function(module, "height", graphicsHeight);
