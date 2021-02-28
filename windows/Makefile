@@ -288,7 +288,7 @@ $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	$(CONFIGURE) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
-	cd $(DOWNLOADS)/ruby; autoconf
+	cd $(DOWNLOADS)/ruby; autoreconf -i
 
 $(DOWNLOADS)/ruby/*.c:
 	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby -b mkxp-z;
