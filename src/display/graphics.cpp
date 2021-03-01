@@ -436,6 +436,7 @@ struct GraphicsPrivate {
     Quad screenQuad;
     
     std::vector<unsigned long long> avgFPSData;
+    unsigned long long last_avg_update;
     SDL_mutex *avgFPSLock;
     
     /* Global list of all live Disposables
@@ -448,7 +449,8 @@ struct GraphicsPrivate {
     screen(scRes.x, scRes.y), threadData(rtData),
     glCtx(SDL_GL_GetCurrentContext()), frameRate(DEF_FRAMERATE),
     frameCount(0), brightness(255), fpsLimiter(frameRate),
-    useFrameSkip(rtData->config.frameSkip), frozen(false), last_update() {
+    useFrameSkip(rtData->config.frameSkip), frozen(false),
+    last_update(0), last_avg_update(0) {
         avgFPSData = std::vector<unsigned long long>();
         avgFPSLock = SDL_CreateMutex();
         
@@ -567,10 +569,9 @@ struct GraphicsPrivate {
             avgFPSData.erase(avgFPSData.begin());
         
         unsigned long long time = shState->runTime();
-        avgFPSData.push_back(time - last_update);
+        avgFPSData.push_back(time - last_avg_update);
+        last_avg_update = time;
         SDL_UnlockMutex(avgFPSLock);
-        
-        last_update = time;
     }
     
     void checkSyncLock() {
@@ -631,8 +632,10 @@ unsigned long long Graphics::getDelta() {
 }
 
 void Graphics::update() {
+    p->last_update = shState->runTime();
     p->checkShutDownReset();
     p->checkSyncLock();
+
     
 #ifdef MKXPZ_STEAM
     if (STEAMSHIM_alive())
