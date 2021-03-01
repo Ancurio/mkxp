@@ -482,9 +482,12 @@ struct KbBinding : public Binding
 
 	bool sourceRepeatable() const
 	{
+        return true;
+        /*
 		return (source >= SDL_SCANCODE_A     && source <= SDL_SCANCODE_0)    ||
 		       (source >= SDL_SCANCODE_RIGHT && source <= SDL_SCANCODE_UP)   ||
 		       (source >= SDL_SCANCODE_F1    && source <= SDL_SCANCODE_F12);
+         */
 	}
 
 	SDL_Scancode source;
