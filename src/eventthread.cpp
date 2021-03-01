@@ -32,6 +32,7 @@
 #include <al.h>
 #include <alc.h>
 #include <alext.h>
+#include <cmath>
 
 #include "sharedstate.h"
 #include "graphics.h"
@@ -136,11 +137,6 @@ void EventThread::process(RGSSThreadData &rtData)
 
 	fullscreen = rtData.config.fullscreen;
 	int toggleFSMod = rtData.config.anyAltToggleFS ? KMOD_ALT : KMOD_LALT;
-
-	fps.lastFrame = SDL_GetPerformanceCounter();
-	fps.displayCounter = 0;
-	fps.acc = 0;
-	fps.accDiv = 0;
 
 	if (rtData.config.printFPS)
 		fps.sendUpdates.set();
@@ -314,8 +310,8 @@ void EventThread::process(RGSSThreadData &rtData)
 			{
 				if (!displayingFPS)
 				{
-					fps.immInitFlag.set();
-					fps.sendUpdates.set();
+
+                    fps.sendUpdates.set();
 					displayingFPS = true;
 				}
 				else
@@ -751,36 +747,8 @@ void EventThread::notifyFrame()
 	if (!fps.sendUpdates)
 		return;
 
-	uint64_t current = SDL_GetPerformanceCounter();
-	uint64_t diff = current - fps.lastFrame;
-	fps.lastFrame = current;
-
-	if (fps.immInitFlag)
-	{
-		fps.immInitFlag.clear();
-		fps.immFiniFlag.set();
-
-		return;
-	}
-
-	static uint64_t freq = SDL_GetPerformanceFrequency();
-
-	double currFPS = (double) freq / diff;
-	fps.acc += currFPS;
-	++fps.accDiv;
-
-	fps.displayCounter += diff;
-	if (fps.displayCounter < freq && !fps.immFiniFlag)
-		return;
-
-	fps.displayCounter = 0;
-	fps.immFiniFlag.clear();
-
-	int32_t avgFPS = fps.acc / fps.accDiv;
-	fps.acc = fps.accDiv = 0;
-
 	SDL_Event event;
-	event.user.code = avgFPS;
+	event.user.code = round(shState->graphics().averageFrameRate());
 	event.user.type = usrIdStart + UPDATE_FPS;
 	SDL_PushEvent(&event);
 }

@@ -44,6 +44,7 @@
 #include <SDL_image.h>
 #include <SDL_timer.h>
 #include <SDL_video.h>
+#include <SDL_mutex.h>
 
 #ifdef MKXPZ_STEAM
 #include "steamshim_child.h"
@@ -435,6 +436,7 @@ struct GraphicsPrivate {
     Quad screenQuad;
     
     std::vector<unsigned long long> avgFPSData;
+    SDL_mutex *avgFPSLock;
     
     /* Global list of all live Disposables
      * (disposed on reset) */
@@ -448,6 +450,7 @@ struct GraphicsPrivate {
     frameCount(0), brightness(255), fpsLimiter(frameRate),
     useFrameSkip(rtData->config.frameSkip), frozen(false), last_update() {
         avgFPSData = std::vector<unsigned long long>();
+        avgFPSLock = SDL_CreateMutex();
         
         recalculateScreenSize(rtData);
         updateScreenResoRatio(rtData);
@@ -462,7 +465,11 @@ struct GraphicsPrivate {
         fpsLimiter.resetFrameAdjust();
     }
     
-    ~GraphicsPrivate() { TEXFBO::fini(frozenScene); }
+    ~GraphicsPrivate() {
+        TEXFBO::fini(frozenScene);
+        SDL_DestroyMutex(avgFPSLock);
+        
+    }
     
     void updateScreenResoRatio(RGSSThreadData *rtData) {
         Vec2 &ratio = rtData->sizeResoRatio;
@@ -555,12 +562,13 @@ struct GraphicsPrivate {
         
         swapGLBuffer();
         
-        
-        if (avgFPSData.size() > 30)
+        SDL_LockMutex(avgFPSLock);
+        if (avgFPSData.size() > 40)
             avgFPSData.erase(avgFPSData.begin());
         
         unsigned long long time = shState->runTime();
         avgFPSData.push_back(time - last_update);
+        SDL_UnlockMutex(avgFPSLock);
         
         last_update = time;
     }
@@ -581,10 +589,13 @@ struct GraphicsPrivate {
     
     double averageFPS() {
         double ret;
+        SDL_LockMutex(avgFPSLock);
         for (unsigned long long times : avgFPSData)
             ret += times;
         
-        return 1 / (ret / avgFPSData.size() / 1000 / 1000);
+        ret = 1 / (ret / avgFPSData.size() / 1000000);
+        SDL_UnlockMutex(avgFPSLock);
+        return ret;
     }
 };
 
@@ -615,10 +626,6 @@ unsigned long long Graphics::getDelta() {
 
 void Graphics::update() {
     p->checkShutDownReset();
-    auto test = p->averageFPS();
-    if (test > 30) {
-        int a = 1;
-    }
     p->checkSyncLock();
     
 #ifdef MKXPZ_STEAM

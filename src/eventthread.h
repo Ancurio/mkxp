@@ -131,13 +131,7 @@ private:
 
 	struct
 	{
-		uint64_t lastFrame;
-		uint64_t displayCounter;
 		AtomicFlag sendUpdates;
-		AtomicFlag immInitFlag;
-		AtomicFlag immFiniFlag;
-		double acc;
-		uint32_t accDiv;
 	} fps;
 };
 
