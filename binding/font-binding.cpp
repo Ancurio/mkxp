@@ -252,12 +252,12 @@ void fontBindingInit() {
   VALUE defNamesObj;
 
   if (defNames.size() == 1) {
-    defNamesObj = rb_str_new_cstr(defNames[0].c_str());
+    defNamesObj = rb_utf8_str_new_cstr(defNames[0].c_str());
   } else {
     defNamesObj = rb_ary_new2(defNames.size());
 
     for (size_t i = 0; i < defNames.size(); ++i)
-      rb_ary_push(defNamesObj, rb_str_new_cstr(defNames[i].c_str()));
+      rb_ary_push(defNamesObj, rb_utf8_str_new_cstr(defNames[i].c_str()));
   }
 
   rb_iv_set(klass, "default_name", defNamesObj);

@@ -281,7 +281,7 @@ RB_METHOD(inputJoystickInfo) {
     VALUE ret = rb_hash_new();
     
     rb_hash_aset(ret, M_SYMBOL("name"),
-                 rb_str_new_cstr(shState->input().getJoystickName()));
+                 rb_utf8_str_new_cstr(shState->input().getJoystickName()));
     
     VALUE power;
     
@@ -324,7 +324,7 @@ RB_METHOD(inputSetMode) {
 RB_METHOD(inputGets) {
     RB_UNUSED_PARAM;
     
-    VALUE ret = rb_str_new_cstr(shState->input().getText());
+    VALUE ret = rb_utf8_str_new_cstr(shState->input().getText());
     shState->input().clearText();
     
     return ret;
@@ -334,7 +334,7 @@ RB_METHOD(inputGetClipboard) {
     RB_UNUSED_PARAM;
     VALUE ret;
     try {
-        ret = rb_str_new_cstr(shState->input().getClipboardText());
+        ret = rb_utf8_str_new_cstr(shState->input().getClipboardText());
     } catch (const Exception &e) {
         raiseRbExc(e);
     }

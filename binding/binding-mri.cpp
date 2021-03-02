@@ -169,7 +169,7 @@ static void mriBindingInit() {
         _rb_define_module_function(rb_mKernel, "msgbox", mriPrint);
         _rb_define_module_function(rb_mKernel, "msgbox_p", mriP);
         
-        rb_define_global_const("RGSS_VERSION", rb_str_new_cstr("3.0.1"));
+        rb_define_global_const("RGSS_VERSION", rb_utf8_str_new_cstr("3.0.1"));
     } else {
         _rb_define_module_function(rb_mKernel, "print", mriPrint);
         _rb_define_module_function(rb_mKernel, "p", mriP);
@@ -210,7 +210,7 @@ static void mriBindingInit() {
     
     /* Load global constants */
     rb_gv_set("MKXP", Qtrue);
-    rb_const_set(mod, rb_intern("VERSION"), rb_str_new_cstr(MACRO_STRINGIFY(MKXPZ_VERSION)));
+    rb_const_set(mod, rb_intern("VERSION"), rb_utf8_str_new_cstr(MACRO_STRINGIFY(MKXPZ_VERSION)));
     
     VALUE debug = rb_bool_new(shState->config().editor.debug);
     if (rgssVer == 1)
@@ -276,7 +276,7 @@ RB_METHOD(mkxpDataDirectory) {
     const char *s = path.empty() ? "." : path.c_str();
     
     std::string s_nml = shState->fileSystem().normalize(s, 1, 1);
-    VALUE ret = rb_str_new_cstr(s_nml.c_str());
+    VALUE ret = rb_utf8_str_new_cstr(s_nml.c_str());
     
     return ret;
 }
@@ -299,7 +299,7 @@ RB_METHOD(mkxpDesensitize) {
     rb_scan_args(argc, argv, "1", &filename);
     SafeStringValue(filename);
     
-    return rb_str_new_cstr(
+    return rb_utf8_str_new_cstr(
                            shState->fileSystem().desensitize(RSTRING_PTR(filename)));
 }
 
@@ -333,25 +333,25 @@ RB_METHOD(mkxpMouseInWindow) {
 RB_METHOD(mkxpPlatform) {
     RB_UNUSED_PARAM;
     
-    return rb_str_new_cstr(SDL_GetPlatform());
+    return rb_utf8_str_new_cstr(SDL_GetPlatform());
 }
 
 RB_METHOD(mkxpUserLanguage) {
     RB_UNUSED_PARAM;
     
-    return rb_str_new_cstr(mkxp_sys::getSystemLanguage().c_str());
+    return rb_utf8_str_new_cstr(mkxp_sys::getSystemLanguage().c_str());
 }
 
 RB_METHOD(mkxpUserName) {
     RB_UNUSED_PARAM;
     
-    return rb_str_new_cstr(mkxp_sys::getUserName().c_str());
+    return rb_utf8_str_new_cstr(mkxp_sys::getUserName().c_str());
 }
 
 RB_METHOD(mkxpGameTitle) {
     RB_UNUSED_PARAM;
     
-    return rb_str_new_cstr(shState->config().game.title.c_str());
+    return rb_utf8_str_new_cstr(shState->config().game.title.c_str());
 }
 
 RB_METHOD(mkxpPowerState) {
@@ -516,7 +516,7 @@ RB_METHOD(_kernelCaller) {
         return trace;
     
     /* RMXP does this, not sure if specific or 1.8 related */
-    VALUE args[] = {rb_str_new_cstr(":in `<main>'"), rb_str_new_cstr("")};
+    VALUE args[] = {rb_utf8_str_new_cstr(":in `<main>'"), rb_utf8_str_new_cstr("")};
     rb_funcall2(rb_ary_entry(trace, len - 1), rb_intern("gsub!"), 2, args);
     
     return trace;
@@ -567,7 +567,7 @@ struct BacktraceData {
 bool evalScript(VALUE string, const char *filename)
 {
     int state;
-    evalString(string, rb_str_new_cstr(filename), &state);
+    evalString(string, rb_utf8_str_new_cstr(filename), &state);
     if (state) return false;
     return true;
 }
@@ -654,7 +654,7 @@ static void runRMXPScripts(BacktraceData &btData) {
             break;
         }
         
-        rb_ary_store(script, 3, rb_str_new_cstr(decodeBuffer.c_str()));
+        rb_ary_store(script, 3, rb_utf8_str_new_cstr(decodeBuffer.c_str()));
     }
     
     // Can be force-disabled similarly to framerate options
@@ -882,7 +882,7 @@ static void mriBindingExecute() {
     }
 #ifndef WORKDIR_CURRENT
     else {
-        rb_ary_push(lpaths, rb_str_new_cstr(mkxp_fs::getCurrentDirectory().c_str()));
+        rb_ary_push(lpaths, rb_utf8_str_new_cstr(mkxp_fs::getCurrentDirectory().c_str()));
     }
 #endif
     

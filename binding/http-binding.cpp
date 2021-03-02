@@ -15,8 +15,8 @@
 VALUE stringMap2hash(mkxp_net::StringMap &map) {
     VALUE ret = rb_hash_new();
     for (auto const &item : map) {
-        VALUE key = rb_str_new_cstr(item.first.c_str());
-        VALUE val = rb_str_new_cstr(item.second.c_str());
+        VALUE key = rb_utf8_str_new_cstr(item.first.c_str());
+        VALUE val = rb_utf8_str_new_cstr(item.second.c_str());
         rb_hash_aset(ret, key, val);
     }
     return ret;
@@ -56,7 +56,7 @@ RB_METHOD(httpGet) {
         auto res = req.get();
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_str_new_cstr(res.body().c_str()));
+        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_utf8_str_new_cstr(res.body().c_str()));
         rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);
@@ -85,7 +85,7 @@ RB_METHOD(httpPost) {
         auto res = req.post(postData);
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_str_new_cstr(res.body().c_str()));
+        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_utf8_str_new_cstr(res.body().c_str()));
         rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);
@@ -114,7 +114,7 @@ RB_METHOD(httpPostBody) {
         auto res = req.post(RSTRING_PTR(body), RSTRING_PTR(ctype));
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_str_new_cstr(res.body().c_str()));
+        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_utf8_str_new_cstr(res.body().c_str()));
         rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);
@@ -131,7 +131,7 @@ VALUE json2rb(json5pp::value const &v) {
         return rb_float_new(v.as_number());
     
     if (v.is_string())
-        return rb_str_new_cstr(v.as_string().c_str());
+        return rb_utf8_str_new_cstr(v.as_string().c_str());
     
     if (v.is_boolean())
         return rb_bool_new(v.as_boolean());
@@ -152,7 +152,7 @@ VALUE json2rb(json5pp::value const &v) {
         auto &o = v.as_object();
         VALUE ret = rb_hash_new();
         for (auto const &pair : o) {
-            rb_hash_aset(ret, rb_str_new_cstr(pair.first.c_str()), json2rb(pair.second));
+            rb_hash_aset(ret, rb_utf8_str_new_cstr(pair.first.c_str()), json2rb(pair.second));
         }
         return ret;
     }
@@ -233,7 +233,7 @@ RB_METHOD(httpJsonStringify) {
     rb_scan_args(argc, argv, "1", &obj);
     
     json5pp::value v = rb2json(obj);
-    return rb_str_new_cstr(v.stringify().c_str());
+    return rb_utf8_str_new_cstr(v.stringify().c_str());
 }
 
 void httpBindingInit() {
