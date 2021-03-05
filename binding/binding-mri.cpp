@@ -345,7 +345,14 @@ RB_METHOD(mkxpUserLanguage) {
 RB_METHOD(mkxpUserName) {
     RB_UNUSED_PARAM;
     
+// Using the Windows API isn't working with usernames that involve Unicode
+// characters for some dumb reason
+#ifdef __WINDOWS__
+    VALUE env = rb_const_get(rb_mKernel, rb_intern("ENV"));
+    return rb_funcall(env, rb_intern("[]"), 1, rb_str_new_cstr("USERNAME"));
+#else
     return rb_utf8_str_new_cstr(mkxp_sys::getUserName().c_str());
+#endif
 }
 
 RB_METHOD(mkxpGameTitle) {
