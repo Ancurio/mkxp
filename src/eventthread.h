@@ -77,10 +77,13 @@ public:
 	static TouchState touchState;
     
     std::string textInputBuffer;
+    void lockText(bool lock);
+    
 
 	static bool allocUserEvents();
 
 	EventThread();
+    ~EventThread();
 
 	void process(RGSSThreadData &rtData);
 	void cleanup();
@@ -128,6 +131,8 @@ private:
     SDL_Joystick *js;
     
 	AtomicFlag msgBoxDone;
+    
+    SDL_mutex *textInputLock;
 
 	struct
 	{

@@ -20,10 +20,12 @@
  */
 
 #include "binding-util.h"
-#include "exception.h"
-#include "input.h"
+#include "util/exception.h"
+#include "input/input.h"
 #include "sharedstate.h"
 #include "src/util/util.h"
+
+#include "eventthread.h"
 
 #include <SDL_joystick.h>
 #include <string>
@@ -323,10 +325,10 @@ RB_METHOD(inputSetMode) {
 
 RB_METHOD(inputGets) {
     RB_UNUSED_PARAM;
-    
+    shState->eThread().lockText(true);
     VALUE ret = rb_utf8_str_new_cstr(shState->input().getText());
     shState->input().clearText();
-    
+    shState->eThread().lockText(false);
     return ret;
 }
 
