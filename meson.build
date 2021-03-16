@@ -107,10 +107,6 @@ if get_option('cxx11_experimental') == true
     global_args += '-DMKXPZ_EXP_FS'
 endif
 
-if not get_option('console')
-    global_args += '-DMKXPZ_DISABLE_CONSOLE'
-endif
-
 if get_option('force32') == true
     global_args += '-m32'
 endif
@@ -159,7 +155,7 @@ if steamworks == true
         shim_args += '-DSTEAM_APPID=' + get_option('steam_appid')
     endif
 
-    if get_option('console') == true
+    if get_option('steamshim_debug') == true
         shim_args += '-DSTEAMSHIM_DEBUG'
     endif
 
@@ -169,7 +165,7 @@ if steamworks == true
         include_directories: (steamworks_path + '/public'),
         cpp_args: shim_args,
         link_args: la.split(),
-        gui_app: (get_option('console') == false),
+        gui_app: (get_option('steamshim_debug') == false),
         install: (host_system != 'windows'))
 endif
 
@@ -186,6 +182,6 @@ executable(exe_name,
     cpp_args: global_args,
     objc_args: global_args,
     objcpp_args: global_args,
-    gui_app: (get_option('console') == false),
+    gui_app: true,
     install: (host_system != 'windows')
 )

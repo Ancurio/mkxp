@@ -2,8 +2,6 @@ option('mri_version', type: 'string', value: '3.0', description: 'Version of MRI
 option('mri_includes', type: 'string', value: '', description: 'Ruby manual include path')
 option('mri_libpath', type: 'string', value: '', description: 'Ruby manual lib path')
 option('mri_library', type: 'string', value: '', description: 'Ruby manual link name')
-
-option('console', type: 'boolean', value: false, description: 'Whether to debug information in the console')
 option('macos_min_version', type: 'string', value: '', description: 'Minimum macOS system version to support (does not affect dependencies)')
 option('force32', type: 'boolean', value: false, description: 'Force compiler to build a 32-bit executable')
 
@@ -22,5 +20,6 @@ option('appimagekit_path', type: 'string', value: '', description: 'Path to AppI
 option('appimage', type: 'boolean', value: false, description: 'Whether to install to an AppImage or just copy everything')
 option('steamworks_path', type: 'string', value: '', description: 'Path to Steamshim')
 option('steam_appid', type: 'string', value: '', description: 'Steam AppID. Set this to use SteamAPI_RestartAppIfNecessary')
+option('steamshim_debug', type: 'boolean', value: false, description: 'Whether to show Steamshim debug messages in the console')
 
 option('gfx_backend', type: 'combo', value: 'gl', choices: ['gl', 'gles'], description: 'Graphics rendering API to use.')
