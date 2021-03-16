@@ -47,6 +47,10 @@ extern "C" {
 #endif
 }
 
+#ifdef __WINDOWS__
+#include <fcntl.h>
+#endif
+
 #include <assert.h>
 #include <string>
 #include <zlib.h>
@@ -70,6 +74,7 @@ extern const char module_rpg3[];
 static void mriBindingExecute();
 static void mriBindingTerminate();
 static void mriBindingReset();
+static void configureWindowsStreams();
 
 ScriptBinding scriptBindingImpl = {mriBindingExecute, mriBindingTerminate,
     mriBindingReset};
@@ -219,6 +224,10 @@ static void mriBindingInit() {
         rb_gv_set("TEST", debug);
     
     rb_gv_set("BTEST", rb_bool_new(shState->config().editor.battleTest));
+
+    // Set $stdout and its ilk accordingly on Windows
+    if (shState->config().editor.debug)
+        configureWindowsStreams();
     
     // Load zlib, if it's present. Requires --with-static-linked-ext or zlib.so.
     // It's okay if it fails, normally it wouldn't be defined anyway.
@@ -746,6 +755,41 @@ static void runRMXPScripts(BacktraceData &btData) {
 }
 #endif
 
+// Attempts to set $stdout and $stdin accordingly on Windows. Only
+// called when debug mode is on, since that's when the console
+// should be active.
+static void configureWindowsStreams() {
+#ifdef __WINDOWS__
+    #define HANDLE_VALID(handle) handle && handle != INVALID_HANDLE_VALUE
+
+    const HANDLE outputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    // Configure $stdout
+    if (HANDLE_VALID(outputHandle)) {
+        const int stdoutFD = _open_osfhandle((intptr_t)outputHandle, _O_TEXT);
+
+        VALUE winStdout = rb_funcall(rb_cIO, rb_intern("new"), 2,
+            INT2NUM(stdoutFD), rb_str_new_cstr("w"));
+
+        rb_gv_set("stdout", winStdout);
+    }
+
+    const HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
+
+    // Configure $stdin
+    if (HANDLE_VALID(inputHandle)) {
+        const int stdinFD = _open_osfhandle((intptr_t)inputHandle, _O_TEXT);
+
+        VALUE winStdin = rb_funcall(rb_cIO, rb_intern("new"), 2,
+            INT2NUM(stdinFD), rb_str_new_cstr("r"));
+
+        rb_gv_set("stdin", winStdin);
+    }
+
+    #undef HANDLE_VALID
+#endif // #ifdef __WINDOWS__
+}
+
 static void showExc(VALUE exc, const BacktraceData &btData) {
     VALUE bt = rb_funcall2(exc, rb_intern("backtrace"), 0, NULL);
     VALUE msg = rb_funcall2(exc, rb_intern("message"), 0, NULL);
@@ -821,9 +865,15 @@ static void mriBindingExecute() {
     /* Normally only a ruby executable would do a sysinit,
      * but not doing it will lead to crashes due to closed
      * stdio streams on some platforms (eg. Windows) */
+#ifdef __WINDOWS__
+    if (!conf.editor.debug) {
+#endif
     int argc = 0;
     char **argv = 0;
     ruby_sysinit(&argc, &argv);
+#ifdef __WINDOWS__
+    }
+#endif
     
     RUBY_INIT_STACK;
     ruby_init();
