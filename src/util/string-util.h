@@ -4,11 +4,11 @@
 #include <string>
 
 // Copies the given text with additional newlines every X characters.
-// Saves the output into the given std::string object.
+// Saves the output into a new std::string object.
 // Newlines are only inserted on spaces (' ') or tabs ('\t').
-void
-copyWithNewlines(const char *input, std::string &output, const unsigned limit)
+static std::string copyWithNewlines(const char *input, const unsigned limit)
 {
+    std::string output;
 	unsigned noNewlineCount = 0;
 	
 	while (*input != '\0')
@@ -30,12 +30,12 @@ copyWithNewlines(const char *input, std::string &output, const unsigned limit)
 
 		input++;
 	}
+    return output;
 }
 
-void
-copyWithNewlines(const std::string& input, std::string& output, const unsigned limit)
+static std::string copyWithNewlines(const std::string& input, const unsigned limit)
 {
-	copyWithNewlines(input.c_str(), output, limit);
+	return copyWithNewlines(input.c_str(), limit);
 }
 
 #endif // STRING_UTIL_H

@@ -45,7 +45,10 @@
 
 #include "al-util.h"
 #include "debugwriter.h"
+
+#ifndef __MACOSX__
 #include "util/string-util.h"
+#endif
 
 #include <string.h>
 
@@ -484,18 +487,23 @@ void EventThread::process(RGSSThreadData &rtData)
                         break;
                         
                     case REQUEST_MESSAGEBOX :
-					{
-						std::string message;
-						// Try to format the message with additional newlines
-						copyWithNewlines((const char*) event.user.data1,
-							message, 70);
+                    {
+#ifndef __MACOSX__
+                        // Try to format the message with additional newlines
+                        std::string message = copyWithNewlines((const char*) event.user.data1,
+                                                               70);
                         SDL_ShowSimpleMessageBox(event.user.code,
                                                  rtData.config.windowTitle.c_str(),
                                                  message.c_str(), win);
+#else
+                        SDL_ShowSimpleMessageBox(event.user.code,
+                                                 rtData.config.windowTitle.c_str(),
+                                                 (const char*)event.user.data1, win);
+#endif
                         free(event.user.data1);
                         msgBoxDone.set();
                         break;
-					}
+                    }
                     case REQUEST_SETCURSORVISIBLE :
                         showCursor = event.user.code;
                         updateCursorState(cursorInWindow, gameScreen);
