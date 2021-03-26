@@ -41,14 +41,14 @@ mkxp_net::StringMap hash2StringMap(VALUE hash) {
 RB_METHOD(httpGet) {
     RB_UNUSED_PARAM;
     
-    VALUE path, rheaders;
-    rb_scan_args(argc, argv, "11", &path, &rheaders);
+    VALUE path, rheaders, redirect;
+    rb_scan_args(argc, argv, "12", &path, &rheaders, &redirect);
     SafeStringValue(path);
     
     VALUE ret;
 
     try {
-        mkxp_net::HTTPRequest req(RSTRING_PTR(path));
+        mkxp_net::HTTPRequest req(RSTRING_PTR(path), RTEST(redirect));
         if (rheaders != Qnil) {
             auto headers = hash2StringMap(rheaders);
             req.headers().insert(headers.begin(), headers.end());
@@ -68,14 +68,14 @@ RB_METHOD(httpGet) {
 RB_METHOD(httpPost) {
     RB_UNUSED_PARAM;
     
-    VALUE path, postDataHash, rheaders;
-    rb_scan_args(argc, argv, "21", &path, &postDataHash, &rheaders);
+    VALUE path, postDataHash, rheaders, redirect;
+    rb_scan_args(argc, argv, "22", &path, &postDataHash, &rheaders, &redirect);
     SafeStringValue(path);
     
     VALUE ret;
 
     try {
-        mkxp_net::HTTPRequest req(RSTRING_PTR(path));
+        mkxp_net::HTTPRequest req(RSTRING_PTR(path), RTEST(redirect));
         if (rheaders != Qnil) {
             auto headers = hash2StringMap(rheaders);
             req.headers().insert(headers.begin(), headers.end());

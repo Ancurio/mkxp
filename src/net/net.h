@@ -33,7 +33,7 @@ private:
 
 class HTTPRequest {
 public:
-    HTTPRequest(const char *dest);
+    HTTPRequest(const char *dest, bool follow_redirects = true);
     ~HTTPRequest();
     
     StringMap &headers();
@@ -45,6 +45,7 @@ public:
     HTTPResponse post(const char *body, const char *content_type);
 private:
     StringMap _headers;
+    bool follow_location;
 };
 }
 

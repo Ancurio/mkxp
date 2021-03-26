@@ -100,8 +100,11 @@ int HTTPResponse::status() {
     return _status;
 }
 
-HTTPRequest::HTTPRequest(const char *dest) :
-    destination(std::string(dest)), _headers(StringMap()) {}
+HTTPRequest::HTTPRequest(const char *dest, bool follow_redirects) :
+    destination(std::string(dest)),
+    _headers(StringMap()),
+    follow_location(follow_redirects)
+{}
 
 HTTPRequest::~HTTPRequest() {}
 
@@ -119,6 +122,7 @@ HTTPResponse HTTPRequest::get() {
 #ifdef MKXPZ_SSL
     client.enable_server_certificate_verification(false);
 #endif
+    client.set_follow_location(follow_location);
     
     for (auto const h : _headers)
         head.emplace(h.first, h.second);
@@ -151,6 +155,7 @@ HTTPResponse HTTPRequest::post(StringMap &postData) {
 #ifdef MKXPZ_SSL
     client.enable_server_certificate_verification(false);
 #endif
+    client.set_follow_location(follow_location);
     
     for (auto const h : _headers)
         head.emplace(h.first, h.second);
@@ -181,7 +186,10 @@ HTTPResponse HTTPRequest::post(const char *body, const char *content_type) {
     httplib::Headers head;
     
     // Seems to need to be disabled for now, at least on macOS
+#ifdef MKXPZ_SSL
     client.enable_server_certificate_verification(false);
+#endif
+    client.set_follow_location(true);
     
     for (auto const h : _headers)
         head.emplace(h.first, h.second);
