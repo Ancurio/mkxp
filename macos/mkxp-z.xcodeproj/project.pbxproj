@@ -2947,7 +2947,7 @@
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.1;
+				CURRENT_PROJECT_VERSION = 2.1.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -2985,7 +2985,7 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 				);
-				MARKETING_VERSION = 2.1;
+				MARKETING_VERSION = 2.1.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3032,7 +3032,7 @@
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.1;
+				CURRENT_PROJECT_VERSION = 2.1.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -3068,7 +3068,7 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 				);
-				MARKETING_VERSION = 2.1;
+				MARKETING_VERSION = 2.1.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
