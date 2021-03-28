@@ -23,6 +23,7 @@ win64 = (sizeof['void*'] != sizeof['long'])
 
 global_args += '-DMKXPZ_BUILD_MESON'
 global_args += '-DMKXPZ_VERSION="@0@"'.format(meson.project_version())
+global_args += '-DHAVE_NANOSLEEP'
 # ====================
 # Ext libs
 # ====================
