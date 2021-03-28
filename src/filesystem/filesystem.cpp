@@ -647,13 +647,11 @@ void FileSystem::openRead(OpenHandler &handler, const char *filename) {
     throw Exception(Exception::NoFileError, "%s", filename);
 }
 
-// FIXME: This is slower than RGSS
 void FileSystem::openReadRaw(SDL_RWops &ops, const char *filename,
                              bool freeOnClose) {
 
   PHYSFS_File *handle = PHYSFS_openRead(normalize(filename, 0, 0).c_str());
 
-  // assert(handle);
   if (!handle)
     throw Exception(Exception::NoFileError, "%s", filename);
 

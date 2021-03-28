@@ -209,7 +209,9 @@ static void mriBindingInit() {
     
     /* Load global constants */
     rb_gv_set("MKXP", Qtrue);
-    rb_const_set(mod, rb_intern("VERSION"), rb_utf8_str_new_cstr(MACRO_STRINGIFY(MKXPZ_VERSION)));
+    VALUE vers = rb_utf8_str_new_cstr(MACRO_STRINGIFY(MKXPZ_VERSION));
+    rb_str_freeze(vers);
+    rb_const_set(mod, rb_intern("VERSION"), vers);
     
     VALUE debug = rb_bool_new(shState->config().editor.debug);
     if (rgssVer == 1)
