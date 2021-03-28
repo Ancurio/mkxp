@@ -38,6 +38,25 @@ mkxp_net::StringMap hash2StringMap(VALUE hash) {
     return ret;
 }
 
+VALUE getResponseBody(mkxp_net::HTTPResponse &res) {
+#if RAPI_FULL >= 190
+    auto it = res.headers().find("Content-Type");
+    if (it == res.headers().end())
+        return rb_str_new(res.body().c_str(), res.body().length());
+    
+    std::string &ctype = it->second;
+
+    if (!ctype.compare("text/plain")        || !ctype.compare("application/json") ||
+        !ctype.compare("application/xml")   || !ctype.compare("text/html")        ||
+        !ctype.compare("text/css")          || !ctype.compare("text/javascript")  ||
+        !ctype.compare("application/x-sh")  || !ctype.compare("image/svg+xml")    ||
+        !ctype.compare("application/x-httpd-php"))
+        return rb_utf8_str_new(res.body().c_str(), res.body().length());
+    
+#endif
+    return rb_str_new(res.body().c_str(), res.body().length());
+}
+
 RB_METHOD(httpGet) {
     RB_UNUSED_PARAM;
     
@@ -56,7 +75,7 @@ RB_METHOD(httpGet) {
         auto res = req.get();
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_utf8_str_new(res.body().c_str(), res.body().length()));
+        rb_hash_aset(ret, ID2SYM(rb_intern("body")), getResponseBody(res));
         rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);

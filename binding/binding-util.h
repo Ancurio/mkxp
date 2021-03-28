@@ -170,6 +170,7 @@ return Data_Wrap_Struct(klass, 0, free, 0);                                \
 
 #if RAPI_MINOR < 9
 #define rb_utf8_str_new_cstr rb_str_new2
+#define rb_utf8_str_new rb_str_new
 #endif
 
 #define PRIsVALUE "s"
