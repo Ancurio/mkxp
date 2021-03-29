@@ -104,7 +104,7 @@ RB_METHOD(httpPost) {
         auto res = req.post(postData);
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_utf8_str_new(res.body().c_str(), res.body().length()));
+        rb_hash_aset(ret, ID2SYM(rb_intern("body")), getResponseBody(res));
         rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);
@@ -133,7 +133,7 @@ RB_METHOD(httpPostBody) {
         auto res = req.post(RSTRING_PTR(body), RSTRING_PTR(ctype));
         ret = rb_hash_new();
         rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), rb_utf8_str_new(res.body().c_str(), res.body().length()));
+        rb_hash_aset(ret, ID2SYM(rb_intern("body")), getResponseBody(res));
         rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
     } catch (Exception &e) {
         raiseRbExc(e);
