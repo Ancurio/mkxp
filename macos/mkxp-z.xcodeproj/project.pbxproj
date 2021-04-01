@@ -749,6 +749,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3B012198261544A0001E574A /* string-util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "string-util.h"; sourceTree = "<group>"; };
 		3B10EC832568E78400372D13 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../assets/icon.png; sourceTree = "<group>"; };
 		3B10EC842568E78400372D13 /* liberation.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = liberation.ttf; path = ../assets/liberation.ttf; sourceTree = "<group>"; };
 		3B10EC852568E78400372D13 /* wqymicrohei.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = wqymicrohei.ttf; path = ../assets/wqymicrohei.ttf; sourceTree = "<group>"; };
@@ -1321,6 +1322,7 @@
 				3B10ED3D2568E95D00372D13 /* serializable.h */,
 				3B10ED3E2568E95D00372D13 /* disposable.h */,
 				3B10ED3F2568E95D00372D13 /* serial-util.h */,
+				3B012198261544A0001E574A /* string-util.h */,
 				3B10ED402568E95D00372D13 /* util.h */,
 				3B10ED412568E95D00372D13 /* exception.h */,
 				3B10ED422568E95D00372D13 /* debugwriter.h */,

@@ -2,7 +2,6 @@ option('mri_version', type: 'string', value: '3.0', description: 'Version of MRI
 option('mri_includes', type: 'string', value: '', description: 'Ruby manual include path')
 option('mri_libpath', type: 'string', value: '', description: 'Ruby manual lib path')
 option('mri_library', type: 'string', value: '', description: 'Ruby manual link name')
-option('macos_min_version', type: 'string', value: '', description: 'Minimum macOS system version to support (does not affect dependencies)')
 option('force32', type: 'boolean', value: false, description: 'Force compiler to build a 32-bit executable')
 
 option('cxx11_experimental', type: 'boolean', value: false, description: 'Toggles between using ghc/filesystem or C++11 <experimental/filesystem>')

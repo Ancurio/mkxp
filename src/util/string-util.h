@@ -1,6 +1,8 @@
 #ifndef STRING_UTIL_H
 #define STRING_UTIL_H
 
+#ifndef __MACOSX__
+
 #include <string>
 
 // Copies the given text with additional newlines every X characters.
@@ -33,9 +35,13 @@ static std::string copyWithNewlines(const char *input, const unsigned limit)
     return output;
 }
 
+/*
 static std::string copyWithNewlines(const std::string& input, const unsigned limit)
 {
 	return copyWithNewlines(input.c_str(), limit);
 }
+ */
+
+#endif
 
 #endif // STRING_UTIL_H
