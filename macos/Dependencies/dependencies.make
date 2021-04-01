@@ -166,7 +166,8 @@ $(LIBDIR)/libSDL2.a: $(DOWNLOADS)/sdl2/Makefile
 
 $(DOWNLOADS)/sdl2/Makefile: $(DOWNLOADS)/sdl2/configure
 	cd $(DOWNLOADS)/sdl2; \
-	$(CONFIGURE) --enable-static=true --enable-shared=false $(SDL_FLAGS)
+	$(CONFIGURE) --enable-static=true --enable-shared=false \
+	--enable-video-x11=false $(SDL_FLAGS)
 
 $(DOWNLOADS)/sdl2/configure: $(DOWNLOADS)/sdl2/autogen.sh
 	cd $(DOWNLOADS)/sdl2; ./autogen.sh
@@ -188,7 +189,8 @@ $(DOWNLOADS)/sdl2_image/Makefile: $(DOWNLOADS)/sdl2_image/configure
 	--disable-imageio \
 	--enable-png=yes --enable-png-shared=no \
 	--enable-jpg=yes --enable-jpg-shared=no \
-	--enable-webp=no $(SDL2_IMAGE_FLAGS)
+	--enable-webp=no --enable-tif=no \
+	$(SDL2_IMAGE_FLAGS)
 
 $(DOWNLOADS)/sdl2_image/configure: $(DOWNLOADS)/sdl2_image/autogen.sh
 	cd $(DOWNLOADS)/sdl2_image; ./autogen.sh
