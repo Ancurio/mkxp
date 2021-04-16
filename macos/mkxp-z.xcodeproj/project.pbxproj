@@ -955,6 +955,7 @@
 		3B522DDB259C1E53003301C4 /* http-binding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "http-binding.cpp"; sourceTree = "<group>"; };
 		3B522DE3259C2017003301C4 /* LUrlParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LUrlParser.h; sourceTree = "<group>"; };
 		3B522DE4259C2039003301C4 /* LUrlParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LUrlParser.cpp; sourceTree = "<group>"; };
+		3B58E90F26293A9D001F9031 /* shim.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shim.entitlements; sourceTree = "<group>"; };
 		3B5A84052569B56F00BAF2E5 /* config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
 		3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = filesystemImplApple.mm; sourceTree = "<group>"; };
 		3B5A84132569C28B00BAF2E5 /* filesystemImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filesystemImpl.cpp; sourceTree = "<group>"; };
@@ -1002,7 +1003,7 @@
 		3BC65D882584F3780063AFF1 /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-macosx-universal/lib/libpixman-1.a"; sourceTree = "<group>"; };
 		3BC65D892584F3910063AFF1 /* libSDL2main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2main.a; path = "Dependencies/build-macosx-universal/lib/libSDL2main.a"; sourceTree = "<group>"; };
 		3BC65E152584F3AD0063AFF1 /* Z.universal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Z.universal.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3BD2B3AF25651885003DAD8A /* entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
+		3BD2B3AF25651885003DAD8A /* mkxp.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = mkxp.entitlements; sourceTree = "<group>"; };
 		3BD2B46525651BF3003DAD8A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		3BD2B46625651BFC003DAD8A /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		3BD2B46725651C00003DAD8A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -1664,7 +1665,8 @@
 				3B1C240B25A1A43B0075EF5D /* steam */,
 				3B1C231D25A15F8F0075EF5D /* mkxp */,
 				3BD2B7282565B35D003DAD8A /* mkxp.json */,
-				3BD2B3AF25651885003DAD8A /* entitlements.plist */,
+				3BD2B3AF25651885003DAD8A /* mkxp.entitlements */,
+				3B58E90F26293A9D001F9031 /* shim.entitlements */,
 				3BDB25C52565184600C4A63D /* Info.plist */,
 			);
 			name = Configuration;
@@ -2378,10 +2380,12 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = shim.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2447,10 +2451,12 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = shim.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2512,7 +2518,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.1;
@@ -2591,7 +2596,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.1;
@@ -2804,7 +2808,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.1;
@@ -2877,7 +2880,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.1;
@@ -2946,7 +2948,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.1.1;
@@ -3031,7 +3032,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.1.1;
@@ -3113,7 +3113,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.1;
@@ -3185,7 +3184,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/entitlements.plist";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.1;

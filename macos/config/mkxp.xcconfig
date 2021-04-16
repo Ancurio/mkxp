@@ -13,6 +13,7 @@
 MRI_VERSION = 3.0.0
 DEPENDENCY_SEARCH_PATH = $(PROJECT_DIR)/Dependencies/build-$(SDK_ROOT)-$(BUILD_ARCH)
 EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = $(inherited) Dependencies ../build DerivedData
+CODE_SIGN_ENTITLEMENTS = $(PROJECT_DIR)/mkxp.entitlements
 MKXPZ_EXECUTABLE_NAME = $(PRODUCT_NAME)
 
 // Configuration settings file format documentation can be found at:
