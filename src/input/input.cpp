@@ -818,7 +818,7 @@ struct InputPrivate
         b.triggered = (rawStates[scancode] && !rawStatesOld[scancode]);
         b.released = (!rawStates[scancode] && rawStatesOld[scancode]);
         
-        b.repeated = rawRepeatCount >= repeatStart && ((rawRepeatCount+1) % repeatDelay) == 0;
+        b.repeated = (rawRepeating == scancode) && (rawRepeatCount >= repeatStart && ((rawRepeatCount+1) % repeatDelay) == 0);
         
         return b;
     }
