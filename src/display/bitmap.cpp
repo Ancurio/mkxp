@@ -931,8 +931,37 @@ void Bitmap::saveToFile(const char *filename)
     
     getRaw(surf->pixels, surf->w * surf->h * 4);
     
+    // Try and determine the intended image format from the filename extension
+    const char *period = strrchr(filename, '.');
+    int filetype = 0;
+    if (period) {
+        period++;
+        std::string ext;
+        for (int i = 0; i < (int)strlen(period); i++) {
+            ext += tolower(period[i]);
+        }
+        
+        if (!ext.compare("png")) {
+            filetype = 1;
+        }
+        else if (!ext.compare("jpg") || !ext.compare("jpeg")) {
+            filetype = 2;
+        }
+    }
+    
     std::string fn_normalized = shState->fileSystem().normalize(filename, 1, 1);
-    int rc = SDL_SaveBMP(surf, fn_normalized.c_str());
+    int rc;
+    switch (filetype) {
+        case 2:
+            rc = IMG_SaveJPG(surf, fn_normalized.c_str(), 90);
+            break;
+        case 1:
+            rc = IMG_SavePNG(surf, fn_normalized.c_str());
+            break;
+        case 0: default:
+            rc = SDL_SaveBMP(surf, fn_normalized.c_str());
+            break;
+    }
     
     SDL_FreeSurface(surf);
     if (rc) throw Exception(Exception::SDLError, "%s", SDL_GetError());
