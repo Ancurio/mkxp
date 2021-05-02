@@ -900,7 +900,6 @@
 		3B10EDE02568E96A00372D13 /* sceneelement-binding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sceneelement-binding.h"; sourceTree = "<group>"; };
 		3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "tilemapvx-binding.cpp"; sourceTree = "<group>"; };
 		3B10EDE22568E96A00372D13 /* module_rpg2.rb.xxd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = module_rpg2.rb.xxd; sourceTree = "<group>"; };
-		3B10EDE32568E96A00372D13 /* meson.build */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = meson.build; sourceTree = "<group>"; };
 		3B10EDE42568E96A00372D13 /* bitmap-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "bitmap-binding.cpp"; sourceTree = "<group>"; };
 		3B10EDE52568E96A00372D13 /* table-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "table-binding.cpp"; sourceTree = "<group>"; };
 		3B10EDE62568E96A00372D13 /* etc-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "etc-binding.cpp"; sourceTree = "<group>"; };
@@ -1500,7 +1499,6 @@
 				3B10EDE02568E96A00372D13 /* sceneelement-binding.h */,
 				3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */,
 				3B10EDE22568E96A00372D13 /* module_rpg2.rb.xxd */,
-				3B10EDE32568E96A00372D13 /* meson.build */,
 				3B10EDE42568E96A00372D13 /* bitmap-binding.cpp */,
 				3B10EDE52568E96A00372D13 /* table-binding.cpp */,
 				3B10EDE62568E96A00372D13 /* etc-binding.cpp */,

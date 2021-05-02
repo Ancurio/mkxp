@@ -60,7 +60,7 @@ extern "C" {
 	{ \
 		if (p->megaSurface) \
 			throw Exception(Exception::MKXPError, \
-                            "Operation not supported for mega surfaces / animated bitmaps"); \
+                            "Operation not supported for mega surfaces"); \
 	}
 
 #define GUARD_ANIMATED \
@@ -168,8 +168,7 @@ struct BitmapPrivate
         inline int currentFrameI() {
             if (!playing) return lastFrame;
             int i = lastFrame + ((shState->runTime() - startTime) / ((1 / fps) * 1000000));
-            int r =  (loop) ? fmod(i, frames.size()) : (i > frames.size() - 1) ? frames.size() - 1 : i;
-            return r;
+            return (loop) ? fmod(i, frames.size()) : (i > frames.size() - 1) ? frames.size() - 1 : i;
         }
         
         TEXFBO &currentFrame() {
@@ -1774,7 +1773,7 @@ void Bitmap::setAnimationFPS(float FPS)
     
     bool restart = p->animation.playing;
     p->animation.stop();
-    p->animation.fps = FPS;
+    p->animation.fps = (FPS < 0) ? 0 : FPS;
     if (restart) p->animation.play();
 }
 

@@ -521,12 +521,17 @@ RB_METHOD(bitmapCurrentFrame){
 RB_METHOD(bitmapSetFPS){
     RB_UNUSED_PARAM;
     
-    float fps;
-    rb_get_args(argc, argv, "f", &fps RB_ARG_END);
+    VALUE fps;
+    rb_scan_args(argc, argv, "1", &fps);
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    b->setAnimationFPS(fps);
+    if (RB_TYPE_P(fps, RUBY_T_FLOAT)) {
+        b->setAnimationFPS(RFLOAT_VALUE(fps));
+    }
+    else {
+        b->setAnimationFPS(NUM2INT(fps));
+    }
     
     return RUBY_Qnil;
 }
@@ -549,7 +554,7 @@ RB_METHOD(bitmapSetLooping){
     Bitmap *b = getPrivateData<Bitmap>(self);
     b->setLooping(loop);
     
-    return Qnil;
+    return RUBY_Qnil;
 }
 
 RB_METHOD(bitmapGetLooping){
@@ -636,7 +641,7 @@ void bitmapBindingInit() {
     _rb_define_method(klass, "frame_rate", bitmapGetFPS);
     
     // For some reason Ruby says "screw this function in particular"
-    //_rb_define_method(klass, "frame_rate=", bitmapSetFPS);
+    _rb_define_method(klass, "frame_rate=", bitmapSetFPS);
     _rb_define_method(klass, "looping", bitmapGetLooping);
     _rb_define_method(klass, "looping=", bitmapSetLooping); 
 
