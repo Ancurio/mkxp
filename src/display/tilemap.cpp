@@ -521,7 +521,8 @@ struct TilemapPrivate
 	/* Assembles atlas from tileset and autotile bitmaps */
 	void buildAtlas()
 	{
-		updateAutotileInfo();
+        updateAutotileInfo();
+        tileset->ensureNonAnimated();
 
 		TileAtlas::BlitVec blits = TileAtlas::calcBlits(atlas.efTilesetH, atlas.size);
 
@@ -542,6 +543,7 @@ struct TilemapPrivate
 		{
 			const uint8_t atInd = atlas.usableATs[i];
 			Bitmap *autotile = autotiles[atInd];
+            autotile->ensureNonAnimated();
 
 			int atW = autotile->width();
 			int atH = autotile->height();

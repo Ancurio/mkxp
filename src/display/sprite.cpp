@@ -575,7 +575,7 @@ void Sprite::draw()
 
 	p->bitmap->bindTex(*base);
 
-	if (p->wave.active)
+    if (p->wave.active)
 		p->wave.qArray.draw();
 	else
 		p->quad.draw();

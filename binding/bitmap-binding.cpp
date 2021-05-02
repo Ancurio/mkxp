@@ -436,6 +436,131 @@ RB_METHOD(bitmapGetMega){
   return rb_bool_new(b->isMega());
 }
 
+RB_METHOD(bitmapGetAnimated){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    return rb_bool_new(b->isAnimated());
+}
+
+RB_METHOD(bitmapGetPlaying){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    return rb_bool_new(b->isPlaying());
+}
+
+RB_METHOD(bitmapSetPlaying){
+    RB_UNUSED_PARAM;
+    
+    bool play;
+    
+    rb_get_args(argc, argv, "b", &play RB_ARG_END);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    (play) ? b->play() : b->stop();
+    
+    return RUBY_Qnil;
+}
+
+RB_METHOD(bitmapGotoStop){
+    RB_UNUSED_PARAM;
+    
+    int frame;
+    
+    rb_get_args(argc, argv, "i", &frame RB_ARG_END);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->gotoAndStop(frame);
+    
+    return RUBY_Qnil;
+}
+
+RB_METHOD(bitmapGotoPlay){
+    RB_UNUSED_PARAM;
+    
+    int frame;
+    
+    rb_get_args(argc, argv, "i", &frame RB_ARG_END);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->gotoAndPlay(frame);
+    
+    return RUBY_Qnil;
+}
+
+RB_METHOD(bitmapFrames){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    return INT2NUM(b->numFrames());
+}
+
+RB_METHOD(bitmapCurrentFrame){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    return INT2NUM(b->currentFrameI());
+}
+
+RB_METHOD(bitmapSetFPS){
+    RB_UNUSED_PARAM;
+    
+    float fps;
+    rb_get_args(argc, argv, "f", &fps RB_ARG_END);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->setAnimationFPS(fps);
+    
+    return RUBY_Qnil;
+}
+
+RB_METHOD(bitmapGetFPS){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    return rb_float_new(b->getAnimationFPS());
+}
+
+RB_METHOD(bitmapSetLooping){
+    RB_UNUSED_PARAM;
+    
+    bool loop;
+    rb_get_args(argc, argv, "b", &loop RB_ARG_END);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    b->setLooping(loop);
+    
+    return Qnil;
+}
+
+RB_METHOD(bitmapGetLooping){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    return rb_bool_new(b->getLooping());
+}
+
 RB_METHOD(bitmapGetMaxSize){
   RB_UNUSED_PARAM;
 
@@ -500,6 +625,20 @@ void bitmapBindingInit() {
 
   _rb_define_method(klass, "mega?", bitmapGetMega);
   rb_define_singleton_method(klass, "max_size", RUBY_METHOD_FUNC(bitmapGetMaxSize), -1);
+    
+    _rb_define_method(klass, "animated?", bitmapGetAnimated);
+    _rb_define_method(klass, "playing", bitmapGetPlaying);
+    _rb_define_method(klass, "playing=", bitmapSetPlaying);
+    _rb_define_method(klass, "goto_and_stop", bitmapGotoStop);
+    _rb_define_method(klass, "goto_and_play", bitmapGotoPlay);
+    _rb_define_method(klass, "frame_count", bitmapFrames);
+    _rb_define_method(klass, "current_frame", bitmapCurrentFrame);
+    _rb_define_method(klass, "frame_rate", bitmapGetFPS);
+    
+    // For some reason Ruby says "screw this function in particular"
+    //_rb_define_method(klass, "frame_rate=", bitmapSetFPS);
+    _rb_define_method(klass, "looping", bitmapGetLooping);
+    _rb_define_method(klass, "looping=", bitmapSetLooping); 
 
   INIT_PROP_BIND(Bitmap, Font, "font");
 }

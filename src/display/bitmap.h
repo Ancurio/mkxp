@@ -48,6 +48,7 @@ public:
 	int width()  const;
 	int height() const;
 	bool isMega() const;
+    bool isAnimated() const;
 
 	IntRect rect() const;
 
@@ -116,6 +117,22 @@ public:
 	TEXFBO &getGLTypes();
 	SDL_Surface *megaSurface() const;
 	void ensureNonMega() const;
+    void ensureNonAnimated() const;
+    
+    // GIF functions
+    void stop();
+    void play();
+    bool isPlaying();
+    void gotoAndStop(int frame);
+    void gotoAndPlay(int frame);
+    int numFrames();
+    int currentFrameI() const;
+    
+    void setAnimationFPS(float FPS);
+    float getAnimationFPS();
+    
+    void setLooping(bool loop);
+    bool getLooping();
 
 	/* Binds the backing texture and sets the correct
 	 * texture size uniform in shader */

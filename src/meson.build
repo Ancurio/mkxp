@@ -68,7 +68,7 @@ global_args += '-DMKXPZ_ALCDEVICE=' + alcdev_struct
 global_include_dirs += include_directories('.',
     'audio',
     'crypto',
-    'display', 'display/gl',
+    'display', 'display/gl', 'display/libnsgif', 'display/libnsgif/utils',
     'etc',
     'filesystem', 'filesystem/ghc',
     'input',
@@ -129,6 +129,9 @@ main_source = files(
     'display/viewport.cpp',
     'display/window.cpp',
     'display/windowvx.cpp',
+
+    'display/libnsgif/libnsgif.c',
+    'display/libnsgif/lzw.c',
 
     'display/gl/gl-debug.cpp',
     'display/gl/gl-fun.cpp',
