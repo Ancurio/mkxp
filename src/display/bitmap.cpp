@@ -476,11 +476,12 @@ Bitmap::Bitmap(const char *filename)
             }
             
             TEX::bind(texfbo.tex);
-            TEX::uploadImage(p->gl.width, p->gl.height, handler.gif->frame_image, GL_RGBA);
+            TEX::uploadImage(handler.gif->width, handler.gif->height, handler.gif->frame_image, GL_RGBA);
             gif_finalise(handler.gif);
             delete handler.gif;
             delete handler.gif_data;
             
+            p->gl = texfbo;
             p->addTaintedArea(rect());
             return;
         }
