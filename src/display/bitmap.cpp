@@ -1226,14 +1226,18 @@ bool Bitmap::getRaw(void *output, int output_size)
 void Bitmap::replaceRaw(void *pixel_data, int size)
 {
     guardDisposed();
-    int w = width();
-    int h = height();
-    if (size != w*h*4) return;
     
     GUARD_MEGA;
-    GUARD_ANIMATED;
+    GUARD_PLAYING;
+    
+    int w = width();
+    int h = height();
+    int requiredsize = w*h*4;
+    
+    if (size != w*h*4)
+        throw Exception(Exception::MKXPError, "Replacement bitmap data is not large enough (given %i bytes, need %i)", size, requiredsize);
 
-    TEX::bind(p->gl.tex);
+    TEX::bind(getGLTypes().tex);
     TEX::uploadImage(w, h, pixel_data, GL_RGBA);
 
     taintArea(IntRect(0,0,w,h));
@@ -1914,6 +1918,7 @@ void Bitmap::removeFrame(int position) {
         
         FBO::bind(p->gl.fbo);
         gl.ReadPixels(0,0,p->gl.width, p->gl.height, GL_RGBA, GL_UNSIGNED_BYTE, p->surface->pixels);
+        taintArea(rect());
     }
 }
 
