@@ -669,7 +669,6 @@ Bitmap::Bitmap(const Bitmap &other, int frame)
         p->animation.lastFrame = 0;
         p->animation.loop = other.getLooping();
         
-        char *tmp = new char[p->animation.width * p->animation.height * 4];
         for (TEXFBO &sourceframe : other.getFrames()) {
             TEXFBO newframe;
             try {
@@ -677,7 +676,6 @@ Bitmap::Bitmap(const Bitmap &other, int frame)
             } catch(const Exception &e) {
                 for (TEXFBO &f : p->animation.frames)
                     shState->texPool().release(f);
-                delete[] tmp;
                 throw e;
             }
             
@@ -688,7 +686,6 @@ Bitmap::Bitmap(const Bitmap &other, int frame)
             
             p->animation.frames.push_back(newframe);
         }
-        delete[] tmp;
     }
     
     p->addTaintedArea(rect());
