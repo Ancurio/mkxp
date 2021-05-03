@@ -42,7 +42,7 @@ public:
 	Bitmap(int width, int height);
     Bitmap(void *pixeldata, int width, int height);
 	/* Clone constructor */
-	Bitmap(const Bitmap &other);
+	Bitmap(const Bitmap &other, bool copyAllFrames = true);
 	~Bitmap();
 
 	int width()  const;

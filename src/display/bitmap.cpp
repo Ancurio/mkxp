@@ -645,13 +645,14 @@ Bitmap::Bitmap(void *pixeldata, int width, int height)
     p->addTaintedArea(rect());
 }
 
-Bitmap::Bitmap(const Bitmap &other)
+Bitmap::Bitmap(const Bitmap &other, bool copyAllFrames)
 {
 	other.ensureNonMega();
 
 	p = new BitmapPrivate(this);
     
-    if (!other.isAnimated()) {
+    if (!other.isAnimated() || !copyAllFrames) {
+        other.ensureNotPlaying();
         p->gl = shState->texPool().request(other.width(), other.height());
         blt(0, 0, other, rect());
     }
