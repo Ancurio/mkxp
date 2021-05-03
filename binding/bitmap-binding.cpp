@@ -465,7 +465,7 @@ RB_METHOD(bitmapSetPlaying){
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    (play) ? b->play() : b->stop();
+    GUARD_EXC((play) ? b->play() : b->stop(););
     
     return RUBY_Qnil;
 }
@@ -476,18 +476,18 @@ RB_METHOD(bitmapPlay){
     rb_check_argc(argc, 0);
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    b->play();
+    GUARD_EXC(b->play(););
     
     return RUBY_Qnil;
 }
 
-RB_METHOD(bitmapPause){
+RB_METHOD(bitmapStop){
     RB_UNUSED_PARAM;
     
     rb_check_argc(argc, 0);
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    b->stop();
+    GUARD_EXC(b->stop(););
     
     return RUBY_Qnil;
 }
@@ -501,7 +501,7 @@ RB_METHOD(bitmapGotoStop){
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    b->gotoAndStop(frame);
+    GUARD_EXC(b->gotoAndStop(frame););
     
     return RUBY_Qnil;
 }
@@ -515,7 +515,7 @@ RB_METHOD(bitmapGotoPlay){
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    b->gotoAndPlay(frame);
+    GUARD_EXC(b->gotoAndPlay(frame););
     
     return RUBY_Qnil;
 }
@@ -558,7 +558,11 @@ RB_METHOD(bitmapAddFrame){
         if (pos < 0) pos = 0;
     }
     
-    return INT2NUM(b->addFrame(*src, pos));
+    int ret;
+    
+    GUARD_EXC(ret = b->addFrame(*src, pos););
+    
+    return INT2NUM(ret);
 }
 
 RB_METHOD(bitmapRemoveFrame){
@@ -576,7 +580,7 @@ RB_METHOD(bitmapRemoveFrame){
         if (pos < 0) pos = 0;
     }
     
-    b->removeFrame(pos);
+    GUARD_EXC(b->removeFrame(pos););
     
     return RUBY_Qnil;
 }
@@ -588,7 +592,7 @@ RB_METHOD(bitmapNextFrame){
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    b->nextFrame();
+    GUARD_EXC(b->nextFrame(););
     
     return INT2NUM(b->currentFrameI());
 }
@@ -600,7 +604,7 @@ RB_METHOD(bitmapPreviousFrame){
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    b->previousFrame();
+    GUARD_EXC(b->previousFrame(););
     
     return INT2NUM(b->currentFrameI());
 }
@@ -613,12 +617,14 @@ RB_METHOD(bitmapSetFPS){
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
+    GUARD_EXC(
     if (RB_TYPE_P(fps, RUBY_T_FLOAT)) {
         b->setAnimationFPS(RFLOAT_VALUE(fps));
     }
     else {
         b->setAnimationFPS(NUM2INT(fps));
     }
+    );
     
     return RUBY_Qnil;
 }
@@ -629,7 +635,12 @@ RB_METHOD(bitmapGetFPS){
     rb_check_argc(argc, 0);
     
     Bitmap *b = getPrivateData<Bitmap>(self);
-    return rb_float_new(b->getAnimationFPS());
+    
+    float ret;
+    
+    GUARD_EXC(ret = b->getAnimationFPS(););
+    
+    return rb_float_new(ret);
 }
 
 RB_METHOD(bitmapSetLooping){
@@ -639,9 +650,9 @@ RB_METHOD(bitmapSetLooping){
     rb_get_args(argc, argv, "b", &loop RB_ARG_END);
     
     Bitmap *b = getPrivateData<Bitmap>(self);
-    b->setLooping(loop);
+    GUARD_EXC(b->setLooping(loop););
     
-    return RUBY_Qnil;
+    return rb_bool_new(loop);
 }
 
 RB_METHOD(bitmapGetLooping){
@@ -650,7 +661,10 @@ RB_METHOD(bitmapGetLooping){
     rb_check_argc(argc, 0);
     
     Bitmap *b = getPrivateData<Bitmap>(self);
-    return rb_bool_new(b->getLooping());
+    
+    bool ret;
+    GUARD_EXC(b->getLooping(););
+    return rb_bool_new(ret);
 }
 
 RB_METHOD(bitmapGetMaxSize){
@@ -722,7 +736,7 @@ void bitmapBindingInit() {
     _rb_define_method(klass, "playing", bitmapGetPlaying);
     _rb_define_method(klass, "playing=", bitmapSetPlaying);
     _rb_define_method(klass, "play", bitmapPlay);
-    _rb_define_method(klass, "pause", bitmapPause);
+    _rb_define_method(klass, "stop", bitmapStop);
     _rb_define_method(klass, "goto_and_stop", bitmapGotoStop);
     _rb_define_method(klass, "goto_and_play", bitmapGotoPlay);
     _rb_define_method(klass, "frame_count", bitmapFrames);

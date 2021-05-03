@@ -1864,7 +1864,7 @@ int Bitmap::numFrames() const
 
 int Bitmap::currentFrameI() const
 {
-    if (!p->animation.enabled) return 1;
+    if (!p->animation.enabled) return 0;
     return p->animation.currentFrameI();
 }
 
