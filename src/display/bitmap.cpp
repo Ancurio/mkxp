@@ -1929,6 +1929,8 @@ int Bitmap::addFrame(Bitmap &source, int position)
 }
 
 void Bitmap::removeFrame(int position) {
+    GUARD_UNANIMATED;
+    
     int pos = (position < 0) ? p->animation.frames.size() - 1 : clamp(position, 0, (int)(p->animation.frames.size() - 1));
     TEXFBO frame = p->animation.frames[pos];
     shState->texPool().release(p->animation.frames[pos]);
