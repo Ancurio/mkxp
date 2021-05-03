@@ -1883,6 +1883,38 @@ void Bitmap::removeFrame(int position) {
     }
 }
 
+void Bitmap::nextFrame()
+{
+    GUARD_UNANIMATED;
+    
+    stop();
+    if (p->animation.lastFrame >= p->animation.frames.size() - 1)  {
+        if (!p->animation.loop) return;
+        p->animation.lastFrame = 0;
+        return;
+    }
+    
+    p->animation.lastFrame++;
+}
+
+void Bitmap::previousFrame()
+{
+    GUARD_UNANIMATED;
+    
+    stop();
+    
+    if (p->animation.lastFrame <= 0) {
+        if (!p->animation.loop) {
+            p->animation.lastFrame = 0;
+            return;
+        }
+        p->animation.lastFrame = p->animation.frames.size() - 1;
+        return;
+    }
+    
+    p->animation.lastFrame--;
+}
+
 void Bitmap::setAnimationFPS(float FPS)
 {
     GUARD_MEGA;

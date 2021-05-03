@@ -130,8 +130,10 @@ public:
     int currentFrameI() const;
     
     int addFrame(Bitmap &source, int position = -1);
-    
     void removeFrame(int position = -1);
+    
+    void nextFrame();
+    void previousFrame();
     
     void setAnimationFPS(float FPS);
     float getAnimationFPS();

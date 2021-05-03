@@ -581,6 +581,30 @@ RB_METHOD(bitmapRemoveFrame){
     return RUBY_Qnil;
 }
 
+RB_METHOD(bitmapNextFrame){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->nextFrame();
+    
+    return INT2NUM(b->currentFrameI());
+}
+
+RB_METHOD(bitmapPreviousFrame){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->previousFrame();
+    
+    return INT2NUM(b->currentFrameI());
+}
+
 RB_METHOD(bitmapSetFPS){
     RB_UNUSED_PARAM;
     
@@ -705,6 +729,8 @@ void bitmapBindingInit() {
     _rb_define_method(klass, "current_frame", bitmapCurrentFrame);
     _rb_define_method(klass, "add_frame", bitmapAddFrame);
     _rb_define_method(klass, "remove_frame", bitmapRemoveFrame);
+    _rb_define_method(klass, "next_frame", bitmapNextFrame);
+    _rb_define_method(klass, "previous_frame", bitmapPreviousFrame);
     _rb_define_method(klass, "frame_rate", bitmapGetFPS);
     _rb_define_method(klass, "frame_rate=", bitmapSetFPS);
     _rb_define_method(klass, "looping", bitmapGetLooping);
