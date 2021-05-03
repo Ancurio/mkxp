@@ -171,10 +171,14 @@ struct BitmapPrivate
         float fps;
         int lastFrame;
         unsigned long long startTime;
+        
+        inline int currentFrameIRaw() {
+            return lastFrame + ((shState->runTime() - startTime) / ((1 / fps) * 1000000));
+        }
 
         inline int currentFrameI() {
             if (!playing || fps <= 0) return lastFrame;
-            int i = lastFrame + ((shState->runTime() - startTime) / ((1 / fps) * 1000000));
+            int i = currentFrameIRaw();
             return (loop) ? fmod(i, frames.size()) : (i > frames.size() - 1) ? frames.size() - 1 : i;
         }
         
@@ -1757,7 +1761,13 @@ void Bitmap::play()
 
 bool Bitmap::isPlaying()
 {
-    return (p->animation.playing);
+    if (!p->animation.playing)
+        return false;
+    
+    if (p->animation.loop)
+        return true;
+    
+    return p->animation.currentFrameIRaw() < p->animation.frames.size();
 }
 
 void Bitmap::gotoAndStop(int frame)
