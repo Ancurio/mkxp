@@ -663,7 +663,7 @@ RB_METHOD(bitmapGetLooping){
     Bitmap *b = getPrivateData<Bitmap>(self);
     
     bool ret;
-    GUARD_EXC(b->getLooping(););
+    GUARD_EXC(ret = b->getLooping(););
     return rb_bool_new(ret);
 }
 
@@ -671,12 +671,14 @@ RB_METHOD(bitmapGetLooping){
 RB_METHOD(bitmapSnapToBitmap) {
     RB_UNUSED_PARAM;
     
-    rb_check_argc(argc, 0);
+    VALUE position;
+    rb_scan_args(argc, argv, "01", &position);
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
     Bitmap *newbitmap = 0;
-    GUARD_EXC(newbitmap = new Bitmap(*b, false););
+    int pos = (position == RUBY_Qnil) ? -1 : NUM2INT(position);
+    GUARD_EXC(newbitmap = new Bitmap(*b, pos););
     
     VALUE ret = rb_obj_alloc(rb_class_of(self));
     

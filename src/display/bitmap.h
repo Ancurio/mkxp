@@ -42,7 +42,9 @@ public:
 	Bitmap(int width, int height);
     Bitmap(void *pixeldata, int width, int height);
 	/* Clone constructor */
-	Bitmap(const Bitmap &other, bool copyAllFrames = true);
+    
+    // frame is -2 for "any and all", -1 for "current", anything else for a specific frame
+	Bitmap(const Bitmap &other, int frame = -2);
 	~Bitmap();
 
 	int width()  const;
@@ -114,11 +116,12 @@ public:
 	void setInitFont(Font *value);
 
 	/* <internal> */
-	TEXFBO &getGLTypes();
+	TEXFBO &getGLTypes() const;
     SDL_Surface *surface() const;
 	SDL_Surface *megaSurface() const;
 	void ensureNonMega() const;
     void ensureNonAnimated() const;
+    void ensureAnimated() const;
     
     // Animation functions
     void stop();

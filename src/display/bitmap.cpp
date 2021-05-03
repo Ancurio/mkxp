@@ -637,16 +637,29 @@ Bitmap::Bitmap(void *pixeldata, int width, int height)
     p->addTaintedArea(rect());
 }
 
-Bitmap::Bitmap(const Bitmap &other, bool copyAllFrames)
+// frame is -2 for "any and all", -1 for "current", anything else for a specific frame
+Bitmap::Bitmap(const Bitmap &other, int frame)
 {
 	other.ensureNonMega();
+    if (frame > -2) other.ensureAnimated();
 
 	p = new BitmapPrivate(this);
     
-    if (!other.isAnimated() || !copyAllFrames) {
-        other.ensureNotPlaying();
+    if (!other.isAnimated() || frame >= -1) {
+        if (frame == -1) other.ensureNotPlaying();
         p->gl = shState->texPool().request(other.width(), other.height());
-        blt(0, 0, other, rect());
+        
+        GLMeta::blitBegin(p->gl);
+        // Blit just the current frame of the other animated bitmap
+        if (frame == -1) {
+            GLMeta::blitSource(other.getGLTypes());
+        }
+        else {
+            auto &frames = other.getFrames();
+            GLMeta::blitSource(frames[clamp(frame, 0, (int)frames.size() - 1)]);
+        }
+        GLMeta::blitRectangle(rect(), rect(), true);
+        GLMeta::blitEnd();
     }
     else {
         p->animation.enabled = true;
@@ -657,10 +670,10 @@ Bitmap::Bitmap(const Bitmap &other, bool copyAllFrames)
         p->animation.loop = other.getLooping();
         
         char *tmp = new char[p->animation.width * p->animation.height * 4];
-        for (const TEXFBO &frame : other.getFrames()) {
-            TEXFBO copyframe;
+        for (TEXFBO &sourceframe : other.getFrames()) {
+            TEXFBO newframe;
             try {
-                copyframe = shState->texPool().request(p->animation.width, p->animation.height);
+                newframe = shState->texPool().request(p->animation.width, p->animation.height);
             } catch(const Exception &e) {
                 for (TEXFBO &f : p->animation.frames)
                     shState->texPool().release(f);
@@ -668,17 +681,17 @@ Bitmap::Bitmap(const Bitmap &other, bool copyAllFrames)
                 throw e;
             }
             
-            // FIXME: gotta see if I can copy textures directly from one TEXFBO to the other
-            // I'm an idiot so I don't already know
-            FBO::bind(frame.fbo);
-            gl.ReadPixels(0,0,p->animation.width,p->animation.height,GL_RGBA,GL_UNSIGNED_BYTE,tmp);
-            TEX::bind(copyframe.tex);
-            TEX::uploadImage(p->animation.width, p->animation.height, tmp, GL_RGBA);
+            GLMeta::blitBegin(newframe);
+            GLMeta::blitSource(sourceframe);
+            GLMeta::blitRectangle(rect(), rect(), true);
+            GLMeta::blitEnd();
             
-            p->animation.frames.push_back(copyframe);
+            p->animation.frames.push_back(newframe);
         }
         delete[] tmp;
     }
+    
+    p->addTaintedArea(rect());
 }
 
 Bitmap::~Bitmap()
@@ -859,7 +872,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	{
 		/* Fast blit */
 		GLMeta::blitBegin(getGLTypes());
-		GLMeta::blitSource(getGLTypes());
+		GLMeta::blitSource(source.getGLTypes());
 		GLMeta::blitRectangle(sourceRect, destRect);
 		GLMeta::blitEnd();
 	}
@@ -1770,7 +1783,7 @@ void Bitmap::setInitFont(Font *value)
 	p->font = value;
 }
 
-TEXFBO &Bitmap::getGLTypes()
+TEXFBO &Bitmap::getGLTypes() const
 {
 	return (p->animation.enabled) ? p->animation.currentFrame() : p->gl;
 }
@@ -1799,6 +1812,14 @@ void Bitmap::ensureNonAnimated() const
         return;
     
     GUARD_ANIMATED;
+}
+
+void Bitmap::ensureAnimated() const
+{
+    if (isDisposed())
+        return;
+    
+    GUARD_UNANIMATED;
 }
 
 void Bitmap::ensureNotPlaying() const
@@ -1899,14 +1920,10 @@ int Bitmap::addFrame(Bitmap &source, int position)
         p->surface = 0;
     }
     else {
-        // FIXME: gotta see if I can copy textures directly from one TEXFBO to the other
-        // I'm an idiot so I don't already know
-        auto pixels = new char[source.width() * source.height() * 4];
-        FBO::bind(source.getGLTypes().fbo);
-        gl.ReadPixels(0,0,source.width(),source.height(),GL_RGBA,GL_UNSIGNED_BYTE,pixels);
-        TEX::bind(newframe.tex);
-        TEX::uploadImage(newframe.width, newframe.height, pixels, GL_RGBA);
-        delete[] pixels;
+        GLMeta::blitBegin(newframe);
+        GLMeta::blitSource(source.getGLTypes());
+        GLMeta::blitRectangle(rect(), rect(), true);
+        GLMeta::blitEnd();
     }
     
     int ret;
