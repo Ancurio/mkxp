@@ -431,40 +431,6 @@ struct BitmapOpenHandler : FileSystem::OpenHandler
                 delete gif_data;
                 return false;
             }
-            /*
-            // Read every frame
-            for (int i = 0; i < gif->frame_count; i++) {
-                int status = gif_decode_frame(&gif, i);
-                if (status != GIF_OK && status != GIF_WORKING) {
-                    error = "Failed to read GIF frame " + std::to_string(i + 1) + " (Error " + std::to_string(status) + ")";
-                    for (SDL_Surface *s : surfaces)
-                        SDL_FreeSurface(s);
-                    break;
-                }
-                
-                if (image_width == -1 || !image_height == -1) {
-                    image_width = gif.width;
-                    image_height = gif.height;
-                }
-                else if (gif.width != image_width || gif.height != image_height) {
-                    error = "Failed to read GIF (Varying frame size)";
-                    for (SDL_Surface *s : surfaces)
-                        SDL_FreeSurface(s);
-                    break;
-                }
-                
-                if (animation_rate == -1 && gif.frames[gif.decoded_frame].frame_delay) {
-                    animation_rate = 1 / ((float)gif.frames[gif.decoded_frame].frame_delay / 100);
-                }
-
-                SDL_Surface *s = SDL_CreateRGBSurfaceWithFormat(0, gif.width, gif.height, 32, SDL_PIXELFORMAT_ABGR8888);
-                memcpy(s->pixels, gif.frame_image, gif.width * gif.height * 4);
-                surfaces.push_back(s);
-            }
-            
-            gif_finalise(&gif);
-            delete data;
-             */
         } else {
             surface = IMG_LoadTyped_RW(&ops, 1, ext);
         }
@@ -488,15 +454,40 @@ Bitmap::Bitmap(const char *filename)
     
     if (handler.gif) {
         p = new BitmapPrivate(this);
+        
+        if (handler.gif->width >= glState.caps.maxTexSize || handler.gif->height > glState.caps.maxTexSize)
+        {
+            throw new Exception(Exception::MKXPError, "Animation too large (%ix%i, max %ix%i)",
+                                handler.gif->width, handler.gif->height, glState.caps.maxTexSize, glState.caps.maxTexSize);
+        }
+        
+        if (handler.gif->frame_count == 1) {
+            TEXFBO texfbo;
+            try {
+                texfbo = shState->texPool().request(handler.gif->width, handler.gif->height);
+            }
+            catch (const Exception &e)
+            {
+                gif_finalise(handler.gif);
+                delete handler.gif;
+                delete handler.gif_data;
+                
+                throw e;
+            }
+            
+            TEX::bind(texfbo.tex);
+            TEX::uploadImage(p->gl.width, p->gl.height, handler.gif->frame_image, GL_RGBA);
+            gif_finalise(handler.gif);
+            delete handler.gif;
+            delete handler.gif_data;
+            
+            p->addTaintedArea(rect());
+            return;
+        }
+        
         p->animation.enabled = true;
         p->animation.width = handler.gif->width;
         p->animation.height = handler.gif->height;
-        
-        if (p->animation.width >= glState.caps.maxTexSize || p->animation.height > glState.caps.maxTexSize)
-        {
-            throw new Exception(Exception::MKXPError, "Animation too large (%ix%i, max %ix%i)",
-                                p->animation.width, p->animation.height, glState.caps.maxTexSize, glState.caps.maxTexSize);
-        }
         
         // Guess framerate based on the first frame's delay
         p->animation.fps = 1 / ((float)handler.gif->frames[handler.gif->decoded_frame].frame_delay / 100);
@@ -1948,8 +1939,6 @@ void Bitmap::removeFrame(int position) {
         
         p->gl = p->animation.frames[0];
         p->animation.frames.erase(p->animation.frames.begin());
-        
-        p->allocSurface();
         
         FBO::bind(p->gl.fbo);
         gl.ReadPixels(0,0,p->gl.width, p->gl.height, GL_RGBA, GL_UNSIGNED_BYTE, p->surface->pixels);
