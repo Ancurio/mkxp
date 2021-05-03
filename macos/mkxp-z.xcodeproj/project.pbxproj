@@ -813,7 +813,6 @@
 		3B10ED512568E95D00372D13 /* sharedstate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sharedstate.cpp; sourceTree = "<group>"; };
 		3B10ED532568E95D00372D13 /* filesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesystem.h; sourceTree = "<group>"; };
 		3B10ED542568E95D00372D13 /* filesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = filesystem.cpp; sourceTree = "<group>"; };
-		3B10ED552568E95D00372D13 /* meson.build */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = meson.build; sourceTree = "<group>"; };
 		3B10ED562568E95D00372D13 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3B10ED5A2568E95D00372D13 /* fake-api.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "fake-api.cpp"; sourceTree = "<group>"; };
 		3B10ED5C2568E95D00372D13 /* fake-api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fake-api.h"; sourceTree = "<group>"; };
@@ -1307,7 +1306,6 @@
 				3B5A84052569B56F00BAF2E5 /* config.cpp */,
 				3B10ED502568E95D00372D13 /* settingsmenu.h */,
 				3B10ED512568E95D00372D13 /* sharedstate.cpp */,
-				3B10ED552568E95D00372D13 /* meson.build */,
 				3B10ED562568E95D00372D13 /* main.cpp */,
 				3B10ED6E2568E95D00372D13 /* settingsmenu.cpp */,
 				3B10EDA42568E95E00372D13 /* sharedstate.h */,

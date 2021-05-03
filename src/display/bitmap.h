@@ -115,11 +115,12 @@ public:
 
 	/* <internal> */
 	TEXFBO &getGLTypes();
+    SDL_Surface *surface() const;
 	SDL_Surface *megaSurface() const;
 	void ensureNonMega() const;
     void ensureNonAnimated() const;
     
-    // GIF functions
+    // Animation functions
     void stop();
     void play();
     bool isPlaying();
@@ -128,12 +129,19 @@ public:
     int numFrames();
     int currentFrameI() const;
     
+    int addFrame(Bitmap &source, int position = -1);
+    
+    void removeFrame(int position = -1);
+    
     void setAnimationFPS(float FPS);
     float getAnimationFPS();
     
     void setLooping(bool loop);
     bool getLooping();
 
+    void ensureNotPlaying() const;
+    // ----------
+    
 	/* Binds the backing texture and sets the correct
 	 * texture size uniform in shader */
 	void bindTex(ShaderBase &shader);

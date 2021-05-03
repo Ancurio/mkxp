@@ -470,6 +470,28 @@ RB_METHOD(bitmapSetPlaying){
     return RUBY_Qnil;
 }
 
+RB_METHOD(bitmapPlay){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->play();
+    
+    return RUBY_Qnil;
+}
+
+RB_METHOD(bitmapPause){
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->stop();
+    
+    return RUBY_Qnil;
+}
+
 RB_METHOD(bitmapGotoStop){
     RB_UNUSED_PARAM;
     
@@ -516,6 +538,47 @@ RB_METHOD(bitmapCurrentFrame){
     Bitmap *b = getPrivateData<Bitmap>(self);
     
     return INT2NUM(b->currentFrameI());
+}
+
+RB_METHOD(bitmapAddFrame){
+    RB_UNUSED_PARAM;
+    
+    VALUE srcBitmap;
+    VALUE position;
+    
+    rb_scan_args(argc, argv, "11", &srcBitmap, &position);
+    
+    Bitmap *src = getPrivateDataCheck<Bitmap>(srcBitmap, BitmapType);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    int pos = -1;
+    if (position != Qnil) {
+        pos = NUM2INT(position);
+        if (pos < 0) pos = 0;
+    }
+    
+    return INT2NUM(b->addFrame(*src, pos));
+}
+
+RB_METHOD(bitmapRemoveFrame){
+    RB_UNUSED_PARAM;
+    
+    VALUE position;
+    
+    rb_scan_args(argc, argv, "01", &position);
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    int pos = -1;
+    if (position != Qnil) {
+        pos = NUM2INT(position);
+        if (pos < 0) pos = 0;
+    }
+    
+    b->removeFrame(pos);
+    
+    return RUBY_Qnil;
 }
 
 RB_METHOD(bitmapSetFPS){
@@ -634,13 +697,15 @@ void bitmapBindingInit() {
     _rb_define_method(klass, "animated?", bitmapGetAnimated);
     _rb_define_method(klass, "playing", bitmapGetPlaying);
     _rb_define_method(klass, "playing=", bitmapSetPlaying);
+    _rb_define_method(klass, "play", bitmapPlay);
+    _rb_define_method(klass, "pause", bitmapPause);
     _rb_define_method(klass, "goto_and_stop", bitmapGotoStop);
     _rb_define_method(klass, "goto_and_play", bitmapGotoPlay);
     _rb_define_method(klass, "frame_count", bitmapFrames);
     _rb_define_method(klass, "current_frame", bitmapCurrentFrame);
+    _rb_define_method(klass, "add_frame", bitmapAddFrame);
+    _rb_define_method(klass, "remove_frame", bitmapRemoveFrame);
     _rb_define_method(klass, "frame_rate", bitmapGetFPS);
-    
-    // For some reason Ruby says "screw this function in particular"
     _rb_define_method(klass, "frame_rate=", bitmapSetFPS);
     _rb_define_method(klass, "looping", bitmapGetLooping);
     _rb_define_method(klass, "looping=", bitmapSetLooping); 

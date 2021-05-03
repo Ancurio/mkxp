@@ -77,6 +77,13 @@ extern "C" {
                         "Operation not supported for static bitmaps"); \
 }
 
+#define GUARD_PLAYING \
+{ \
+    if (p->animation.playing) \
+        throw Exception(Exception::MKXPError, \
+                        "Operation not supported while bitmap's animation is being played"); \
+}
+
 #define OUTLINE_SIZE 1
 
 /* Normalize (= ensure width and
@@ -166,7 +173,7 @@ struct BitmapPrivate
         unsigned long long startTime;
 
         inline int currentFrameI() {
-            if (!playing) return lastFrame;
+            if (!playing || fps <= 0) return lastFrame;
             int i = lastFrame + ((shState->runTime() - startTime) / ((1 / fps) * 1000000));
             return (loop) ? fmod(i, frames.size()) : (i > frames.size() - 1) ? frames.size() - 1 : i;
         }
@@ -221,13 +228,13 @@ struct BitmapPrivate
 	{
 		format = SDL_AllocFormat(SDL_PIXELFORMAT_ABGR8888);
         
-        animation.width = -1;
-        animation.height = -1;
+        animation.width = 0;
+        animation.height = 0;
         animation.enabled = false;
         animation.playing = false;
         animation.loop = true;
         animation.startTime = 0;
-        animation.fps = -1;
+        animation.fps = 0;
         animation.lastFrame = 0;
 
 		font = &shState->defaultFont();
@@ -435,7 +442,6 @@ struct BitmapOpenHandler : FileSystem::OpenHandler
                 }
 
                 SDL_Surface *s = SDL_CreateRGBSurfaceWithFormat(0, gif.width, gif.height, 32, SDL_PIXELFORMAT_ABGR8888);
-                SDL_SetSurfaceBlendMode(s, SDL_BLENDMODE_NONE);
                 memcpy(s->pixels, gif.frame_image, gif.width * gif.height * 4);
                 surfaces.push_back(s);
             }
@@ -500,7 +506,6 @@ Bitmap::Bitmap(const char *filename)
             SDL_FreeSurface(s);
         
         p->addTaintedArea(rect());
-        p->animation.play();
         return;
     }
 
@@ -605,7 +610,6 @@ Bitmap::Bitmap(void *pixeldata, int width, int height)
 Bitmap::Bitmap(const Bitmap &other)
 {
 	other.ensureNonMega();
-    other.ensureNonAnimated();
 
 	p = new BitmapPrivate(this);
 
@@ -696,7 +700,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
     // Don't need this, right? This function is fine with megasurfaces it seems
 	//GUARD_MEGA;
     
-    GUARD_ANIMATED;
+    GUARD_PLAYING;
 
 	if (source.isDisposed())
 		return;
@@ -763,7 +767,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 
 		SDL_BlitScaled(srcSurf, &srcRect, blitTemp, 0);
 
-		TEX::bind(p->gl.tex);
+		TEX::bind(getGLTypes().tex);
 
 		if (bltRect.w == dstRect.w && bltRect.h == dstRect.h)
 		{
@@ -789,8 +793,8 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 	if (opacity == 255 && !p->touchesTaintedArea(destRect))
 	{
 		/* Fast blit */
-		GLMeta::blitBegin(p->gl);
-		GLMeta::blitSource(source.p->gl);
+		GLMeta::blitBegin(getGLTypes());
+		GLMeta::blitSource(getGLTypes());
 		GLMeta::blitRectangle(sourceRect, destRect);
 		GLMeta::blitEnd();
 	}
@@ -802,7 +806,7 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 		TEXFBO &gpTex = shState->gpTexFBO(destRect.w, destRect.h);
 
 		GLMeta::blitBegin(gpTex);
-		GLMeta::blitSource(p->gl);
+		GLMeta::blitSource(getGLTypes());
 		GLMeta::blitRectangle(destRect, Vec2i());
 		GLMeta::blitEnd();
 
@@ -1168,11 +1172,16 @@ bool Bitmap::getRaw(void *output, int output_size)
     
     guardDisposed();
     
-    GUARD_MEGA;
-    GUARD_ANIMATED;
+    GUARD_PLAYING;
     
-    FBO::bind(p->gl.fbo);
-    glReadPixels(0,0,width(),height(),GL_RGBA,GL_UNSIGNED_BYTE,output);
+    if (!p->animation.enabled && (p->surface || p->megaSurface)) {
+        void *src = (p->megaSurface) ? p->megaSurface->pixels : p->surface->pixels;
+        memcpy(output, src, output_size);
+    }
+    else {
+        FBO::bind(getGLTypes().fbo);
+        gl.ReadPixels(0,0,width(),height(),GL_RGBA,GL_UNSIGNED_BYTE,output);
+    }
     return true;
 }
 
@@ -1198,12 +1207,12 @@ void Bitmap::saveToFile(const char *filename)
     guardDisposed();
     
     GUARD_MEGA;
-    GUARD_ANIMATED;
+    GUARD_PLAYING;
     
     SDL_Surface *surf = SDL_CreateRGBSurface(0, width(), height(),p->format->BitsPerPixel, p->format->Rmask,p->format->Gmask,p->format->Bmask,p->format->Amask);
     
     if (!surf)
-        throw Exception(Exception::SDLError, "Failed to save bitmap: %s", SDL_GetError());
+        throw Exception(Exception::SDLError, "Failed to prepare bitmap for saving: %s", SDL_GetError());
     
     getRaw(surf->pixels, surf->w * surf->h * 4);
     
@@ -1697,6 +1706,11 @@ TEXFBO &Bitmap::getGLTypes()
 	return (p->animation.enabled) ? p->animation.currentFrame() : p->gl;
 }
 
+SDL_Surface *Bitmap::surface() const
+{
+    return p->surface;
+}
+
 SDL_Surface *Bitmap::megaSurface() const
 {
 	return p->megaSurface;
@@ -1718,6 +1732,14 @@ void Bitmap::ensureNonAnimated() const
     GUARD_ANIMATED;
 }
 
+void Bitmap::ensureNotPlaying() const
+{
+    if (isDisposed())
+        return;
+    
+    GUARD_PLAYING;
+}
+
 void Bitmap::stop()
 {
     GUARD_UNANIMATED;
@@ -1735,7 +1757,6 @@ void Bitmap::play()
 
 bool Bitmap::isPlaying()
 {
-    GUARD_UNANIMATED;
     return (p->animation.playing);
 }
 
@@ -1757,19 +1778,104 @@ void Bitmap::gotoAndPlay(int frame)
 
 int Bitmap::numFrames()
 {
-    GUARD_UNANIMATED;
+    if (!p->animation.enabled) return 1;
     return p->animation.frames.size();
 }
 
 int Bitmap::currentFrameI() const
 {
-    GUARD_UNANIMATED;
+    if (!p->animation.enabled) return 1;
     return p->animation.currentFrameI();
+}
+
+int Bitmap::addFrame(Bitmap &source, int position)
+{
+    GUARD_MEGA;
+    
+    source.ensureNotPlaying();
+    
+    if (source.height() != height() || source.width() != width())
+        throw Exception(Exception::MKXPError, "Animations with varying dimensions are not supported (%ix%i vs %ix%i)",
+                        source.width(), source.height(), width(), height());
+    
+    TEXFBO newframe = shState->texPool().request(source.width(), source.height());
+    
+    // Convert the bitmap into an animated bitmap if it isn't already one
+    if (!p->animation.enabled) {
+        p->animation.width = p->gl.width;
+        p->animation.height = p->gl.height;
+        p->animation.enabled = true;
+        p->animation.lastFrame = 0;
+        
+        if (p->animation.fps <= 0)
+            p->animation.fps = shState->graphics().getFrameRate();
+        
+        p->animation.frames.push_back(p->gl);
+        
+        if (p->surface)
+            SDL_FreeSurface(p->surface);
+        p->gl = TEXFBO();
+    }
+    
+    if (source.surface()) {
+        TEX::bind(newframe.tex);
+        TEX::uploadImage(source.width(), source.height(), source.surface()->pixels, GL_RGBA);
+        SDL_FreeSurface(p->surface);
+        p->surface = 0;
+    }
+    else {
+        // FIXME: gotta see if I can copy textures directly from one TEXFBO to the other
+        // I'm an idiot so I don't already know
+        auto pixels = new char[source.width() * source.height() * 4];
+        FBO::bind(source.getGLTypes().fbo);
+        gl.ReadPixels(0,0,source.width(),source.height(),GL_RGBA,GL_UNSIGNED_BYTE,pixels);
+        TEX::bind(newframe.tex);
+        TEX::uploadImage(newframe.width, newframe.height, pixels, GL_RGBA);
+        delete pixels;
+    }
+    
+    int ret;
+
+    if (position < 0) {
+        p->animation.frames.push_back(newframe);
+        ret = p->animation.frames.size();
+    }
+    else {
+        p->animation.frames.insert(p->animation.frames.begin() + position, newframe);
+        ret = position;
+    }
+
+    return ret;
+}
+
+void Bitmap::removeFrame(int position) {
+    int pos = (position < 0) ? p->animation.frames.size() - 1 : clamp(position, 0, (int)(p->animation.frames.size() - 1));
+    TEXFBO frame = p->animation.frames[pos];
+    shState->texPool().release(p->animation.frames[pos]);
+    p->animation.frames.erase(p->animation.frames.begin() + pos);
+    
+    // Change the animated bitmap back to a normal one if there's only one frame left
+    if (p->animation.frames.size() == 1) {
+        
+        p->animation.enabled = false;
+        p->animation.playing = false;
+        p->animation.width = 0;
+        p->animation.height = 0;
+        p->animation.lastFrame = 0;
+        
+        p->gl = p->animation.frames[0];
+        p->animation.frames.erase(p->animation.frames.begin());
+        
+        p->allocSurface();
+        
+        FBO::bind(p->gl.fbo);
+        gl.ReadPixels(0,0,p->gl.width, p->gl.height, GL_RGBA, GL_UNSIGNED_BYTE, p->surface->pixels);
+    }
 }
 
 void Bitmap::setAnimationFPS(float FPS)
 {
-    GUARD_UNANIMATED;
+    GUARD_MEGA;
     
     bool restart = p->animation.playing;
     p->animation.stop();
@@ -1779,21 +1885,21 @@ void Bitmap::setAnimationFPS(float FPS)
 
 float Bitmap::getAnimationFPS()
 {
-    GUARD_UNANIMATED;
+    GUARD_MEGA;
     
     return p->animation.fps;
 }
 
 void Bitmap::setLooping(bool loop)
 {
-    GUARD_UNANIMATED;
+    GUARD_MEGA;
     
     p->animation.loop = loop;
 }
 
 bool Bitmap::getLooping()
 {
-    GUARD_UNANIMATED;
+    GUARD_MEGA;
     
     return p->animation.loop;
 }
