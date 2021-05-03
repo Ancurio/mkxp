@@ -536,7 +536,7 @@ Bitmap::Bitmap(const char *filename)
                 delete handler.gif_data;
                 
                 throw Exception(Exception::MKXPError, "Failed to decode frame GIF frame %i out of %i (Error %i)",
-                                handler.gif->decoded_frame, handler.gif->frame_count, status);
+                                handler.gif->decoded_frame + 1, handler.gif->frame_count, status);
             }
         }
         
