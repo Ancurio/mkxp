@@ -650,10 +650,42 @@ Bitmap::Bitmap(const Bitmap &other)
 	other.ensureNonMega();
 
 	p = new BitmapPrivate(this);
-
-	p->gl = shState->texPool().request(other.width(), other.height());
-
-	blt(0, 0, other, rect());
+    
+    if (!other.isAnimated()) {
+        p->gl = shState->texPool().request(other.width(), other.height());
+        blt(0, 0, other, rect());
+    }
+    else {
+        p->animation.enabled = true;
+        p->animation.fps = other.getAnimationFPS();
+        p->animation.width = other.width();
+        p->animation.height = other.height();
+        p->animation.lastFrame = 0;
+        p->animation.loop = other.getLooping();
+        
+        char *tmp = new char[p->animation.width * p->animation.height * 4];
+        for (const TEXFBO &frame : other.getFrames()) {
+            TEXFBO copyframe;
+            try {
+                copyframe = shState->texPool().request(p->animation.width, p->animation.height);
+            } catch(const Exception &e) {
+                for (TEXFBO &f : p->animation.frames)
+                    shState->texPool().release(f);
+                delete tmp;
+                throw e;
+            }
+            
+            // FIXME: gotta see if I can copy textures directly from one TEXFBO to the other
+            // I'm an idiot so I don't already know
+            FBO::bind(frame.fbo);
+            gl.ReadPixels(0,0,p->animation.width,p->animation.height,GL_RGBA,GL_UNSIGNED_BYTE,tmp);
+            TEX::bind(copyframe.tex);
+            TEX::uploadImage(p->animation.width, p->animation.height, tmp, GL_RGBA);
+            
+            p->animation.frames.push_back(copyframe);
+        }
+        delete tmp;
+    }
 }
 
 Bitmap::~Bitmap()
@@ -1797,7 +1829,7 @@ void Bitmap::play()
     p->animation.play();
 }
 
-bool Bitmap::isPlaying()
+bool Bitmap::isPlaying() const
 {
     if (!p->animation.playing)
         return false;
@@ -1824,7 +1856,7 @@ void Bitmap::gotoAndPlay(int frame)
     p->animation.play();
 }
 
-int Bitmap::numFrames()
+int Bitmap::numFrames() const
 {
     if (!p->animation.enabled) return 1;
     return p->animation.frames.size();
@@ -1964,7 +1996,12 @@ void Bitmap::setAnimationFPS(float FPS)
     if (restart) p->animation.play();
 }
 
-float Bitmap::getAnimationFPS()
+std::vector<TEXFBO> &Bitmap::getFrames() const
+{
+    return p->animation.frames;
+}
+
+float Bitmap::getAnimationFPS() const
 {
     GUARD_MEGA;
     
@@ -1978,7 +2015,7 @@ void Bitmap::setLooping(bool loop)
     p->animation.loop = loop;
 }
 
-bool Bitmap::getLooping()
+bool Bitmap::getLooping() const
 {
     GUARD_MEGA;
     

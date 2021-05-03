@@ -123,10 +123,10 @@ public:
     // Animation functions
     void stop();
     void play();
-    bool isPlaying();
+    bool isPlaying() const;
     void gotoAndStop(int frame);
     void gotoAndPlay(int frame);
-    int numFrames();
+    int numFrames() const;
     int currentFrameI() const;
     
     int addFrame(Bitmap &source, int position = -1);
@@ -134,12 +134,13 @@ public:
     
     void nextFrame();
     void previousFrame();
+    std::vector<TEXFBO> &getFrames() const;
     
     void setAnimationFPS(float FPS);
-    float getAnimationFPS();
+    float getAnimationFPS() const;
     
     void setLooping(bool loop);
-    bool getLooping();
+    bool getLooping() const;
 
     void ensureNotPlaying() const;
     // ----------
