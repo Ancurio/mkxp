@@ -179,7 +179,7 @@ struct BitmapPrivate
         inline int currentFrameI() {
             if (!playing || fps <= 0) return lastFrame;
             int i = currentFrameIRaw();
-            return (loop) ? fmod(i, frames.size()) : (i > frames.size() - 1) ? frames.size() - 1 : i;
+            return (loop) ? fmod(i, frames.size()) : (i > (int)frames.size() - 1) ? (int)frames.size() - 1 : i;
         }
         
         TEXFBO &currentFrame() {
@@ -664,7 +664,7 @@ Bitmap::Bitmap(const Bitmap &other, bool copyAllFrames)
             } catch(const Exception &e) {
                 for (TEXFBO &f : p->animation.frames)
                     shState->texPool().release(f);
-                delete tmp;
+                delete[] tmp;
                 throw e;
             }
             
@@ -677,7 +677,7 @@ Bitmap::Bitmap(const Bitmap &other, bool copyAllFrames)
             
             p->animation.frames.push_back(copyframe);
         }
-        delete tmp;
+        delete[] tmp;
     }
 }
 
@@ -690,11 +690,13 @@ int Bitmap::width() const
 {
 	guardDisposed();
 
-	if (p->megaSurface)
-		return p->megaSurface->w;
+    if (p->megaSurface) {
+        return p->megaSurface->w;
+    }
     
-    if (p->animation.enabled)
+    if (p->animation.enabled) {
         return p->animation.width;
+    }
 
 	return p->gl.width;
 }
@@ -1852,7 +1854,7 @@ void Bitmap::gotoAndPlay(int frame)
 int Bitmap::numFrames() const
 {
     if (!p->animation.enabled) return 1;
-    return p->animation.frames.size();
+    return (int)p->animation.frames.size();
 }
 
 int Bitmap::currentFrameI() const
@@ -1904,14 +1906,14 @@ int Bitmap::addFrame(Bitmap &source, int position)
         gl.ReadPixels(0,0,source.width(),source.height(),GL_RGBA,GL_UNSIGNED_BYTE,pixels);
         TEX::bind(newframe.tex);
         TEX::uploadImage(newframe.width, newframe.height, pixels, GL_RGBA);
-        delete pixels;
+        delete[] pixels;
     }
     
     int ret;
 
     if (position < 0) {
         p->animation.frames.push_back(newframe);
-        ret = p->animation.frames.size();
+        ret = (int)p->animation.frames.size();
     }
     else {
         p->animation.frames.insert(p->animation.frames.begin() + clamp(position, 0, (int)p->animation.frames.size()), newframe);
@@ -1924,8 +1926,7 @@ int Bitmap::addFrame(Bitmap &source, int position)
 void Bitmap::removeFrame(int position) {
     GUARD_UNANIMATED;
     
-    int pos = (position < 0) ? p->animation.frames.size() - 1 : clamp(position, 0, (int)(p->animation.frames.size() - 1));
-    TEXFBO frame = p->animation.frames[pos];
+    int pos = (position < 0) ? (int)p->animation.frames.size() - 1 : clamp(position, 0, (int)(p->animation.frames.size() - 1));
     shState->texPool().release(p->animation.frames[pos]);
     p->animation.frames.erase(p->animation.frames.begin() + pos);
     
@@ -1972,7 +1973,7 @@ void Bitmap::previousFrame()
             p->animation.lastFrame = 0;
             return;
         }
-        p->animation.lastFrame = p->animation.frames.size() - 1;
+        p->animation.lastFrame = (int)p->animation.frames.size() - 1;
         return;
     }
     
