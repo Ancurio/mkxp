@@ -1921,7 +1921,7 @@ int Bitmap::addFrame(Bitmap &source, int position)
         ret = p->animation.frames.size();
     }
     else {
-        p->animation.frames.insert(p->animation.frames.begin() + position, newframe);
+        p->animation.frames.insert(p->animation.frames.begin() + clamp(position, 0, (int)p->animation.frames.size()), newframe);
         ret = position;
     }
 
