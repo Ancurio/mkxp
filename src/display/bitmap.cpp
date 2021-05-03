@@ -173,7 +173,7 @@ struct BitmapPrivate
         unsigned long long startTime;
         
         inline int currentFrameIRaw() {
-            return lastFrame + ((shState->runTime() - startTime) / ((1 / fps) * 1000000));
+            return round(lastFrame + ((shState->runTime() - startTime) / ((1 / fps) * 1000000)));
         }
 
         inline int currentFrameI() {
