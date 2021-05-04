@@ -645,13 +645,14 @@ Bitmap::Bitmap(const Bitmap &other, int frame)
 
 	p = new BitmapPrivate(this);
     
+    // TODO: Clean me up
     if (!other.isAnimated() || frame >= -1) {
         if (frame == -1) other.ensureNotPlaying();
         p->gl = shState->texPool().request(other.width(), other.height());
         
         GLMeta::blitBegin(p->gl);
         // Blit just the current frame of the other animated bitmap
-        if (frame == -1) {
+        if (!other.isAnimated() || frame == -1) {
             GLMeta::blitSource(other.getGLTypes());
         }
         else {
