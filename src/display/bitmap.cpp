@@ -640,6 +640,7 @@ Bitmap::Bitmap(void *pixeldata, int width, int height)
 // frame is -2 for "any and all", -1 for "current", anything else for a specific frame
 Bitmap::Bitmap(const Bitmap &other, int frame)
 {
+    other.guardDisposed();
 	other.ensureNonMega();
     if (frame > -2) other.ensureAnimated();
 
@@ -1830,6 +1831,8 @@ void Bitmap::ensureNotPlaying() const
 
 void Bitmap::stop()
 {
+    guardDisposed();
+    
     GUARD_UNANIMATED;
     if (!p->animation.playing) return;
     
@@ -1838,6 +1841,8 @@ void Bitmap::stop()
 
 void Bitmap::play()
 {
+    guardDisposed();
+    
     GUARD_UNANIMATED;
     if (p->animation.playing) return;
     p->animation.play();
@@ -1845,6 +1850,8 @@ void Bitmap::play()
 
 bool Bitmap::isPlaying() const
 {
+    guardDisposed();
+    
     if (!p->animation.playing)
         return false;
     
@@ -1856,6 +1863,8 @@ bool Bitmap::isPlaying() const
 
 void Bitmap::gotoAndStop(int frame)
 {
+    guardDisposed();
+    
     GUARD_UNANIMATED;
     
     p->animation.stop();
@@ -1863,6 +1872,8 @@ void Bitmap::gotoAndStop(int frame)
 }
 void Bitmap::gotoAndPlay(int frame)
 {
+    guardDisposed();
+    
     GUARD_UNANIMATED;
     
     p->animation.stop();
@@ -1872,18 +1883,24 @@ void Bitmap::gotoAndPlay(int frame)
 
 int Bitmap::numFrames() const
 {
+    guardDisposed();
+    
     if (!p->animation.enabled) return 1;
     return (int)p->animation.frames.size();
 }
 
 int Bitmap::currentFrameI() const
 {
+    guardDisposed();
+    
     if (!p->animation.enabled) return 0;
     return p->animation.currentFrameI();
 }
 
 int Bitmap::addFrame(Bitmap &source, int position)
 {
+    guardDisposed();
+    
     GUARD_MEGA;
     
     source.ensureNotPlaying();
@@ -1939,6 +1956,8 @@ int Bitmap::addFrame(Bitmap &source, int position)
 }
 
 void Bitmap::removeFrame(int position) {
+    guardDisposed();
+    
     GUARD_UNANIMATED;
     
     int pos = (position < 0) ? (int)p->animation.frames.size() - 1 : clamp(position, 0, (int)(p->animation.frames.size() - 1));
@@ -1965,6 +1984,8 @@ void Bitmap::removeFrame(int position) {
 
 void Bitmap::nextFrame()
 {
+    guardDisposed();
+    
     GUARD_UNANIMATED;
     
     stop();
@@ -1979,6 +2000,8 @@ void Bitmap::nextFrame()
 
 void Bitmap::previousFrame()
 {
+    guardDisposed();
+    
     GUARD_UNANIMATED;
     
     stop();
@@ -1997,6 +2020,8 @@ void Bitmap::previousFrame()
 
 void Bitmap::setAnimationFPS(float FPS)
 {
+    guardDisposed();
+    
     GUARD_MEGA;
     
     bool restart = p->animation.playing;
@@ -2012,6 +2037,8 @@ std::vector<TEXFBO> &Bitmap::getFrames() const
 
 float Bitmap::getAnimationFPS() const
 {
+    guardDisposed();
+    
     GUARD_MEGA;
     
     return p->animation.fps;
@@ -2019,6 +2046,8 @@ float Bitmap::getAnimationFPS() const
 
 void Bitmap::setLooping(bool loop)
 {
+    guardDisposed();
+    
     GUARD_MEGA;
     
     p->animation.loop = loop;
@@ -2026,6 +2055,8 @@ void Bitmap::setLooping(bool loop)
 
 bool Bitmap::getLooping() const
 {
+    guardDisposed();
+    
     GUARD_MEGA;
     
     return p->animation.loop;
