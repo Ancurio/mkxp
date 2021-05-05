@@ -631,6 +631,10 @@ unsigned long long Graphics::getDelta() {
     return shState->runTime() - p->last_update;
 }
 
+unsigned long long Graphics::lastUpdate() {
+    return p->last_update;
+}
+
 void Graphics::update() {
     p->last_update = shState->runTime();
     p->checkShutDownReset();

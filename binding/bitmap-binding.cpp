@@ -699,7 +699,7 @@ RB_METHOD(bitmapEachFrame) {
     
     GUARD_EXC
     (
-        b->ensureNotPlaying();
+        b->
         int cur_frame = b->currentFrameI();
         for (int i = 0; i < b->numFrames(); i++) {
             b->gotoAndStop(i);

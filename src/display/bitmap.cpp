@@ -77,13 +77,6 @@ extern "C" {
                         "Operation not supported for static bitmaps"); \
 }
 
-#define GUARD_PLAYING \
-{ \
-    if (p->animation.playing) \
-        throw Exception(Exception::MKXPError, \
-                        "Operation not supported while bitmap's animation is being played"); \
-}
-
 #define OUTLINE_SIZE 1
 
 /* Normalize (= ensure width and
@@ -166,38 +159,54 @@ struct BitmapPrivate
         
         bool enabled;
         bool playing;
+        bool needsReset;
         bool loop;
         std::vector<TEXFBO> frames;
         float fps;
         int lastFrame;
         unsigned long long startTime;
+        unsigned long long playTime;
         
         inline int currentFrameIRaw() {
-            return round(lastFrame + ((shState->runTime() - startTime) / ((1 / fps) * 1000000)));
+            if (fps <= 0) return lastFrame;
+            return floor(lastFrame + (playTime / ((1 / fps) * 1000000)));
         }
 
-        inline int currentFrameI() {
-            if (!playing || fps <= 0) return lastFrame;
+        int currentFrameI() {
+            if (!playing || needsReset) return lastFrame;
             int i = currentFrameIRaw();
             return (loop) ? fmod(i, frames.size()) : (i > (int)frames.size() - 1) ? (int)frames.size() - 1 : i;
         }
         
-        TEXFBO &currentFrame() {
-            return frames[currentFrameI()];
+        inline TEXFBO &currentFrame() {
+            int i = currentFrameI();
+            return frames[i];
         }
         
-        void play() {
+        inline void play() {
             playing = true;
-            startTime = shState->runTime();
+            needsReset = true;
         }
         
-        void stop() {
+        inline void stop() {
             lastFrame = currentFrameI();
             playing = false;
         }
         
-        void seek(int frame) {
+        inline void seek(int frame) {
             lastFrame = clamp(frame, 0, (int)frames.size());
+        }
+        
+        void updateTimer() {
+            if (needsReset) {
+                playTime = 0;
+                startTime = shState->graphics().lastUpdate();
+                needsReset = false;
+                return;
+            }
+            
+            playTime = shState->graphics().lastUpdate() - startTime;
+            return;
         }
     } animation;
     
@@ -237,6 +246,7 @@ struct BitmapPrivate
         animation.enabled = false;
         animation.playing = false;
         animation.loop = true;
+        animation.playTime = 0;
         animation.startTime = 0;
         animation.fps = 0;
         animation.lastFrame = 0;
@@ -648,7 +658,6 @@ Bitmap::Bitmap(const Bitmap &other, int frame)
     
     // TODO: Clean me up
     if (!other.isAnimated() || frame >= -1) {
-        if (frame == -1) other.ensureNotPlaying();
         p->gl = shState->texPool().request(other.width(), other.height());
         
         GLMeta::blitBegin(p->gl);
@@ -669,6 +678,8 @@ Bitmap::Bitmap(const Bitmap &other, int frame)
         p->animation.width = other.width();
         p->animation.height = other.height();
         p->animation.lastFrame = 0;
+        p->animation.playTime = 0;
+        p->animation.startTime = 0;
         p->animation.loop = other.getLooping();
         
         for (TEXFBO &sourceframe : other.getFrames()) {
@@ -776,8 +787,6 @@ void Bitmap::stretchBlt(const IntRect &destRect,
 
     // Don't need this, right? This function is fine with megasurfaces it seems
 	//GUARD_MEGA;
-    
-    GUARD_PLAYING;
 
 	if (source.isDisposed())
 		return;
@@ -1249,8 +1258,6 @@ bool Bitmap::getRaw(void *output, int output_size)
     
     guardDisposed();
     
-    GUARD_PLAYING;
-    
     if (!p->animation.enabled && (p->surface || p->megaSurface)) {
         void *src = (p->megaSurface) ? p->megaSurface->pixels : p->surface->pixels;
         memcpy(output, src, output_size);
@@ -1267,7 +1274,6 @@ void Bitmap::replaceRaw(void *pixel_data, int size)
     guardDisposed();
     
     GUARD_MEGA;
-    GUARD_PLAYING;
     
     int w = width();
     int h = height();
@@ -1288,7 +1294,6 @@ void Bitmap::saveToFile(const char *filename)
     guardDisposed();
     
     GUARD_MEGA;
-    GUARD_PLAYING;
     
     SDL_Surface *surf = SDL_CreateRGBSurface(0, width(), height(),p->format->BitsPerPixel, p->format->Rmask,p->format->Gmask,p->format->Bmask,p->format->Amask);
     
@@ -1821,14 +1826,6 @@ void Bitmap::ensureAnimated() const
     GUARD_UNANIMATED;
 }
 
-void Bitmap::ensureNotPlaying() const
-{
-    if (isDisposed())
-        return;
-    
-    GUARD_PLAYING;
-}
-
 void Bitmap::stop()
 {
     guardDisposed();
@@ -1903,8 +1900,6 @@ int Bitmap::addFrame(Bitmap &source, int position)
     
     GUARD_MEGA;
     
-    source.ensureNotPlaying();
-    
     if (source.height() != height() || source.width() != width())
         throw Exception(Exception::MKXPError, "Animations with varying dimensions are not supported (%ix%i vs %ix%i)",
                         source.width(), source.height(), width(), height());
@@ -1917,6 +1912,8 @@ int Bitmap::addFrame(Bitmap &source, int position)
         p->animation.height = p->gl.height;
         p->animation.enabled = true;
         p->animation.lastFrame = 0;
+        p->animation.playTime = 0;
+        p->animation.startTime = 0;
         
         if (p->animation.fps <= 0)
             p->animation.fps = shState->graphics().getFrameRate();
@@ -1982,7 +1979,7 @@ void Bitmap::removeFrame(int position) {
     }
 }
 
-void Bitmap::nextFrame()
+void Bitmap::nextFrame(bool iteration)
 {
     guardDisposed();
     
@@ -2003,9 +2000,8 @@ void Bitmap::previousFrame()
     guardDisposed();
     
     GUARD_UNANIMATED;
-    
+
     stop();
-    
     if (p->animation.lastFrame <= 0) {
         if (!p->animation.loop) {
             p->animation.lastFrame = 0;
@@ -2060,6 +2056,17 @@ bool Bitmap::getLooping() const
     GUARD_MEGA;
     
     return p->animation.loop;
+}
+
+
+// Called when a sprite attached to this Bitmap is being drawn
+// Makes sure the bitmap begins its animation on time, on top of
+// making sure that the bitmap doesn't begin actually moving until
+// Graphics.update is called once
+void Bitmap::syncAnimationTimer()
+{
+    if (!p->animation.enabled || isDisposed()) return;
+    p->animation.updateTimer();
 }
 
 void Bitmap::bindTex(ShaderBase &shader)

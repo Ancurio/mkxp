@@ -35,6 +35,7 @@ class Graphics
 {
 public:
     unsigned long long getDelta();
+    unsigned long long lastUpdate();
     
 	void update();
 	void freeze();
