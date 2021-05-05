@@ -1979,7 +1979,7 @@ void Bitmap::removeFrame(int position) {
     }
 }
 
-void Bitmap::nextFrame(bool iteration)
+void Bitmap::nextFrame()
 {
     guardDisposed();
     

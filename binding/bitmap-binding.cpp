@@ -688,29 +688,6 @@ RB_METHOD(bitmapSnapToBitmap) {
     return ret;
 }
 
-RB_METHOD(bitmapEachFrame) {
-    RB_UNUSED_PARAM;
-    
-    rb_check_argc(argc, 0);
-    
-    Bitmap *b = getPrivateData<Bitmap>(self);
-    
-    if (!rb_block_given_p()) return RUBY_Qnil;
-    
-    GUARD_EXC
-    (
-        b->
-        int cur_frame = b->currentFrameI();
-        for (int i = 0; i < b->numFrames(); i++) {
-            b->gotoAndStop(i);
-            rb_yield_values(2, self, INT2NUM(i));
-        }
-        b->gotoAndStop(cur_frame);
-    );
-    
-    return RUBY_Qnil;
-}
-
 RB_METHOD(bitmapGetMaxSize){
     RB_UNUSED_PARAM;
     
@@ -789,7 +766,6 @@ void bitmapBindingInit() {
     _rb_define_method(klass, "remove_frame", bitmapRemoveFrame);
     _rb_define_method(klass, "next_frame", bitmapNextFrame);
     _rb_define_method(klass, "previous_frame", bitmapPreviousFrame);
-    _rb_define_method(klass, "each_frame", bitmapEachFrame);
     _rb_define_method(klass, "frame_rate", bitmapGetFPS);
     _rb_define_method(klass, "frame_rate=", bitmapSetFPS);
     _rb_define_method(klass, "looping", bitmapGetLooping);
