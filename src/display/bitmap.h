@@ -146,8 +146,6 @@ public:
     bool getLooping() const;
 
     void ensureNotPlaying() const;
-    
-    void syncAnimationTimer();
     // ----------
     
 	/* Binds the backing texture and sets the correct

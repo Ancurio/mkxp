@@ -49,6 +49,8 @@
 
 #include "debugwriter.h"
 
+#include <sigc++/connection.h>
+
 #include <math.h>
 #include <algorithm>
 
@@ -199,16 +201,19 @@ struct BitmapPrivate
         
         void updateTimer() {
             if (needsReset) {
+                lastFrame = currentFrameI();
                 playTime = 0;
-                startTime = shState->graphics().lastUpdate();
+                startTime = shState->runTime();
                 needsReset = false;
                 return;
             }
             
-            playTime = shState->graphics().lastUpdate() - startTime;
+            playTime = shState->runTime() - startTime;
             return;
         }
     } animation;
+    
+    sigc::connection prepareCon;
     
 	TEXFBO gl;
 
@@ -250,6 +255,8 @@ struct BitmapPrivate
         animation.startTime = 0;
         animation.fps = 0;
         animation.lastFrame = 0;
+        
+        prepareCon = shState->prepareDraw.connect(sigc::mem_fun(this, &BitmapPrivate::prepare));
 
 		font = &shState->defaultFont();
 		pixman_region_init(&tainted);
@@ -257,9 +264,17 @@ struct BitmapPrivate
 
 	~BitmapPrivate()
 	{
+        prepareCon.disconnect();
 		SDL_FreeFormat(format);
 		pixman_region_fini(&tainted);
 	}
+    
+    void prepare()
+    {
+        if (!animation.enabled || !animation.playing) return;
+        
+        animation.updateTimer();
+    }
 
 	void allocSurface()
 	{
@@ -2058,17 +2073,6 @@ bool Bitmap::getLooping() const
     return p->animation.loop;
 }
 
-
-// Called when a sprite attached to this Bitmap is being drawn
-// Makes sure the bitmap begins its animation on time, on top of
-// making sure that the bitmap doesn't begin actually moving until
-// Graphics.update is called once
-void Bitmap::syncAnimationTimer()
-{
-    if (!p->animation.enabled || isDisposed()) return;
-    p->animation.updateTimer();
-}
-
 void Bitmap::bindTex(ShaderBase &shader)
 {
 	p->bindTexture(shader);
@@ -2088,6 +2092,8 @@ void Bitmap::releaseResources()
 	if (p->megaSurface)
 		SDL_FreeSurface(p->megaSurface);
     else if (p->animation.enabled) {
+        p->animation.enabled = false;
+        p->animation.playing = false;
         for (TEXFBO &tex : p->animation.frames)
             shState->texPool().release(tex);
     }

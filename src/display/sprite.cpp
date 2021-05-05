@@ -579,8 +579,6 @@ void Sprite::draw()
 		p->wave.qArray.draw();
 	else
 		p->quad.draw();
-    
-    p->bitmap->syncAnimationTimer();
 
 	glState.blendMode.pop();
 }
