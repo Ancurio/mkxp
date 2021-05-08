@@ -1989,7 +1989,6 @@ void Bitmap::removeFrame(int position) {
         p->animation.frames.erase(p->animation.frames.begin());
         
         FBO::bind(p->gl.fbo);
-        gl.ReadPixels(0,0,p->gl.width, p->gl.height, GL_RGBA, GL_UNSIGNED_BYTE, p->surface->pixels);
         taintArea(rect());
     }
 }
