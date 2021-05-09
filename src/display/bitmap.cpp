@@ -522,7 +522,12 @@ Bitmap::Bitmap(const char *filename)
         // Loop gif (Either it's looping or it's not, at the moment)
         p->animation.loop = handler.gif->loop_count >= 0;
         
-        while (handler.gif->decoded_frame < handler.gif->frame_count - 1) {
+        int fcount = handler.gif->frame_count;
+        int fcount_partial = handler.gif->frame_count_partial;
+        if (fcount > fcount_partial) {
+            Debug() << "Non-fatal error reading" << filename << ": Only decoded" << fcount_partial << "out of" << fcount << "frames";
+        }
+        while (handler.gif->decoded_frame < fcount_partial - 1) {
             TEXFBO texfbo;
             try {
                 texfbo = shState->texPool().request(p->animation.width, p->animation.height);
@@ -553,7 +558,7 @@ Bitmap::Bitmap(const char *filename)
                 delete handler.gif_data;
                 
                 throw Exception(Exception::MKXPError, "Failed to decode frame GIF frame %i out of %i (Error %i)",
-                                handler.gif->decoded_frame + 1, handler.gif->frame_count, status);
+                                handler.gif->decoded_frame + 1, fcount_partial, status);
             }
         }
         
