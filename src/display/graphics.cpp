@@ -888,6 +888,7 @@ void Graphics::resizeScreen(int width, int height) {
     // width = clamp(width, 1, 640);
     // height = clamp(height, 1, 480);
     
+    p->threadData->rqWindowAdjust.wait();
     Vec2i size(width, height);
     
     if (p->scRes == size)
@@ -904,8 +905,9 @@ void Graphics::resizeScreen(int width, int height) {
     
     glState.scissorBox.set(IntRect(0, 0, p->scRes.x, p->scRes.y));
     
+    
+    p->threadData->rqWindowAdjust.set();
     shState->eThread().requestWindowResize(width, height);
-    usleep(50000);
     update();
 }
 
@@ -957,6 +959,8 @@ void Graphics::reset() {
 void Graphics::center() {
     if (getFullscreen())
         return;
+    
+    p->threadData->rqWindowAdjust.reset();
     p->threadData->ethread->requestWindowCenter();
 }
 
@@ -979,6 +983,7 @@ void Graphics::setShowCursor(bool value) {
 double Graphics::getScale() const { return (double)p->scSize.y / p->scRes.y; }
 
 void Graphics::setScale(double factor) {
+    p->threadData->rqWindowAdjust.wait();
     factor = clamp(factor, 0.5, 2.0);
     
     if (factor == getScale())
@@ -987,8 +992,8 @@ void Graphics::setScale(double factor) {
     int widthpx = p->scRes.x * factor;
     int heightpx = p->scRes.y * factor;
     
+    p->threadData->rqWindowAdjust.set();
     shState->eThread().requestWindowResize(widthpx, heightpx);
-    usleep(50000);
     update();
 }
 

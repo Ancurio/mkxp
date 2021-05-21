@@ -242,6 +242,9 @@ struct RGSSThreadData
 
 	/* Set when F12 is released */
 	AtomicFlag rqResetFinish;
+    
+    // Set when window is being adjusted (resize, reposition)
+    AtomicFlag rqWindowAdjust;
 
 	EventThread *ethread;
 	UnidirMessage<Vec2i> windowSizeMsg;

@@ -450,10 +450,12 @@ void EventThread::process(RGSSThreadData &rtData)
                         
                     case REQUEST_WINRESIZE :
                         SDL_SetWindowSize(win, event.window.data1, event.window.data2);
+                        rtData.rqWindowAdjust.clear();
                         break;
                         
                     case REQUEST_WINREPOSITION :
                         SDL_SetWindowPosition(win, event.window.data1, event.window.data2);
+                        rtData.rqWindowAdjust.clear();
                         break;
                         
                     case REQUEST_WINCENTER :
@@ -462,6 +464,7 @@ void EventThread::process(RGSSThreadData &rtData)
                             SDL_SetWindowPosition(win,
                                                   (dm.w / 2) - (winW / 2),
                                                   (dm.h / 2) - (winH / 2));
+                        rtData.rqWindowAdjust.clear();
                         break;
                         
                     case REQUEST_WINRENAME :
@@ -567,7 +570,9 @@ void EventThread::process(RGSSThreadData &rtData)
     if (SDL_JoystickGetAttached(js))
         SDL_JoystickClose(js);
     
+#ifndef MKXPZ_BUILD_XCODE
     delete sMenu;
+#endif
 }
 
 int EventThread::eventFilter(void *data, SDL_Event *event)

@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include <unistd.h>
 
 struct AtomicFlag
 {
@@ -24,6 +25,19 @@ struct AtomicFlag
 	{
 		SDL_AtomicSet(&atom, 0);
 	}
+    
+    void wait()
+    {
+        while (SDL_AtomicGet(&atom)) {
+            usleep(5000);
+        }
+    }
+    
+    void reset()
+    {
+        wait();
+        set();
+    }
 
 	operator bool() const
 	{
