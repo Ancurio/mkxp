@@ -1162,7 +1162,7 @@ void Input::update()
 		else
 			repeated = p->repeatCount >= 15 && ((p->repeatCount+1) % 4) == 0;
          */
-        bool repeated = p->repeatCount >= p->repeatStart && ((p->repeatCount+1) & p->repeatDelay) == 0;
+        bool repeated = p->repeatCount >= p->repeatStart && ((p->repeatCount+1) % p->repeatDelay) == 0;
 		p->getState(p->repeating).repeated |= repeated;
 
         p->last_update = shState->runTime();
