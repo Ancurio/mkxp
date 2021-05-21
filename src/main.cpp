@@ -45,6 +45,8 @@
 
 #include "filesystem/filesystem.h"
 
+#include "system/system.h"
+
 #if defined(__WINDOWS__)
 #include "resource.h"
 #include <Winsock2.h>
@@ -191,8 +193,8 @@ int main(int argc, char *argv[]) {
 
 #ifndef WORKDIR_CURRENT
     char dataDir[512]{};
-    char *tmp{};
 #if defined(__linux__)
+    char *tmp{};
     tmp = getenv("SRCDIR");
     if (tmp) {
       strncpy(dataDir, tmp, sizeof(dataDir));
@@ -384,7 +386,7 @@ int main(int argc, char *argv[]) {
 #endif
 
     RGSSThreadData rtData(&eventThread, argv[0], win, alcDev, mode.refresh_rate,
-                          conf, glCtx);
+                          mkxp_sys::getScalingFactor(), conf, glCtx);
 
     int winW, winH;
     SDL_GetWindowSize(win, &winW, &winH);

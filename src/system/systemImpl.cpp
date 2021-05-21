@@ -54,3 +54,8 @@ std::string systemImpl::getUserName() {
     return std::string(ret);
     
 }
+
+// HiDPI scaling not supported outside of macOS for now
+int systemImpl::getScalingFactor() {
+    return 1;
+}

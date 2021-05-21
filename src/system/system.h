@@ -13,6 +13,7 @@
 namespace systemImpl {
 std::string getSystemLanguage();
 std::string getUserName();
+int getScalingFactor();
 }
 
 #ifdef MKXPZ_BUILD_XCODE

@@ -415,6 +415,10 @@ struct GraphicsPrivate {
      * is blitted inside the game window */
     Vec2i scOffset;
     
+    // Scaling factor, used to display the screen properly
+    // on Retina displays
+    int scalingFactor;
+    
     ScreenScene screen;
     RGSSThreadData *threadData;
     SDL_GLContext glCtx;
@@ -450,7 +454,7 @@ struct GraphicsPrivate {
     glCtx(SDL_GL_GetCurrentContext()), frameRate(DEF_FRAMERATE),
     frameCount(0), brightness(255), fpsLimiter(frameRate),
     useFrameSkip(rtData->config.frameSkip), frozen(false),
-    last_update(0), last_avg_update(0) {
+    last_update(0), last_avg_update(0), scalingFactor(rtData->scale){
         avgFPSData = std::vector<unsigned long long>();
         avgFPSLock = SDL_CreateMutex();
         
@@ -547,7 +551,10 @@ struct GraphicsPrivate {
     void metaBlitBufferFlippedScaled() {
         GLMeta::blitRectangle(
                               IntRect(0, 0, scRes.x, scRes.y),
-                              IntRect(scOffset.x, scSize.y + scOffset.y, scSize.x, -scSize.y),
+                              IntRect(scOffset.x * scalingFactor,
+                                      (scSize.y + scOffset.y) * scalingFactor,
+                                      scSize.x * scalingFactor,
+                                      -scSize.y * scalingFactor),
                               threadData->config.smoothScaling);
     }
     
@@ -589,7 +596,7 @@ struct GraphicsPrivate {
     }
     
     double averageFPS() {
-        double ret;
+        double ret = 0;
         SDL_LockMutex(avgFPSLock);
         for (unsigned long long times : avgFPSData)
             ret += times;

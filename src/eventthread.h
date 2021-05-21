@@ -257,6 +257,7 @@ struct RGSSThreadData
 
 	Vec2 sizeResoRatio;
 	Vec2i screenOffset;
+    int scale;
 	const int refreshRate;
 
 	Config config;
@@ -268,6 +269,7 @@ struct RGSSThreadData
 	               SDL_Window *window,
 	               ALCdevice *alcDev,
 	               int refreshRate,
+                   int scalingFactor,
 	               const Config& newconf,
                    SDL_GLContext ctx)
 	    : ethread(ethread),
@@ -276,6 +278,7 @@ struct RGSSThreadData
 	      alcDev(alcDev),
 	      sizeResoRatio(1, 1),
 	      refreshRate(refreshRate),
+          scale(scalingFactor),
 	      config(newconf),
           glContext(ctx)
 	{}

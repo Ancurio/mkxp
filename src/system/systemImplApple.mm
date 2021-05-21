@@ -19,6 +19,10 @@ std::string systemImpl::getUserName() {
     return std::string(NSUserName().UTF8String);
 }
 
+int systemImpl::getScalingFactor() {
+    return NSApplication.sharedApplication.mainWindow.backingScaleFactor;
+}
+
 
 // constant, if it's not nil then just raise the menu instead
 SettingsMenu *smenu = nil;
