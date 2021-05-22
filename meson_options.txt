@@ -17,7 +17,7 @@ option('workdir_current', type: 'boolean', value: false, description: 'Keep curr
 option('static_executable', type: 'boolean', value: true, description: 'Build a static executable (Windows-only)')
 option('appimagekit_path', type: 'string', value: '', description: 'Path to AppImageKit, used for building AppImages')
 option('appimage', type: 'boolean', value: false, description: 'Whether to install to an AppImage or just copy everything')
-option('steamworks_path', type: 'string', value: '', description: 'Path to Steamshim')
+option('steamworks_path', type: 'string', value: '', description: 'Path to Steamworks SDK')
 option('steam_appid', type: 'string', value: '', description: 'Steam AppID. Set this to use SteamAPI_RestartAppIfNecessary')
 option('steamshim_debug', type: 'boolean', value: false, description: 'Whether to show Steamshim debug messages in the console')
 
