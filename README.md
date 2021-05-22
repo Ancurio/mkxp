@@ -1,14 +1,18 @@
 # mkxp-z
 
-![ss](/screenshot.png?raw=true)
+<p align=center>
+    <img src="screenshot.png?raw=true" width=512 height=412>
+</p>
 
 This is a fork of mkxp intended to be a little more than just a barebones recreation of RPG Maker. The original goal was successfully running games based on Pokemon Essentials, which is notoriously dependent on Windows APIs. I'd consider that mission accomplished.
 
+Despite the fact that it was made with Essentials games in mind, it should still be compatible with anything that runs in the upstream version of MKXP, so you can think of it as just MKXP but a bit supercharged. It should be able to run all but the most demanding of RPG Maker projects.
+
 It supports Windows, Linux and both Intel and Apple Silicon versions of macOS.
 
-I'd highly recommend [checking the gitbook](https://roza-gb.gitbook.io/mkxp-z) for more information than this readme contains.
-
 Releases are [here](https://gitlab.com/mkxp-z/mkxp-z/-/releases). Requirements for running them are Windows 8.1+, Ubuntu 18.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.12+.
+
+I'd highly recommend [checking the gitbook](https://roza-gb.gitbook.io/mkxp-z) for more information than this readme contains.
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on MRI and as such the mruby and null bindings are not included.
@@ -51,9 +55,13 @@ Following that, you should be able to just build mkxp-z:
 
 ### macOS
 
-Open the Xcode project, select the scheme you want (Universal and Apple Silicon options currently don't work with Intel Macs), and build.
+After having all the prerequisites, go to the `macos` directory and run `setup.command`. This will build all the remaining dependencies you need.
+
+Following that, open the Xcode project, select the scheme you want (Universal and Apple Silicon options currently don't work with Intel Macs), and build.
 
 ### Windows/Linux
+
+After having all the prerequisites, go to the `windows` or `linux` directory and run `make`. This will build all the remaining dependencies you need.
 
 `source linux/vars.sh` or `source windows/vars.sh` depending on your platform, then run `meson build` and `ninja -C build`.
 
@@ -92,4 +100,4 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 * wma audio files
 * Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 16384 on modern cards).^
 
-^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error. Pokemon Essentials uses its own code for rendering tilemaps, and can be modified to avoid this limit.
+^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
