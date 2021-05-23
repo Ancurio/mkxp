@@ -28,6 +28,7 @@
 #include "util/sdl-util.h"
 #include "util/debugwriter.h"
 #include "util/boost-hash.h"
+#include "util/exception.h"
 
 
 #include "binding-util.h"
@@ -125,6 +126,7 @@ RB_METHOD(mkxpSystemMemory);
 RB_METHOD(mkxpReloadPathCache);
 RB_METHOD(mkxpAddPath);
 RB_METHOD(mkxpRemovePath);
+RB_METHOD(mkxpLaunch);
 
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
@@ -208,6 +210,7 @@ static void mriBindingInit() {
     _rb_define_module_function(mod, "reload_cache", mkxpReloadPathCache);
     _rb_define_module_function(mod, "mount", mkxpAddPath);
     _rb_define_module_function(mod, "unmount", mkxpRemovePath);
+    _rb_define_module_function(mod, "launch", mkxpLaunch);
     
     /* Load global constants */
     rb_gv_set("MKXP", Qtrue);
@@ -448,6 +451,58 @@ RB_METHOD(mkxpRemovePath) {
         raiseRbExc(e);
     }
     return path;
+}
+
+#ifdef __MACOSX__
+#define OPENCMD "open "
+#define OPENARGS "--args"
+#elif defined(__linux__)
+#define OPENCMD "xdg-open "
+#define OPENARGS ""
+#else
+#define OPENCMD "start /b "
+#define OPENARGS ""
+#endif
+
+RB_METHOD(mkxpLaunch) {
+    RB_UNUSED_PARAM;
+    
+    VALUE cmdname, args;
+    
+    rb_scan_args(argc, argv, "11", &cmdname, &args);
+    SafeStringValue(cmdname);
+    
+    std::string command(OPENCMD);
+    command += "\""; command += RSTRING_PTR(cmdname); command += "\"";
+    
+    if (args != RUBY_Qnil) {
+#ifndef __linux__
+        command += " ";
+        command += OPENARGS;
+        Check_Type(args, T_ARRAY);
+        
+        for (int i = 0; i < RARRAY_LEN(args); i++) {
+            VALUE arg = rb_ary_entry(args, i);
+            SafeStringValue(arg);
+            
+            if (RSTRING_LEN(arg) <= 0)
+                continue;
+            
+            command += " ";
+            command += RSTRING_PTR(arg);
+#else
+            Debug() << command << ":" << "Arguments are not supported with xdg-open. Ignoring.";
+#endif
+        }
+    }
+    
+    if (std::system(command.c_str()) != 0) {
+        raiseRbExc(Exception(Exception::MKXPError, "Failed to launch \"%s\"", RSTRING_PTR(cmdname)));
+    }
+    
+    Debug() << command;
+    
+    return RUBY_Qnil;
 }
 
 static VALUE rgssMainCb(VALUE block) {
