@@ -527,7 +527,22 @@ Bitmap::Bitmap(const char *filename)
         if (fcount > fcount_partial) {
             Debug() << "Non-fatal error reading" << filename << ": Only decoded" << fcount_partial << "out of" << fcount << "frames";
         }
-        for (int i = 1; i < fcount_partial; i++) {
+        for (int i = 0; i < fcount_partial; i++) {
+            if (i > 0) {
+                int status = gif_decode_frame(handler.gif, i);
+                if (status != GIF_OK && status != GIF_WORKING) {
+                    for (TEXFBO &frame : p->animation.frames)
+                        shState->texPool().release(frame);
+                    
+                    gif_finalise(handler.gif);
+                    delete handler.gif;
+                    delete handler.gif_data;
+                    
+                    throw Exception(Exception::MKXPError, "Failed to decode GIF frame %i out of %i (Status %i)",
+                                    i + 1, fcount_partial, status);
+                }
+            }
+            
             TEXFBO texfbo;
             try {
                 texfbo = shState->texPool().request(p->animation.width, p->animation.height);
@@ -547,19 +562,6 @@ Bitmap::Bitmap(const char *filename)
             TEX::bind(texfbo.tex);
             TEX::uploadImage(p->animation.width, p->animation.height, handler.gif->frame_image, GL_RGBA);
             p->animation.frames.push_back(texfbo);
-            
-            int status = gif_decode_frame(handler.gif, i);
-            if (status != GIF_OK && status != GIF_WORKING) {
-                for (TEXFBO &frame : p->animation.frames)
-                    shState->texPool().release(frame);
-                
-                gif_finalise(handler.gif);
-                delete handler.gif;
-                delete handler.gif_data;
-                
-                throw Exception(Exception::MKXPError, "Failed to decode GIF frame %i out of %i (Error %i)",
-                                i + 1, fcount_partial, status);
-            }
         }
         
         gif_finalise(handler.gif);
