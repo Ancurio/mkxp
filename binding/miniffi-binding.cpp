@@ -82,7 +82,7 @@ RB_METHOD(MiniFFI_initialize) {
     rb_scan_args(argc, argv, "22", &libname, &func, &imports, &exports);
     SafeStringValue(libname);
     SafeStringValue(func);
-#ifdef __MACOSX__
+#ifdef __APPLE__
     void *hlib = SDL_LoadObject(mkxp_fs::normalizePath(RSTRING_PTR(libname), 1, 1).c_str());
 #else
     void *hlib = SDL_LoadObject(RSTRING_PTR(libname));

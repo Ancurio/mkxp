@@ -58,6 +58,7 @@ extern "C" {
 
 #include <SDL_cpuinfo.h>
 #include <SDL_filesystem.h>
+#include <SDL_loadso.h>
 #include <SDL_power.h>
 
 #define MACRO_STRINGIFY(x) #x
@@ -115,7 +116,16 @@ RB_METHOD(mkxpDesensitize);
 RB_METHOD(mkxpPuts);
 RB_METHOD(mkxpRawKeyStates);
 RB_METHOD(mkxpMouseInWindow);
+
 RB_METHOD(mkxpPlatform);
+RB_METHOD(mkxpIsMacHost);
+RB_METHOD(mkxpIsWindowsHost);
+RB_METHOD(mkxpIsLinuxHost);
+RB_METHOD(mkxpIsUsingRosetta);
+RB_METHOD(mkxpIsUsingWine);
+RB_METHOD(mkxpIsReallyMacHost);
+RB_METHOD(mkxpIsReallyLinuxHost);
+
 RB_METHOD(mkxpUserLanguage);
 RB_METHOD(mkxpUserName);
 RB_METHOD(mkxpGameTitle);
@@ -193,6 +203,7 @@ static void mriBindingInit() {
     
     VALUE mod = rb_define_module("System");
     _rb_define_module_function(mod, "delta", mkxpDelta);
+    _rb_define_module_function(mod, "uptime", mkxpDelta);
     _rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
     _rb_define_module_function(mod, "set_window_title", mkxpSetTitle);
     _rb_define_module_function(mod, "show_settings", mkxpSettingsMenu);
@@ -200,7 +211,21 @@ static void mriBindingInit() {
     _rb_define_module_function(mod, "desensitize", mkxpDesensitize);
     _rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
     _rb_define_module_function(mod, "mouse_in_window", mkxpMouseInWindow);
+    _rb_define_module_function(mod, "mouse_in_window?", mkxpMouseInWindow);
+    
     _rb_define_module_function(mod, "platform", mkxpPlatform);
+    
+    _rb_define_module_function(mod, "is_mac?", mkxpIsMacHost);
+    _rb_define_module_function(mod, "is_rosetta?", mkxpIsUsingRosetta);
+    
+    _rb_define_module_function(mod, "is_linux?", mkxpIsLinuxHost);
+    
+    _rb_define_module_function(mod, "is_windows?", mkxpIsWindowsHost);
+    _rb_define_module_function(mod, "is_wine?", mkxpIsUsingWine);
+    _rb_define_module_function(mod, "is_really_mac?", mkxpIsReallyMacHost);
+    _rb_define_module_function(mod, "is_really_linux?", mkxpIsReallyLinuxHost);
+    
+    
     _rb_define_module_function(mod, "user_language", mkxpUserLanguage);
     _rb_define_module_function(mod, "user_name", mkxpUserName);
     _rb_define_module_function(mod, "game_title", mkxpGameTitle);
@@ -345,7 +370,70 @@ RB_METHOD(mkxpMouseInWindow) {
 RB_METHOD(mkxpPlatform) {
     RB_UNUSED_PARAM;
     
-    return rb_utf8_str_new_cstr(SDL_GetPlatform());
+#if MKXPZ_PLATFORM == MKXPZ_PLATFORM_MACOS
+    std::string platform("macOS");
+    
+    if (mkxp_sys::isRosetta())
+        platform += " (Rosetta)";
+
+#elif MKXPZ_PLATFORM == MKXPZ_PLATFORM_WINDOWS
+    std::string platform("Windows");
+    
+    if (mkxp_sys::isWine()) {
+        platform += " (Wine - ";
+        switch (mkxp_sys::getRealHostType()) {
+            case mkxp_sys::WineHostType::Mac:
+                platform += "macOS)";
+                break;
+            default:
+                platform += "Linux)";
+                break;
+        }
+    }
+#else
+    std::string platform("Linux");
+#endif
+    
+    return rb_utf8_str_new_cstr(platform.c_str());
+}
+
+RB_METHOD(mkxpIsMacHost) {
+    RB_UNUSED_PARAM;
+    
+    return rb_bool_new(MKXPZ_PLATFORM == MKXPZ_PLATFORM_MACOS);
+}
+
+RB_METHOD(mkxpIsUsingRosetta) {
+    RB_UNUSED_PARAM;
+    
+    return rb_bool_new(mkxp_sys::isRosetta());
+}
+
+RB_METHOD(mkxpIsLinuxHost) {
+    RB_UNUSED_PARAM;
+    
+    return rb_bool_new(MKXPZ_PLATFORM == MKXPZ_PLATFORM_LINUX);
+}
+
+RB_METHOD(mkxpIsWindowsHost) {
+    RB_UNUSED_PARAM;
+    
+    return rb_bool_new(MKXPZ_PLATFORM == MKXPZ_PLATFORM_WINDOWS);
+}
+
+RB_METHOD(mkxpIsUsingWine) {
+    RB_UNUSED_PARAM;
+    return rb_bool_new(mkxp_sys::isWine());
+}
+
+RB_METHOD(mkxpIsReallyMacHost) {
+    RB_UNUSED_PARAM;
+    return rb_bool_new(mkxp_sys::getRealHostType() == mkxp_sys::WineHostType::Mac);
+}
+
+RB_METHOD(mkxpIsReallyLinuxHost) {
+    RB_UNUSED_PARAM;
+    return rb_bool_new(mkxp_sys::getRealHostType() == mkxp_sys::WineHostType::Linux);
 }
 
 RB_METHOD(mkxpUserLanguage) {
@@ -453,7 +541,7 @@ RB_METHOD(mkxpRemovePath) {
     return path;
 }
 
-#ifdef __MACOSX__
+#ifdef __APPLE__
 #define OPENCMD "open "
 #define OPENARGS "--args"
 #elif defined(__linux__)
@@ -499,8 +587,6 @@ RB_METHOD(mkxpLaunch) {
     if (std::system(command.c_str()) != 0) {
         raiseRbExc(Exception(Exception::MKXPError, "Failed to launch \"%s\"", RSTRING_PTR(cmdname)));
     }
-    
-    Debug() << command;
     
     return RUBY_Qnil;
 }
@@ -768,7 +854,7 @@ static void runRMXPScripts(BacktraceData &btData) {
             
             // Adding a 'not' symbol means it WON'T run on that
             // platform (i.e. |!W| won't run on Windows)
-            
+/*
             if (scriptName[0] == '|') {
                 int len = strlen(scriptName);
                 if (len > 2) {
@@ -782,6 +868,7 @@ static void runRMXPScripts(BacktraceData &btData) {
                         continue;
                 }
             }
+ */
             
             int state;
             

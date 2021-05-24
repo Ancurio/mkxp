@@ -617,7 +617,7 @@ Graphics::Graphics(RGSSThreadData *data) {
 #ifndef MKXPZ_STATIC_FRAMERATE
     if (data->config.syncToRefreshrate) {
         p->frameRate = data->refreshRate;
-#if defined(__MACOSX__) && defined(GLES2_HEADER)
+#if defined(__APPLE__) && defined(GLES2_HEADER)
         // VSync seems to be broken at the moment, could be anywhere in the
         // GLES -> ANGLE -> OpenGL -> Metal (if Apple Silicon) translation
         p->fpsLimiter.setDesiredFPS(data->refreshRate);

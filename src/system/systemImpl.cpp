@@ -54,6 +54,40 @@ std::string systemImpl::getUserName() {
     return std::string(ret);
     
 }
+    
+bool systemImpl::isWine() {
+#if MKXPZ_PLATFORM != MKXPZ_PLATFORM_WINDOWS
+    return false;
+#else
+    void *ntdll = SDL_LoadObject("ntdll.dll");
+    return SDL_LoadFunction(ntdll, "wine_get_host_version") != 0;
+#endif
+}
+
+bool systemImpl::isRosetta() {
+    return false;
+}
+
+systemImpl::WineHostType systemImpl::getRealHostType() {
+#if MKXPZ_PLATFORM != MKXPZ_PLATFORM_WINDOWS
+    return WineHostType::Linux;
+#else
+    void *ntdll = SDL_LoadObject("ntdll.dll");
+    void (*wine_get_host_version)(const char **, const char **) =
+    (void (*)(const char **, const char **))SDL_LoadFunction(ntdll, "wine_get_host_version");
+    
+    if (wine_get_host_version == 0)
+        return WineHostType::Windows;
+    
+    const char *kernel = 0;
+    wine_get_host_version(&kernel, 0);
+
+    if (!strcmp(kernel, "Darwin"))
+        return WineHostType::Mac;
+    
+    return WineHostType::Linux;
+#endif
+}
 
 // HiDPI scaling not supported outside of macOS for now
 int systemImpl::getScalingFactor() {

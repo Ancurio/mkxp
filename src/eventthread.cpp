@@ -46,7 +46,7 @@
 #include "al-util.h"
 #include "debugwriter.h"
 
-#ifndef __MACOSX__
+#ifndef __APPLE__
 #include "util/string-util.h"
 #endif
 
@@ -142,7 +142,7 @@ void EventThread::process(RGSSThreadData &rtData)
     initALCFunctions(rtData.alcDev);
     
     // XXX this function breaks input focus on OSX
-#ifndef __MACOSX__
+#ifndef __APPLE__
     SDL_SetEventFilter(eventFilter, &rtData);
 #endif
     
@@ -491,7 +491,7 @@ void EventThread::process(RGSSThreadData &rtData)
                         
                     case REQUEST_MESSAGEBOX :
                     {
-#ifndef __MACOSX__
+#ifndef __APPLE__
                         // Try to format the message with additional newlines
                         std::string message = copyWithNewlines((const char*) event.user.data1,
                                                                70);

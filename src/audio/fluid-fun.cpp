@@ -10,7 +10,7 @@
 #define FLUID_LIB "libfluidsynth.so.3"
 #elif MKXPZ_BUILD_XCODE
 #define FLUID_LIB "@rpath/libfluidsynth.dylib"
-#elif __MACOSX__
+#elif __APPLE__
 #define FLUID_LIB "libfluidsynth.3.dylib"
 #elif __WINDOWS__
 #define FLUID_LIB "fluidsynth.dll"

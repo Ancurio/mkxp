@@ -6,6 +6,7 @@
 //
 
 #import <AppKit/AppKit.h>
+#import <sys/sysctl.h>
 #import "system.h"
 #import "SettingsMenuController.h"
 
@@ -21,6 +22,25 @@ std::string systemImpl::getUserName() {
 
 int systemImpl::getScalingFactor() {
     return NSApplication.sharedApplication.mainWindow.backingScaleFactor;
+}
+
+bool systemImpl::isWine() {
+    return false;
+}
+
+bool systemImpl::isRosetta() {
+    int translated = 0;
+    size_t size = sizeof(translated);
+    int result = sysctlbyname("sysctl.proc_translated", &translated, &size, NULL, 0);
+    
+    if (result == -1)
+        return false;
+    
+    return translated;
+}
+
+systemImpl::WineHostType systemImpl::getRealHostType() {
+    return WineHostType::Mac;
 }
 
 
