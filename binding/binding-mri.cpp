@@ -125,6 +125,7 @@ RB_METHOD(mkxpIsUsingRosetta);
 RB_METHOD(mkxpIsUsingWine);
 RB_METHOD(mkxpIsReallyMacHost);
 RB_METHOD(mkxpIsReallyLinuxHost);
+RB_METHOD(mkxpIsReallyWindowsHost);
 
 RB_METHOD(mkxpUserLanguage);
 RB_METHOD(mkxpUserName);
@@ -224,6 +225,7 @@ static void mriBindingInit() {
     _rb_define_module_function(mod, "is_wine?", mkxpIsUsingWine);
     _rb_define_module_function(mod, "is_really_mac?", mkxpIsReallyMacHost);
     _rb_define_module_function(mod, "is_really_linux?", mkxpIsReallyLinuxHost);
+    _rb_define_module_function(mod, "is_really_windows?", mkxpIsReallyWindowsHost);
     
     
     _rb_define_module_function(mod, "user_language", mkxpUserLanguage);
@@ -434,6 +436,11 @@ RB_METHOD(mkxpIsReallyMacHost) {
 RB_METHOD(mkxpIsReallyLinuxHost) {
     RB_UNUSED_PARAM;
     return rb_bool_new(mkxp_sys::getRealHostType() == mkxp_sys::WineHostType::Linux);
+}
+
+RB_METHOD(mkxpIsReallyWindowsHost) {
+    RB_UNUSED_PARAM;
+    return rb_bool_new(mkxp_sys::getRealHostType() == mkxp_sys::WineHostType::Windows);
 }
 
 RB_METHOD(mkxpUserLanguage) {
