@@ -555,7 +555,7 @@ RB_METHOD(mkxpRemovePath) {
 #define OPENCMD "xdg-open "
 #define OPENARGS ""
 #else
-#define OPENCMD "start /b "
+#define OPENCMD "start /b \"launch\" "
 #define OPENARGS ""
 #endif
 
