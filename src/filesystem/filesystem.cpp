@@ -46,7 +46,7 @@
 #include <iconv.h>
 #endif
 
-#ifdef __WINDOWS__
+#ifdef __WIN32__
 #include <direct.h>
 #endif
 

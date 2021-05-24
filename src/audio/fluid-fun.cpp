@@ -12,7 +12,7 @@
 #define FLUID_LIB "@rpath/libfluidsynth.dylib"
 #elif __APPLE__
 #define FLUID_LIB "libfluidsynth.3.dylib"
-#elif __WINDOWS__
+#elif __WIN32__
 #define FLUID_LIB "fluidsynth.dll"
 #else
 #error "platform not recognized"

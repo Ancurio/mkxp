@@ -47,7 +47,7 @@
 
 #include "system/system.h"
 
-#if defined(__WINDOWS__)
+#if defined(__WIN32__)
 #include "resource.h"
 #include <Winsock2.h>
 #include "util/win-consoleutils.h"
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
 
       return 0;
     }
-#if defined(__WINDOWS__)
+#if defined(__WIN32__)
     WSAData wsadata = {0};
     if (WSAStartup(0x101, &wsadata) || wsadata.wVersion != 0x101) {
       char buf[200];
@@ -443,7 +443,7 @@ int main(int argc, char *argv[]) {
     alcCloseDevice(alcDev);
     SDL_DestroyWindow(win);
 
-#if defined(__WINDOWS__)
+#if defined(__WIN32__)
     if (wsadata.wVersion)
       WSACleanup();
 #endif

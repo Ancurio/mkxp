@@ -48,7 +48,7 @@ extern "C" {
 #endif
 }
 
-#ifdef __WINDOWS__
+#ifdef __WIN32__
 #include <fcntl.h>
 #endif
 
@@ -447,7 +447,7 @@ RB_METHOD(mkxpUserName) {
     
 // Using the Windows API isn't working with usernames that involve Unicode
 // characters for some dumb reason
-#ifdef __WINDOWS__
+#ifdef __WIN32__
     VALUE env = rb_const_get(rb_mKernel, rb_intern("ENV"));
     return rb_funcall(env, rb_intern("[]"), 1, rb_str_new_cstr("USERNAME"));
 #else
@@ -919,7 +919,7 @@ static void configureWindowsStreams() {
 
     #undef HANDLE_VALID
 }
-#endif // #ifdef __WINDOWS__
+#endif // #ifdef __WIN32__
 
 static void showExc(VALUE exc, const BacktraceData &btData) {
     VALUE bt = rb_funcall2(exc, rb_intern("backtrace"), 0, NULL);
@@ -996,13 +996,13 @@ static void mriBindingExecute() {
     /* Normally only a ruby executable would do a sysinit,
      * but not doing it will lead to crashes due to closed
      * stdio streams on some platforms (eg. Windows) */
-#ifdef __WINDOWS__
+#ifdef __WIN32__
     if (!conf.editor.debug) {
 #endif
     int argc = 0;
     char **argv = 0;
     ruby_sysinit(&argc, &argv);
-#ifdef __WINDOWS__
+#ifdef __WIN32__
     }
 #endif
     

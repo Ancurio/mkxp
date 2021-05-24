@@ -14,6 +14,7 @@
 #include <locale>
 #endif
 
+#include <SDL_loadso.h>
 #include <cstring>
 #include <string>
 
@@ -43,10 +44,13 @@ std::string systemImpl::getSystemLanguage() {
 }
 
 std::string systemImpl::getUserName() {
-    char ret[30];
-#ifdef __WINDOWS__
-    GetUserName(ret, sizeof(ret));
+    
+#ifdef __WIN32__
+    // The Ruby binding gets the username from the environment loaded
+    // with Ruby instead, should fix getting it from WinAPI at some point
+    return std::string("unused");
 #else
+    char ret[30];
     char *username = getenv("USER");
     if (username)
         strncpy(ret, username, sizeof(ret));
