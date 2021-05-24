@@ -54,8 +54,8 @@ std::string systemImpl::getUserName() {
     char *username = getenv("USER");
     if (username)
         strncpy(ret, username, sizeof(ret));
-#endif
     return std::string(ret);
+#endif
     
 }
     

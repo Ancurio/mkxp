@@ -735,7 +735,6 @@ bool evalScript(VALUE string, const char *filename)
 static void runRMXPScripts(BacktraceData &btData) {
     const Config &conf = shState->rtData().config;
     const std::string &scriptPack = conf.game.scripts;
-    const char *platform = SDL_GetPlatform();
     
     if (scriptPack.empty()) {
         showMsg("No game scripts specified (missing Game.ini?)");
