@@ -578,10 +578,10 @@ RB_METHOD(mkxpLaunch) {
             
             command += " ";
             command += RSTRING_PTR(arg);
-#else
-            Debug() << command << ":" << "Arguments are not supported with xdg-open. Ignoring.";
-#endif
         }
+#else
+        Debug() << command << ":" << "Arguments are not supported with xdg-open. Ignoring.";
+#endif
     }
     
     if (std::system(command.c_str()) != 0) {
