@@ -77,6 +77,8 @@ public:
 	 * if "checkReset" */
 	void repaintWait(const AtomicFlag &exitCond,
 	                 bool checkReset = true);
+    
+    void lockResources(bool lock);
 
 private:
 	Graphics(RGSSThreadData *data);
@@ -90,5 +92,11 @@ private:
 
 	GraphicsPrivate *p;
 };
+
+#define GFX_BLOCK(exp) \
+shState->graphics().lockResources(true); \
+{ \
+   exp \
+}
 
 #endif // GRAPHICS_H

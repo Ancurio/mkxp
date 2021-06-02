@@ -9,6 +9,10 @@
 #include "miniffi.h"
 #include "binding-util.h"
 
+#if RAPI_MAJOR >= 2
+#include <ruby/thread.h>
+#endif
+
 #if defined(__linux__) || defined(__APPLE__)
 #define MVAL2RB(v) ULONG2NUM(v)
 #define RB2MVAL(v) (mffi_value)NUM2ULONG(v)
@@ -213,6 +217,19 @@ RB_METHOD(MiniFFI_initialize) {
     return Qnil;
 }
 
+#if RAPI_MAJOR >= 2
+typedef struct {
+    MINIFFI_FUNC function;
+    MiniFFIFuncArgs *args;
+    int nparams;
+} MFFICallCBArgs;
+
+void* miniffi_call_cb(void *args) {
+    MFFICallCBArgs *a = (MFFICallCBArgs*)args;
+    return (void*)miniffi_call_intern(a->function, a->args, a->nparams);
+    }
+#endif
+
 RB_METHOD(MiniFFI_call) {
     MiniFFIFuncArgs param;
 #define params param.params
@@ -259,7 +276,12 @@ RB_METHOD(MiniFFI_call) {
         }
         params[i] = lParam;
     }
+#if RAPI_MAJOR >= 2
+    MFFICallCBArgs cb_args {ApiFunction, &param, nimport};
+    mffi_value ret = (mffi_value)rb_thread_call_without_gvl(miniffi_call_cb, &cb_args, 0, 0);
+#else
     mffi_value ret = miniffi_call_intern(ApiFunction, &param, nimport);
+#endif
     
     switch (FIX2INT(own_exports)) {
         case _T_NUMBER:

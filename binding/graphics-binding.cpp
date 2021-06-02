@@ -25,6 +25,10 @@
 #include "binding-types.h"
 #include "exception.h"
 
+#if RAPI_MAJOR >= 2
+#include <ruby/thread.h>
+#endif
+
 RB_METHOD(graphicsDelta) {
     RB_UNUSED_PARAM;
     
@@ -34,8 +38,11 @@ RB_METHOD(graphicsDelta) {
 RB_METHOD(graphicsUpdate)
 {
     RB_UNUSED_PARAM;
-    
+#if RAPI_MAJOR >= 2
+    rb_thread_call_without_gvl([](void*) -> void* {shState->graphics().update(); return 0;}, 0, 0, 0);
+#else
     shState->graphics().update();
+#endif
     
     return Qnil;
 }
@@ -145,8 +152,11 @@ RB_METHOD(graphicsWait)
     
     int duration;
     rb_get_args(argc, argv, "i", &duration RB_ARG_END);
-    
+#if RAPI_MAJOR >= 2
+    rb_thread_call_without_gvl([](void* d) -> void* {shState->graphics().wait(*(int*)d); return 0;}, (int*)&duration, 0, 0);
+#else
     shState->graphics().wait(duration);
+#endif
     
     return Qnil;
 }
@@ -231,6 +241,18 @@ RB_METHOD(graphicsPlayMovie)
     return Qnil;
 }
 
+void graphicsScreenshotInternal(const char *filename)
+{
+    try
+    {
+        shState->graphics().screenshot(filename);
+    }
+    catch(const Exception &e)
+    {
+        raiseRbExc(e);
+    }
+}
+
 RB_METHOD(graphicsScreenshot)
 {
     RB_UNUSED_PARAM;
@@ -238,14 +260,11 @@ RB_METHOD(graphicsScreenshot)
     VALUE filename;
     rb_scan_args(argc, argv, "1", &filename);
     SafeStringValue(filename);
-    try
-    {
-        shState->graphics().screenshot(RSTRING_PTR(filename));
-    }
-    catch(const Exception &e)
-    {
-        raiseRbExc(e);
-    }
+#if RAPI_MAJOR >= 2
+    rb_thread_call_without_gvl([](void* fn) -> void* {graphicsScreenshotInternal((const char*)fn); return 0;}, (void*)filename, 0, 0);
+#else
+    graphicsScreenshotInternal(RSTRING_PTR(filename));
+#endif
     return Qnil;
 }
 

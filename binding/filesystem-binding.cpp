@@ -33,6 +33,10 @@
 #include "intern.h"
 #endif
 
+#if RAPI_MAJOR > 2
+#include <ruby/thread.h>
+#endif
+
 static void fileIntFreeInstance(void *inst) {
   SDL_RWops *ops = static_cast<SDL_RWops *>(inst);
 
@@ -156,6 +160,17 @@ kernelLoadDataInt(const char *filename, bool rubyExc, bool raw) {
   return result;
 }
 
+#if RAPI_MAJOR >= 2
+typedef struct {
+    const char *filename;
+    bool loadRaw;
+} loadDataRubyArgs;
+
+VALUE call_kernelLoadDataInt_cb(loadDataRubyArgs *args) {
+    return kernelLoadDataInt(args->filename, true, args->loadRaw);
+}
+#endif
+
 RB_METHOD(kernelLoadData) {
   RB_UNUSED_PARAM;
 
@@ -168,8 +183,14 @@ RB_METHOD(kernelLoadData) {
   if (raw != Qnil && raw != Qtrue && raw != Qfalse) {
     rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
   }
-    
+#if RAPI_MAJOR >= 2
+    loadDataRubyArgs ldargs {RSTRING_PTR(filename), true};
+    return (VALUE)rb_thread_call_without_gvl([](void* args) -> void* {
+        return ((void*)call_kernelLoadDataInt_cb((loadDataRubyArgs*)args));
+    }, (void*)&ldargs, 0, 0);
+#else
   return kernelLoadDataInt(RSTRING_PTR(filename), true, RTEST(raw));
+#endif
 }
 
 RB_METHOD(kernelSaveData) {
