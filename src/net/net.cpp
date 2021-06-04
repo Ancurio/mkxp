@@ -115,24 +115,33 @@ StringMap &HTTPRequest::headers() {
 HTTPResponse HTTPRequest::get() {
     HTTPResponse ret;
     auto target = readURL(destination.c_str());
-    httplib::Client client(getHost(target).c_str());
+    
+    httplib::Client *client = nullptr;
+    try {
+        client = new httplib::Client(getHost(target).c_str());
+    }
+    catch (std::exception &e) {
+        delete client;
+        throw Exception(Exception::MKXPError, "Failed to create HTTP client (%s)", e.what());
+    }
+    
     httplib::Headers head;
     
     // Seems to need to be disabled for now, at least on macOS
 #ifdef MKXPZ_SSL
-    client.enable_server_certificate_verification(false);
+    client->enable_server_certificate_verification(false);
 #endif
-    client.set_follow_location(follow_location);
+    client->set_follow_location(follow_location);
     
-    for (auto const h : _headers)
+    for (auto const &h : _headers)
         head.emplace(h.first, h.second);
         
-    if (auto result = client.Get(getPath(target).c_str(), head)) {
+    if (auto result = client->Get(getPath(target).c_str(), head)) {
         auto response = result.value();
         ret._status = response.status;
         ret._body = response.body;
         
-        for (auto const h : response.headers)
+        for (auto const &h : response.headers)
             ret._headers.emplace(h.first, h.second);
     }
     else {
@@ -147,23 +156,32 @@ HTTPResponse HTTPRequest::get() {
 HTTPResponse HTTPRequest::post(StringMap &postData) {
     HTTPResponse ret;
     auto target = readURL(destination.c_str());
-    httplib::Client client(getHost(target).c_str());
+    
+    httplib::Client *client = nullptr;
+    try {
+        client = new httplib::Client(getHost(target).c_str());
+    }
+    catch (std::exception &e) {
+        delete client;
+        throw Exception(Exception::MKXPError, "Failed to create HTTP client (%s)", e.what());
+    }
+    
     httplib::Headers head;
     httplib::Params params;
     
     // Seems to need to be disabled for now, at least on macOS
 #ifdef MKXPZ_SSL
-    client.enable_server_certificate_verification(false);
+    client->enable_server_certificate_verification(false);
 #endif
-    client.set_follow_location(follow_location);
+    client->set_follow_location(follow_location);
     
-    for (auto const h : _headers)
+    for (auto const &h : _headers)
         head.emplace(h.first, h.second);
     
     for (auto const &p : postData)
         params.emplace(p.first, p.second);
     
-    if (auto result = client.Post(getPath(target).c_str(), head, params)) {
+    if (auto result = client->Post(getPath(target).c_str(), head, params)) {
         auto response = result.value();
         ret._status = response.status;
         ret._body = response.body;
@@ -182,24 +200,33 @@ HTTPResponse HTTPRequest::post(StringMap &postData) {
 HTTPResponse HTTPRequest::post(const char *body, const char *content_type) {
     HTTPResponse ret;
     auto target = readURL(destination.c_str());
-    httplib::Client client(getHost(target).c_str());
+    
+    httplib::Client *client = nullptr;
+    try {
+        client = new httplib::Client(getHost(target).c_str());
+    }
+    catch (std::exception &e) {
+        delete client;
+        throw Exception(Exception::MKXPError, "Failed to create HTTP client (%s)", e.what());
+    }
+    
     httplib::Headers head;
     
     // Seems to need to be disabled for now, at least on macOS
 #ifdef MKXPZ_SSL
-    client.enable_server_certificate_verification(false);
+    client->enable_server_certificate_verification(false);
 #endif
-    client.set_follow_location(true);
+    client->set_follow_location(true);
     
-    for (auto const h : _headers)
+    for (auto const &h : _headers)
         head.emplace(h.first, h.second);
 
-    if (auto result = client.Post(getPath(target).c_str(), head, body, content_type)) {
+    if (auto result = client->Post(getPath(target).c_str(), head, body, content_type)) {
         auto response = result.value();
         ret._status = response.status;
         ret._body = response.body;
         
-        for (auto const h : response.headers)
+        for (auto const &h : response.headers)
             ret._headers.emplace(h.first, h.second);
     }
     else {
