@@ -31,6 +31,7 @@ DEF_ALLOCFUNC(Window);
 #endif
 
 RB_METHOD(windowInitialize) {
+    GFX_LOCK;
     Window *w = viewportElementInitialize<Window>(argc, argv, self);
     
     setPrivateData(self, w);
@@ -39,6 +40,7 @@ RB_METHOD(windowInitialize) {
     
     wrapProperty(self, &w->getCursorRect(), "cursor_rect", RectType);
     
+    GFX_UNLOCK;
     return self;
 }
 
@@ -47,28 +49,28 @@ RB_METHOD(windowUpdate) {
     
     Window *w = getPrivateData<Window>(self);
     
-    GUARD_EXC(w->update(););
+    GFX_GUARD_EXC(w->update(););
     
     return Qnil;
 }
 
-DEF_PROP_OBJ_REF(Window, Bitmap, Windowskin, "windowskin")
-DEF_PROP_OBJ_REF(Window, Bitmap, Contents, "contents")
-DEF_PROP_OBJ_VAL(Window, Rect, CursorRect, "cursor_rect")
+DEF_GFX_PROP_OBJ_REF(Window, Bitmap, Windowskin, "windowskin")
+DEF_GFX_PROP_OBJ_REF(Window, Bitmap, Contents, "contents")
+DEF_GFX_PROP_OBJ_VAL(Window, Rect, CursorRect, "cursor_rect")
 
-DEF_PROP_B(Window, Stretch)
-DEF_PROP_B(Window, Active)
-DEF_PROP_B(Window, Pause)
+DEF_GFX_PROP_B(Window, Stretch)
+DEF_GFX_PROP_B(Window, Active)
+DEF_GFX_PROP_B(Window, Pause)
 
-DEF_PROP_I(Window, X)
-DEF_PROP_I(Window, Y)
-DEF_PROP_I(Window, Width)
-DEF_PROP_I(Window, Height)
-DEF_PROP_I(Window, OX)
-DEF_PROP_I(Window, OY)
-DEF_PROP_I(Window, Opacity)
-DEF_PROP_I(Window, BackOpacity)
-DEF_PROP_I(Window, ContentsOpacity)
+DEF_GFX_PROP_I(Window, X)
+DEF_GFX_PROP_I(Window, Y)
+DEF_GFX_PROP_I(Window, Width)
+DEF_GFX_PROP_I(Window, Height)
+DEF_GFX_PROP_I(Window, OX)
+DEF_GFX_PROP_I(Window, OY)
+DEF_GFX_PROP_I(Window, Opacity)
+DEF_GFX_PROP_I(Window, BackOpacity)
+DEF_GFX_PROP_I(Window, ContentsOpacity)
 
 void windowBindingInit() {
     VALUE klass = rb_define_class("Window", rb_cObject);

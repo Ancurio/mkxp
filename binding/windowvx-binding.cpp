@@ -25,6 +25,7 @@
 #include "windowvx.h"
 
 #include "bitmap.h"
+#include "graphics.h"
 
 #if RAPI_FULL > 187
 DEF_TYPE_CUSTOMNAME(WindowVX, "Window");
@@ -37,6 +38,7 @@ void bitmapInitProps(Bitmap *b, VALUE self);
 RB_METHOD(windowVXInitialize) {
   WindowVX *w;
 
+    GFX_LOCK;
   if (rgssVer >= 3) {
     int x, y, width, height;
     x = y = width = height = 0;
@@ -63,6 +65,7 @@ RB_METHOD(windowVXInitialize) {
   bitmapInitProps(contents, contentsObj);
   rb_iv_set(self, "contents", contentsObj);
 
+    GFX_UNLOCK;
   return self;
 }
 
@@ -71,7 +74,9 @@ RB_METHOD(windowVXUpdate) {
 
   WindowVX *w = getPrivateData<WindowVX>(self);
 
+    GFX_LOCK;
   w->update();
+    GFX_UNLOCK;
 
   return Qnil;
 }
@@ -82,8 +87,10 @@ RB_METHOD(windowVXMove) {
   int x, y, width, height;
   rb_get_args(argc, argv, "iiii", &x, &y, &width, &height RB_ARG_END);
 
+    GFX_LOCK;
   w->move(x, y, width, height);
-
+    GFX_UNLOCK;
+    
   return Qnil;
 }
 
@@ -103,28 +110,28 @@ RB_METHOD(windowVXIsClosed) {
   return rb_bool_new(w->isClosed());
 }
 
-DEF_PROP_OBJ_REF(WindowVX, Bitmap, Windowskin, "windowskin")
-DEF_PROP_OBJ_REF(WindowVX, Bitmap, Contents, "contents")
+DEF_GFX_PROP_OBJ_REF(WindowVX, Bitmap, Windowskin, "windowskin")
+DEF_GFX_PROP_OBJ_REF(WindowVX, Bitmap, Contents, "contents")
 
-DEF_PROP_OBJ_VAL(WindowVX, Rect, CursorRect, "cursor_rect")
-DEF_PROP_OBJ_VAL(WindowVX, Tone, Tone, "tone")
+DEF_GFX_PROP_OBJ_VAL(WindowVX, Rect, CursorRect, "cursor_rect")
+DEF_GFX_PROP_OBJ_VAL(WindowVX, Tone, Tone, "tone")
 
-DEF_PROP_I(WindowVX, X)
-DEF_PROP_I(WindowVX, Y)
-DEF_PROP_I(WindowVX, OX)
-DEF_PROP_I(WindowVX, OY)
-DEF_PROP_I(WindowVX, Width)
-DEF_PROP_I(WindowVX, Height)
-DEF_PROP_I(WindowVX, Padding)
-DEF_PROP_I(WindowVX, PaddingBottom)
-DEF_PROP_I(WindowVX, Opacity)
-DEF_PROP_I(WindowVX, BackOpacity)
-DEF_PROP_I(WindowVX, ContentsOpacity)
-DEF_PROP_I(WindowVX, Openness)
+DEF_GFX_PROP_I(WindowVX, X)
+DEF_GFX_PROP_I(WindowVX, Y)
+DEF_GFX_PROP_I(WindowVX, OX)
+DEF_GFX_PROP_I(WindowVX, OY)
+DEF_GFX_PROP_I(WindowVX, Width)
+DEF_GFX_PROP_I(WindowVX, Height)
+DEF_GFX_PROP_I(WindowVX, Padding)
+DEF_GFX_PROP_I(WindowVX, PaddingBottom)
+DEF_GFX_PROP_I(WindowVX, Opacity)
+DEF_GFX_PROP_I(WindowVX, BackOpacity)
+DEF_GFX_PROP_I(WindowVX, ContentsOpacity)
+DEF_GFX_PROP_I(WindowVX, Openness)
 
-DEF_PROP_B(WindowVX, Active)
-DEF_PROP_B(WindowVX, ArrowsVisible)
-DEF_PROP_B(WindowVX, Pause)
+DEF_GFX_PROP_B(WindowVX, Active)
+DEF_GFX_PROP_B(WindowVX, ArrowsVisible)
+DEF_GFX_PROP_B(WindowVX, Pause)
 
 void windowVXBindingInit() {
   VALUE klass = rb_define_class("Window", rb_cObject);

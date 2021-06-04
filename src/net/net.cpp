@@ -147,9 +147,11 @@ HTTPResponse HTTPRequest::get() {
     else {
         int err = result.error();
         const char *errname = httpErrorNames[err];
+        delete client;
         throw Exception(Exception::MKXPError, "Failed to GET %s (%i: %s)", destination.c_str(), err, errname);
     }
     
+    delete client;
     return ret;
 }
 
@@ -192,8 +194,10 @@ HTTPResponse HTTPRequest::post(StringMap &postData) {
     else {
         int err = result.error();
         const char *errname = httpErrorNames[err];
+        delete client;
         throw Exception(Exception::MKXPError, "Failed to POST %s (%i: %s)", destination.c_str(), err, errname);
     }
+    delete client;
     return ret;
 }
 
@@ -231,7 +235,9 @@ HTTPResponse HTTPRequest::post(const char *body, const char *content_type) {
     }
     else {
         int err = result.error();
+        delete client;
         throw Exception(Exception::MKXPError, "Failed to POST %s (%i: %s)", destination.c_str(), err, httpErrorNames[err]);
     }
+    delete client;
     return ret;
 }

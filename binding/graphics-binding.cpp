@@ -31,34 +31,44 @@
 
 RB_METHOD(graphicsDelta) {
     RB_UNUSED_PARAM;
-    
-    return ULL2NUM(shState->graphics().getDelta());
+    GFX_LOCK;
+    VALUE ret = ULL2NUM(shState->graphics().getDelta());
+    GFX_UNLOCK;
+    return ret;
 }
 
 RB_METHOD(graphicsUpdate)
 {
     RB_UNUSED_PARAM;
 #if RAPI_MAJOR >= 2
-    rb_thread_call_without_gvl([](void*) -> void* {shState->graphics().update(); return 0;}, 0, 0, 0);
+    rb_thread_call_without_gvl([](void*) -> void* {
+        GFX_LOCK;
+        shState->graphics().update();
+        GFX_UNLOCK;
+        return 0;
+    }, 0, 0, 0);
 #else
     shState->graphics().update();
 #endif
-    
     return Qnil;
 }
 
 RB_METHOD(graphicsAverageFrameRate)
 {
     RB_UNUSED_PARAM;
-    
-    return rb_float_new(shState->graphics().averageFrameRate());
+    GFX_LOCK;
+    VALUE ret = rb_float_new(shState->graphics().averageFrameRate());
+    GFX_UNLOCK;
+    return ret;
 }
 
 RB_METHOD(graphicsFreeze)
 {
     RB_UNUSED_PARAM;
     
+    GFX_LOCK;
     shState->graphics().freeze();
+    GFX_UNLOCK;
     
     return Qnil;
 }
@@ -73,7 +83,7 @@ RB_METHOD(graphicsTransition)
     
     rb_get_args(argc, argv, "|izi", &duration, &filename, &vague RB_ARG_END);
     
-    GUARD_EXC( shState->graphics().transition(duration, filename, vague); )
+    GFX_GUARD_EXC( shState->graphics().transition(duration, filename, vague); )
     
     return Qnil;
 }
@@ -82,7 +92,9 @@ RB_METHOD(graphicsFrameReset)
 {
     RB_UNUSED_PARAM;
     
+    GFX_LOCK;
     shState->graphics().frameReset();
+    GFX_UNLOCK;
     
     return Qnil;
 }
@@ -98,7 +110,9 @@ RB_METHOD(graphics##Set##PropName) \
 RB_UNUSED_PARAM; \
 int value; \
 rb_get_args(argc, argv, "i", &value RB_ARG_END); \
+GFX_LOCK; \
 shState->graphics().set##PropName(value); \
+GFX_UNLOCK; \
 return rb_fix_new(value); \
 }
 
@@ -113,7 +127,9 @@ RB_METHOD(graphics##Set##PropName) \
 RB_UNUSED_PARAM; \
 bool value; \
 rb_get_args(argc, argv, "b", &value RB_ARG_END); \
+GFX_LOCK; \
 shState->graphics().set##PropName(value); \
+GFX_UNLOCK; \
 return rb_bool_new(value); \
 }
 
@@ -128,7 +144,9 @@ RB_METHOD(graphics##Set##PropName) \
 RB_UNUSED_PARAM; \
 double value; \
 rb_get_args(argc, argv, "f", &value RB_ARG_END); \
+GFX_LOCK; \
 shState->graphics().set##PropName(value); \
+GFX_UNLOCK; \
 return rb_float_new(value); \
 }
 
@@ -153,11 +171,15 @@ RB_METHOD(graphicsWait)
     int duration;
     rb_get_args(argc, argv, "i", &duration RB_ARG_END);
 #if RAPI_MAJOR >= 2
-    rb_thread_call_without_gvl([](void* d) -> void* {shState->graphics().wait(*(int*)d); return 0;}, (int*)&duration, 0, 0);
+    rb_thread_call_without_gvl([](void* d) -> void* {
+        GFX_LOCK;
+        shState->graphics().wait(*(int*)d);
+        GFX_UNLOCK;
+        return 0;
+    }, (int*)&duration, 0, 0);
 #else
     shState->graphics().wait(duration);
 #endif
-    
     return Qnil;
 }
 
@@ -168,7 +190,9 @@ RB_METHOD(graphicsFadeout)
     int duration;
     rb_get_args(argc, argv, "i", &duration RB_ARG_END);
     
+    GFX_LOCK;
     shState->graphics().fadeout(duration);
+    GFX_UNLOCK;
     
     return Qnil;
 }
@@ -180,7 +204,9 @@ RB_METHOD(graphicsFadein)
     int duration;
     rb_get_args(argc, argv, "i", &duration RB_ARG_END);
     
+    GFX_LOCK;
     shState->graphics().fadein(duration);
+    GFX_UNLOCK;
     
     return Qnil;
 }
@@ -192,7 +218,8 @@ RB_METHOD(graphicsSnapToBitmap)
     RB_UNUSED_PARAM;
     
     Bitmap *result = 0;
-    GUARD_EXC( result = shState->graphics().snapToBitmap(); );
+    
+    GFX_GUARD_EXC( result = shState->graphics().snapToBitmap(); );
     
     VALUE obj = wrapObject(result, BitmapType);
     bitmapInitProps(result, obj);
@@ -207,7 +234,9 @@ RB_METHOD(graphicsResizeScreen)
     int width, height;
     rb_get_args(argc, argv, "ii", &width, &height RB_ARG_END);
     
+    GFX_LOCK;
     shState->graphics().resizeScreen(width, height);
+    GFX_UNLOCK;
     
     return Qnil;
 }
@@ -216,7 +245,9 @@ RB_METHOD(graphicsReset)
 {
     RB_UNUSED_PARAM;
     
+    GFX_LOCK;
     shState->graphics().reset();
+    GFX_UNLOCK;
     
     return Qnil;
 }
@@ -243,14 +274,7 @@ RB_METHOD(graphicsPlayMovie)
 
 void graphicsScreenshotInternal(const char *filename)
 {
-    try
-    {
-        shState->graphics().screenshot(filename);
-    }
-    catch(const Exception &e)
-    {
-        raiseRbExc(e);
-    }
+    GFX_GUARD_EXC(shState->graphics().screenshot(filename););
 }
 
 RB_METHOD(graphicsScreenshot)
@@ -260,8 +284,12 @@ RB_METHOD(graphicsScreenshot)
     VALUE filename;
     rb_scan_args(argc, argv, "1", &filename);
     SafeStringValue(filename);
+    
 #if RAPI_MAJOR >= 2
-    rb_thread_call_without_gvl([](void* fn) -> void* {graphicsScreenshotInternal((const char*)fn); return 0;}, (void*)filename, 0, 0);
+    rb_thread_call_without_gvl([](void* fn) -> void* {
+        graphicsScreenshotInternal((const char*)fn);
+        return 0;
+    }, (void*)filename, 0, 0);
 #else
     graphicsScreenshotInternal(RSTRING_PTR(filename));
 #endif

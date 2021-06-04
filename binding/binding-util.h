@@ -314,6 +314,19 @@ raiseRbExc(exc);                                                         \
 }                                                                          \
 }
 
+#define GFX_GUARD_EXC(exp)                                                         \
+{\
+GFX_LOCK; \
+try {\
+exp                                                                      \
+} catch (const Exception &exc) {\
+GFX_UNLOCK; \
+raiseRbExc(exc);                                                         \
+}\
+GFX_UNLOCK;\
+}
+
+
 template <class C>
 static inline VALUE objectLoad(int argc, VALUE *argv, VALUE self) {
     const char *data;
@@ -437,6 +450,10 @@ return self;                                                               \
  * FIXME: Getter assumes prop is disposable,
  * because self.disposed? is not checked in this case.
  * Should make this more clear */
+
+// --------------
+// Do not wait for Graphics.update
+// --------------
 #if RAPI_FULL > 187
 #define DEF_PROP_OBJ_REF(Klass, PropKlass, PropName, prop_iv)                  \
 RB_METHOD(Klass##Get##PropName) {                                            \
@@ -545,5 +562,81 @@ DEF_PROP(Klass, bool, PropName, bool, rb_bool_new)
 _rb_define_method(klass, prop_name_s, Klass##Get##PropName);               \
 _rb_define_method(klass, prop_name_s "=", Klass##Set##PropName);           \
 }
+
+// --------------
+// Wait for Graphics.update
+// --------------
+#if RAPI_FULL > 187
+#define DEF_GFX_PROP_OBJ_REF(Klass, PropKlass, PropName, prop_iv)                  \
+RB_METHOD(Klass##Get##PropName) {                                            \
+RB_UNUSED_PARAM;                                                           \
+return rb_iv_get(self, prop_iv);                                           \
+}                                                                            \
+RB_METHOD(Klass##Set##PropName) {                                            \
+RB_UNUSED_PARAM;                                                           \
+rb_check_argc(argc, 1);                                                    \
+Klass *k = getPrivateData<Klass>(self);                                    \
+VALUE propObj = *argv;                                                     \
+PropKlass *prop;                                                           \
+if (NIL_P(propObj))                                                        \
+prop = 0;                                                                \
+else                                                                       \
+prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type);         \
+GFX_GUARD_EXC(k->set##PropName(prop);)                                         \
+rb_iv_set(self, prop_iv, propObj);                                         \
+return propObj;                                                            \
+}
+#else
+#define DEF_GFX_PROP_OBJ_REF(Klass, PropKlass, PropName, prop_iv)                  \
+DEF_PROP_OBJ_REF(Klass, PropKlass, PropName, prop_iv)
+#endif
+
+/* Object property which is copied by value, not reference */
+#if RAPI_FULL > 187
+#define DEF_GFX_PROP_OBJ_VAL(Klass, PropKlass, PropName, prop_iv)                  \
+RB_METHOD(Klass##Get##PropName) {                                            \
+RB_UNUSED_PARAM;                                                           \
+checkDisposed<Klass>(self);                                                \
+return rb_iv_get(self, prop_iv);                                           \
+}                                                                            \
+RB_METHOD(Klass##Set##PropName) {                                            \
+rb_check_argc(argc, 1);                                                    \
+Klass *k = getPrivateData<Klass>(self);                                    \
+VALUE propObj = *argv;                                                     \
+PropKlass *prop;                                                           \
+prop = getPrivateDataCheck<PropKlass>(propObj, PropKlass##Type);           \
+GFX_GUARD_EXC(k->set##PropName(*prop);)                                        \
+return propObj;                                                            \
+}
+#else
+#define DEF_GFX_PROP_OBJ_VAL(Klass, PropKlass, PropName, prop_iv)                  \
+DEF_PROP_OBJ_VAL(Klass, PropKlass, PropName, prop_iv)
+#endif
+
+#define DEF_GFX_PROP(Klass, type, PropName, arg_fun, value_fun)                    \
+RB_METHOD(Klass##Get##PropName) {                                            \
+RB_UNUSED_PARAM;                                                           \
+Klass *k = getPrivateData<Klass>(self);                                    \
+type value = 0;                                                            \
+GUARD_EXC(value = k->get##PropName();)                                     \
+return value_fun(value);                                                   \
+}                                                                            \
+RB_METHOD(Klass##Set##PropName) {                                            \
+rb_check_argc(argc, 1);                                                    \
+Klass *k = getPrivateData<Klass>(self);                                    \
+type value;                                                                \
+rb_##arg_fun##_arg(*argv, &value);                                         \
+GFX_GUARD_EXC(k->set##PropName(value);)                                        \
+return *argv;                                                              \
+}
+
+#define DEF_GFX_PROP_I(Klass, PropName)                                            \
+DEF_GFX_PROP(Klass, int, PropName, int, rb_fix_new)
+
+#define DEF_GFX_PROP_F(Klass, PropName)                                            \
+DEF_GFX_PROP(Klass, double, PropName, float, rb_float_new)
+
+#define DEF_GFX_PROP_B(Klass, PropName)                                            \
+DEF_GFX_PROP(Klass, bool, PropName, bool, rb_bool_new)
 
 #endif // BINDING_UTIL_H

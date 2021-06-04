@@ -27,6 +27,7 @@
 #include "binding-util.h"
 #include "binding-types.h"
 #include "debugwriter.h"
+#include "graphics.h"
 
 #include "sceneelement-binding.h"
 #include "disposable-binding.h"
@@ -62,7 +63,7 @@ RB_METHOD(viewportElementSetViewport)
         disposableAddChild(viewportObj, self);
     }
 
-	GUARD_EXC( ve->setViewport(viewport); );
+	GFX_GUARD_EXC( ve->setViewport(viewport); );
 
 	rb_iv_set(self, "viewport", viewportObj);
 
@@ -87,13 +88,14 @@ viewportElementInitialize(int argc, VALUE *argv, VALUE self)
 			disposableAddChild(viewportObj, self);
 	}
 
+    GFX_LOCK;
 	/* Construct object */
 	C *ve = new C(viewport);
 
     
 	/* Set property objects */
 	rb_iv_set(self, "viewport", viewportObj);
-
+    GFX_UNLOCK;
 	return ve;
 }
 

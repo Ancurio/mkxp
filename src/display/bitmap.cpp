@@ -762,7 +762,7 @@ int Bitmap::height() const
 bool Bitmap::isMega() const{
     guardDisposed();
     
-    return p->megaSurface || p->animation.enabled;
+    return p->megaSurface;
 }
 
 bool Bitmap::isAnimated() const {

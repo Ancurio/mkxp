@@ -24,6 +24,7 @@
 
 #include "scene.h"
 #include "binding-util.h"
+#include "graphics.h"
 
 template<class C>
 RB_METHOD(sceneElementGetZ)
@@ -46,7 +47,7 @@ RB_METHOD(sceneElementSetZ)
 	int z;
 	rb_get_args(argc, argv, "i", &z RB_ARG_END);
 
-	GUARD_EXC( se->setZ(z); );
+	GFX_GUARD_EXC( se->setZ(z); );
 
 	return rb_fix_new(z);
 }
@@ -72,7 +73,7 @@ RB_METHOD(sceneElementSetVisible)
 	bool visible;
 	rb_get_args(argc, argv, "b", &visible RB_ARG_END);
 
-	GUARD_EXC( se->setVisible(visible); );
+	GFX_GUARD_EXC( se->setVisible(visible); );
 
     return rb_bool_new(visible);
 }

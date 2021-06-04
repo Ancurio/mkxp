@@ -45,6 +45,7 @@
 #include <SDL_timer.h>
 #include <SDL_video.h>
 #include <SDL_mutex.h>
+#include <SDL_thread.h>
 
 #ifdef MKXPZ_STEAM
 #include "steamshim_child.h"
@@ -609,25 +610,18 @@ struct GraphicsPrivate {
         return ret;
     }
     
-    void lockResources() {
+    void setLock() {
         SDL_LockMutex(glResourceLock);
-        SDL_GL_MakeCurrent(threadData->window, glCtx);
+        SDL_GL_MakeCurrent(threadData->window, threadData->glContext);
     }
     
-    void unlockResources() {
+    void releaseLock() {
         SDL_UnlockMutex(glResourceLock);
     }
 };
 
-#define GRAPHICS_THREAD_LOCK(exp) \
-p->lockResources(); \
-{ \
-    exp \
-}
-
 Graphics::Graphics(RGSSThreadData *data) {
     p = new GraphicsPrivate(data);
-    
     // To appease people who don't want players to have
     // emulator-like speedups
     // Nothing stops anybody from building with this
@@ -660,8 +654,8 @@ unsigned long long Graphics::lastUpdate() {
     return p->last_update;
 }
 
-void Graphics::update() {GRAPHICS_THREAD_LOCK(
-                                              
+void Graphics::update() {
+                    
     p->last_update = shState->runTime();
     p->checkShutDownReset();
     p->checkSyncLock();
@@ -691,9 +685,9 @@ void Graphics::update() {GRAPHICS_THREAD_LOCK(
     
     p->checkResize();
     p->redrawScreen();
-)}
+}
 
-void Graphics::freeze() {GRAPHICS_THREAD_LOCK(
+void Graphics::freeze() {
     p->frozen = true;
     
     p->checkShutDownReset();
@@ -701,9 +695,9 @@ void Graphics::freeze() {GRAPHICS_THREAD_LOCK(
     
     /* Capture scene into frozen buffer */
     p->compositeToBuffer(p->frozenScene);
-)}
+}
 
-void Graphics::transition(int duration, const char *filename, int vague) {GRAPHICS_THREAD_LOCK(
+void Graphics::transition(int duration, const char *filename, int vague) {
     p->checkSyncLock();
     
     if (!p->frozen)
@@ -804,9 +798,9 @@ void Graphics::transition(int duration, const char *filename, int vague) {GRAPHI
     delete transMap;
     
     p->frozen = false;
-)}
+}
 
-void Graphics::frameReset() {GRAPHICS_THREAD_LOCK(p->fpsLimiter.resetFrameAdjust();)}
+void Graphics::frameReset() {p->fpsLimiter.resetFrameAdjust();}
 
 static void guardDisposed() {}
 
@@ -814,7 +808,7 @@ DEF_ATTR_RD_SIMPLE(Graphics, FrameRate, int, p->frameRate)
 
 DEF_ATTR_SIMPLE(Graphics, FrameCount, int, p->frameCount)
 
-void Graphics::setFrameRate(int value) {GRAPHICS_THREAD_LOCK(
+void Graphics::setFrameRate(int value) {
     p->frameRate = clamp(value, 10, 120);
     
     if (p->threadData->config.syncToRefreshrate)
@@ -825,20 +819,20 @@ void Graphics::setFrameRate(int value) {GRAPHICS_THREAD_LOCK(
     
     p->fpsLimiter.setDesiredFPS(p->frameRate);
     shState->input().recalcRepeat((unsigned int)p->frameRate);
-)}
+}
 
 double Graphics::averageFrameRate() {
     return p->averageFPS();
 }
 
-void Graphics::wait(int duration) {GRAPHICS_THREAD_LOCK(
+void Graphics::wait(int duration) {
     for (int i = 0; i < duration; ++i) {
         p->checkShutDownReset();
         p->redrawScreen();
     }
-)}
+}
 
-void Graphics::fadeout(int duration) {GRAPHICS_THREAD_LOCK(
+void Graphics::fadeout(int duration) {
     FBO::unbind();
     
     float curr = p->brightness;
@@ -861,9 +855,9 @@ void Graphics::fadeout(int duration) {GRAPHICS_THREAD_LOCK(
             update();
         }
     }
-)}
+}
 
-void Graphics::fadein(int duration) {GRAPHICS_THREAD_LOCK(
+void Graphics::fadein(int duration) {
     FBO::unbind();
     
     float curr = p->brightness;
@@ -886,17 +880,15 @@ void Graphics::fadein(int duration) {GRAPHICS_THREAD_LOCK(
             update();
         }
     }
-)}
+}
 
 Bitmap *Graphics::snapToBitmap() {
     Bitmap *bitmap = new Bitmap(width(), height());
+
+    p->compositeToBuffer(bitmap->getGLTypes());
     
-    GRAPHICS_THREAD_LOCK(
-        p->compositeToBuffer(bitmap->getGLTypes());
-        
-        /* Taint entire bitmap */
-        bitmap->taintArea(IntRect(0, 0, width(), height()));
-    );
+    /* Taint entire bitmap */
+    bitmap->taintArea(IntRect(0, 0, width(), height()));
     return bitmap;
 }
 
@@ -904,7 +896,7 @@ int Graphics::width() const { return p->scRes.x; }
 
 int Graphics::height() const { return p->scRes.y; }
 
-void Graphics::resizeScreen(int width, int height) {GRAPHICS_THREAD_LOCK(
+void Graphics::resizeScreen(int width, int height) {
     // width = clamp(width, 1, 640);
     // height = clamp(height, 1, 480);
     
@@ -929,19 +921,19 @@ void Graphics::resizeScreen(int width, int height) {GRAPHICS_THREAD_LOCK(
     p->threadData->rqWindowAdjust.set();
     shState->eThread().requestWindowResize(width, height);
     update();
-)}
+}
 
 void Graphics::playMovie(const char *filename) {
     Debug() << "Graphics.playMovie(" << filename << ") not implemented";
 }
 
-void Graphics::screenshot(const char *filename) {GRAPHICS_THREAD_LOCK(
+void Graphics::screenshot(const char *filename) {
     p->threadData->rqWindowAdjust.wait();
     Bitmap *ss = snapToBitmap();
     ss->saveToFile(filename);
     ss->dispose();
     delete ss;
-)}
+}
 
 DEF_ATTR_RD_SIMPLE(Graphics, Brightness, int, p->brightness)
 
@@ -955,7 +947,7 @@ void Graphics::setBrightness(int value) {
     p->screen.setBrightness(value / 255.0);
 }
 
-void Graphics::reset() {GRAPHICS_THREAD_LOCK(
+void Graphics::reset() {
     /* Dispose all live Disposables */
     IntruListLink<Disposable> *iter;
     
@@ -973,35 +965,35 @@ void Graphics::reset() {GRAPHICS_THREAD_LOCK(
     
     setFrameRate(DEF_FRAMERATE);
     setBrightness(255);
-)}
+}
 
-void Graphics::center() {GRAPHICS_THREAD_LOCK(
+void Graphics::center() {
     if (getFullscreen())
         return;
     
     p->threadData->rqWindowAdjust.reset();
     p->threadData->ethread->requestWindowCenter();
-)}
+}
 
 bool Graphics::getFullscreen() const {
     return p->threadData->ethread->getFullscreen();
 }
 
-void Graphics::setFullscreen(bool value) {GRAPHICS_THREAD_LOCK(
+void Graphics::setFullscreen(bool value) {
     p->threadData->ethread->requestFullscreenMode(value);
-)}
+}
 
 bool Graphics::getShowCursor() const {
     return p->threadData->ethread->getShowCursor();
 }
 
-void Graphics::setShowCursor(bool value) {GRAPHICS_THREAD_LOCK(
+void Graphics::setShowCursor(bool value) {
     p->threadData->ethread->requestShowCursor(value);
-)}
+}
 
 double Graphics::getScale() const { return (double)p->scSize.y / p->scRes.y; }
 
-void Graphics::setScale(double factor) {GRAPHICS_THREAD_LOCK(
+void Graphics::setScale(double factor) {
     p->threadData->rqWindowAdjust.wait();
     factor = clamp(factor, 0.5, 2.0);
     
@@ -1014,7 +1006,7 @@ void Graphics::setScale(double factor) {GRAPHICS_THREAD_LOCK(
     p->threadData->rqWindowAdjust.set();
     shState->eThread().requestWindowResize(widthpx, heightpx);
     update();
-)}
+}
 
 bool Graphics::getFrameskip() const { return p->useFrameSkip; }
 
@@ -1048,13 +1040,12 @@ void Graphics::repaintWait(const AtomicFlag &exitCond, bool checkReset) {
     GLMeta::blitEnd();
 }
 
-void Graphics::lockResources(bool lock) {
-    if (lock) {
-        p->lockResources();
-        return;
-    }
-    
-    p->unlockResources();
+void Graphics::lock() {
+    p->setLock();
+}
+
+void Graphics::unlock() {
+    p->releaseLock();
 }
 
 void Graphics::addDisposable(Disposable *d) { p->dispList.append(d->link); }

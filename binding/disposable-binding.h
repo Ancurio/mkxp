@@ -24,6 +24,7 @@
 
 #include "disposable.h"
 #include "binding-util.h"
+#include "graphics.h"
 
 /* 'Children' are disposables that are disposed together
  * with their parent. Currently this is only used by Viewport
@@ -31,6 +32,7 @@
 inline void
 disposableAddChild(VALUE disp, VALUE child)
 {
+    GFX_LOCK;
     if (NIL_P(disp) || NIL_P(child)) {
         return;
     }
@@ -50,11 +52,13 @@ disposableAddChild(VALUE disp, VALUE child)
 
 	if (!exists)
         rb_ary_push(children, child);
+    GFX_UNLOCK;
 }
 
 inline void
 disposableRemoveChild(VALUE disp, VALUE child)
 {
+    GFX_LOCK;
     if (NIL_P(disp) || NIL_P(child)) {
         return;
     }
@@ -68,7 +72,7 @@ disposableRemoveChild(VALUE disp, VALUE child)
         return;
     
     rb_funcall(children, rb_intern("delete_at"), 1, index);
-    
+    GFX_UNLOCK;
 }
 
 inline void
@@ -102,7 +106,9 @@ RB_METHOD(disposableDispose)
 	if (rgssVer == 1)
 		disposableDisposeChildren(self);
 
+    GFX_LOCK;
 	d->dispose();
+    GFX_UNLOCK;
 
 	return Qnil;
 }

@@ -36,25 +36,27 @@ RB_METHOD(planeInitialize) {
 
   setPrivateData(self, p);
 
+    GFX_LOCK;
   p->initDynAttribs();
 
   wrapProperty(self, &p->getColor(), "color", ColorType);
   wrapProperty(self, &p->getTone(), "tone", ToneType);
+    GFX_UNLOCK;
 
   return self;
 }
 
-DEF_PROP_OBJ_REF(Plane, Bitmap, Bitmap, "bitmap")
-DEF_PROP_OBJ_VAL(Plane, Color, Color, "color")
-DEF_PROP_OBJ_VAL(Plane, Tone, Tone, "tone")
+DEF_GFX_PROP_OBJ_REF(Plane, Bitmap, Bitmap, "bitmap")
+DEF_GFX_PROP_OBJ_VAL(Plane, Color, Color, "color")
+DEF_GFX_PROP_OBJ_VAL(Plane, Tone, Tone, "tone")
 
-DEF_PROP_I(Plane, OX)
-DEF_PROP_I(Plane, OY)
-DEF_PROP_I(Plane, Opacity)
-DEF_PROP_I(Plane, BlendType)
+DEF_GFX_PROP_I(Plane, OX)
+DEF_GFX_PROP_I(Plane, OY)
+DEF_GFX_PROP_I(Plane, Opacity)
+DEF_GFX_PROP_I(Plane, BlendType)
 
-DEF_PROP_F(Plane, ZoomX)
-DEF_PROP_F(Plane, ZoomY)
+DEF_GFX_PROP_F(Plane, ZoomX)
+DEF_GFX_PROP_F(Plane, ZoomY)
 
 void planeBindingInit() {
   VALUE klass = rb_define_class("Plane", rb_cObject);
