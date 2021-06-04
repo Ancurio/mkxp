@@ -10,6 +10,10 @@
 #include "util/json5pp.hpp"
 #include "binding-util.h"
 
+#if RAPI_MAJOR >= 2
+#include <ruby/thread.h>
+#endif
+
 #include "net/net.h"
 
 VALUE stringMap2hash(mkxp_net::StringMap &map) {
@@ -38,6 +42,10 @@ mkxp_net::StringMap hash2StringMap(VALUE hash) {
     return ret;
 }
 
+bool strContainsStr(std::string &first, std::string second) {
+    return first.find(second) != std::string::npos;
+}
+
 VALUE getResponseBody(mkxp_net::HTTPResponse &res) {
 #if RAPI_FULL >= 190
     auto it = res.headers().find("Content-Type");
@@ -45,17 +53,39 @@ VALUE getResponseBody(mkxp_net::HTTPResponse &res) {
         return rb_str_new(res.body().c_str(), res.body().length());
     
     std::string &ctype = it->second;
-
-    if (!ctype.compare("text/plain")        || !ctype.compare("application/json") ||
-        !ctype.compare("application/xml")   || !ctype.compare("text/html")        ||
-        !ctype.compare("text/css")          || !ctype.compare("text/javascript")  ||
-        !ctype.compare("application/x-sh")  || !ctype.compare("image/svg+xml")    ||
-        !ctype.compare("application/x-httpd-php"))
+    
+    if (strContainsStr(ctype, "text/plain")        || strContainsStr(ctype, "application/json") ||
+        strContainsStr(ctype, "application/xml")   || strContainsStr(ctype, "text/html")        ||
+        strContainsStr(ctype, "text/css")          || strContainsStr(ctype, "text/javascript")  ||
+        strContainsStr(ctype, "application/x-sh")  || strContainsStr(ctype, "image/svg+xml")    ||
+        strContainsStr(ctype, "application/x-httpd-php"))
         return rb_utf8_str_new(res.body().c_str(), res.body().length());
     
 #endif
     return rb_str_new(res.body().c_str(), res.body().length());
 }
+
+VALUE formResponse(mkxp_net::HTTPResponse &res) {
+    VALUE ret = rb_hash_new();
+    
+    rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
+    rb_hash_aset(ret, ID2SYM(rb_intern("body")), getResponseBody(res));
+    rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
+    return ret;
+}
+
+#if RAPI_MAJOR >= 2
+void* httpGetInternal(void *req) {
+    VALUE ret;
+    
+    GUARD_EXC(
+              mkxp_net::HTTPResponse res = ((mkxp_net::HTTPRequest*)req)->get();
+              ret = formResponse(res);
+              );
+    
+    return (void*)ret;
+}
+#endif
 
 RB_METHOD(httpGet) {
     RB_UNUSED_PARAM;
@@ -64,25 +94,39 @@ RB_METHOD(httpGet) {
     rb_scan_args(argc, argv, "12", &path, &rheaders, &redirect);
     SafeStringValue(path);
     
-    VALUE ret;
-
-    try {
-        mkxp_net::HTTPRequest req(RSTRING_PTR(path), RTEST(redirect));
-        if (rheaders != Qnil) {
-            auto headers = hash2StringMap(rheaders);
-            req.headers().insert(headers.begin(), headers.end());
-        }
-        auto res = req.get();
-        ret = rb_hash_new();
-        rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), getResponseBody(res));
-        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
-    } catch (Exception &e) {
-        raiseRbExc(e);
+    mkxp_net::HTTPRequest req(RSTRING_PTR(path), RTEST(redirect));
+    if (rheaders != Qnil) {
+        auto headers = hash2StringMap(rheaders);
+        req.headers().insert(headers.begin(), headers.end());
     }
-    
-    return ret;
+#if RAPI_MAJOR >= 2
+    return (VALUE)rb_thread_call_without_gvl(httpGetInternal, &req, 0, 0);
+#else
+    return (VALUE)httpGetInternal(&req);
+#endif
 }
+
+#if RAPI_MAJOR >= 2
+
+typedef struct {
+    mkxp_net::HTTPRequest *req;
+    mkxp_net::StringMap *postData;
+} httpPostInternalArgs;
+
+void* httpPostInternal(void *args) {
+    VALUE ret;
+    
+    mkxp_net::HTTPRequest *req = ((httpPostInternalArgs*)args)->req;
+    mkxp_net::StringMap *postData = ((httpPostInternalArgs*)args)->postData;
+    
+    GUARD_EXC(
+              mkxp_net::HTTPResponse res = req->post(*postData);
+              ret = formResponse(res);
+              );
+    
+    return (void*)ret;
+}
+#endif
 
 RB_METHOD(httpPost) {
     RB_UNUSED_PARAM;
@@ -91,27 +135,43 @@ RB_METHOD(httpPost) {
     rb_scan_args(argc, argv, "22", &path, &postDataHash, &rheaders, &redirect);
     SafeStringValue(path);
     
-    VALUE ret;
-
-    try {
-        mkxp_net::HTTPRequest req(RSTRING_PTR(path), RTEST(redirect));
-        if (rheaders != Qnil) {
-            auto headers = hash2StringMap(rheaders);
-            req.headers().insert(headers.begin(), headers.end());
-        }
-        
-        auto postData = hash2StringMap(postDataHash);
-        auto res = req.post(postData);
-        ret = rb_hash_new();
-        rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), getResponseBody(res));
-        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
-    } catch (Exception &e) {
-        raiseRbExc(e);
+    mkxp_net::HTTPRequest req(RSTRING_PTR(path), RTEST(redirect));
+    if (rheaders != Qnil) {
+        auto headers = hash2StringMap(rheaders);
+        req.headers().insert(headers.begin(), headers.end());
     }
     
-    return ret;
+    mkxp_net::StringMap postData = hash2StringMap(postDataHash);
+    httpPostInternalArgs args {&req, &postData};
+#if RAPI_MAJOR >= 2
+    return (VALUE)rb_thread_call_without_gvl(httpPostInternal, &args, 0, 0);
+#else
+    return httpPostInternal(&args);
+#endif
 }
+
+#if RAPI_MAJOR >= 2
+typedef struct {
+    mkxp_net::HTTPRequest *req;
+    const char *body;
+    const char *ctype;
+} httpPostBodyInternalArgs;
+
+void* httpPostBodyInternal(void *args) {
+    VALUE ret;
+    
+    mkxp_net::HTTPRequest *req = ((httpPostBodyInternalArgs*)args)->req;
+    const char *reqbody = ((httpPostBodyInternalArgs*)args)->body;
+    const char *reqctype = ((httpPostBodyInternalArgs*)args)->ctype;
+    
+    GUARD_EXC(
+              mkxp_net::HTTPResponse res = req->post(reqbody, reqctype);
+              ret = formResponse(res);
+              );
+    
+    return (void*)ret;
+}
+#endif
 
 RB_METHOD(httpPostBody) {
     RB_UNUSED_PARAM;
@@ -122,24 +182,19 @@ RB_METHOD(httpPostBody) {
     SafeStringValue(body);
     SafeStringValue(ctype);
     
-    VALUE ret;
-
-    try {
-        mkxp_net::HTTPRequest req(RSTRING_PTR(path));
-        if (rheaders != Qnil) {
-            auto headers = hash2StringMap(rheaders);
-            req.headers().insert(headers.begin(), headers.end());
-        }
-        auto res = req.post(RSTRING_PTR(body), RSTRING_PTR(ctype));
-        ret = rb_hash_new();
-        rb_hash_aset(ret, ID2SYM(rb_intern("status")), INT2NUM(res.status()));
-        rb_hash_aset(ret, ID2SYM(rb_intern("body")), getResponseBody(res));
-        rb_hash_aset(ret, ID2SYM(rb_intern("headers")), stringMap2hash(res.headers()));
-    } catch (Exception &e) {
-        raiseRbExc(e);
+    
+    mkxp_net::HTTPRequest req(RSTRING_PTR(path));
+    if (rheaders != Qnil) {
+        auto headers = hash2StringMap(rheaders);
+        req.headers().insert(headers.begin(), headers.end());
     }
     
-    return ret;
+    httpPostBodyInternalArgs args {&req, RSTRING_PTR(body), RSTRING_PTR(ctype)};
+#if RAPI_MAJOR >= 2
+    return (VALUE)rb_thread_call_without_gvl(httpPostBodyInternal, &args, 0, 0);
+#else
+    return httpPostBodyInternal(&args);
+#endif
 }
 
 VALUE json2rb(json5pp::value const &v) {
