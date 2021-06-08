@@ -101,6 +101,14 @@
 		3B10EE092568E96A00372D13 /* binding-mri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF02568E96A00372D13 /* binding-mri.cpp */; };
 		3B10EE0B2568E96A00372D13 /* module_rpg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF32568E96A00372D13 /* module_rpg.cpp */; };
 		3B10EE0C2568E96A00372D13 /* viewport-binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10EDF42568E96A00372D13 /* viewport-binding.cpp */; };
+		3B1BC0E1266F7C2600794D22 /* iniconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */; };
+		3B1BC0E2266F7C2700794D22 /* iniconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */; };
+		3B1BC0E3266F7C2700794D22 /* iniconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */; };
+		3B1BC0E4266F7C2800794D22 /* iniconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */; };
+		3B1BC0E8266F91E100794D22 /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1BC0E7266F91E100794D22 /* libuchardet.a */; };
+		3B1BC0EA266F91FE00794D22 /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1BC0E9266F91FE00794D22 /* libuchardet.a */; };
+		3B1BC0EC266F924B00794D22 /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1BC0EB266F924B00794D22 /* libuchardet.a */; };
+		3B1BC0ED266F924B00794D22 /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1BC0EB266F924B00794D22 /* libuchardet.a */; };
 		3B1C230725A142620075EF5D /* libruby.3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230625A142620075EF5D /* libruby.3.0.dylib */; };
 		3B1C230825A1426C0075EF5D /* libruby.3.0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230625A142620075EF5D /* libruby.3.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B1C230B25A144A10075EF5D /* libruby.3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */; };
@@ -917,6 +925,12 @@
 		3B10EDF32568E96A00372D13 /* module_rpg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = module_rpg.cpp; sourceTree = "<group>"; };
 		3B10EDF42568E96A00372D13 /* viewport-binding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "viewport-binding.cpp"; sourceTree = "<group>"; };
 		3B10EE1F2569348E00372D13 /* json5pp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json5pp.hpp; sourceTree = "<group>"; };
+		3B1BC0DF266F7C0C00794D22 /* iniconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iniconfig.h; sourceTree = "<group>"; };
+		3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iniconfig.cpp; sourceTree = "<group>"; };
+		3B1BC0E6266F8E8700794D22 /* dependencies.make */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = dependencies.make; path = Dependencies/dependencies.make; sourceTree = "<group>"; };
+		3B1BC0E7266F91E100794D22 /* libuchardet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuchardet.a; path = "Dependencies/build-macosx-arm64/lib/libuchardet.a"; sourceTree = "<group>"; };
+		3B1BC0E9266F91FE00794D22 /* libuchardet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuchardet.a; path = "Dependencies/build-macosx-x86_64/lib/libuchardet.a"; sourceTree = "<group>"; };
+		3B1BC0EB266F924B00794D22 /* libuchardet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuchardet.a; path = "Dependencies/build-macosx-x86_64/lib/libuchardet.a"; sourceTree = "<group>"; };
 		3B1C230625A142620075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-arm64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
 		3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-x86_64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
 		3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-universal/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
@@ -1072,6 +1086,7 @@
 				3B1C23C725A19C600075EF5D /* libcrypto.a in Frameworks */,
 				3B1C23C825A19C600075EF5D /* libopenal.a in Frameworks */,
 				3B97F77725E6182100A569B5 /* libSDL2_sound.a in Frameworks */,
+				3B1BC0ED266F924B00794D22 /* libuchardet.a in Frameworks */,
 				3B1C23C925A19C600075EF5D /* libpixman-1.a in Frameworks */,
 				3B5E1F1225A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3B1C23CA25A19C600075EF5D /* AppKit.framework in Frameworks */,
@@ -1118,6 +1133,7 @@
 			files = (
 				3BC65D622584EED10063AFF1 /* libSDL2_image.a in Frameworks */,
 				3BC65D5A2584EED10063AFF1 /* libvorbis.a in Frameworks */,
+				3B1BC0E8266F91E100794D22 /* libuchardet.a in Frameworks */,
 				3B522DD2259BFF0B003301C4 /* libssl.a in Frameworks */,
 				3B5E1F0D25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3BC65D282584EDC60063AFF1 /* IOKit.framework in Frameworks */,
@@ -1161,6 +1177,7 @@
 			files = (
 				3BC65E2C2584F4290063AFF1 /* libvorbisenc.a in Frameworks */,
 				3BC65E2D2584F4290063AFF1 /* libogg.a in Frameworks */,
+				3B1BC0EA266F91FE00794D22 /* libuchardet.a in Frameworks */,
 				3B522DCC259BFEE0003301C4 /* libssl.a in Frameworks */,
 				3B5E1F0B25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3BC65E222584F4290063AFF1 /* libSDL2_ttf.a in Frameworks */,
@@ -1209,6 +1226,7 @@
 				3B522DD8259BFF2D003301C4 /* libcrypto.a in Frameworks */,
 				3B5A8445256A0F6300BAF2E5 /* libopenal.a in Frameworks */,
 				3B97F77625E6182100A569B5 /* libSDL2_sound.a in Frameworks */,
+				3B1BC0EC266F924B00794D22 /* libuchardet.a in Frameworks */,
 				3BE08107256879FE0006849F /* libpixman-1.a in Frameworks */,
 				3B5E1F1025A881FB0086FFDC /* libGLESv2.dylib in Frameworks */,
 				3B1C233025A16CB20075EF5D /* AppKit.framework in Frameworks */,
@@ -1338,6 +1356,8 @@
 				3B10ED412568E95D00372D13 /* exception.h */,
 				3B10ED422568E95D00372D13 /* debugwriter.h */,
 				3B10EE1F2569348E00372D13 /* json5pp.hpp */,
+				3B1BC0DF266F7C0C00794D22 /* iniconfig.h */,
+				3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */,
 				3B5A842B2569E8BA00BAF2E5 /* mINI.h */,
 			);
 			path = util;
@@ -1522,6 +1542,14 @@
 			path = ../binding;
 			sourceTree = "<group>";
 		};
+		3B1BC0E5266F8E2A00794D22 /* Makefiles */ = {
+			isa = PBXGroup;
+			children = (
+				3B1BC0E6266F8E8700794D22 /* dependencies.make */,
+			);
+			name = Makefiles;
+			sourceTree = "<group>";
+		};
 		3B1C231D25A15F8F0075EF5D /* mkxp */ = {
 			isa = PBXGroup;
 			children = (
@@ -1638,6 +1666,7 @@
 		3BC65D492584EE690063AFF1 /* ARM64 */ = {
 			isa = PBXGroup;
 			children = (
+				3B1BC0E7266F91E100794D22 /* libuchardet.a */,
 				3BC65D4F2584EED10063AFF1 /* libfreetype.a */,
 				3BC65D512584EED10063AFF1 /* libogg.a */,
 				3BC65D562584EED10063AFF1 /* libopenal.a */,
@@ -1666,6 +1695,7 @@
 			children = (
 				3B5E1EF425A880D50086FFDC /* OpenGL ES */,
 				3BC65D7D2584F3780063AFF1 /* libfreetype.a */,
+				3B1BC0E9266F91FE00794D22 /* libuchardet.a */,
 				3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */,
 				3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */,
 				3BC65D822584F3780063AFF1 /* libogg.a */,
@@ -1728,6 +1758,7 @@
 		3BDB22EB25644FBF00C4A63D = {
 			isa = PBXGroup;
 			children = (
+				3B1BC0E5266F8E2A00794D22 /* Makefiles */,
 				3BD2B7272565B343003DAD8A /* README.md */,
 				3BDB23E22564546E00C4A63D /* icon.icns */,
 				3BDB2409256470AE00C4A63D /* Player */,
@@ -1787,6 +1818,7 @@
 			isa = PBXGroup;
 			children = (
 				3BE080FC256879FE0006849F /* libfreetype.a */,
+				3B1BC0EB266F924B00794D22 /* libuchardet.a */,
 				3B5A8444256A0F6300BAF2E5 /* libopenal.a */,
 				3BE080FD256879FE0006849F /* libogg.a */,
 				3BE081452568A5C60006849F /* libpng.a */,
@@ -2107,6 +2139,7 @@
 				3B3F7D2D25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */,
 				3B1C23BF25A19C600075EF5D /* filesystemImplApple.mm in Sources */,
 				3B1C23C025A19C600075EF5D /* fake-api.cpp in Sources */,
+				3B1BC0E4266F7C2800794D22 /* iniconfig.cpp in Sources */,
 				3B1C23C125A19C600075EF5D /* sharedstate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2190,6 +2223,7 @@
 				3BC65D122584EDC60063AFF1 /* systemImplApple.mm in Sources */,
 				3BC65D132584EDC60063AFF1 /* graphics.cpp in Sources */,
 				3BC65D142584EDC60063AFF1 /* font.cpp in Sources */,
+				3B1BC0E3266F7C2700794D22 /* iniconfig.cpp in Sources */,
 				3BC65D172584EDC60063AFF1 /* filesystemImplApple.mm in Sources */,
 				3BC65D182584EDC60063AFF1 /* fake-api.cpp in Sources */,
 				3BC65D192584EDC60063AFF1 /* sharedstate.cpp in Sources */,
@@ -2268,6 +2302,7 @@
 				3BC65DD32584F3AD0063AFF1 /* systemImplApple.mm in Sources */,
 				3BC65DD42584F3AD0063AFF1 /* graphics.cpp in Sources */,
 				3BC65DD52584F3AD0063AFF1 /* font.cpp in Sources */,
+				3B1BC0E1266F7C2600794D22 /* iniconfig.cpp in Sources */,
 				3BC65DD82584F3AD0063AFF1 /* filesystemImplApple.mm in Sources */,
 				3BC65DD92584F3AD0063AFF1 /* fake-api.cpp in Sources */,
 				3BC65DDA2584F3AD0063AFF1 /* sharedstate.cpp in Sources */,
@@ -2346,6 +2381,7 @@
 				3B5A8464256A46B200BAF2E5 /* systemImplApple.mm in Sources */,
 				3B10EDC12568E95E00372D13 /* graphics.cpp in Sources */,
 				3B10EDC02568E95E00372D13 /* font.cpp in Sources */,
+				3B1BC0E2266F7C2700794D22 /* iniconfig.cpp in Sources */,
 				3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */,
 				3B10EDB12568E95E00372D13 /* fake-api.cpp in Sources */,
 				3B10EDAC2568E95E00372D13 /* sharedstate.cpp in Sources */,
@@ -3025,6 +3061,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
 				MARKETING_VERSION = 2.2.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3107,6 +3144,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
+					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
 				MARKETING_VERSION = 2.2.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3310,6 +3348,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
+					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -3379,6 +3418,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
+					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				LIBRARY_SEARCH_PATHS = (

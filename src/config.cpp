@@ -20,8 +20,94 @@
 #include "util/json5pp.hpp"
 #include "util/mINI.h"
 
+#include "util/iniconfig.h"
+
+#if defined(MKXPZ_BUILD_XCODE) || defined(MKXPZ_INI_ENCODING)
+#include <iconv.h>
+#include <uchardet.h>
+#include <errno.h>
+#endif
+
 namespace json = json5pp;
-namespace ini = mINI;
+
+/* http://stackoverflow.com/a/1031773 */
+static bool validUtf8(const char *string)
+{
+    const uint8_t *bytes = (uint8_t*) string;
+
+    while(*bytes)
+    {
+        if( (/* ASCII
+              * use bytes[0] <= 0x7F to allow ASCII control characters */
+                bytes[0] == 0x09 ||
+                bytes[0] == 0x0A ||
+                bytes[0] == 0x0D ||
+                (0x20 <= bytes[0] && bytes[0] <= 0x7E)
+            )
+        ) {
+            bytes += 1;
+            continue;
+        }
+
+        if( (/* non-overlong 2-byte */
+                (0xC2 <= bytes[0] && bytes[0] <= 0xDF) &&
+                (0x80 <= bytes[1] && bytes[1] <= 0xBF)
+            )
+        ) {
+            bytes += 2;
+            continue;
+        }
+
+        if( (/* excluding overlongs */
+                bytes[0] == 0xE0 &&
+                (0xA0 <= bytes[1] && bytes[1] <= 0xBF) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF)
+            ) ||
+            (/* straight 3-byte */
+                ((0xE1 <= bytes[0] && bytes[0] <= 0xEC) ||
+                    bytes[0] == 0xEE ||
+                    bytes[0] == 0xEF) &&
+                (0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF)
+            ) ||
+            (/* excluding surrogates */
+                bytes[0] == 0xED &&
+                (0x80 <= bytes[1] && bytes[1] <= 0x9F) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF)
+            )
+        ) {
+            bytes += 3;
+            continue;
+        }
+
+        if( (/* planes 1-3 */
+                bytes[0] == 0xF0 &&
+                (0x90 <= bytes[1] && bytes[1] <= 0xBF) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+                (0x80 <= bytes[3] && bytes[3] <= 0xBF)
+            ) ||
+            (/* planes 4-15 */
+                (0xF1 <= bytes[0] && bytes[0] <= 0xF3) &&
+                (0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+                (0x80 <= bytes[3] && bytes[3] <= 0xBF)
+            ) ||
+            (/* plane 16 */
+                bytes[0] == 0xF4 &&
+                (0x80 <= bytes[1] && bytes[1] <= 0x8F) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+                (0x80 <= bytes[3] && bytes[3] <= 0xBF)
+            )
+        ) {
+            bytes += 4;
+            continue;
+        }
+
+        return false;
+    }
+
+    return true;
+}
 
 std::string prefPath(const char *org, const char *app) {
     char *path = SDL_GetPrefPath(org, app);
@@ -255,40 +341,82 @@ void Config::readGameINI() {
     }
     
     std::string iniFileName(execName + ".ini");
+    SDLRWStream iniFile(iniFileName.c_str(), "r");
     
-    if (mkxp_fs::fileExists(iniFileName.c_str())) {
-        ini::INIStructure iniStruct;
-        
-        if (!ini::INIFile(iniFileName).read(iniStruct)) {
-            Debug() << "Failed to read INI file" << iniFileName;
+    if (iniFile)
+    {
+        INIConfiguration ic;
+        if (ic.load(iniFile.stream()))
+        {
+            GUARD(game.title = ic.getStringProperty("Game", "Title"););
+            GUARD(game.scripts = ic.getStringProperty("Game", "Scripts"););
+            
+            strReplace(game.scripts, '\\', '/');
+            
+            if (game.title.empty()) {
+                Debug() << iniFileName + ": Could not find Game.Title";
+            }
+            
+            if (game.scripts.empty())
+                Debug() << iniFileName + ": Could not find Game.Scripts";
         }
-        else if (!iniStruct.has("Game")){
-            Debug() << "INI is missing [Game] section";
-        }
-        
-        game.title = iniStruct["Game"]["Title"];
-        game.scripts = iniStruct["Game"]["Scripts"];
     }
+    else
+        Debug() << "Could not read" << iniFileName;
     
-    if (game.title.empty()) {
-        Debug() << "INI is missing Game.Title property";
+    bool convSuccess = false;
+
+    // Attempt to convert from other encodings to UTF-8
+    if (!validUtf8(game.title.c_str()))
+    {
+#if defined(MKXPZ_BUILD_XCODE) || defined(MKXPZ_INI_ENCODING)
+        uchardet_t ud = uchardet_new();
+        uchardet_handle_data(ud, game.title.c_str(), game.title.length());
+        uchardet_data_end(ud);
+        const char *charset = uchardet_get_charset(ud);
+        
+        Debug() << iniFileName << ": Assuming encoding is" << charset << "...";
+        iconv_t cd = iconv_open("UTF-8", charset);
+        
+        uchardet_delete(ud);
+        
+        size_t inLen = game.title.size();
+        size_t outLen = inLen * 4;
+        std::string buf(outLen, '\0');
+        char *inPtr = const_cast<char*>(game.title.c_str());
+        char *outPtr = const_cast<char*>(buf.c_str());
+        
+        errno = 0;
+        size_t result = iconv(cd, &inPtr, &inLen, &outPtr, &outLen);
+        
+        iconv_close(cd);
+        
+        if (result != (size_t)-1 && errno == 0)
+        {
+            buf.resize(buf.size()-outLen);
+            game.title = buf;
+            convSuccess = true;
+        }
+        else {
+            Debug() << iniFileName << ": failed to convert game title to UTF-8";
+        }
+#else
+        Debug() << iniFileName << ": Game title isn't valid UTF-8"
+#endif
+    }
+    else
+        convSuccess = true;
+    
+    if (game.title.empty() || !convSuccess)
         game.title = "mkxp-z";
-    }
     
-    if (game.scripts.empty())
-        Debug() << "INI is missing Game.Scripts property";
-    
-    if (dataPathOrg.empty()) {
+    if (dataPathOrg.empty())
         dataPathOrg = ".";
-    }
     
-    if (dataPathApp.empty()) {
+    if (dataPathApp.empty())
         dataPathApp = game.title;
-    }
     
-    if (!dataPathApp.empty()) {
-        customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
-    }
+    customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
     
     commonDataPath = prefPath(".", "mkxp-z");
     
