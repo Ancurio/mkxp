@@ -100,10 +100,6 @@ if get_option('workdir_current')
     global_args += '-DWORKDIR_CURRENT'
 endif
 
-if get_option('easypoke') == true and miniffi == true
-    global_args += '-DMKXPZ_ESSENTIALS_DEBUG'
-endif
-
 if get_option('cxx11_experimental') == true
     global_args += '-DMKXPZ_EXP_FS'
 endif

@@ -49,7 +49,6 @@
 		3B10EDAC2568E95E00372D13 /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
 		3B10EDAD2568E95E00372D13 /* filesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED542568E95D00372D13 /* filesystem.cpp */; };
 		3B10EDAF2568E95E00372D13 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED562568E95D00372D13 /* main.cpp */; };
-		3B10EDB12568E95E00372D13 /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3B10EDB32568E95E00372D13 /* midisource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5E2568E95D00372D13 /* midisource.cpp */; };
 		3B10EDB42568E95E00372D13 /* alstream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5F2568E95D00372D13 /* alstream.cpp */; };
 		3B10EDB52568E95E00372D13 /* fluid-fun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED602568E95D00372D13 /* fluid-fun.cpp */; };
@@ -186,7 +185,6 @@
 		3B1C23BB25A19C600075EF5D /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7B2568E95D00372D13 /* graphics.cpp */; };
 		3B1C23BC25A19C600075EF5D /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED772568E95D00372D13 /* font.cpp */; };
 		3B1C23BF25A19C600075EF5D /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
-		3B1C23C025A19C600075EF5D /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3B1C23C125A19C600075EF5D /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
 		3B1C23C325A19C600075EF5D /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080EF256879FD0006849F /* libSDL2_ttf.a */; };
 		3B1C23C425A19C600075EF5D /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FB256879FE0006849F /* libvorbisenc.a */; };
@@ -364,7 +362,6 @@
 		3BC65D132584EDC60063AFF1 /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7B2568E95D00372D13 /* graphics.cpp */; };
 		3BC65D142584EDC60063AFF1 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED772568E95D00372D13 /* font.cpp */; };
 		3BC65D172584EDC60063AFF1 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
-		3BC65D182584EDC60063AFF1 /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3BC65D192584EDC60063AFF1 /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
 		3BC65D282584EDC60063AFF1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
 		3BC65D2A2584EDC60063AFF1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
@@ -458,7 +455,6 @@
 		3BC65DD42584F3AD0063AFF1 /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7B2568E95D00372D13 /* graphics.cpp */; };
 		3BC65DD52584F3AD0063AFF1 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED772568E95D00372D13 /* font.cpp */; };
 		3BC65DD82584F3AD0063AFF1 /* filesystemImplApple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */; };
-		3BC65DD92584F3AD0063AFF1 /* fake-api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED5A2568E95D00372D13 /* fake-api.cpp */; };
 		3BC65DDA2584F3AD0063AFF1 /* sharedstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED512568E95D00372D13 /* sharedstate.cpp */; };
 		3BC65DEB2584F3AD0063AFF1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
 		3BC65DED2584F3AD0063AFF1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
@@ -822,8 +818,6 @@
 		3B10ED532568E95D00372D13 /* filesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesystem.h; sourceTree = "<group>"; };
 		3B10ED542568E95D00372D13 /* filesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = filesystem.cpp; sourceTree = "<group>"; };
 		3B10ED562568E95D00372D13 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		3B10ED5A2568E95D00372D13 /* fake-api.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "fake-api.cpp"; sourceTree = "<group>"; };
-		3B10ED5C2568E95D00372D13 /* fake-api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fake-api.h"; sourceTree = "<group>"; };
 		3B10ED5E2568E95D00372D13 /* midisource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midisource.cpp; sourceTree = "<group>"; };
 		3B10ED5F2568E95D00372D13 /* alstream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = alstream.cpp; sourceTree = "<group>"; };
 		3B10ED602568E95D00372D13 /* fluid-fun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "fluid-fun.cpp"; sourceTree = "<group>"; };
@@ -980,7 +974,6 @@
 		3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = filesystemImplApple.mm; sourceTree = "<group>"; };
 		3B5A84132569C28B00BAF2E5 /* filesystemImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filesystemImpl.cpp; sourceTree = "<group>"; };
 		3B5A84142569C28B00BAF2E5 /* filesystemImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = filesystemImpl.h; sourceTree = "<group>"; };
-		3B5A842B2569E8BA00BAF2E5 /* mINI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mINI.h; sourceTree = "<group>"; };
 		3B5A8444256A0F6300BAF2E5 /* libopenal.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libopenal.a; path = "Dependencies/build-macosx-x86_64/lib/libopenal.a"; sourceTree = "<group>"; };
 		3B5A845C256A465700BAF2E5 /* system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
 		3B5A845D256A465700BAF2E5 /* systemImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = systemImpl.cpp; sourceTree = "<group>"; };
@@ -1358,7 +1351,6 @@
 				3B10EE1F2569348E00372D13 /* json5pp.hpp */,
 				3B1BC0DF266F7C0C00794D22 /* iniconfig.h */,
 				3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */,
-				3B5A842B2569E8BA00BAF2E5 /* mINI.h */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -1402,8 +1394,6 @@
 		3B10ED582568E95D00372D13 /* system */ = {
 			isa = PBXGroup;
 			children = (
-				3B10ED5A2568E95D00372D13 /* fake-api.cpp */,
-				3B10ED5C2568E95D00372D13 /* fake-api.h */,
 				3B5A845C256A465700BAF2E5 /* system.h */,
 				3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */,
 				3B5A845D256A465700BAF2E5 /* systemImpl.cpp */,
@@ -2138,7 +2128,6 @@
 				3B1C242B25A1AA1F0075EF5D /* steamshim_child.c in Sources */,
 				3B3F7D2D25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */,
 				3B1C23BF25A19C600075EF5D /* filesystemImplApple.mm in Sources */,
-				3B1C23C025A19C600075EF5D /* fake-api.cpp in Sources */,
 				3B1BC0E4266F7C2800794D22 /* iniconfig.cpp in Sources */,
 				3B1C23C125A19C600075EF5D /* sharedstate.cpp in Sources */,
 			);
@@ -2225,7 +2214,6 @@
 				3BC65D142584EDC60063AFF1 /* font.cpp in Sources */,
 				3B1BC0E3266F7C2700794D22 /* iniconfig.cpp in Sources */,
 				3BC65D172584EDC60063AFF1 /* filesystemImplApple.mm in Sources */,
-				3BC65D182584EDC60063AFF1 /* fake-api.cpp in Sources */,
 				3BC65D192584EDC60063AFF1 /* sharedstate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2304,7 +2292,6 @@
 				3BC65DD52584F3AD0063AFF1 /* font.cpp in Sources */,
 				3B1BC0E1266F7C2600794D22 /* iniconfig.cpp in Sources */,
 				3BC65DD82584F3AD0063AFF1 /* filesystemImplApple.mm in Sources */,
-				3BC65DD92584F3AD0063AFF1 /* fake-api.cpp in Sources */,
 				3BC65DDA2584F3AD0063AFF1 /* sharedstate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2383,7 +2370,6 @@
 				3B10EDC02568E95E00372D13 /* font.cpp in Sources */,
 				3B1BC0E2266F7C2700794D22 /* iniconfig.cpp in Sources */,
 				3B5A840D2569BE7C00BAF2E5 /* filesystemImplApple.mm in Sources */,
-				3B10EDB12568E95E00372D13 /* fake-api.cpp in Sources */,
 				3B10EDAC2568E95E00372D13 /* sharedstate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

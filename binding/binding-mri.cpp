@@ -1066,12 +1066,6 @@ static void mriBindingExecute() {
 #endif
 #endif
     
-#if defined(MKXPZ_ESSENTIALS_DEBUG) && !defined(__WIN32__)
-    char *tmpdir = getenv("TMPDIR");
-    if (tmpdir)
-        setenv("TEMP", tmpdir, false);
-#endif
-    
     VALUE lpaths = rb_gv_get(":");
     if (!conf.rubyLoadpaths.empty()) {
         /* Setup custom load paths */

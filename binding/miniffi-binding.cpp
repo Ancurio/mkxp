@@ -1,7 +1,6 @@
 // Most of the MiniFFI class was taken from Ruby 1.8's Win32API.c,
 // it's just as basic but should work fine for the moment
 
-#include "system/fake-api.h"
 #include <SDL.h>
 #include <cstdint>
 
@@ -39,40 +38,6 @@ DEF_ALLOCFUNC_CUSTOMFREE(MiniFFI, SDL_UnloadObject);
 #endif
 
 static void *MiniFFI_GetFunctionHandle(void *libhandle, const char *func) {
-#ifdef MKXPZ_ESSENTIALS_DEBUG
-#define CAPTURE(n)                                                             \
-    if (!strcmp(#n, func))                                                       \
-        return (void *)&MKXP_##n
-        CAPTURE(GetCurrentThreadId);
-    CAPTURE(GetWindowThreadProcessId);
-    CAPTURE(FindWindowEx);
-    CAPTURE(GetForegroundWindow);
-    CAPTURE(GetClientRect);
-    CAPTURE(GetCursorPos);
-    CAPTURE(ScreenToClient);
-    CAPTURE(SetWindowPos);
-    CAPTURE(SetWindowTextA);
-    CAPTURE(GetWindowRect);
-    CAPTURE(GetKeyboardState);
-#ifndef __WIN32__
-    // Functions only needed on Linux and macOS go here
-    CAPTURE(RtlMoveMemory);
-    CAPTURE(LoadLibrary);
-    CAPTURE(FreeLibrary);
-    CAPTURE(GetAsyncKeyState);
-    CAPTURE(GetSystemPowerStatus);
-    CAPTURE(ShowWindow);
-    CAPTURE(GetSystemMetrics);
-    CAPTURE(SetCapture);
-    CAPTURE(ReleaseCapture);
-    CAPTURE(ShowCursor);
-    CAPTURE(GetPrivateProfileString);
-    CAPTURE(GetUserDefaultLangID);
-    CAPTURE(GetUserName);
-    CAPTURE(RegisterHotKey);
-    CAPTURE(SetWindowLong);
-#endif
-#endif
     if (!libhandle)
         return 0;
     return SDL_LoadFunction(libhandle, func);

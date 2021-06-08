@@ -17,9 +17,8 @@
 #include "util/debugwriter.h"
 #include "util/sdl-util.h"
 #include "util/util.h"
-#include "util/json5pp.hpp"
-#include "util/mINI.h"
 
+#include "util/json5pp.hpp"
 #include "util/iniconfig.h"
 
 #if defined(MKXPZ_BUILD_XCODE) || defined(MKXPZ_INI_ENCODING)
@@ -401,7 +400,7 @@ void Config::readGameINI() {
             Debug() << iniFileName << ": failed to convert game title to UTF-8";
         }
 #else
-        Debug() << iniFileName << ": Game title isn't valid UTF-8"
+        Debug() << iniFileName << ": Game title isn't valid UTF-8";
 #endif
     }
     else

@@ -659,11 +659,6 @@ void FileSystem::openReadRaw(SDL_RWops &ops, const char *filename,
     return;
 }
 
-// RGSS normalizes paths for at least audio
-// Essentials kind of takes this for granted
-// (`Audio/BGM/../../Audio/ME/[file]`)
-
-// SDL_SaveBMP wants absolute paths
 std::string FileSystem::normalize(const char *pathname, bool preferred,
                             bool absolute) {
     return filesystemImpl::normalizePath(pathname, preferred, absolute);

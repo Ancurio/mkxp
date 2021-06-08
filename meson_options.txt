@@ -8,7 +8,6 @@ option('cxx11_experimental', type: 'boolean', value: false, description: 'Toggle
 option('shared_fluid', type: 'boolean', value: true, description: 'Dynamically link fluidsynth at build time')
 option('cjk_fallback_font', type: 'boolean', value: false, description: 'Use WenQuanYi Micro Hei as the fallback font')
 option('use_miniffi', type: 'boolean', value: true, description: 'Enable MiniFFI Ruby module (Win32API)')
-option('easypoke', type: 'boolean', value: false, description: '"Fix" any incompatibilities with Pkmn Essentials.')
 option('enable-https', type: 'boolean', value: true, description: 'Support HTTPS for get/post requests. Requires OpenSSL.')
 option('default_framerate', type: 'boolean', value: false, description: 'Disable syncToRefreshrate and fixedFramerate configuration options')
 option('no_preload_scripts', type: 'boolean', value: false, description: 'Disable the preloadScript configuration option')
