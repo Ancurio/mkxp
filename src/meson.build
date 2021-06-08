@@ -39,6 +39,7 @@ endif
 iconv = compilers['cpp'].find_library('iconv', static: build_static, required: false)
 if iconv.found() == true
     global_dependencies += iconv
+    global_dependencies += compilers['cpp'].find_library('uchardet', static: build_static)
     global_args += '-DMKXPZ_INI_ENCODING'
 endif
 
