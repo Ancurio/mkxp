@@ -69,8 +69,6 @@ RB_METHOD(bitmapInitialize) {
     setPrivateData(self, b);
     bitmapInitProps(b, self);
     
-    GFX_UNLOCK;
-    
     return self;
 }
 
