@@ -34,6 +34,14 @@ if get_option('enable-https') == true
     endif
 endif
 
+# If iconv is present, mkxp will try to identify and convert the encoding
+# of the game's title
+iconv = compilers['cpp'].find_library('iconv', static: build_static, required: false)
+if iconv.found() == true
+    global_dependencies += iconv
+    global_args += '-DMKXPZ_INI_ENCODING'
+endif
+
 # Windows needs to be treated like a special needs child here
 explicit_libs = ''
 if host_system == 'windows'
@@ -144,6 +152,8 @@ main_source = files(
     'display/gl/tileatlasvx.cpp',
     'display/gl/tilequad.cpp',
     'display/gl/vertex.cpp',
+
+    'util/iniconfig.cpp',
     
     'etc/etc.cpp',
     'etc/table.cpp',
