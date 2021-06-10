@@ -184,7 +184,7 @@ RB_METHOD(kernelLoadData) {
     rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
   }
 #if RAPI_MAJOR >= 2
-    loadDataRubyArgs ldargs {RSTRING_PTR(filename), true};
+    loadDataRubyArgs ldargs {RSTRING_PTR(filename), RTEST(raw)};
     return (VALUE)rb_thread_call_without_gvl([](void* args) -> void* {
         return ((void*)call_kernelLoadDataInt_cb((loadDataRubyArgs*)args));
     }, (void*)&ldargs, 0, 0);
