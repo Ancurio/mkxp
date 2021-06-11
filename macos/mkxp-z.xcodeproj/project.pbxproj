@@ -105,7 +105,6 @@
 		3B1BC0E3266F7C2700794D22 /* iniconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */; };
 		3B1BC0E4266F7C2800794D22 /* iniconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */; };
 		3B1BC0E8266F91E100794D22 /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1BC0E7266F91E100794D22 /* libuchardet.a */; };
-		3B1BC0EA266F91FE00794D22 /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1BC0E9266F91FE00794D22 /* libuchardet.a */; };
 		3B1BC0EC266F924B00794D22 /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1BC0EB266F924B00794D22 /* libuchardet.a */; };
 		3B1BC0ED266F924B00794D22 /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1BC0EB266F924B00794D22 /* libuchardet.a */; };
 		3B1C230725A142620075EF5D /* libruby.3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C230625A142620075EF5D /* libruby.3.0.dylib */; };
@@ -300,6 +299,7 @@
 		3BA69459263DAB53004194EB /* lzw.c in Sources */ = {isa = PBXBuildFile; fileRef = 3BA6944F263DAB53004194EB /* lzw.c */; };
 		3BA6945A263DAB53004194EB /* lzw.c in Sources */ = {isa = PBXBuildFile; fileRef = 3BA6944F263DAB53004194EB /* lzw.c */; };
 		3BA6945B263DAB53004194EB /* lzw.c in Sources */ = {isa = PBXBuildFile; fileRef = 3BA6944F263DAB53004194EB /* lzw.c */; };
+		3BAEB1442673DBE700AC177B /* libuchardet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BAEB1432673DBE700AC177B /* libuchardet.a */; };
 		3BC65CCD2584EDC60063AFF1 /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
 		3BC65CCF2584EDC60063AFF1 /* rgssad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED382568E95D00372D13 /* rgssad.cpp */; };
 		3BC65CD02584EDC60063AFF1 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED462568E95D00372D13 /* input.cpp */; };
@@ -923,7 +923,6 @@
 		3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iniconfig.cpp; sourceTree = "<group>"; };
 		3B1BC0E6266F8E8700794D22 /* dependencies.make */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = dependencies.make; path = Dependencies/dependencies.make; sourceTree = "<group>"; };
 		3B1BC0E7266F91E100794D22 /* libuchardet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuchardet.a; path = "Dependencies/build-macosx-arm64/lib/libuchardet.a"; sourceTree = "<group>"; };
-		3B1BC0E9266F91FE00794D22 /* libuchardet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuchardet.a; path = "Dependencies/build-macosx-x86_64/lib/libuchardet.a"; sourceTree = "<group>"; };
 		3B1BC0EB266F924B00794D22 /* libuchardet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuchardet.a; path = "Dependencies/build-macosx-x86_64/lib/libuchardet.a"; sourceTree = "<group>"; };
 		3B1C230625A142620075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-arm64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
 		3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.0.dylib; path = "Dependencies/build-macosx-x86_64/lib/libruby.3.0.dylib"; sourceTree = "<group>"; };
@@ -990,6 +989,7 @@
 		3BA69451263DAB53004194EB /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
 		3BA69452263DAB53004194EB /* lzw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzw.h; sourceTree = "<group>"; };
 		3BA69453263DAB53004194EB /* libnsgif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libnsgif.h; sourceTree = "<group>"; };
+		3BAEB1432673DBE700AC177B /* libuchardet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuchardet.a; path = "Dependencies/build-macosx-universal/lib/libuchardet.a"; sourceTree = "<group>"; };
 		3BC65D442584EDC60063AFF1 /* Z.arm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Z.arm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BC65D4A2584EED10063AFF1 /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbis.a; path = "Dependencies/build-macosx-arm64/lib/libvorbis.a"; sourceTree = "<group>"; };
 		3BC65D4B2584EED10063AFF1 /* libpixman-1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpixman-1.a"; path = "Dependencies/build-macosx-arm64/lib/libpixman-1.a"; sourceTree = "<group>"; };
@@ -1170,7 +1170,7 @@
 			files = (
 				3BC65E2C2584F4290063AFF1 /* libvorbisenc.a in Frameworks */,
 				3BC65E2D2584F4290063AFF1 /* libogg.a in Frameworks */,
-				3B1BC0EA266F91FE00794D22 /* libuchardet.a in Frameworks */,
+				3BAEB1442673DBE700AC177B /* libuchardet.a in Frameworks */,
 				3B522DCC259BFEE0003301C4 /* libssl.a in Frameworks */,
 				3B5E1F0B25A881FB0086FFDC /* libEGL.dylib in Frameworks */,
 				3BC65E222584F4290063AFF1 /* libSDL2_ttf.a in Frameworks */,
@@ -1685,7 +1685,7 @@
 			children = (
 				3B5E1EF425A880D50086FFDC /* OpenGL ES */,
 				3BC65D7D2584F3780063AFF1 /* libfreetype.a */,
-				3B1BC0E9266F91FE00794D22 /* libuchardet.a */,
+				3BAEB1432673DBE700AC177B /* libuchardet.a */,
 				3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */,
 				3B1C230D25A144BF0075EF5D /* libruby.3.0.dylib */,
 				3BC65D822584F3780063AFF1 /* libogg.a */,
@@ -3035,6 +3035,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
+					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
@@ -3118,6 +3119,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
+					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
