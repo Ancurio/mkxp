@@ -112,6 +112,7 @@ RB_METHOD(mriPrint);
 RB_METHOD(mriP);
 RB_METHOD(mkxpDataDirectory);
 RB_METHOD(mkxpSetTitle);
+RB_METHOD(mkxpGetTitle);
 RB_METHOD(mkxpDesensitize);
 RB_METHOD(mkxpPuts);
 RB_METHOD(mkxpRawKeyStates);
@@ -207,6 +208,8 @@ static void mriBindingInit() {
     _rb_define_module_function(mod, "uptime", mkxpDelta);
     _rb_define_module_function(mod, "data_directory", mkxpDataDirectory);
     _rb_define_module_function(mod, "set_window_title", mkxpSetTitle);
+    _rb_define_module_function(mod, "window_title", mkxpGetTitle);
+    _rb_define_module_function(mod, "window_title=", mkxpSetTitle);
     _rb_define_module_function(mod, "show_settings", mkxpSettingsMenu);
     _rb_define_module_function(mod, "puts", mkxpPuts);
     _rb_define_module_function(mod, "desensitize", mkxpDesensitize);
@@ -329,6 +332,14 @@ RB_METHOD(mkxpSetTitle) {
     
     shState->eThread().requestWindowRename(RSTRING_PTR(s));
     return s;
+}
+
+RB_METHOD(mkxpGetTitle) {
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    return rb_utf8_str_new_cstr(SDL_GetWindowTitle(shState->sdlWindow()));
 }
 
 RB_METHOD(mkxpDesensitize) {
