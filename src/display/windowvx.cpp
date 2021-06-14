@@ -34,7 +34,7 @@
 
 #include <limits>
 #include <algorithm>
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 #define DEF_Z         (rgssVer >= 3 ? 100 :   0)
 #define DEF_PADDING   (rgssVer >= 3 ?  12 :  16)
@@ -179,9 +179,9 @@ struct WindowVXPrivate
 	NormValue openness;
 	Tone *tone;
 
-	sigc::connection cursorRectCon;
-	sigc::connection toneCon;
-	sigc::connection prepareCon;
+	sigslot::connection cursorRectCon;
+	sigslot::connection toneCon;
+	sigslot::connection prepareCon;
 
 	EtcTemps tmp;
 
@@ -264,7 +264,7 @@ struct WindowVXPrivate
 		}
 
 		prepareCon = shState->prepareDraw.connect
-			(sigc::mem_fun(this, &WindowVXPrivate::prepare));
+			(&WindowVXPrivate::prepare, this);
 
 		refreshCursorRectCon();
 		refreshToneCon();
@@ -294,14 +294,14 @@ struct WindowVXPrivate
 	{
 		cursorRectCon.disconnect();
 		cursorRectCon = cursorRect->valueChanged.connect
-		        (sigc::mem_fun(this, &WindowVXPrivate::invalidateCursorVert));
+		        (&WindowVXPrivate::invalidateCursorVert, this);
 	}
 
 	void refreshToneCon()
 	{
 		toneCon.disconnect();
 		toneCon = tone->valueChanged.connect
-			(sigc::mem_fun(this, &WindowVXPrivate::invalidateBaseTex));
+			(&WindowVXPrivate::invalidateBaseTex, this);
 	}
 
 	void updateBaseTexSize()

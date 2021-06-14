@@ -28,8 +28,7 @@
 #include "graphics.h"
 
 #include <assert.h>
-#include <sigc++/signal.h>
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 class Disposable
 {
@@ -61,7 +60,7 @@ public:
 		return disposed;
 	}
 
-	sigc::signal<void> wasDisposed;
+    sigslot::signal<> wasDisposed;
 
 protected:
 	void guardDisposed() const

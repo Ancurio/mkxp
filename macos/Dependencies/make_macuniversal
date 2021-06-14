@@ -41,7 +41,6 @@ armfiles.length.times{|i|
 src_includes = BUILD_ARM.sub(/lib$/, "include")
 dst = DESTINATION.sub(/lib$/, "include")
 FileUtils.ln_s(src_includes, dst) if !Dir.exists?(dst)
-FileUtils.ln_s(File.join(BUILD_ARM, "sigc++-2.0"), DESTINATION)
 
 rb = File.join(BUILD_ARM, "ruby")
 FileUtils.ln_s(rb, DESTINATION) if Dir.exists?(rb)

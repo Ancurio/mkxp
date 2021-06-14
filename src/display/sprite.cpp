@@ -41,7 +41,7 @@
 
 #include <SDL_rect.h>
 
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 struct SpritePrivate
 {
@@ -51,7 +51,7 @@ struct SpritePrivate
 	Transform trans;
 
 	Rect *srcRect;
-	sigc::connection srcRectCon;
+	sigslot::connection srcRectCon;
 
 	bool mirrored;
 	int bushDepth;
@@ -86,7 +86,7 @@ struct SpritePrivate
 
 	EtcTemps tmp;
 
-	sigc::connection prepareCon;
+	sigslot::connection prepareCon;
 
 	SpritePrivate()
 	    : bitmap(0),
@@ -107,7 +107,7 @@ struct SpritePrivate
 		updateSrcRectCon();
 
 		prepareCon = shState->prepareDraw.connect
-		        (sigc::mem_fun(this, &SpritePrivate::prepare));
+		        (&SpritePrivate::prepare, this);
 
 		wave.amp = 0;
 		wave.length = 180;
@@ -162,7 +162,7 @@ struct SpritePrivate
 		srcRectCon.disconnect();
 		/* Create new one */
 		srcRectCon = srcRect->valueChanged.connect
-				(sigc::mem_fun(this, &SpritePrivate::onSrcRectChange));
+				(&SpritePrivate::onSrcRectChange, this);
 	}
 
 	void updateVisibility()

@@ -49,7 +49,7 @@
 
 #include "debugwriter.h"
 
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 #include <math.h>
 #include <algorithm>
@@ -213,7 +213,7 @@ struct BitmapPrivate
         }
     } animation;
     
-    sigc::connection prepareCon;
+    sigslot::connection prepareCon;
     
     TEXFBO gl;
     
@@ -256,7 +256,7 @@ struct BitmapPrivate
         animation.fps = 0;
         animation.lastFrame = 0;
         
-        prepareCon = shState->prepareDraw.connect(sigc::mem_fun(this, &BitmapPrivate::prepare));
+        prepareCon = shState->prepareDraw.connect(&BitmapPrivate::prepare, this);
         
         font = &shState->defaultFont();
         pixman_region_init(&tainted);

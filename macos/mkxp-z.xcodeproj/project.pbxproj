@@ -200,7 +200,6 @@
 		3B1C23CF25A19C600075EF5D /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080E6256879FC0006849F /* libvorbis.a */; };
 		3B1C23D025A19C600075EF5D /* libSDL2_test.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE080FA256879FE0006849F /* libSDL2_test.a */; };
 		3B1C23D225A19C600075EF5D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
-		3B1C23D325A19C600075EF5D /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
 		3B1C23D425A19C600075EF5D /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
 		3B1C23D625A19C600075EF5D /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081542568D3A60006849F /* Metal.framework */; };
 		3B1C23D725A19C600075EF5D /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081572568D3A60006849F /* ForceFeedback.framework */; };
@@ -240,7 +239,6 @@
 		3B3F7D2B25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
 		3B3F7D2C25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
 		3B3F7D2D25B1A73A00EA5F1C /* SettingsMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */; };
-		3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B426F76256BA847009EA00F /* libsigc-2.0.a */; };
 		3B480E9F25DCD174001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
 		3B480EA025DCD175001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
 		3B480EA125DCD176001686B4 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
@@ -390,7 +388,6 @@
 		3BC65D642584EED10063AFF1 /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D542584EED10063AFF1 /* libvorbisfile.a */; };
 		3BC65D652584EED10063AFF1 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D552584EED10063AFF1 /* libSDL2.a */; };
 		3BC65D662584EED10063AFF1 /* libopenal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D562584EED10063AFF1 /* libopenal.a */; };
-		3BC65D672584EED10063AFF1 /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D572584EED10063AFF1 /* libsigc-2.0.a */; };
 		3BC65D682584EED10063AFF1 /* libturbojpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D582584EED10063AFF1 /* libturbojpeg.a */; };
 		3BC65D692584EED10063AFF1 /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D592584EED10063AFF1 /* libpng16.a */; };
 		3BC65D8E2584F3AD0063AFF1 /* tilemapvx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */; };
@@ -480,7 +477,6 @@
 		3BC65E252584F4290063AFF1 /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D852584F3780063AFF1 /* libvorbis.a */; };
 		3BC65E262584F4290063AFF1 /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D872584F3780063AFF1 /* libpng16.a */; };
 		3BC65E282584F4290063AFF1 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D892584F3910063AFF1 /* libSDL2main.a */; };
-		3BC65E2A2584F4290063AFF1 /* libsigc-2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D802584F3780063AFF1 /* libsigc-2.0.a */; };
 		3BC65E2B2584F4290063AFF1 /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7B2584F3780063AFF1 /* libphysfs.a */; };
 		3BC65E2C2584F4290063AFF1 /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D7A2584F3780063AFF1 /* libvorbisenc.a */; };
 		3BC65E2D2584F4290063AFF1 /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC65D822584F3780063AFF1 /* libogg.a */; };
@@ -952,7 +948,6 @@
 		3B426F6E256B8AC0009EA00F /* filesystem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = filesystem.hpp; sourceTree = "<group>"; };
 		3B426F6F256B8AC0009EA00F /* fs_impl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_impl.hpp; sourceTree = "<group>"; };
 		3B426F70256B8AC0009EA00F /* fs_std_fwd.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fs_std_fwd.hpp; sourceTree = "<group>"; };
-		3B426F76256BA847009EA00F /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-x86_64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
 		3B480E9325DCBDD6001686B4 /* sdl_codes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sdl_codes.h; path = views/sdl_codes.h; sourceTree = "<group>"; };
 		3B480E9E25DCD16D001686B4 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfluidsynth.dylib; path = Dependencies/Frameworks/libfluidsynth.dylib; sourceTree = "<group>"; };
@@ -1003,14 +998,12 @@
 		3BC65D542584EED10063AFF1 /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "Dependencies/build-macosx-arm64/lib/libvorbisfile.a"; sourceTree = "<group>"; };
 		3BC65D552584EED10063AFF1 /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = "Dependencies/build-macosx-arm64/lib/libSDL2.a"; sourceTree = "<group>"; };
 		3BC65D562584EED10063AFF1 /* libopenal.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libopenal.a; path = "Dependencies/build-macosx-arm64/lib/libopenal.a"; sourceTree = "<group>"; };
-		3BC65D572584EED10063AFF1 /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-arm64/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
 		3BC65D582584EED10063AFF1 /* libturbojpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libturbojpeg.a; path = "Dependencies/build-macosx-arm64/lib/libturbojpeg.a"; sourceTree = "<group>"; };
 		3BC65D592584EED10063AFF1 /* libpng16.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng16.a; path = "Dependencies/build-macosx-arm64/lib/libpng16.a"; sourceTree = "<group>"; };
 		3BC65D7A2584F3780063AFF1 /* libvorbisenc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisenc.a; path = "Dependencies/build-macosx-universal/lib/libvorbisenc.a"; sourceTree = "<group>"; };
 		3BC65D7B2584F3780063AFF1 /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = "Dependencies/build-macosx-universal/lib/libphysfs.a"; sourceTree = "<group>"; };
 		3BC65D7D2584F3780063AFF1 /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = "Dependencies/build-macosx-universal/lib/libfreetype.a"; sourceTree = "<group>"; };
 		3BC65D7E2584F3780063AFF1 /* libturbojpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libturbojpeg.a; path = "Dependencies/build-macosx-universal/lib/libturbojpeg.a"; sourceTree = "<group>"; };
-		3BC65D802584F3780063AFF1 /* libsigc-2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsigc-2.0.a"; path = "Dependencies/build-macosx-universal/lib/libsigc-2.0.a"; sourceTree = "<group>"; };
 		3BC65D812584F3780063AFF1 /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisfile.a; path = "Dependencies/build-macosx-universal/lib/libvorbisfile.a"; sourceTree = "<group>"; };
 		3BC65D822584F3780063AFF1 /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libogg.a; path = "Dependencies/build-macosx-universal/lib/libogg.a"; sourceTree = "<group>"; };
 		3BC65D832584F3780063AFF1 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_ttf.a"; sourceTree = "<group>"; };
@@ -1057,6 +1050,7 @@
 		3BE081572568D3A60006849F /* ForceFeedback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ForceFeedback.framework; path = System/Library/Frameworks/ForceFeedback.framework; sourceTree = SDKROOT; };
 		3BE081582568D3A60006849F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		3BEA5D7125AC3CE300B6E359 /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_image.a"; sourceTree = "<group>"; };
+		3BFABF53267787940024C7DD /* sigslot */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sigslot; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1091,7 +1085,6 @@
 				3B1C23CF25A19C600075EF5D /* libvorbis.a in Frameworks */,
 				3B1C23D025A19C600075EF5D /* libSDL2_test.a in Frameworks */,
 				3B1C23D225A19C600075EF5D /* IOKit.framework in Frameworks */,
-				3B1C23D325A19C600075EF5D /* libsigc-2.0.a in Frameworks */,
 				3B1C23D425A19C600075EF5D /* Carbon.framework in Frameworks */,
 				3B1C23D625A19C600075EF5D /* Metal.framework in Frameworks */,
 				3B1C23D725A19C600075EF5D /* ForceFeedback.framework in Frameworks */,
@@ -1156,7 +1149,6 @@
 				3BC65D612584EED10063AFF1 /* libogg.a in Frameworks */,
 				3BC65D352584EDC60063AFF1 /* CoreFoundation.framework in Frameworks */,
 				3BC65D362584EDC60063AFF1 /* libz.tbd in Frameworks */,
-				3BC65D672584EED10063AFF1 /* libsigc-2.0.a in Frameworks */,
 				3BC65D5F2584EED10063AFF1 /* libfreetype.a in Frameworks */,
 				3BC65D372584EDC60063AFF1 /* libiconv.tbd in Frameworks */,
 				3BC65D602584EED10063AFF1 /* libSDL2main.a in Frameworks */,
@@ -1186,7 +1178,6 @@
 				3BC65DF52584F3AD0063AFF1 /* ForceFeedback.framework in Frameworks */,
 				3BC65DF62584F3AD0063AFF1 /* CoreVideo.framework in Frameworks */,
 				3BC65E232584F4290063AFF1 /* libfreetype.a in Frameworks */,
-				3BC65E2A2584F4290063AFF1 /* libsigc-2.0.a in Frameworks */,
 				3BC65DFA2584F3AD0063AFF1 /* CoreGraphics.framework in Frameworks */,
 				3BEA5D7225AC3CE300B6E359 /* libSDL2_image.a in Frameworks */,
 				3B522DCA259BFEE0003301C4 /* libcrypto.a in Frameworks */,
@@ -1231,7 +1222,6 @@
 				3BE08104256879FE0006849F /* libvorbis.a in Frameworks */,
 				3BE08118256879FE0006849F /* libSDL2_test.a in Frameworks */,
 				3BD2B6E72565AEC0003DAD8A /* IOKit.framework in Frameworks */,
-				3B426F77256BA847009EA00F /* libsigc-2.0.a in Frameworks */,
 				3B10EC5D2568D40C00372D13 /* Carbon.framework in Frameworks */,
 				3B10EC5F2568D40C00372D13 /* Metal.framework in Frameworks */,
 				3B10EC602568D40C00372D13 /* ForceFeedback.framework in Frameworks */,
@@ -1338,6 +1328,7 @@
 		3B10ED392568E95D00372D13 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				3BFABF53267787940024C7DD /* sigslot */,
 				3B10ED3A2568E95D00372D13 /* intrulist.h */,
 				3B10ED3B2568E95D00372D13 /* sdl-util.h */,
 				3B10ED3C2568E95D00372D13 /* boost-hash.h */,
@@ -1669,7 +1660,6 @@
 				3BC65D532584EED10063AFF1 /* libSDL2_ttf.a */,
 				3BC65D552584EED10063AFF1 /* libSDL2.a */,
 				3BC65D502584EED10063AFF1 /* libSDL2main.a */,
-				3BC65D572584EED10063AFF1 /* libsigc-2.0.a */,
 				3BC65D582584EED10063AFF1 /* libturbojpeg.a */,
 				3BC65D4A2584EED10063AFF1 /* libvorbis.a */,
 				3BC65D4D2584EED10063AFF1 /* libvorbisenc.a */,
@@ -1698,7 +1688,6 @@
 				3BC65D832584F3780063AFF1 /* libSDL2_ttf.a */,
 				3BC65D862584F3780063AFF1 /* libSDL2.a */,
 				3BC65D892584F3910063AFF1 /* libSDL2main.a */,
-				3BC65D802584F3780063AFF1 /* libsigc-2.0.a */,
 				3BC65D7E2584F3780063AFF1 /* libturbojpeg.a */,
 				3BC65D852584F3780063AFF1 /* libvorbis.a */,
 				3BC65D7A2584F3780063AFF1 /* libvorbisenc.a */,
@@ -1816,7 +1805,6 @@
 				3BE080FF256879FE0006849F /* libphysfs.a */,
 				3B1C230A25A144A10075EF5D /* libruby.3.0.dylib */,
 				3BE080E9256879FC0006849F /* libpixman-1.a */,
-				3B426F76256BA847009EA00F /* libsigc-2.0.a */,
 				3BE080F0256879FD0006849F /* libSDL2_image.a */,
 				3B97F77525E6182100A569B5 /* libSDL2_sound.a */,
 				3BE080FA256879FE0006849F /* libSDL2_test.a */,
@@ -3030,7 +3018,6 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include",
 					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
 					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
-					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
 					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
@@ -3114,7 +3101,6 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include",
 					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
 					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
-					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
 					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
@@ -3287,7 +3273,7 @@
 			baseConfigurationReference = 3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -3330,7 +3316,6 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include",
 					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
 					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
-					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
 					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",
@@ -3358,7 +3343,7 @@
 			baseConfigurationReference = 3B1C231E25A15FB20075EF5D /* mkxp.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -3400,7 +3385,6 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include",
 					"$(DEPENDENCY_SEARCH_PATH)/lib/**",
 					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
-					"$(DEPENDENCY_SEARCH_PATH)/include/sigc++-2.0",
 					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/$(BUILD_ARCH)-darwin",

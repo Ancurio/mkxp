@@ -33,20 +33,20 @@ Firstly, each platform has a set of tools and libraries that must be installed p
 + **macOS (through Homebrew)**
 
 ```sh
-brew install libtool mm-common cmake automake autoconf pkg-config
+brew install libtool cmake automake autoconf pkg-config
 ```
 
 + **Windows (MSYS 64-Bit)**
 
 ```sh
 # Assuming 64-bit
-pacman -S git ruby base-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-meson mingw-w64-x86_64-gcc mingw-w64-x86_64-libsigc++
+pacman -S git ruby base-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-meson mingw-w64-x86_64-gcc
 ```
 
 + **Linux (Ubuntu/Debian)**
 
 ```sh
-sudo apt install git build-essential cmake meson autoconf automake mm-common libtool pkg-config ruby bison zlib1g-dev xorg-dev lib32z1 libasound2-dev libpulse-dev
+sudo apt install git build-essential cmake meson autoconf automake libtool pkg-config ruby bison zlib1g-dev xorg-dev lib32z1 libasound2-dev libpulse-dev
 ```
 
 If Meson complains about not being able to find OpenGL, you also need `libgl1-mesa-dev`. After having all the prerequisites, go to your platform's respective folder and run `make` (or `setup.command` on macOS).

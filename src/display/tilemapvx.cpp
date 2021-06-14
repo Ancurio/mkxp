@@ -36,7 +36,7 @@
 #include "tilemap-common.h"
 
 #include <vector>
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 /* Flash tiles pulsing opacity */
 static const uint8_t flashAlpha[] =
@@ -87,12 +87,12 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 	bool buffersDirty;
 	bool mapViewportDirty;
 
-	sigc::connection mapDataCon;
-	sigc::connection flagsCon;
+	sigslot::connection mapDataCon;
+	sigslot::connection flagsCon;
 
-	sigc::connection prepareCon;
-	sigc::connection bmChangedCons[BM_COUNT];
-	sigc::connection bmDisposedCons[BM_COUNT];
+	sigslot::connection prepareCon;
+	sigslot::connection bmChangedCons[BM_COUNT];
+	sigslot::connection bmDisposedCons[BM_COUNT];
 
 	struct AboveLayer : public ViewportElement
 	{
@@ -142,7 +142,7 @@ struct TilemapVXPrivate : public ViewportElement, TileAtlasVX::Reader
 		onGeometryChange(scene->getGeometry());
 
 		prepareCon = shState->prepareDraw.connect
-			(sigc::mem_fun(this, &TilemapVXPrivate::prepare));
+			(&TilemapVXPrivate::prepare, this);
 	}
 
 	virtual ~TilemapVXPrivate()
@@ -383,11 +383,11 @@ void TilemapVX::BitmapArray::set(int i, Bitmap *bitmap)
 
 	p->bmChangedCons[i].disconnect();
 	p->bmChangedCons[i] = bitmap->modified.connect
-		(sigc::mem_fun(p, &TilemapVXPrivate::invalidateAtlas));
+        (&TilemapVXPrivate::invalidateAtlas, p);
 
 	p->bmDisposedCons[i].disconnect();
 	p->bmDisposedCons[i] = bitmap->wasDisposed.connect
-		(sigc::mem_fun(p, &TilemapVXPrivate::invalidateAtlas));
+		(&TilemapVXPrivate::invalidateAtlas, p);
 }
 
 Bitmap *TilemapVX::BitmapArray::get(int i) const
@@ -482,7 +482,7 @@ void TilemapVX::setMapData(Table *value)
 
 	p->mapDataCon.disconnect();
 	p->mapDataCon = value->modified.connect
-		(sigc::mem_fun(p, &TilemapVXPrivate::invalidateBuffers));
+		(&TilemapVXPrivate::invalidateBuffers, p);
 }
 
 void TilemapVX::setFlashData(Table *value)
@@ -504,7 +504,7 @@ void TilemapVX::setFlags(Table *value)
 
 	p->flagsCon.disconnect();
 	p->flagsCon = value->modified.connect
-		(sigc::mem_fun(p, &TilemapVXPrivate::invalidateBuffers));
+		(&TilemapVXPrivate::invalidateBuffers, p);
 }
 
 void TilemapVX::setVisible(bool value)

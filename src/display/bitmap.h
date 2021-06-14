@@ -26,7 +26,7 @@
 #include "etc-internal.h"
 #include "etc.h"
 
-#include <sigc++/signal.h>
+#include "sigslot/signal.hpp"
 
 class Font;
 class ShaderBase;
@@ -155,7 +155,7 @@ public:
 	/* Adds 'rect' to tainted area */
 	void taintArea(const IntRect &rect);
 
-	sigc::signal<void> modified;
+	sigslot::signal<> modified;
 
 	static int maxSize();
 

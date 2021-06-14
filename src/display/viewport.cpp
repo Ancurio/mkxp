@@ -30,7 +30,7 @@
 
 #include <SDL_rect.h>
 
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 struct ViewportPrivate
 {
@@ -38,7 +38,7 @@ struct ViewportPrivate
 	Viewport *self;
 
 	Rect *rect;
-	sigc::connection rectCon;
+	sigslot::connection rectCon;
 
 	Color *color;
 	Tone *tone;
@@ -75,7 +75,7 @@ struct ViewportPrivate
 	{
 		rectCon.disconnect();
 		rectCon = rect->valueChanged.connect
-		        (sigc::mem_fun(this, &ViewportPrivate::onRectChange));
+		        (&ViewportPrivate::onRectChange, this);
 	}
 
 	void recomputeOnScreen()

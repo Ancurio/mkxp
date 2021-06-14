@@ -34,7 +34,7 @@
 #include "shader.h"
 #include "glstate.h"
 
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 static float fwrap(float value, float range)
 {
@@ -62,7 +62,7 @@ struct PlanePrivate
 
 	EtcTemps tmp;
 
-	sigc::connection prepareCon;
+	sigslot::connection prepareCon;
 
 	PlanePrivate()
 	    : bitmap(0),
@@ -75,7 +75,7 @@ struct PlanePrivate
 	      quadSourceDirty(false)
 	{
 		prepareCon = shState->prepareDraw.connect
-		        (sigc::mem_fun(this, &PlanePrivate::prepare));
+		        (&PlanePrivate::prepare, this);
 
 		qArray.resize(1);
 	}

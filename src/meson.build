@@ -1,4 +1,3 @@
-sigcxx = dependency('sigc++-2.0', version: '>=2.10.0', static: build_static)
 physfs = dependency('physfs', version: '>=2.1', static: build_static)
 openal = dependency('openal', static: build_static, method: 'pkg-config')
 vorbisfile = dependency('vorbisfile', static: build_static)
@@ -86,7 +85,7 @@ global_include_dirs += include_directories('.',
     'util'
 )
 
-global_dependencies += [sigcxx, openal, zlib, bz2, sdl2, sdl_sound, pixman, physfs, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg]
+global_dependencies += [openal, zlib, bz2, sdl2, sdl_sound, pixman, physfs, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg]
 if host_system == 'windows'
     global_dependencies += compilers['cpp'].find_library('wsock32')
 endif

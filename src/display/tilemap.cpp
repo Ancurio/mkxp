@@ -39,7 +39,7 @@
 #include "tileatlas.h"
 #include "tilemap-common.h"
 
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 #include <string.h>
 #include <stdint.h>
@@ -322,16 +322,16 @@ struct TilemapPrivate
 	bool tilemapReady;
 
 	/* Change watches */
-	sigc::connection tilesetCon;
-	sigc::connection autotilesCon[autotileCount];
-	sigc::connection mapDataCon;
-	sigc::connection prioritiesCon;
+	sigslot::connection tilesetCon;
+	sigslot::connection autotilesCon[autotileCount];
+	sigslot::connection mapDataCon;
+	sigslot::connection prioritiesCon;
 
 	/* Dispose watches */
-	sigc::connection autotilesDispCon[autotileCount];
+	sigslot::connection autotilesDispCon[autotileCount];
 
 	/* Draw prepare call */
-	sigc::connection prepareCon;
+	sigslot::connection prepareCon;
 
 	NormValue opacity;
 	BlendType blendType;
@@ -382,7 +382,7 @@ struct TilemapPrivate
 			elem.zlayers[i] = new ZLayer(this, viewport);
 
 		prepareCon = shState->prepareDraw.connect
-		        (sigc::mem_fun(this, &TilemapPrivate::prepare));
+		        (&TilemapPrivate::prepare, this);
 
 		updateFlashMapViewport();
 	}
@@ -1181,11 +1181,11 @@ void Tilemap::Autotiles::set(int i, Bitmap *bitmap)
 
 	p->autotilesCon[i].disconnect();
 	p->autotilesCon[i] = bitmap->modified.connect
-	        (sigc::mem_fun(p, &TilemapPrivate::invalidateAtlasContents));
+	        (&TilemapPrivate::invalidateAtlasContents, p);
 
 	p->autotilesDispCon[i].disconnect();
 	p->autotilesDispCon[i] = bitmap->wasDisposed.connect
-	        (sigc::mem_fun(p, &TilemapPrivate::invalidateAtlasContents));
+	        (&TilemapPrivate::invalidateAtlasContents, p);
 
 	p->updateAutotileInfo();
 }
@@ -1266,7 +1266,7 @@ void Tilemap::setTileset(Bitmap *value)
 	p->invalidateAtlasSize();
 	p->tilesetCon.disconnect();
 	p->tilesetCon = value->modified.connect
-	        (sigc::mem_fun(p, &TilemapPrivate::invalidateAtlasSize));
+	        (&TilemapPrivate::invalidateAtlasSize, p);
 
 	p->updateAtlasInfo();
 }
@@ -1286,7 +1286,7 @@ void Tilemap::setMapData(Table *value)
 	p->invalidateBuffers();
 	p->mapDataCon.disconnect();
 	p->mapDataCon = value->modified.connect
-	        (sigc::mem_fun(p, &TilemapPrivate::invalidateBuffers));
+	        (&TilemapPrivate::invalidateBuffers, p);
 }
 
 void Tilemap::setFlashData(Table *value)
@@ -1311,7 +1311,7 @@ void Tilemap::setPriorities(Table *value)
 	p->invalidateBuffers();
 	p->prioritiesCon.disconnect();
 	p->prioritiesCon = value->modified.connect
-	        (sigc::mem_fun(p, &TilemapPrivate::invalidateBuffers));
+	        (&TilemapPrivate::invalidateBuffers, p);
 }
 
 void Tilemap::setVisible(bool value)

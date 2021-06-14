@@ -37,7 +37,7 @@
 #include <assert.h>
 #include <vector>
 
-#include <sigc++/connection.h>
+#include "sigslot/signal.hpp"
 
 static inline int
 wrap(int value, int range)
@@ -148,8 +148,9 @@ struct FlashMap
 		if (!data)
 			return;
 
-		dataCon = data->modified.connect
-			(sigc::mem_fun(this, &FlashMap::setDirty));
+        
+        
+        dataCon = data->modified.connect(&FlashMap::setDirty, this);
 	}
 
 	void setViewport(const IntRect &value)
@@ -266,7 +267,7 @@ private:
 	bool dirty;
 
 	Table *data;
-	sigc::connection dataCon;
+	sigslot::connection dataCon;
 
 	IntRect viewp;
 
