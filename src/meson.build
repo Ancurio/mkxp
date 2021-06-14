@@ -82,7 +82,7 @@ global_include_dirs += include_directories('.',
     'input',
     'net',
     'system',
-    'util'
+    'util', 'util/sigslot', 'util/sigslot/adapter'
 )
 
 global_dependencies += [openal, zlib, bz2, sdl2, sdl_sound, pixman, physfs, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg]
