@@ -33,8 +33,6 @@
 
 #include <physfs.h>
 
-#include <SDL_sound.h>
-
 #include <algorithm>
 #include <stack>
 #include <stdio.h>

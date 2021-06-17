@@ -201,19 +201,28 @@ $(DOWNLOADS)/sdl2_image/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/SDL_image $(DOWNLOADS)/sdl2_image -b mkxp-z
 
 # SDL_sound
-sdlsound: init_dirs sdl2 libogg libvorbis $(LIBDIR)/libSDL2_sound.a
+sdlsound: init_dirs sdl2 libogg libvorbis $(LIBDIR)/libSDL_sound.a
 
-$(LIBDIR)/libSDL2_sound.a: $(DOWNLOADS)/sdl_sound/cmakebuild/Makefile
-	cd $(DOWNLOADS)/sdl_sound/cmakebuild; \
+$(LIBDIR)/libSDL_sound.a: $(DOWNLOADS)/sdl_sound/Makefile
+	cd $(DOWNLOADS)/sdl_sound; \
 	make -j$(NPROC); make install
 
-$(DOWNLOADS)/sdl_sound/cmakebuild/Makefile: $(DOWNLOADS)/sdl_sound/CMakeLists.txt
-	cd $(DOWNLOADS)/sdl_sound; mkdir -p cmakebuild; cd cmakebuild; \
-	$(CMAKE) -DSDLSOUND_BUILD_SHARED=false -DSDLSOUND_BUILD_TEST=false
+$(DOWNLOADS)/sdl_sound/Makefile: $(DOWNLOADS)/sdl_sound/configure
+	cd $(DOWNLOADS)/sdl_sound; \
+	$(CONFIGURE) \
+	--disable-sdltest --disable-modplug \
+	--disable-flac --disable-speex \
+	--disable-physfs --disable-raw \
+	--disable-mikmod --disable-au \
+	--disable-voc --disable-shn \
+	--enable-static=yes --enable-shared=no
 
-$(DOWNLOADS)/sdl_sound/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b v2.0
+$(DOWNLOADS)/sdl_sound/configure: $(DOWNLOADS)/sdl_sound/bootstrap
+	cd $(DOWNLOADS)/sdl_sound; ./bootstrap
 
+$(DOWNLOADS)/sdl_sound/bootstrap:
+	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound
+	
 # SDL2 (ttf)
 sdl2ttf: init_dirs sdl2 freetype $(LIBDIR)/libSDL2_ttf.a
 
