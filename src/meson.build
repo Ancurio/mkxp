@@ -12,6 +12,8 @@ pixman = dependency('pixman-1', static: build_static)
 png = dependency('libpng', static: build_static)
 jpeg = dependency('libjpeg', static: build_static)
 zlib = dependency('zlib', static: build_static)
+iconv = compilers['cpp'].find_library('iconv', static: build_static)
+uchardet = dependency('uchardet', static: build_static)
 
 if host_system == 'windows'
     bz2 = dependency('bzip2', static: build_static)
@@ -31,15 +33,6 @@ if get_option('enable-https') == true
     else
         warning('Could not locate OpenSSL. HTTPS will be disabled.')
     endif
-endif
-
-# If iconv is present, mkxp will try to identify and convert the encoding
-# of the game's title
-iconv = compilers['cpp'].find_library('iconv', static: build_static, required: false)
-if iconv.found() == true
-    global_dependencies += iconv
-    global_dependencies += dependency('uchardet', static: build_static)
-    global_args += '-DMKXPZ_INI_ENCODING'
 endif
 
 # Windows needs to be treated like a special needs child here
@@ -85,7 +78,7 @@ global_include_dirs += include_directories('.',
     'util', 'util/sigslot', 'util/sigslot/adapter'
 )
 
-global_dependencies += [openal, zlib, bz2, sdl2, sdl_sound, pixman, physfs, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg]
+global_dependencies += [openal, zlib, bz2, sdl2, sdl_sound, pixman, physfs, vorbisfile, vorbis, ogg, sdl2_ttf, freetype, sdl2_image, png, jpeg, iconv, uchardet]
 if host_system == 'windows'
     global_dependencies += compilers['cpp'].find_library('wsock32')
 endif

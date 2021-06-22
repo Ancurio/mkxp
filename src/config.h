@@ -22,11 +22,16 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "util/json5pp.hpp"
+
 #include <set>
 #include <string>
 #include <vector>
 
 struct Config {
+    // Used for sending the JSON data to Ruby as System::CONFIG
+    json5pp::value raw;
+    
     int rgssVersion;
     
     bool debugMode;

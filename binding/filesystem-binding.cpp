@@ -19,11 +19,12 @@
 ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "src/config.h"
+
 #include "binding-util.h"
 
 #include "filesystem.h"
 #include "sharedstate.h"
-#include "src/config.h"
 #include "src/util/util.h"
 
 #if RAPI_FULL > 187

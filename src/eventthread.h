@@ -22,11 +22,6 @@
 #ifndef EVENTTHREAD_H
 #define EVENTTHREAD_H
 
-#include "config.h"
-#include "etc-internal.h"
-#include "sdl-util.h"
-#include "keybindings.h"
-
 #include <SDL_scancode.h>
 #include <SDL_joystick.h>
 #include <SDL_mouse.h>
@@ -35,6 +30,11 @@
 #include <string>
 
 #include <stdint.h>
+
+#include "config.h"
+#include "etc-internal.h"
+#include "sdl-util.h"
+#include "keybindings.h"
 
 struct RGSSThreadData;
 typedef struct MKXPZ_ALCDEVICE ALCdevice;

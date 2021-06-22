@@ -293,8 +293,8 @@ RB_METHOD(httpJsonParse) {
     try {
         v = json5pp::parse5(RSTRING_PTR(jsonv));
     }
-    catch (...) {
-        raiseRbExc(Exception(Exception::MKXPError, "Failed to parse JSON"));
+    catch (const std::exception &e) {
+        raiseRbExc(Exception(Exception::MKXPError, "Failed to parse JSON: %s", e.what()));
     }
     
     return json2rb(v);

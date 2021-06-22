@@ -19,16 +19,17 @@
  ** along with mkxp.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <SDL_joystick.h>
+#include <string>
+
+
+#include "eventthread.h"
+
 #include "binding-util.h"
 #include "util/exception.h"
 #include "input/input.h"
 #include "sharedstate.h"
 #include "src/util/util.h"
-
-#include "eventthread.h"
-
-#include <SDL_joystick.h>
-#include <string>
 
 RB_METHOD(inputDelta) {
     RB_UNUSED_PARAM;

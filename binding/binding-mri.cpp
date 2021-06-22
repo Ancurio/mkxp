@@ -30,12 +30,12 @@
 #include "util/boost-hash.h"
 #include "util/exception.h"
 
+#include "config.h"
 
 #include "binding-util.h"
 #include "binding.h"
 
 #include "sharedstate.h"
-#include "config.h"
 #include "eventthread.h"
 
 #include <vector>
@@ -143,6 +143,8 @@ RB_METHOD(mkxpLaunch);
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
 RB_METHOD(_kernelCaller);
+
+VALUE json2rb(json5pp::value const &v);
 
 static void mriBindingInit() {
     tableBindingInit();
@@ -255,6 +257,8 @@ static void mriBindingInit() {
         rb_gv_set("TEST", debug);
     
     rb_gv_set("BTEST", rb_bool_new(shState->config().editor.battleTest));
+    
+    rb_define_const(mod, "CONFIG", json2rb(shState->config().raw));
 
     // Set $stdout and its ilk accordingly on Windows
 #ifdef __WIN32__
