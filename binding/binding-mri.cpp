@@ -1077,6 +1077,13 @@ static void mriBindingExecute() {
 #endif
 #endif
     
+    VALUE rbArgv = rb_get_argv();
+    for (const auto &str : conf.launchArgs)
+        rb_ary_push(rbArgv, rb_utf8_str_new_cstr(str.c_str()));
+    
+    // Duplicates get pushed for some reason
+    rb_funcall(rbArgv, rb_intern("uniq!"), 0);
+    
     VALUE lpaths = rb_gv_get(":");
     if (!conf.rubyLoadpaths.empty()) {
         /* Setup custom load paths */

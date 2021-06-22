@@ -323,5 +323,17 @@
     // is a tiny bit less intrusive.
     //
     // "execName": "Game"
+    
+    // You can define alternate terminology for the different
+    // inputs recognized by RPG Maker. A, B, C, X, Y, Z, L, and R
+    // can all be set using this dictionary, and will be displayed
+    // on the F1 menu. This is only a cosmetic effect, so it will
+    // have no effect on the game's scripts.
+    //
+    // "bindingNames": {
+    //  "c": "Confirm",
+    //  "b": "Cancel",
+    //  "x": ...
+    // }
 
 }

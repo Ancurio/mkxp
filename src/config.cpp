@@ -236,6 +236,11 @@ try { exp } catch (...) {}
             editor.debug = true;
         else if (!strcmp(argv[1], "btest"))
             editor.battleTest = true;
+        
+        for (int i = 1; i < argc; i++) {
+            const char *arg = argv[i];
+            launchArgs.push_back(argv[i]);
+        }
     }
     
     if (mkxp_fs::fileExists(CONF_FILE)) {
