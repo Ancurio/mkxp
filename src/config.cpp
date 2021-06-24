@@ -182,6 +182,9 @@ try { exp } catch (...) {}
         copyObject(optsJ, confData);
         copyObject(opts["bindingNames"], confData.as_object()["bindingNames"], "bindingNames .");
     }
+    else {
+        raw = json::object({});
+    }
     
 #define SET_OPT_CUSTOMKEY(var, key, type) GUARD(var = opts[#key].as_##type();)
 #define SET_OPT(var, type) SET_OPT_CUSTOMKEY(var, var, type)
