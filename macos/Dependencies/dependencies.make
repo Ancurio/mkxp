@@ -34,7 +34,6 @@ CMAKE_ARGS := \
 RUBY_CONFIGURE_ARGS := \
 	--enable-install-static-library \
 	--enable-shared \
-	--disable-install-doc \
 	--with-out-ext=fiddle,gdbm,win32ole,win32 \
 	--with-static-linked-ext \
 	--disable-rubygems \
