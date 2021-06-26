@@ -82,20 +82,6 @@ $(DOWNLOADS)/ogg/configure: $(DOWNLOADS)/ogg/autogen.sh
 $(DOWNLOADS)/ogg/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/ogg $(DOWNLOADS)/ogg
 
-# sigc++-2
-sigcxx: init_dirs $(LIBDIR)/libsigc-2.0.a
-
-$(LIBDIR)/libsigc-2.0.a: $(DOWNLOADS)/sigcxx/Makefile
-	cd $(DOWNLOADS)/sigcxx; \
-	$(CONFIGURE_ENV) make; $(CONFIGURE_ENV) make install
-
-$(DOWNLOADS)/sigcxx/Makefile: $(DOWNLOADS)/sigcxx/autogen.sh
-	cd $(DOWNLOADS)/sigcxx; \
-	$(AUTOGEN) --enable-static=yes --enable-shared=no
-
-$(DOWNLOADS)/sigcxx/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/libsigcplusplus -b libsigc++-2-10 $(DOWNLOADS)/sigcxx
-
 # Pixman
 pixman: init_dirs libpng $(LIBDIR)/libpixman-1.a
 
@@ -333,5 +319,5 @@ powerwash: clean-downloads
 clean-downloads:
 	-rm -rf downloads
 
-deps-core: libvorbis sigcxx pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth uchardet
+deps-core: libvorbis pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth uchardet
 everything: deps-core ruby
