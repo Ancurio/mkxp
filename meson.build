@@ -1,4 +1,4 @@
-project('mkxp-z', 'c', 'cpp', version: '2.2.1', meson_version: '>=0.51.0', default_options: ['cpp_std=c++14', 'buildtype=release'])
+project('mkxp-z', 'c', 'cpp', version: '2.2.2', meson_version: '>=0.51.0', default_options: ['cpp_std=c++14', 'buildtype=release'])
 
 host_system = host_machine.system()
 
