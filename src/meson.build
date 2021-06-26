@@ -19,6 +19,7 @@ if host_system == 'windows'
     bz2 = dependency('bzip2', static: build_static)
 else
     bz2 = compilers['cpp'].find_library('bz2')
+    global_dependencies += compilers['cpp'].find_library('charset')
 endif
 
 # If OpenSSL is present, you get HTTPS support

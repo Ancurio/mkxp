@@ -98,6 +98,24 @@ $(DOWNLOADS)/pixman/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/pixman $(DOWNLOADS)/pixman
 
 
+# iconv
+iconv: init_dirs $(LIBDIR)/libiconv.a
+
+$(LIBDIR)/libiconv.a: $(DOWNLOADS)/iconv/Makefile
+	cd $(DOWNLOADS)/iconv; make; make install
+
+$(DOWNLOADS)/iconv/Makefile: $(DOWNLOADS)/iconv/configure
+	cd $(DOWNLOADS)/iconv; \
+	$(CONFIGURE) --enable-static=true --enable-shared=false
+
+$(DOWNLOADS)/iconv/configure: $(DOWNLOADS)/libiconv-1.16.tar.gz
+	cd $(DOWNLOADS); \
+	tar -xzf libiconv-1.16.tar.gz; \
+	mv libiconv-1.16 iconv
+
+$(DOWNLOADS)/libiconv-1.16.tar.gz:
+	wget https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz -P $(DOWNLOADS)
+
 # uchardet
 uchardet: init_dirs $(LIBDIR)/libuchardet.a
 
@@ -319,5 +337,5 @@ powerwash: clean-downloads
 clean-downloads:
 	-rm -rf downloads
 
-deps-core: libvorbis pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth uchardet
+deps-core: libvorbis pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth uchardet iconv
 everything: deps-core ruby
