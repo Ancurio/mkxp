@@ -316,5 +316,5 @@ clean-downloads:
 clean-compiled:
 	-rm -rf build-$(SDK)-$(ARCH)
 
-deps-core: libvorbis pixman libpng libjpeg physfs uchardet sdl2 sdl2image nyquist sdlsound sdl2ttf openal openssl
+deps-core: libvorbis pixman libpng libjpeg physfs uchardet sdl2 sdl2image sdlsound sdl2ttf openal openssl
 everything: deps-core ruby

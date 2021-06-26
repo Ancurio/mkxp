@@ -36,11 +36,16 @@ Firstly, each platform has a set of tools and libraries that must be installed p
 brew install libtool cmake automake autoconf pkg-config
 ```
 
-+ **Windows (MSYS 64-Bit)**
++ **Windows (MSYS)**
 
 ```sh
 # Assuming 64-bit
 pacman -S git ruby base-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-meson mingw-w64-x86_64-gcc
+```
+
+```sh
+# Assuming 32-bit
+pacman -S git ruby base-devel mingw-w64-i686-cmake mingw-w64-i686-meson mingw-w64-i686-gcc
 ```
 
 + **Linux (Ubuntu/Debian)**
