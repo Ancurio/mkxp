@@ -246,9 +246,6 @@ static void mriBindingInit() {
     
     /* Load global constants */
     rb_gv_set("MKXP", Qtrue);
-    VALUE vers = rb_utf8_str_new_cstr(MACRO_STRINGIFY(MKXPZ_VERSION));
-    rb_str_freeze(vers);
-    rb_const_set(mod, rb_intern("VERSION"), vers);
     
     VALUE debug = rb_bool_new(shState->config().editor.debug);
     if (rgssVer == 1)
@@ -258,7 +255,13 @@ static void mriBindingInit() {
     
     rb_gv_set("BTEST", rb_bool_new(shState->config().editor.battleTest));
     
-    rb_define_const(mod, "CONFIG", json2rb(shState->config().raw));
+    VALUE vers = rb_utf8_str_new_cstr(MACRO_STRINGIFY(MKXPZ_VERSION));
+    rb_str_freeze(vers);
+    rb_define_const(mod, "VERSION", vers);
+    
+    VALUE cfg = json2rb(shState->config().raw);
+    rb_hash_freeze(cfg);
+    rb_define_const(mod, "CONFIG", cfg);
 
     // Set $stdout and its ilk accordingly on Windows
 #ifdef __WIN32__
