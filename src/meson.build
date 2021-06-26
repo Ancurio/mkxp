@@ -12,7 +12,7 @@ pixman = dependency('pixman-1', static: build_static)
 png = dependency('libpng', static: build_static)
 jpeg = dependency('libjpeg', static: build_static)
 zlib = dependency('zlib', static: build_static)
-iconv = compilers['cpp'].find_library('iconv', static: build_static)
+iconv = compilers['cpp'].find_library('iconv')
 uchardet = dependency('uchardet', static: build_static)
 
 if host_system == 'windows'

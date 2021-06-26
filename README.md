@@ -57,7 +57,7 @@ Following that, you should be able to just build mkxp-z:
 
 After having all the prerequisites, go to the `macos` directory and run `setup.command`. This will build all the remaining dependencies you need.
 
-Following that, open the Xcode project, select the scheme you want (Universal and Apple Silicon options currently don't work with Intel Macs), and build.
+Afterwards, open the Xcode project, select the scheme you want, and build.
 
 ### Windows/Linux
 
