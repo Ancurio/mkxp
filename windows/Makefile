@@ -145,6 +145,21 @@ $(DOWNLOADS)/libjpeg/cmakebuild/Makefile: $(DOWNLOADS)/libjpeg/CMakeLists.txt
 $(DOWNLOADS)/libjpeg/CMakeLists.txt:
 	$(CLONE) $(GITLAB)/mkxp-z/libjpeg-turbo $(DOWNLOADS)/libjpeg
 
+# uchardet
+uchardet: init_dirs $(LIBDIR)/libuchardet.a
+
+$(LIBDIR)/libuchardet.a: $(DOWNLOADS)/uchardet/cmakebuild/Makefile
+	cd $(DOWNLOADS)/uchardet/cmakebuild; \
+	make -j$(NPROC); make install
+
+$(DOWNLOADS)/uchardet/cmakebuild/Makefile: $(DOWNLOADS)/uchardet/CMakeLists.txt
+	cd $(DOWNLOADS)/uchardet; \
+	mkdir cmakebuild; cd cmakebuild; \
+	$(CMAKE) -DBUILD_SHARED_LIBS=no
+
+$(DOWNLOADS)/uchardet/CMakeLists.txt:
+	$(CLONE) $(GITHUB)/freedesktop/uchardet $(DOWNLOADS)/uchardet
+
 # SDL2
 sdl2: init_dirs $(LIBDIR)/libSDL2.a
 
@@ -305,5 +320,5 @@ powerwash: clean-downloads
 clean-downloads:
 	-rm -rf downloads
 
-deps-core: libvorbis pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth
+deps-core: libvorbis pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth uchardet
 everything: deps-core ruby
