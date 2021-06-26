@@ -100,22 +100,6 @@ $(DOWNLOADS)/pixman/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/pixman $(DOWNLOADS)/pixman
 
 
-# uchardet
-uchardet: init_dirs $(LIBDIR)/libuchardet.a
-
-$(LIBDIR)/libuchardet.a: $(DOWNLOADS)/uchardet/cmakebuild/Makefile
-	cd $(DOWNLOADS)/uchardet/cmakebuild; \
-	make -j$(NPROC); make install
-
-$(DOWNLOADS)/uchardet/cmakebuild/Makefile: $(DOWNLOADS)/uchardet/CMakeLists.txt
-	cd $(DOWNLOADS)/uchardet; \
-	mkdir cmakebuild; cd cmakebuild; \
-	$(CMAKE) -DBUILD_SHARED_LIBS=no
-
-$(DOWNLOADS)/uchardet/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/freedesktop/uchardet $(DOWNLOADS)/uchardet
-
-
 # PhysFS
 
 physfs: init_dirs $(LIBDIR)/libphysfs.a
@@ -201,27 +185,21 @@ $(DOWNLOADS)/sdl2_image/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/SDL_image $(DOWNLOADS)/sdl2_image -b mkxp-z
 
 # SDL_sound
-sdlsound: init_dirs sdl2 libogg libvorbis $(LIBDIR)/libSDL_sound.a
+sdlsound: init_dirs sdl2 libogg libvorbis $(LIBDIR)/libSDL2_sound.a
 
-$(LIBDIR)/libSDL_sound.a: $(DOWNLOADS)/sdl_sound/Makefile
-	cd $(DOWNLOADS)/sdl_sound; \
+$(LIBDIR)/libSDL2_sound.a: $(DOWNLOADS)/sdl_sound/cmakebuild/Makefile
+	cd $(DOWNLOADS)/sdl_sound/cmakebuild; \
 	make -j$(NPROC); make install
 
-$(DOWNLOADS)/sdl_sound/Makefile: $(DOWNLOADS)/sdl_sound/configure
-	cd $(DOWNLOADS)/sdl_sound; \
-	$(CONFIGURE) \
-	--disable-sdltest --disable-modplug \
-	--disable-flac --disable-speex \
-	--disable-physfs --disable-raw \
-	--disable-mikmod --disable-au \
-	--disable-voc --disable-shn \
-	--enable-static=yes --enable-shared=no
+$(DOWNLOADS)/sdl_sound/cmakebuild/Makefile: $(DOWNLOADS)/sdl_sound/CMakeLists.txt
+	cd $(DOWNLOADS)/sdl_sound; mkdir -p cmakebuild; cd cmakebuild; \
+	$(CMAKE) \
+	-DSDLSOUND_BUILD_SHARED=false \
+	-DSDLSOUND_BUILD_TEST=false \
+	-DSDLSOUND_DECODER_MP3=false
 
-$(DOWNLOADS)/sdl_sound/configure: $(DOWNLOADS)/sdl_sound/bootstrap
-	cd $(DOWNLOADS)/sdl_sound; ./bootstrap
-
-$(DOWNLOADS)/sdl_sound/bootstrap:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound
+$(DOWNLOADS)/sdl_sound/CMakeLists.txt:
+	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b v2.0
 
 # SDL2 (ttf)
 sdl2ttf: init_dirs sdl2 freetype $(LIBDIR)/libSDL2_ttf.a
@@ -313,7 +291,7 @@ $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	$(CONFIGURE) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
-	cd $(DOWNLOADS)/ruby; autoreconf -i
+	cd $(DOWNLOADS)/ruby; autoconf
 
 $(DOWNLOADS)/ruby/*.c:
 	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby -b mkxp-z;
@@ -327,5 +305,5 @@ powerwash: clean-downloads
 clean-downloads:
 	-rm -rf downloads
 
-deps-core: libvorbis pixman libpng libjpeg physfs uchardet sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth
+deps-core: libvorbis pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth
 everything: deps-core ruby
