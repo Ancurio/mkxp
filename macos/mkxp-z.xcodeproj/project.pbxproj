@@ -586,7 +586,7 @@
 		3B1C23E825A19C600075EF5D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = Resources;
+			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
 				3B1C23E925A19C600075EF5D /* Assets.bundle in CopyFiles */,
