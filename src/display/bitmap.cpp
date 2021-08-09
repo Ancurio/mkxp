@@ -1315,14 +1315,19 @@ void Bitmap::saveToFile(const char *filename)
 {
     guardDisposed();
     
-    GUARD_MEGA;
+    SDL_Surface *surf;
     
-    SDL_Surface *surf = SDL_CreateRGBSurface(0, width(), height(),p->format->BitsPerPixel, p->format->Rmask,p->format->Gmask,p->format->Bmask,p->format->Amask);
-    
-    if (!surf)
-        throw Exception(Exception::SDLError, "Failed to prepare bitmap for saving: %s", SDL_GetError());
-    
-    getRaw(surf->pixels, surf->w * surf->h * 4);
+    if (p->surface || p->megaSurface) {
+        surf = (p->surface) ? p->surface : p->megaSurface;
+    }
+    else {
+        surf = SDL_CreateRGBSurface(0, width(), height(),p->format->BitsPerPixel, p->format->Rmask,p->format->Gmask,p->format->Bmask,p->format->Amask);
+        
+        if (!surf)
+            throw Exception(Exception::SDLError, "Failed to prepare bitmap for saving: %s", SDL_GetError());
+        
+        getRaw(surf->pixels, surf->w * surf->h * 4);
+    }
     
     // Try and determine the intended image format from the filename extension
     const char *period = strrchr(filename, '.');
@@ -1356,7 +1361,9 @@ void Bitmap::saveToFile(const char *filename)
             break;
     }
     
-    SDL_FreeSurface(surf);
+    if (!p->surface && !p->megaSurface)
+        SDL_FreeSurface(surf);
+    
     if (rc) throw Exception(Exception::SDLError, "%s", SDL_GetError());
 }
 
