@@ -27,7 +27,7 @@ static std::string getCharset(std::string &str) {
     uchardet_delete(ud);
     
     if (ret.empty())
-        throw Exception(Exception::MKXPError, "Could not detect encoding of \"%s\"", str.c_str());
+        throw Exception(Exception::MKXPError, "Could not detect string encoding", str.c_str());
     return ret;
 }
 
@@ -40,7 +40,7 @@ static std::string convertString(std::string &str) {
         return std::string(str);
     }
     
-    iconv_t cd = iconv_open("UTF-8", getCharset(str).c_str());
+    iconv_t cd = iconv_open("UTF-8", charset.c_str());
     
     size_t inLen = str.size();
     size_t outLen = inLen * 4;
@@ -58,7 +58,7 @@ static std::string convertString(std::string &str) {
         buf.resize(buf.size()-outLen);
     }
     else {
-        throw Exception(Exception::MKXPError, "Failed to convert \"%s\" to UTF-8", str.c_str());
+        throw Exception(Exception::MKXPError, "Unable to convert string (Guessed encoding: %s)", charset.c_str());
     }
     
     return buf;

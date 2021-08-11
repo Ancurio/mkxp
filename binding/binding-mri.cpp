@@ -29,6 +29,7 @@
 #include "util/debugwriter.h"
 #include "util/boost-hash.h"
 #include "util/exception.h"
+#include "util/encoding.h"
 
 #include "config.h"
 
@@ -144,6 +145,9 @@ RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
 RB_METHOD(_kernelCaller);
 
+RB_METHOD(mkxpStringGuess);
+RB_METHOD(mkxpStringGuessBang);
+
 VALUE json2rb(json5pp::value const &v);
 
 static void mriBindingInit() {
@@ -243,6 +247,9 @@ static void mriBindingInit() {
     _rb_define_module_function(mod, "mount", mkxpAddPath);
     _rb_define_module_function(mod, "unmount", mkxpRemovePath);
     _rb_define_module_function(mod, "launch", mkxpLaunch);
+    
+    _rb_define_method(rb_cString, "guess", mkxpStringGuess);
+    _rb_define_method(rb_cString, "guess!", mkxpStringGuessBang);
     
     /* Load global constants */
     rb_gv_set("MKXP", Qtrue);
@@ -564,6 +571,35 @@ RB_METHOD(mkxpRemovePath) {
         raiseRbExc(e);
     }
     return path;
+}
+
+RB_METHOD(mkxpStringGuess) {
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    std::string ret(RSTRING_PTR(self), RSTRING_LEN(self));
+    GUARD_EXC(ret = Encoding::convertString(ret); );
+    
+    return rb_utf8_str_new(ret.c_str(), ret.length());
+}
+
+RB_METHOD(mkxpStringGuessBang) {
+    RB_UNUSED_PARAM;
+    
+    rb_check_argc(argc, 0);
+    
+    std::string ret(RSTRING_PTR(self), RSTRING_LEN(self));
+    GUARD_EXC(ret = Encoding::convertString(ret); );
+    
+    rb_str_resize(self, ret.length());
+    memcpy(RSTRING_PTR(self), ret.c_str(), RSTRING_LEN(self));
+    
+#if RAPI_FULL >= 190
+    rb_funcall(self, rb_intern("force_encoding"), 1, rb_enc_from_encoding(rb_utf8_encoding()));
+#endif
+    
+    return self;
 }
 
 #ifdef __APPLE__
