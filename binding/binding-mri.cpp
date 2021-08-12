@@ -145,8 +145,8 @@ RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
 RB_METHOD(_kernelCaller);
 
-RB_METHOD(mkxpStringGuess);
-RB_METHOD(mkxpStringGuessBang);
+RB_METHOD(mkxpStringToUTF8);
+RB_METHOD(mkxpStringToUTF8Bang);
 
 VALUE json2rb(json5pp::value const &v);
 
@@ -248,8 +248,8 @@ static void mriBindingInit() {
     _rb_define_module_function(mod, "unmount", mkxpRemovePath);
     _rb_define_module_function(mod, "launch", mkxpLaunch);
     
-    _rb_define_method(rb_cString, "guess", mkxpStringGuess);
-    _rb_define_method(rb_cString, "guess!", mkxpStringGuessBang);
+    _rb_define_method(rb_cString, "to_utf8", mkxpStringToUTF8);
+    _rb_define_method(rb_cString, "to_utf8!", mkxpStringToUTF8Bang);
     
     /* Load global constants */
     rb_gv_set("MKXP", Qtrue);
@@ -573,7 +573,7 @@ RB_METHOD(mkxpRemovePath) {
     return path;
 }
 
-RB_METHOD(mkxpStringGuess) {
+RB_METHOD(mkxpStringToUTF8) {
     RB_UNUSED_PARAM;
     
     rb_check_argc(argc, 0);
@@ -584,7 +584,7 @@ RB_METHOD(mkxpStringGuess) {
     return rb_utf8_str_new(ret.c_str(), ret.length());
 }
 
-RB_METHOD(mkxpStringGuessBang) {
+RB_METHOD(mkxpStringToUTF8Bang) {
     RB_UNUSED_PARAM;
     
     rb_check_argc(argc, 0);
