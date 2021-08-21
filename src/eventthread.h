@@ -125,7 +125,6 @@ private:
 	                       const SDL_Rect &screen);
 
 	bool fullscreen;
-    bool joystickConnected;
 	bool showCursor;
     
     SDL_Joystick *js;
