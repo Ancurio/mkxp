@@ -228,6 +228,10 @@
 		3B1C242625A1A90B0075EF5D /* shim in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B1C235625A199370075EF5D /* shim */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B1C242B25A1AA1F0075EF5D /* steamshim_child.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B1C236925A19B960075EF5D /* steamshim_child.c */; };
 		3B1C244425A1BD220075EF5D /* steam_appid.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B1C243E25A1B8D20075EF5D /* steam_appid.txt */; };
+		3B251DA626DA2CFA00E5D09B /* 3.0.0 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B251DA526DA2CFA00E5D09B /* 3.0.0 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B251DA826DA2E9000E5D09B /* 3.0.0 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B251DA526DA2CFA00E5D09B /* 3.0.0 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B251DAA26DA2EAB00E5D09B /* 3.0.0 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B251DA526DA2CFA00E5D09B /* 3.0.0 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B251DAC26DA2EC200E5D09B /* 3.0.0 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B251DA526DA2CFA00E5D09B /* 3.0.0 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B312843259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
 		3B312844259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
 		3B312845259E7DC1002EAB43 /* miniffi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B312842259E7DC1002EAB43 /* miniffi.cpp */; };
@@ -638,6 +642,46 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3B251D9F26DA2C2A00E5D09B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Ruby;
+			dstSubfolderSpec = 7;
+			files = (
+				3B251DA626DA2CFA00E5D09B /* 3.0.0 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B251DA726DA2E8A00E5D09B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Ruby;
+			dstSubfolderSpec = 7;
+			files = (
+				3B251DA826DA2E9000E5D09B /* 3.0.0 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B251DA926DA2EA400E5D09B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Ruby;
+			dstSubfolderSpec = 7;
+			files = (
+				3B251DAA26DA2EAB00E5D09B /* 3.0.0 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B251DAB26DA2EBB00E5D09B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Ruby;
+			dstSubfolderSpec = 7;
+			files = (
+				3B251DAC26DA2EC200E5D09B /* 3.0.0 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3B522D79259BA0E3003301C4 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -937,6 +981,7 @@
 		3B1C240C25A1A4C50075EF5D /* steamshim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = steamshim.xcconfig; path = config/steamshim.xcconfig; sourceTree = "<group>"; };
 		3B1C241125A1A7120075EF5D /* libsteam_api.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsteam_api.dylib; path = Dependencies/Frameworks/steam/sdk/redistributable_bin/osx/libsteam_api.dylib; sourceTree = "<group>"; };
 		3B1C243E25A1B8D20075EF5D /* steam_appid.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = steam_appid.txt; path = config/steam_appid.txt; sourceTree = "<group>"; };
+		3B251DA526DA2CFA00E5D09B /* 3.0.0 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = 3.0.0; path = "Dependencies/build-macosx-x86_64/lib/ruby/3.0.0"; sourceTree = "<group>"; };
 		3B312841259E7DC1002EAB43 /* miniffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniffi.h; sourceTree = "<group>"; };
 		3B312842259E7DC1002EAB43 /* miniffi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = miniffi.cpp; sourceTree = "<group>"; };
 		3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = settingsmenu.xib; path = views/settingsmenu.xib; sourceTree = "<group>"; };
@@ -1573,6 +1618,14 @@
 			name = Steam;
 			sourceTree = "<group>";
 		};
+		3B251DA226DA2C8600E5D09B /* Ruby Standard Library */ = {
+			isa = PBXGroup;
+			children = (
+				3B251DA526DA2CFA00E5D09B /* 3.0.0 */,
+			);
+			name = "Ruby Standard Library";
+			sourceTree = "<group>";
+		};
 		3B3F7D1325B19C5A00EA5F1C /* MacOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1739,6 +1792,7 @@
 		3BDB22EB25644FBF00C4A63D = {
 			isa = PBXGroup;
 			children = (
+				3B251DA226DA2C8600E5D09B /* Ruby Standard Library */,
 				3B1BC0E5266F8E2A00794D22 /* Makefiles */,
 				3BD2B7272565B343003DAD8A /* README.md */,
 				3BDB23E22564546E00C4A63D /* icon.icns */,
@@ -1852,6 +1906,7 @@
 				3B1C242525A1A8F00075EF5D /* CopyFiles */,
 				3B1C23E825A19C600075EF5D /* CopyFiles */,
 				3B1C23EA25A19C600075EF5D /* CopyFiles */,
+				3B251DAB26DA2EBB00E5D09B /* CopyFiles */,
 				3B1C23EC25A19C600075EF5D /* Embed Frameworks */,
 				3B1C244325A1BD1D0075EF5D /* CopyFiles */,
 			);
@@ -1894,6 +1949,7 @@
 				3BC65D3C2584EDC60063AFF1 /* Resources */,
 				3B1C233B25A17CBE0075EF5D /* CopyFiles */,
 				3BC65D3E2584EDC60063AFF1 /* CopyFiles */,
+				3B251DA926DA2EA400E5D09B /* CopyFiles */,
 				3B522D7F259BA0EC003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -1915,6 +1971,7 @@
 				3BC65E0D2584F3AD0063AFF1 /* Resources */,
 				3B1C233325A17C380075EF5D /* CopyFiles */,
 				3BC65E0F2584F3AD0063AFF1 /* CopyFiles */,
+				3B251D9F26DA2C2A00E5D09B /* CopyFiles */,
 				3B522D79259BA0E3003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -1936,6 +1993,7 @@
 				3BD2B6F82565AEC0003DAD8A /* Resources */,
 				3B1C233725A17CAB0075EF5D /* CopyFiles */,
 				3B5A843B2569F95A00BAF2E5 /* CopyFiles */,
+				3B251DA726DA2E8A00E5D09B /* CopyFiles */,
 				3B522D7C259BA0E8003301C4 /* Embed Frameworks */,
 			);
 			buildRules = (

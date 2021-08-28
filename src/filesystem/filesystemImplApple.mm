@@ -96,6 +96,10 @@ std::string filesystemImpl::contentsOfAssetAsString(const char *baseName, const 
 
 }
 
+std::string filesystemImpl::getResourcePath() {
+    return std::string(NSTOPATH(NSBundle.mainBundle.resourcePath));
+}
+
 #ifdef MKXPZ_DEBUG
 std::string filesystemImpl::selectPath(SDL_Window *win) {
     NSOpenPanel *panel = [NSOpenPanel openPanel];

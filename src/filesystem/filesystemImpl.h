@@ -28,6 +28,8 @@ std::string getDefaultGameRoot();
 std::string getPathForAsset(const char *baseName, const char *ext);
 std::string contentsOfAssetAsString(const char *baseName, const char *ext);
 
+std::string getResourcePath();
+
 #ifdef MKXPZ_DEBUG
 std::string selectPath(SDL_Window *win);
 #endif
