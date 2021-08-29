@@ -417,6 +417,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	${PIXMAN_INCLUDE_DIRS}
 	${PHYSFS_INCLUDE_DIRS}
 	${SDL2_INCLUDE_DIRS} # Blindly assume other SDL bits are in same directory
+	${SDL_SOUND_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIR}
 	${MRI_INCLUDE_DIRS}
 	${VORBISFILE_INCLUDE_DIRS}
