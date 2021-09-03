@@ -158,6 +158,7 @@ void Config::read(int argc, char *argv[])
 	PO_DESC(winResizable, bool, false) \
 	PO_DESC(fullscreen, bool, false) \
 	PO_DESC(fixedAspectRatio, bool, true) \
+	PO_DESC(showCursor, bool, false) \
 	PO_DESC(smoothScaling, bool, true) \
 	PO_DESC(vsync, bool, false) \
 	PO_DESC(defScreenW, int, 0) \
