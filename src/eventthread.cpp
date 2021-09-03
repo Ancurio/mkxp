@@ -105,6 +105,8 @@ EventThread::EventThread()
       showCursor(false)
 {}
 
+SDL_DisplayMode dm = {0};
+
 void EventThread::process(RGSSThreadData &rtData)
 {
 	SDL_Event event;
@@ -119,6 +121,8 @@ void EventThread::process(RGSSThreadData &rtData)
 #endif
 
 	fullscreen = rtData.config.fullscreen;
+	showCursor = rtData.config.showCursor;
+	SDL_GetDesktopDisplayMode(0, &dm);
 	int toggleFSMod = rtData.config.anyAltToggleFS ? KMOD_ALT : KMOD_LALT;
 
 	fps.lastFrame = SDL_GetPerformanceCounter();
@@ -540,6 +544,7 @@ void EventThread::resetInputStates()
 
 void EventThread::setFullscreen(SDL_Window *win, bool mode)
 {
+	SDL_GetDesktopDisplayMode(0, &dm);
 	SDL_SetWindowFullscreen
 	        (win, mode ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 	fullscreen = mode;
