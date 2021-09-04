@@ -25,11 +25,19 @@
 #include "binding-types.h"
 #include "exception.h"
 
+#include <ruby/thread.h>
+
+static void *graphicsUpdate_internal(void*)
+{
+	shState->graphics().update();
+	return NULL;
+}
+
 RB_METHOD(graphicsUpdate)
 {
 	RB_UNUSED_PARAM;
 
-	shState->graphics().update();
+	rb_thread_call_without_gvl(&graphicsUpdate_internal, NULL, NULL, NULL);
 
 	return Qnil;
 }
@@ -43,17 +51,33 @@ RB_METHOD(graphicsFreeze)
 	return Qnil;
 }
 
+/** Argument structure used to pass arguments to various blocking calls,
+ * meanwhile releasing the ruby interpreter lock. */
+struct transition_args {
+	int duration;
+	const char *filename;
+	int vague;
+};
+
+static void *graphicsTransition_internal(void* args_in)
+{
+	struct transition_args *args = static_cast<transition_args*>(args_in);
+	GUARD_EXC( shState->graphics().transition(args->duration, args->filename, args->vague); )
+	return NULL;
+}
+
 RB_METHOD(graphicsTransition)
 {
 	RB_UNUSED_PARAM;
 
-	int duration = 8;
-	const char *filename = "";
-	int vague = 40;
+	struct transition_args args;
+	args.duration = 8;
+	args.filename = "";
+	args.vague = 40;
 
-	rb_get_args(argc, argv, "|izi", &duration, &filename, &vague RB_ARG_END);
+	rb_get_args(argc, argv, "|izi", &args.duration, &args.filename, &args.vague RB_ARG_END);
 
-	GUARD_EXC( shState->graphics().transition(duration, filename, vague); )
+	rb_thread_call_without_gvl(&graphicsTransition_internal, &args, NULL, NULL);
 
 	return Qnil;
 }
@@ -111,38 +135,56 @@ RB_METHOD(graphicsHeight)
 	return rb_fix_new(shState->graphics().height());
 }
 
+static void *graphicsWait_internal(void* args_in)
+{
+	struct transition_args *args = static_cast<transition_args*>(args_in);
+	shState->graphics().wait(args->duration);
+	return NULL;
+}
+
 RB_METHOD(graphicsWait)
 {
 	RB_UNUSED_PARAM;
 
-	int duration;
-	rb_get_args(argc, argv, "i", &duration RB_ARG_END);
-
-	shState->graphics().wait(duration);
+	struct transition_args args;
+	rb_get_args(argc, argv, "i", &args.duration RB_ARG_END);
+	rb_thread_call_without_gvl(&graphicsWait_internal, &args, NULL, NULL);
 
 	return Qnil;
+}
+
+static void *graphicsFadeout_internal(void* args_in)
+{
+	struct transition_args *args = static_cast<transition_args*>(args_in);
+	shState->graphics().fadeout(args->duration);
+	return NULL;
 }
 
 RB_METHOD(graphicsFadeout)
 {
 	RB_UNUSED_PARAM;
 
-	int duration;
-	rb_get_args(argc, argv, "i", &duration RB_ARG_END);
-
-	shState->graphics().fadeout(duration);
+	struct transition_args args;
+	rb_get_args(argc, argv, "i", &args.duration RB_ARG_END);
+	rb_thread_call_without_gvl(&graphicsFadeout_internal, &args, NULL, NULL);
 
 	return Qnil;
+}
+
+static void *graphicsFadein_internal(void* args_in)
+{
+	struct transition_args *args = static_cast<transition_args*>(args_in);
+	shState->graphics().fadein(args->duration);
+	return NULL;
 }
 
 RB_METHOD(graphicsFadein)
 {
 	RB_UNUSED_PARAM;
 
-	int duration;
-	rb_get_args(argc, argv, "i", &duration RB_ARG_END);
-
-	shState->graphics().fadein(duration);
+	struct transition_args args;
+	rb_get_args(argc, argv, "i", &args.duration RB_ARG_END);
+	rb_thread_call_without_gvl(&graphicsFadein_internal, &args, NULL, NULL);
 
 	return Qnil;
 }
