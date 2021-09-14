@@ -31,7 +31,7 @@ std::string contentsOfAssetAsString(const char *baseName, const char *ext);
 std::string getResourcePath();
 
 #ifdef MKXPZ_DEBUG
-std::string selectPath(SDL_Window *win);
+std::string selectPath(SDL_Window *win, const char *msg, const char *prompt);
 #endif
 #endif
 

@@ -334,9 +334,10 @@ int main(int argc, char *argv[]) {
       return 0;
     }
     
-// Temporary fix for easier debugging
 #if defined(MKXPZ_BUILD_XCODE) && defined(MKXPZ_DEBUG)
-    std::string dataDirStr = mkxp_fs::selectPath(win);
+#define DEBUG_FSELECT_MSG "Select the folder to load game files from. This is the folder containing the INI and/or configuration JSON.\nThis prompt does not appear in release builds."
+#define DEBUG_FSELECT_PROMPT "Load Game"
+    std::string dataDirStr = mkxp_fs::selectPath(win, DEBUG_FSELECT_MSG, DEBUG_FSELECT_PROMPT);
     if (!dataDirStr.empty()) {
         conf.gameFolder = dataDirStr;
         mkxp_fs::setCurrentDirectory(dataDirStr.c_str());

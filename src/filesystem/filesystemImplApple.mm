@@ -101,10 +101,13 @@ std::string filesystemImpl::getResourcePath() {
 }
 
 #ifdef MKXPZ_DEBUG
-std::string filesystemImpl::selectPath(SDL_Window *win) {
+std::string filesystemImpl::selectPath(SDL_Window *win, const char *msg, const char *prompt) {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.canChooseDirectories = true;
     panel.canChooseFiles = false;
+    
+    if (msg) panel.message = @(msg);
+    if (prompt) panel.prompt = @(prompt);
     //panel.directoryURL = [NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath];
     
     SDL_SysWMinfo windowinfo{};
@@ -115,6 +118,9 @@ std::string filesystemImpl::selectPath(SDL_Window *win) {
     }];
     
     [NSApp runModalForWindow:windowinfo.info.cocoa.window];
+    
+    // The window needs to be brought to the front again after the OpenPanel closes
+    [NSApplication.sharedApplication activateIgnoringOtherApps:true];
     if (panel.URLs.count > 0)
         return std::string(NSTOPATH(panel.URLs[0].path));
     

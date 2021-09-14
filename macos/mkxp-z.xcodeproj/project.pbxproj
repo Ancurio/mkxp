@@ -227,7 +227,6 @@
 		3B1C242025A1A8660075EF5D /* libsteam_api.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B1C241125A1A7120075EF5D /* libsteam_api.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B1C242625A1A90B0075EF5D /* shim in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B1C235625A199370075EF5D /* shim */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B1C242B25A1AA1F0075EF5D /* steamshim_child.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B1C236925A19B960075EF5D /* steamshim_child.c */; };
-		3B1C244425A1BD220075EF5D /* steam_appid.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B1C243E25A1B8D20075EF5D /* steam_appid.txt */; };
 		3B251DA626DA2CFA00E5D09B /* 3.0.0 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B251DA526DA2CFA00E5D09B /* 3.0.0 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B251DA826DA2E9000E5D09B /* 3.0.0 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B251DA526DA2CFA00E5D09B /* 3.0.0 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B251DAA26DA2EAB00E5D09B /* 3.0.0 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B251DA526DA2CFA00E5D09B /* 3.0.0 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -287,6 +286,7 @@
 		3B5E1F1E25A8820B0086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B5E1F1F25A8820D0086FFDC /* libEGL.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0925A881FB0086FFDC /* libEGL.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B5E1F2025A8820F0086FFDC /* libGLESv2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B5E1F0A25A881FB0086FFDC /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3B5F5E7D26F1360C00DF792F /* steam_appid.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3B1C243E25A1B8D20075EF5D /* steam_appid.txt */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3B97F77025E6178200A569B5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B480E9E25DCD16D001686B4 /* GameController.framework */; };
 		3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B46925651C1B003DAD8A /* AudioToolbox.framework */; };
 		3BA69454263DAB53004194EB /* libnsgif.c in Sources */ = {isa = PBXBuildFile; fileRef = 3BA6944E263DAB53004194EB /* libnsgif.c */; };
@@ -594,6 +594,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				3B1C23E925A19C600075EF5D /* Assets.bundle in CopyFiles */,
+				3B5F5E7D26F1360C00DF792F /* steam_appid.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -629,16 +630,6 @@
 			dstSubfolderSpec = 6;
 			files = (
 				3B1C242625A1A90B0075EF5D /* shim in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3B1C244325A1BD1D0075EF5D /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				3B1C244425A1BD220075EF5D /* steam_appid.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1908,7 +1899,6 @@
 				3B1C23EA25A19C600075EF5D /* CopyFiles */,
 				3B251DAB26DA2EBB00E5D09B /* CopyFiles */,
 				3B1C23EC25A19C600075EF5D /* Embed Frameworks */,
-				3B1C244325A1BD1D0075EF5D /* CopyFiles */,
 			);
 			buildRules = (
 			);

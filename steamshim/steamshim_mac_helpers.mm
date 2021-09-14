@@ -14,7 +14,6 @@ std::string execPath() {
     return ret;
 }
 
-std::string appParentPath() {
-    std::string ret([NSBundle.mainBundle.bundlePath stringByDeletingLastPathComponent].UTF8String);
-    return ret;
+std::string appResourcePath() {
+    return std::string(NSBundle.mainBundle.resourcePath.UTF8String);
 }

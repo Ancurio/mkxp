@@ -658,12 +658,12 @@ static void deinitSteamworks(void) {
 
 static int mainline(void) {
 
-#if (defined(MKXPZ_BUILD_XCODE) && !defined(MKXPZ_DEBUG)) || \
+#if (defined(MKXPZ_BUILD_XCODE) && STEAM_APPID != 0) || \
     (!defined(MKXPZ_BUILD_XCODE) && defined(STEAM_APPID))
   if (SteamAPI_RestartAppIfNecessary(STEAM_APPID))
     return 0;
 #elif defined(MKXPZ_BUILD_XCODE) && defined(MKXPZ_DEBUG)
-    chdir(appParentPath().c_str());
+    chdir(appResourcePath().c_str());
 #endif
 
   PipeType pipeParentRead = NULLPIPE;
