@@ -74,10 +74,6 @@ By default, mkxp switches into the directory where its binary is contained and t
 
 **MRI-Binding**: Meson will use pkg-config to look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-3.0.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y`. `mri-version` is set to `3.0` by default.
 
-## Platform-specific scripts
-
-By including `|p|` or `|!p|` at the very beginning of a script's title, you can specify what platform the script should or shouldn't run on. `p` should match the first letter of your platform, and is case-insensitive. As an example, a script named `|!W| Socket` would not run on Windows, while a script named `|W| Socket` would *only* run on Windows.
-
 ## Midi music
 
 mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
