@@ -655,7 +655,7 @@ unsigned long long Graphics::lastUpdate() {
 }
 
 void Graphics::update() {
-                    
+    p->threadData->rqWindowAdjust.wait();
     p->last_update = shState->runTime();
     p->checkShutDownReset();
     p->checkSyncLock();
