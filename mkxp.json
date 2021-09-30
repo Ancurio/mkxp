@@ -193,6 +193,7 @@
 
 
     // Set the game window icon to 'path/to/icon.png'
+    // Only functions on Linux.
     // (default: none)
     //
     // "iconPath": "/path/to/icon.png",
