@@ -75,9 +75,8 @@ void GLBlendMode::apply(const BlendType &value) {
     break;
 
   case BlendSubstraction:
-    // FIXME Alpha calculation is untested
     gl.BlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-    gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
+    gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE);
     break;
   }
 }
