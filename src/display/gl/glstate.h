@@ -27,6 +27,15 @@
 #include <stack>
 #include <assert.h>
 
+// Try to work around buggy GL drivers that tend to be in Optimus laptops
+// by forcing MKXP to use the dedicated card instead of the integrated one
+#ifdef __WIN32__
+#include <windows.h>
+extern "C" {
+__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+#endif
+
 struct Config;
 
 template<typename T>
