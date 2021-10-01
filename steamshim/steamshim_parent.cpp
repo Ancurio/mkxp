@@ -662,7 +662,7 @@ static int mainline(void) {
     (!defined(MKXPZ_BUILD_XCODE) && defined(STEAM_APPID))
   if (SteamAPI_RestartAppIfNecessary(STEAM_APPID))
     return 0;
-#elif defined(MKXPZ_BUILD_XCODE) && defined(MKXPZ_DEBUG)
+#elif defined(MKXPZ_BUILD_XCODE)
     chdir(appResourcePath().c_str());
 #endif
 
