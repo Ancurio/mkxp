@@ -51,6 +51,13 @@
 #include "resource.h"
 #include <Winsock2.h>
 #include "util/win-consoleutils.h"
+
+// Try to work around buggy GL drivers that tend to be in Optimus laptops
+// by forcing MKXP to use the dedicated card instead of the integrated one
+#include <windows.h>
+extern "C" {
+__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
 #endif
 
 #ifdef MKXPZ_STEAM
