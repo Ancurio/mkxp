@@ -96,10 +96,6 @@ if get_option('shared_fluid') == true
     endif
 endif
 
-if get_option('default_framerate') == true
-    add_project_arguments('-DMKXPZ_STATIC_FRAMERATE', language: 'cpp')
-endif
-
 if get_option('cjk_fallback_font') == true
     add_project_arguments('-DMKXPZ_CJK_FONT', language: 'cpp')
 endif

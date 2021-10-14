@@ -622,11 +622,6 @@ struct GraphicsPrivate {
 
 Graphics::Graphics(RGSSThreadData *data) {
     p = new GraphicsPrivate(data);
-    // To appease people who don't want players to have
-    // emulator-like speedups
-    // Nothing stops anybody from building with this
-    // enabled though and I'm not removing this stuff
-#ifndef MKXPZ_STATIC_FRAMERATE
     if (data->config.syncToRefreshrate) {
         p->frameRate = data->refreshRate;
 #if defined(__APPLE__) && defined(GLES2_HEADER)
@@ -641,7 +636,6 @@ Graphics::Graphics(RGSSThreadData *data) {
     } else if (data->config.fixedFramerate < 0) {
         p->fpsLimiter.disabled = true;
     }
-#endif
 }
 
 Graphics::~Graphics() { delete p; }

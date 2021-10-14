@@ -874,8 +874,6 @@ static void runRMXPScripts(BacktraceData &btData) {
         rb_ary_store(script, 3, rb_utf8_str_new_cstr(decodeBuffer.c_str()));
     }
     
-    // Can be force-disabled similarly to framerate options
-#ifndef MKXPZ_NO_PRELOADSCRIPTS
     /* Execute preloaded scripts */
     for (std::vector<std::string>::const_iterator i = conf.preloadScripts.begin();
          i != conf.preloadScripts.end(); ++i)
@@ -944,7 +942,6 @@ static void runRMXPScripts(BacktraceData &btData) {
         processReset();
     }
 }
-#endif
 
 // Attempts to set $stdout and $stdin accordingly on Windows. Only
 // called when debug mode is on, since that's when the console

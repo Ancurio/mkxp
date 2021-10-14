@@ -12,10 +12,6 @@ else
     global_dependencies += compilers['cpp'].find_library(get_option('mri_library'), dirs: get_option('mri_libpath'))
 endif
 
-if get_option('no_preload_scripts') == true
-    add_project_arguments('-DMKXPZ_NO_PRELOADSCRIPTS', language: ['cpp','objc','objcpp'])
-endif
-
 global_include_dirs += include_directories('.')
 
 binding_source = [files(

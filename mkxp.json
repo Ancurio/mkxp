@@ -93,7 +93,6 @@
 
 
     // Enforce a static frame rate
-    // This option may be force-disabled at build time.
     // (0 = disabled)
     //
     // "fixedFramerate": 0,
@@ -208,7 +207,6 @@
 
     // Define raw scripts to be executed before the
     // actual Scripts.rxdata execution starts
-    // This option may be force-disabled at build time.
     // (default: none)
     //
     // "preloadScript": ["my_win32_wrapper.rb",
