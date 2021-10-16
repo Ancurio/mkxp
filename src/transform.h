@@ -3,7 +3,7 @@
 **
 ** This file is part of mkxp. It is based on parts of "SFML 2.0" (license further below)
 **
-** Copyright (C) 2021 Amaryllis Kulla <amaryllis.kulla@protonmail.com>
+** Copyright (C) 2013 - 2021 Amaryllis Kulla <ancurio@mapleshrine.eu>
 **
 ** mkxp is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
