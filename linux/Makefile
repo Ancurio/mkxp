@@ -1,4 +1,4 @@
-ARCH := $(shell gcc -dumpmachine | sed -r "s/(.+)-.+-.+/\1/")
+ARCH := $(shell uname -m)
 
 SDL_FLAGS := ${SDL_FLAGS}
 SDL2_IMAGE_FLAGS := ${SDL2_IMAGE_FLAGS}

@@ -1,6 +1,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-MKXPZ_PREFIX=$(gcc -dumpmachine | sed -r "s/(.+)-.+-.+/\1/")
+MKXPZ_PREFIX=$(uname -m)
 export LDFLAGS="-L$DIR/build-${MKXPZ_PREFIX}/lib"
 export CFLAGS="-I$DIR/build-${MKXPZ_PREFIX}/include"
 MKXPZ_OLD_PC=$(pkg-config --variable pc_path pkg-config)
