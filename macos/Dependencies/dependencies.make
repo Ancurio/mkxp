@@ -15,6 +15,14 @@ CLONE := $(GIT) clone -q
 GITHUB := https://github.com
 GITLAB := https://gitlab.com
 
+# need to set the build variable because Ruby is picky
+ifeq "$(strip $(shell uname -m))" "arm64"
+RBUILD := aarch64-apple-darwin
+else
+RBUILD := x86_64-apple-darwin
+endif
+
+
 CONFIGURE_ENV := \
 	$(DEPLOYMENT_TARGET_ENV) \
 	PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR) \
@@ -31,12 +39,18 @@ CMAKE_ARGS := \
 	-DCMAKE_OSX_DEPLOYMENT_TARGET=$(MINIMUM_REQUIRED) \
 	-DCMAKE_C_FLAGS="$(CFLAGS)" 
 
+
+# Ruby won't think it's cross-compiling unless
+# the BUILD variable is set now for whatever reason,
+# but 
 RUBY_CONFIGURE_ARGS := \
 	--enable-install-static-library \
 	--enable-shared \
 	--with-out-ext=fiddle,gdbm,win32ole,win32 \
 	--with-static-linked-ext \
 	--disable-rubygems \
+	--disable-install-doc \
+	--build=$(RBUILD) \
 	${EXTRA_RUBY_CONFIG_ARGS}
 
 CONFIGURE := $(CONFIGURE_ENV) ./configure $(CONFIGURE_ARGS)
