@@ -568,7 +568,7 @@ openReadEnumCB(void *d, const char *dirpath, const char *filename) {
    * of the extension), or up to a following '\0' (full match), we've
    * found our file */
   if (last != '.' && last != '\0')
-    return PHYSFS_ENUM_STOP;
+    return PHYSFS_ENUM_OK;
 
   /* If the path cache is active, translate from lower case
    * to mixed case path */
