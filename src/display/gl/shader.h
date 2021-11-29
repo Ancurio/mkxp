@@ -192,12 +192,16 @@ public:
 	void setBushDepth(float value);
 	void setBushOpacity(float value);
     void setPattern(const TEX::ID pattern, const Vec2 &dimensions);
+    void setPatternTile(bool value);
     void setShouldRenderPattern(bool value);
     void setPatternOpacity(float value);
     void setPatternScroll(const Vec2 &scroll);
+    void setPatternZoom(const Vec2 &zoom);
+    void setInvert(bool value);
 
 private:
-	GLint u_spriteMat, u_tone, u_opacity, u_color, u_bushDepth, u_bushOpacity, u_pattern, u_renderPattern, u_patternSizeInv, u_patternOpacity, u_patternScroll;
+	GLint u_spriteMat, u_tone, u_opacity, u_color, u_bushDepth, u_bushOpacity, u_pattern, u_renderPattern,
+    u_patternSizeInv, u_patternTile, u_patternOpacity, u_patternScroll, u_patternZoom, u_invert;
 };
 
 class PlaneShader : public ShaderBase

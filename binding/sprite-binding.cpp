@@ -76,8 +76,12 @@ DEF_GFX_PROP_F(Sprite, ZoomX)
 DEF_GFX_PROP_F(Sprite, ZoomY)
 DEF_GFX_PROP_F(Sprite, Angle)
 DEF_GFX_PROP_F(Sprite, WavePhase)
+DEF_GFX_PROP_F(Sprite, PatternZoomX)
+DEF_GFX_PROP_F(Sprite, PatternZoomY)
 
 DEF_GFX_PROP_B(Sprite, Mirror)
+DEF_GFX_PROP_B(Sprite, PatternTile)
+DEF_GFX_PROP_B(Sprite, Invert)
 
 RB_METHOD(spriteWidth) {
     RB_UNUSED_PARAM;
@@ -137,9 +141,13 @@ void spriteBindingInit() {
     INIT_PROP_BIND(Sprite, BushOpacity, "bush_opacity");
     
     INIT_PROP_BIND(Sprite, Pattern, "pattern");
+    INIT_PROP_BIND(Sprite, PatternTile, "pattern_tile");
     INIT_PROP_BIND(Sprite, PatternOpacity, "pattern_opacity");
     INIT_PROP_BIND(Sprite, PatternScrollX, "pattern_scroll_x");
     INIT_PROP_BIND(Sprite, PatternScrollY, "pattern_scroll_y");
+    INIT_PROP_BIND(Sprite, PatternZoomX, "pattern_zoom_x");
+    INIT_PROP_BIND(Sprite, PatternZoomY, "pattern_zoom_y");
+    INIT_PROP_BIND(Sprite, Invert, "invert");
     
     INIT_PROP_BIND(Sprite, WaveAmp, "wave_amp");
     INIT_PROP_BIND(Sprite, WaveLength, "wave_length");

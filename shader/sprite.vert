@@ -6,7 +6,9 @@ uniform mat4 spriteMat;
 uniform vec2 texSizeInv;
 uniform vec2 patternSizeInv;
 uniform vec2 patternScroll;
+uniform vec2 patternZoom;
 uniform bool renderPattern;
+uniform bool patternTile;
 
 attribute vec2 position;
 attribute vec2 texCoord;
@@ -18,8 +20,16 @@ void main()
 {
 	gl_Position = projMat * spriteMat * vec4(position, 0, 1);
     
-	v_texCoord = texCoord * texSizeInv;
+    v_texCoord = texCoord * texSizeInv;
+    
     if (renderPattern) {
-        v_patCoord = (texCoord * patternSizeInv) - (patternScroll * patternSizeInv);
+        if (patternTile) {
+            vec2 scroll = patternScroll * patternZoom;
+            v_patCoord = (texCoord * patternSizeInv) - (scroll * patternSizeInv);
+        }
+        else {
+            vec2 scroll = patternScroll * (patternSizeInv / texSizeInv) * patternZoom;
+            v_patCoord = (texCoord * texSizeInv) - (scroll * texSizeInv);
+        }
     }
 }

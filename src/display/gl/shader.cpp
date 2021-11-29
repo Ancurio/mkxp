@@ -469,10 +469,13 @@ SpriteShader::SpriteShader()
 	GET_U(bushDepth);
 	GET_U(bushOpacity);
     GET_U(pattern);
+    GET_U(patternTile);
     GET_U(renderPattern);
     GET_U(patternSizeInv);
     GET_U(patternOpacity);
     GET_U(patternScroll);
+    GET_U(patternZoom);
+    GET_U(invert);
 }
 
 void SpriteShader::setSpriteMat(const float value[16])
@@ -511,6 +514,11 @@ void SpriteShader::setPattern(const TEX::ID pattern, const Vec2 &dimensions)
     gl.Uniform2f(u_patternSizeInv, 1.f / dimensions.x, 1.f / dimensions.y);
 }
 
+void SpriteShader::setPatternTile(bool value)
+{
+    gl.Uniform1i(u_patternTile, value);
+}
+
 void SpriteShader::setShouldRenderPattern(bool value)
 {
     gl.Uniform1i(u_renderPattern, value);
@@ -524,6 +532,16 @@ void SpriteShader::setPatternOpacity(float value)
 void SpriteShader::setPatternScroll(const Vec2 &scroll)
 {
     setVec2Uniform(u_patternScroll, scroll);
+}
+
+void SpriteShader::setPatternZoom(const Vec2 &zoom)
+{
+    setVec2Uniform(u_patternZoom, zoom);
+}
+
+void SpriteShader::setInvert(bool value)
+{
+    gl.Uniform1i(u_invert, value);
 }
 
 

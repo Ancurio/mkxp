@@ -61,8 +61,12 @@ struct SpritePrivate
     BlendType blendType;
     
     Bitmap *pattern;
+    bool patternTile;
     NormValue patternOpacity;
     Vec2 patternScroll;
+    Vec2 patternZoom;
+    
+    bool invert;
     
     IntRect sceneRect;
     Vec2i sceneOrig;
@@ -102,7 +106,9 @@ struct SpritePrivate
     opacity(255),
     blendType(BlendNormal),
     pattern(0),
+    patternTile(true),
     patternOpacity(255),
+    invert(false),
     isVisible(false),
     color(&tmp.color),
     tone(&tmp.tone)
@@ -116,6 +122,7 @@ struct SpritePrivate
         (&SpritePrivate::prepare, this);
         
         patternScroll = Vec2(0,0);
+        patternZoom = Vec2(1, 1);
         
         wave.amp = 0;
         wave.length = 180;
@@ -342,9 +349,13 @@ DEF_ATTR_SIMPLE(Sprite, Opacity,     int,     p->opacity)
 DEF_ATTR_SIMPLE(Sprite, SrcRect,     Rect&,  *p->srcRect)
 DEF_ATTR_SIMPLE(Sprite, Color,       Color&, *p->color)
 DEF_ATTR_SIMPLE(Sprite, Tone,        Tone&,  *p->tone)
+DEF_ATTR_SIMPLE(Sprite, PatternTile, bool, p->patternTile)
 DEF_ATTR_SIMPLE(Sprite, PatternOpacity, int, p->patternOpacity)
 DEF_ATTR_SIMPLE(Sprite, PatternScrollX, int, p->patternScroll.x)
 DEF_ATTR_SIMPLE(Sprite, PatternScrollY, int, p->patternScroll.y)
+DEF_ATTR_SIMPLE(Sprite, PatternZoomX, float, p->patternZoom.x)
+DEF_ATTR_SIMPLE(Sprite, PatternZoomY, float, p->patternZoom.y)
+DEF_ATTR_SIMPLE(Sprite, Invert,      bool,    p->invert)
 
 void Sprite::setBitmap(Bitmap *bitmap)
 {
@@ -553,6 +564,7 @@ void Sprite::draw()
     p->tone->hasEffect()  ||
     flashing              ||
     p->bushDepth != 0     ||
+    p->invert             ||
     (p->pattern && !p->pattern->isDisposed());
     
     if (renderEffect)
@@ -568,8 +580,10 @@ void Sprite::draw()
         shader.setBushDepth(p->efBushDepth);
         shader.setBushOpacity(p->bushOpacity.norm);
         
-        if (p->pattern) {
+        if (p->pattern && p->patternOpacity > 0) {
             shader.setPattern(p->pattern->getGLTypes().tex, Vec2(p->pattern->width(), p->pattern->height()));
+            shader.setPatternTile(p->patternTile);
+            shader.setPatternZoom(p->patternZoom);
             shader.setPatternOpacity(p->patternOpacity.norm);
             shader.setPatternScroll(p->patternScroll);
             shader.setShouldRenderPattern(true);
@@ -577,6 +591,8 @@ void Sprite::draw()
         else {
             shader.setShouldRenderPattern(false);
         }
+        
+        shader.setInvert(p->invert);
         
         /* When both flashing and effective color are set,
          * the one with higher alpha will be blended */
