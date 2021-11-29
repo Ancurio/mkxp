@@ -245,6 +245,11 @@ void Shader::initFromFile(const char *_vertFile, const char *_fragFile,
 	     _vertFile, _fragFile, programName);
 }
 
+void Shader::setVec2Uniform(GLint location, const Vec2 &vec)
+{
+    gl.Uniform2f(location, vec.x, vec.y);
+}
+
 void Shader::setVec4Uniform(GLint location, const Vec4 &vec)
 {
 	gl.Uniform4f(location, vec.x, vec.y, vec.z, vec.w);
@@ -463,6 +468,11 @@ SpriteShader::SpriteShader()
 	GET_U(opacity);
 	GET_U(bushDepth);
 	GET_U(bushOpacity);
+    GET_U(pattern);
+    GET_U(renderPattern);
+    GET_U(patternSizeInv);
+    GET_U(patternOpacity);
+    GET_U(patternScroll);
 }
 
 void SpriteShader::setSpriteMat(const float value[16])
@@ -493,6 +503,27 @@ void SpriteShader::setBushDepth(float value)
 void SpriteShader::setBushOpacity(float value)
 {
 	gl.Uniform1f(u_bushOpacity, value);
+}
+
+void SpriteShader::setPattern(const TEX::ID pattern, const Vec2 &dimensions)
+{
+    setTexUniform(u_pattern, 1, pattern);
+    gl.Uniform2f(u_patternSizeInv, 1.f / dimensions.x, 1.f / dimensions.y);
+}
+
+void SpriteShader::setShouldRenderPattern(bool value)
+{
+    gl.Uniform1i(u_renderPattern, value);
+}
+
+void SpriteShader::setPatternOpacity(float value)
+{
+    gl.Uniform1f(u_patternOpacity, value);
+}
+
+void SpriteShader::setPatternScroll(const Vec2 &scroll)
+{
+    setVec2Uniform(u_patternScroll, scroll);
 }
 
 

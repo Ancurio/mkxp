@@ -9,14 +9,26 @@ uniform lowp vec4 color;
 uniform float bushDepth;
 uniform lowp float bushOpacity;
 
+uniform sampler2D pattern;
+uniform lowp float patternOpacity;
+uniform bool renderPattern;
+
 varying vec2 v_texCoord;
+varying vec2 v_patCoord;
 
 const vec3 lumaF = vec3(.299, .587, .114);
+const vec2 repeat = vec2(1, 1);
 
 void main()
 {
 	/* Sample source color */
 	vec4 frag = texture2D(texture, v_texCoord);
+    
+    /* Apply the pattern if needed */
+    if (renderPattern) {
+        vec4 pattfrag = texture2D(pattern, mod(v_patCoord, repeat));
+        frag.rgb = mix(frag.rgb, pattfrag.rgb, pattfrag.a * patternOpacity);
+    }
 	
 	/* Apply gray */
 	float luma = dot(frag.rgb, lumaF);

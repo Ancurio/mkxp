@@ -52,6 +52,7 @@ RB_METHOD(spriteInitialize) {
 }
 
 DEF_GFX_PROP_OBJ_REF(Sprite, Bitmap, Bitmap, "bitmap")
+DEF_GFX_PROP_OBJ_REF(Sprite, Bitmap, Pattern, "pattern")
 DEF_GFX_PROP_OBJ_VAL(Sprite, Rect, SrcRect, "src_rect")
 DEF_GFX_PROP_OBJ_VAL(Sprite, Color, Color, "color")
 DEF_GFX_PROP_OBJ_VAL(Sprite, Tone, Tone, "tone")
@@ -64,6 +65,9 @@ DEF_GFX_PROP_I(Sprite, BushDepth)
 DEF_GFX_PROP_I(Sprite, BushOpacity)
 DEF_GFX_PROP_I(Sprite, Opacity)
 DEF_GFX_PROP_I(Sprite, BlendType)
+DEF_GFX_PROP_I(Sprite, PatternOpacity)
+DEF_GFX_PROP_I(Sprite, PatternScrollX)
+DEF_GFX_PROP_I(Sprite, PatternScrollY)
 DEF_GFX_PROP_I(Sprite, WaveAmp)
 DEF_GFX_PROP_I(Sprite, WaveLength)
 DEF_GFX_PROP_I(Sprite, WaveSpeed)
@@ -131,6 +135,11 @@ void spriteBindingInit() {
     _rb_define_method(klass, "height", spriteHeight);
     
     INIT_PROP_BIND(Sprite, BushOpacity, "bush_opacity");
+    
+    INIT_PROP_BIND(Sprite, Pattern, "pattern");
+    INIT_PROP_BIND(Sprite, PatternOpacity, "pattern_opacity");
+    INIT_PROP_BIND(Sprite, PatternScrollX, "pattern_scroll_x");
+    INIT_PROP_BIND(Sprite, PatternScrollY, "pattern_scroll_y");
     
     INIT_PROP_BIND(Sprite, WaveAmp, "wave_amp");
     INIT_PROP_BIND(Sprite, WaveLength, "wave_length");

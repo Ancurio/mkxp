@@ -53,6 +53,7 @@ protected:
 	                  const char *programName);
 
 	static void setVec4Uniform(GLint location, const Vec4 &vec);
+    static void setVec2Uniform(GLint location, const Vec2 &vec);
 	static void setTexUniform(GLint location, unsigned unitIndex, TEX::ID texture);
 
 	GLuint vertShader, fragShader;
@@ -190,9 +191,13 @@ public:
 	void setOpacity(float value);
 	void setBushDepth(float value);
 	void setBushOpacity(float value);
+    void setPattern(const TEX::ID pattern, const Vec2 &dimensions);
+    void setShouldRenderPattern(bool value);
+    void setPatternOpacity(float value);
+    void setPatternScroll(const Vec2 &scroll);
 
 private:
-	GLint u_spriteMat, u_tone, u_opacity, u_color, u_bushDepth, u_bushOpacity;
+	GLint u_spriteMat, u_tone, u_opacity, u_color, u_bushDepth, u_bushOpacity, u_pattern, u_renderPattern, u_patternSizeInv, u_patternOpacity, u_patternScroll;
 };
 
 class PlaneShader : public ShaderBase
