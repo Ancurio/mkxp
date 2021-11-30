@@ -469,6 +469,7 @@ SpriteShader::SpriteShader()
 	GET_U(bushDepth);
 	GET_U(bushOpacity);
     GET_U(pattern);
+    GET_U(patternBlendType);
     GET_U(patternTile);
     GET_U(renderPattern);
     GET_U(patternSizeInv);
@@ -512,6 +513,11 @@ void SpriteShader::setPattern(const TEX::ID pattern, const Vec2 &dimensions)
 {
     setTexUniform(u_pattern, 1, pattern);
     gl.Uniform2f(u_patternSizeInv, 1.f / dimensions.x, 1.f / dimensions.y);
+}
+
+void SpriteShader::setPatternBlendType(int blendType)
+{
+    gl.Uniform1i(u_patternBlendType, blendType);
 }
 
 void SpriteShader::setPatternTile(bool value)

@@ -61,6 +61,7 @@ struct SpritePrivate
     BlendType blendType;
     
     Bitmap *pattern;
+    BlendType patternBlendType;
     bool patternTile;
     NormValue patternOpacity;
     Vec2 patternScroll;
@@ -337,6 +338,7 @@ DEF_ATTR_RD_SIMPLE(Sprite, Mirror,     bool,    p->mirrored)
 DEF_ATTR_RD_SIMPLE(Sprite, BushDepth,  int,     p->bushDepth)
 DEF_ATTR_RD_SIMPLE(Sprite, BlendType,  int,     p->blendType)
 DEF_ATTR_RD_SIMPLE(Sprite, Pattern,    Bitmap*, p->pattern)
+DEF_ATTR_RD_SIMPLE(Sprite, PatternBlendType, int, p->patternBlendType)
 DEF_ATTR_RD_SIMPLE(Sprite, Width,      int,     p->srcRect->width)
 DEF_ATTR_RD_SIMPLE(Sprite, Height,     int,     p->srcRect->height)
 DEF_ATTR_RD_SIMPLE(Sprite, WaveAmp,    int,     p->wave.amp)
@@ -512,6 +514,25 @@ void Sprite::setPattern(Bitmap *value)
         value->ensureNonMega();
 }
 
+void Sprite::setPatternBlendType(int type)
+{
+    guardDisposed();
+    
+    switch (type)
+    {
+        default :
+        case BlendNormal :
+            p->patternBlendType = BlendNormal;
+            return;
+        case BlendAddition :
+            p->patternBlendType = BlendAddition;
+            return;
+        case BlendSubstraction :
+            p->patternBlendType = BlendSubstraction;
+            return;
+    }
+}
+
 #define DEF_WAVE_SETTER(Name, name, type) \
 void Sprite::setWave##Name(type value) \
 { \
@@ -582,6 +603,7 @@ void Sprite::draw()
         
         if (p->pattern && p->patternOpacity > 0) {
             shader.setPattern(p->pattern->getGLTypes().tex, Vec2(p->pattern->width(), p->pattern->height()));
+            shader.setPatternBlendType(p->patternBlendType);
             shader.setPatternTile(p->patternTile);
             shader.setPatternZoom(p->patternZoom);
             shader.setPatternOpacity(p->patternOpacity.norm);

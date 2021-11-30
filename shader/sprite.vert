@@ -24,12 +24,12 @@ void main()
     
     if (renderPattern) {
         if (patternTile) {
-            vec2 scroll = patternScroll * patternZoom;
-            v_patCoord = (texCoord * patternSizeInv) - (scroll * patternSizeInv);
+            vec2 scroll = patternScroll * (patternSizeInv / texSizeInv);
+            v_patCoord = (texCoord * (patternSizeInv / patternZoom)) - (scroll * patternSizeInv);
         }
         else {
-            vec2 scroll = patternScroll * (patternSizeInv / texSizeInv) * patternZoom;
-            v_patCoord = (texCoord * texSizeInv) - (scroll * texSizeInv);
+            vec2 scroll = patternScroll * (patternSizeInv / texSizeInv);
+            v_patCoord = (texCoord * (texSizeInv / patternZoom)) - (scroll * texSizeInv);
         }
     }
 }

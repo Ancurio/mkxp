@@ -65,6 +65,7 @@ DEF_GFX_PROP_I(Sprite, BushDepth)
 DEF_GFX_PROP_I(Sprite, BushOpacity)
 DEF_GFX_PROP_I(Sprite, Opacity)
 DEF_GFX_PROP_I(Sprite, BlendType)
+DEF_GFX_PROP_I(Sprite, PatternBlendType)
 DEF_GFX_PROP_I(Sprite, PatternOpacity)
 DEF_GFX_PROP_I(Sprite, PatternScrollX)
 DEF_GFX_PROP_I(Sprite, PatternScrollY)
@@ -141,6 +142,7 @@ void spriteBindingInit() {
     INIT_PROP_BIND(Sprite, BushOpacity, "bush_opacity");
     
     INIT_PROP_BIND(Sprite, Pattern, "pattern");
+    INIT_PROP_BIND(Sprite, PatternBlendType, "pattern_blend_type");
     INIT_PROP_BIND(Sprite, PatternTile, "pattern_tile");
     INIT_PROP_BIND(Sprite, PatternOpacity, "pattern_opacity");
     INIT_PROP_BIND(Sprite, PatternScrollX, "pattern_scroll_x");

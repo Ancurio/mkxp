@@ -63,6 +63,7 @@ public:
 	DECL_ATTR( Color,       Color&  )
 	DECL_ATTR( Tone,        Tone&   )
     DECL_ATTR( Pattern,     Bitmap* )
+    DECL_ATTR( PatternBlendType, int)
     DECL_ATTR( PatternTile, bool    )
     DECL_ATTR( PatternOpacity, int  )
     DECL_ATTR( PatternScrollX, int  )
