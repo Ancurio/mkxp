@@ -289,7 +289,7 @@ RB_METHOD(graphicsScreenshot)
     rb_thread_call_without_gvl([](void* fn) -> void* {
         graphicsScreenshotInternal((const char*)fn);
         return 0;
-    }, (void*)filename, 0, 0);
+    }, (void*)RSTRING_PTR(filename), 0, 0);
 #else
     graphicsScreenshotInternal(RSTRING_PTR(filename));
 #endif
