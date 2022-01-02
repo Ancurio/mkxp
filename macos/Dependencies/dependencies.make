@@ -59,6 +59,24 @@ CMAKE     := $(CONFIGURE_ENV) cmake .. $(CMAKE_ARGS)
 
 default:
 
+# Theora
+libtheora: init_dirs libvorbis libogg $(LIBDIR)/libtheora.a
+
+$(LIBDIR)/libtheora.a: $(LIBDIR)/libogg.a $(DOWNLOADS)/theora/Makefile
+	cd $(DOWNLOADS)/theora; \
+	make -j$(NPROC); make install
+
+$(DOWNLOADS)/theora/Makefile: $(DOWNLOADS)/theora/configure
+	cd $(DOWNLOADS)/theora; \
+	$(CONFIGURE) --with-ogg=$(BUILD_PREFIX) --enable-shared=false --enable-static=true --disable-examples
+
+$(DOWNLOADS)/theora/configure: $(DOWNLOADS)/theora/autogen.sh
+	cd $(DOWNLOADS)/theora; \
+	./autogen.sh
+
+$(DOWNLOADS)/theora/autogen.sh:
+	$(CLONE) $(GITHUB)/xiph/theora $(DOWNLOADS)/theora
+
 # Vorbis
 libvorbis: init_dirs libogg $(LIBDIR)/libvorbis.a
 
@@ -329,5 +347,5 @@ clean-downloads:
 clean-compiled:
 	-rm -rf build-$(SDK)-$(ARCH)
 
-deps-core: libvorbis pixman libpng libjpeg physfs uchardet sdl2 sdl2image sdlsound sdl2ttf openal openssl
+deps-core: libtheora libvorbis pixman libpng libjpeg physfs uchardet sdl2 sdl2image sdlsound sdl2ttf openal openssl
 everything: deps-core ruby

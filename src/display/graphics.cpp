@@ -21,6 +21,8 @@
 
 #include "graphics.h"
 
+#include "theoraplay/theoraplay.h"
+#include "audio.h"
 #include "binding.h"
 #include "bitmap.h"
 #include "config.h"
@@ -62,6 +64,8 @@
 #define DEF_SCREEN_H (rgssVer == 1 ? 480 : 416)
 
 #define DEF_FRAMERATE (rgssVer == 1 ? 40 : 60)
+
+#define DEF_MAX_VIDEO_FRAMES 30
 
 struct PingPong {
     TEXFBO rt[2];
@@ -912,7 +916,146 @@ void Graphics::resizeScreen(int width, int height) {
 }
 
 void Graphics::playMovie(const char *filename) {
-    Debug() << "Graphics.playMovie(" << filename << ") not implemented";
+    const size_t bufferSize = 256;
+    char filePath[bufferSize] = "";
+    snprintf(filePath, bufferSize, "%s.ogg", filename);
+
+    // Try adding the .ogg and .ogv extensions
+    if (!shState->fileSystem().exists(filePath)) {
+        snprintf(filePath, bufferSize, "%s.ogg", filename);
+    }
+    if (!shState->fileSystem().exists(filePath)) {
+        snprintf(filePath, bufferSize, "%s.ogv", filename);
+    }
+
+    if (!shState->fileSystem().exists(filePath)) {
+        // Movie file not found
+        Debug() << "Unable to open movie file: " << filePath;
+        return;
+    }
+    
+    THEORAPLAY_Decoder *decoder = THEORAPLAY_startDecodeFile(filePath, DEF_MAX_VIDEO_FRAMES, THEORAPLAY_VIDFMT_RGBA);
+    if (!decoder) { 
+        Debug() << "Failed to start decoding movie file: " << filePath;
+        return;
+    }
+
+    // Wait until the decoder has parsed out some basic truths from the file.
+    while (!THEORAPLAY_isInitialized(decoder)) {
+        SDL_Delay(10);
+    }
+
+    // Wait until we have video
+    const THEORAPLAY_VideoFrame *video = NULL;
+    while ((video = THEORAPLAY_getVideo(decoder)) == NULL) {
+        SDL_Delay(10);
+    }
+
+    /* Capture new scene */
+    p->checkSyncLock();
+    p->screen.composite();
+    TEXFBO &videoBuffer = p->screen.getPP().backBuffer();
+
+    Bitmap *videoBitmap = new Bitmap(video->width, video->height);
+    TransShader &shader = shState->shaders().trans;
+    shader.bind();
+    shader.applyViewportProj();
+    shader.setTransMap(videoBitmap->getGLTypes().tex);
+    shader.setVague(256.0f);
+    shader.setTexSize(p->scRes);    
+    glState.blend.pushSet(false);
+
+    // We can just play the audio stream directly using the movie file
+    shState->audio().bgmPlay(filePath, 100, 100, 0);
+
+    // Flags on what to do upon video end
+    bool shutDown = false;
+    bool scriptReset = false;
+    
+    // Assuming every frame has the same duration.
+    Uint32 frameMs = (video->fps == 0.0) ? 0 : ((Uint32) (1000.0 / video->fps));
+    Uint32 baseTicks = SDL_GetTicks();
+    while(THEORAPLAY_isDecoding(decoder)) {
+        if (p->threadData->rqTerm) {
+            shutDown = true;
+            break;
+        }
+        
+        if (p->threadData->rqReset) {
+            break;
+        }
+
+        if (!video) {
+            video = THEORAPLAY_getVideo(decoder);
+        }
+
+        const Uint32 now = SDL_GetTicks() - baseTicks;
+        if (video && (video->playms <= now)) {
+            if (frameMs && ((now - video->playms) >= frameMs)) { 
+                // Skip frames to catch up, but keep track of the last one
+                // in case we catch up to a series of dupe frames, which
+                // means we'd have to draw that final frame and then wait for
+                // more.
+                const THEORAPLAY_VideoFrame *previous = video;
+                while ((video = THEORAPLAY_getVideo(decoder)) != NULL) {
+                    THEORAPLAY_freeVideo(previous);
+                    previous = video;
+                    if ((now - video->playms) < frameMs) {
+                        break;
+                    }
+                }
+
+                if (!video) {
+                    video = previous;
+                }
+            }
+            
+            // Application is too far behind
+            if (!video) {
+                Debug() << "WARNING: Video playback cannot keep up!";
+                break;
+            }
+
+            // Got a video frame, now draw it
+            p->checkSyncLock();
+            videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
+            
+            shader.bind();
+            FBO::bind(videoBuffer.fbo);
+            FBO::clear();
+            p->screenQuad.draw();
+            
+            p->checkResize();
+            
+            /* Then blit it flipped and scaled to the screen */
+            FBO::unbind();
+            FBO::clear();
+            
+            GLMeta::blitBeginScreen(Vec2i(p->winSize));
+            GLMeta::blitSource(videoBuffer);
+            p->metaBlitBufferFlippedScaled();
+            GLMeta::blitEnd();
+            
+            p->swapGLBuffer();
+
+
+            THEORAPLAY_freeVideo(video);
+            video = NULL;
+
+        } else {
+            // Next video frame not yet ready, let the CPU breathe
+            SDL_Delay(10);
+        }
+
+    }
+    if (video) THEORAPLAY_freeVideo(video);
+    if (decoder) THEORAPLAY_stopDecode(decoder);
+    glState.blend.pop();
+    videoBitmap->dispose();
+    delete videoBitmap;
+    shState->audio().bgmStop();
+    if(scriptReset) scriptBinding->reset();
+    if(shutDown) p->shutdown();
 }
 
 void Graphics::screenshot(const char *filename) {
