@@ -915,7 +915,8 @@ void Graphics::resizeScreen(int width, int height) {
     update();
 }
 
-void Graphics::playMovie(const char *filename) {
+void Graphics::playMovie(const char *filename, int volume) {
+    // TODO: mkxp somehow disregards file extensions when loading stuff. Use that instead of reinventing the wheel.
     const size_t bufferSize = 256;
     char filePath[bufferSize] = "";
     snprintf(filePath, bufferSize, "%s.ogg", filename);
@@ -934,6 +935,12 @@ void Graphics::playMovie(const char *filename) {
         return;
     }
     
+    // TODO: Get the actual format first... somehow. Seek the header?
+    // Note: VX Ace itself displays odd colors for yuv422p format
+    // theoraplay assets that it must use TH_PF_420. Will have to dip into that.
+    // Leaving this as VIDFMT_RGBA may be fine. Maybe.
+    // https://theora.org/doc/libtheora-1.0/codec_8h.html
+    // https://ffmpeg.org/doxygen/0.11/group__lavc__misc__pixfmt.html
     THEORAPLAY_Decoder *decoder = THEORAPLAY_startDecodeFile(filePath, DEF_MAX_VIDEO_FRAMES, THEORAPLAY_VIDFMT_RGBA);
     if (!decoder) { 
         Debug() << "Failed to start decoding movie file: " << filePath;
@@ -945,10 +952,28 @@ void Graphics::playMovie(const char *filename) {
         SDL_Delay(10);
     }
 
+    // Once we're initialized, we can tell if this file has audio and/or video.
+    bool hasAudio = THEORAPLAY_hasAudioStream(decoder);
+    bool hasVideo = THEORAPLAY_hasVideoStream(decoder);
+
+    // No video, so no point in doing anything else
+    if (!hasVideo) {
+        THEORAPLAY_stopDecode(decoder);
+        return;
+    }
+
     // Wait until we have video
     const THEORAPLAY_VideoFrame *video = NULL;
     while ((video = THEORAPLAY_getVideo(decoder)) == NULL) {
         SDL_Delay(10);
+    }
+
+    // Wait until we have audio, if applicable
+    const THEORAPLAY_AudioPacket *audio = NULL;
+    if (hasAudio) {
+        while ((audio = THEORAPLAY_getAudio(decoder)) == NULL && THEORAPLAY_availableVideo(decoder) < DEF_MAX_VIDEO_FRAMES) {
+            SDL_Delay(10);
+        }
     }
 
     /* Capture new scene */
@@ -965,13 +990,15 @@ void Graphics::playMovie(const char *filename) {
     shader.setTexSize(p->scRes);    
     glState.blend.pushSet(false);
 
-    // We can just play the audio stream directly using the movie file
-    shState->audio().bgmPlay(filePath, 100, 100, 0);
-
-    // Flags on what to do upon video end
+    // Flags on what to do upon playback end
     bool shutDown = false;
     bool scriptReset = false;
-    
+
+    // Queue up the audio
+    if(hasAudio) {
+        shState->audio().moviePlay(filePath, volume, 100);
+    }
+
     // Assuming every frame has the same duration.
     Uint32 frameMs = (video->fps == 0.0) ? 0 : ((Uint32) (1000.0 / video->fps));
     Uint32 baseTicks = SDL_GetTicks();
@@ -990,8 +1017,41 @@ void Graphics::playMovie(const char *filename) {
         }
 
         const Uint32 now = SDL_GetTicks() - baseTicks;
+
+        // Open the audio device as soon as we know what it should be.
+        if (hasAudio) {
+            if (!audio) {
+                audio = THEORAPLAY_getAudio(decoder);
+            }
+            if (audio && (audio->playms <= now)) {
+                if (frameMs && ((now - audio->playms) >= frameMs)) {
+                    const THEORAPLAY_AudioPacket *previousAudio = audio;
+                    while ((audio = THEORAPLAY_getAudio(decoder)) != NULL) {
+                        THEORAPLAY_freeAudio(previousAudio);
+                        previousAudio = audio;
+                        if ((now - audio->playms) < frameMs) {
+                            break;
+                        }
+                    }
+
+                    if (!audio) {
+                        audio = previousAudio;
+                    }
+                }
+
+                // Application is too far behind
+                if (!audio) {
+                    Debug() << "WARNING: Audio playback cannot keep up!";
+                    break;
+                }
+
+                shState->audio().movieSeek(audio->playms);
+                audio = NULL;
+            }
+        }
+
         if (video && (video->playms <= now)) {
-            if (frameMs && ((now - video->playms) >= frameMs)) { 
+            if (frameMs && ((now - video->playms) >= frameMs)) {
                 // Skip frames to catch up, but keep track of the last one
                 // in case we catch up to a series of dupe frames, which
                 // means we'd have to draw that final frame and then wait for
@@ -1031,6 +1091,7 @@ void Graphics::playMovie(const char *filename) {
             FBO::unbind();
             FBO::clear();
             
+            // Currently this stretches to fit the screen. VX Ace behavior is to center it and let the edges run off
             GLMeta::blitBeginScreen(Vec2i(p->winSize));
             GLMeta::blitSource(videoBuffer);
             p->metaBlitBufferFlippedScaled();
@@ -1049,11 +1110,12 @@ void Graphics::playMovie(const char *filename) {
 
     }
     if (video) THEORAPLAY_freeVideo(video);
+    if (audio) THEORAPLAY_freeAudio(audio);
     if (decoder) THEORAPLAY_stopDecode(decoder);
     glState.blend.pop();
     videoBitmap->dispose();
     delete videoBitmap;
-    shState->audio().bgmStop();
+    shState->audio().movieStop();
     if(scriptReset) scriptBinding->reset();
     if(shutDown) p->shutdown();
 }

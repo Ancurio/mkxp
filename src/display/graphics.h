@@ -57,7 +57,7 @@ public:
 	int width() const;
 	int height() const;
 	void resizeScreen(int width, int height);
-	void playMovie(const char *filename);
+	void playMovie(const char *filename, int volume);
 	void screenshot(const char *filename);
 
 	void reset();

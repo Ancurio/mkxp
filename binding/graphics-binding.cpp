@@ -264,10 +264,12 @@ RB_METHOD(graphicsPlayMovie)
 {
     RB_UNUSED_PARAM;
     
-    const char *filename;
-    rb_get_args(argc, argv, "z", &filename RB_ARG_END);
-    
-    shState->graphics().playMovie(filename);
+    VALUE filename, volumeArg;
+    rb_scan_args(argc, argv, "11", &filename, &volumeArg);
+    SafeStringValue(filename);
+    int volume = (volumeArg == Qnil) ? 100 : NUM2INT(volumeArg);
+
+    shState->graphics().playMovie(RSTRING_PTR(filename), volume);
     
     return Qnil;
 }
