@@ -25,6 +25,32 @@
 #include <stdint.h>
 #include <string.h>
 
+/* Equivalent Linear Congruential Generator (LCG) constants for iteration 2^n
+ * all the way up to 2^32/4 (the largest dword offset possible in
+ * RGSS{AD,[23]A}).
+ *
+ * This table can be easily calculated by taking the original LCG parameter
+ * m[0] and a[0] and write them down as LCG_TABLE[0]. Then for the rest of
+ * the 29 entries, LGC_TABLE[n] = {m[n], a[n]} where m[n] = pow(m[n-1], 2)
+ * and a[n] = a[n-1] * (m[n-1] + 1). */
+constexpr static uint32_t LCG_TABLE[30][2] = {
+    {0x00000007, 0x00000003}, {0x00000031, 0x00000018},
+    {0x00000961, 0x000004b0}, {0x0057f6c1, 0x002bfb60},
+    {0xa5057d81, 0xd282bec0}, {0x6e913b01, 0x37489d80},
+    {0xc0bb7601, 0x605dbb00}, {0x1bdaec01, 0x8ded7600},
+    {0x0145d801, 0x80a2ec00}, {0x28cbb001, 0x1465d800},
+    {0xea976001, 0x754bb000}, {0x392ec001, 0x1c976000},
+    {0x025d8001, 0x012ec000}, {0x44bb0001, 0x225d8000},
+    {0x89760001, 0xc4bb0000}, {0x12ec0001, 0x89760000},
+    {0x25d80001, 0x12ec0000}, {0x4bb00001, 0x25d80000},
+    {0x97600001, 0x4bb00000}, {0x2ec00001, 0x97600000},
+    {0x5d800001, 0x2ec00000}, {0xbb000001, 0x5d800000},
+    {0x76000001, 0xbb000000}, {0xec000001, 0x76000000},
+    {0xd8000001, 0xec000000}, {0xb0000001, 0xd8000000},
+    {0x60000001, 0xb0000000}, {0xc0000001, 0x60000000},
+    {0x80000001, 0xc0000000}, {0x00000001, 0x80000000},
+};
+
 struct RGSS_entryData
 {
 	int64_t offset;
@@ -96,6 +122,22 @@ advanceMagic(uint32_t &magic)
 	magic = magic * 7 + 3;
 
 	return old;
+}
+
+static inline uint32_t
+advanceMagicN(uint32_t &magic, uint32_t n) {
+    uint32_t old = magic;
+    int table_index = 0;
+
+    while (n != 0) {
+        if (n & 1) {
+            magic = magic * LCG_TABLE[table_index][0] + LCG_TABLE[table_index][1];
+        }
+        n >>= 1;
+        table_index++;
+    }
+
+    return old;
 }
 
 static PHYSFS_sint64
@@ -217,8 +259,7 @@ RGSS_ioSeek(PHYSFS_Io *self, PHYSFS_uint64 offset)
 	uint64_t targetDword  = offset / 4;
 	uint64_t dwordsSought = targetDword - currentDword;
 
-	for (uint64_t i = 0; i < dwordsSought; ++i)
-		advanceMagic(entry->currentMagic);
+	advanceMagicN(entry->currentMagic, (uint32_t) dwordsSought);
 
 	entry->currentOffset = offset;
 	entry->io->seek(entry->io, entry->data.offset + entry->currentOffset);
