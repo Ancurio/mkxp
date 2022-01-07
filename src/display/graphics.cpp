@@ -43,6 +43,7 @@
 #include "util.h"
 #include "input.h"
 
+#include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_timer.h>
 #include <SDL_video.h>
@@ -66,6 +67,15 @@
 #define DEF_FRAMERATE (rgssVer == 1 ? 40 : 60)
 
 #define DEF_MAX_VIDEO_FRAMES 30
+#define VIDEO_DELAY 10
+#define AUDIO_DELAY 100
+
+typedef struct AudioQueue
+{
+    const THEORAPLAY_AudioPacket *audio;
+    int offset;
+    struct AudioQueue *next;
+} AudioQueue;
 
 struct PingPong {
     TEXFBO rt[2];
@@ -915,6 +925,97 @@ void Graphics::resizeScreen(int width, int height) {
     update();
 }
 
+// TODO: I'd rather these not be declared in global space...
+static volatile AudioQueue *movieAudioQueue = NULL;
+static volatile AudioQueue *movieAudioQueueTail = NULL;
+
+static void SDLCALL movieAudioCallback(void *userdata, uint8_t *stream, int len) {
+    // !!! FIXME: this should refuse to play if item->playms is in the future.
+    //const Uint32 now = SDL_GetTicks() - baseticks;
+    Sint16 *dst = (Sint16 *) stream;
+
+    while (movieAudioQueue && (len > 0)) {
+        volatile AudioQueue *item = movieAudioQueue;
+        AudioQueue *next = item->next;
+        const int channels = item->audio->channels;
+
+        const float *src = item->audio->samples + (item->offset * channels);
+        int cpy = (item->audio->frames - item->offset) * channels;
+        int i;
+
+        if (cpy > (len / sizeof (Sint16))) {
+            cpy = len / sizeof (Sint16);
+        }
+
+        for (i = 0; i < cpy; i++) {
+            const float val = *(src++);
+            if (val < -1.0f) {
+                *(dst++) = -32768;
+            } else if (val > 1.0f) {
+                *(dst++) = 32767;
+            } else {
+                *(dst++) = (Sint16) (val * 32767.0f);
+            }
+        }
+
+        item->offset += (cpy / channels);
+        len -= cpy * sizeof (Sint16);
+
+        if (item->offset >= item->audio->frames) {
+            THEORAPLAY_freeAudio(item->audio);
+            free((void *) item);
+            movieAudioQueue = next;
+        }
+    }
+
+    if (!movieAudioQueue) {
+        movieAudioQueueTail = NULL;
+    }
+
+    if (len > 0) {
+        memset(dst, '\0', len);
+    }
+}
+
+static void queueAudioPacket(const THEORAPLAY_AudioPacket *audio) {
+    AudioQueue *item = NULL;
+
+    if (!audio) {
+        return;
+    }
+
+    item = (AudioQueue *) malloc(sizeof (AudioQueue));
+    if (!item) {
+        THEORAPLAY_freeAudio(audio);
+        return;  // oh well.
+    }
+
+    item->audio = audio;
+    item->offset = 0;
+    item->next = NULL;
+
+
+    SDL_LockAudio();
+    if (movieAudioQueueTail) {
+        movieAudioQueueTail->next = item;
+    } else {
+        movieAudioQueue = item;
+    }
+    movieAudioQueueTail = item;
+    SDL_UnlockAudio();
+}
+
+static void queueMoreMovieAudio(THEORAPLAY_Decoder *decoder, const Uint32 now) {
+    const THEORAPLAY_AudioPacket *audio;
+    while ((audio = THEORAPLAY_getAudio(decoder)) != NULL) {
+        const unsigned int playms = audio->playms;
+        queueAudioPacket(audio);
+        if (playms >= now + 2000) {  // don't let this get too far ahead.
+            break;
+        }
+    }
+}
+
 void Graphics::playMovie(const char *filename, int volume) {
     // TODO: mkxp somehow disregards file extensions when loading stuff. Use that instead of reinventing the wheel.
     const size_t bufferSize = 256;
@@ -922,6 +1023,7 @@ void Graphics::playMovie(const char *filename, int volume) {
     snprintf(filePath, bufferSize, "%s.ogg", filename);
 
     // Try adding the .ogg and .ogv extensions
+    // TODO: Fails if the extension is already passed in
     if (!shState->fileSystem().exists(filePath)) {
         snprintf(filePath, bufferSize, "%s.ogg", filename);
     }
@@ -949,7 +1051,7 @@ void Graphics::playMovie(const char *filename, int volume) {
 
     // Wait until the decoder has parsed out some basic truths from the file.
     while (!THEORAPLAY_isInitialized(decoder)) {
-        SDL_Delay(10);
+        SDL_Delay(VIDEO_DELAY);
     }
 
     // Once we're initialized, we can tell if this file has audio and/or video.
@@ -965,14 +1067,14 @@ void Graphics::playMovie(const char *filename, int volume) {
     // Wait until we have video
     const THEORAPLAY_VideoFrame *video = NULL;
     while ((video = THEORAPLAY_getVideo(decoder)) == NULL) {
-        SDL_Delay(10);
+        SDL_Delay(VIDEO_DELAY);
     }
 
     // Wait until we have audio, if applicable
     const THEORAPLAY_AudioPacket *audio = NULL;
     if (hasAudio) {
         while ((audio = THEORAPLAY_getAudio(decoder)) == NULL && THEORAPLAY_availableVideo(decoder) < DEF_MAX_VIDEO_FRAMES) {
-            SDL_Delay(10);
+            SDL_Delay(VIDEO_DELAY);
         }
     }
 
@@ -990,64 +1092,68 @@ void Graphics::playMovie(const char *filename, int volume) {
     shader.setTexSize(p->scRes);    
     glState.blend.pushSet(false);
 
+    // Queue up the audio
+    if (hasAudio) {
+        // shState->audio().moviePlay(filePath, volume, 100);
+        while ((audio = THEORAPLAY_getAudio(decoder)) == NULL) {
+            if ((THEORAPLAY_availableVideo(decoder) >= DEF_MAX_VIDEO_FRAMES)) {
+                break;  // we'll never progress, there's no audio yet but we've prebuffered as much as we plan to.
+            }
+            SDL_Delay(VIDEO_DELAY);
+        }
+    }
+
     // Flags on what to do upon playback end
     bool shutDown = false;
     bool scriptReset = false;
 
-    // Queue up the audio
-    if(hasAudio) {
-        shState->audio().moviePlay(filePath, volume, 100);
-    }
-
     // Assuming every frame has the same duration.
     Uint32 frameMs = (video->fps == 0.0) ? 0 : ((Uint32) (1000.0 / video->fps));
     Uint32 baseTicks = SDL_GetTicks();
-    while(THEORAPLAY_isDecoding(decoder)) {
+    bool openedAudio = false;
+    // TODO: There is now an issue with the shutdown/app close where it is not immediate. It is
+    // hanging somewhere while audio is processing
+    while (THEORAPLAY_isDecoding(decoder)) {
         if (p->threadData->rqTerm) {
             shutDown = true;
             break;
         }
         
         if (p->threadData->rqReset) {
+            scriptReset = true;
             break;
         }
+
+        const Uint32 now = SDL_GetTicks() - baseTicks;
 
         if (!video) {
             video = THEORAPLAY_getVideo(decoder);
         }
 
-        const Uint32 now = SDL_GetTicks() - baseTicks;
-
-        // Open the audio device as soon as we know what it should be.
         if (hasAudio) {
             if (!audio) {
                 audio = THEORAPLAY_getAudio(decoder);
             }
-            if (audio && (audio->playms <= now)) {
-                if (frameMs && ((now - audio->playms) >= frameMs)) {
-                    const THEORAPLAY_AudioPacket *previousAudio = audio;
-                    while ((audio = THEORAPLAY_getAudio(decoder)) != NULL) {
-                        THEORAPLAY_freeAudio(previousAudio);
-                        previousAudio = audio;
-                        if ((now - audio->playms) < frameMs) {
-                            break;
-                        }
-                    }
 
-                    if (!audio) {
-                        audio = previousAudio;
-                    }
+            if (audio && !openedAudio) {
+                SDL_AudioSpec spec;
+                memset(&spec, '\0', sizeof (SDL_AudioSpec));
+                spec.freq = audio->freq;
+                spec.format = AUDIO_S16SYS;
+                spec.channels = audio->channels;
+                spec.samples = 2048;
+                spec.callback = movieAudioCallback;
+                if (SDL_OpenAudio(&spec, NULL) != 0) {
+                   Debug() << "Error opening movie audio!";
+                   break;
                 }
-
-                // Application is too far behind
-                if (!audio) {
-                    Debug() << "WARNING: Audio playback cannot keep up!";
-                    break;
-                }
-
-                shState->audio().movieSeek(audio->playms);
+                openedAudio = true;
+                queueAudioPacket(audio);
                 audio = NULL;
+                queueMoreMovieAudio(decoder, 0);
+                SDL_PauseAudio(0);  // Start audio playback
             }
+
         }
 
         if (video && (video->playms <= now)) {
@@ -1105,17 +1211,34 @@ void Graphics::playMovie(const char *filename, int volume) {
 
         } else {
             // Next video frame not yet ready, let the CPU breathe
-            SDL_Delay(10);
+            SDL_Delay(VIDEO_DELAY);
+        }
+        
+        if (openedAudio) {
+            queueMoreMovieAudio(decoder, now);
         }
 
     }
+
+    if (hasAudio) {
+        if (movieAudioQueueTail) {
+            THEORAPLAY_freeAudio(movieAudioQueueTail->audio);
+        }
+        movieAudioQueueTail = NULL;
+
+        if (movieAudioQueue) {
+            THEORAPLAY_freeAudio(movieAudioQueue->audio);
+        }
+        movieAudioQueue = NULL;
+    }
+
     if (video) THEORAPLAY_freeVideo(video);
     if (audio) THEORAPLAY_freeAudio(audio);
     if (decoder) THEORAPLAY_stopDecode(decoder);
     glState.blend.pop();
     videoBitmap->dispose();
     delete videoBitmap;
-    shState->audio().movieStop();
+    SDL_CloseAudio();
     if(scriptReset) scriptBinding->reset();
     if(shutDown) p->shutdown();
 }
