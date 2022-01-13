@@ -7,7 +7,7 @@
 // -----------------------------
 // Don't change any of this
 // -----------------------------
-MRI_VERSION = 3.0.0
+MRI_VERSION = 3.1.0
 DEPENDENCY_SEARCH_PATH = $(PROJECT_DIR)/Dependencies/build-$(SDK_ROOT)-$(BUILD_ARCH)
 EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = $(inherited) Dependencies ../build DerivedData
 CODE_SIGN_ENTITLEMENTS = $(PROJECT_DIR)/mkxp.entitlements
