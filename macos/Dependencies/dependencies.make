@@ -298,13 +298,12 @@ $(DOWNLOADS)/openssl/Configure:
 	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
 
 # Standard ruby
-ruby: init_dirs openssl $(LIBDIR)/libruby.3.0.dylib
+ruby: init_dirs openssl $(LIBDIR)/libruby.3.1.dylib
 
-$(LIBDIR)/libruby.3.0.dylib: $(DOWNLOADS)/ruby/Makefile
+$(LIBDIR)/libruby.3.1.dylib: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
 	$(CONFIGURE_ENV) make -j$(NPROC); $(CONFIGURE_ENV) make install
-	# Make the dylib relative
-	install_name_tool -id @rpath/libruby.3.0.dylib $(LIBDIR)/libruby.3.0.dylib
+	install_name_tool -id @rpath/libruby.3.1.dylib $(LIBDIR)/libruby.3.1.dylib
 
 $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	cd $(DOWNLOADS)/ruby; \
