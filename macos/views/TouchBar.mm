@@ -23,6 +23,7 @@ MKXPZTouchBar *_sharedTouchBar;
 @interface MKXPZTouchBar () {
     NSWindow *_parent;
     NSTextField *fpsLabel;
+    NSSegmentedControl *functionKeys;
 }
 
 @property (retain,nonatomic) NSString *gameTitle;
@@ -30,8 +31,7 @@ MKXPZTouchBar *_sharedTouchBar;
 -(void)updateFPSDisplay:(uint32_t)value;
 @end
 
-@implementation MKXPZTouchBar {
-}
+@implementation MKXPZTouchBar
 
 @synthesize gameTitle;
 
@@ -44,11 +44,15 @@ MKXPZTouchBar *_sharedTouchBar;
 -(instancetype)init {
     self = [super init];
     self.delegate = self;
-    self.defaultItemIdentifiers = @[@"F5", @"F6", @"F7", @"F8", @"F9", NSTouchBarItemIdentifierFixedSpaceSmall, @"fps", NSTouchBarItemIdentifierFlexibleSpace, @"rebind", @"reset"];
+    self.defaultItemIdentifiers = @[@"function", NSTouchBarItemIdentifierFlexibleSpace, @"fps", NSTouchBarItemIdentifierFlexibleSpace, @"rebind", @"reset"];
     
     fpsLabel = [NSTextField labelWithString:@"Loading..."];
-    //fpsLabel.alignment = NSTextAlignmentCenter;
+    fpsLabel.alignment = NSTextAlignmentCenter;
     fpsLabel.font = [NSFont labelFontOfSize:NSFont.smallSystemFontSize];
+    
+    functionKeys = [NSSegmentedControl segmentedControlWithLabels:@[@"F5", @"F6", @"F7", @"F8", @"F9"] trackingMode:NSSegmentSwitchTrackingMomentary target:self action:@selector(simFunctionKey)];
+    functionKeys.segmentStyle = NSSegmentStyleSeparated;
+    
     return self;
 }
 
@@ -77,25 +81,13 @@ MKXPZTouchBar *_sharedTouchBar;
         ((NSButton*)ret.view).bezelColor = accentColor;
     }
     else if ([identifier isEqualToString:@"rebind"]) {
-        ret.view = [NSButton buttonWithImage:[NSImage imageNamed:@"gearshape.fill"] target:self action:@selector(openSettingsMenu)];
+        ret.view = [NSButton buttonWithImage:[NSImage imageNamed:@"gear"] target:self action:@selector(openSettingsMenu)];
     }
     else if ([identifier isEqualToString:@"fps"]) {
         ret.view = fpsLabel;
     }
-    else if ([identifier isEqualToString:@"F5"]){
-        ret.view = [NSButton buttonWithTitle:identifier target:self action:@selector(simF5)];
-    }
-    else if ([identifier isEqualToString:@"F6"]){
-        ret.view = [NSButton buttonWithTitle:identifier target:self action:@selector(simF6)];
-    }
-    else if ([identifier isEqualToString:@"F7"]){
-        ret.view = [NSButton buttonWithTitle:identifier target:self action:@selector(simF7)];
-    }
-    else if ([identifier isEqualToString:@"F8"]){
-        ret.view = [NSButton buttonWithTitle:identifier target:self action:@selector(simF8)];
-    }
-    else if ([identifier isEqualToString:@"F9"]){
-        ret.view = [NSButton buttonWithTitle:identifier target:self action:@selector(simF9)];
+    else if ([identifier isEqualToString:@"function"]) {
+        ret.view = functionKeys;
     }
     else {
         // hopefully this should get the compiler to free the touchbaritem here
@@ -118,24 +110,8 @@ MKXPZTouchBar *_sharedTouchBar;
     [self simulateKeypress:SDL_SCANCODE_F12];
 }
 
--(void)simF5 {
-    [self simulateKeypress:SDL_SCANCODE_F5];
-}
-
--(void)simF6 {
-    [self simulateKeypress:SDL_SCANCODE_F6];
-}
-
--(void)simF7 {
-    [self simulateKeypress:SDL_SCANCODE_F7];
-}
-
--(void)simF8 {
-    [self simulateKeypress:SDL_SCANCODE_F8];
-}
-
--(void)simF9 {
-    [self simulateKeypress:SDL_SCANCODE_F9];
+-(void)simFunctionKey {
+    [self simulateKeypress:(SDL_Scancode)(SDL_SCANCODE_F5 + functionKeys.selectedSegment)];
 }
 
 -(void)simulateKeypress:(SDL_Scancode)scancode {
