@@ -39,8 +39,6 @@ struct AudioPrivate
 	AudioStream bgs;
 	AudioStream me;
 
-	AudioStream movie;
-
 	SoundEmitter se;
 
 	SyncPoint &syncPoint;
@@ -68,7 +66,6 @@ struct AudioPrivate
 	AudioPrivate(RGSSThreadData &rtData)
 	    : bgm(ALStream::Looped, "bgm"),
 	      bgs(ALStream::Looped, "bgs"),
-		  movie(ALStream::NotLooped, "movie"),
 	      me(ALStream::NotLooped, "me"),
 	      se(rtData.config),
 	      syncPoint(rtData.syncPoint)
@@ -313,31 +310,6 @@ void Audio::seStop()
 	p->se.stop();
 }
 
-
-void Audio::moviePlay(const char *filename,
-                    int volume,
-                    int pitch,
-                    float pos)
-{
-	p->movie.play(filename, volume, pitch, pos);
-}
-
-void Audio::movieSeek(float pos)
-{
-	p->movie.seek(pos);
-}
-
-void Audio::movieStop()
-{
-	p->movie.stop();
-}
-
-void Audio::movieFade(int time)
-{
-	p->movie.fadeOut(time);
-}
-
-
 void Audio::setupMidi()
 {
 	shState->midiState().initIfNeeded(shState->config());
@@ -351,11 +323,6 @@ float Audio::bgmPos()
 float Audio::bgsPos()
 {
 	return p->bgs.playingOffset();
-}
-
-float Audio::moviePos()
-{
-	return p->movie.playingOffset();
 }
 
 void Audio::reset()

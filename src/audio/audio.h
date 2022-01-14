@@ -63,18 +63,9 @@ public:
 	            int pitch = 100);
 	void seStop();
 
-	void moviePlay(const char *filename,
-	             int volume = 100,
-	             int pitch = 100,
-	             float pos = 0);
-	void movieStop();
-	void movieFade(int time);
-	void movieSeek(float pos);
-
 	void setupMidi();
 	float bgmPos();
 	float bgsPos();
-	float moviePos();
 
 	void reset();
 
