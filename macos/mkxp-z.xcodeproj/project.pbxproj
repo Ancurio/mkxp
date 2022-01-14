@@ -506,6 +506,14 @@
 		3BF5B4BD2685881D00A3B240 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF5B4BC2685881C00A3B240 /* libSDL2_sound.a */; };
 		3BF5B4BF2685883B00A3B240 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF5B4BE2685883B00A3B240 /* libSDL2_sound.a */; };
 		3BF5B4C02685883B00A3B240 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF5B4BE2685883B00A3B240 /* libSDL2_sound.a */; };
+		96573E7C27913B46002C3E77 /* TouchBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 96573E7A27913B46002C3E77 /* TouchBar.mm */; };
+		96573E7D27913B46002C3E77 /* TouchBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 96573E7A27913B46002C3E77 /* TouchBar.mm */; };
+		96573E7E27913B46002C3E77 /* TouchBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 96573E7A27913B46002C3E77 /* TouchBar.mm */; };
+		96573E7F27913B46002C3E77 /* TouchBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 96573E7A27913B46002C3E77 /* TouchBar.mm */; };
+		96573E81279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
+		96573E82279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
+		96573E83279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
+		96573E84279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1086,6 +1094,9 @@
 		3BF5B4BC2685881C00A3B240 /* libSDL2_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_sound.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_sound.a"; sourceTree = "<group>"; };
 		3BF5B4BE2685883B00A3B240 /* libSDL2_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_sound.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_sound.a"; sourceTree = "<group>"; };
 		3BFABF53267787940024C7DD /* sigslot */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sigslot; sourceTree = "<group>"; };
+		96573E7A27913B46002C3E77 /* TouchBar.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TouchBar.mm; path = views/TouchBar.mm; sourceTree = "<group>"; };
+		96573E7B27913B46002C3E77 /* TouchBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = TouchBar.h; path = views/TouchBar.h; sourceTree = "<group>"; };
+		96573E80279152DC002C3E77 /* TouchBar.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = TouchBar.xcassets; path = views/TouchBar.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1616,6 +1627,9 @@
 				3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */,
 				3B3F7D3025B1A79F00EA5F1C /* SettingsMenuController.h */,
 				3B480E9325DCBDD6001686B4 /* sdl_codes.h */,
+				96573E7A27913B46002C3E77 /* TouchBar.mm */,
+				96573E7B27913B46002C3E77 /* TouchBar.h */,
+				96573E80279152DC002C3E77 /* TouchBar.xcassets */,
 			);
 			name = MacOS;
 			sourceTree = "<group>";
@@ -2009,6 +2023,7 @@
 			files = (
 				3B1C23E725A19C600075EF5D /* icon.icns in Resources */,
 				3B3F7D2625B19F7000EA5F1C /* settingsmenu.xib in Resources */,
+				96573E84279152DC002C3E77 /* TouchBar.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2026,6 +2041,7 @@
 			files = (
 				3BBE87F52705A73400A574AE /* icon.icns in Resources */,
 				3BBE87F62705A73400A574AE /* settingsmenu.xib in Resources */,
+				96573E83279152DC002C3E77 /* TouchBar.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2035,6 +2051,7 @@
 			files = (
 				3BC65E0E2584F3AD0063AFF1 /* icon.icns in Resources */,
 				3B3F7D1D25B19F6E00EA5F1C /* settingsmenu.xib in Resources */,
+				96573E81279152DC002C3E77 /* TouchBar.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2044,6 +2061,7 @@
 			files = (
 				3BD2B6F92565AEC0003DAD8A /* icon.icns in Resources */,
 				3B3F7D2025B19F6E00EA5F1C /* settingsmenu.xib in Resources */,
+				96573E82279152DC002C3E77 /* TouchBar.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2106,6 +2124,7 @@
 				3B1C239D25A19C600075EF5D /* binding-mri.cpp in Sources */,
 				3B1C239F25A19C600075EF5D /* eventthread.cpp in Sources */,
 				3B1C23A025A19C600075EF5D /* viewport.cpp in Sources */,
+				96573E7F27913B46002C3E77 /* TouchBar.mm in Sources */,
 				3B1C23A125A19C600075EF5D /* gl-debug.cpp in Sources */,
 				3B1C23A325A19C600075EF5D /* tileatlasvx.cpp in Sources */,
 				3B1C23A425A19C600075EF5D /* bitmap.cpp in Sources */,
@@ -2192,6 +2211,7 @@
 				3BBE87AE2705A73400A574AE /* binding-mri.cpp in Sources */,
 				3BBE87AF2705A73400A574AE /* eventthread.cpp in Sources */,
 				3BBE87B02705A73400A574AE /* viewport.cpp in Sources */,
+				96573E7E27913B46002C3E77 /* TouchBar.mm in Sources */,
 				3BBE87B12705A73400A574AE /* gl-debug.cpp in Sources */,
 				3BBE87B22705A73400A574AE /* tileatlasvx.cpp in Sources */,
 				3BBE87B32705A73400A574AE /* bitmap.cpp in Sources */,
@@ -2265,6 +2285,7 @@
 				3BC65DAD2584F3AD0063AFF1 /* etc.cpp in Sources */,
 				3BC65DAE2584F3AD0063AFF1 /* shader.cpp in Sources */,
 				3BC65DAF2584F3AD0063AFF1 /* tilemap.cpp in Sources */,
+				96573E7C27913B46002C3E77 /* TouchBar.mm in Sources */,
 				3BC65DB12584F3AD0063AFF1 /* window.cpp in Sources */,
 				3BC65DB32584F3AD0063AFF1 /* input-binding.cpp in Sources */,
 				3BC65DB42584F3AD0063AFF1 /* keybindings.cpp in Sources */,
@@ -2343,6 +2364,7 @@
 				3B10EDAB2568E95E00372D13 /* etc.cpp in Sources */,
 				3B10EDCA2568E95E00372D13 /* shader.cpp in Sources */,
 				3B10EDCE2568E95E00372D13 /* tilemap.cpp in Sources */,
+				96573E7D27913B46002C3E77 /* TouchBar.mm in Sources */,
 				3B10EDBE2568E95E00372D13 /* window.cpp in Sources */,
 				3B10EDF92568E96A00372D13 /* input-binding.cpp in Sources */,
 				3B10EDA92568E95E00372D13 /* keybindings.cpp in Sources */,
@@ -3376,7 +3398,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.12.2;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-fdeclspec";
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
@@ -3446,7 +3468,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.12.2;
 				OTHER_CFLAGS = "-fdeclspec";
 				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";

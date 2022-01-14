@@ -66,6 +66,7 @@ __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 
 #ifdef MKXPZ_BUILD_XCODE
 #include <Availability.h>
+#include "TouchBar.h"
 #if __MAC_OS_X_VERSION_MAX_ALLOWED < __MAC_10_15
 #define MKXPZ_INIT_GL_LATER
 #endif
@@ -402,6 +403,11 @@ int main(int argc, char *argv[]) {
 
     /* Load and post key bindings */
     rtData.bindingUpdateMsg.post(loadBindings(conf));
+    
+#ifdef MKXPZ_BUILD_XCODE
+    // Create Touch Bar
+    initTouchBar(win, conf);
+#endif
 
     /* Start RGSS thread */
     SDL_Thread *rgssThread = SDL_CreateThread(rgssThreadFun, "rgss", &rtData);

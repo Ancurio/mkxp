@@ -82,14 +82,14 @@ typedef NSMutableArray<NSNumber*> BindingIndexArray;
     win.styleMask &= NSWindowStyleMaskTitled;
     win.title = @"Keybindings";
     [s setWindow:win];
-    [win orderFront:self];
+    [win makeKeyAndOrderFront:self];
     
     return s;
 }
 
 -(SettingsMenu*)raise {
     if (_window)
-        [_window orderFront:self];
+        [_window makeKeyAndOrderFront:self];
     return self;
 }
 

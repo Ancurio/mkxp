@@ -120,7 +120,7 @@ std::string filesystemImpl::selectPath(SDL_Window *win, const char *msg, const c
     [NSApp runModalForWindow:windowinfo.info.cocoa.window];
     
     // The window needs to be brought to the front again after the OpenPanel closes
-    [NSApplication.sharedApplication activateIgnoringOtherApps:true];
+    [windowinfo.info.cocoa.window makeKeyAndOrderFront:nil];
     if (panel.URLs.count > 0)
         return std::string(NSTOPATH(panel.URLs[0].path));
     

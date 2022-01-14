@@ -41,6 +41,7 @@
 #include "settingsmenu.h"
 #else
 #include "system/system.h"
+#include "TouchBar.h"
 #endif
 
 #include "al-util.h"
@@ -775,11 +776,19 @@ SDL_Joystick *EventThread::joystick() const
 
 void EventThread::notifyFrame()
 {
+#ifdef MKXPZ_BUILD_XCODE
+    uint32_t frames = round(shState->graphics().averageFrameRate());
+    updateTouchBarFPSDisplay(frames);
+#endif
     if (!fps.sendUpdates)
         return;
     
     SDL_Event event;
+#ifdef MKXPZ_BUILD_XCODE
+    event.user.code = frames;
+#else
     event.user.code = round(shState->graphics().averageFrameRate());
+#endif
     event.user.type = usrIdStart + UPDATE_FPS;
     SDL_PushEvent(&event);
 }
