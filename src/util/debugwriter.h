@@ -30,46 +30,47 @@
 #include <android/log.h>
 #endif
 
-
 /* A cheap replacement for qDebug() */
 
 class Debug
 {
 public:
-	Debug()
-	{
-		buf << std::boolalpha;
-	}
+	Debug();
+	~Debug();
 
 	template<typename T>
-	Debug &operator<<(const T &t)
-	{
-		buf << t;
-		buf << " ";
-
-		return *this;
-	}
+	Debug &operator<<(const T &t);
 
 	template<typename T>
-	Debug &operator<<(const std::vector<T> &v)
-	{
-		for (size_t i = 0; i < v.size(); ++i)
-			buf << v[i] << " ";
+	Debug &operator<<(const std::vector<T> &v);
 
-		return *this;
-	}
-
-	~Debug()
-	{
-#ifdef __ANDROID__
-		__android_log_write(ANDROID_LOG_DEBUG, "mkxp", buf.str().c_str());
-#else
-		std::cerr << buf.str() << std::endl;
-#endif
-	}
+	static void startQueueing();
+	static void stopQueueing();
 
 private:
 	std::stringstream buf;
+	static std::stringstream queueBuf;
+	static bool queue;
+
+	std::stringstream &getBuf();
 };
+
+template<typename T>
+Debug &Debug::operator<<(const T &t)
+{
+	getBuf() << t;
+	getBuf() << " ";
+
+	return *this;
+}
+
+template<typename T>
+Debug &Debug::operator<<(const std::vector<T> &v)
+{
+	for (size_t i = 0; i < v.size(); ++i)
+		getBuf() << v[i] << " ";
+
+	return *this;
+}
 
 #endif // DEBUGWRITER_H
