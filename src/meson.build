@@ -147,6 +147,7 @@ main_source = files(
     'display/gl/vertex.cpp',
 
     'util/iniconfig.cpp',
+    'util/win-consoleutils.cpp',
     
     'etc/etc.cpp',
     'etc/table.cpp',

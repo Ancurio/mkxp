@@ -51,6 +51,7 @@ extern "C" {
 
 #ifdef __WIN32__
 #include <fcntl.h>
+#include "util/win-consoleutils.h"
 #endif
 
 #include <assert.h>
@@ -273,7 +274,10 @@ static void mriBindingInit() {
     // Set $stdout and its ilk accordingly on Windows
 #ifdef __WIN32__
     if (shState->config().editor.debug)
+    {
+        reopenWindowsStreams();
         configureWindowsStreams();
+    }
 #endif
     
     // Load zlib, if it's present. Requires --with-static-linked-ext or zlib.so.
@@ -957,7 +961,7 @@ static void configureWindowsStreams() {
         const int stdoutFD = _open_osfhandle((intptr_t)outputHandle, _O_TEXT);
 
         VALUE winStdout = rb_funcall(rb_cIO, rb_intern("new"), 2,
-            INT2NUM(stdoutFD), rb_str_new_cstr("w"));
+            INT2NUM(stdoutFD), rb_str_new_cstr("w+"));
 
         rb_gv_set("stdout", winStdout);
     }
@@ -972,6 +976,18 @@ static void configureWindowsStreams() {
             INT2NUM(stdinFD), rb_str_new_cstr("r"));
 
         rb_gv_set("stdin", winStdin);
+    }
+
+    const HANDLE errorHandle = GetStdHandle(STD_ERROR_HANDLE);
+
+    // Configure $stderr
+    if (HANDLE_VALID(errorHandle)) {
+        const int stderrFD = _open_osfhandle((intptr_t)errorHandle, _O_TEXT);
+
+        VALUE winStderr = rb_funcall(rb_cIO, rb_intern("new"), 2,
+            INT2NUM(stderrFD), rb_str_new_cstr("w+"));
+
+        rb_gv_set("stderr", winStderr);
     }
 
     #undef HANDLE_VALID
@@ -1053,15 +1069,9 @@ static void mriBindingExecute() {
     /* Normally only a ruby executable would do a sysinit,
      * but not doing it will lead to crashes due to closed
      * stdio streams on some platforms (eg. Windows) */
-#ifdef __WIN32__
-    if (!conf.editor.debug) {
-#endif
     int argc = 0;
     char **argv = 0;
     ruby_sysinit(&argc, &argv);
-#ifdef __WIN32__
-    }
-#endif
     
     RUBY_INIT_STACK;
     ruby_init();
