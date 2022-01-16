@@ -50,8 +50,7 @@ extern "C" {
 }
 
 #ifdef __WIN32__
-#include <fcntl.h>
-#include "util/win-consoleutils.h"
+#include "binding-mri-win32.h"
 #endif
 
 #include <assert.h>
@@ -72,9 +71,6 @@ extern const char module_rpg3[];
 static void mriBindingExecute();
 static void mriBindingTerminate();
 static void mriBindingReset();
-#ifdef __WIN32__
-static void configureWindowsStreams();
-#endif
 
 ScriptBinding scriptBindingImpl = {mriBindingExecute, mriBindingTerminate,
     mriBindingReset};
@@ -274,10 +270,7 @@ static void mriBindingInit() {
     // Set $stdout and its ilk accordingly on Windows
 #ifdef __WIN32__
     if (shState->config().editor.debug)
-    {
-        reopenWindowsStreams();
         configureWindowsStreams();
-    }
 #endif
     
     // Load zlib, if it's present. Requires --with-static-linked-ext or zlib.so.
@@ -946,53 +939,6 @@ static void runRMXPScripts(BacktraceData &btData) {
         processReset();
     }
 }
-
-// Attempts to set $stdout and $stdin accordingly on Windows. Only
-// called when debug mode is on, since that's when the console
-// should be active.
-#ifdef __WIN32__
-static void configureWindowsStreams() {
-    #define HANDLE_VALID(handle) handle && handle != INVALID_HANDLE_VALUE
-
-    const HANDLE outputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    // Configure $stdout
-    if (HANDLE_VALID(outputHandle)) {
-        const int stdoutFD = _open_osfhandle((intptr_t)outputHandle, _O_TEXT);
-
-        VALUE winStdout = rb_funcall(rb_cIO, rb_intern("new"), 2,
-            INT2NUM(stdoutFD), rb_str_new_cstr("w+"));
-
-        rb_gv_set("stdout", winStdout);
-    }
-
-    const HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
-
-    // Configure $stdin
-    if (HANDLE_VALID(inputHandle)) {
-        const int stdinFD = _open_osfhandle((intptr_t)inputHandle, _O_TEXT);
-
-        VALUE winStdin = rb_funcall(rb_cIO, rb_intern("new"), 2,
-            INT2NUM(stdinFD), rb_str_new_cstr("r"));
-
-        rb_gv_set("stdin", winStdin);
-    }
-
-    const HANDLE errorHandle = GetStdHandle(STD_ERROR_HANDLE);
-
-    // Configure $stderr
-    if (HANDLE_VALID(errorHandle)) {
-        const int stderrFD = _open_osfhandle((intptr_t)errorHandle, _O_TEXT);
-
-        VALUE winStderr = rb_funcall(rb_cIO, rb_intern("new"), 2,
-            INT2NUM(stderrFD), rb_str_new_cstr("w+"));
-
-        rb_gv_set("stderr", winStderr);
-    }
-
-    #undef HANDLE_VALID
-}
-#endif // #ifdef __WIN32__
 
 static void showExc(VALUE exc, const BacktraceData &btData) {
     VALUE bt = rb_funcall2(exc, rb_intern("backtrace"), 0, NULL);

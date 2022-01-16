@@ -296,7 +296,9 @@ int main(int argc, char *argv[]) {
 
     // Create a debug console in debug mode
     if (conf.editor.debug) {
-      if (!setupWindowsConsole()) {
+      if (setupWindowsConsole()) {
+        reopenWindowsStreams();
+      } else {
         char buf[200];
         snprintf(buf, sizeof(buf), "Error allocating console: %lu",
                 GetLastError());
