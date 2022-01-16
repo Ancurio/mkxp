@@ -21,7 +21,6 @@
 
 #include "graphics.h"
 
-#include "theoraplay/theoraplay.h"
 #include "audio.h"
 #include "binding.h"
 #include "bitmap.h"
@@ -40,6 +39,7 @@
 #include "shader.h"
 #include "sharedstate.h"
 #include "texpool.h"
+#include "theoraplay/theoraplay.h"
 #include "util.h"
 #include "input.h"
 
@@ -104,11 +104,14 @@ struct Movie
     bool hasVideo;
     bool hasAudio;
     Bitmap *videoBitmap;
-    SDL_RWops srcOps;
+    SDL_RWops srcOps;    
+    static float volume;
 
-    Movie()
+    Movie(int volume_)
     : decoder(0), audio(0), video(0)
-    {}
+    {
+        volume = volume_ * 0.01f;
+    }
     bool preparePlayback()
     {
 
@@ -204,9 +207,8 @@ struct Movie
     static void queueMoreMovieAudio(THEORAPLAY_Decoder *decoder, const Uint32 now) {
         const THEORAPLAY_AudioPacket *audio;
         while ((audio = THEORAPLAY_getAudio(decoder)) != NULL) {
-            const unsigned int playms = audio->playms;
             queueAudioPacket(audio);
-            if (playms >= now + 2000) {  // don't let this get too far ahead.
+            if (audio->playms >= now + 2000) {  // don't let this get too far ahead.
                 break;
             }
         }
@@ -231,7 +233,7 @@ struct Movie
             }
 
             for (i = 0; i < cpy; i++) {
-                const float val = *(src++);
+                const float val = (*(src++)) * volume;
                 if (val < -1.0f) {
                     *(dst++) = -32768;
                 } else if (val > 1.0f) {
@@ -373,6 +375,7 @@ struct Movie
     }
 };
 
+float Movie::volume;
 
 struct MovieOpenHandler : FileSystem::OpenHandler
 {
@@ -1266,7 +1269,7 @@ bool Graphics::updateMovieInput(Movie *movie) {
 }
 
 void Graphics::playMovie(const char *filename, int volume) {
-    Movie *movie = new Movie();
+    Movie *movie = new Movie(volume);
     MovieOpenHandler handler(movie->srcOps);
     shState->fileSystem().openRead(handler, filename);
 
@@ -1284,9 +1287,9 @@ void Graphics::playMovie(const char *filename, int volume) {
         glState.blend.pushSet(false);
 
         movie->play();
+        glState.blend.pop();
     }
 
-    glState.blend.pop();
     delete movie;
     if(p->threadData->rqReset) scriptBinding->reset();
     if(p->threadData->rqTerm) p->shutdown();
