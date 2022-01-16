@@ -269,7 +269,9 @@ RB_METHOD(graphicsPlayMovie)
     SafeStringValue(filename);
     int volume = (volumeArg == Qnil) ? 100 : NUM2INT(volumeArg);
 
-    shState->graphics().playMovie(RSTRING_PTR(filename), volume);
+    // TODO: Video control inputs (e.g. skip, pause)
+
+    GUARD_EXC(shState->graphics().playMovie(RSTRING_PTR(filename), volume););
     
     return Qnil;
 }
