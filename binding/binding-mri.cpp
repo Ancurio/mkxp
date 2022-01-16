@@ -277,7 +277,6 @@ static void mriBindingInit() {
     {
         reopenWindowsStreams();
         configureWindowsStreams();
-        Debug::stopQueueing();
     }
 #endif
     

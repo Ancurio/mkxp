@@ -228,11 +228,6 @@ int main(int argc, char *argv[]) {
       }
     }
 
-  #if __WIN32__
-    if (conf.editor.debug)
-      Debug::startQueueing();
-  #endif
-
     conf.readGameINI();
 
 #ifdef MKXPZ_STEAM

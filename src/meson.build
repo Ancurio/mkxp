@@ -146,7 +146,6 @@ main_source = files(
     'display/gl/tilequad.cpp',
     'display/gl/vertex.cpp',
 
-    'util/debugwriter.cpp',
     'util/iniconfig.cpp',
     'util/win-consoleutils.cpp',
     
