@@ -49,18 +49,19 @@ vec3 blendAdd(vec3 base, vec3 blend, float opacity) {
     return (blendAdd(base, blend) * opacity + base * (1.0 - opacity));
 }
 
-// Substract
-float blendSubstract(float base, float blend) {
+// Subtract
+float blendSubtract(float base, float blend) {
     return max(base+blend-1.0,0.0);
 }
 
-vec3 blendSubstract(vec3 base, vec3 blend) {
+vec3 blendSubtract(vec3 base, vec3 blend) {
     return max(base+blend-vec3(1.0),vec3(0.0));
 }
 
-vec3 blendSubstract(vec3 base, vec3 blend, float opacity) {
-    return (blendSubstract(base, blend) * opacity + blend * (1.0 - opacity));
+vec3 blendSubtract(vec3 base, vec3 blend, float opacity) {
+    return (blendSubtract(base, blend) * opacity + base * (1.0 - opacity));
 }
+
 // = = = = = = = = = = =
 
 void main()
@@ -72,10 +73,10 @@ void main()
     if (renderPattern) {
         vec4 pattfrag = texture2D(pattern, mod(v_patCoord, repeat));
         if (patternBlendType == 1) {
-            frag.rgb = frag.rgb = blendAdd(frag.rgb, pattfrag.rgb, pattfrag.a * patternOpacity);
+            frag.rgb =  blendAdd(frag.rgb, pattfrag.rgb, pattfrag.a * patternOpacity);
         }
         else if (patternBlendType == 2) {
-            frag.rgb = blendSubstract(frag.rgb, pattfrag.rgb, pattfrag.a * patternOpacity);
+            frag.rgb = blendSubtract(frag.rgb, pattfrag.rgb, pattfrag.a * patternOpacity);
         }
         else {
             frag.rgb = blendNormal(frag.rgb, pattfrag.rgb, pattfrag.a * patternOpacity);
