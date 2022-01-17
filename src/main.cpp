@@ -344,18 +344,19 @@ int main(int argc, char *argv[]) {
       return 0;
     }
     
-#if defined(MKXPZ_BUILD_XCODE) && defined(MKXPZ_DEBUG)
-#define DEBUG_FSELECT_MSG "Select the folder to load game files from. This is the folder containing the INI and/or configuration JSON.\nThis prompt does not appear in release builds."
+#if defined(MKXPZ_BUILD_XCODE)
+#define DEBUG_FSELECT_MSG "Select the folder to load game files from. This is the folder containing the INI and/or configuration JSON."
 #define DEBUG_FSELECT_PROMPT "Load Game"
-    std::string dataDirStr = mkxp_fs::selectPath(win, DEBUG_FSELECT_MSG, DEBUG_FSELECT_PROMPT);
-    if (!dataDirStr.empty()) {
-        conf.gameFolder = dataDirStr;
-        mkxp_fs::setCurrentDirectory(dataDirStr.c_str());
-        Debug() << "DEBUG: Current directory set to" << dataDirStr;
-        conf.read(argc, argv);
-        conf.readGameINI();
+    if (SDL_getenv("MKXPZ_SELECT_PATH")) {
+        std::string dataDirStr = mkxp_fs::selectPath(win, DEBUG_FSELECT_MSG, DEBUG_FSELECT_PROMPT);
+        if (!dataDirStr.empty()) {
+            conf.gameFolder = dataDirStr;
+            mkxp_fs::setCurrentDirectory(dataDirStr.c_str());
+            Debug() << "DEBUG: Current directory set to" << dataDirStr;
+            conf.read(argc, argv);
+            conf.readGameINI();
+        }
     }
-    
 #endif
 
     /* OSX and Windows have their own native ways of

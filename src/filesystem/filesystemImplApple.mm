@@ -5,12 +5,8 @@
 //  Created by ゾロアーク on 11/21/20.
 //
 
-#ifdef MKXPZ_DEBUG
 #import <AppKit/AppKit.h>
 #import <SDL_syswm.h>
-#else
-#import <Foundation/Foundation.h>
-#endif
 
 #import <SDL_filesystem.h>
 
@@ -100,7 +96,6 @@ std::string filesystemImpl::getResourcePath() {
     return std::string(NSTOPATH(NSBundle.mainBundle.resourcePath));
 }
 
-#ifdef MKXPZ_DEBUG
 std::string filesystemImpl::selectPath(SDL_Window *win, const char *msg, const char *prompt) {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.canChooseDirectories = true;
@@ -126,4 +121,3 @@ std::string filesystemImpl::selectPath(SDL_Window *win, const char *msg, const c
     
     return std::string();
 }
-#endif
