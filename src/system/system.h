@@ -41,6 +41,7 @@ WineHostType getRealHostType();
 
 #ifdef MKXPZ_BUILD_XCODE
 void openSettingsWindow();
+bool isMetalSupported();
 #endif
 
 namespace mkxp_sys = systemImpl;

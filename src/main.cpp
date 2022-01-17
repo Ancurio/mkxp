@@ -325,6 +325,8 @@ int main(int argc, char *argv[]) {
     // LoadLibrary properly initializes EGL, it won't work otherwise.
     // Doesn't completely do it though, needs a small patch to SDL
 #ifdef MKXPZ_BUILD_XCODE
+    // Setting OpenGL only works when building in Release mode due to the config getting re-read later
+    SDL_setenv("ANGLE_DEFAULT_PLATFORM", (conf.preferMetalRenderer && isMetalSupported()) ? "metal" : "opengl", true);
     SDL_GL_LoadLibrary("@rpath/libEGL.dylib");
 #endif
 #endif
