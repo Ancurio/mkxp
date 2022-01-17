@@ -157,7 +157,7 @@ try { exp } catch (...) {}
             editor.battleTest = true;
         
         for (int i = 1; i < argc; i++) {
-            if (!strcmp(argv[i], "debug"))
+            if (strcmp(argv[i], "debug"))
                 launchArgs.push_back(argv[i]);
         }
     }

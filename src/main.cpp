@@ -228,6 +228,20 @@ int main(int argc, char *argv[]) {
       }
     }
 
+#if defined(__WIN32__)
+    // Create a debug console in debug mode
+    if (conf.editor.debug) {
+      if (setupWindowsConsole()) {
+        reopenWindowsStreams();
+      } else {
+        char buf[200];
+        snprintf(buf, sizeof(buf), "Error allocating console: %lu",
+                GetLastError());
+        showInitError(std::string(buf));
+      }
+    }
+#endif
+
     conf.readGameINI();
 
 #ifdef MKXPZ_STEAM
@@ -292,20 +306,6 @@ int main(int argc, char *argv[]) {
                WSAGetLastError());
       showInitError(
           std::string(buf)); // Not an error worth ending the program over
-    }
-
-    // Create a debug console in debug mode
-    if (conf.editor.debug) {
-      HANDLE winConsoleHandle;
-
-      if (setupWindowsConsole(winConsoleHandle)) {
-        reopenWindowsStreams();
-      } else {
-        char buf[200];
-        snprintf(buf, sizeof(buf), "Error allocating console: %lu",
-                GetLastError());
-        showInitError(std::string(buf));
-      }
     }
 #endif
 
