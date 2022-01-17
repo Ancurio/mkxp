@@ -19,6 +19,11 @@
     // (default: 0)
     //
     // "rgssVersion": 1,
+    
+    // Render using Metal instead of OpenGL, if possible.
+    //
+    // Using Metal requires macOS 10.13+ and a compatible GPU.
+    // "preferMetalRenderer": true,
 
     // Create a debug context and log
     // OpenGL debug information to the console

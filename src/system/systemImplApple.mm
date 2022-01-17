@@ -6,6 +6,8 @@
 //
 
 #import <AppKit/AppKit.h>
+#import <Metal/Metal.h>
+
 #import <sys/sysctl.h>
 #import "system.h"
 #import "SettingsMenuController.h"
@@ -52,4 +54,11 @@ void openSettingsWindow() {
         return;
     }
     [smenu raise];
+}
+
+bool isMetalSupported() {
+    if (@available(macOS 10.13.0, *)) {
+        return MTLCreateSystemDefaultDevice() != nil;
+    }
+    return false;
 }

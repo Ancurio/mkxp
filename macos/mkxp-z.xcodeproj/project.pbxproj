@@ -458,7 +458,7 @@
 		3BC65DEB2584F3AD0063AFF1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD2B47A256534BA003DAD8A /* IOKit.framework */; };
 		3BC65DED2584F3AD0063AFF1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081552568D3A60006849F /* Carbon.framework */; };
 		3BC65DEF2584F3AD0063AFF1 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081582568D3A60006849F /* AppKit.framework */; };
-		3BC65DF42584F3AD0063AFF1 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081542568D3A60006849F /* Metal.framework */; };
+		3BC65DF42584F3AD0063AFF1 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081542568D3A60006849F /* Metal.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		3BC65DF52584F3AD0063AFF1 /* ForceFeedback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081572568D3A60006849F /* ForceFeedback.framework */; };
 		3BC65DF62584F3AD0063AFF1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081532568D3A60006849F /* CoreVideo.framework */; };
 		3BC65DFA2584F3AD0063AFF1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BE081562568D3A60006849F /* CoreGraphics.framework */; };
@@ -3366,7 +3366,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MKXPZ_BUILD_XCODE,
 					"MKXPZ_ALCDEVICE=ALCdevice",
-					"MKXPZ_VERSION=\"$(MARKETING_VERSION)\"",
+					"MKXPZ_VERSION=\"\\\"$(MARKETING_VERSION)\\\"\"",
 					MKXPZ_MINIFFI,
 					MKXPZ_DEBUG,
 					MKXPZ_SSL,
@@ -3437,7 +3437,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MKXPZ_BUILD_XCODE,
 					"MKXPZ_ALCDEVICE=ALCdevice",
-					"MKXPZ_VERSION=\"$(MARKETING_VERSION)\"",
+					"MKXPZ_VERSION=\"\\\"$(MARKETING_VERSION)\\\"\"",
 					MKXPZ_MINIFFI,
 					MKXPZ_SSL,
 					AL_LIBTYPE_STATIC,

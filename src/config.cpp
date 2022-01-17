@@ -88,6 +88,7 @@ Config::Config() {}
 void Config::read(int argc, char *argv[]) {
     auto optsJ = json::object({
         {"rgssVersion", 0},
+        {"preferMetalRenderer", true},
         {"debugMode", false},
         {"printFPS", false},
         {"winResizable", true},
@@ -192,6 +193,7 @@ try { exp } catch (...) {}
 #define SET_STRINGOPT(var, key) GUARD(var = std::string(opts[#key].as_string());)
     
     SET_OPT(rgssVersion, integer);
+    SET_OPT(preferMetalRenderer, boolean);
     SET_OPT(debugMode, boolean);
     SET_OPT(printFPS, boolean);
     SET_OPT(fullscreen, boolean);

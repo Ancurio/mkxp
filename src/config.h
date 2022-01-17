@@ -35,6 +35,7 @@ struct Config {
     int rgssVersion;
     
     bool debugMode;
+    bool preferMetalRenderer;
     bool printFPS;
     
     bool winResizable;

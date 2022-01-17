@@ -10,7 +10,7 @@ Despite the fact that it was made with Essentials games in mind, there is nothin
 
 It supports Windows, Linux and both Intel and Apple Silicon versions of macOS.
 
-Releases are [here](https://gitlab.com/mkxp-z/mkxp-z/-/releases). Requirements for running them are Windows 8.1+, Ubuntu 18.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.12+.
+Releases are [here](https://gitlab.com/mkxp-z/mkxp-z/-/releases). Requirements for running them are Windows 8.1+, Ubuntu 18.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.12.2+.
 
 I'd highly recommend [checking the gitbook](https://roza-gb.gitbook.io/mkxp-z) for more information than this readme contains.
 
@@ -48,7 +48,7 @@ pacman -S git ruby base-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-meson ming
 pacman -S git ruby base-devel mingw-w64-i686-cmake mingw-w64-i686-meson mingw-w64-i686-gcc
 ```
 
-+ **Linux (Ubuntu/Debian)**
++ **Linux (Ubuntu 18.04)**
 
 ```sh
 sudo apt install git build-essential cmake meson autoconf automake libtool pkg-config ruby bison zlib1g-dev xorg-dev lib32z1 libasound2-dev libpulse-dev
@@ -99,6 +99,6 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 ## What doesn't work (yet)
 * Movie playback
 * wma audio files
-* Creating Bitmaps with sizes greater than the OpenGL texture size limit (around 16384 on modern cards).^
+* Creating Bitmaps with sizes greater than your hardware's texture size limit (around 16384 on modern cards).^
 
 ^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
