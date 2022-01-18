@@ -51,11 +51,11 @@ vec3 blendAdd(vec3 base, vec3 blend, float opacity) {
 
 // Subtract
 float blendSubtract(float base, float blend) {
-    return max(base+blend-1.0,0.0);
+    return max(base-blend,0.0);
 }
 
 vec3 blendSubtract(vec3 base, vec3 blend) {
-    return max(base+blend-vec3(1.0),vec3(0.0));
+    return max(base-blend,vec3(0.0));
 }
 
 vec3 blendSubtract(vec3 base, vec3 blend, float opacity) {
