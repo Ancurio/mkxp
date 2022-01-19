@@ -109,7 +109,7 @@ if get_option('force32') == true
 endif
 
 build_static = false
-if get_option('static_executable') == true # and host_system == 'windows'
+if get_option('static_executable') == true
     build_static = true
 endif
 
@@ -141,11 +141,20 @@ else
 endif
 
 exe_name = meson.project_name()
+
+if host_system == 'linux' and get_option('appimage') == false
+    exe_name += '.' + host_machine.cpu()
+endif
+
 if steamworks == true
-    exe_name = meson.project_name() + '_rt'
+    exe_name += '_rt'
     la = ''
     if build_static == true
-        la = '-static'
+        if host_system == 'windows'
+            la = '-static'
+        else
+            la = '-static-libgcc -static-libstdc++'
+        endif
     endif
 
     shim_args = [
@@ -168,10 +177,6 @@ if steamworks == true
         link_args: la.split(),
         gui_app: (get_option('steamshim_debug') == false),
         install: (host_system != 'windows'))
-endif
-
-if host_system == 'linux' and get_option('appimage') == false
-    exe_name += '.' + host_machine.cpu()
 endif
 
 executable(exe_name,
