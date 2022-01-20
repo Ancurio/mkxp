@@ -147,7 +147,7 @@ if host_system == 'linux' and get_option('appimage') == false
 endif
 
 if steamworks == true
-    exe_name += '_rt'
+    exe_name = 'steam_' + exe_name
     la = ''
     if build_static == true
         if host_system == 'windows'
