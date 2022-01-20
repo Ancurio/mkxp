@@ -88,7 +88,7 @@ Binding controller buttons on macOS is slightly different depending on which ver
 + **Start/Select (Options/Share, Menu/Back, Plus/Minus)**: macOS Catalina 10.15+
 + **Home (Guide, PS)**: macOS Big Sur 11.0+
 
-Technically, while SDL itself might support these buttons, the keybinding menu had to be rewritten in Cocoa in a hurry, as switching away from native OpenGL broke the original keybinding menu. (ANGLE is used instead, to prevent crashing on Apple Silicon releases of macOS, and to help mkxp switch to Metal in the future)
+Technically, while SDL itself might support these buttons, the keybinding menu had to be rewritten in Cocoa in a hurry, as switching away from native OpenGL broke the original keybinding menu. (ANGLE is used instead, to prevent crashing on Apple Silicon releases of macOS, and to help mkxp switch to Metal)
 
 ## Fonts
 
