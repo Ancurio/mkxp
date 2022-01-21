@@ -506,6 +506,14 @@
 		3BF5B4BD2685881D00A3B240 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF5B4BC2685881C00A3B240 /* libSDL2_sound.a */; };
 		3BF5B4BF2685883B00A3B240 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF5B4BE2685883B00A3B240 /* libSDL2_sound.a */; };
 		3BF5B4C02685883B00A3B240 /* libSDL2_sound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BF5B4BE2685883B00A3B240 /* libSDL2_sound.a */; };
+		96563582279A5ABD003D6A75 /* libtheora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96563581279A5ABD003D6A75 /* libtheora.a */; };
+		96563583279A5ABD003D6A75 /* libtheora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96563581279A5ABD003D6A75 /* libtheora.a */; };
+		96563585279A5ADA003D6A75 /* libtheora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96563584279A5ADA003D6A75 /* libtheora.a */; };
+		96563586279A5ADA003D6A75 /* libtheora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96563584279A5ADA003D6A75 /* libtheora.a */; };
+		9656359B279A5B74003D6A75 /* theoraplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 96563592279A5B74003D6A75 /* theoraplay.c */; };
+		9656359C279A5B74003D6A75 /* theoraplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 96563592279A5B74003D6A75 /* theoraplay.c */; };
+		9656359D279A5B74003D6A75 /* theoraplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 96563592279A5B74003D6A75 /* theoraplay.c */; };
+		9656359E279A5B74003D6A75 /* theoraplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 96563592279A5B74003D6A75 /* theoraplay.c */; };
 		96573E7C27913B46002C3E77 /* TouchBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 96573E7A27913B46002C3E77 /* TouchBar.mm */; };
 		96573E7D27913B46002C3E77 /* TouchBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 96573E7A27913B46002C3E77 /* TouchBar.mm */; };
 		96573E7E27913B46002C3E77 /* TouchBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 96573E7A27913B46002C3E77 /* TouchBar.mm */; };
@@ -1094,6 +1102,11 @@
 		3BF5B4BC2685881C00A3B240 /* libSDL2_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_sound.a; path = "Dependencies/build-macosx-universal/lib/libSDL2_sound.a"; sourceTree = "<group>"; };
 		3BF5B4BE2685883B00A3B240 /* libSDL2_sound.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_sound.a; path = "Dependencies/build-macosx-x86_64/lib/libSDL2_sound.a"; sourceTree = "<group>"; };
 		3BFABF53267787940024C7DD /* sigslot */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sigslot; sourceTree = "<group>"; };
+		96563581279A5ABD003D6A75 /* libtheora.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtheora.a; path = "Dependencies/build-macosx-x86_64/lib/libtheora.a"; sourceTree = "<group>"; };
+		96563584279A5ADA003D6A75 /* libtheora.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtheora.a; path = "Dependencies/build-macosx-universal/lib/libtheora.a"; sourceTree = "<group>"; };
+		9656358E279A5B74003D6A75 /* theoraplay_cvtrgb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = theoraplay_cvtrgb.h; sourceTree = "<group>"; };
+		9656358F279A5B74003D6A75 /* theoraplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = theoraplay.h; sourceTree = "<group>"; };
+		96563592279A5B74003D6A75 /* theoraplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = theoraplay.c; sourceTree = "<group>"; };
 		96573E7A27913B46002C3E77 /* TouchBar.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TouchBar.mm; path = views/TouchBar.mm; sourceTree = "<group>"; };
 		96573E7B27913B46002C3E77 /* TouchBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = TouchBar.h; path = views/TouchBar.h; sourceTree = "<group>"; };
 		96573E80279152DC002C3E77 /* TouchBar.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = TouchBar.xcassets; path = views/TouchBar.xcassets; sourceTree = "<group>"; };
@@ -1140,6 +1153,7 @@
 				3B1C23DC25A19C600075EF5D /* CoreAudio.framework in Frameworks */,
 				3B1C23DD25A19C600075EF5D /* AudioToolbox.framework in Frameworks */,
 				3B1C23DE25A19C600075EF5D /* Foundation.framework in Frameworks */,
+				96563583279A5ABD003D6A75 /* libtheora.a in Frameworks */,
 				3B1C23DF25A19C600075EF5D /* CoreFoundation.framework in Frameworks */,
 				3B1C23E025A19C600075EF5D /* libz.tbd in Frameworks */,
 				3B1C23E125A19C600075EF5D /* libiconv.tbd in Frameworks */,
@@ -1189,6 +1203,7 @@
 				3BBE87EA2705A73400A574AE /* CoreAudio.framework in Frameworks */,
 				3BBE87EB2705A73400A574AE /* AudioToolbox.framework in Frameworks */,
 				3BBE87EC2705A73400A574AE /* Foundation.framework in Frameworks */,
+				96563586279A5ADA003D6A75 /* libtheora.a in Frameworks */,
 				3BBE87ED2705A73400A574AE /* CoreFoundation.framework in Frameworks */,
 				3BBE87EE2705A73400A574AE /* libz.tbd in Frameworks */,
 				3BBE87EF2705A73400A574AE /* libiconv.tbd in Frameworks */,
@@ -1203,6 +1218,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96563585279A5ADA003D6A75 /* libtheora.a in Frameworks */,
 				3BC65E2C2584F4290063AFF1 /* libvorbisenc.a in Frameworks */,
 				3BC65E2D2584F4290063AFF1 /* libogg.a in Frameworks */,
 				3BAEB1442673DBE700AC177B /* libuchardet.a in Frameworks */,
@@ -1274,6 +1290,7 @@
 				3B10EC632568D40C00372D13 /* CoreAudio.framework in Frameworks */,
 				3BA08E9B256638C900449CFF /* AudioToolbox.framework in Frameworks */,
 				3BD2B6F12565AEC0003DAD8A /* Foundation.framework in Frameworks */,
+				96563582279A5ABD003D6A75 /* libtheora.a in Frameworks */,
 				3BD2B6EF2565AEC0003DAD8A /* CoreFoundation.framework in Frameworks */,
 				3BD2B6F32565AEC0003DAD8A /* libz.tbd in Frameworks */,
 				3BD2B6ED2565AEC0003DAD8A /* libiconv.tbd in Frameworks */,
@@ -1342,6 +1359,7 @@
 				3B10ED582568E95D00372D13 /* system */,
 				3B10ED5D2568E95D00372D13 /* audio */,
 				3B10ED6F2568E95D00372D13 /* display */,
+				9656358D279A5B74003D6A75 /* theoraplay */,
 				3B10ED352568E95D00372D13 /* eventthread.cpp */,
 				3B10ED492568E95D00372D13 /* eventthread.h */,
 				3B10ED432568E95D00372D13 /* config.h */,
@@ -1705,6 +1723,7 @@
 				3BAEB1432673DBE700AC177B /* libuchardet.a */,
 				3B522DA1259BAA13003301C4 /* libfluidsynth.dylib */,
 				3B1C230D25A144BF0075EF5D /* libruby.3.1.dylib */,
+				96563584279A5ADA003D6A75 /* libtheora.a */,
 				3BC65D822584F3780063AFF1 /* libogg.a */,
 				3BC65D842584F3780063AFF1 /* libopenal.a */,
 				3BC65D7B2584F3780063AFF1 /* libphysfs.a */,
@@ -1831,6 +1850,7 @@
 				3BE080FF256879FE0006849F /* libphysfs.a */,
 				3B1C230A25A144A10075EF5D /* libruby.3.1.dylib */,
 				3BE080E9256879FC0006849F /* libpixman-1.a */,
+				96563581279A5ABD003D6A75 /* libtheora.a */,
 				3BE080F0256879FD0006849F /* libSDL2_image.a */,
 				3BE080FA256879FE0006849F /* libSDL2_test.a */,
 				3BE080EF256879FD0006849F /* libSDL2_ttf.a */,
@@ -1844,6 +1864,16 @@
 				3B522DD4259BFF2D003301C4 /* libssl.a */,
 			);
 			name = Intel;
+			sourceTree = "<group>";
+		};
+		9656358D279A5B74003D6A75 /* theoraplay */ = {
+			isa = PBXGroup;
+			children = (
+				9656358E279A5B74003D6A75 /* theoraplay_cvtrgb.h */,
+				9656358F279A5B74003D6A75 /* theoraplay.h */,
+				96563592279A5B74003D6A75 /* theoraplay.c */,
+			);
+			path = theoraplay;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2107,6 +2137,7 @@
 				3B1C238B25A19C600075EF5D /* windowvx.cpp in Sources */,
 				3B1C238C25A19C600075EF5D /* LUrlParser.cpp in Sources */,
 				3B1C238D25A19C600075EF5D /* module_rpg.cpp in Sources */,
+				9656359E279A5B74003D6A75 /* theoraplay.c in Sources */,
 				3B1C238E25A19C600075EF5D /* miniffi.cpp in Sources */,
 				3B1C238F25A19C600075EF5D /* autotiles.cpp in Sources */,
 				3B1C239025A19C600075EF5D /* audiostream.cpp in Sources */,
@@ -2194,6 +2225,7 @@
 				3BBE879D2705A73400A574AE /* windowvx.cpp in Sources */,
 				3BBE879E2705A73400A574AE /* LUrlParser.cpp in Sources */,
 				3BBE879F2705A73400A574AE /* module_rpg.cpp in Sources */,
+				9656359D279A5B74003D6A75 /* theoraplay.c in Sources */,
 				3BBE87A02705A73400A574AE /* miniffi.cpp in Sources */,
 				3BBE87A12705A73400A574AE /* autotiles.cpp in Sources */,
 				3BBE87A22705A73400A574AE /* audiostream.cpp in Sources */,
@@ -2303,6 +2335,7 @@
 				3BC65DC12584F3AD0063AFF1 /* graphics-binding.cpp in Sources */,
 				3BC65DC22584F3AD0063AFF1 /* plane.cpp in Sources */,
 				3BC65DC32584F3AD0063AFF1 /* tilequad.cpp in Sources */,
+				9656359B279A5B74003D6A75 /* theoraplay.c in Sources */,
 				3BC65DC62584F3AD0063AFF1 /* tileatlas.cpp in Sources */,
 				3BC65DC72584F3AD0063AFF1 /* fluid-fun.cpp in Sources */,
 				3BC65DC82584F3AD0063AFF1 /* scene.cpp in Sources */,
@@ -2382,6 +2415,7 @@
 				3B10EE042568E96A00372D13 /* graphics-binding.cpp in Sources */,
 				3B10EDD12568E95E00372D13 /* plane.cpp in Sources */,
 				3B10EDC32568E95E00372D13 /* tilequad.cpp in Sources */,
+				9656359C279A5B74003D6A75 /* theoraplay.c in Sources */,
 				3B10EDCB2568E95E00372D13 /* tileatlas.cpp in Sources */,
 				3B10EDB52568E95E00372D13 /* fluid-fun.cpp in Sources */,
 				3B10EDC62568E95E00372D13 /* scene.cpp in Sources */,

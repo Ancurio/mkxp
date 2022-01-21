@@ -42,6 +42,7 @@
 #include "theoraplay/theoraplay.h"
 #include "util.h"
 #include "input.h"
+#include "sprite.h"
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -264,8 +265,7 @@ struct Movie
 
     bool startAudio()
     {
-        SDL_AudioSpec spec;
-        memset(&spec, '\0', sizeof (SDL_AudioSpec));
+        SDL_AudioSpec spec{};
         spec.freq = audio->freq;
         spec.format = AUDIO_S16SYS;
         spec.channels = audio->channels;
@@ -313,24 +313,6 @@ struct Movie
             }
 
             if (video && (video->playms <= now)) {
-                if (frameMs && ((now - video->playms) >= frameMs)) {
-                    // Skip frames to catch up, but keep track of the last one
-                    // in case we catch up to a series of dupe frames, which
-                    // means we'd have to draw that final frame and then wait for
-                    // more.
-                    const THEORAPLAY_VideoFrame *previous = video;
-                    while ((video = THEORAPLAY_getVideo(decoder)) != NULL) {
-                        THEORAPLAY_freeVideo(previous);
-                        previous = video;
-                        if ((now - video->playms) < frameMs) {
-                            break;
-                        }
-                    }
-
-                    if (!video) {
-                        video = previous;
-                    }
-                }
                 
                 // Application is too far behind
                 if (!video) {
@@ -339,7 +321,8 @@ struct Movie
                 }
 
                 // Got a video frame, now draw it
-                shState->graphics().drawMovieFrame(video, videoBitmap);
+                videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
+                shState->graphics().update();
                 THEORAPLAY_freeVideo(video);
                 video = NULL;
 
@@ -1240,30 +1223,6 @@ void Graphics::resizeScreen(int width, int height) {
     update();
 }
 
-void Graphics::drawMovieFrame(const THEORAPLAY_VideoFrame* video, Bitmap *videoBitmap) {
-    p->checkSyncLock();
-    videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
-
-    shState->shaders().trans.bind();
-    FBO::bind(p->screen.getPP().backBuffer().fbo);
-    FBO::clear();
-    p->screenQuad.draw();
-
-    p->checkResize();
-
-    /* Then blit it flipped and scaled to the screen */
-    FBO::unbind();
-    FBO::clear();
-
-    // Currently this stretches to fit the screen. VX Ace behavior is to center it and let the edges run off
-    GLMeta::blitBeginScreen(Vec2i(p->winSize));
-    GLMeta::blitSource(p->screen.getPP().backBuffer());
-    p->metaBlitBufferFlippedScaled();
-    GLMeta::blitEnd();
-
-    p->swapGLBuffer();
-}
-
 bool Graphics::updateMovieInput(Movie *movie) {
     return  p->threadData->rqTerm || p->threadData->rqReset;
 }
@@ -1274,25 +1233,29 @@ void Graphics::playMovie(const char *filename, int volume) {
     shState->fileSystem().openRead(handler, filename);
 
     if (movie->preparePlayback()) {
-        p->checkSyncLock();
-        p->screen.composite();
-
+        int limiterDisabled = p->fpsLimiter.disabled;
+        p->fpsLimiter.disabled = false;
+        p->fpsLimiter.setDesiredFPS(movie->video->fps);
+        bool oldframeskip = p->useFrameSkip;
+        p->useFrameSkip = true;
+        update();
+        
+        Sprite movieSprite;
         movie->videoBitmap = new Bitmap(movie->video->width, movie->video->height);
-        TransShader &shader = shState->shaders().trans;
-        shader.bind();
-        shader.applyViewportProj();
-        shader.setTransMap(movie->videoBitmap->getGLTypes().tex);
-        shader.setVague(256.0f);
-        shader.setTexSize(p->scRes);    
-        glState.blend.pushSet(false);
+        
+        // Currently this stretches to fit the screen. VX Ace behavior is to center it and let the edges run off
+        movieSprite.setBitmap(movie->videoBitmap);
+        movieSprite.setZoomX((double)width() / movie->video->width);
+        movieSprite.setZoomY((double)height() / movie->video->height);
 
         movie->play();
-        glState.blend.pop();
+        
+        p->fpsLimiter.disabled = limiterDisabled;
+        p->fpsLimiter.setDesiredFPS(p->frameRate);
+        p->useFrameSkip = oldframeskip;
     }
 
     delete movie;
-    if(p->threadData->rqReset) scriptBinding->reset();
-    if(p->threadData->rqTerm) p->shutdown();
 }
 
 void Graphics::screenshot(const char *filename) {

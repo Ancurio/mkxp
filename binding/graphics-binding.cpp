@@ -271,7 +271,7 @@ RB_METHOD(graphicsPlayMovie)
 
     // TODO: Video control inputs (e.g. skip, pause)
 
-    GUARD_EXC(shState->graphics().playMovie(RSTRING_PTR(filename), volume););
+    GFX_GUARD_EXC(shState->graphics().playMovie(RSTRING_PTR(filename), volume););
     
     return Qnil;
 }
@@ -345,10 +345,10 @@ void graphicsBindingInit()
 
     // end
     
-    if (rgssVer >= 3)
-    {
-        _rb_define_module_function(module, "play_movie", graphicsPlayMovie);
-    }
+    //if (rgssVer >= 3)
+    //{
+    _rb_define_module_function(module, "play_movie", graphicsPlayMovie);
+    //}
     
     INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
     INIT_GRA_PROP_BIND( ShowCursor, "show_cursor" );
