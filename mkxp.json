@@ -20,18 +20,18 @@
     //
     // "rgssVersion": 1,
     
-    // Render using Metal instead of OpenGL, if possible.
+    // Render using Metal instead of OpenGL, if possible. It should
+    // be far more reliable across all kinds of Macs.
     //
     // Using Metal requires macOS 10.13+ and a compatible GPU.
-    // Switching this to false will break the Steam Overlay
-    // on some systems (M1/Max/Pro, maybe more)
-    // "preferMetalRenderer": true,
-
-    // Create a debug context and log
-    // OpenGL debug information to the console
-    // (default: disabled)
+    // Any machine supporting 10.14+ or newer should automatically
+    // support Metal.
     //
-    // "debugMode": false,
+    // Unless there's some kind of problem, you should really leave
+    // this on. OpenGL will cause trouble, such as blitting problems,
+    // the Steam overlay not working, and v-sync failing completely.
+    
+    // "preferMetalRenderer": true,
 
 
     // Continuously print average FPS to console.

@@ -502,8 +502,12 @@ static SDL_GLContext initGL(SDL_Window *win, Config &conf,
     return 0;
   }
 
+// This breaks scaling for Retina screens.
+// Using Metal should be rendering this irrelevant anyway, hopefully
+#ifndef __APPLE__
   if (!conf.enableBlitting)
     gl.BlitFramebuffer = 0;
+#endif
 
   gl.ClearColor(0, 0, 0, 1);
   gl.Clear(GL_COLOR_BUFFER_BIT);
