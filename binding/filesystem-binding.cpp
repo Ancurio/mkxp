@@ -191,11 +191,9 @@ RB_METHOD(kernelLoadData) {
     rb_scan_args(argc, argv, "11", &filename, &raw);
     SafeStringValue(filename);
     
-    // There's gotta be an easier way to do this
-    if (raw != Qnil && raw != Qtrue && raw != Qfalse) {
-        rb_raise(rb_eTypeError, "load_data: second argument must be Boolean");
-    }
-    return kernelLoadDataInt(RSTRING_PTR(filename), true, RTEST(raw));
+    bool rawv;
+    rb_bool_arg(raw, &rawv);
+    return kernelLoadDataInt(RSTRING_PTR(filename), true, rawv);
 }
 
 RB_METHOD(kernelSaveData) {

@@ -226,7 +226,7 @@ RB_METHOD(MiniFFI_call) {
                 break;
                 
             case _T_BOOL:
-                lParam = RTEST(rb_ary_entry(args, i));
+                rb_bool_arg(rb_ary_entry(args, i), (bool*)&lParam);
                 break;
                 
             case _T_INTEGER:

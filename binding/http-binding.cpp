@@ -94,7 +94,9 @@ RB_METHOD(httpGet) {
     rb_scan_args(argc, argv, "12", &path, &rheaders, &redirect);
     SafeStringValue(path);
     
-    mkxp_net::HTTPRequest req(RSTRING_PTR(path), RTEST(redirect));
+    bool rd;
+    rb_bool_arg(redirect, &rd);
+    mkxp_net::HTTPRequest req(RSTRING_PTR(path), rd);
     if (rheaders != Qnil) {
         auto headers = hash2StringMap(rheaders);
         req.headers().insert(headers.begin(), headers.end());
@@ -135,7 +137,9 @@ RB_METHOD(httpPost) {
     rb_scan_args(argc, argv, "22", &path, &postDataHash, &rheaders, &redirect);
     SafeStringValue(path);
     
-    mkxp_net::HTTPRequest req(RSTRING_PTR(path), RTEST(redirect));
+    bool rd;
+    rb_bool_arg(redirect, &rd);
+    mkxp_net::HTTPRequest req(RSTRING_PTR(path), rd);
     if (rheaders != Qnil) {
         auto headers = hash2StringMap(rheaders);
         req.headers().insert(headers.begin(), headers.end());
