@@ -128,6 +128,7 @@ struct AudioStream
 	          float offset = 0);
 	void stop();
 	void fadeOut(int duration);
+	void seek(float offset);
 
 	/* Any access to this classes 'stream' member,
 	 * whether state query or modification, must be

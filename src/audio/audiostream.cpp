@@ -222,6 +222,13 @@ void AudioStream::fadeOut(int duration)
 	unlockStream();
 }
 
+void AudioStream::seek(float offset)
+{
+	lockStream();
+	stream.play(offset);
+	unlockStream();
+}
+
 /* Any access to this classes 'stream' member,
  * whether state query or modification, must be
  * protected by a 'lock'/'unlock' pair */

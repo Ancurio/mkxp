@@ -72,13 +72,13 @@ static const KbBindingData defaultKbBindings[] =
 	{ SDL_SCANCODE_UP,     Input::Up    },
 	{ SDL_SCANCODE_DOWN,   Input::Down  },
     
-	{ SDL_SCANCODE_SPACE,  Input::ZL    },
-	{ SDL_SCANCODE_RETURN, Input::ZL    },
+	{ SDL_SCANCODE_SPACE,  Input::C     },
+	{ SDL_SCANCODE_RETURN, Input::C     },
 	{ SDL_SCANCODE_ESCAPE, Input::B     },
 	{ SDL_SCANCODE_KP_0,   Input::B     },
 	{ SDL_SCANCODE_LSHIFT, Input::A     },
 	{ SDL_SCANCODE_X,      Input::B     },
-	{ SDL_SCANCODE_D,      Input::ZR    },
+	{ SDL_SCANCODE_D,      Input::Z     },
 	{ SDL_SCANCODE_Q,      Input::L     },
 	{ SDL_SCANCODE_W,      Input::R     },
 	{ SDL_SCANCODE_A,      Input::X     },
@@ -89,13 +89,13 @@ static const KbBindingData defaultKbBindings[] =
 static const KbBindingData defaultKbBindings1[] =
 {
 	{ SDL_SCANCODE_Z,      Input::A     },
-	{ SDL_SCANCODE_C,      Input::ZL     },
+	{ SDL_SCANCODE_C,      Input::C     },
 };
 
 /* RGSS2 and higher */
 static const KbBindingData defaultKbBindings2[] =
 {
-	{ SDL_SCANCODE_Z,      Input::ZL     }
+	{ SDL_SCANCODE_Z,      Input::C     }
 };
 
 static elementsN(defaultKbBindings);
@@ -106,10 +106,10 @@ static const JsBindingData defaultJsBindings[] =
 {
 	{ 3, Input::A  },
 	{ 0, Input::B  },
-	{ 1, Input::ZL },
+	{ 1, Input::C },
 	{ 2, Input::X  },
 	{ 4, Input::Y  },
-	{ 5, Input::ZR },
+	{ 5, Input::Z },
 	{ 9, Input::L  },
 	{ 10, Input::R  }
 };
@@ -240,8 +240,8 @@ static bool verifyDesc(const BindingDesc &desc)
 	{
 	    Input::None,
 	    Input::Down, Input::Left, Input::Right, Input::Up,
-	    Input::A, Input::B, Input::ZL,
-	    Input::X, Input::Y, Input::ZR,
+	    Input::A, Input::B, Input::C,
+	    Input::X, Input::Y, Input::Z,
 	    Input::L, Input::R,
 	    Input::Shift, Input::Ctrl, Input::Alt,
 	    Input::F5, Input::F6, Input::F7, Input::F8, Input::F9

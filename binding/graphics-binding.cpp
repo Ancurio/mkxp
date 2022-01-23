@@ -264,10 +264,17 @@ RB_METHOD(graphicsPlayMovie)
 {
     RB_UNUSED_PARAM;
     
-    const char *filename;
-    rb_get_args(argc, argv, "z", &filename RB_ARG_END);
+    VALUE filename, volumeArg, skippable;
+    rb_scan_args(argc, argv, "12", &filename, &volumeArg, &skippable);
+    SafeStringValue(filename);
     
-    shState->graphics().playMovie(filename);
+    bool skip;
+    rb_bool_arg(skippable, &skip);
+    int volume = (volumeArg == Qnil) ? 100 : NUM2INT(volumeArg);
+
+    // TODO: Video control inputs (e.g. skip, pause)
+
+    GFX_GUARD_EXC(shState->graphics().playMovie(RSTRING_PTR(filename), volume, skip););
     
     return Qnil;
 }
@@ -341,10 +348,10 @@ void graphicsBindingInit()
 
     // end
     
-    if (rgssVer >= 3)
-    {
-        _rb_define_module_function(module, "play_movie", graphicsPlayMovie);
-    }
+    //if (rgssVer >= 3)
+    //{
+    _rb_define_module_function(module, "play_movie", graphicsPlayMovie);
+    //}
     
     INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
     INIT_GRA_PROP_BIND( ShowCursor, "show_cursor" );

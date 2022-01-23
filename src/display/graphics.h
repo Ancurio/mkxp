@@ -30,6 +30,8 @@ class Disposable;
 struct RGSSThreadData;
 struct GraphicsPrivate;
 struct AtomicFlag;
+struct THEORAPLAY_VideoFrame;
+struct Movie;
 
 class Graphics
 {
@@ -37,7 +39,7 @@ public:
     unsigned long long getDelta();
     unsigned long long lastUpdate();
     
-	void update();
+	void update(bool checkForShutdown = true);
 	void freeze();
 	void transition(int duration = 8,
 	                const char *filename = "",
@@ -57,7 +59,9 @@ public:
 	int width() const;
 	int height() const;
 	void resizeScreen(int width, int height);
-	void playMovie(const char *filename);
+	void drawMovieFrame(const THEORAPLAY_VideoFrame* video, Bitmap *videoBitmap);
+	bool updateMovieInput(Movie *movie);
+	void playMovie(const char *filename, int volume, bool skippable);
 	void screenshot(const char *filename);
 
 	void reset();
