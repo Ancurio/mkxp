@@ -34,6 +34,7 @@
 #include <string.h>
 #include <string>
 #include <unistd.h>
+#include <regex>
 
 #include "binding.h"
 #include "sharedstate.h"
@@ -86,8 +87,18 @@ static inline const char *glGetStringInt(GLenum name) {
 }
 
 static void printGLInfo() {
+    const std::string renderer(glGetStringInt(GL_RENDERER));
+    std::regex rgx("ANGLE \\((.+), ANGLE Metal Renderer: (.+), Version (.+)\\)");
+        
+    std::smatch matches;
+    if (std::regex_search(renderer, matches, rgx)) {
+        Debug() << "Metal Device   :" << matches[2] << "(" + matches[1].str() + ")";
+        Debug() << "ANGLE Version  :" << matches[3].str();
+        return;
+    }
+    
   Debug() << "GL Vendor    :" << glGetStringInt(GL_VENDOR);
-  Debug() << "GL Renderer  :" << glGetStringInt(GL_RENDERER);
+  Debug() << "GL Renderer  :" << renderer;
   Debug() << "GL Version   :" << glGetStringInt(GL_VERSION);
   Debug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
 }
@@ -230,7 +241,7 @@ int main(int argc, char *argv[]) {
 
 #if defined(__WIN32__)
     // Create a debug console in debug mode
-    if (conf.editor.debug) {
+    if (conf.winConsole) {
       if (setupWindowsConsole()) {
         reopenWindowsStreams();
       } else {
@@ -241,7 +252,6 @@ int main(int argc, char *argv[]) {
       }
     }
 #endif
-
     conf.readGameINI();
 
 #ifdef MKXPZ_STEAM
@@ -326,7 +336,7 @@ int main(int argc, char *argv[]) {
     // Doesn't completely do it though, needs a small patch to SDL
 #ifdef MKXPZ_BUILD_XCODE
     // Setting OpenGL only works when building in Release mode due to the config getting re-read later
-    SDL_setenv("ANGLE_DEFAULT_PLATFORM", (conf.preferMetalRenderer && isMetalSupported()) ? "metal" : "opengl", true);
+    SDL_setenv("ANGLE_DEFAULT_PLATFORM", (conf.preferMetalRenderer) ? "metal" : "opengl", true);
     SDL_GL_LoadLibrary("@rpath/libEGL.dylib");
 #endif
 #endif

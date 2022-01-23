@@ -76,6 +76,7 @@ MKXPZTouchBar *_sharedTouchBar;
     }
     else if ([identifier isEqualToString:@"icon"]) {
         NSImage *appIcon = [NSWorkspace.sharedWorkspace iconForFile:NSBundle.mainBundle.bundlePath];
+        appIcon.size = NSSizeFromCGSize(CGSizeMake(30,30));
         ret.view = [NSImageView imageViewWithImage:appIcon];
         
     }

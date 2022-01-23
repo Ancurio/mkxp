@@ -23,6 +23,8 @@
 #include "util/iniconfig.h"
 #include "util/encoding.h"
 
+#include "system/system.h"
+
 
 namespace json = json5pp;
 
@@ -250,6 +252,14 @@ try { exp } catch (...) {}
     
     rgssVersion = clamp(rgssVersion, 0, 3);
     SE.sourceCount = clamp(SE.sourceCount, 1, 64);
+    
+    // Determine whether to open a console window on... Windows
+    const char *consoleEnv = SDL_getenv("MKXPZ_WINDOWS_CONSOLE");
+    winConsole = ((consoleEnv && !strcmp(consoleEnv, "1")) || editor.debug);
+    
+    // Determine whether to use the Metal renderer on macOS
+    const char *metalEnv = SDL_getenv("MKXPZ_MACOS_METAL");
+    preferMetalRenderer = (!metalEnv || strcmp(metalEnv, "0")) && isMetalSupported();
     
 }
 

@@ -266,8 +266,9 @@ static void mriBindingInit() {
     rb_define_const(mod, "CONFIG", cfg);
 
     // Set $stdout and its ilk accordingly on Windows
+    // I regret teaching you that word
 #ifdef __WIN32__
-    if (shState->config().editor.debug)
+    if (shState->config().winConsole)
         configureWindowsStreams();
 #endif
     

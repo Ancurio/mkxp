@@ -70,10 +70,10 @@ struct VButton
 	BTN_STRING(R),
 	BTN_STRING(A),
 	BTN_STRING(B),
-    BTN_STRING_CUSTOM(ZL, "C"),
+  BTN_STRING(C),
 	BTN_STRING(X),
 	BTN_STRING(Y),
-    BTN_STRING_CUSTOM(ZR, "Z"),
+  BTN_STRING(Z)
 };
 
 static elementsN(vButtons);
