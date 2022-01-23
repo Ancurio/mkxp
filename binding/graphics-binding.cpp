@@ -264,14 +264,17 @@ RB_METHOD(graphicsPlayMovie)
 {
     RB_UNUSED_PARAM;
     
-    VALUE filename, volumeArg;
-    rb_scan_args(argc, argv, "11", &filename, &volumeArg);
+    VALUE filename, volumeArg, skippable;
+    rb_scan_args(argc, argv, "12", &filename, &volumeArg, &skippable);
     SafeStringValue(filename);
+    
+    bool skip;
+    rb_bool_arg(skippable, &skip);
     int volume = (volumeArg == Qnil) ? 100 : NUM2INT(volumeArg);
 
     // TODO: Video control inputs (e.g. skip, pause)
 
-    GFX_GUARD_EXC(shState->graphics().playMovie(RSTRING_PTR(filename), volume););
+    GFX_GUARD_EXC(shState->graphics().playMovie(RSTRING_PTR(filename), volume, skip););
     
     return Qnil;
 }

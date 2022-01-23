@@ -104,12 +104,13 @@ struct Movie
     const THEORAPLAY_VideoFrame *video;
     bool hasVideo;
     bool hasAudio;
+    bool skippable;
     Bitmap *videoBitmap;
     SDL_RWops srcOps;    
     static float volume;
 
-    Movie(int volume_)
-    : decoder(0), audio(0), video(0)
+    Movie(int volume_, bool skippable_)
+    : decoder(0), audio(0), video(0), skippable(skippable_), videoBitmap(0)
     {
         volume = volume_ * 0.01f;
     }
@@ -170,7 +171,7 @@ struct Movie
                 SDL_Delay(VIDEO_DELAY);
             }
         }
-
+        videoBitmap = new Bitmap(video->width, video->height);
         movieAudioQueue = NULL;
         movieAudioQueueTail = NULL;
 
@@ -284,12 +285,18 @@ struct Movie
     void play()
     {
         // Assuming every frame has the same duration.
-        Uint32 frameMs = (video->fps == 0.0) ? 0 : ((Uint32) (1000.0 / video->fps));
+        // Uint32 frameMs = (video->fps == 0.0) ? 0 : ((Uint32) (1000.0 / video->fps));
         Uint32 baseTicks = SDL_GetTicks();
         bool openedAudio = false;
         while (THEORAPLAY_isDecoding(decoder)) {
             // Check for reset/shutdown input
             if(shState->graphics().updateMovieInput(this)) break;
+            
+            // Check for attempted skip
+            if (skippable) {
+                shState->input().update();
+                if  (shState->input().isTriggered(Input::C) || shState->input().isTriggered(Input::B)) break;
+            }
 
             const Uint32 now = SDL_GetTicks() - baseTicks;
 
@@ -312,25 +319,12 @@ struct Movie
 
             }
 
-            if (video && (video->playms <= now)) {
-                
-                // Application is too far behind
-                if (!video) {
-                    Debug() << "WARNING: Video playback cannot keep up!";
-                    break;
-                }
-
-                // Got a video frame, now draw it
-                videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
-                shState->graphics().update();
-                THEORAPLAY_freeVideo(video);
-                video = NULL;
-
-            } else {
-                // Next video frame not yet ready, let the CPU breathe
-                SDL_Delay(VIDEO_DELAY);
-            }
-            
+            // Got a video frame, now draw it
+            videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
+            shState->graphics().update(false);
+            THEORAPLAY_freeVideo(video);
+            video = NULL;
+        
             if (openedAudio) {
                 queueMoreMovieAudio(decoder, now);
             }
@@ -954,10 +948,13 @@ unsigned long long Graphics::lastUpdate() {
     return p->last_update;
 }
 
-void Graphics::update() {
+void Graphics::update(bool checkForShutdown) {
     p->threadData->rqWindowAdjust.wait();
     p->last_update = shState->runTime();
-    p->checkShutDownReset();
+    
+    if (checkForShutdown)
+        p->checkShutDownReset();
+    
     p->checkSyncLock();
 
     
@@ -1227,31 +1224,41 @@ bool Graphics::updateMovieInput(Movie *movie) {
     return  p->threadData->rqTerm || p->threadData->rqReset;
 }
 
-void Graphics::playMovie(const char *filename, int volume) {
-    Movie *movie = new Movie(volume);
+void Graphics::playMovie(const char *filename, int volume, bool skippable) {
+    Movie *movie = new Movie(volume, skippable);
     MovieOpenHandler handler(movie->srcOps);
     shState->fileSystem().openRead(handler, filename);
 
     if (movie->preparePlayback()) {
         int limiterDisabled = p->fpsLimiter.disabled;
         p->fpsLimiter.disabled = false;
-        p->fpsLimiter.setDesiredFPS(movie->video->fps);
+        int oldFPS = getFrameRate();
+        setFrameRate(movie->video->fps);
         bool oldframeskip = p->useFrameSkip;
-        p->useFrameSkip = true;
+        p->useFrameSkip = false;
         update();
         
         Sprite movieSprite;
-        movie->videoBitmap = new Bitmap(movie->video->width, movie->video->height);
         
         // Currently this stretches to fit the screen. VX Ace behavior is to center it and let the edges run off
         movieSprite.setBitmap(movie->videoBitmap);
-        movieSprite.setZoomX((double)width() / movie->video->width);
-        movieSprite.setZoomY((double)height() / movie->video->height);
+        double ratio = (double)width() / movie->video->width;
+        movieSprite.setZoomX(ratio);
+        movieSprite.setZoomY(ratio);
+        movieSprite.setY((height() / 2) - (movie->video->height * ratio / 2));
+        
+        Sprite letterboxSprite;
+        Bitmap letterbox(width(), height());
+        letterbox.fillRect(0, 0, width(), height(), Vec4(0,0,0,255));
+        letterboxSprite.setBitmap(&letterbox);
+        
+        letterboxSprite.setZ(-1001);
+        movieSprite.setZ(-1000);
 
         movie->play();
         
         p->fpsLimiter.disabled = limiterDisabled;
-        p->fpsLimiter.setDesiredFPS(p->frameRate);
+        setFrameRate(oldFPS);
         p->useFrameSkip = oldframeskip;
     }
 

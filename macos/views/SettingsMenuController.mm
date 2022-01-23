@@ -33,7 +33,7 @@
 
 static const int inputMapRowToCode[] {
     Input::Down, Input::Left, Input::Right, Input::Up,
-    Input::A, Input:: B, Input::ZL, Input::X, Input::Y, Input::ZR,
+    Input::A, Input:: B, Input::C, Input::X, Input::Y, Input::Z,
     Input::L, Input::R
 };
 
@@ -280,10 +280,10 @@ s.d.ja.dir = (axis.value >= 0) ? AxisDir::Positive : AxisDir::Negative;
     SET_BINDING(Up);
     SET_BINDING(A);
     SET_BINDING(B);
-    SET_BINDING_CUSTOM(ZL, "C");
+    SET_BINDING(C);
     SET_BINDING(X);
     SET_BINDING(Y);
-    SET_BINDING_CUSTOM(ZR, "Z");
+    SET_BINDING(Z);
     SET_BINDING(L);
     SET_BINDING(R);
     
@@ -292,10 +292,10 @@ if (!data.config.kbActionNames.value.empty()) bindingNames[@(Input::code)] = \
     @(data.config.kbActionNames.value.c_str())
     SET_BINDING_CONF(A,a);
     SET_BINDING_CONF(B,b);
-    SET_BINDING_CONF(ZL,c);
+    SET_BINDING_CONF(C,c);
     SET_BINDING_CONF(X,x);
     SET_BINDING_CONF(Y,y);
-    SET_BINDING_CONF(ZR,z);
+    SET_BINDING_CONF(Z,z);
     SET_BINDING_CONF(L,l);
     SET_BINDING_CONF(R,r);
     
