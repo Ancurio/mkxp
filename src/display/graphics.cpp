@@ -1256,7 +1256,7 @@ void Graphics::playMovie(const char *filename, int volume, bool skippable) {
         letterbox.fillRect(0, 0, width(), height(), Vec4(0,0,0,255));
         letterboxSprite.setBitmap(&letterbox);
         
-        letterboxSprite.setZ(-999);
+        letterboxSprite.setZ(-1000);
         movieSprite.setZ(-998);
 
         movie->play();
@@ -1366,10 +1366,10 @@ void Graphics::repaintWait(const AtomicFlag &exitCond, bool checkReset) {
     GLMeta::blitSource(lastFrame);
     
     while (!exitCond) {
-        0;//shState->checkShutdown();
+        shState->checkShutdown();
         
         if (checkReset)
-            0;//shState->checkReset();
+            shState->checkReset();
         
         FBO::clear();
         p->metaBlitBufferFlippedScaled();

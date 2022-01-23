@@ -169,12 +169,12 @@ struct BitmapPrivate
         unsigned long long startTime;
         unsigned long long playTime;
         
-        inline int currentFrameIRaw() {
+        inline unsigned int currentFrameIRaw() {
             if (fps <= 0) return lastFrame;
             return floor(lastFrame + (playTime / ((1 / fps) * 1000000)));
         }
         
-        int currentFrameI() {
+        unsigned int currentFrameI() {
             if (!playing || needsReset) return lastFrame;
             int i = currentFrameIRaw();
             return (loop) ? fmod(i, frames.size()) : (i > (int)frames.size() - 1) ? (int)frames.size() - 1 : i;
@@ -480,7 +480,7 @@ Bitmap::Bitmap(const char *filename)
     if (handler.gif) {
         p = new BitmapPrivate(this);
         
-        if (handler.gif->width >= glState.caps.maxTexSize || handler.gif->height > glState.caps.maxTexSize)
+        if ((uint32_t)handler.gif->width >= glState.caps.maxTexSize || (uint32_t)handler.gif->height > glState.caps.maxTexSize)
         {
             throw new Exception(Exception::MKXPError, "Animation too large (%ix%i, max %ix%i)",
                                 handler.gif->width, handler.gif->height, glState.caps.maxTexSize, glState.caps.maxTexSize);
