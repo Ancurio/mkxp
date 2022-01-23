@@ -742,6 +742,11 @@ void EventThread::showMessageBox(const char *body, int flags)
 {
     msgBoxDone.clear();
     
+    // mkxp has already been asked to quit.
+    // Don't break things if the window wants to close
+    if (shState->rtData().rqTerm)
+        return;
+    
     SDL_Event event;
     event.user.code = flags;
     event.user.data1 = strdup(body);

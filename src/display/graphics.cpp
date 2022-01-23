@@ -320,10 +320,12 @@ struct Movie
             }
 
             // Got a video frame, now draw it
-            videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
+            if (video) {
+                videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
+                THEORAPLAY_freeVideo(video);
+                video = NULL;
+            }
             shState->graphics().update(false);
-            THEORAPLAY_freeVideo(video);
-            video = NULL;
         
             if (openedAudio) {
                 queueMoreMovieAudio(decoder, now);
@@ -1362,10 +1364,10 @@ void Graphics::repaintWait(const AtomicFlag &exitCond, bool checkReset) {
     GLMeta::blitSource(lastFrame);
     
     while (!exitCond) {
-        shState->checkShutdown();
+        0;//shState->checkShutdown();
         
         if (checkReset)
-            shState->checkReset();
+            0;//shState->checkReset();
         
         FBO::clear();
         p->metaBlitBufferFlippedScaled();
