@@ -180,6 +180,10 @@ void EventThread::process(RGSSThreadData &rtData)
     
     SDL_GetWindowSize(win, &winW, &winH);
     
+    // Just in case it's started when the window is opened
+    // for some dumb reason
+    SDL_StopTextInput();
+    
     textInputBuffer.clear();
 #ifndef MKXPZ_BUILD_XCODE
     SettingsMenu *sMenu = 0;

@@ -72,7 +72,7 @@ After having all the prerequisites, go to the `windows` or `linux` directory and
 
 By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `-Dworkdir_current=true` to meson's build arguments.
 
-**MRI-Binding**: Meson will use pkg-config to look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-3.0.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y`. `mri-version` is set to `3.0` by default.
+**MRI-Binding**: Meson will use pkg-config to look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-3.1.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y`. `mri-version` is set to `3.1` by default.
 
 ## Midi music
 
@@ -97,7 +97,6 @@ In the RMXP version of RGSS, fonts are loaded directly from system specific sear
 If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
 
 ## What doesn't work (yet)
-* Movie playback
 * wma audio files
 * Creating Bitmaps with sizes greater than your hardware's texture size limit (around 16384 on modern cards).^
 
