@@ -60,6 +60,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <time.h>
+#include <cmath>
 
 
 #define DEF_SCREEN_W (rgssVer == 1 ? 640 : 544)
@@ -1244,9 +1245,10 @@ void Graphics::playMovie(const char *filename, int volume, bool skippable) {
         
         // Currently this stretches to fit the screen. VX Ace behavior is to center it and let the edges run off
         movieSprite.setBitmap(movie->videoBitmap);
-        double ratio = (double)width() / movie->video->width;
+        double ratio = std::min((double)width() / movie->video->width, (double)height() / movie->video->height);
         movieSprite.setZoomX(ratio);
         movieSprite.setZoomY(ratio);
+        movieSprite.setX((width() / 2) - (movie->video->width * ratio / 2));
         movieSprite.setY((height() / 2) - (movie->video->height * ratio / 2));
         
         Sprite letterboxSprite;
@@ -1254,8 +1256,8 @@ void Graphics::playMovie(const char *filename, int volume, bool skippable) {
         letterbox.fillRect(0, 0, width(), height(), Vec4(0,0,0,255));
         letterboxSprite.setBitmap(&letterbox);
         
-        letterboxSprite.setZ(-1001);
-        movieSprite.setZ(-1000);
+        letterboxSprite.setZ(-999);
+        movieSprite.setZ(-998);
 
         movie->play();
         
