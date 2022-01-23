@@ -480,7 +480,7 @@ Bitmap::Bitmap(const char *filename)
     if (handler.gif) {
         p = new BitmapPrivate(this);
         
-        if ((uint32_t)handler.gif->width >= glState.caps.maxTexSize || (uint32_t)handler.gif->height > glState.caps.maxTexSize)
+        if (handler.gif->width >= (uint32_t)glState.caps.maxTexSize || handler.gif->height > (uint32_t)glState.caps.maxTexSize)
         {
             throw new Exception(Exception::MKXPError, "Animation too large (%ix%i, max %ix%i)",
                                 handler.gif->width, handler.gif->height, glState.caps.maxTexSize, glState.caps.maxTexSize);
@@ -2014,7 +2014,7 @@ void Bitmap::nextFrame()
     GUARD_UNANIMATED;
     
     stop();
-    if (p->animation.lastFrame >= p->animation.frames.size() - 1)  {
+    if (p->animation.lastFrame >= (uint32_t)p->animation.frames.size() - 1)  {
         if (!p->animation.loop) return;
         p->animation.lastFrame = 0;
         return;

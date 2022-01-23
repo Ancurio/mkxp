@@ -19,19 +19,6 @@
     // (default: 0)
     //
     // "rgssVersion": 1,
-    
-    // Render using Metal instead of OpenGL, if possible. It should
-    // be far more reliable across all kinds of Macs.
-    //
-    // Using Metal requires macOS 10.13+ and a compatible GPU.
-    // Any machine supporting 10.14+ or newer should automatically
-    // support Metal.
-    //
-    // Unless there's some kind of problem, you should really leave
-    // this on. OpenGL will cause trouble, such as blitting problems,
-    // the Steam overlay not working, and v-sync failing completely.
-    
-    // "preferMetalRenderer": true,
 
 
     // Continuously print average FPS to console.
@@ -143,7 +130,8 @@
     // Enable framebuffer blitting if the driver is
     // capable of it. Some drivers carry buggy
     // implementations of this functionality, so
-    // disabling it can be used as a workaround
+    // disabling it can be used as a workaround.
+    // Does nothing on macOS.
     // (default: enabled)
     //
     // "enableBlitting": true,

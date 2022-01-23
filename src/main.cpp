@@ -335,7 +335,6 @@ int main(int argc, char *argv[]) {
     // LoadLibrary properly initializes EGL, it won't work otherwise.
     // Doesn't completely do it though, needs a small patch to SDL
 #ifdef MKXPZ_BUILD_XCODE
-    // Setting OpenGL only works when building in Release mode due to the config getting re-read later
     SDL_setenv("ANGLE_DEFAULT_PLATFORM", (conf.preferMetalRenderer) ? "metal" : "opengl", true);
     SDL_GL_LoadLibrary("@rpath/libEGL.dylib");
 #endif
@@ -514,7 +513,7 @@ static SDL_GLContext initGL(SDL_Window *win, Config &conf,
 
 // This breaks scaling for Retina screens.
 // Using Metal should be rendering this irrelevant anyway, hopefully
-#ifndef __APPLE__
+#ifndef MKXPZ_BUILD_XCODE
   if (!conf.enableBlitting)
     gl.BlitFramebuffer = 0;
 #endif

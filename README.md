@@ -22,7 +22,7 @@ Website: https://www.ruby-lang.org/en/
 
 Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version of ruby. MRI 1.8.1 is what was used in RPG Maker XP, and 1.8.7 is the lowest that mkxp-z is prepared to let you go.
 
-Ruby versions 1.9.3 and 2.1 - 3.0 are also supported, and running each platform's respective dependency makefile will build Ruby 3.
+Ruby versions 1.9.3 and 2.1 - 3.1 are also supported, and running each platform's respective dependency makefile will build Ruby 3.1.
 
 ## Dependencies / Building
 

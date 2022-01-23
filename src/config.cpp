@@ -257,7 +257,7 @@ try { exp } catch (...) {}
     const char *consoleEnv = SDL_getenv("MKXPZ_WINDOWS_CONSOLE");
     winConsole = ((consoleEnv && !strcmp(consoleEnv, "1")) || editor.debug);
     
-#ifdef __APPLE__
+#ifdef MKXPZ_BUILD_XCODE
     // Determine whether to use the Metal renderer on macOS
     const char *metalEnv = SDL_getenv("MKXPZ_MACOS_METAL");
     preferMetalRenderer = (!metalEnv || strcmp(metalEnv, "0")) && isMetalSupported();

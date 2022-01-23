@@ -228,7 +228,7 @@ struct Movie
             const int channels = item->audio->channels;
 
             const float *src = item->audio->samples + (item->offset * channels);
-            int cpy = (item->audio->frames - item->offset) * channels;
+            unsigned int cpy = (item->audio->frames - item->offset) * channels;
             int i;
 
             if (cpy > (len / sizeof (Sint16))) {
