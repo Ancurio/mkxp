@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "MKXPZ_SELECT_PATH"
+            key = "MKXPZ_FOLDER_SELECT"
             value = "1"
             isEnabled = "YES">
          </EnvironmentVariable>
@@ -79,7 +79,7 @@
       buildConfiguration = "Debug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

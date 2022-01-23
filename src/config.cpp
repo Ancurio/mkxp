@@ -83,6 +83,19 @@ bool copyObject(json::value &dest, json::value &src, const char *objectName = ""
     return true;
 }
 
+bool getEnvironmentBool(const char *env, bool defaultValue) {
+    const char *e = SDL_getenv(env);
+    if (!e)
+        return defaultValue;
+    
+    if (!strcmp(e, "0"))
+        return false;
+    else if (!strcmp(e, "1"))
+        return true;
+    
+    return defaultValue;
+}
+
 #define CONF_FILE "mkxp.json"
 
 Config::Config() {}
@@ -254,14 +267,18 @@ try { exp } catch (...) {}
     SE.sourceCount = clamp(SE.sourceCount, 1, 64);
     
     // Determine whether to open a console window on... Windows
-    const char *consoleEnv = SDL_getenv("MKXPZ_WINDOWS_CONSOLE");
-    winConsole = ((consoleEnv && !strcmp(consoleEnv, "1")) || editor.debug);
+    winConsole = getEnvironmentBool("MKXPZ_WINDOWS_CONSOLE", editor.debug);
     
-#ifdef MKXPZ_BUILD_XCODE
+#ifdef __APPLE__
     // Determine whether to use the Metal renderer on macOS
-    const char *metalEnv = SDL_getenv("MKXPZ_MACOS_METAL");
-    preferMetalRenderer = (!metalEnv || strcmp(metalEnv, "0")) && isMetalSupported();
+    preferMetalRenderer = isMetalSupported() && getEnvironmentBool("MKXPZ_MACOS_METAL", true);
 #endif
+    
+    // Determine whether to allow manual selection of a game folder on startup
+    // Only works on macOS atm, mainly used to test games located outside of the bundle.
+    // The config is re-read after the window is already created, so some entries
+    // may not take effect
+    manualFolderSelect = getEnvironmentBool("MKXPZ_FOLDER_SELECT", false);
 }
 
 static void setupScreenSize(Config &conf) {

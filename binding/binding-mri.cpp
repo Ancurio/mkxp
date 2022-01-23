@@ -1071,7 +1071,7 @@ static void mriBindingExecute() {
     ruby_init();
     rb_eval_string("$KCODE='U'");
 #ifdef __WIN32__
-    if (!conf.editor.debug) {
+    if (!conf.winConsole) {
         VALUE iostr = rb_str_new2("NUL");
         // Sysinit isn't a thing yet, so send io to /dev/null instead
         rb_funcall(rb_gv_get("$stderr"), rb_intern("reopen"), 1, iostr);

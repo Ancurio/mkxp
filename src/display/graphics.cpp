@@ -229,13 +229,12 @@ struct Movie
 
             const float *src = item->audio->samples + (item->offset * channels);
             unsigned int cpy = (item->audio->frames - item->offset) * channels;
-            int i;
 
             if (cpy > (len / sizeof (Sint16))) {
                 cpy = len / sizeof (Sint16);
             }
 
-            for (i = 0; i < cpy; i++) {
+            for (unsigned int i = 0; i < cpy; i++) {
                 const float val = (*(src++)) * volume;
                 if (val < -1.0f) {
                     *(dst++) = -32768;

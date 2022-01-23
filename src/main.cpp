@@ -88,18 +88,27 @@ static inline const char *glGetStringInt(GLenum name) {
 
 static void printGLInfo() {
     const std::string renderer(glGetStringInt(GL_RENDERER));
+    const std::string version(glGetStringInt(GL_VERSION));
     std::regex rgx("ANGLE \\((.+), ANGLE Metal Renderer: (.+), Version (.+)\\)");
         
     std::smatch matches;
     if (std::regex_search(renderer, matches, rgx)) {
-        Debug() << "Metal Device   :" << matches[2] << "(" + matches[1].str() + ")";
-        Debug() << "ANGLE Version  :" << matches[3].str();
+        
+        Debug() << "Backend           :" << "Metal";
+        Debug() << "Metal Device      :" << matches[2] << "(" + matches[1].str() + ")";
+        Debug() << "Renderer Version  :" << matches[3].str();
+        
+    std::smatch vmatches;
+        if (std::regex_search(version, vmatches, std::regex("\\(ANGLE (.+) git hash: .+\\)"))) {
+            Debug() << "ANGLE Version     :" << vmatches[1].str();
+        }
         return;
     }
     
+  Debug() << "Backend      :" << "OpenGL";
   Debug() << "GL Vendor    :" << glGetStringInt(GL_VENDOR);
   Debug() << "GL Renderer  :" << renderer;
-  Debug() << "GL Version   :" << glGetStringInt(GL_VERSION);
+  Debug() << "GL Version   :" << version;
   Debug() << "GLSL Version :" << glGetStringInt(GL_SHADING_LANGUAGE_VERSION);
 }
 
@@ -354,14 +363,14 @@ int main(int argc, char *argv[]) {
     }
     
 #if defined(MKXPZ_BUILD_XCODE)
-#define DEBUG_FSELECT_MSG "Select the folder to load game files from. This is the folder containing the INI and/or configuration JSON."
+#define DEBUG_FSELECT_MSG "Select the folder from which to load game files. This is the folder containing the game's INI."
 #define DEBUG_FSELECT_PROMPT "Load Game"
-    if (SDL_getenv("MKXPZ_SELECT_PATH")) {
+    if (conf.manualFolderSelect) {
         std::string dataDirStr = mkxp_fs::selectPath(win, DEBUG_FSELECT_MSG, DEBUG_FSELECT_PROMPT);
         if (!dataDirStr.empty()) {
             conf.gameFolder = dataDirStr;
             mkxp_fs::setCurrentDirectory(dataDirStr.c_str());
-            Debug() << "DEBUG: Current directory set to" << dataDirStr;
+            Debug() << "Current directory set to" << dataDirStr;
             conf.read(argc, argv);
             conf.readGameINI();
         }

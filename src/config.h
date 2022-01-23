@@ -60,6 +60,8 @@ struct Config {
     int maxTextureSize;
     
     std::string gameFolder;
+    bool manualFolderSelect;
+    
     bool anyAltToggleFS;
     bool enableReset;
     bool allowSymlinks;

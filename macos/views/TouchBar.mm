@@ -44,9 +44,10 @@ MKXPZTouchBar *_sharedTouchBar;
 -(instancetype)init {
     self = [super init];
     self.delegate = self;
-    self.defaultItemIdentifiers = @[@"rebind", @"icon", @"fps", NSTouchBarItemIdentifierFlexibleSpace, @"function",  NSTouchBarItemIdentifierFlexibleSpace, @"reset"];
+    self.defaultItemIdentifiers = @[@"function", NSTouchBarItemIdentifierFlexibleSpace, @"icon", @"fps", NSTouchBarItemIdentifierFlexibleSpace, @"rebind", @"reset"];
     
     fpsLabel = [NSTextField labelWithString:@"Loading..."];
+    fpsLabel.alignment = NSTextAlignmentCenter;
     fpsLabel.font = [NSFont labelFontOfSize:NSFont.smallSystemFontSize];
     
     functionKeys = [NSSegmentedControl segmentedControlWithLabels:@[@"F5", @"F6", @"F7", @"F8", @"F9"] trackingMode:NSSegmentSwitchTrackingMomentary target:self action:@selector(simFunctionKey)];
@@ -76,7 +77,7 @@ MKXPZTouchBar *_sharedTouchBar;
     }
     else if ([identifier isEqualToString:@"icon"]) {
         NSImage *appIcon = [NSWorkspace.sharedWorkspace iconForFile:NSBundle.mainBundle.bundlePath];
-        appIcon.size = NSSizeFromCGSize(CGSizeMake(30,30));
+        appIcon.size = CGSizeMake(30,30);
         ret.view = [NSImageView imageViewWithImage:appIcon];
         
     }
