@@ -44,10 +44,9 @@ MKXPZTouchBar *_sharedTouchBar;
 -(instancetype)init {
     self = [super init];
     self.delegate = self;
-    self.defaultItemIdentifiers = @[@"function", NSTouchBarItemIdentifierFlexibleSpace, @"fps", NSTouchBarItemIdentifierFlexibleSpace, @"rebind", @"reset"];
+    self.defaultItemIdentifiers = @[@"rebind", @"icon", @"fps", NSTouchBarItemIdentifierFlexibleSpace, @"function",  NSTouchBarItemIdentifierFlexibleSpace, @"reset"];
     
     fpsLabel = [NSTextField labelWithString:@"Loading..."];
-    fpsLabel.alignment = NSTextAlignmentCenter;
     fpsLabel.font = [NSFont labelFontOfSize:NSFont.smallSystemFontSize];
     
     functionKeys = [NSSegmentedControl segmentedControlWithLabels:@[@"F5", @"F6", @"F7", @"F8", @"F9"] trackingMode:NSSegmentSwitchTrackingMomentary target:self action:@selector(simFunctionKey)];
@@ -70,18 +69,15 @@ MKXPZTouchBar *_sharedTouchBar;
     if ([identifier isEqualToString:@"reset"]) {
         ret.view = [NSButton buttonWithImage:[NSImage imageNamed:@"gobackward"] target:self action:@selector(simF12)];
         
-        NSColor *accentColor = nil;
-        if (@available(macOS 10.14.0, *)) {
-            accentColor = NSColor.controlAccentColor;
-        }
-        else {
-            // the color of a certain vulpine's beautiful mane
-            accentColor = [NSColor colorWithRed:0xac/255.0 green:0x14/255.0 blue:0x01/255.0 alpha:1.0];
-        }
-        ((NSButton*)ret.view).bezelColor = accentColor;
+        ((NSButton*)ret.view).bezelColor = [NSColor colorWithRed:0xac/255.0 green:0x14/255.0 blue:0x01/255.0 alpha:1.0];
     }
     else if ([identifier isEqualToString:@"rebind"]) {
         ret.view = [NSButton buttonWithImage:[NSImage imageNamed:@"gear"] target:self action:@selector(openSettingsMenu)];
+    }
+    else if ([identifier isEqualToString:@"icon"]) {
+        NSImage *appIcon = [NSWorkspace.sharedWorkspace iconForFile:NSBundle.mainBundle.bundlePath];
+        ret.view = [NSImageView imageViewWithImage:appIcon];
+        
     }
     else if ([identifier isEqualToString:@"fps"]) {
         ret.view = fpsLabel;
@@ -101,7 +97,7 @@ MKXPZTouchBar *_sharedTouchBar;
     if (fpsLabel) {
         int targetFrameRate = shState->graphics().getFrameRate();
         dispatch_async(dispatch_get_main_queue(), ^{
-            self->fpsLabel.stringValue = [NSString stringWithFormat:@"%@\n%i/%i FPS (%i%%)", self.gameTitle, value, targetFrameRate, (int)((float)value / (float)targetFrameRate * 100)];
+            self->fpsLabel.stringValue = [NSString stringWithFormat:@"%@\n%i FPS (%i%%)", self.gameTitle, value, (int)((float)value / (float)targetFrameRate * 100)];
         });
     }
 }
