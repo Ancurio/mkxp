@@ -12,7 +12,7 @@ LIBDIR := $(BUILD_PREFIX)/lib
 INCLUDEDIR := $(BUILD_PREFIX)/include
 DOWNLOADS := ${PWD}/downloads/$(ARCH)
 NPROC := $(shell nproc)
-CFLAGS := -I$(INCLUDEDIR)
+CFLAGS := -I$(INCLUDEDIR) -flax-vector-conversions
 LDFLAGS := -L$(LIBDIR)
 CC      := gcc
 PKG_CONFIG_LIBDIR := $(BUILD_PREFIX)/lib/pkgconfig
@@ -254,19 +254,16 @@ $(DOWNLOADS)/sdl_sound/CMakeLists.txt:
 # SDL2 (ttf)
 sdl2ttf: init_dirs sdl2 freetype $(LIBDIR)/libSDL2_ttf.a
 
-$(LIBDIR)/libSDL2_ttf.a: $(DOWNLOADS)/sdl2_ttf/Makefile
-	cd $(DOWNLOADS)/sdl2_ttf; \
+$(LIBDIR)/libSDL2_ttf.a: $(DOWNLOADS)/sdl2_ttf/cmakebuild/Makefile
+	cd $(DOWNLOADS)/sdl2_ttf/cmakebuild; \
 	make -j$(NPROC); make install
 
-$(DOWNLOADS)/sdl2_ttf/Makefile: $(DOWNLOADS)/sdl2_ttf/configure
-	cd $(DOWNLOADS)/sdl2_ttf; \
-	$(CONFIGURE) --enable-static=true --enable-shared=false $(SDL2_TTF_FLAGS)
+$(DOWNLOADS)/sdl2_ttf/cmakebuild/Makefile: $(DOWNLOADS)/sdl2_ttf/CMakeLists.txt
+	cd $(DOWNLOADS)/sdl2_ttf; mkdir cmakebuild; cd cmakebuild; \
+	$(CMAKE) -DBUILD_SHARED_LIBS=no
 
-$(DOWNLOADS)/sdl2_ttf/configure: $(DOWNLOADS)/sdl2_ttf/autogen.sh
-	cd $(DOWNLOADS)/sdl2_ttf; ./autogen.sh
-
-$(DOWNLOADS)/sdl2_ttf/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_ttf $(DOWNLOADS)/sdl2_ttf -b mkxp-z
+$(DOWNLOADS)/sdl2_ttf/CMakeLists.txt:
+	$(CLONE) $(GITLAB)/mkxp-z/sdl_ttf $(DOWNLOADS)/sdl2_ttf
 
 # Freetype (dependency of SDL2_ttf)
 freetype: init_dirs $(LIBDIR)/libfreetype.a
