@@ -1255,8 +1255,8 @@ void Graphics::playMovie(const char *filename, int volume, bool skippable) {
         letterbox.fillRect(0, 0, width(), height(), Vec4(0,0,0,255));
         letterboxSprite.setBitmap(&letterbox);
         
-        letterboxSprite.setZ(-1000);
-        movieSprite.setZ(-998);
+        letterboxSprite.setZ(4999);
+        movieSprite.setZ(5001);
 
         movie->play();
         
