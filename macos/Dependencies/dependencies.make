@@ -244,10 +244,10 @@ $(DOWNLOADS)/sdl_sound/cmakebuild/Makefile: $(DOWNLOADS)/sdl_sound/CMakeLists.tx
 	$(CMAKE) \
 	-DSDLSOUND_BUILD_SHARED=false \
 	-DSDLSOUND_BUILD_TEST=false \
-	-DSDLSOUND_DECODER_MP3=false
+	-DSDLSOUND_DECODER_COREAUDIO=false
 
 $(DOWNLOADS)/sdl_sound/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b v2.0
+	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b git
 
 	
 # SDL2 (ttf)

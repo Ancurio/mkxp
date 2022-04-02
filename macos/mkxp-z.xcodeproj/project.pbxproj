@@ -2013,7 +2013,7 @@
 		3BDB22EC25644FBF00C4A63D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1330;
 				TargetAttributes = {
 					3B1C235525A199370075EF5D = {
 						CreatedOnToolsVersion = 12.3;
@@ -2533,7 +2533,6 @@
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/Frameworks/steam/sdk/redistributable_bin/osx";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.struma.mkxp-z";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2643,7 +2642,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.3.0;
+				CURRENT_PROJECT_VERSION = 2.3.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -2671,11 +2670,10 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
-				MARKETING_VERSION = 2.3.0;
+				MARKETING_VERSION = 2.3.1;
 				MKXPZ_EXECUTABLE_NAME = shim;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.struma.mkxp-z";
@@ -2719,7 +2717,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.3.0;
+				CURRENT_PROJECT_VERSION = 2.3.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -2745,7 +2743,7 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
-				MARKETING_VERSION = 2.3.0;
+				MARKETING_VERSION = 2.3.1;
 				MKXPZ_EXECUTABLE_NAME = shim;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2927,7 +2925,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.3.0;
+				CURRENT_PROJECT_VERSION = 2.3.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -2969,11 +2967,10 @@
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 				);
-				MARKETING_VERSION = 2.3.0;
+				MARKETING_VERSION = 2.3.1;
 				MKXPZ_EXECUTABLE_NAME = shim;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.struma.mkxp-z";
@@ -3017,7 +3014,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.3.0;
+				CURRENT_PROJECT_VERSION = 2.3.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -3057,7 +3054,7 @@
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 				);
-				MARKETING_VERSION = 2.3.0;
+				MARKETING_VERSION = 2.3.1;
 				MKXPZ_EXECUTABLE_NAME = shim;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -3105,7 +3102,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.3.0;
+				CURRENT_PROJECT_VERSION = 2.3.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -3143,10 +3140,9 @@
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
-				MARKETING_VERSION = 2.3.0;
+				MARKETING_VERSION = 2.3.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.struma.mkxp-z";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3189,7 +3185,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.3.0;
+				CURRENT_PROJECT_VERSION = 2.3.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -3225,7 +3221,7 @@
 					"$(PROJECT_DIR)/Dependencies/build-macosx-universal/lib",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
-				MARKETING_VERSION = 2.3.0;
+				MARKETING_VERSION = 2.3.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
@@ -3270,7 +3266,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.3.0;
+				CURRENT_PROJECT_VERSION = 2.3.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -3294,10 +3290,9 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
-				MARKETING_VERSION = 2.3.0;
+				MARKETING_VERSION = 2.3.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.struma.mkxp-z";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3340,7 +3335,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.3.0;
+				CURRENT_PROJECT_VERSION = 2.3.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -3362,7 +3357,7 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 					"$(PROJECT_DIR)/Dependencies/build-macosx-x86_64/lib",
 				);
-				MARKETING_VERSION = 2.3.0;
+				MARKETING_VERSION = 2.3.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
@@ -3433,9 +3428,8 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12.2;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-fdeclspec";
-				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = "-Wno-documentation";
@@ -3503,8 +3497,8 @@
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12.2;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-fdeclspec";
-				OTHER_CODE_SIGN_FLAGS = "--ignore-resources";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = "-Wno-documentation";

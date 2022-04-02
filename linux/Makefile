@@ -245,11 +245,10 @@ $(DOWNLOADS)/sdl_sound/cmakebuild/Makefile: $(DOWNLOADS)/sdl_sound/CMakeLists.tx
 	cd $(DOWNLOADS)/sdl_sound; mkdir -p cmakebuild; cd cmakebuild; \
 	$(CMAKE) \
 	-DSDLSOUND_BUILD_SHARED=false \
-	-DSDLSOUND_BUILD_TEST=false \
-	-DSDLSOUND_DECODER_MP3=false
+	-DSDLSOUND_BUILD_TEST=false
 
 $(DOWNLOADS)/sdl_sound/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b v2.0
+	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b git
 
 # SDL2 (ttf)
 sdl2ttf: init_dirs sdl2 freetype $(LIBDIR)/libSDL2_ttf.a
