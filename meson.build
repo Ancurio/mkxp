@@ -188,6 +188,6 @@ executable(exe_name,
     cpp_args: global_args,
     objc_args: global_args,
     objcpp_args: global_args,
-    gui_app: true,
+    win_subsystem: 'windows',
     install: (host_system != 'windows')
 )
