@@ -119,7 +119,11 @@ void Config::read(int argc, char *argv[]) {
         {"syncToRefreshrate", false},
         {"solidFonts", false},
         {"subImageFix", false},
+#ifdef __WIN32__
+        {"enableBlitting", false},
+#else
         {"enableBlitting", true},
+#endif
         {"maxTextureSize", 0},
         {"gameFolder", ""},
         {"anyAltToggleFS", false},
