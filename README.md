@@ -26,53 +26,8 @@ Ruby versions 1.9.3 and 2.1 - 3.1 are also supported, and running each platform'
 
 ## Dependencies / Building
 
-For more detailed build instructions, refer to the linked gitbook.
+For build instructions, refer to the [gitbook](https://roza-gb.gitbook.io/mkxp-z/).
 
-Firstly, each platform has a set of tools and libraries that must be installed prior to building anything:
-
-+ **macOS (through Homebrew)**
-
-```sh
-brew install libtool cmake automake autoconf pkg-config
-```
-
-+ **Windows (MSYS)**
-
-```sh
-# Assuming 64-bit
-pacman -S git ruby base-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-meson mingw-w64-x86_64-gcc
-```
-
-```sh
-# Assuming 32-bit
-pacman -S git ruby base-devel mingw-w64-i686-cmake mingw-w64-i686-meson mingw-w64-i686-gcc
-```
-
-+ **Linux (Ubuntu 18.04)**
-
-```sh
-sudo apt install git build-essential cmake meson autoconf automake libtool pkg-config ruby bison zlib1g-dev xorg-dev lib32z1 libasound2-dev libpulse-dev
-```
-
-If Meson complains about not being able to find OpenGL, you also need `libgl1-mesa-dev`. After having all the prerequisites, go to your platform's respective folder and run `make` (or `setup.command` on macOS).
-
-Following that, you should be able to just build mkxp-z:
-
-### macOS
-
-After having all the prerequisites, go to the `macos` directory and run `setup.command`. This will build all the remaining dependencies you need.
-
-Afterwards, open the Xcode project, select the scheme you want, and build.
-
-### Windows/Linux
-
-After having all the prerequisites, go to the `windows` or `linux` directory and run `make`. This will build all the remaining dependencies you need.
-
-`source linux/vars.sh` or `source windows/vars.sh` depending on your platform, then run `meson build` and `ninja -C build`.
-
-By default, mkxp switches into the directory where its binary is contained and then starts reading the configuration and resolving relative paths. In case this is undesired (eg. when the binary is to be installed to a system global, read-only location), it can be turned off by adding `-Dworkdir_current=true` to meson's build arguments.
-
-**MRI-Binding**: Meson will use pkg-config to look for `ruby-X.Y.pc`, where `X` is the major version number and `Y` is the minor version number (e.g. `ruby-3.1.pc`). The version that will be searched for can be set with `-Dmri_version=X.Y`. `mri-version` is set to `3.1` by default.
 
 ## Midi music
 
@@ -96,7 +51,7 @@ In the RMXP version of RGSS, fonts are loaded directly from system specific sear
 
 If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
 
-## What doesn't work (yet)
+## What doesn't work
 * wma audio files
 * Creating Bitmaps with sizes greater than your hardware's texture size limit (around 16384 on modern cards).^
 
