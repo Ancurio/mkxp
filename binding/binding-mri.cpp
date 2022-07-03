@@ -22,6 +22,7 @@
 #include "audio/audio.h"
 #include "filesystem/filesystem.h"
 #include "display/graphics.h"
+#include "display/font.h"
 #include "system/system.h"
 
 #include "util/util.h"
@@ -136,6 +137,9 @@ RB_METHOD(mkxpAddPath);
 RB_METHOD(mkxpRemovePath);
 RB_METHOD(mkxpLaunch);
 
+RB_METHOD(mkxpGetDefaultFontFamily);
+RB_METHOD(mkxpSetDefaultFontFamily);
+
 RB_METHOD(mriRgssMain);
 RB_METHOD(mriRgssStop);
 RB_METHOD(_kernelCaller);
@@ -242,6 +246,8 @@ static void mriBindingInit() {
     _rb_define_module_function(mod, "mount", mkxpAddPath);
     _rb_define_module_function(mod, "unmount", mkxpRemovePath);
     _rb_define_module_function(mod, "launch", mkxpLaunch);
+    
+    _rb_define_module_function(mod, "default_font_family=", mkxpSetDefaultFontFamily);
     
     _rb_define_method(rb_cString, "to_utf8", mkxpStringToUTF8);
     _rb_define_method(rb_cString, "to_utf8!", mkxpStringToUTF8Bang);
@@ -575,6 +581,19 @@ RB_METHOD(mkxpRemovePath) {
         raiseRbExc(e);
     }
     return path;
+}
+
+RB_METHOD(mkxpSetDefaultFontFamily) {
+    RB_UNUSED_PARAM;
+    
+    VALUE familyV;
+    rb_scan_args(argc, argv, "1", &familyV);
+    SafeStringValue(familyV);
+    
+    std::string family(RSTRING_PTR(familyV));
+    shState->fontState().setDefaultFontFamily(family);
+    
+    return Qnil;
 }
 
 RB_METHOD(mkxpStringToUTF8) {

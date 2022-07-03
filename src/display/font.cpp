@@ -101,6 +101,10 @@ struct SharedFontStatePrivate
 	/* Pool of already opened fonts; once opened, they are reused
 	 * and never closed until the termination of the program */
 	BoostHash<FontKey, TTF_Font*> pool;
+    
+    /* Internal default font family that is used anytime an
+     * empty/invalid family is requested */
+    std::string defaultFamily;
 };
 
 SharedFontState::SharedFontState(const Config &conf)
@@ -156,6 +160,10 @@ void SharedFontState::initFontSetCB(SDL_RWops &ops,
 _TTF_Font *SharedFontState::getFont(std::string family,
                                     int size)
 {
+    
+    if (family.empty())
+        family = p->defaultFamily;
+    
 	/* Check for substitutions */
 	if (p->subs.contains(family))
 		family = p->subs[family];
@@ -224,6 +232,10 @@ _TTF_Font *SharedFontState::openBundled(int size)
 	SDL_RWops *ops = openBundledFont();
 
 	return TTF_OpenFontRW(ops, 1, size);
+}
+
+void SharedFontState::setDefaultFontFamily(const std::string &family) {
+    p->defaultFamily = family;
 }
 
 void pickExistingFontName(const std::vector<std::string> &names,
