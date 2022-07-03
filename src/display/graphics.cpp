@@ -1465,11 +1465,10 @@ bool Graphics::getFixedAspectRatio() const
 void Graphics::setFixedAspectRatio(bool value)
 {
     shState->config().fixedAspectRatio = value;
-    update();
-    //p->recalculateScreenSize(p->threadData);
-    //p->findHighestIntegerScale();
-    //p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
-    //p->updateScreenResoRatio(p->threadData);
+    p->recalculateScreenSize(p->threadData);
+    p->findHighestIntegerScale();
+    p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
+    p->updateScreenResoRatio(p->threadData);
 }
 
 bool Graphics::getSmoothScaling() const
@@ -1491,12 +1490,11 @@ bool Graphics::getIntegerScaling() const
 void Graphics::setIntegerScaling(bool value)
 {
     p->integerScaleActive = value;
-    update();
-    //p->findHighestIntegerScale();
-    //p->rebuildIntegerScaleBuffer();
+    p->findHighestIntegerScale();
+    p->rebuildIntegerScaleBuffer();
     
-    //p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
-    //p->updateScreenResoRatio(p->threadData);
+    p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
+    p->updateScreenResoRatio(p->threadData);
 }
 
 bool Graphics::getLastMileScaling() const
@@ -1507,16 +1505,15 @@ bool Graphics::getLastMileScaling() const
 void Graphics::setLastMileScaling(bool value)
 {
     p->integerLastMileScaling = value;
-    update();
-    //p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
-    //p->updateScreenResoRatio(p->threadData);
+    p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
+    p->updateScreenResoRatio(p->threadData);
 }
 
 double Graphics::getScale() const { return (double)p->scSize.y / p->scRes.y; }
 
 void Graphics::setScale(double factor) {
     p->threadData->rqWindowAdjust.wait();
-    factor = clamp(factor, 0.5, 2.0);
+    factor = clamp(factor, 0.5, 4.0);
     
     if (factor == getScale())
         return;

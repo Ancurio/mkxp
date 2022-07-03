@@ -336,6 +336,10 @@ DEF_GRA_PROP_B(Fullscreen)
 DEF_GRA_PROP_B(ShowCursor)
 DEF_GRA_PROP_F(Scale)
 DEF_GRA_PROP_B(Frameskip)
+DEF_GRA_PROP_B(FixedAspectRatio)
+DEF_GRA_PROP_B(SmoothScaling)
+DEF_GRA_PROP_B(IntegerScaling)
+DEF_GRA_PROP_B(LastMileScaling)
 
 #define INIT_GRA_PROP_BIND(PropName, prop_name_s) \
 { \
@@ -378,8 +382,12 @@ void graphicsBindingInit()
     _rb_define_module_function(module, "play_movie", graphicsPlayMovie);
     //}
     
-    INIT_GRA_PROP_BIND( Fullscreen, "fullscreen"  );
-    INIT_GRA_PROP_BIND( ShowCursor, "show_cursor" );
-    INIT_GRA_PROP_BIND( Scale,      "scale"       );
-    INIT_GRA_PROP_BIND( Frameskip,  "frameskip"   );
+    INIT_GRA_PROP_BIND( Fullscreen,       "fullscreen"         );
+    INIT_GRA_PROP_BIND( ShowCursor,       "show_cursor"        );
+    INIT_GRA_PROP_BIND( Scale,            "scale"              );
+    INIT_GRA_PROP_BIND( Frameskip,        "frameskip"          );
+    INIT_GRA_PROP_BIND( FixedAspectRatio, "fixed_aspect_ratio" );
+    INIT_GRA_PROP_BIND( SmoothScaling,    "smooth_scaling"     );
+    INIT_GRA_PROP_BIND( IntegerScaling,   "integer_scaling"    );
+    INIT_GRA_PROP_BIND( LastMileScaling,  "last_mile_scaling"  );
 }
