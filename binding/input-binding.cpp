@@ -269,6 +269,12 @@ RB_METHOD(inputMouseY) {
     return rb_fix_new(shState->input().mouseY());
 }
 
+RB_METHOD(inputScrollV) {
+    RB_UNUSED_PARAM;
+    
+    return rb_fix_new(shState->input().scrollV());
+}
+
 #define M_SYMBOL(x) ID2SYM(rb_intern(x))
 #define POWERCASE(v, c)                                                        \
 case SDL_JOYSTICK_POWER_##c:                                                 \
@@ -386,7 +392,10 @@ struct {
     
     {"MOUSELEFT", Input::MouseLeft},
     {"MOUSEMIDDLE", Input::MouseMiddle},
-    {"MOUSERIGHT", Input::MouseRight}};
+    {"MOUSERIGHT", Input::MouseRight},
+    {"MOUSEX1", Input::MouseX1},
+    {"MOUSEX2", Input::MouseX2}
+};
 
 static elementsN(buttonCodes);
 
@@ -412,6 +421,7 @@ void inputBindingInit() {
     
     _rb_define_module_function(module, "mouse_x", inputMouseX);
     _rb_define_module_function(module, "mouse_y", inputMouseY);
+    _rb_define_module_function(module, "scroll_v", inputScrollV);
     
     _rb_define_module_function(module, "joystick", inputJoystickInfo);
     

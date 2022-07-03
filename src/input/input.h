@@ -50,7 +50,8 @@ public:
 		F5 = 25, F6 = 26, F7 = 27, F8 = 28, F9 = 29,
 
 		/* Non-standard extensions */
-		MouseLeft = 38, MouseMiddle = 39, MouseRight = 40
+		MouseLeft = 38, MouseMiddle = 39, MouseRight = 40,
+        MouseX1 = 41, MouseX2 = 42
 	};
     
     void recalcRepeat(unsigned int fps);
@@ -79,6 +80,7 @@ public:
 	/* Non-standard extensions */
 	int mouseX();
 	int mouseY();
+    int scrollV();
     
     bool getJoystickConnected();
     const char *getJoystickName();

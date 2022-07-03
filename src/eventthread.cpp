@@ -86,6 +86,7 @@ uint8_t EventThread::keyStates[];
 EventThread::JoyState EventThread::joyState;
 EventThread::MouseState EventThread::mouseState;
 EventThread::TouchState EventThread::touchState;
+SDL_atomic_t EventThread::verticalScrollDistance;
 
 /* User event codes */
 enum
@@ -427,6 +428,10 @@ void EventThread::process(RGSSThreadData &rtData)
                 mouseState.y = event.motion.y;
                 updateCursorState(cursorInWindow, gameScreen);
                 break;
+                
+            case SDL_MOUSEWHEEL :
+                /* Only consider vertical scrolling for now */
+                SDL_AtomicAdd(&verticalScrollDistance, event.wheel.y);
                 
             case SDL_FINGERDOWN :
                 i = event.tfinger.fingerId;

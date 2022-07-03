@@ -38,7 +38,7 @@
 #include <string.h>
 #include <assert.h>
 
-#define BUTTON_CODE_COUNT 24
+#define BUTTON_CODE_COUNT 26
 
 #define m(vk,sc) { vk, SDL_SCANCODE_##sc }
 std::unordered_map<int, int> vKeyToScancode{
@@ -626,7 +626,7 @@ static const int mapToIndex[] =
     0,
     16, 17, 18, 19, 20,
     0, 0, 0, 0, 0, 0, 0, 0,
-    21, 22, 23
+    21, 22, 23, 24, 25
 };
 
 static elementsN(mapToIndex);
@@ -691,6 +691,8 @@ struct InputPrivate
     unsigned int repeatDelay;
     
     unsigned long long last_update;
+
+    int vScrollDistance;
     
     struct
     {
@@ -746,6 +748,8 @@ struct InputPrivate
         dir4Data.previous = Input::None;
         
         dir8Data.active = 0;
+        
+        vScrollDistance = 0;
     }
     
     inline ButtonState &getStateCheck(int code)
@@ -942,12 +946,14 @@ struct InputPrivate
     
     void initMsBindings()
     {
-        msBindings.resize(3);
+        msBindings.resize(5);
         
         size_t i = 0;
         msBindings[i++] = MsBinding(SDL_BUTTON_LEFT,   Input::MouseLeft);
         msBindings[i++] = MsBinding(SDL_BUTTON_MIDDLE, Input::MouseMiddle);
         msBindings[i++] = MsBinding(SDL_BUTTON_RIGHT,  Input::MouseRight);
+        msBindings[i++] = MsBinding(SDL_BUTTON_X1, Input::MouseX1);
+        msBindings[i++] = MsBinding(SDL_BUTTON_X2, Input::MouseX2);
     }
     
     void pollBindings(Input::ButtonCode &repeatCand)
@@ -1173,6 +1179,10 @@ void Input::update()
     }
     
     p->repeating = None;
+    
+    /* Fetch new cumulative scroll distance and reset counter */
+    p->vScrollDistance = SDL_AtomicSet(&EventThread::verticalScrollDistance, 0);
+    
     p->last_update = shState->runTime();
 }
 
@@ -1306,6 +1316,11 @@ int Input::mouseY()
     
     return (EventThread::mouseState.y - rtData.screenOffset.y) * rtData.sizeResoRatio.y;
 }
+
+int Input::scrollV()
+ {
+     return p->vScrollDistance;
+ }
 
 bool Input::getJoystickConnected()
 {
