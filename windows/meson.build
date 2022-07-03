@@ -3,6 +3,7 @@ win = import('windows')
 res = files(
 'resource.h',
 'icon.ico',
+'mkxpz.manifest',
 'resource.rc'
 )
 

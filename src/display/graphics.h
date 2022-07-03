@@ -67,11 +67,15 @@ public:
 	void reset();
     void center();
 
-	/* Non-standard extension */
-	DECL_ATTR( Fullscreen, bool )
-	DECL_ATTR( ShowCursor, bool )
-  DECL_ATTR( Scale,    double )
-	DECL_ATTR( Frameskip, bool )
+    /* Non-standard extension */
+    DECL_ATTR( Fullscreen, bool )
+    DECL_ATTR( ShowCursor, bool )
+    DECL_ATTR( Scale,    double )
+    DECL_ATTR( Frameskip, bool )
+    DECL_ATTR( FixedAspectRatio, bool )
+    DECL_ATTR( SmoothScaling, bool )
+    DECL_ATTR( IntegerScaling, bool )
+    DECL_ATTR( LastMileScaling, bool )
     double averageFrameRate();
 
 	/* <internal> */

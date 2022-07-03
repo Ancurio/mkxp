@@ -107,9 +107,9 @@ struct Movie
     bool hasAudio;
     bool skippable;
     Bitmap *videoBitmap;
-    SDL_RWops srcOps;    
+    SDL_RWops srcOps;
     static float volume;
-
+    
     Movie(int volume_, bool skippable_)
     : decoder(0), audio(0), video(0), skippable(skippable_), videoBitmap(0)
     {
@@ -117,10 +117,10 @@ struct Movie
     }
     bool preparePlayback()
     {
-
+        
         // https://theora.org/doc/libtheora-1.0/codec_8h.html
         // https://ffmpeg.org/doxygen/0.11/group__lavc__misc__pixfmt.html
-        THEORAPLAY_Io *io = (THEORAPLAY_Io *) malloc(sizeof (THEORAPLAY_Io));        
+        THEORAPLAY_Io *io = (THEORAPLAY_Io *) malloc(sizeof (THEORAPLAY_Io));
         if(!io) {
             SDL_RWclose(&srcOps);
             return false;
@@ -134,16 +134,16 @@ struct Movie
             SDL_RWclose(&srcOps);
             return false;
         }
-
+        
         // Wait until the decoder has parsed out some basic truths from the file.
         while (!THEORAPLAY_isInitialized(decoder)) {
             SDL_Delay(VIDEO_DELAY);
         }
-
+        
         // Once we're initialized, we can tell if this file has audio and/or video.
         hasAudio = THEORAPLAY_hasAudioStream(decoder);
         hasVideo = THEORAPLAY_hasVideoStream(decoder);
-
+        
         // Queue up the audio
         if (hasAudio) {
             while ((audio = THEORAPLAY_getAudio(decoder)) == NULL) {
@@ -153,18 +153,18 @@ struct Movie
                 SDL_Delay(VIDEO_DELAY);
             }
         }
-
+        
         // No video, so no point in doing anything else
         if (!hasVideo) {
             THEORAPLAY_stopDecode(decoder);
             return false;
         }
-
+        
         // Wait until we have video
         while ((video = THEORAPLAY_getVideo(decoder)) == NULL) {
             SDL_Delay(VIDEO_DELAY);
         }
-
+        
         // Wait until we have audio, if applicable
         audio = NULL;
         if (hasAudio) {
@@ -175,28 +175,28 @@ struct Movie
         videoBitmap = new Bitmap(video->width, video->height);
         movieAudioQueue = NULL;
         movieAudioQueueTail = NULL;
-
+        
         return true;
     }
-
+    
     static void queueAudioPacket(const THEORAPLAY_AudioPacket *audio) {
         AudioQueue *item = NULL;
-
+        
         if (!audio) {
             return;
         }
-
+        
         item = (AudioQueue *) malloc(sizeof (AudioQueue));
         if (!item) {
             THEORAPLAY_freeAudio(audio);
             return;  // oh well.
         }
-
+        
         item->audio = audio;
         item->offset = 0;
         item->next = NULL;
-
-
+        
+        
         SDL_LockAudio();
         if (movieAudioQueueTail) {
             movieAudioQueueTail->next = item;
@@ -206,7 +206,7 @@ struct Movie
         movieAudioQueueTail = item;
         SDL_UnlockAudio();
     }
-
+    
     static void queueMoreMovieAudio(THEORAPLAY_Decoder *decoder, const Uint32 now) {
         const THEORAPLAY_AudioPacket *audio;
         while ((audio = THEORAPLAY_getAudio(decoder)) != NULL) {
@@ -221,19 +221,19 @@ struct Movie
         // !!! FIXME: this should refuse to play if item->playms is in the future.
         //const Uint32 now = SDL_GetTicks() - baseticks;
         Sint16 *dst = (Sint16 *) stream;
-
+        
         while (movieAudioQueue && (len > 0)) {
             volatile AudioQueue *item = movieAudioQueue;
             AudioQueue *next = item->next;
             const int channels = item->audio->channels;
-
+            
             const float *src = item->audio->samples + (item->offset * channels);
             unsigned int cpy = (item->audio->frames - item->offset) * channels;
-
+            
             if (cpy > (len / sizeof (Sint16))) {
                 cpy = len / sizeof (Sint16);
             }
-
+            
             for (unsigned int i = 0; i < cpy; i++) {
                 const float val = (*(src++)) * volume;
                 if (val < -1.0f) {
@@ -244,26 +244,26 @@ struct Movie
                     *(dst++) = (Sint16) (val * 32767.0f);
                 }
             }
-
+            
             item->offset += (cpy / channels);
             len -= cpy * sizeof (Sint16);
-
+            
             if (item->offset >= item->audio->frames) {
                 THEORAPLAY_freeAudio(item->audio);
                 free((void *) item);
                 movieAudioQueue = next;
             }
         }
-
+        
         if (!movieAudioQueue) {
             movieAudioQueueTail = NULL;
         }
-
+        
         if (len > 0) {
             memset(dst, '\0', len);
         }
     }
-
+    
     bool startAudio()
     {
         SDL_AudioSpec spec{};
@@ -281,7 +281,7 @@ struct Movie
         SDL_PauseAudio(0);  // Start audio playback
         return true;
     }
-
+    
     void play()
     {
         // Assuming every frame has the same duration.
@@ -297,18 +297,18 @@ struct Movie
                 shState->input().update();
                 if  (shState->input().isTriggered(Input::C) || shState->input().isTriggered(Input::B)) break;
             }
-
+            
             const Uint32 now = SDL_GetTicks() - baseTicks;
-
+            
             if (!video) {
                 video = THEORAPLAY_getVideo(decoder);
             }
-
+            
             if (hasAudio) {
                 if (!audio) {
                     audio = THEORAPLAY_getAudio(decoder);
                 }
-
+                
                 if (audio && !openedAudio) {
                     if(!startAudio()){
                         Debug() << "Error opening movie audio!";
@@ -316,9 +316,9 @@ struct Movie
                     }
                     openedAudio = true;
                 }
-
+                
             }
-
+            
             // Got a video frame, now draw it
             if (video) {
                 videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
@@ -326,13 +326,13 @@ struct Movie
                 video = NULL;
             }
             shState->graphics().update(false);
-        
+            
             if (openedAudio) {
                 queueMoreMovieAudio(decoder, now);
             }
         }
     }
-
+    
     ~Movie()
     {
         if (hasAudio) {
@@ -340,7 +340,7 @@ struct Movie
                 THEORAPLAY_freeAudio(movieAudioQueueTail->audio);
             }
             movieAudioQueueTail = NULL;
-
+            
             if (movieAudioQueue) {
                 THEORAPLAY_freeAudio(movieAudioQueue->audio);
             }
@@ -359,7 +359,7 @@ float Movie::volume;
 struct MovieOpenHandler : FileSystem::OpenHandler
 {
     SDL_RWops *srcOps;
-
+    
     MovieOpenHandler(SDL_RWops &srcOps)
     :   srcOps(&srcOps)
     {}
@@ -389,7 +389,7 @@ struct PingPong {
     
     ~PingPong() {
         for (int i = 0; i < 2; ++i)
-        TEXFBO::fini(rt[i]);
+            TEXFBO::fini(rt[i]);
     }
     
     TEXFBO &backBuffer() { return rt[srcInd]; }
@@ -402,7 +402,7 @@ struct PingPong {
         screenH = height;
         
         for (int i = 0; i < 2; ++i)
-        TEXFBO::allocEmpty(rt[i], width, height);
+            TEXFBO::allocEmpty(rt[i], width, height);
     }
     
     void startRender() { bind(); }
@@ -748,6 +748,11 @@ struct GraphicsPrivate {
     TEXFBO frozenScene;
     Quad screenQuad;
     
+    Vec2i integerScaleFactor;
+    TEXFBO integerScaleBuffer;
+    bool integerScaleActive;
+    bool integerLastMileScaling;
+    
     std::vector<unsigned long long> avgFPSData;
     unsigned long long last_avg_update;
     SDL_mutex *avgFPSLock;
@@ -765,11 +770,17 @@ struct GraphicsPrivate {
     glCtx(SDL_GL_GetCurrentContext()), frameRate(DEF_FRAMERATE),
     frameCount(0), brightness(255), fpsLimiter(frameRate),
     useFrameSkip(rtData->config.frameSkip), frozen(false),
-    last_update(0), last_avg_update(0), scalingFactor(rtData->scale){
+    last_update(0), last_avg_update(0), integerScaleFactor(0, 0),
+    integerScaleActive(rtData->config.integerScaling.active),
+    integerLastMileScaling(rtData->config.integerScaling.lastMileScaling) {
         avgFPSData = std::vector<unsigned long long>();
         avgFPSLock = SDL_CreateMutex();
         glResourceLock = SDL_CreateMutex();
         
+        if (integerScaleActive) {
+            integerScaleFactor = Vec2i(1, 1);
+            rebuildIntegerScaleBuffer();
+        }
         recalculateScreenSize(rtData);
         updateScreenResoRatio(rtData);
         
@@ -785,6 +796,7 @@ struct GraphicsPrivate {
     
     ~GraphicsPrivate() {
         TEXFBO::fini(frozenScene);
+        TEXFBO::fini(integerScaleBuffer);
         SDL_DestroyMutex(avgFPSLock);
         SDL_DestroyMutex(glResourceLock);
     }
@@ -798,11 +810,19 @@ struct GraphicsPrivate {
     }
     
     /* Enforces fixed aspect ratio, if desired */
-    void recalculateScreenSize(RGSSThreadData *rtData) {
+    void recalculateScreenSize(bool fixedAspectRatio) {
         scSize = winSize;
         
-        if (!rtData->config.fixedAspectRatio) {
+        if (!fixedAspectRatio && integerLastMileScaling) {
             scOffset = Vec2i(0, 0);
+            return;
+        }
+        
+        if (integerScaleActive && !integerLastMileScaling) {
+            scOffset.x = (winSize.x - scRes.x * integerScaleFactor.x / 2);
+            scOffset.y = (winSize.y - scRes.y * integerScaleFactor.y / 2);
+            
+            scSize = Vec2i(scRes.x * integerScaleFactor.x, scRes.y * integerScaleFactor.y);
             return;
         }
         
@@ -818,8 +838,64 @@ struct GraphicsPrivate {
         scOffset.y = (winSize.y - scSize.y) / 2.f;
     }
     
+    static int findHighestFittingScale(int base, int target) {
+        int scale = 1;
+        
+        while (base * scale <= target)
+            scale++;
+        
+        return scale - 1;
+    }
+    
+    /* Returns whether a new scale was found */
+    bool findHighestIntegerScale()
+    {
+        Vec2i newScale(findHighestFittingScale(scRes.x, winSize.x),
+                       findHighestFittingScale(scRes.y, winSize.y));
+        
+        if (threadData->config.fixedAspectRatio)
+        {
+            /* Limit both factors to the smaller of the two */
+            newScale.x = newScale.y = std::min(newScale.x, newScale.y);
+        }
+        
+        if (newScale == integerScaleFactor)
+            return false;
+        
+        integerScaleFactor = newScale;
+        return true;
+    }
+    
+    void rebuildIntegerScaleBuffer()
+    {
+        TEXFBO::fini(integerScaleBuffer);
+        TEXFBO::init(integerScaleBuffer);
+        TEXFBO::allocEmpty(integerScaleBuffer, scRes.x * integerScaleFactor.x,
+                           scRes.y * integerScaleFactor.y);
+        TEXFBO::linkFBO(integerScaleBuffer);
+    }
+    
+    bool integerScaleStepApplicable() const
+    {
+        if (!integerScaleActive)
+            return false;
+        
+        if (integerScaleFactor.x < 1 || integerScaleFactor.y < 1) // XXX should be < 2, this is for testing only
+            return false;
+        
+        return true;
+    }
+    
     void checkResize() {
         if (threadData->windowSizeMsg.poll(winSize)) {
+            /* Query the actual size in pixels, not units */
+            SDL_GL_GetDrawableSize(threadData->window, &winSize.x, &winSize.y);
+            
+            /* Make sure integer buffers are rebuilt before screen offsets are
+             * calculated so we have the final allocated buffer size ready */
+            if (integerScaleActive && findHighestIntegerScale())
+                rebuildIntegerScaleBuffer();
+            
             /* some GL drivers change the viewport on window resize */
             glState.viewport.refresh();
             recalculateScreenSize(threadData);
@@ -861,6 +937,7 @@ struct GraphicsPrivate {
     }
     
     void metaBlitBufferFlippedScaled() {
+        metaBlitBufferFlippedScaled(scRes);
         GLMeta::blitRectangle(
                               IntRect(0, 0, scRes.x, scRes.y),
                               IntRect(scOffset.x * scalingFactor,
@@ -870,14 +947,60 @@ struct GraphicsPrivate {
                               threadData->config.smoothScaling);
     }
     
+    void metaBlitBufferFlippedScaled(const Vec2i &sourceSize, bool forceNearestNeighbor=false) {
+        GLMeta::blitRectangle(IntRect(0, 0, sourceSize.x, sourceSize.y),
+                              IntRect(scOffset.x, scSize.y+scOffset.y, scSize.x, -scSize.y),
+                              !forceNearestNeighbor && threadData->config.smoothScaling);
+    }
+    
     void redrawScreen() {
         screen.composite();
         
+        // maybe unspaghetti this later
+        if (integerScaleStepApplicable() && !integerLastMileScaling)
+        {
+            GLMeta::blitBeginScreen(winSize);
+            GLMeta::blitSource(screen.getPP().frontBuffer());
+            
+            FBO::clear();
+            metaBlitBufferFlippedScaled(scRes, true);
+            GLMeta::blitEnd();
+            
+            swapGLBuffer();
+            return;
+        }
+        
+        if (integerScaleStepApplicable())
+        {
+            assert(integerScaleBuffer.tex != TEX::ID(0));
+            GLMeta::blitBegin(integerScaleBuffer);
+            GLMeta::blitSource(screen.getPP().frontBuffer());
+            
+            GLMeta::blitRectangle(IntRect(0, 0, scRes.x, scRes.y),
+                                  IntRect(0, 0, integerScaleBuffer.width, integerScaleBuffer.height),
+                                  false);
+            
+            GLMeta::blitEnd();
+        }
+        
         GLMeta::blitBeginScreen(winSize);
-        GLMeta::blitSource(screen.getPP().frontBuffer());
+        //GLMeta::blitSource(screen.getPP().frontBuffer());
+        
+        Vec2i sourceSize;
+        
+        if (integerScaleActive)
+        {
+            GLMeta::blitSource(integerScaleBuffer);
+            sourceSize = Vec2i(integerScaleBuffer.width, integerScaleBuffer.height);
+        }
+        else
+        {
+            GLMeta::blitSource(screen.getPP().frontBuffer());
+            sourceSize = scRes;
+        }
         
         FBO::clear();
-        metaBlitBufferFlippedScaled();
+        metaBlitBufferFlippedScaled(sourceSize);
         
         GLMeta::blitEnd();
         
@@ -958,7 +1081,7 @@ void Graphics::update(bool checkForShutdown) {
         p->checkShutDownReset();
     
     p->checkSyncLock();
-
+    
     
 #ifdef MKXPZ_STEAM
     if (STEAMSHIM_alive())
@@ -1183,7 +1306,7 @@ void Graphics::fadein(int duration) {
 
 Bitmap *Graphics::snapToBitmap() {
     Bitmap *bitmap = new Bitmap(width(), height());
-
+    
     p->compositeToBuffer(bitmap->getGLTypes());
     
     /* Taint entire bitmap */
@@ -1230,7 +1353,7 @@ void Graphics::playMovie(const char *filename, int volume, bool skippable) {
     Movie *movie = new Movie(volume, skippable);
     MovieOpenHandler handler(movie->srcOps);
     shState->fileSystem().openRead(handler, filename);
-
+    
     if (movie->preparePlayback()) {
         int limiterDisabled = p->fpsLimiter.disabled;
         p->fpsLimiter.disabled = false;
@@ -1257,14 +1380,14 @@ void Graphics::playMovie(const char *filename, int volume, bool skippable) {
         
         letterboxSprite.setZ(4999);
         movieSprite.setZ(5001);
-
+        
         movie->play();
         
         p->fpsLimiter.disabled = limiterDisabled;
         setFrameRate(oldFPS);
         p->useFrameSkip = oldframeskip;
     }
-
+    
     delete movie;
 }
 
@@ -1330,6 +1453,63 @@ bool Graphics::getShowCursor() const {
 
 void Graphics::setShowCursor(bool value) {
     p->threadData->ethread->requestShowCursor(value);
+}
+
+bool Graphics::getFixedAspectRatio() const
+{
+    // It's a bit hacky to expose config values as a Graphics
+    // attribute, but there's really no point in state duplication
+    return shState->config().fixedAspectRatio;
+}
+
+void Graphics::setFixedAspectRatio(bool value)
+{
+    shState->config().fixedAspectRatio = value;
+    update();
+    //p->recalculateScreenSize(p->threadData);
+    //p->findHighestIntegerScale();
+    //p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
+    //p->updateScreenResoRatio(p->threadData);
+}
+
+bool Graphics::getSmoothScaling() const
+{
+    // Same deal as with fixed aspect ratio
+    return shState->config().smoothScaling;
+}
+
+void Graphics::setSmoothScaling(bool value)
+{
+    shState->config().smoothScaling = value;
+}
+
+bool Graphics::getIntegerScaling() const
+{
+    return p->integerScaleActive;
+}
+
+void Graphics::setIntegerScaling(bool value)
+{
+    p->integerScaleActive = value;
+    update();
+    //p->findHighestIntegerScale();
+    //p->rebuildIntegerScaleBuffer();
+    
+    //p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
+    //p->updateScreenResoRatio(p->threadData);
+}
+
+bool Graphics::getLastMileScaling() const
+{
+    return p->integerLastMileScaling;
+}
+
+void Graphics::setLastMileScaling(bool value)
+{
+    p->integerLastMileScaling = value;
+    update();
+    //p->recalculateScreenSize(p->threadData->config.fixedAspectRatio);
+    //p->updateScreenResoRatio(p->threadData);
 }
 
 double Graphics::getScale() const { return (double)p->scSize.y / p->scRes.y; }

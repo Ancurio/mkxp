@@ -100,7 +100,15 @@ void initGLFunctions()
     
     if (glMajor < 2)
 #ifndef GLES2_HEADER
-        throw EXC("A graphics card that supports OpenGL 2.0 or later is required.");
+        throw Exception(Exception::MKXPError,
+                  "A graphics card that supports OpenGL 2.0 or later is required.\n\n"
+                  "Driver information:\n"
+                  "Vendor: %s\n"
+                  "Renderer: %s\n"
+                  "Version: %s\n"
+                  "GLSL Version: %s\n",
+                  gl.GetString(GL_VENDOR), gl.GetString(GL_RENDERER), gl.GetString(GL_VERSION),
+                  gl.GetString(GL_SHADING_LANGUAGE_VERSION));
 #else
         // on macOS, we're actually using either desktop GL or Metal due to ANGLE, but every Mac that supports Sierra
         // (officially or otherwise) should support ANGLE, so this should never be seen. Probably, anyway. Don't @ me

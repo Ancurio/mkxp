@@ -124,6 +124,8 @@ void Config::read(int argc, char *argv[]) {
 #else
         {"enableBlitting", true},
 #endif
+        {"integerScalingActive", false},
+        {"integerScalingLastMile", true},
         {"maxTextureSize", 0},
         {"gameFolder", ""},
         {"anyAltToggleFS", false},
@@ -139,7 +141,6 @@ void Config::read(int argc, char *argv[]) {
         {"SESourceCount", 6},
         {"customScript", ""},
         {"pathCache", true},
-        {"encryptedGraphics", true},
         {"useScriptNames", 1},
         {"preloadScript", json::array({})},
         {"RTP", json::array({})},
@@ -212,7 +213,6 @@ try { exp } catch (...) {}
 #define SET_STRINGOPT(var, key) GUARD(var = std::string(opts[#key].as_string());)
     
     SET_OPT(rgssVersion, integer);
-    SET_OPT(preferMetalRenderer, boolean);
     SET_OPT(debugMode, boolean);
     SET_OPT(printFPS, boolean);
     SET_OPT(fullscreen, boolean);
@@ -229,6 +229,8 @@ try { exp } catch (...) {}
     SET_OPT(solidFonts, boolean);
     SET_OPT(subImageFix, boolean);
     SET_OPT(enableBlitting, boolean);
+    SET_OPT_CUSTOMKEY(integerScaling.active, integerScalingActive, boolean);
+    SET_OPT_CUSTOMKEY(integerScaling.lastMileScaling, integerScalingLastMile, boolean);
     SET_OPT(maxTextureSize, integer);
     SET_STRINGOPT(gameFolder, gameFolder);
     SET_OPT(anyAltToggleFS, boolean);

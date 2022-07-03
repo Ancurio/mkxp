@@ -59,6 +59,11 @@ struct Config {
     bool enableBlitting;
     int maxTextureSize;
     
+    struct {
+        bool active;
+        bool lastMileScaling;
+    } integerScaling;
+    
     std::string gameFolder;
     bool manualFolderSelect;
     
