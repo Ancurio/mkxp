@@ -22,7 +22,6 @@
 #include "eventthread.h"
 
 #include <SDL_events.h>
-#include <SDL_joystick.h>
 #include <SDL_messagebox.h>
 #include <SDL_timer.h>
 #include <SDL_thread.h>
@@ -83,7 +82,7 @@ initALCFunctions(ALCdevice *alcDev)
 #define HAVE_ALC_DEVICE_PAUSE alc.DevicePause
 
 uint8_t EventThread::keyStates[];
-EventThread::JoyState EventThread::joyState;
+EventThread::ControllerState EventThread::controllerState;
 EventThread::MouseState EventThread::mouseState;
 EventThread::TouchState EventThread::touchState;
 SDL_atomic_t EventThread::verticalScrollDistance;
@@ -122,7 +121,7 @@ bool EventThread::allocUserEvents()
 }
 
 EventThread::EventThread()
-: js(0),
+: ctrl(0),
 fullscreen(false),
 showCursor(true)
 {
@@ -164,8 +163,13 @@ void EventThread::process(RGSSThreadData &rtData)
     
     bool terminate = false;
     
-    if (SDL_NumJoysticks() > 0)
-        js = SDL_JoystickOpen(0);
+    // debug, haven't actually added it to the build systems yet
+    SDL_GameControllerAddMappingsFromFile("/Users/zorua/Documents/Source/mkxp-z/assets/gamecontrollerdb.txt");
+    
+    SDL_JoystickUpdate();
+    if (SDL_NumJoysticks() > 0 && SDL_IsGameController(0)) {
+            ctrl = SDL_GameControllerOpen(0);
+    }
     
     char buffer[128];
     
@@ -387,32 +391,28 @@ void EventThread::process(RGSSThreadData &rtData)
                 keyStates[event.key.keysym.scancode] = false;
                 break;
                 
-            case SDL_JOYBUTTONDOWN :
-                joyState.buttons[event.jbutton.button] = true;
+            case SDL_CONTROLLERBUTTONDOWN:
+                controllerState.buttons[event.cbutton.button] = true;
                 break;
                 
-            case SDL_JOYBUTTONUP :
-                joyState.buttons[event.jbutton.button] = false;
+            case SDL_CONTROLLERBUTTONUP:
+                controllerState.buttons[event.cbutton.button] = false;
                 break;
                 
-            case SDL_JOYHATMOTION :
-                joyState.hats[event.jhat.hat] = event.jhat.value;
+            case SDL_CONTROLLERAXISMOTION:
+                controllerState.axes[event.caxis.axis] = event.caxis.value;
                 break;
                 
-            case SDL_JOYAXISMOTION :
-                joyState.axes[event.jaxis.axis] = event.jaxis.value;
-                break;
-                
-            case SDL_JOYDEVICEADDED :
-                if (event.jdevice.which > 0)
+            case SDL_CONTROLLERDEVICEADDED:
+                if (event.cdevice.which > 0)
                     break;
                 
-                js = SDL_JoystickOpen(0);
+                ctrl = SDL_GameControllerOpen(0);
                 break;
                 
-            case SDL_JOYDEVICEREMOVED :
+            case SDL_CONTROLLERDEVICEREMOVED:
                 resetInputStates();
-                js = 0;
+                ctrl = 0;
                 break;
                 
             case SDL_MOUSEBUTTONDOWN :
@@ -575,8 +575,8 @@ void EventThread::process(RGSSThreadData &rtData)
     /* Just in case */
     rtData.syncPoint.resumeThreads();
     
-    if (SDL_JoystickGetAttached(js))
-        SDL_JoystickClose(js);
+    if (SDL_GameControllerGetAttached(ctrl))
+        SDL_GameControllerClose(ctrl);
     
 #ifndef MKXPZ_BUILD_XCODE
     delete sMenu;
@@ -649,7 +649,7 @@ void EventThread::cleanup()
 void EventThread::resetInputStates()
 {
     memset(&keyStates, 0, sizeof(keyStates));
-    memset(&joyState, 0, sizeof(joyState));
+    memset(&controllerState, 0, sizeof(controllerState));
     memset(&mouseState.buttons, 0, sizeof(mouseState.buttons));
     memset(&touchState, 0, sizeof(touchState));
 }
@@ -778,14 +778,14 @@ bool EventThread::getShowCursor() const
     return showCursor;
 }
 
-bool EventThread::getJoystickConnected() const
+bool EventThread::getControllerConnected() const
 {
-    return js != 0;
+    return ctrl != 0;
 }
 
-SDL_Joystick *EventThread::joystick() const
+SDL_GameController *EventThread::controller() const
 {
-    return js;
+    return ctrl;
 }
 
 void EventThread::notifyFrame()

@@ -23,6 +23,7 @@
 #define INPUT_H
 
 #include <unordered_map>
+#include <SDL_gamecontroller.h>
 #include <string>
 #include <vector>
 
@@ -82,9 +83,9 @@ public:
 	int mouseY();
     int scrollV();
     
-    bool getJoystickConnected();
-    const char *getJoystickName();
-    int getJoystickPowerLevel();
+    bool getControllerConnected();
+    const char *getControllerName();
+    int getControllerPowerLevel();
     
     bool getTextInputMode();
     void setTextInputMode(bool mode);
@@ -93,6 +94,9 @@ public:
     
     char *getClipboardText();
     void setClipboardText(char *text);
+    
+    const char *getAxisName(SDL_GameControllerAxis axis);
+    const char *getButtonName(SDL_GameControllerButton button);
 
 private:
 	Input(const RGSSThreadData &rtData);

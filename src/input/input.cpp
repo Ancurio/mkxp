@@ -423,6 +423,39 @@ std::unordered_map<std::string, int> strToScancode{
 
 #undef m
 
+const char *axisNames[] {
+    "LStick X",
+    "LStick Y",
+    "RStick X",
+    "RStick Y",
+    "LTrigger",
+    "RTrigger"
+};
+
+const char *buttonNames[] {
+    "Pad A",
+    "Pad B",
+    "Pad X",
+    "Pad Y",
+    "Pad Back",
+    "Pad Guide",
+    "Pad Start",
+    "Pad LS",
+    "Pad RS",
+    "Pad LB",
+    "Pad RB",
+    "Pad Up",
+    "Pad Down",
+    "Pad Left",
+    "Pad Right",
+    "Pad Misc",
+    "Pad Paddle1",
+    "Pad Paddle2",
+    "Pad Paddle3",
+    "Pad Paddle4",
+    "Pad Touchpad"
+};
+
 struct ButtonState
 {
     bool pressed;
@@ -493,14 +526,13 @@ struct KbBinding : public Binding
     SDL_Scancode source;
 };
 
-/* Joystick button binding */
-struct JsButtonBinding : public Binding
+struct CtrlButtonBinding : public Binding
 {
-    JsButtonBinding() {}
+    CtrlButtonBinding() {}
     
     bool sourceActive() const
     {
-        return EventThread::joyState.buttons[source];
+        return EventThread::controllerState.buttons[source];
     }
     
     bool sourceRepeatable() const
@@ -508,67 +540,32 @@ struct JsButtonBinding : public Binding
         return true;
     }
     
-    uint8_t source;
+    SDL_GameControllerButton source;
 };
 
-/* Joystick axis binding */
-struct JsAxisBinding : public Binding
+struct CtrlAxisBinding : public Binding
 {
-    JsAxisBinding() {}
+    CtrlAxisBinding() {}
     
-    JsAxisBinding(uint8_t source,
-                  AxisDir dir,
-                  Input::ButtonCode target)
-    : Binding(target),
-    source(source),
-    dir(dir)
-    {}
+    CtrlAxisBinding(uint8_t source, AxisDir dir, Input::ButtonCode target)
+    : Binding(target), source(source), dir(dir) {}
     
     bool sourceActive() const
     {
-        int val = EventThread::joyState.axes[source];
+        float val = EventThread::controllerState.axes[source];
         
         if (dir == Negative)
             return val < -JAXIS_THRESHOLD;
-        else /* dir == Positive */
+        else
             return val > JAXIS_THRESHOLD;
     }
     
-    bool sourceRepeatable() const
-    {
+    bool sourceRepeatable() const {
         return true;
     }
     
     uint8_t source;
     AxisDir dir;
-};
-
-/* Joystick hat binding */
-struct JsHatBinding : public Binding
-{
-    JsHatBinding() {}
-    
-    JsHatBinding(uint8_t source,
-                 uint8_t pos,
-                 Input::ButtonCode target)
-    : Binding(target),
-    source(source),
-    pos(pos)
-    {}
-    
-    bool sourceActive() const
-    {
-        /* For a diagonal input accept it as an input for both the axes */
-        return (pos & EventThread::joyState.hats[source]) != 0;
-    }
-    
-    bool sourceRepeatable() const
-    {
-        return true;
-    }
-    
-    uint8_t source;
-    uint8_t pos;
 };
 
 /* Mouse button binding */
@@ -661,9 +658,8 @@ struct InputPrivate
 {
     std::vector<KbBinding> kbStatBindings;
     std::vector<KbBinding> kbBindings;
-    std::vector<JsAxisBinding> jsABindings;
-    std::vector<JsHatBinding> jsHBindings;
-    std::vector<JsButtonBinding> jsBBindings;
+    std::vector<CtrlAxisBinding> ctrlABindings;
+    std::vector<CtrlButtonBinding> ctrlBBindings;
     std::vector<MsBinding> msBindings;
     
     /* Collective binding array */
@@ -866,9 +862,8 @@ struct InputPrivate
     void applyBindingDesc(const BDescVec &d)
     {
         kbBindings.clear();
-        jsABindings.clear();
-        jsHBindings.clear();
-        jsBBindings.clear();
+        ctrlABindings.clear();
+        ctrlBBindings.clear();
         
         for (size_t i = 0; i < d.size(); ++i)
         {
@@ -891,32 +886,22 @@ struct InputPrivate
                     
                     break;
                 }
-                case JAxis :
+                case CAxis :
                 {
-                    JsAxisBinding bind;
-                    bind.source = src.d.ja.axis;
-                    bind.dir = src.d.ja.dir;
+                    CtrlAxisBinding bind;
+                    bind.source = src.d.ca.axis;
+                    bind.dir = src.d.ca.dir;
                     bind.target = desc.target;
-                    jsABindings.push_back(bind);
+                    ctrlABindings.push_back(bind);
                     
                     break;
                 }
-                case JHat :
+                case CButton :
                 {
-                    JsHatBinding bind;
-                    bind.source = src.d.jh.hat;
-                    bind.pos = src.d.jh.pos;
+                    CtrlButtonBinding bind;
+                    bind.source = src.d.cb;
                     bind.target = desc.target;
-                    jsHBindings.push_back(bind);
-                    
-                    break;
-                }
-                case JButton :
-                {
-                    JsButtonBinding bind;
-                    bind.source = src.d.jb;
-                    bind.target = desc.target;
-                    jsBBindings.push_back(bind);
+                    ctrlBBindings.push_back(bind);
                     
                     break;
                 }
@@ -931,9 +916,8 @@ struct InputPrivate
         appendBindings(msBindings);
         
         appendBindings(kbBindings);
-        appendBindings(jsABindings);
-        appendBindings(jsHBindings);
-        appendBindings(jsBBindings);
+        appendBindings(ctrlABindings);
+        appendBindings(ctrlBBindings);
     }
     
     void initStaticKbBindings()
@@ -1193,19 +1177,14 @@ std::vector<std::string> Input::getBindings(ButtonCode code) {
         ret.push_back(SDL_GetScancodeName(b.source));
     }
     
-    for (const auto &b : p->jsBBindings) {
+    for (const auto &b : p->ctrlBBindings) {
         if (b.target != code) continue;
-        ret.push_back(std::string("JSBUTTON") + std::to_string(b.source));
+        ret.push_back(std::string("CBUTTON") + std::to_string(b.source));
     }
     
-    for (const auto &b : p->jsABindings) {
+    for (const auto &b : p->ctrlABindings) {
         if (b.target != code) continue;
-        ret.push_back(std::string("JSAXIS") + std::to_string(b.source));
-    }
-    
-    for (const auto &b : p->jsHBindings) {
-        if (b.target != code) continue;
-        ret.push_back(std::string("JSHAT") + std::to_string(b.source));
+        ret.push_back(std::string("CAXIS") + std::to_string(b.source));
     }
     
     return ret;
@@ -1322,23 +1301,25 @@ int Input::scrollV()
      return p->vScrollDistance;
  }
 
-bool Input::getJoystickConnected()
+bool Input::getControllerConnected()
 {
-    return shState->eThread().getJoystickConnected();
+    return shState->eThread().getControllerConnected();
 }
 
-const char *Input::getJoystickName()
+const char *Input::getControllerName()
 {
-    return (getJoystickConnected()) ?
-    SDL_JoystickName(shState->eThread().joystick()) :
+    return (getControllerConnected()) ?
+    SDL_GameControllerName(shState->eThread().controller()) :
     0;
 }
 
-int Input::getJoystickPowerLevel()
+int Input::getControllerPowerLevel()
 {
-    return (getJoystickConnected()) ?
-    SDL_JoystickCurrentPowerLevel(shState->eThread().joystick()) :
-    SDL_JOYSTICK_POWER_UNKNOWN;
+    if (!getControllerConnected())
+        return SDL_JOYSTICK_POWER_UNKNOWN;
+    
+    SDL_Joystick *js = SDL_GameControllerGetJoystick(shState->eThread().controller());
+    return SDL_JoystickCurrentPowerLevel(js);
 }
 
 bool Input::getTextInputMode()
@@ -1373,6 +1354,20 @@ void Input::setClipboardText(char *text)
 {
     if (SDL_SetClipboardText(text) < 0)
         throw Exception(Exception::SDLError, "Failed to set clipboard text: %s", SDL_GetError());
+}
+
+const char *Input::getAxisName(SDL_GameControllerAxis axis) {
+    if (axis < 0 || axis >= SDL_CONTROLLER_AXIS_MAX)
+        return "Invalid";
+    
+    return axisNames[axis];
+}
+
+const char *Input::getButtonName(SDL_GameControllerButton button) {
+    if (button < 0 || button >= SDL_CONTROLLER_BUTTON_MAX)
+        return "Invalid";
+    
+    return buttonNames[button];
 }
 
 Input::~Input()

@@ -23,10 +23,10 @@
 #define EVENTTHREAD_H
 
 #include <SDL_scancode.h>
-#include <SDL_joystick.h>
 #include <SDL_mouse.h>
 #include <SDL_mutex.h>
 #include <SDL_atomic.h>
+#include <SDL_gamecontroller.h>
 
 #include <string>
 
@@ -47,12 +47,11 @@ union SDL_Event;
 class EventThread
 {
 public:
-	struct JoyState
-	{
-		int axes[256];
-		uint8_t hats[256];
-		bool buttons[256];
-	};
+    
+    struct ControllerState {
+        int axes[SDL_CONTROLLER_AXIS_MAX];
+        bool buttons[SDL_CONTROLLER_BUTTON_MAX];
+    };
 
 	struct MouseState
 	{
@@ -73,7 +72,7 @@ public:
 	};
 
 	static uint8_t keyStates[SDL_NUM_SCANCODES];
-	static JoyState joyState;
+    static ControllerState controllerState;
 	static MouseState mouseState;
 	static TouchState touchState;
     static SDL_atomic_t verticalScrollDistance;
@@ -106,9 +105,9 @@ public:
 
 	bool getFullscreen() const;
 	bool getShowCursor() const;
-    bool getJoystickConnected() const;
+    bool getControllerConnected() const;
     
-    SDL_Joystick *joystick() const;
+    SDL_GameController *controller() const;
 
 	void showMessageBox(const char *body, int flags = 0);
 
@@ -129,7 +128,7 @@ private:
 	bool fullscreen;
 	bool showCursor;
     
-    SDL_Joystick *js;
+    SDL_GameController *ctrl;
     
 	AtomicFlag msgBoxDone;
     

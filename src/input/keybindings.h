@@ -25,7 +25,7 @@
 #include "input.h"
 
 #include <SDL_scancode.h>
-#include <SDL_joystick.h>
+#include <SDL_gamecontroller.h>
 #include <stdint.h>
 #include <assert.h>
 #include <vector>
@@ -40,9 +40,8 @@ enum SourceType
 {
 	Invalid,
 	Key,
-	JButton,
-	JAxis,
-	JHat
+    CButton,
+    CAxis
 };
 
 struct SourceDesc
@@ -54,21 +53,14 @@ struct SourceDesc
 		/* Keyboard scancode */
 		SDL_Scancode scan;
 		/* Joystick button index */
-		uint8_t jb;
+		SDL_GameControllerButton cb;
 		struct
 		{
 			/* Joystick axis index */
-			uint8_t axis;
+			SDL_GameControllerAxis axis;
 			/* Joystick axis direction */
 			AxisDir dir;
-		} ja;
-		struct
-		{
-			/* Joystick axis index */
-			uint8_t hat;
-			/* Joystick axis direction */
-			uint8_t pos;
-		} jh;
+		} ca;
 	} d;
 
 	bool operator==(const SourceDesc &o) const
@@ -82,12 +74,10 @@ struct SourceDesc
 			return true;
 		case Key:
 			return d.scan == o.d.scan;
-		case JButton:
-			return d.jb == o.d.jb;
-		case JAxis:
-			return (d.ja.axis == o.d.ja.axis) && (d.ja.dir == o.d.ja.dir);
-		case JHat:
-			return (d.jh.hat == o.d.jh.hat) && (d.jh.pos == o.d.jh.pos);
+        case CButton:
+            return d.cb == o.d.cb;
+		case CAxis:
+			return (d.ca.axis == o.d.ca.axis) && (d.ca.dir == o.d.ca.dir);
 		default:
 			assert(!"unreachable");
 			return false;

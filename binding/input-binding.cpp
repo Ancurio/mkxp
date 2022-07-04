@@ -281,20 +281,20 @@ case SDL_JOYSTICK_POWER_##c:                                                 \
 v = M_SYMBOL(#c);                                                          \
 break;
 
-RB_METHOD(inputJoystickInfo) {
+RB_METHOD(inputControllerInfo) {
     RB_UNUSED_PARAM;
     
-    if (!shState->input().getJoystickConnected())
+    if (!shState->input().getControllerConnected())
         return RUBY_Qnil;
     
     VALUE ret = rb_hash_new();
     
     rb_hash_aset(ret, M_SYMBOL("name"),
-                 rb_utf8_str_new_cstr(shState->input().getJoystickName()));
+                 rb_utf8_str_new_cstr(shState->input().getControllerName()));
     
     VALUE power;
     
-    switch (shState->input().getJoystickPowerLevel()) {
+    switch (shState->input().getControllerPowerLevel()) {
             POWERCASE(power, MAX);
             POWERCASE(power, WIRED);
             POWERCASE(power, FULL);
@@ -423,7 +423,8 @@ void inputBindingInit() {
     _rb_define_module_function(module, "mouse_y", inputMouseY);
     _rb_define_module_function(module, "scroll_v", inputScrollV);
     
-    _rb_define_module_function(module, "joystick", inputJoystickInfo);
+    _rb_define_module_function(module, "joystick", inputControllerInfo);
+    _rb_define_module_function(module, "controller", inputControllerInfo);
     
     _rb_define_module_function(module, "text_input", inputGetMode);
     _rb_define_module_function(module, "text_input=", inputSetMode);
