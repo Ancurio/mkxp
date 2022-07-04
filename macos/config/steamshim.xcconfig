@@ -7,6 +7,7 @@
 
 // If this is set to anything but 0, steamshim will use RestartAppIfNecessary instead of requiring
 // a steam_appid.txt
+//STEAM_APP_ID = 1488200
 STEAM_APP_ID = 0
 
 STEAMSHIM_DEFINES = "GAME_LAUNCH_NAME=\"Z-steam\"" STEAM_APPID=$(STEAM_APP_ID)

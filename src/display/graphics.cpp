@@ -748,6 +748,8 @@ struct GraphicsPrivate {
     TEXFBO frozenScene;
     Quad screenQuad;
     
+    float backingScaleFactor;
+    
     Vec2i integerScaleFactor;
     TEXFBO integerScaleBuffer;
     bool integerScaleActive;
@@ -770,7 +772,7 @@ struct GraphicsPrivate {
     glCtx(SDL_GL_GetCurrentContext()), frameRate(DEF_FRAMERATE),
     frameCount(0), brightness(255), fpsLimiter(frameRate),
     useFrameSkip(rtData->config.frameSkip), frozen(false),
-    last_update(0), last_avg_update(0), integerScaleFactor(0, 0),
+    last_update(0), last_avg_update(0), backingScaleFactor(1), integerScaleFactor(0, 0),
     integerScaleActive(rtData->config.integerScaling.active),
     integerLastMileScaling(rtData->config.integerScaling.lastMileScaling) {
         avgFPSData = std::vector<unsigned long long>();
@@ -803,8 +805,8 @@ struct GraphicsPrivate {
     
     void updateScreenResoRatio(RGSSThreadData *rtData) {
         Vec2 &ratio = rtData->sizeResoRatio;
-        ratio.x = (float)scRes.x / scSize.x;
-        ratio.y = (float)scRes.y / scSize.y;
+        ratio.x = (float)scRes.x / scSize.x * backingScaleFactor;
+        ratio.y = (float)scRes.y / scSize.y * backingScaleFactor;
         
         rtData->screenOffset = scOffset;
     }
@@ -889,7 +891,11 @@ struct GraphicsPrivate {
     void checkResize() {
         if (threadData->windowSizeMsg.poll(winSize)) {
             /* Query the actual size in pixels, not units */
-            threadData->drawableSizeMsg.poll(winSize);
+            Vec2i drawableSize(winSize);
+            threadData->drawableSizeMsg.poll(drawableSize);
+            
+            backingScaleFactor = drawableSize.x / winSize.x;
+            winSize = drawableSize;
             
             /* Make sure integer buffers are rebuilt before screen offsets are
              * calculated so we have the final allocated buffer size ready */
