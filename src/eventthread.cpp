@@ -326,7 +326,7 @@ void EventThread::process(RGSSThreadData &rtData)
                     break;
                 }
                 
-                if (event.key.keysym.scancode == SDL_SCANCODE_F1)
+                if (event.key.keysym.scancode == SDL_SCANCODE_F1 && rtData.config.enableSettings)
                 {
 #ifndef MKXPZ_BUILD_XCODE
                     if (!sMenu)

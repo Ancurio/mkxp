@@ -69,6 +69,7 @@ struct Config {
     
     bool anyAltToggleFS;
     bool enableReset;
+    bool enableSettings;
     bool allowSymlinks;
     bool pathCache;
     

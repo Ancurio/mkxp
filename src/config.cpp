@@ -130,6 +130,7 @@ void Config::read(int argc, char *argv[]) {
         {"gameFolder", ""},
         {"anyAltToggleFS", false},
         {"enableReset", true},
+        {"enableSettings", true},
         {"allowSymlinks", false},
         {"dataPathOrg", ""},
         {"dataPathApp", ""},
@@ -235,6 +236,7 @@ try { exp } catch (...) {}
     SET_STRINGOPT(gameFolder, gameFolder);
     SET_OPT(anyAltToggleFS, boolean);
     SET_OPT(enableReset, boolean);
+    SET_OPT(enableSettings, boolean);
     SET_OPT(allowSymlinks, boolean);
     SET_STRINGOPT(dataPathOrg, dataPathOrg);
     SET_STRINGOPT(dataPathApp, dataPathApp);
