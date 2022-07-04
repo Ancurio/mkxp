@@ -352,8 +352,6 @@ void Config::readGameINI() {
     
     customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
     
-    commonDataPath = prefPath(".", "mkxp-z");
-    
     if (rgssVersion == 0) {
         /* Try to guess RGSS version based on Data/Scripts extension */
         rgssVersion = 1;

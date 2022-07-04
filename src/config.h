@@ -137,7 +137,6 @@ struct Config {
     
     /* Internal */
     std::string customDataPath;
-    std::string commonDataPath;
     
     Config();
     

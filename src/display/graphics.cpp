@@ -808,7 +808,7 @@ struct GraphicsPrivate {
         ratio.x = (float)scRes.x / scSize.x * backingScaleFactor;
         ratio.y = (float)scRes.y / scSize.y * backingScaleFactor;
         
-        rtData->screenOffset = scOffset;
+        rtData->screenOffset = scOffset / backingScaleFactor;
     }
     
     /* Enforces fixed aspect ratio, if desired */

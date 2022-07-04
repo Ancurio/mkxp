@@ -210,10 +210,9 @@
     // Organisation / company and application / game
     // name to build the directory path where mkxp
     // will store game specific data (eg. key bindings).
-    // If not specified, mkxp will save to a common
-    // directory shared by all games. Note that these
-    // are TWO individual config entries, and both need
-    // to be defined for this to take effect.
+    // If not specified, mkxp-z will use a folder based
+    // on the name of the game, if possible, defaulting
+    // to "." for Org and "mkxp-z" for App otherwise.
     // (default: none)
     //
     // "dataPathOrg": "mycompany",
