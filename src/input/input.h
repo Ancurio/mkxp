@@ -29,6 +29,7 @@
 
 extern std::unordered_map<int, int> vKeyToScancode;
 extern std::unordered_map<std::string, int> strToScancode;
+extern std::unordered_map<std::string, SDL_GameControllerButton> strToGCButton;
 
 struct InputPrivate;
 struct RGSSThreadData;
@@ -68,20 +69,37 @@ public:
     bool isReleased(int button);
     unsigned int count(int button);
     unsigned long long repeatTime(int button);
+    
     bool isPressedEx(int code, bool isVKey);
     bool isTriggeredEx(int code, bool isVKey);
     bool isRepeatedEx(int code, bool isVKey);
     bool isReleasedEx(int code, bool isVKey);
     unsigned int repeatcount(int code, bool isVKey);
     unsigned long long repeatTimeEx(int code, bool isVKey);
+    
+    bool controllerIsPressedEx(int button);
+    bool controllerIsTriggeredEx(int button);
+    bool controllerIsRepeatedEx(int button);
+    bool controllerIsReleasedEx(int button);
+    unsigned int controllerRepeatcount(int button);
+    unsigned long long controllerRepeatTimeEx(int button);
+    
+    uint8_t *rawKeyStates();
+    unsigned int rawKeyStatesLength();
+    uint8_t *rawButtonStates();
+    unsigned int rawButtonStatesLength();
+    int16_t *rawAxes();
+    unsigned int rawAxesLength();
+    
+    short getControllerAxisValue(SDL_GameControllerAxis axis);
 
 	int dir4Value();
 	int dir8Value();
 
-	/* Non-standard extensions */
 	int mouseX();
 	int mouseY();
     int scrollV();
+    bool mouseInWindow();
     
     bool getControllerConnected();
     const char *getControllerName();

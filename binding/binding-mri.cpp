@@ -112,8 +112,6 @@ RB_METHOD(mkxpSetTitle);
 RB_METHOD(mkxpGetTitle);
 RB_METHOD(mkxpDesensitize);
 RB_METHOD(mkxpPuts);
-RB_METHOD(mkxpRawKeyStates);
-RB_METHOD(mkxpMouseInWindow);
 
 RB_METHOD(mkxpPlatform);
 RB_METHOD(mkxpIsMacHost);
@@ -137,7 +135,6 @@ RB_METHOD(mkxpAddPath);
 RB_METHOD(mkxpRemovePath);
 RB_METHOD(mkxpLaunch);
 
-RB_METHOD(mkxpGetDefaultFontFamily);
 RB_METHOD(mkxpSetDefaultFontFamily);
 
 RB_METHOD(mriRgssMain);
@@ -218,10 +215,6 @@ static void mriBindingInit() {
     _rb_define_module_function(mod, "show_settings", mkxpSettingsMenu);
     _rb_define_module_function(mod, "puts", mkxpPuts);
     _rb_define_module_function(mod, "desensitize", mkxpDesensitize);
-    _rb_define_module_function(mod, "raw_key_states", mkxpRawKeyStates);
-    _rb_define_module_function(mod, "mouse_in_window", mkxpMouseInWindow);
-    _rb_define_module_function(mod, "mouse_in_window?", mkxpMouseInWindow);
-    
     _rb_define_module_function(mod, "platform", mkxpPlatform);
     
     _rb_define_module_function(mod, "is_mac?", mkxpIsMacHost);
@@ -378,22 +371,6 @@ RB_METHOD(mkxpPuts) {
     Debug() << str;
     
     return Qnil;
-}
-
-RB_METHOD(mkxpRawKeyStates) {
-    RB_UNUSED_PARAM;
-    
-    VALUE str = rb_str_new(0, sizeof(EventThread::keyStates));
-    memcpy(RSTRING_PTR(str), EventThread::keyStates,
-           sizeof(EventThread::keyStates));
-    
-    return str;
-}
-
-RB_METHOD(mkxpMouseInWindow) {
-    RB_UNUSED_PARAM;
-    
-    return rb_bool_new(EventThread::mouseState.inWindow);
 }
 
 RB_METHOD(mkxpPlatform) {

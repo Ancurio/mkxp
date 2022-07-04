@@ -29,6 +29,7 @@
 
 #include "keybindings.h"
 #include "eventthread.h"
+#include "sharedstate.h"
 #include "font.h"
 #include "input.h"
 #include "etc-internal.h"
@@ -102,39 +103,13 @@ std::string sourceDescString(const SourceDesc &src)
 		else
 			return str;
 	}
-	case JButton:
-		snprintf(buf, sizeof(buf), "JS %d", src.d.jb);
+	case CButton:
+		snprintf(buf, sizeof(buf), "%s", shState->input().getButtonName(src.d.cb));
 		return buf;
 
-	case JHat:
-		switch(src.d.jh.pos)
-		{
-		case SDL_HAT_UP:
-			pos = 'U';
-			break;
-
-		case SDL_HAT_DOWN:
-			pos = 'D';
-			break;
-
-		case SDL_HAT_LEFT:
-			pos = 'L';
-			break;
-
-		case SDL_HAT_RIGHT:
-			pos = 'R';
-			break;
-
-		default:
-			pos = '-';
-		}
-		snprintf(buf, sizeof(buf), "Hat %d:%c",
-		         src.d.jh.hat, pos);
-		return buf;
-
-	case JAxis:
-		snprintf(buf, sizeof(buf), "Axis %d%c",
-		         src.d.ja.axis, src.d.ja.dir == Negative ? '-' : '+');
+	case CAxis:
+		snprintf(buf, sizeof(buf), "%s%c",
+		         shState->input().getAxisName(src.d.ca.axis), src.d.ca.dir == Negative ? '-' : '+');
 		return buf;
 	}
 
@@ -640,37 +615,22 @@ struct SettingsMenuPrivate
 
 			break;
 
-		case SDL_JOYBUTTONDOWN:
-			desc.type = JButton;
-			desc.d.jb = event.jbutton.button;
+		case SDL_CONTROLLERBUTTONDOWN:
+			desc.type = CButton;
+			desc.d.cb = event.cbutton.button;
 			break;
 
-		case SDL_JOYHATMOTION:
+		case SDL_CONTROLLERAXISMOTION:
 		{
-			int v = event.jhat.value;
-
-			/* Only register if single directional input */
-			if (v != SDL_HAT_LEFT && v != SDL_HAT_RIGHT &&
-			    v != SDL_HAT_UP   && v != SDL_HAT_DOWN)
-				return true;
-
-			desc.type = JHat;
-			desc.d.jh.hat = event.jhat.hat;
-			desc.d.jh.pos = v;
-			break;
-		}
-
-		case SDL_JOYAXISMOTION:
-		{
-			int v = event.jaxis.value;
+			int v = event.caxis.value;
 
 			/* Only register if pushed halfway through */
 			if (v > -JAXIS_THRESHOLD && v < JAXIS_THRESHOLD)
 				return true;
 
-			desc.type = JAxis;
-			desc.d.ja.axis = event.jaxis.axis;
-			desc.d.ja.dir = v < 0 ? Negative : Positive;
+			desc.type = CAxis;
+			desc.d.ca.axis = event.caxis.axis;
+			desc.d.ca.dir = v < 0 ? Negative : Positive;
 			break;
 		}
 		default:

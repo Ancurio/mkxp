@@ -522,6 +522,7 @@
 		96573E82279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
 		96573E83279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
 		96573E84279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
+		96D8EDD128728DCE00A331EA /* gamecontrollerdb.txt in Resources */ = {isa = PBXBuildFile; fileRef = 96D8EDD028728DCA00A331EA /* gamecontrollerdb.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1110,6 +1111,7 @@
 		96573E7A27913B46002C3E77 /* TouchBar.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TouchBar.mm; path = views/TouchBar.mm; sourceTree = "<group>"; };
 		96573E7B27913B46002C3E77 /* TouchBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = TouchBar.h; path = views/TouchBar.h; sourceTree = "<group>"; };
 		96573E80279152DC002C3E77 /* TouchBar.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = TouchBar.xcassets; path = views/TouchBar.xcassets; sourceTree = "<group>"; };
+		96D8EDD028728DCA00A331EA /* gamecontrollerdb.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = gamecontrollerdb.txt; path = ../assets/gamecontrollerdb.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1813,6 +1815,7 @@
 				3B10EC8B2568E79800372D13 /* Shaders */,
 				3B10EC832568E78400372D13 /* icon.png */,
 				3B10EC842568E78400372D13 /* liberation.ttf */,
+				96D8EDD028728DCA00A331EA /* gamecontrollerdb.txt */,
 				3B10EC852568E78400372D13 /* wqymicrohei.ttf */,
 			);
 			name = Assets;
@@ -2062,6 +2065,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B10EC862568E78500372D13 /* icon.png in Resources */,
+				96D8EDD128728DCE00A331EA /* gamecontrollerdb.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

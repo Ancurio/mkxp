@@ -1,5 +1,6 @@
 embedded_assets = [
-    'icon.png'
+    'icon.png',
+    'gamecontrollerdb.txt'
 ]
 
 if get_option('cjk_fallback_font') == true

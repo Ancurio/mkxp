@@ -82,6 +82,18 @@ static int getScancodeArg(VALUE *argv) {
     return code;
 }
 
+static int getControllerButtonArg(VALUE *argv) {
+    const char *button = rb_id2name(SYM2ID(*argv));
+    int btn{};
+    try {
+        btn = strToGCButton[button];
+    } catch (...) {
+        rb_raise(rb_eRuntimeError, "%s is not a valid name of an SDL Controller button.");
+    }
+    
+    return btn;
+}
+
 RB_METHOD(inputPress) {
     RB_UNUSED_PARAM;
     
@@ -275,43 +287,196 @@ RB_METHOD(inputScrollV) {
     return rb_fix_new(shState->input().scrollV());
 }
 
+RB_METHOD(inputMouseInWindow) {
+    RB_UNUSED_PARAM;
+    
+    return rb_bool_new(shState->input().mouseInWindow());
+}
+
+RB_METHOD(inputRawKeyStates) {
+    RB_UNUSED_PARAM;
+    
+    VALUE ret = rb_ary_new();
+
+    uint8_t *states = shState->input().rawButtonStates();
+    
+    for (int i = 0; i < shState->input().rawButtonStatesLength(); i++)
+        rb_ary_push(ret, rb_bool_new(states[i]));
+    
+    return ret;
+}
+
 #define M_SYMBOL(x) ID2SYM(rb_intern(x))
 #define POWERCASE(v, c)                                                        \
 case SDL_JOYSTICK_POWER_##c:                                                 \
 v = M_SYMBOL(#c);                                                          \
 break;
 
-RB_METHOD(inputControllerInfo) {
+RB_METHOD(inputControllerConnected) {
+    RB_UNUSED_PARAM;
+    
+    return rb_bool_new(shState->input().getControllerConnected());
+}
+
+RB_METHOD(inputControllerName) {
     RB_UNUSED_PARAM;
     
     if (!shState->input().getControllerConnected())
-        return RUBY_Qnil;
+        return rb_utf8_str_new_cstr("");
     
-    VALUE ret = rb_hash_new();
+    return rb_utf8_str_new_cstr(shState->input().getControllerName());
+}
+
+RB_METHOD(inputControllerPowerLevel) {
+    RB_UNUSED_PARAM;
     
-    rb_hash_aset(ret, M_SYMBOL("name"),
-                 rb_utf8_str_new_cstr(shState->input().getControllerName()));
+    VALUE ret;
     
-    VALUE power;
+    if (!shState->input().getControllerConnected())
+        ret = M_SYMBOL("UNKNOWN");
     
     switch (shState->input().getControllerPowerLevel()) {
-            POWERCASE(power, MAX);
-            POWERCASE(power, WIRED);
-            POWERCASE(power, FULL);
-            POWERCASE(power, MEDIUM);
-            POWERCASE(power, LOW);
-            POWERCASE(power, EMPTY);
+            POWERCASE(ret, MAX);
+            POWERCASE(ret, WIRED);
+            POWERCASE(ret, FULL);
+            POWERCASE(ret, MEDIUM);
+            POWERCASE(ret, LOW);
+            POWERCASE(ret, EMPTY);
             
         default:
-            power = M_SYMBOL("UNKNOWN");
+            ret = M_SYMBOL("UNKNOWN");
             break;
     }
     
-    rb_hash_aset(ret, M_SYMBOL("power"), power);
     return ret;
 }
+
+#define AXISFUNC(n, ax1, ax2) \
+RB_METHOD(inputControllerGet##n##Axis) {\
+RB_UNUSED_PARAM;\
+VALUE ret = rb_ary_new(); \
+if (!shState->eThread().getControllerConnected()) {\
+rb_ary_push(ret, rb_float_new(0)); rb_ary_push(ret, rb_float_new(0)); \
+}\
+rb_ary_push(ret, rb_float_new(shState->input().getControllerAxisValue(SDL_CONTROLLER_AXIS_##ax1) / 32767.0)); \
+rb_ary_push(ret, rb_float_new(shState->input().getControllerAxisValue(SDL_CONTROLLER_AXIS_##ax2) / 32767.0)); \
+return ret; \
+}
+
+AXISFUNC(Left, LEFTX, LEFTY);
+AXISFUNC(Right, RIGHTX, RIGHTY);
+AXISFUNC(Trigger, TRIGGERLEFT, TRIGGERRIGHT);
+
 #undef POWERCASE
 #undef M_SYMBOL
+
+RB_METHOD(inputControllerPressEx) {
+    RB_UNUSED_PARAM;
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    if (SYMBOL_P(button)) {
+        int num = getControllerButtonArg(&button);
+        return rb_bool_new(shState->input().controllerIsPressedEx(num));
+    }
+    
+    return rb_bool_new(shState->input().controllerIsPressedEx(NUM2INT(button)));
+}
+
+RB_METHOD(inputControllerTriggerEx) {
+    RB_UNUSED_PARAM;
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    if (SYMBOL_P(button)) {
+        int num = getControllerButtonArg(&button);
+        return rb_bool_new(shState->input().controllerIsTriggeredEx(num));
+    }
+    
+    return rb_bool_new(shState->input().controllerIsTriggeredEx(NUM2INT(button)));
+}
+
+RB_METHOD(inputControllerRepeatEx) {
+    RB_UNUSED_PARAM;
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    if (SYMBOL_P(button)) {
+        int num = getControllerButtonArg(&button);
+        return rb_bool_new(shState->input().controllerIsRepeatedEx(num));
+    }
+    
+    return rb_bool_new(shState->input().controllerIsRepeatedEx(NUM2INT(button)));
+}
+
+RB_METHOD(inputControllerReleaseEx) {
+    RB_UNUSED_PARAM;
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    if (SYMBOL_P(button)) {
+        int num = getControllerButtonArg(&button);
+        return rb_bool_new(shState->input().controllerIsReleasedEx(num));
+    }
+    
+    return rb_bool_new(shState->input().controllerIsReleasedEx(NUM2INT(button)));
+}
+
+RB_METHOD(inputControllerCountEx) {
+    RB_UNUSED_PARAM;
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    if (SYMBOL_P(button)) {
+        int num = getControllerButtonArg(&button);
+        return rb_bool_new(shState->input().controllerRepeatcount(num));
+    }
+    
+    return rb_bool_new(shState->input().controllerRepeatcount(NUM2INT(button)));
+}
+
+RB_METHOD(inputControllerRepeatTimeEx) {
+    RB_UNUSED_PARAM;
+    
+    VALUE button;
+    rb_scan_args(argc, argv, "1", &button);
+    
+    if (SYMBOL_P(button)) {
+        int num = getControllerButtonArg(&button);
+        return rb_bool_new(shState->input().controllerRepeatTimeEx(num));
+    }
+    
+    return rb_bool_new(shState->input().controllerRepeatTimeEx(NUM2INT(button)));
+}
+
+RB_METHOD(inputControllerRawButtonStates) {
+    RB_UNUSED_PARAM;
+    
+    VALUE ret = rb_ary_new();
+    uint8_t *states = shState->input().rawButtonStates();
+    
+    for (int i = 0; i < shState->input().rawButtonStatesLength(); i++)
+        rb_ary_push(ret, rb_bool_new(states[i]));
+    
+    return ret;
+}
+
+RB_METHOD(inputControllerRawAxes) {
+    RB_UNUSED_PARAM;
+    
+    VALUE ret = rb_ary_new();
+    int16_t *states = shState->input().rawAxes();
+    
+    for (int i = 0; i < shState->input().rawAxesLength(); i++)
+        rb_ary_push(ret, rb_float_new(states[i] / 32767.0));
+    
+    return ret;
+}
 
 RB_METHOD(inputGetMode) {
     RB_UNUSED_PARAM;
@@ -422,9 +587,25 @@ void inputBindingInit() {
     _rb_define_module_function(module, "mouse_x", inputMouseX);
     _rb_define_module_function(module, "mouse_y", inputMouseY);
     _rb_define_module_function(module, "scroll_v", inputScrollV);
+    _rb_define_module_function(module, "mouse_in_window", inputMouseInWindow);
+    _rb_define_module_function(module, "mouse_in_window?", inputMouseInWindow);
     
-    _rb_define_module_function(module, "joystick", inputControllerInfo);
-    _rb_define_module_function(module, "controller", inputControllerInfo);
+    _rb_define_module_function(module, "raw_key_states", inputRawKeyStates);
+    
+    VALUE submod = rb_define_module_under(module, "Controller");
+    _rb_define_module_function(submod, "connected?", inputControllerConnected);
+    _rb_define_module_function(submod, "name", inputControllerName);
+    _rb_define_module_function(submod, "power_level", inputControllerPowerLevel);
+    _rb_define_module_function(submod, "axes_left", inputControllerGetLeftAxis);
+    _rb_define_module_function(submod, "axes_right", inputControllerGetRightAxis);
+    _rb_define_module_function(submod, "axes_trigger", inputControllerGetTriggerAxis);
+    _rb_define_module_function(submod, "raw_button_states", inputControllerRawButtonStates);
+    _rb_define_module_function(submod, "raw_axes", inputControllerRawAxes);
+    _rb_define_module_function(submod, "triggerex?", inputControllerTriggerEx);
+    _rb_define_module_function(submod, "repeatex?", inputControllerRepeatEx);
+    _rb_define_module_function(submod, "releaseex?", inputControllerReleaseEx);
+    _rb_define_module_function(submod, "repeatcount", inputControllerCountEx);
+    _rb_define_module_function(submod, "timeex?", inputControllerRepeatTimeEx);
     
     _rb_define_module_function(module, "text_input", inputGetMode);
     _rb_define_module_function(module, "text_input=", inputSetMode);

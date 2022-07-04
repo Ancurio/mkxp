@@ -38,8 +38,10 @@
 
 #ifndef MKXPZ_BUILD_XCODE
 #include "settingsmenu.h"
+#include "gamecontrollerdb.txt.xxd"
 #else
 #include "system/system.h"
+#include "filesystem/filesystem.h"
 #include "TouchBar.h"
 #endif
 
@@ -163,8 +165,13 @@ void EventThread::process(RGSSThreadData &rtData)
     
     bool terminate = false;
     
-    // debug, haven't actually added it to the build systems yet
-    SDL_GameControllerAddMappingsFromFile("/Users/zorua/Documents/Source/mkxp-z/assets/gamecontrollerdb.txt");
+#ifdef MKXPZ_BUILD_XCODE
+    SDL_GameControllerAddMappingsFromFile(mkxp_fs::getPathForAsset("gamecontrollerdb", "txt").c_str());
+#else
+    SDL_GameControllerAddMappingsFromRW(
+        SDL_RWFromConstMem(___assets_gamecontrollerdb_txt, ___assets_gamecontrollerdb_txt_len),
+    1);
+#endif
     
     SDL_JoystickUpdate();
     if (SDL_NumJoysticks() > 0 && SDL_IsGameController(0)) {

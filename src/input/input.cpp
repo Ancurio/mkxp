@@ -422,6 +422,18 @@ std::unordered_map<std::string, int> strToScancode{
 };
 
 #undef m
+#define m(ctrl) {#ctrl, SDL_CONTROLLER_BUTTON_##ctrl}
+
+std::unordered_map<std::string, SDL_GameControllerButton> strToGCButton {
+    m(A), m(B), m(X), m(Y),
+    m(BACK), m(GUIDE), m(START),
+    m(LEFTSTICK), m(RIGHTSTICK),
+    m(LEFTSHOULDER), m(RIGHTSHOULDER),
+    m(DPAD_UP), m(DPAD_DOWN), m(DPAD_LEFT), m(DPAD_RIGHT)
+    
+};
+
+#undef m
 
 const char *axisNames[] {
     "LStick X",
@@ -676,12 +688,28 @@ struct InputPrivate
     uint8_t *rawStates;
     uint8_t *rawStatesOld;
     
+    // Gamepad button states
+    uint8_t rawButtonStateArray[SDL_CONTROLLER_BUTTON_MAX*2];
+    
+    uint8_t *rawButtonStates;
+    uint8_t *rawButtonStatesOld;
+    
+    // Gamepad axes & mouse coordinates
+    int16_t axisStateArray[SDL_CONTROLLER_AXIS_MAX];
+    int mousePos[2];
+    bool mouseInWindow;
+    
     Input::ButtonCode repeating;
     int rawRepeating;
+    int buttonRepeating;
+    
     unsigned int repeatCount;
     unsigned int rawRepeatCount;
+    unsigned int buttonRepeatCount;
+    
     unsigned long long repeatTime;
     unsigned long long rawRepeatTime;
+    unsigned long long buttonRepeatTime;
     
     unsigned int repeatStart;
     unsigned int repeatDelay;
@@ -732,6 +760,9 @@ struct InputPrivate
         rawStates = rawStateArray;
         rawStatesOld = rawStateArray + SDL_NUM_SCANCODES;
         
+        rawButtonStates = rawButtonStateArray;
+        rawButtonStatesOld = rawButtonStateArray + SDL_CONTROLLER_BUTTON_MAX;
+        
         /* Clear buffers */
         clearBuffer();
         swapBuffers();
@@ -770,7 +801,7 @@ struct InputPrivate
         return statesOld[mapToIndex[code]];
     }
     
-    inline ButtonState getStateRaw(int code, bool useVKey)
+    ButtonState getStateRaw(int code, bool useVKey)
     {
         ButtonState b;
         int scancode = (useVKey) ? -1 : code;
@@ -823,6 +854,18 @@ struct InputPrivate
         return b;
     }
     
+    ButtonState getControllerButtonState(int button) {
+        ButtonState b;
+        
+        b.pressed = rawButtonStates[button];
+        b.triggered = (rawButtonStates[button] && !rawButtonStatesOld[button]);
+        b.released = (!rawButtonStates[button] && rawButtonStatesOld[button]);
+        
+        b.repeated = (buttonRepeating == button) && (buttonRepeatCount >= repeatStart && ((buttonRepeatCount+1) % repeatDelay) == 0);
+        
+        return b;
+    }
+    
     void swapBuffers()
     {
         ButtonState *tmp = states;
@@ -832,6 +875,10 @@ struct InputPrivate
         uint8_t *tmpr = rawStates;
         rawStates = rawStatesOld;
         rawStatesOld = tmpr;
+        
+        uint8_t *tmpb = rawButtonStates;
+        rawButtonStates = rawButtonStatesOld;
+        rawButtonStatesOld = tmpb;
     }
     
     void clearBuffer()
@@ -840,6 +887,8 @@ struct InputPrivate
         memset(states, 0, size);
         
         memset(rawStates, 0, SDL_NUM_SCANCODES);
+        
+        memset(rawButtonStates, 0, SDL_CONTROLLER_BUTTON_MAX);
     }
     
     void checkBindingChange(const RGSSThreadData &rtData)
@@ -995,6 +1044,7 @@ struct InputPrivate
     
     void updateRaw()
     {
+        
         memcpy(rawStates, shState->eThread().keyStates, SDL_NUM_SCANCODES);
         
         for (int i = 0; i < SDL_NUM_SCANCODES; i++)
@@ -1017,6 +1067,34 @@ struct InputPrivate
         }
         
         rawRepeating = -1;
+        
+    }
+    
+    void updateControllerRaw()
+    {
+        for (int i = 0; i < SDL_CONTROLLER_AXIS_MAX; i++)
+            axisStateArray[i] = shState->eThread().controllerState.axes[i];
+        
+        memcpy(rawButtonStates, shState->eThread().controllerState.buttons, SDL_CONTROLLER_BUTTON_MAX);
+        
+        for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; i++)
+        {
+            if (rawButtonStates[i] && rawButtonStatesOld[i])
+            {
+                if (buttonRepeating == i)
+                    rawRepeatCount++;
+                else
+                {
+                    buttonRepeatCount = 0;
+                    buttonRepeatTime = shState->runTime();
+                    buttonRepeating = i;
+                }
+                
+                return;
+            }
+        }
+        
+        buttonRepeating = -1;
     }
     
     void updateDir4()
@@ -1128,8 +1206,15 @@ void Input::update()
     /* Poll all bindings */
     p->pollBindings(repeatCand);
     
-    // Get raw keystates
+    // Update raw keys, controller buttons and axes
     p->updateRaw();
+    p->updateControllerRaw();
+    
+    // Record mouse positions
+    p->mousePos[0] = shState->eThread().mouseState.x;
+    p->mousePos[1] = shState->eThread().mouseState.y;
+    p->mouseInWindow = shState->eThread().mouseState.inWindow;
+    
     
     /* Check for new repeating key */
     if (repeatCand != None && repeatCand != p->repeating)
@@ -1243,6 +1328,22 @@ bool Input::isReleasedEx(int code, bool isVKey)
     return p->getStateRaw(code, isVKey).released;
 }
 
+bool Input::controllerIsPressedEx(int button) {
+    return p->getControllerButtonState(button).pressed;
+}
+
+bool Input::controllerIsTriggeredEx(int button) {
+    return p->getControllerButtonState(button).triggered;
+}
+
+bool Input::controllerIsRepeatedEx(int button) {
+    return p->getControllerButtonState(button).repeated;
+}
+
+bool Input::controllerIsReleasedEx(int button) {
+    return p->getControllerButtonState(button).released;
+}
+
 unsigned int Input::repeatcount(int code, bool isVKey) {
     int c = code;
     if (isVKey) {
@@ -1259,6 +1360,13 @@ unsigned int Input::repeatcount(int code, bool isVKey) {
     return p->rawRepeatCount;
 }
 
+unsigned int Input::controllerRepeatcount(int button) {
+    if (button != p->buttonRepeating)
+        return 0;
+    
+    return p->buttonRepeatCount;
+}
+
 unsigned long long Input::repeatTimeEx(int code, bool isVKey) {
     int c = code;
     if (isVKey) {
@@ -1270,6 +1378,48 @@ unsigned long long Input::repeatTimeEx(int code, bool isVKey) {
         return 0;
     
     return shState->runTime() - p->rawRepeatTime;
+}
+
+unsigned long long Input::controllerRepeatTimeEx(int button) {
+    if (button != p->buttonRepeating)
+        return 0;
+    
+    return shState->runTime() - p->buttonRepeatTime;
+}
+
+uint8_t *Input::rawKeyStates(){
+    return p->rawStates;
+}
+
+unsigned int Input::rawKeyStatesLength() {
+    return sizeof(p->rawStateArray) / 2;
+}
+
+uint8_t *Input::rawButtonStates() {
+    return p->rawButtonStates;
+}
+
+unsigned int Input::rawButtonStatesLength() {
+    return sizeof(p->rawButtonStateArray) / 2;
+}
+
+int16_t *Input::rawAxes() {
+    return p->axisStateArray;
+}
+
+unsigned int Input::rawAxesLength() {
+    return sizeof(p->axisStateArray) / sizeof(int16_t);
+}
+
+short Input::getControllerAxisValue(SDL_GameControllerAxis axis) {
+    if (axis < 0 || axis >= rawAxesLength())
+        return 0;
+    
+    return rawAxes()[axis];
+}
+
+bool Input::mouseInWindow() {
+    return p->mouseInWindow;
 }
 
 int Input::dir4Value()
@@ -1286,14 +1436,14 @@ int Input::mouseX()
 {
     RGSSThreadData &rtData = shState->rtData();
     
-    return (EventThread::mouseState.x - rtData.screenOffset.x) * rtData.sizeResoRatio.x;
+    return (p->mousePos[0] - rtData.screenOffset.x) * rtData.sizeResoRatio.x;
 }
 
 int Input::mouseY()
 {
     RGSSThreadData &rtData = shState->rtData();
     
-    return (EventThread::mouseState.y - rtData.screenOffset.y) * rtData.sizeResoRatio.y;
+    return (p->mousePos[1] - rtData.screenOffset.y) * rtData.sizeResoRatio.y;
 }
 
 int Input::scrollV()
