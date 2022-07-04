@@ -27,6 +27,7 @@ MKXPZTouchBar *_sharedTouchBar;
 }
 
 @property (retain,nonatomic) NSString *gameTitle;
+@property (retain,nonatomic) NSNumber *showResetButton;
 
 -(void)updateFPSDisplay:(uint32_t)value;
 @end
@@ -34,6 +35,7 @@ MKXPZTouchBar *_sharedTouchBar;
 @implementation MKXPZTouchBar
 
 @synthesize gameTitle;
+@synthesize showResetButton;
 
 +(MKXPZTouchBar*)sharedTouchBar {
     if (!_sharedTouchBar)
@@ -44,7 +46,11 @@ MKXPZTouchBar *_sharedTouchBar;
 -(instancetype)init {
     self = [super init];
     self.delegate = self;
-    self.defaultItemIdentifiers = @[@"function", NSTouchBarItemIdentifierFlexibleSpace, @"icon", @"fps", NSTouchBarItemIdentifierFlexibleSpace, @"rebind", @"reset"];
+    
+    NSMutableArray *items = [NSMutableArray arrayWithArray:@[@"function", NSTouchBarItemIdentifierFlexibleSpace, @"icon", @"fps", NSTouchBarItemIdentifierFlexibleSpace, @"rebind"]];
+    // Only show the reset button if resetting is enabled
+    if ([showResetButton boolValue]) [items addObject:@"reset"];
+    self.defaultItemIdentifiers = items;
     
     fpsLabel = [NSTextField labelWithString:@"Loading..."];
     fpsLabel.alignment = NSTextAlignmentCenter;
@@ -156,6 +162,7 @@ void initTouchBar(SDL_Window *win, Config &conf) {
     windowinfo.info.cocoa.window.touchBar = MKXPZTouchBar.sharedTouchBar;
     MKXPZTouchBar.sharedTouchBar.parent = windowinfo.info.cocoa.window;
     MKXPZTouchBar.sharedTouchBar.gameTitle = @(conf.game.title.c_str());
+    MKXPZTouchBar.sharedTouchBar.showResetButton = [NSNumber numberWithBool:conf.enableReset];
 }
 
 void updateTouchBarFPSDisplay(uint32_t value) {
