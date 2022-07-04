@@ -248,6 +248,7 @@ struct RGSSThreadData
 
 	EventThread *ethread;
 	UnidirMessage<Vec2i> windowSizeMsg;
+    UnidirMessage<Vec2i> drawableSizeMsg;
 	UnidirMessage<BDescVec> bindingUpdateMsg;
 	SyncPoint syncPoint;
 

@@ -889,7 +889,7 @@ struct GraphicsPrivate {
     void checkResize() {
         if (threadData->windowSizeMsg.poll(winSize)) {
             /* Query the actual size in pixels, not units */
-            SDL_GL_GetDrawableSize(threadData->window, &winSize.x, &winSize.y);
+            threadData->drawableSizeMsg.poll(winSize);
             
             /* Make sure integer buffers are rebuilt before screen offsets are
              * calculated so we have the final allocated buffer size ready */

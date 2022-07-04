@@ -140,6 +140,7 @@ void EventThread::process(RGSSThreadData &rtData)
     SDL_Event event;
     SDL_Window *win = rtData.window;
     UnidirMessage<Vec2i> &windowSizeMsg = rtData.windowSizeMsg;
+    UnidirMessage<Vec2i> &drawableSizeMsg = rtData.drawableSizeMsg;
     
     initALCFunctions(rtData.alcDev);
     
@@ -254,7 +255,11 @@ void EventThread::process(RGSSThreadData &rtData)
                         winW = event.window.data1;
                         winH = event.window.data2;
                         
+                        int drwW, drwH;
+                        SDL_GL_GetDrawableSize(win, &drwW, &drwH);
+                        
                         windowSizeMsg.post(Vec2i(winW, winH));
+                        drawableSizeMsg.post(Vec2i(drwW, drwH));
                         resetInputStates();
                         break;
                         

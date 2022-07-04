@@ -76,8 +76,8 @@ MKXPZTouchBar *_sharedTouchBar;
         ret.view = [NSButton buttonWithImage:[NSImage imageNamed:@"gear"] target:self action:@selector(openSettingsMenu)];
     }
     else if ([identifier isEqualToString:@"icon"]) {
-        NSImage *appIcon = [NSWorkspace.sharedWorkspace iconForFile:NSBundle.mainBundle.bundlePath];
-        appIcon.size = CGSizeMake(30,30);
+        NSImage *appIcon = [[NSApplication sharedApplication] applicationIconImage];
+        appIcon.size = {30, 30};
         ret.view = [NSImageView imageViewWithImage:appIcon];
         
     }
