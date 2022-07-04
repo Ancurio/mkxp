@@ -225,6 +225,26 @@ RB_METHOD(bitmapSetPixel) {
     return self;
 }
 
+RB_METHOD(bitmapHFlip) {
+    RB_UNUSED_PARAM;
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->hFlip();
+    
+    return Qnil;
+}
+
+RB_METHOD(bitmapVFlip) {
+    RB_UNUSED_PARAM;
+    
+    Bitmap *b = getPrivateData<Bitmap>(self);
+    
+    b->vFlip();
+    
+    return Qnil;
+}
+
 RB_METHOD(bitmapHueChange) {
     Bitmap *b = getPrivateData<Bitmap>(self);
     
@@ -740,6 +760,8 @@ void bitmapBindingInit() {
     _rb_define_method(klass, "clear", bitmapClear);
     _rb_define_method(klass, "get_pixel", bitmapGetPixel);
     _rb_define_method(klass, "set_pixel", bitmapSetPixel);
+    _rb_define_method(klass, "h_flip", bitmapHFlip);
+    _rb_define_method(klass, "v_flip", bitmapVFlip);
     _rb_define_method(klass, "hue_change", bitmapHueChange);
     _rb_define_method(klass, "draw_text", bitmapDrawText);
     _rb_define_method(klass, "text_size", bitmapTextSize);
