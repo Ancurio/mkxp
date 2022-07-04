@@ -143,9 +143,9 @@
     // implementations of this functionality, so
     // disabling it can be used as a workaround.
     // Does nothing on macOS.
-    // (default: enabled)
+    // (default: disabled)
     //
-    // "enableBlitting": true,
+    // "enableBlitting": false,
 
 
     // Limit the maximum size (width, height) of
@@ -158,7 +158,30 @@
     //
     // "maxTextureSize": 0,
 
+    // Scale up the game screen by an integer amount,
+    // as large as the current window size allows, before
+    // doing any last additional scalings to fill part or
+    // all of the remaining window space (or none at all
+    // if lastMileScaling is disabled).
+    // If fixedAspectRatio is disabled, the integer scale
+    // factors in horizontal and vertical direction can differ
+    // depending on how much space is available, otherwise
+    // they are forced to the smaller of the two.
+    // (default: disabled)
+    //
+    // "integerScaling.active": false,
 
+
+    // When integer scaling is enabled, this option controls
+    // whether the scaled game screen is further scaled
+    // (with linear interpolation when smoothScaling is enabled)
+    // to fill the rest of the game window.
+    // Note that this option still respects fixedAspectRatio.
+    // (default: enabled)
+    //
+    // "integerScaling.lastMileScaling": true,
+    
+    
     // Set the base path of the game to '/path/to/game'
     // (default: executable directory)
     //
