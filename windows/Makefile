@@ -37,7 +37,7 @@ RUBY_CONFIGURE_ARGS := \
 	--prefix="$(shell cygpath -m ${BUILD_PREFIX})" \
 	--enable-install-static-library \
 	--disable-install-doc \
-	--with-out-ext=openssl,readline,dbm,gdbm \
+	--with-out-ext=openssl,readline,dbm,gdbm,win32ole \
 	--with-static-linked-ext \
 	--disable-rubygems \
 	--without-gmp

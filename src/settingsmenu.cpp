@@ -617,7 +617,7 @@ struct SettingsMenuPrivate
 
 		case SDL_CONTROLLERBUTTONDOWN:
 			desc.type = CButton;
-			desc.d.cb = event.cbutton.button;
+			desc.d.cb = (SDL_GameControllerButton)event.cbutton.button;
 			break;
 
 		case SDL_CONTROLLERAXISMOTION:
@@ -629,7 +629,7 @@ struct SettingsMenuPrivate
 				return true;
 
 			desc.type = CAxis;
-			desc.d.ca.axis = event.caxis.axis;
+			desc.d.ca.axis = (SDL_GameControllerAxis)event.caxis.axis;
 			desc.d.ca.dir = v < 0 ? Negative : Positive;
 			break;
 		}
@@ -1028,9 +1028,8 @@ bool SettingsMenu::onEvent(const SDL_Event &event)
 		break;
 
 	case SDL_JOYBUTTONDOWN :
-	case SDL_JOYBUTTONUP :
-	case SDL_JOYHATMOTION :
-	case SDL_JOYAXISMOTION :
+	case SDL_CONTROLLERBUTTONUP :
+	case SDL_CONTROLLERAXISMOTION :
 		if (!p->hasFocus)
 			return false;
 		break;
@@ -1105,9 +1104,8 @@ bool SettingsMenu::onEvent(const SDL_Event &event)
 			break;
 		}
 
-	case SDL_JOYBUTTONDOWN:
-	case SDL_JOYHATMOTION:
-	case SDL_JOYAXISMOTION:
+	case SDL_CONTROLLERBUTTONDOWN:
+	case SDL_CONTROLLERAXISMOTION:
 		if (p->state != AwaitingInput)
 			return true;
 		break;
