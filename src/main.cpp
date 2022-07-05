@@ -239,16 +239,6 @@ int main(int argc, char *argv[]) {
     Config conf;
     conf.read(argc, argv);
 
-    if (!conf.gameFolder.empty()) {
-
-      if (!mkxp_fs::setCurrentDirectory(conf.gameFolder.c_str()))
-      {
-        showInitError(std::string("Unable to switch into gameFolder ") +
-                      conf.gameFolder);
-        return 0;
-      }
-    }
-
 #if defined(__WIN32__)
     // Create a debug console in debug mode
     if (conf.winConsole) {
@@ -262,7 +252,6 @@ int main(int argc, char *argv[]) {
       }
     }
 #endif
-    conf.readGameINI();
 
 #ifdef MKXPZ_STEAM
     if (!STEAMSHIM_init()) {

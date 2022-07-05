@@ -72,12 +72,13 @@ bool copyObject(json::value &dest, json::value &src, const char *objectName = ""
         if ((it.second.is_array() && destVec[it.first].is_array())    ||
             (it.second.is_number() && destVec[it.first].is_number())  ||
             (it.second.is_string() && destVec[it.first].is_string())  ||
-            (it.second.is_boolean() && destVec[it.first].is_boolean()) )
+            (it.second.is_boolean() && destVec[it.first].is_boolean()) ||
+            (destVec[it.first].is_null()))
         {
             destVec[it.first] = it.second;
         }
         else {
-            Debug() << "Invalid or unrecognized variable in configuration:" << objectName << it.first;
+            Debug() << "Invalid variable in configuration:" << objectName << it.first;
         }
     }
     return true;
@@ -94,6 +95,30 @@ bool getEnvironmentBool(const char *env, bool defaultValue) {
         return true;
     
     return defaultValue;
+}
+
+json::value readConfFile(const char *path) {
+    
+    json::value ret(0);
+    if (!mkxp_fs::fileExists(path)) {
+        return ret;
+    }
+    
+    try {
+        std::string cfg = mkxp_fs::contentsOfFileAsString(path);
+        ret = json::parse5(Encoding::convertString(cfg));
+    }
+    catch (const std::exception &e) {
+        Debug() << "Failed to parse" << path << ":" << e.what();
+    }
+    catch (const Exception &e) {
+        Debug() << "Failed to parse" << path << ":" << "Unknown encoding";
+    }
+    
+    if (!ret.is_object())
+        ret = json::object({});
+    
+    return ret;
 }
 
 #define CONF_FILE "mkxp.json"
@@ -183,37 +208,43 @@ try { exp } catch (...) {}
         }
     }
     
-    if (mkxp_fs::fileExists(CONF_FILE)) {
-        
-        json::value confData = json::value(0);
-        try {
-            std::string cfg = mkxp_fs::contentsOfFileAsString(CONF_FILE);
-            confData = json::parse5(Encoding::convertString(cfg));
-        }
-        catch (const std::exception &e) {
-            Debug() << "Failed to parse JSON configuration:" << e.what();
-        }
-        catch (const Exception &e) {
-            Debug() << "Failed to parse JSON configuration: Unknown encoding";
-        }
-        
-        if (!confData.is_object())
-            confData = json::object({});
-     
-        raw = confData;
-        
-        copyObject(optsJ, confData);
-        copyObject(opts["bindingNames"], confData.as_object()["bindingNames"], "bindingNames .");
-    }
-    else {
-        raw = json::object({});
-    }
+    json::value baseConf = readConfFile(CONF_FILE);
+    copyObject(optsJ, baseConf);
+    copyObject(opts["bindingNames"], baseConf.as_object()["bindingNames"], "bindingNames .");
     
 #define SET_OPT_CUSTOMKEY(var, key, type) GUARD(var = opts[#key].as_##type();)
 #define SET_OPT(var, type) SET_OPT_CUSTOMKEY(var, var, type)
 #define SET_STRINGOPT(var, key) GUARD(var = std::string(opts[#key].as_string());)
     
+    SET_STRINGOPT(gameFolder, gameFolder);
+    SET_STRINGOPT(dataPathOrg, dataPathOrg);
+    SET_STRINGOPT(dataPathApp, dataPathApp);
+    SET_STRINGOPT(iconPath, iconPath);
+    SET_STRINGOPT(execName, execName);
+    SET_OPT(allowSymlinks, boolean);
+    SET_OPT(pathCache, boolean);
+    SET_OPT_CUSTOMKEY(jit.enabled, JITEnable, boolean);
+    SET_OPT_CUSTOMKEY(jit.verboseLevel, JITVerboseLevel, integer);
+    SET_OPT_CUSTOMKEY(jit.maxCache, JITMaxCache, integer);
+    SET_OPT_CUSTOMKEY(jit.minCalls, JITMinCalls, integer);
     SET_OPT(rgssVersion, integer);
+    SET_OPT(defScreenW, integer);
+    SET_OPT(defScreenH, integer);
+    
+    // Take a break real quick and witch to set game folder and read the game's ini
+    if (!gameFolder.empty() && !mkxp_fs::setCurrentDirectory(gameFolder.c_str())) {
+        throw Exception(Exception::MKXPError, "Unable to switch into gameFolder %s", gameFolder.c_str());
+    }
+    
+    readGameINI();
+    
+    // Now check for an extra mkxp.conf in the user's save directory and merge anything else from that
+    std::string userConfPath = customDataPath + "/" CONF_FILE;
+    json::value userConf = readConfFile(userConfPath.c_str());
+    copyObject(optsJ, userConf);
+    
+    // now RESUME
+    
     SET_OPT(debugMode, boolean);
     SET_OPT(printFPS, boolean);
     SET_OPT(fullscreen, boolean);
@@ -221,8 +252,6 @@ try { exp } catch (...) {}
     SET_OPT(smoothScaling, boolean);
     SET_OPT(winResizable, boolean);
     SET_OPT(vsync, boolean);
-    SET_OPT(defScreenW, integer);
-    SET_OPT(defScreenH, integer);
     SET_STRINGOPT(windowTitle, windowTitle);
     SET_OPT(fixedFramerate, integer);
     SET_OPT(frameSkip, boolean);
@@ -233,26 +262,15 @@ try { exp } catch (...) {}
     SET_OPT_CUSTOMKEY(integerScaling.active, integerScalingActive, boolean);
     SET_OPT_CUSTOMKEY(integerScaling.lastMileScaling, integerScalingLastMile, boolean);
     SET_OPT(maxTextureSize, integer);
-    SET_STRINGOPT(gameFolder, gameFolder);
     SET_OPT(anyAltToggleFS, boolean);
     SET_OPT(enableReset, boolean);
     SET_OPT(enableSettings, boolean);
-    SET_OPT(allowSymlinks, boolean);
-    SET_STRINGOPT(dataPathOrg, dataPathOrg);
-    SET_STRINGOPT(dataPathApp, dataPathApp);
-    SET_STRINGOPT(iconPath, iconPath);
-    SET_STRINGOPT(execName, execName);
     SET_STRINGOPT(midi.soundFont, midiSoundFont);
     SET_OPT_CUSTOMKEY(midi.chorus, midiChorus, boolean);
     SET_OPT_CUSTOMKEY(midi.reverb, midiReverb, boolean);
     SET_OPT_CUSTOMKEY(SE.sourceCount, SESourceCount, integer);
     SET_STRINGOPT(customScript, customScript);
-    SET_OPT(pathCache, boolean);
     SET_OPT(useScriptNames, boolean);
-    SET_OPT_CUSTOMKEY(jit.enabled, JITEnable, boolean);
-    SET_OPT_CUSTOMKEY(jit.verboseLevel, JITVerboseLevel, integer);
-    SET_OPT_CUSTOMKEY(jit.maxCache, JITMaxCache, integer);
-    SET_OPT_CUSTOMKEY(jit.minCalls, JITMinCalls, integer);
     
     fillStringVec(opts["preloadScript"], preloadScripts);
     fillStringVec(opts["RTP"], rtps);
@@ -287,14 +305,16 @@ try { exp } catch (...) {}
     // The config is re-read after the window is already created, so some entries
     // may not take effect
     manualFolderSelect = getEnvironmentBool("MKXPZ_FOLDER_SELECT", false);
+    
+    raw = optsJ;
 }
 
 static void setupScreenSize(Config &conf) {
-  if (conf.defScreenW <= 0)
-    conf.defScreenW = (conf.rgssVersion == 1 ? 640 : 544);
-
-  if (conf.defScreenH <= 0)
-    conf.defScreenH = (conf.rgssVersion == 1 ? 480 : 416);
+    if (conf.defScreenW <= 0)
+        conf.defScreenW = (conf.rgssVersion == 1 ? 640 : 544);
+    
+    if (conf.defScreenH <= 0)
+        conf.defScreenH = (conf.rgssVersion == 1 ? 480 : 416);
 }
 
 
@@ -357,19 +377,19 @@ void Config::readGameINI() {
     if (rgssVersion == 0) {
         /* Try to guess RGSS version based on Data/Scripts extension */
         rgssVersion = 1;
-
+        
         if (!game.scripts.empty()) {
-          const char *p = &game.scripts[game.scripts.size()];
-          const char *head = &game.scripts[0];
-
-          while (--p != head)
-            if (*p == '.')
-              break;
-
-          if (!strcmp(p, ".rvdata"))
-            rgssVersion = 2;
-          else if (!strcmp(p, ".rvdata2"))
-            rgssVersion = 3;
+            const char *p = &game.scripts[game.scripts.size()];
+            const char *head = &game.scripts[0];
+            
+            while (--p != head)
+                if (*p == '.')
+                    break;
+            
+            if (!strcmp(p, ".rvdata"))
+                rgssVersion = 2;
+            else if (!strcmp(p, ".rvdata2"))
+                rgssVersion = 3;
         }
     }
     
