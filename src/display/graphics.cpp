@@ -780,7 +780,7 @@ struct GraphicsPrivate {
         glResourceLock = SDL_CreateMutex();
         
         if (integerScaleActive) {
-            integerScaleFactor = Vec2i(1, 1);
+            integerScaleFactor = Vec2i(0, 0);
             rebuildIntegerScaleBuffer();
         }
         recalculateScreenSize(rtData);
@@ -821,8 +821,8 @@ struct GraphicsPrivate {
         }
         
         if (integerScaleActive && !integerLastMileScaling) {
-            scOffset.x = (winSize.x - scRes.x * integerScaleFactor.x / 2);
-            scOffset.y = (winSize.y - scRes.y * integerScaleFactor.y / 2);
+            scOffset.x = ((winSize.x / 2) - (scRes.x / 2) * integerScaleFactor.x);
+            scOffset.y = ((winSize.y / 2) - (scRes.y / 2) * integerScaleFactor.y);
             
             scSize = Vec2i(scRes.x * integerScaleFactor.x, scRes.y * integerScaleFactor.y);
             return;
@@ -846,7 +846,7 @@ struct GraphicsPrivate {
         while (base * scale <= target)
             scale++;
         
-        return scale - 1;
+        return std::max(scale - 1, 1);
     }
     
     /* Returns whether a new scale was found */
@@ -946,10 +946,10 @@ struct GraphicsPrivate {
         metaBlitBufferFlippedScaled(scRes);
         GLMeta::blitRectangle(
                               IntRect(0, 0, scRes.x, scRes.y),
-                              IntRect(scOffset.x * scalingFactor,
-                                      (scSize.y + scOffset.y) * scalingFactor,
-                                      scSize.x * scalingFactor,
-                                      -scSize.y * scalingFactor),
+                              IntRect(scOffset.x,
+                                      (scSize.y + scOffset.y),
+                                      scSize.x,
+                                      -scSize.y),
                               threadData->config.smoothScaling);
     }
     
