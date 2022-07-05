@@ -1515,7 +1515,7 @@ void Graphics::setLastMileScaling(bool value)
     p->updateScreenResoRatio(p->threadData);
 }
 
-double Graphics::getScale() const { return (double)p->scSize.y / p->scRes.y; }
+double Graphics::getScale() const { return (double)(p->winSize.y / p->backingScaleFactor) / p->scRes.y; }
 
 void Graphics::setScale(double factor) {
     p->threadData->rqWindowAdjust.wait();
