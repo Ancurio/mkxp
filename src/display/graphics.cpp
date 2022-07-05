@@ -1325,9 +1325,6 @@ int Graphics::width() const { return p->scRes.x; }
 int Graphics::height() const { return p->scRes.y; }
 
 void Graphics::resizeScreen(int width, int height) {
-    // width = clamp(width, 1, 640);
-    // height = clamp(height, 1, 480);
-    
     p->threadData->rqWindowAdjust.wait();
     Vec2i size(width, height);
     
@@ -1348,7 +1345,21 @@ void Graphics::resizeScreen(int width, int height) {
     
     p->threadData->rqWindowAdjust.set();
     shState->eThread().requestWindowResize(width, height);
-    update();
+}
+
+void Graphics::resizeWindow(int width, int height, bool center) {
+    p->threadData->rqWindowAdjust.wait();
+    //factor = clamp(factor, 0.5, 4.0);
+    
+    if (width == p->winSize.x / p->backingScaleFactor &&
+        height == p->winSize.y / p->backingScaleFactor)
+            return;
+    
+    p->threadData->rqWindowAdjust.set();
+    shState->eThread().requestWindowResize(width, height);
+    
+    if (center)
+        this->center();
 }
 
 bool Graphics::updateMovieInput(Movie *movie) {
@@ -1518,18 +1529,12 @@ void Graphics::setLastMileScaling(bool value)
 double Graphics::getScale() const { return (double)(p->winSize.y / p->backingScaleFactor) / p->scRes.y; }
 
 void Graphics::setScale(double factor) {
-    p->threadData->rqWindowAdjust.wait();
-    factor = clamp(factor, 0.5, 4.0);
-    
-    if (factor == getScale())
-        return;
+    //factor = clamp(factor, 0.5, 4.0);
     
     int widthpx = p->scRes.x * factor;
     int heightpx = p->scRes.y * factor;
     
-    p->threadData->rqWindowAdjust.set();
-    shState->eThread().requestWindowResize(widthpx, heightpx);
-    update();
+    resizeWindow(widthpx, heightpx);
 }
 
 bool Graphics::getFrameskip() const { return p->useFrameSkip; }

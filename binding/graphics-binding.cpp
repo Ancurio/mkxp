@@ -241,6 +241,22 @@ RB_METHOD(graphicsResizeScreen)
     return Qnil;
 }
 
+RB_METHOD(graphicsResizeWindow)
+{
+    RB_UNUSED_PARAM;
+    
+    int width, height;
+    bool center = false;
+    rb_get_args(argc, argv, "ii|b", &width, &height, &center RB_ARG_END);
+    
+    
+    GFX_LOCK;
+    shState->graphics().resizeWindow(width, height, center);
+    GFX_UNLOCK;
+    
+    return Qnil;
+}
+
 RB_METHOD(graphicsReset)
 {
     RB_UNUSED_PARAM;
@@ -371,6 +387,7 @@ void graphicsBindingInit()
     _rb_define_module_function(module, "fadein", graphicsFadein);
     _rb_define_module_function(module, "snap_to_bitmap", graphicsSnapToBitmap);
     _rb_define_module_function(module, "resize_screen", graphicsResizeScreen);
+    _rb_define_module_function(module, "resize_window", graphicsResizeWindow);
     _rb_define_module_function(module, "center", graphicsCenter);
         
     INIT_GRA_PROP_BIND( Brightness, "brightness" );
