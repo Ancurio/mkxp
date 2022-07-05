@@ -52,12 +52,17 @@ MKXPZTouchBar *_sharedTouchBar;
     bool showReset = [showResetButton boolValue];
     bool showSettings = [showSettingsButton boolValue];
     
-    NSMutableArray *items = [NSMutableArray arrayWithArray:@[@"function", NSTouchBarItemIdentifierFlexibleSpace, @"icon", @"fps"]];
+    NSMutableArray *items = [NSMutableArray arrayWithArray:@[@"function", NSTouchBarItemIdentifierFlexibleSpace]];
     
     if (showReset || showSettings) {
+        [items addObject:@"icon"];
+        [items addObject:@"fps"];
         [items addObject:NSTouchBarItemIdentifierFlexibleSpace];
         if (showReset) [items addObject:@"reset"];
         if (showSettings) [items addObject:@"rebind"];
+    } else {
+        [items addObject:@"fps"];
+        [items addObject:@"icon"];
     }
     self.defaultItemIdentifiers = items;
     
