@@ -60,9 +60,6 @@ if steamworks_path != ''
     endif
 endif
 
-# BOOST UNORDERED
-global_include_dirs += include_directories('boost-unordered')
-
 # GLES
 gfx_backend = get_option('gfx_backend')
 if gfx_backend == 'gles'

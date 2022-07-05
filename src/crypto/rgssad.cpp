@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <string>
+
 /* Equivalent Linear Congruential Generator (LCG) constants for iteration 2^n
  * all the way up to 2^32/4 (the largest dword offset possible in
  * RGSS{AD,[23]A}).
