@@ -239,7 +239,7 @@ try { exp } catch (...) {}
     readGameINI();
     
     // Now check for an extra mkxp.conf in the user's save directory and merge anything else from that
-    std::string userConfPath = customDataPath + "/" CONF_FILE;
+    userConfPath = customDataPath + "/" CONF_FILE;
     json::value userConf = readConfFile(userConfPath.c_str());
     copyObject(optsJ, userConf);
     

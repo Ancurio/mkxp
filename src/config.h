@@ -136,6 +136,8 @@ struct Config {
         std::string r;
     } kbActionNames;
     
+    std::string userConfPath;
+    
     /* Internal */
     std::string customDataPath;
     

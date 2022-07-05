@@ -311,7 +311,7 @@ RB_METHOD(httpJsonStringify) {
     rb_scan_args(argc, argv, "1", &obj);
     
     json5pp::value v = rb2json(obj);
-    return rb_utf8_str_new_cstr(v.stringify().c_str());
+    return rb_utf8_str_new_cstr(v.stringify5(json5pp::rule::space_indent<>()).c_str());
 }
 
 void httpBindingInit() {

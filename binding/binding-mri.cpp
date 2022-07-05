@@ -135,6 +135,10 @@ RB_METHOD(mkxpAddPath);
 RB_METHOD(mkxpRemovePath);
 RB_METHOD(mkxpLaunch);
 
+RB_METHOD(mkxpGetJSONSetting);
+RB_METHOD(mkxpSetJSONSetting);
+RB_METHOD(mkxpGetAllJSONSettings);
+
 RB_METHOD(mkxpSetDefaultFontFamily);
 
 RB_METHOD(mriRgssMain);
@@ -145,6 +149,7 @@ RB_METHOD(mkxpStringToUTF8);
 RB_METHOD(mkxpStringToUTF8Bang);
 
 VALUE json2rb(json5pp::value const &v);
+json5pp::value rb2json(VALUE v);
 
 static void mriBindingInit() {
     tableBindingInit();
@@ -245,6 +250,11 @@ static void mriBindingInit() {
     _rb_define_method(rb_cString, "to_utf8", mkxpStringToUTF8);
     _rb_define_method(rb_cString, "to_utf8!", mkxpStringToUTF8Bang);
     
+    VALUE cmod = rb_define_module("CONFIG");
+    _rb_define_module_function(cmod, "[]", mkxpGetJSONSetting);
+    _rb_define_module_function(cmod, "[]=", mkxpSetJSONSetting);
+    _rb_define_module_function(cmod, "to_hash", mkxpGetAllJSONSettings);
+    
     /* Load global constants */
     rb_gv_set("MKXP", Qtrue);
     
@@ -260,10 +270,6 @@ static void mriBindingInit() {
     rb_str_freeze(vers);
     rb_define_const(mod, "VERSION", vers);
     
-    VALUE cfg = json2rb(shState->config().raw);
-    rb_hash_freeze(cfg);
-    rb_define_const(mod, "CONFIG", cfg);
-
     // Set $stdout and its ilk accordingly on Windows
     // I regret teaching you that word
 #ifdef __WIN32__
@@ -359,7 +365,7 @@ RB_METHOD(mkxpDesensitize) {
     SafeStringValue(filename);
     
     return rb_utf8_str_new_cstr(
-                           shState->fileSystem().desensitize(RSTRING_PTR(filename)));
+                                shState->fileSystem().desensitize(RSTRING_PTR(filename)));
 }
 
 RB_METHOD(mkxpPuts) {
@@ -381,7 +387,7 @@ RB_METHOD(mkxpPlatform) {
     
     if (mkxp_sys::isRosetta())
         platform += " (Rosetta)";
-
+    
 #elif MKXPZ_PLATFORM == MKXPZ_PLATFORM_WINDOWS
     std::string platform("Windows");
     
@@ -456,8 +462,8 @@ RB_METHOD(mkxpUserLanguage) {
 RB_METHOD(mkxpUserName) {
     RB_UNUSED_PARAM;
     
-// Using the Windows API isn't working with usernames that involve Unicode
-// characters for some dumb reason
+    // Using the Windows API isn't working with usernames that involve Unicode
+    // characters for some dumb reason
 #ifdef __WIN32__
     VALUE env = rb_const_get(rb_mKernel, rb_intern("ENV"));
     return rb_funcall(env, rb_intern("[]"), 1, rb_str_new_cstr("USERNAME"));
@@ -650,6 +656,70 @@ RB_METHOD(mkxpLaunch) {
     }
     
     return RUBY_Qnil;
+}
+
+json5pp::value userSettings;
+
+void loadUserSettings() {
+    if (!userSettings.is_null())
+        return;
+    
+    VALUE cpath = rb_utf8_str_new_cstr(shState->config().userConfPath.c_str());
+    
+    if (rb_funcall(rb_cFile, rb_intern("exists?"), 1, cpath) == Qtrue) {
+        VALUE f = rb_funcall(rb_cFile, rb_intern("open"), 2, cpath, rb_str_new("r", 1));
+        VALUE data = rb_funcall(f, rb_intern("read"), 0);
+        rb_funcall(f, rb_intern("close"), 0);
+        userSettings = rb2json(data);
+    }
+    
+    if (!userSettings.is_object())
+        userSettings = json5pp::object({});
+}
+
+void saveUserSettings() {
+    VALUE cpath = rb_utf8_str_new_cstr(shState->config().userConfPath.c_str());
+    VALUE f = rb_funcall(rb_cFile, rb_intern("open"), 2, cpath, rb_str_new("w", 1));
+    rb_funcall(f, rb_intern("write"), 1, rb_utf8_str_new_cstr(userSettings.stringify5(json5pp::rule::space_indent<>()).c_str()));
+    rb_funcall(f, rb_intern("close"), 0);
+}
+
+RB_METHOD(mkxpGetJSONSetting) {
+    RB_UNUSED_PARAM;
+    
+    VALUE sname;
+    rb_scan_args(argc, argv, "1", &sname);
+    SafeStringValue(sname);
+    
+    loadUserSettings();
+    auto &s = userSettings.as_object();
+    
+    if (s[RSTRING_PTR(sname)].is_null()) {
+        return json2rb(shState->config().raw.as_object()[RSTRING_PTR(sname)]);
+    }
+    
+    return json2rb(s[RSTRING_PTR(sname)]);
+    
+}
+
+RB_METHOD(mkxpSetJSONSetting) {
+    RB_UNUSED_PARAM;
+    
+    VALUE sname, svalue;
+    rb_scan_args(argc, argv, "2", &sname, &svalue);
+    SafeStringValue(sname);
+    
+    loadUserSettings();
+    userSettings.as_object()[RSTRING_PTR(sname)] = rb2json(svalue);
+    
+    saveUserSettings();
+    return Qnil;
+}
+
+RB_METHOD(mkxpGetAllJSONSettings) {
+    RB_UNUSED_PARAM;
+    
+    return json2rb(shState->config().raw);
 }
 
 static VALUE rgssMainCb(VALUE block) {
@@ -877,7 +947,7 @@ static void runRMXPScripts(BacktraceData &btData) {
     /* Execute preloaded scripts */
     for (std::vector<std::string>::const_iterator i = conf.preloadScripts.begin();
          i != conf.preloadScripts.end(); ++i)
-    runCustomScript(*i);
+        runCustomScript(*i);
     
     VALUE exc = rb_gv_get("$!");
     if (exc != Qnil)
@@ -912,21 +982,21 @@ static void runRMXPScripts(BacktraceData &btData) {
             
             // Adding a 'not' symbol means it WON'T run on that
             // platform (i.e. |!W| won't run on Windows)
-/*
-            if (scriptName[0] == '|') {
-                int len = strlen(scriptName);
-                if (len > 2) {
-                    if (scriptName[1] == '!' && len > 3 &&
-                        scriptName[3] == scriptName[0]) {
-                        if (toupper(scriptName[2]) == platform[0])
-                            continue;
-                    }
-                    if (scriptName[2] == scriptName[0] &&
-                        toupper(scriptName[1]) != platform[0])
-                        continue;
-                }
-            }
- */
+            /*
+             if (scriptName[0] == '|') {
+             int len = strlen(scriptName);
+             if (len > 2) {
+             if (scriptName[1] == '!' && len > 3 &&
+             scriptName[3] == scriptName[0]) {
+             if (toupper(scriptName[2]) == platform[0])
+             continue;
+             }
+             if (scriptName[2] == scriptName[0] &&
+             toupper(scriptName[1]) != platform[0])
+             continue;
+             }
+             }
+             */
             
             int state;
             
@@ -958,9 +1028,9 @@ static void showExc(VALUE exc, const BacktraceData &btData) {
 #endif
     /* omit "useless" last entry (from ruby:1:in `eval') */
     for (long i = 1, btlen = RARRAY_LEN(bt) - 1; i < btlen; ++i)
-    rb_str_catf(ds, "\n\tfrom %" PRIsVALUE,
+        rb_str_catf(ds, "\n\tfrom %" PRIsVALUE,
 #if RAPI_MAJOR >= 2
-                rb_ary_entry(bt, i));
+                    rb_ary_entry(bt, i));
 #else
     RSTRING_PTR(rb_ary_entry(bt, i)));
 #endif
