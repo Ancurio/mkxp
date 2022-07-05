@@ -250,7 +250,7 @@ static void mriBindingInit() {
     _rb_define_method(rb_cString, "to_utf8", mkxpStringToUTF8);
     _rb_define_method(rb_cString, "to_utf8!", mkxpStringToUTF8Bang);
     
-    VALUE cmod = rb_define_module("CONFIG");
+    VALUE cmod = rb_define_module("CFG");
     _rb_define_module_function(cmod, "[]", mkxpGetJSONSetting);
     _rb_define_module_function(cmod, "[]=", mkxpSetJSONSetting);
     _rb_define_module_function(cmod, "to_hash", mkxpGetAllJSONSettings);
