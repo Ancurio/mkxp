@@ -2,7 +2,6 @@
  <assembly
      xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"
      xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
-     <assemblyIdentity type="win32" name="mkxpz" version="5.7.1"/>
      <asmv3:application>
          <asmv3:windowsSettings>
              <dpiAware
