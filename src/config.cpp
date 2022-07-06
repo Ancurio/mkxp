@@ -101,7 +101,7 @@ json::value readConfFile(const char *path) {
     
     json::value ret(0);
     if (!mkxp_fs::fileExists(path)) {
-        return ret;
+        return json::object({});
     }
     
     try {

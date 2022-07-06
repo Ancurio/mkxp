@@ -165,6 +165,9 @@ if steamworks == true
 
     if get_option('steamshim_debug') == true
         shim_args += '-DSTEAMSHIM_DEBUG'
+        shim_ws = 'console'
+    else
+        shim_ws = 'windows'
     endif
 
     executable(meson.project_name(),
@@ -172,7 +175,7 @@ if steamworks == true
         dependencies: steamlib,
         cpp_args: shim_args,
         link_args: la.split(),
-        gui_app: (get_option('steamshim_debug') == false),
+        win_subsystem: shim_ws,
         install: (host_system != 'windows'))
 endif
 
