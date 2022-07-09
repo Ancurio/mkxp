@@ -168,14 +168,15 @@ return Data_Wrap_Struct(klass, 0, free, 0);                                \
 
 #define DEF_ALLOCFUNC(type) DEF_ALLOCFUNC_CUSTOMFREE(type, freeInstance<type>)
 
-#if RAPI_MINOR < 9
+#define PRIsVALUE "s"
+
+#endif
+
+#if RAPI_FULL < 240
 #define rb_utf8_str_new_cstr rb_str_new2
 #define rb_utf8_str_new rb_str_new
 #endif
 
-#define PRIsVALUE "s"
-
-#endif
 // end
 
 #if RAPI_FULL > 187
