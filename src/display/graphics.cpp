@@ -1326,6 +1326,8 @@ int Graphics::height() const { return p->scRes.y; }
 
 void Graphics::resizeScreen(int width, int height) {
     p->threadData->rqWindowAdjust.wait();
+    p->checkResize();
+    
     Vec2i size(width, height);
     
     if (p->scRes == size)
@@ -1349,7 +1351,7 @@ void Graphics::resizeScreen(int width, int height) {
 
 void Graphics::resizeWindow(int width, int height, bool center) {
     p->threadData->rqWindowAdjust.wait();
-    //factor = clamp(factor, 0.5, 4.0);
+    p->checkResize();
     
     if (width == p->winSize.x / p->backingScaleFactor &&
         height == p->winSize.y / p->backingScaleFactor)
@@ -1526,15 +1528,23 @@ void Graphics::setLastMileScaling(bool value)
     p->updateScreenResoRatio(p->threadData);
 }
 
-double Graphics::getScale() const { return (double)(p->winSize.y / p->backingScaleFactor) / p->scRes.y; }
+double Graphics::getScale() const {
+    p->checkResize();
+    return (double)(p->winSize.y / p->backingScaleFactor) / p->scRes.y;
+    
+}
 
 void Graphics::setScale(double factor) {
-    //factor = clamp(factor, 0.5, 4.0);
+    p->threadData->rqWindowAdjust.reset();
+    factor = clamp(factor, 0.5, 4.0);
+    
+    if (factor == getScale())
+        return;
     
     int widthpx = p->scRes.x * factor;
     int heightpx = p->scRes.y * factor;
     
-    resizeWindow(widthpx, heightpx);
+    shState->eThread().requestWindowResize(widthpx, heightpx);
 }
 
 bool Graphics::getFrameskip() const { return p->useFrameSkip; }
