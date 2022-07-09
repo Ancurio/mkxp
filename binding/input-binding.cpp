@@ -298,9 +298,9 @@ RB_METHOD(inputRawKeyStates) {
     
     VALUE ret = rb_ary_new();
 
-    uint8_t *states = shState->input().rawButtonStates();
+    uint8_t *states = shState->input().rawKeyStates();
     
-    for (int i = 0; i < shState->input().rawButtonStatesLength(); i++)
+    for (int i = 0; i < shState->input().rawKeyStatesLength(); i++)
         rb_ary_push(ret, rb_bool_new(states[i]));
     
     return ret;
