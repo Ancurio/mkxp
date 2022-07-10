@@ -172,7 +172,7 @@ return Data_Wrap_Struct(klass, 0, free, 0);                                \
 
 #endif
 
-#if RAPI_FULL < 240
+#if RAPI_FULL < 220
 #define rb_utf8_str_new_cstr rb_str_new2
 #define rb_utf8_str_new rb_str_new
 #endif

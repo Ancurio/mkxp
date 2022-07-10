@@ -601,6 +601,7 @@ void inputBindingInit() {
     _rb_define_module_function(submod, "axes_trigger", inputControllerGetTriggerAxis);
     _rb_define_module_function(submod, "raw_button_states", inputControllerRawButtonStates);
     _rb_define_module_function(submod, "raw_axes", inputControllerRawAxes);
+    _rb_define_module_function(submod, "pressex?", inputControllerPressEx);
     _rb_define_module_function(submod, "triggerex?", inputControllerTriggerEx);
     _rb_define_module_function(submod, "repeatex?", inputControllerRepeatEx);
     _rb_define_module_function(submod, "releaseex?", inputControllerReleaseEx);
