@@ -1337,7 +1337,9 @@ void Graphics::resizeScreen(int width, int height) {
     p->scRes = size;
     
     p->screen.setResolution(width, height);
-    p->rebuildIntegerScaleBuffer();
+    
+    if (p->integerScaleActive)
+        p->rebuildIntegerScaleBuffer();
     
     TEXFBO::allocEmpty(p->frozenScene, width, height);
     
