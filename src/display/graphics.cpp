@@ -783,6 +783,7 @@ struct GraphicsPrivate {
             integerScaleFactor = Vec2i(0, 0);
             rebuildIntegerScaleBuffer();
         }
+        
         recalculateScreenSize(rtData);
         updateScreenResoRatio(rtData);
         
@@ -888,7 +889,7 @@ struct GraphicsPrivate {
         return true;
     }
     
-    void checkResize() {
+    void checkResize(bool skipIntScaleBuffer = false) {
         if (threadData->windowSizeMsg.poll(winSize)) {
             /* Query the actual size in pixels, not units */
             Vec2i drawableSize(winSize);
@@ -899,7 +900,7 @@ struct GraphicsPrivate {
             
             /* Make sure integer buffers are rebuilt before screen offsets are
              * calculated so we have the final allocated buffer size ready */
-            if (integerScaleActive && findHighestIntegerScale())
+            if (integerScaleActive && findHighestIntegerScale() && !skipIntScaleBuffer)
                 rebuildIntegerScaleBuffer();
             
             /* some GL drivers change the viewport on window resize */
@@ -1326,7 +1327,7 @@ int Graphics::height() const { return p->scRes.y; }
 
 void Graphics::resizeScreen(int width, int height) {
     p->threadData->rqWindowAdjust.wait();
-    p->checkResize();
+    p->checkResize(true);
     
     Vec2i size(width, height);
     
@@ -1336,6 +1337,7 @@ void Graphics::resizeScreen(int width, int height) {
     p->scRes = size;
     
     p->screen.setResolution(width, height);
+    p->rebuildIntegerScaleBuffer();
     
     TEXFBO::allocEmpty(p->frozenScene, width, height);
     
