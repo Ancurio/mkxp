@@ -276,11 +276,6 @@ static void mriBindingInit() {
     if (shState->config().winConsole)
         configureWindowsStreams();
 #endif
-    
-    // Load zlib, if it's present. Requires --with-static-linked-ext or zlib.so.
-    // It's okay if it fails, normally it wouldn't be defined anyway.
-    // It's included with normal RGSS though, so I'd prefer if it's loaded at the start.
-    rb_eval_string("begin;require 'zlib';rescue;nil;end");
 }
 
 static void showMsg(const std::string &msg) {
