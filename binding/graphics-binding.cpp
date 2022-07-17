@@ -356,6 +356,7 @@ DEF_GRA_PROP_B(FixedAspectRatio)
 DEF_GRA_PROP_B(SmoothScaling)
 DEF_GRA_PROP_B(IntegerScaling)
 DEF_GRA_PROP_B(LastMileScaling)
+DEF_GRA_PROP_B(Threadsafe)
 
 #define INIT_GRA_PROP_BIND(PropName, prop_name_s) \
 { \
@@ -407,4 +408,5 @@ void graphicsBindingInit()
     INIT_GRA_PROP_BIND( SmoothScaling,    "smooth_scaling"     );
     INIT_GRA_PROP_BIND( IntegerScaling,   "integer_scaling"    );
     INIT_GRA_PROP_BIND( LastMileScaling,  "last_mile_scaling"  );
+    INIT_GRA_PROP_BIND( Threadsafe,       "thread_safe"        );
 }

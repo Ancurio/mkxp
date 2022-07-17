@@ -77,6 +77,7 @@ public:
     DECL_ATTR( SmoothScaling, bool )
     DECL_ATTR( IntegerScaling, bool )
     DECL_ATTR( LastMileScaling, bool )
+    DECL_ATTR( Threadsafe, bool )
     double averageFrameRate();
 
 	/* <internal> */
@@ -87,8 +88,8 @@ public:
 	void repaintWait(const AtomicFlag &exitCond,
 	                 bool checkReset = true);
     
-    void lock();
-    void unlock();
+    void lock(bool force = false);
+    void unlock(bool force = false);
 
 private:
 	Graphics(RGSSThreadData *data);

@@ -760,6 +760,7 @@ struct GraphicsPrivate {
     SDL_mutex *avgFPSLock;
     
     SDL_mutex *glResourceLock;
+    bool multithreadedMode;
     
     /* Global list of all live Disposables
      * (disposed on reset) */
@@ -769,9 +770,9 @@ struct GraphicsPrivate {
     : scRes(DEF_SCREEN_W, DEF_SCREEN_H), scSize(scRes),
     winSize(rtData->config.defScreenW, rtData->config.defScreenH),
     screen(scRes.x, scRes.y), threadData(rtData),
-    glCtx(SDL_GL_GetCurrentContext()), frameRate(DEF_FRAMERATE),
-    frameCount(0), brightness(255), fpsLimiter(frameRate),
-    useFrameSkip(rtData->config.frameSkip), frozen(false),
+    glCtx(SDL_GL_GetCurrentContext()), multithreadedMode(true),
+    frameRate(DEF_FRAMERATE), frameCount(0), brightness(255),
+    fpsLimiter(frameRate), useFrameSkip(rtData->config.frameSkip), frozen(false),
     last_update(0), last_avg_update(0), backingScaleFactor(1), integerScaleFactor(0, 0),
     integerScaleActive(rtData->config.integerScaling.active),
     integerLastMileScaling(rtData->config.integerScaling.lastMileScaling) {
@@ -1048,12 +1049,16 @@ struct GraphicsPrivate {
         return ret;
     }
     
-    void setLock() {
+    void setLock(bool force = false) {
+        if (!(force || multithreadedMode)) return;
+        
         SDL_LockMutex(glResourceLock);
         SDL_GL_MakeCurrent(threadData->window, threadData->glContext);
     }
     
-    void releaseLock() {
+    void releaseLock(bool force = false) {
+        if (!(force || multithreadedMode)) return;
+        
         SDL_UnlockMutex(glResourceLock);
     }
 };
@@ -1532,6 +1537,16 @@ void Graphics::setLastMileScaling(bool value)
     p->updateScreenResoRatio(p->threadData);
 }
 
+bool Graphics::getThreadsafe() const
+{
+    return p->multithreadedMode;
+}
+
+void Graphics::setThreadsafe(bool value)
+{
+    p->multithreadedMode = value;
+}
+
 double Graphics::getScale() const {
     p->checkResize();
     return (double)(p->winSize.y / p->backingScaleFactor) / p->scRes.y;
@@ -1583,12 +1598,12 @@ void Graphics::repaintWait(const AtomicFlag &exitCond, bool checkReset) {
     GLMeta::blitEnd();
 }
 
-void Graphics::lock() {
-    p->setLock();
+void Graphics::lock(bool force) {
+    p->setLock(force);
 }
 
-void Graphics::unlock() {
-    p->releaseLock();
+void Graphics::unlock(bool force) {
+    p->releaseLock(force);
 }
 
 void Graphics::addDisposable(Disposable *d) { p->dispList.append(d->link); }
