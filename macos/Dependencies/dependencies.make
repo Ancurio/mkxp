@@ -34,6 +34,7 @@ CONFIGURE_ARGS := \
 
 CMAKE_ARGS := \
 	-DCMAKE_INSTALL_PREFIX="$(BUILD_PREFIX)" \
+	-DCMAKE_PREFIX_PATH="$(BUILD_PREFIX)" \
 	-DCMAKE_OSX_SYSROOT=$(SDKROOT) \
 	-DCMAKE_OSX_ARCHITECTURES=$(ARCH) \
 	-DCMAKE_OSX_DEPLOYMENT_TARGET=$(MINIMUM_REQUIRED) \
@@ -176,20 +177,6 @@ $(DOWNLOADS)/libpng/Makefile: $(DOWNLOADS)/libpng/configure
 $(DOWNLOADS)/libpng/configure:
 	$(CLONE) $(GITLAB)/mkxp-z/libpng $(DOWNLOADS)/libpng
 
-# libjpeg
-libjpeg: init_dirs $(LIBDIR)/libjpeg.a
-
-$(LIBDIR)/libjpeg.a: $(DOWNLOADS)/libjpeg/cmakebuild/Makefile
-	cd $(DOWNLOADS)/libjpeg/cmakebuild; \
-	make -j$(NPROC); make install
-
-$(DOWNLOADS)/libjpeg/cmakebuild/Makefile: $(DOWNLOADS)/libjpeg/CMakeLists.txt
-	cd $(DOWNLOADS)/libjpeg; mkdir -p cmakebuild; cd cmakebuild; \
-	$(CMAKE) -DENABLE_SHARED=no -DENABLE_STATIC=yes
-
-$(DOWNLOADS)/libjpeg/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/libjpeg-turbo $(DOWNLOADS)/libjpeg
-
 # SDL2
 sdl2: init_dirs $(LIBDIR)/libSDL2.a
 
@@ -207,28 +194,26 @@ $(DOWNLOADS)/sdl2/configure: $(DOWNLOADS)/sdl2/autogen.sh
 
 $(DOWNLOADS)/sdl2/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z; cd $(DOWNLOADS)/sdl2
+	
+# SDL_image
+sdl2image: init_dirs sdl2 $(LIBDIR)/libSDL2_image.a
 
-# SDL2 (Image)
-sdl2image: init_dirs sdl2 libpng libjpeg $(LIBDIR)/libSDL2_image.a
-
-$(LIBDIR)/libSDL2_image.a: $(DOWNLOADS)/sdl2_image/Makefile
-	cd $(DOWNLOADS)/sdl2_image; \
+$(LIBDIR)/libSDL2_image.a: $(DOWNLOADS)/sdl2_image/cmakebuild/Makefile
+	cd $(DOWNLOADS)/sdl2_image/cmakebuild; \
 	make -j$(NPROC); make install
 
-$(DOWNLOADS)/sdl2_image/Makefile: $(DOWNLOADS)/sdl2_image/configure
-	cd $(DOWNLOADS)/sdl2_image; \
-	LIBPNG_LIBS="-L$(LIBDIR)/libpng.a -lpng" LIBPNG_CFLAGS="-I$(INCLUDEDIR)" \
-	$(CONFIGURE) --enable-static=true --enable-shared=false \
-	--disable-imageio \
-	--enable-png=yes --enable-png-shared=no \
-	--enable-jpg=yes --enable-jpg-shared=no \
-	--enable-webp=no --enable-tif=no \
-	$(SDL2_IMAGE_FLAGS)
+$(DOWNLOADS)/sdl2_image/cmakebuild/Makefile: $(DOWNLOADS)/sdl2_image/CMakeLists.txt
+	cd $(DOWNLOADS)/sdl2_image; mkdir -p cmakebuild; cd cmakebuild; \
+	$(CMAKE) \
+	-DBUILD_SHARED_LIBS=no \
+	-DSDL2IMAGE_JPG_SAVE=yes \
+	-DSDL2IMAGE_PNG_SAVE=yes \
+	-DSDL2IMAGE_PNG_SHARED=no \
+	-DSDL2IMAGE_JPG_SHARED=no \
+	-DSDL2IMAGE_BACKEND_IMAGEIO=no
+	
 
-$(DOWNLOADS)/sdl2_image/configure: $(DOWNLOADS)/sdl2_image/autogen.sh
-	cd $(DOWNLOADS)/sdl2_image; ./autogen.sh
-
-$(DOWNLOADS)/sdl2_image/autogen.sh:
+$(DOWNLOADS)/sdl2_image/CMakeLists.txt:
 	$(CLONE) $(GITLAB)/mkxp-z/SDL_image $(DOWNLOADS)/sdl2_image -b mkxp-z
 
 
@@ -347,5 +332,5 @@ clean-downloads:
 clean-compiled:
 	-rm -rf build-$(SDK)-$(ARCH)
 
-deps-core: libtheora libvorbis pixman libpng libjpeg physfs uchardet sdl2 sdl2image sdlsound sdl2ttf openal openssl
-everything: deps-core ruby
+deps-core: libtheora libvorbis pixman libpng physfs uchardet sdl2 sdl2image sdlsound sdl2ttf openal openssl
+everything: deps-core autoconf ruby
