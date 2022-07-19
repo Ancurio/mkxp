@@ -28,7 +28,7 @@
 #include "util.h"
 #include "debugwriter.h"
 
-#include <SDL_sound.h>
+#include <libnyquist/Decoders.h>
 
 #define SE_CACHE_MEM (10*1024*1024) // 10 MB
 
@@ -187,6 +187,7 @@ void SoundEmitter::stop()
 struct SoundOpenHandler : FileSystem::OpenHandler
 {
 	SoundBuffer *buffer;
+    std::string error;
 
 	SoundOpenHandler()
 	    : buffer(0)
@@ -194,29 +195,31 @@ struct SoundOpenHandler : FileSystem::OpenHandler
 
 	bool tryRead(SDL_RWops &ops, const char *ext)
 	{
-		Sound_Sample *sample = Sound_NewSample(&ops, ext, 0, STREAM_BUF_SIZE);
-
-		if (!sample)
-		{
-			SDL_RWclose(&ops);
-			return false;
-		}
+        nqr::AudioData audioData;
+        {
+            nqr::NyquistIO io;
+            std::vector<uint8_t> vec(SDL_RWsize(&ops));
+            SDL_RWread(&ops, vec.data(), vec.size(), vec.size());
+            try {
+                io.Load(&audioData, ext, vec);
+            } catch(std::runtime_error &e) {
+                error = e.what();
+                SDL_RWclose(&ops);
+                return false;
+            }
+        }
 
 		/* Do all of the decoding in the handler so we don't have
 		 * to keep the source ops around */
-		uint32_t decBytes = Sound_DecodeAll(sample);
-		uint8_t sampleSize = formatSampleSize(sample->actual.format);
-		uint32_t sampleCount = decBytes / sampleSize;
+		uint8_t sampleSize = sizeof(float);
 
 		buffer = new SoundBuffer;
-		buffer->bytes = sampleSize * sampleCount;
+		buffer->bytes = (uint32_t)audioData.samples.size() * sampleSize;
 
-		ALenum alFormat = chooseALFormat(sampleSize, sample->actual.channels);
+		ALenum alFormat = chooseALFormat(sampleSize, audioData.channelCount);
 
-		AL::Buffer::uploadData(buffer->alBuffer, alFormat, sample->buffer,
-							   buffer->bytes, sample->actual.rate);
-
-		Sound_FreeSample(sample);
+		AL::Buffer::uploadData(buffer->alBuffer, alFormat, audioData.samples.data(),
+							   buffer->bytes, audioData.sampleRate);
 
 		return true;
 	}
@@ -246,7 +249,7 @@ SoundBuffer *SoundEmitter::allocateBuffer(const std::string &filename)
 		{
 			char buf[512];
 			snprintf(buf, sizeof(buf), "Unable to decode sound: %s: %s",
-			         filename.c_str(), Sound_GetError());
+			         filename.c_str(), handler.error.c_str());
 			Debug() << buf;
 
 			return 0;

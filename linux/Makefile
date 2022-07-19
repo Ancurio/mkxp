@@ -235,6 +235,22 @@ $(DOWNLOADS)/sdl2_image/configure: $(DOWNLOADS)/sdl2_image/autogen.sh
 $(DOWNLOADS)/sdl2_image/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/SDL_image_old $(DOWNLOADS)/sdl2_image -b mkxp-z
 
+# libnyquist
+libnyquist: init_dirs sdl2 $(LIBDIR)/libnyquist.a
+
+$(LIBDIR)/libnyquist.a: $(DOWNLOADS)/libnyquist/cmakebuild/Makefile
+	cd $(DOWNLOADS)/libnyquist/cmakebuild; \
+	make -j$(NPROC); make install
+
+$(DOWNLOADS)/libnyquist/cmakebuild/Makefile: $(DOWNLOADS)/libnyquist/CMakeLists.txt
+	cd $(DOWNLOADS)/libnyquist; mkdir -p cmakebuild; cd cmakebuild; \
+	$(CMAKE) \
+	-DLIBNYQUIST_BUILD_EXAMPLES=no \
+	-DCMAKE_CXX_STANDARD=11
+
+$(DOWNLOADS)/libnyquist/CMakeLists.txt:
+	$(CLONE) $(GITLAB)/mkxp-z/libnyquist $(DOWNLOADS)/libnyquist
+
 # SDL_sound
 sdlsound: init_dirs sdl2 libogg libvorbis $(LIBDIR)/libSDL2_sound.a
 
@@ -352,5 +368,5 @@ powerwash: clean-downloads
 clean-downloads:
 	-rm -rf downloads
 
-deps-core: libtheora libvorbis pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth uchardet iconv
+deps-core: libtheora libvorbis pixman libpng libjpeg physfs sdl2 sdl2image libnyquist sdlsound sdl2ttf openal openssl fluidsynth uchardet iconv
 everything: deps-core autoconf ruby
