@@ -15,8 +15,9 @@
     //     - Enables/disables the extra console window on Windows. It appears by
     //       default whenever mkxp-z is started in debug mode.
     // "MKXPZ_MACOS_METAL"
-    //     - Setting this to 0 will force the usage of OpenGL over Metal.
-    //       Probably not a good idea unless you have some kind of issue.
+    //     - Setting this will influence the rendering backend used.
+    //       Probably not a good idea to mess with it unless you have some kind of issue.
+    //       OpenGL is default on x86, and Metal is the default on Apple Silicon.
     // "MKXPZ_FOLDER_SELECT"
     //     - Allows the manual selection of the game's folder at startup.
     //       Only works on macOS at the moment.

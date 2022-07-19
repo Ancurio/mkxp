@@ -297,7 +297,12 @@ try { exp } catch (...) {}
     
 #ifdef __APPLE__
     // Determine whether to use the Metal renderer on macOS
-    preferMetalRenderer = isMetalSupported() && getEnvironmentBool("MKXPZ_MACOS_METAL", true);
+#if defined(__x86_64__)
+#define METAL_DEFAULT_SETTING false
+#else
+#define METAL_DEFAULT_SETTING true
+#endif
+    preferMetalRenderer = isMetalSupported() && getEnvironmentBool("MKXPZ_MACOS_METAL", METAL_DEFAULT_SETTING);
 #endif
     
     // Determine whether to allow manual selection of a game folder on startup
