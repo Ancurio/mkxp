@@ -6,7 +6,7 @@ LIBDIR := $(BUILD_PREFIX)/lib
 INCLUDEDIR := $(BUILD_PREFIX)/include
 DOWNLOADS := ${PWD}/downloads/$(HOST)
 NPROC := $(shell sysctl -n hw.ncpu)
-CFLAGS := -I$(INCLUDEDIR) $(TARGETFLAGS) $(DEFINES)
+CFLAGS := -I$(INCLUDEDIR) $(TARGETFLAGS) $(DEFINES) -O3
 LDFLAGS := -L$(LIBDIR)
 CC      := xcrun -sdk $(SDK) clang -arch $(ARCH) -isysroot $(SDKROOT)
 PKG_CONFIG_LIBDIR := $(BUILD_PREFIX)/lib/pkgconfig
@@ -38,7 +38,8 @@ CMAKE_ARGS := \
 	-DCMAKE_OSX_SYSROOT=$(SDKROOT) \
 	-DCMAKE_OSX_ARCHITECTURES=$(ARCH) \
 	-DCMAKE_OSX_DEPLOYMENT_TARGET=$(MINIMUM_REQUIRED) \
-	-DCMAKE_C_FLAGS="$(CFLAGS)" 
+	-DCMAKE_C_FLAGS="$(CFLAGS)" \
+	-DCMAKE_BUILD_TYPE=Release
 
 
 # Ruby won't think it's cross-compiling unless

@@ -12,7 +12,7 @@ LIBDIR := $(BUILD_PREFIX)/lib
 INCLUDEDIR := $(BUILD_PREFIX)/include
 DOWNLOADS := ${PWD}/downloads/$(ARCH)
 NPROC := $(shell nproc)
-CFLAGS := -I$(INCLUDEDIR) -flax-vector-conversions
+CFLAGS := -I$(INCLUDEDIR) -flax-vector-conversions -O3
 LDFLAGS := -L$(LIBDIR)
 CC      := gcc
 PKG_CONFIG_LIBDIR := $(BUILD_PREFIX)/lib/pkgconfig
@@ -30,7 +30,8 @@ CONFIGURE_ARGS := --prefix="$(BUILD_PREFIX)"
 CMAKE_ARGS := \
 	-DCMAKE_INSTALL_PREFIX="$(BUILD_PREFIX)" \
 	-DCMAKE_PREFIX_PATH="$(BUILD_PREFIX)" \
-	-DCMAKE_C_FLAGS="$(CFLAGS)"
+	-DCMAKE_C_FLAGS="$(CFLAGS)" \
+	-DCMAKE_BUILD_TYPE=Release
 
 RUBY_CONFIGURE_ARGS := \
 	--enable-install-static-library \
@@ -182,6 +183,20 @@ $(DOWNLOADS)/libpng/Makefile: $(DOWNLOADS)/libpng/configure
 $(DOWNLOADS)/libpng/configure:
 	$(CLONE) $(GITLAB)/mkxp-z/libpng $(DOWNLOADS)/libpng
 
+# libjpeg
+libjpeg: init_dirs $(LIBDIR)/libjpeg.a
+
+$(LIBDIR)/libjpeg.a: $(DOWNLOADS)/libjpeg/cmakebuild/Makefile
+	cd $(DOWNLOADS)/libjpeg/cmakebuild; \
+	make -j$(NPROC); make install
+
+$(DOWNLOADS)/libjpeg/cmakebuild/Makefile: $(DOWNLOADS)/libjpeg/CMakeLists.txt
+	cd $(DOWNLOADS)/libjpeg; mkdir -p cmakebuild; cd cmakebuild; \
+	$(CMAKE) -DENABLE_SHARED=no -DENABLE_STATIC=yes
+
+$(DOWNLOADS)/libjpeg/CMakeLists.txt:
+	$(CLONE) $(GITLAB)/mkxp-z/libjpeg-turbo $(DOWNLOADS)/libjpeg
+
 # SDL2
 sdl2: init_dirs $(LIBDIR)/libSDL2.a
 
@@ -199,25 +214,26 @@ $(DOWNLOADS)/sdl2/configure: $(DOWNLOADS)/sdl2/autogen.sh
 $(DOWNLOADS)/sdl2/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z; cd $(DOWNLOADS)/sdl2
 
-# SDL_image
-sdl2image: init_dirs sdl2 $(LIBDIR)/libSDL2_image.a
+# SDL2 (Image)
+sdl2image: init_dirs sdl2 libpng libjpeg $(LIBDIR)/libSDL2_image.a
 
-$(LIBDIR)/libSDL2_image.a: $(DOWNLOADS)/sdl2_image/cmakebuild/Makefile
-	cd $(DOWNLOADS)/sdl2_image/cmakebuild; \
+$(LIBDIR)/libSDL2_image.a: $(DOWNLOADS)/sdl2_image/Makefile
+	cd $(DOWNLOADS)/sdl2_image; \
 	make -j$(NPROC); make install
 
-$(DOWNLOADS)/sdl2_image/cmakebuild/Makefile: $(DOWNLOADS)/sdl2_image/CMakeLists.txt
-	cd $(DOWNLOADS)/sdl2_image; mkdir -p cmakebuild; cd cmakebuild; \
-	$(CMAKE) \
-	-DBUILD_SHARED_LIBS=no \
-	-DSDL2IMAGE_JPG_SAVE=yes \
-	-DSDL2IMAGE_PNG_SAVE=yes \
-	-DSDL2IMAGE_PNG_SHARED=no \
-	-DSDL2IMAGE_JPG_SHARED=no
-	
+$(DOWNLOADS)/sdl2_image/Makefile: $(DOWNLOADS)/sdl2_image/configure
+	cd $(DOWNLOADS)/sdl2_image; \
+	LIBPNG_LIBS="-L$(LIBDIR) -lpng" LIBPNG_CFLAGS="-I$(INCLUDEDIR)" \
+	$(CONFIGURE) --enable-static=true --enable-shared=false \
+	--enable-png=yes --enable-png-shared=no \
+	--enable-jpg=yes --enable-jpg-shared=no \
+	--enable-webp=no $(SDL2_IMAGE_FLAGS)
 
-$(DOWNLOADS)/sdl2_image/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_image $(DOWNLOADS)/sdl2_image -b mkxp-z
+$(DOWNLOADS)/sdl2_image/configure: $(DOWNLOADS)/sdl2_image/autogen.sh
+	cd $(DOWNLOADS)/sdl2_image; ./autogen.sh
+
+$(DOWNLOADS)/sdl2_image/autogen.sh:
+	$(CLONE) $(GITLAB)/mkxp-z/SDL_image_old $(DOWNLOADS)/sdl2_image -b mkxp-z
 
 # SDL_sound
 sdlsound: init_dirs sdl2 libogg libvorbis $(LIBDIR)/libSDL2_sound.a
@@ -336,5 +352,5 @@ powerwash: clean-downloads
 clean-downloads:
 	-rm -rf downloads
 
-deps-core: libtheora libvorbis pixman libpng physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth uchardet iconv
+deps-core: libtheora libvorbis pixman libpng libjpeg physfs sdl2 sdl2image sdlsound sdl2ttf openal openssl fluidsynth uchardet iconv
 everything: deps-core autoconf ruby
