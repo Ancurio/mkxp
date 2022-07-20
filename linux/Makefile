@@ -121,17 +121,16 @@ $(DOWNLOADS)/pixman/autogen.sh:
 # iconv
 iconv: init_dirs $(LIBDIR)/libiconv.a
 
-$(LIBDIR)/libiconv.a: $(DOWNLOADS)/iconv/Makefile
-	cd $(DOWNLOADS)/iconv; make; make install
+$(LIBDIR)/libiconv.a: $(DOWNLOADS)/libiconv-1.16/Makefile
+	cd $(DOWNLOADS)/libiconv-1.16; make; make install
 
-$(DOWNLOADS)/iconv/Makefile: $(DOWNLOADS)/iconv/configure
-	cd $(DOWNLOADS)/iconv; \
+$(DOWNLOADS)/libiconv-1.16/Makefile: $(DOWNLOADS)/libiconv-1.16/configure
+	cd $(DOWNLOADS)/libiconv-1.16; \
 	$(CONFIGURE) --enable-static=true --enable-shared=false
 
-$(DOWNLOADS)/iconv/configure: $(DOWNLOADS)/libiconv-1.16.tar.gz
+$(DOWNLOADS)/libiconv-1.16/configure: $(DOWNLOADS)/libiconv-1.16.tar.gz
 	cd $(DOWNLOADS); \
-	tar -xzf libiconv-1.16.tar.gz; \
-	mv libiconv-1.16 iconv
+	tar -xzf libiconv-1.16.tar.gz;
 
 $(DOWNLOADS)/libiconv-1.16.tar.gz:
 	wget https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz -P $(DOWNLOADS)
