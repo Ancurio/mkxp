@@ -398,41 +398,6 @@ struct BitmapPrivate
         
         self->modified();
     }
-    
-    void flip(const IntRect &srcRect)
-     {
-        TEXFBO &current = getGLTypes();
-         TEXFBO newTex = shState->texPool().request(current.width, current.height);
-
-         SimpleShader &shader = shState->shaders().simple;
-         shader.bind();
-         shader.setTexOffsetX(0);
-         bindTexture(shader);
-
-         Quad &quad = shState->gpQuad();
-         quad.setTexPosRect(srcRect, IntRect(0, 0, current.width, current.height));
-         quad.setColor(Vec4(1, 1, 1, 1));
-
-         glState.blend.pushSet(false);
-         pushSetViewport(shader);
-
-         FBO::bind(newTex.fbo);
-         blitQuad(quad);
-
-         popViewport();
-         glState.blend.pop();
-
-        if (!animation.enabled) {
-            shState->texPool().release(gl);
-            gl = newTex;
-        }
-        else {
-            shState->texPool().release(animation.frames[animation.currentFrameI()]);
-            animation.frames[animation.currentFrameI()] = newTex;
-        }
-
-         onModified();
-     }
 };
 
 struct BitmapOpenHandler : FileSystem::OpenHandler
@@ -1311,22 +1276,6 @@ void Bitmap::setPixel(int x, int y, const Color &color)
     }
     
     p->onModified(false);
-}
-
-void Bitmap::vFlip() {
-    guardDisposed();
-    GUARD_MEGA;
-    
-    TEXFBO &current = getGLTypes();
-    p->flip(IntRect(0, current.height, current.width, -current.height));
-}
-
-void Bitmap::hFlip() {
-    guardDisposed();
-    GUARD_MEGA;
-    
-    TEXFBO &current = getGLTypes();
-    p->flip(IntRect(current.width, 0, -current.width, current.height));
 }
 
 bool Bitmap::getRaw(void *output, int output_size)
