@@ -143,6 +143,13 @@ void Config::read(int argc, char *argv[]) {
         {"frameSkip", false},
         {"syncToRefreshrate", false},
         {"solidFonts", false},
+#ifdef __APPLE__
+#ifdef __x86_64__
+        {"preferMetalRenderer", false},
+#else
+        {"preferMetalRenderer", true},
+#endif
+#endif
         {"subImageFix", false},
 #ifdef __WIN32__
         {"enableBlitting", false},
@@ -257,6 +264,9 @@ try { exp } catch (...) {}
     SET_OPT(frameSkip, boolean);
     SET_OPT(syncToRefreshrate, boolean);
     SET_OPT(solidFonts, boolean);
+#ifdef __APPLE__
+    SET_OPT(preferMetalRenderer, boolean);
+#endif
     SET_OPT(subImageFix, boolean);
     SET_OPT(enableBlitting, boolean);
     SET_OPT_CUSTOMKEY(integerScaling.active, integerScalingActive, boolean);
@@ -297,12 +307,8 @@ try { exp } catch (...) {}
     
 #ifdef __APPLE__
     // Determine whether to use the Metal renderer on macOS
-#if defined(__x86_64__)
-#define METAL_DEFAULT_SETTING false
-#else
-#define METAL_DEFAULT_SETTING true
-#endif
-    preferMetalRenderer = isMetalSupported() && getEnvironmentBool("MKXPZ_MACOS_METAL", METAL_DEFAULT_SETTING);
+    // Environment variable takes priority over the json setting
+    preferMetalRenderer = isMetalSupported() && getEnvironmentBool("MKXPZ_MACOS_METAL", preferMetalRenderer);
 #endif
     
     // Determine whether to allow manual selection of a game folder on startup

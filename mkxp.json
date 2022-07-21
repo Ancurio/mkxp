@@ -18,6 +18,7 @@
     //     - Setting this will influence the rendering backend used.
     //       Probably not a good idea to mess with it unless you have some kind of issue.
     //       OpenGL is default on x86, and Metal is the default on Apple Silicon.
+    //       This takes priority over the config option if it's set.
     // "MKXPZ_FOLDER_SELECT"
     //     - Allows the manual selection of the game's folder at startup.
     //       Only works on macOS at the moment.
@@ -130,6 +131,23 @@
     // "solidFonts": false,
 
 
+    // Prefer the use of Metal over OpenGL on macOS.
+    // This defaults to false under Intel machines,
+    // and true under ARM/Apple Silicon ones (which
+    // merely emulate OpenGL anyway)
+    //
+    // Try changing this if you have graphics problems.
+    // Metal is far better, but ANGLE may not initialize correctly
+    // on some Intel machines.
+    //
+    // On Apple Silicon it's probably better to not touch it.
+    // Emulated OpenGL is buggy, and it will also break things like
+    // the Steam overlay.
+    // (default: true if Apple Silicon, false if Intel)
+    //
+    // "preferMetalRenderer": true,
+    
+    
     // Work around buggy graphics drivers which don't
     // properly synchronize texture access, most
     // apparent when text doesn't show up or the map
@@ -170,7 +188,7 @@
     // they are forced to the smaller of the two.
     // (default: disabled)
     //
-    // "integerScaling.active": false,
+    // "integerScalingActive": false,
 
 
     // When integer scaling is enabled, this option controls
@@ -180,7 +198,7 @@
     // Note that this option still respects fixedAspectRatio.
     // (default: enabled)
     //
-    // "integerScaling.lastMileScaling": true,
+    // "integerScalingLastMile": true,
     
     
     // Set the base path of the game to '/path/to/game'
