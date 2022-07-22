@@ -804,7 +804,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3BBE880D2705AAC900A574AE /* libruby.3.1.dylib in Embed Frameworks */,
 				3BBE88012705A73400A574AE /* libfluidsynth.dylib in Embed Frameworks */,
 				3BBE88022705A73400A574AE /* libEGL.dylib in Embed Frameworks */,
 				3BBE88042705A73400A574AE /* libsteam_api.dylib in Embed Frameworks */,
@@ -2954,7 +2953,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
 					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
@@ -3041,7 +3040,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
 					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
@@ -3127,10 +3126,10 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
 					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
-					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
+					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3208,10 +3207,10 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/SDL2",
 					"$(DEPENDENCY_SEARCH_PATH)/include/pixman-1",
 					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)",
-					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/-darwin",
+					"$(DEPENDENCY_SEARCH_PATH)/include/ruby-$(MRI_VERSION)/arm64-darwin",
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
-					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
+					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
 					"$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE",
 				);
 				LD_RUNPATH_SEARCH_PATHS = (

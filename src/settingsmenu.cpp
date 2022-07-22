@@ -83,7 +83,7 @@ static elementsN(vButtons);
 std::string sourceDescString(const SourceDesc &src)
 {
 	char buf[128];
-	char pos;
+	//char pos;
 
 	switch (src.type)
 	{

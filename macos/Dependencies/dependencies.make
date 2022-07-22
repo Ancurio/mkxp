@@ -334,4 +334,4 @@ clean-compiled:
 	-rm -rf build-$(SDK)-$(ARCH)
 
 deps-core: libtheora libvorbis pixman libpng physfs uchardet sdl2 sdl2image sdlsound sdl2ttf openal openssl
-everything: deps-core autoconf ruby
+everything: deps-core ruby

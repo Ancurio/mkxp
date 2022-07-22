@@ -1412,7 +1412,7 @@ unsigned int Input::rawAxesLength() {
 }
 
 short Input::getControllerAxisValue(SDL_GameControllerAxis axis) {
-    if (axis < 0 || axis >= rawAxesLength())
+    if (axis < 0 || (uint32_t)axis >= rawAxesLength())
         return 0;
     
     return rawAxes()[axis];

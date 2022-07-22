@@ -2018,7 +2018,7 @@ void Bitmap::nextFrame()
     GUARD_UNANIMATED;
     
     stop();
-    if (p->animation.lastFrame >= (uint32_t)p->animation.frames.size() - 1)  {
+    if ((uint32_t)p->animation.lastFrame >= p->animation.frames.size() - 1)  {
         if (!p->animation.loop) return;
         p->animation.lastFrame = 0;
         return;

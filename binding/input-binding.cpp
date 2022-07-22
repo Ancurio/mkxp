@@ -88,7 +88,7 @@ static int getControllerButtonArg(VALUE *argv) {
     try {
         btn = strToGCButton[button];
     } catch (...) {
-        rb_raise(rb_eRuntimeError, "%s is not a valid name of an SDL Controller button.");
+        rb_raise(rb_eRuntimeError, "%s is not a valid name of an SDL Controller button.", button);
     }
     
     return btn;
@@ -300,7 +300,7 @@ RB_METHOD(inputRawKeyStates) {
 
     uint8_t *states = shState->input().rawKeyStates();
     
-    for (int i = 0; i < shState->input().rawKeyStatesLength(); i++)
+    for (unsigned int i = 0; i < shState->input().rawKeyStatesLength(); i++)
         rb_ary_push(ret, rb_bool_new(states[i]));
     
     return ret;
@@ -460,7 +460,7 @@ RB_METHOD(inputControllerRawButtonStates) {
     VALUE ret = rb_ary_new();
     uint8_t *states = shState->input().rawButtonStates();
     
-    for (int i = 0; i < shState->input().rawButtonStatesLength(); i++)
+    for (unsigned int i = 0; i < shState->input().rawButtonStatesLength(); i++)
         rb_ary_push(ret, rb_bool_new(states[i]));
     
     return ret;
@@ -472,7 +472,7 @@ RB_METHOD(inputControllerRawAxes) {
     VALUE ret = rb_ary_new();
     int16_t *states = shState->input().rawAxes();
     
-    for (int i = 0; i < shState->input().rawAxesLength(); i++)
+    for (unsigned int i = 0; i < shState->input().rawAxesLength(); i++)
         rb_ary_push(ret, rb_float_new(states[i] / 32767.0));
     
     return ret;
