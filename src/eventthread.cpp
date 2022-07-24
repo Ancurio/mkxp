@@ -705,6 +705,7 @@ void EventThread::requestFullscreenMode(bool mode)
 
 void EventThread::requestWindowResize(int width, int height)
 {
+    shState->rtData().rqWindowAdjust.set();
     SDL_Event event;
     event.type = usrIdStart + REQUEST_WINRESIZE;
     event.window.data1 = width;
@@ -714,6 +715,7 @@ void EventThread::requestWindowResize(int width, int height)
 
 void EventThread::requestWindowReposition(int x, int y)
 {
+    shState->rtData().rqWindowAdjust.set();
     SDL_Event event;
     event.type = usrIdStart + REQUEST_WINREPOSITION;
     event.window.data1 = x;
@@ -723,6 +725,7 @@ void EventThread::requestWindowReposition(int x, int y)
 
 void EventThread::requestWindowCenter()
 {
+    shState->rtData().rqWindowAdjust.set();
     SDL_Event event;
     event.type = usrIdStart + REQUEST_WINCENTER;
     SDL_PushEvent(&event);

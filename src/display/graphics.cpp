@@ -1353,8 +1353,6 @@ void Graphics::resizeScreen(int width, int height) {
     
     glState.scissorBox.set(IntRect(0, 0, p->scRes.x, p->scRes.y));
     
-    
-    p->threadData->rqWindowAdjust.set();
     shState->eThread().requestWindowResize(width, height);
 }
 
@@ -1365,8 +1363,7 @@ void Graphics::resizeWindow(int width, int height, bool center) {
     if (width == p->winSize.x / p->backingScaleFactor &&
         height == p->winSize.y / p->backingScaleFactor)
             return;
-    
-    p->threadData->rqWindowAdjust.set();
+
     shState->eThread().requestWindowResize(width, height);
     
     if (center)
@@ -1460,10 +1457,10 @@ void Graphics::reset() {
 }
 
 void Graphics::center() {
+    p->threadData->rqWindowAdjust.wait();
     if (getFullscreen())
         return;
     
-    p->threadData->rqWindowAdjust.reset();
     p->threadData->ethread->requestWindowCenter();
 }
 
@@ -1554,7 +1551,7 @@ double Graphics::getScale() const {
 }
 
 void Graphics::setScale(double factor) {
-    p->threadData->rqWindowAdjust.reset();
+    p->threadData->rqWindowAdjust.wait();
     factor = clamp(factor, 0.5, 4.0);
     
     if (factor == getScale())
