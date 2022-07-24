@@ -27,17 +27,14 @@ MKXPZTouchBar *_sharedTouchBar;
 }
 
 @property (retain,nonatomic) NSString *gameTitle;
-@property (retain,nonatomic) NSNumber *showResetButton;
-@property (retain,nonatomic) NSNumber *showSettingsButton;
 
 -(void)updateFPSDisplay:(uint32_t)value;
+-(void)setBarLayoutWithSettingsButton:(bool)showSettings andResetButton:(bool)showReset;
 @end
 
 @implementation MKXPZTouchBar
 
 @synthesize gameTitle;
-@synthesize showResetButton;
-@synthesize showSettingsButton;
 
 +(MKXPZTouchBar*)sharedTouchBar {
     if (!_sharedTouchBar)
@@ -45,12 +42,16 @@ MKXPZTouchBar *_sharedTouchBar;
     return _sharedTouchBar;
 }
 
--(instancetype)init {
-    self = [super init];
-    self.delegate = self;
-    
-    bool showReset = [showResetButton boolValue];
-    bool showSettings = [showSettingsButton boolValue];
+-(void)setBarLayoutWithSettingsButton:(bool)showSettings andResetButton:(bool)showReset {
+    if (!functionKeys) {
+        functionKeys = [NSSegmentedControl segmentedControlWithLabels:@[@"F5", @"F6", @"F7", @"F8", @"F9"] trackingMode:NSSegmentSwitchTrackingMomentary target:self action:@selector(simFunctionKey)];
+        functionKeys.segmentStyle = NSSegmentStyleSeparated;
+    }
+    if (!fpsLabel) {
+        fpsLabel = [NSTextField labelWithString:@"Loading..."];
+        fpsLabel.alignment = (showReset || showSettings) ? NSTextAlignmentCenter : NSTextAlignmentRight;
+        fpsLabel.font = [NSFont labelFontOfSize:NSFont.smallSystemFontSize];
+    }
     
     NSMutableArray *items = [NSMutableArray arrayWithArray:@[@"function", NSTouchBarItemIdentifierFlexibleSpace]];
     
@@ -58,20 +59,18 @@ MKXPZTouchBar *_sharedTouchBar;
         [items addObject:@"icon"];
         [items addObject:@"fps"];
         [items addObject:NSTouchBarItemIdentifierFlexibleSpace];
-        if (showReset) [items addObject:@"reset"];
         if (showSettings) [items addObject:@"rebind"];
+        if (showReset) [items addObject:@"reset"];
     } else {
         [items addObject:@"fps"];
         [items addObject:@"icon"];
     }
     self.defaultItemIdentifiers = items;
-    
-    fpsLabel = [NSTextField labelWithString:@"Loading..."];
-    fpsLabel.alignment = (showReset || showSettings) ? NSTextAlignmentCenter : NSTextAlignmentRight;
-    fpsLabel.font = [NSFont labelFontOfSize:NSFont.smallSystemFontSize];
-    
-    functionKeys = [NSSegmentedControl segmentedControlWithLabels:@[@"F5", @"F6", @"F7", @"F8", @"F9"] trackingMode:NSSegmentSwitchTrackingMomentary target:self action:@selector(simFunctionKey)];
-    functionKeys.segmentStyle = NSSegmentStyleSeparated;
+}
+
+-(instancetype)init {
+    self = [super init];
+    self.delegate = self;
     
     return self;
 }
@@ -173,11 +172,11 @@ void initTouchBar(SDL_Window *win, Config &conf) {
     SDL_SysWMinfo windowinfo{};
     SDL_GetWindowWMInfo(win, &windowinfo);
     
-    windowinfo.info.cocoa.window.touchBar = MKXPZTouchBar.sharedTouchBar;
-    MKXPZTouchBar.sharedTouchBar.parent = windowinfo.info.cocoa.window;
-    MKXPZTouchBar.sharedTouchBar.gameTitle = @(conf.game.title.c_str());
-    MKXPZTouchBar.sharedTouchBar.showResetButton = [NSNumber numberWithBool:conf.enableReset];
-    MKXPZTouchBar.sharedTouchBar.showSettingsButton = [NSNumber numberWithBool:conf.enableSettings];
+    MKXPZTouchBar *tb = MKXPZTouchBar.sharedTouchBar;
+    windowinfo.info.cocoa.window.touchBar = tb;
+    tb.parent = windowinfo.info.cocoa.window;
+    tb.gameTitle = @(conf.game.title.c_str());
+    [tb setBarLayoutWithSettingsButton:conf.enableSettings andResetButton:conf.enableReset];
 }
 
 void updateTouchBarFPSDisplay(uint32_t value) {

@@ -28,9 +28,7 @@ struct AtomicFlag
     
     void wait()
     {
-        while (SDL_AtomicGet(&atom)) {
-            usleep(5000);
-        }
+        while (SDL_AtomicGet(&atom)) {}
     }
     
     void reset()

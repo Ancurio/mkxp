@@ -141,7 +141,8 @@ $(LIBDIR)/libpixman-1.a: $(DOWNLOADS)/pixman/Makefile
 
 $(DOWNLOADS)/pixman/Makefile: $(DOWNLOADS)/pixman/autogen.sh
 	cd $(DOWNLOADS)/pixman; \
-	$(AUTOGEN) --enable-static=yes --enable-shared=no
+	$(AUTOGEN) --enable-static=yes --enable-shared=no \
+	--disable-arm-a64-neon
 
 $(DOWNLOADS)/pixman/autogen.sh:
 	$(CLONE) $(GITLAB)/mkxp-z/pixman $(DOWNLOADS)/pixman

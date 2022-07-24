@@ -128,7 +128,6 @@ Config::Config() {}
 void Config::read(int argc, char *argv[]) {
     auto optsJ = json::object({
         {"rgssVersion", 0},
-        {"preferMetalRenderer", true},
         {"debugMode", false},
         {"printFPS", false},
         {"winResizable", true},
@@ -143,12 +142,10 @@ void Config::read(int argc, char *argv[]) {
         {"frameSkip", false},
         {"syncToRefreshrate", false},
         {"solidFonts", false},
-#ifdef __APPLE__
-#ifdef __x86_64__
-        {"preferMetalRenderer", false},
-#else
+#if defined(__APPLE__) && defined(__aarch64__)
         {"preferMetalRenderer", true},
-#endif
+#else
+        {"preferMetalRenderer", false},
 #endif
         {"subImageFix", false},
 #ifdef __WIN32__
