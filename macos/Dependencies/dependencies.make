@@ -13,7 +13,6 @@ PKG_CONFIG_LIBDIR := $(BUILD_PREFIX)/lib/pkgconfig
 GIT := git
 CLONE := $(GIT) clone -q
 GITHUB := https://github.com
-GITLAB := https://gitlab.com
 
 # need to set the build variable because Ruby is picky
 ifeq "$(strip $(shell uname -m))" "arm64"
@@ -95,7 +94,7 @@ $(DOWNLOADS)/vorbis/configure: $(DOWNLOADS)/vorbis/autogen.sh
 	./autogen.sh
 
 $(DOWNLOADS)/vorbis/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/vorbis $(DOWNLOADS)/vorbis
+	$(CLONE) $(GITHUB)/mkxp-z/vorbis $(DOWNLOADS)/vorbis
 
 
 # Ogg, dependency of Vorbis
@@ -113,7 +112,7 @@ $(DOWNLOADS)/ogg/configure: $(DOWNLOADS)/ogg/autogen.sh
 	cd $(DOWNLOADS)/ogg; ./autogen.sh
 
 $(DOWNLOADS)/ogg/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/ogg $(DOWNLOADS)/ogg
+	$(CLONE) $(GITHUB)/mkxp-z/ogg $(DOWNLOADS)/ogg
 	
 # uchardet
 uchardet: init_dirs $(LIBDIR)/libuchardet.a
@@ -145,7 +144,7 @@ $(DOWNLOADS)/pixman/Makefile: $(DOWNLOADS)/pixman/autogen.sh
 	--disable-arm-a64-neon
 
 $(DOWNLOADS)/pixman/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/pixman $(DOWNLOADS)/pixman
+	$(CLONE) $(GITHUB)/mkxp-z/pixman $(DOWNLOADS)/pixman
 
 
 # PhysFS
@@ -162,7 +161,7 @@ $(DOWNLOADS)/physfs/cmakebuild/Makefile: $(DOWNLOADS)/physfs/CMakeLists.txt
 	$(CMAKE) -DPHYSFS_BUILD_STATIC=true -DPHYSFS_BUILD_SHARED=false
 
 $(DOWNLOADS)/physfs/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/physfs $(DOWNLOADS)/physfs
+	$(CLONE) $(GITHUB)/mkxp-z/physfs $(DOWNLOADS)/physfs
 
 # libpng
 libpng: init_dirs $(LIBDIR)/libpng.a
@@ -177,7 +176,7 @@ $(DOWNLOADS)/libpng/Makefile: $(DOWNLOADS)/libpng/configure
 	--enable-shared=no --enable-static=yes
 
 $(DOWNLOADS)/libpng/configure:
-	$(CLONE) $(GITLAB)/mkxp-z/libpng $(DOWNLOADS)/libpng
+	$(CLONE) $(GITHUB)/mkxp-z/libpng $(DOWNLOADS)/libpng
 
 # SDL2
 sdl2: init_dirs $(LIBDIR)/libSDL2.a
@@ -195,7 +194,7 @@ $(DOWNLOADS)/sdl2/configure: $(DOWNLOADS)/sdl2/autogen.sh
 	cd $(DOWNLOADS)/sdl2; ./autogen.sh
 
 $(DOWNLOADS)/sdl2/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z; cd $(DOWNLOADS)/sdl2
+	$(CLONE) $(GITHUB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z; cd $(DOWNLOADS)/sdl2
 	
 # SDL_image
 sdl2image: init_dirs sdl2 $(LIBDIR)/libSDL2_image.a
@@ -216,7 +215,7 @@ $(DOWNLOADS)/sdl2_image/cmakebuild/Makefile: $(DOWNLOADS)/sdl2_image/CMakeLists.
 	
 
 $(DOWNLOADS)/sdl2_image/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_image $(DOWNLOADS)/sdl2_image -b mkxp-z
+	$(CLONE) $(GITHUB)/mkxp-z/SDL_image $(DOWNLOADS)/sdl2_image -b mkxp-z
 
 
 # SDL_sound
@@ -234,7 +233,7 @@ $(DOWNLOADS)/sdl_sound/cmakebuild/Makefile: $(DOWNLOADS)/sdl_sound/CMakeLists.tx
 	-DSDLSOUND_DECODER_COREAUDIO=false
 
 $(DOWNLOADS)/sdl_sound/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b git
+	$(CLONE) $(GITHUB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b git
 
 	
 # SDL2 (ttf)
@@ -252,7 +251,7 @@ $(DOWNLOADS)/sdl2_ttf/configure: $(DOWNLOADS)/sdl2_ttf/autogen.sh
 	cd $(DOWNLOADS)/sdl2_ttf; ./autogen.sh
 
 $(DOWNLOADS)/sdl2_ttf/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_ttf $(DOWNLOADS)/sdl2_ttf -b mkxp-z
+	$(CLONE) $(GITHUB)/mkxp-z/SDL_ttf $(DOWNLOADS)/sdl2_ttf -b mkxp-z
 
 # Freetype (dependency of SDL2_ttf)
 freetype: init_dirs $(LIBDIR)/libfreetype.a
@@ -269,7 +268,7 @@ $(DOWNLOADS)/freetype/configure: $(DOWNLOADS)/freetype/autogen.sh
 	cd $(DOWNLOADS)/freetype; ./autogen.sh
 
 $(DOWNLOADS)/freetype/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/freetype2 $(DOWNLOADS)/freetype
+	$(CLONE) $(GITHUB)/mkxp-z/freetype2 $(DOWNLOADS)/freetype
 
 # OpenAL
 openal: init_dirs libogg $(LIBDIR)/libopenal.a
@@ -283,7 +282,7 @@ $(DOWNLOADS)/openal/cmakebuild/Makefile: $(DOWNLOADS)/openal/CMakeLists.txt
 	$(CMAKE) -DLIBTYPE=STATIC -DALSOFT_EXAMPLES=no -DALSOFT_UTILS=no $(OPENAL_FLAGS)
 
 $(DOWNLOADS)/openal/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
+	$(CLONE) $(GITHUB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
 
 # OpenSSL
 openssl: init_dirs $(LIBDIR)/libssl.a
@@ -300,7 +299,7 @@ $(DOWNLOADS)/openssl/Makefile: $(DOWNLOADS)/openssl/Configure
 
 $(DOWNLOADS)/openssl/Configure:
 	$(CLONE) $(GITHUB)/openssl/openssl $(DOWNLOADS)/openssl; \
-	cd $(DOWNLOADS)/openssl; git checkout OpenSSL_1_1_1i
+	cd $(DOWNLOADS)/openssl --single-branch --branch OpenSSL_1_1_1i --depth 1
 
 # Standard ruby
 ruby: init_dirs openssl $(LIBDIR)/libruby.3.1.dylib
@@ -318,7 +317,7 @@ $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
 	cd $(DOWNLOADS)/ruby; autoreconf -i
 
 $(DOWNLOADS)/ruby/*.c:
-	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby --single-branch -b mkxp-z-3.1;
+	$(CLONE) $(GITHUB)/mkxp-z/ruby $(DOWNLOADS)/ruby --single-branch -b mkxp-z-3.1 --depth 1;
 
 # ====
 init_dirs:

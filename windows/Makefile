@@ -20,7 +20,6 @@ PKG_CONFIG_LIBDIR := $(BUILD_PREFIX)/lib/pkgconfig
 GIT := git
 CLONE := $(GIT) clone -q
 GITHUB := https://github.com
-GITLAB := https://gitlab.com
 
 CONFIGURE_ENV := \
 	PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR) \
@@ -84,7 +83,7 @@ $(DOWNLOADS)/vorbis/configure: $(DOWNLOADS)/vorbis/autogen.sh
 	./autogen.sh
 
 $(DOWNLOADS)/vorbis/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/vorbis $(DOWNLOADS)/vorbis
+	$(CLONE) $(GITHUB)/mkxp-z/vorbis $(DOWNLOADS)/vorbis
 
 
 # Ogg, dependency of Vorbis
@@ -102,7 +101,7 @@ $(DOWNLOADS)/ogg/configure: $(DOWNLOADS)/ogg/autogen.sh
 	cd $(DOWNLOADS)/ogg; ./autogen.sh
 
 $(DOWNLOADS)/ogg/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/ogg $(DOWNLOADS)/ogg
+	$(CLONE) $(GITHUB)/mkxp-z/ogg $(DOWNLOADS)/ogg
 
 # Pixman
 pixman: init_dirs libpng $(LIBDIR)/libpixman-1.a
@@ -117,7 +116,7 @@ $(DOWNLOADS)/pixman/Makefile: $(DOWNLOADS)/pixman/autogen.sh
 	$(AUTOGEN) --enable-static=yes --enable-shared=no
 
 $(DOWNLOADS)/pixman/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/pixman $(DOWNLOADS)/pixman
+	$(CLONE) $(GITHUB)/mkxp-z/pixman $(DOWNLOADS)/pixman
 
 
 # PhysFS
@@ -134,7 +133,7 @@ $(DOWNLOADS)/physfs/cmakebuild/Makefile: $(DOWNLOADS)/physfs/CMakeLists.txt
 	$(CMAKE) -DPHYSFS_BUILD_STATIC=true -DPHYSFS_BUILD_SHARED=false
 
 $(DOWNLOADS)/physfs/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/physfs $(DOWNLOADS)/physfs
+	$(CLONE) $(GITHUB)/mkxp-z/physfs $(DOWNLOADS)/physfs
 
 # libpng
 libpng: init_dirs $(LIBDIR)/libpng.a
@@ -149,7 +148,7 @@ $(DOWNLOADS)/libpng/Makefile: $(DOWNLOADS)/libpng/configure
 	--enable-shared=no --enable-static=yes
 
 $(DOWNLOADS)/libpng/configure:
-	$(CLONE) $(GITLAB)/mkxp-z/libpng $(DOWNLOADS)/libpng
+	$(CLONE) $(GITHUB)/mkxp-z/libpng $(DOWNLOADS)/libpng
 
 # libjpeg
 libjpeg: init_dirs $(LIBDIR)/libjpeg.a
@@ -163,7 +162,7 @@ $(DOWNLOADS)/libjpeg/cmakebuild/Makefile: $(DOWNLOADS)/libjpeg/CMakeLists.txt
 	$(CMAKE) -DENABLE_SHARED=no -DENABLE_STATIC=yes
 
 $(DOWNLOADS)/libjpeg/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/libjpeg-turbo $(DOWNLOADS)/libjpeg
+	$(CLONE) $(GITHUB)/mkxp-z/libjpeg-turbo $(DOWNLOADS)/libjpeg
 
 # uchardet
 uchardet: init_dirs $(LIBDIR)/libuchardet.a
@@ -195,7 +194,7 @@ $(DOWNLOADS)/sdl2/configure: $(DOWNLOADS)/sdl2/autogen.sh
 	cd $(DOWNLOADS)/sdl2; ./autogen.sh
 
 $(DOWNLOADS)/sdl2/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z; cd $(DOWNLOADS)/sdl2
+	$(CLONE) $(GITHUB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z; cd $(DOWNLOADS)/sdl2
 
 # SDL2 (Image)
 sdl2image: init_dirs sdl2 libpng libjpeg $(LIBDIR)/libSDL2_image.a
@@ -216,7 +215,7 @@ $(DOWNLOADS)/sdl2_image/configure: $(DOWNLOADS)/sdl2_image/autogen.sh
 	cd $(DOWNLOADS)/sdl2_image; ./autogen.sh
 
 $(DOWNLOADS)/sdl2_image/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_image_old $(DOWNLOADS)/sdl2_image -b mkxp-z
+	$(CLONE) $(GITHUB)/mkxp-z/SDL_image_old $(DOWNLOADS)/sdl2_image -b mkxp-z
 
 # SDL_sound
 sdlsound: init_dirs sdl2 libogg libvorbis $(LIBDIR)/libSDL2_sound.a
@@ -232,7 +231,7 @@ $(DOWNLOADS)/sdl_sound/cmakebuild/Makefile: $(DOWNLOADS)/sdl_sound/CMakeLists.tx
 	-DSDLSOUND_BUILD_TEST=false
 
 $(DOWNLOADS)/sdl_sound/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b git
+	$(CLONE) $(GITHUB)/mkxp-z/SDL_sound $(DOWNLOADS)/sdl_sound -b git
 
 # SDL2 (ttf)
 sdl2ttf: init_dirs sdl2 freetype $(LIBDIR)/libSDL2_ttf.a
@@ -249,7 +248,7 @@ $(DOWNLOADS)/sdl2_ttf/configure: $(DOWNLOADS)/sdl2_ttf/autogen.sh
 	cd $(DOWNLOADS)/sdl2_ttf; ./autogen.sh
 
 $(DOWNLOADS)/sdl2_ttf/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/SDL_ttf $(DOWNLOADS)/sdl2_ttf -b mkxp-z
+	$(CLONE) $(GITHUB)/mkxp-z/SDL_ttf $(DOWNLOADS)/sdl2_ttf -b mkxp-z
 
 # Freetype (dependency of SDL2_ttf)
 freetype: init_dirs $(LIBDIR)/libfreetype.a
@@ -266,7 +265,7 @@ $(DOWNLOADS)/freetype/configure: $(DOWNLOADS)/freetype/autogen.sh
 	cd $(DOWNLOADS)/freetype; ./autogen.sh
 
 $(DOWNLOADS)/freetype/autogen.sh:
-	$(CLONE) $(GITLAB)/mkxp-z/freetype2 $(DOWNLOADS)/freetype
+	$(CLONE) $(GITHUB)/mkxp-z/freetype2 $(DOWNLOADS)/freetype
 
 # OpenAL
 openal: init_dirs libogg $(LIBDIR)/libOpenAL32.a
@@ -280,7 +279,7 @@ $(DOWNLOADS)/openal/cmakebuild/Makefile: $(DOWNLOADS)/openal/CMakeLists.txt
 	$(CMAKE) -DLIBTYPE=STATIC -DALSOFT_EXAMPLES=no -DALSOFT_UTILS=no $(OPENAL_FLAGS)
 
 $(DOWNLOADS)/openal/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
+	$(CLONE) $(GITHUB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
 
 # FluidSynth
 fluidsynth: init_dirs $(LIBDIR)/libfluidsynth.a
@@ -294,7 +293,7 @@ $(DOWNLOADS)/fluidsynth/cmakebuild/Makefile: $(DOWNLOADS)/fluidsynth/CMakeLists.
 	$(CMAKE) -DBUILD_SHARED_LIBS=no -Denable-sdl2=no -Denable-readline=no
 
 $(DOWNLOADS)/fluidsynth/CMakeLists.txt:
-	$(CLONE) $(GITLAB)/mkxp-z/fluidsynth-sans-glib $(DOWNLOADS)/fluidsynth
+	$(CLONE) $(GITHUB)/mkxp-z/fluidsynth-sans-glib $(DOWNLOADS)/fluidsynth
 
 # OpenSSL
 openssl: init_dirs $(LIBDIR)/libssl.a
@@ -310,7 +309,7 @@ $(DOWNLOADS)/openssl/Makefile: $(DOWNLOADS)/openssl/Configure
 	--openssldir="$(BUILD_PREFIX)"
 
 $(DOWNLOADS)/openssl/Configure:
-	$(CLONE) $(GITHUB)/openssl/openssl $(DOWNLOADS)/openssl -c advice.detachedHead=false --branch OpenSSL_1_1_1i
+	$(CLONE) $(GITHUB)/openssl/openssl $(DOWNLOADS)/openssl --single-branch --branch OpenSSL_1_1_1i --depth 1
 
 # Standard ruby
 ruby: init_dirs openssl $(BUILD_PREFIX)/$(RB_PREFIX)-ruby310.dll
@@ -327,7 +326,7 @@ $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
 	cd $(DOWNLOADS)/ruby; autoreconf -i
 
 $(DOWNLOADS)/ruby/*.c:
-	$(CLONE) $(GITLAB)/mkxp-z/ruby $(DOWNLOADS)/ruby -b mkxp-z-3.1;
+	$(CLONE) $(GITHUB)/mkxp-z/ruby $(DOWNLOADS)/ruby --single-branch --branch mkxp-z-3.1 --depth 1;
 
 # ====
 init_dirs:

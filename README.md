@@ -10,24 +10,12 @@ Despite the fact that it was made with Essentials games in mind, there is nothin
 
 It supports Windows, Linux and both Intel and Apple Silicon versions of macOS.
 
-Releases are [here](https://gitlab.com/mkxp-z/mkxp-z/-/releases). Requirements for running them are Windows 8.1+, Ubuntu 18.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.12.2+.
+Releases are [here](https://github.com/mkxp-z/mkxp-z/releases). Requirements for running them are Windows 8.1+, Ubuntu 20.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.12.2+.
 
-I'd highly recommend [checking the gitbook](https://roza-gb.gitbook.io/mkxp-z) for more information than this readme contains.
+I'd highly recommend [checking the wiki](https://github.com/mkxp-z/mkxp-z/wiki) for more information than this readme contains.
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on MRI and as such the mruby and null bindings are not included.
-
-### MRI
-Website: https://www.ruby-lang.org/en/
-
-Matz's Ruby Interpreter, also called CRuby, is the most widely deployed version of ruby. MRI 1.8.1 is what was used in RPG Maker XP, and 1.8.7 is the lowest that mkxp-z is prepared to let you go.
-
-Ruby versions 1.9.3 and 2.1 - 3.1 are also supported, and running each platform's respective dependency makefile will build Ruby 3.1.
-
-## Dependencies / Building
-
-For build instructions, refer to the [gitbook](https://roza-gb.gitbook.io/mkxp-z/).
-
 
 ## Midi music
 
@@ -49,7 +37,7 @@ Technically, while SDL itself might support these buttons, the keybinding menu h
 
 In the RMXP version of RGSS, fonts are loaded directly from system specific search paths (meaning they must be installed to be available to games). Because this whole thing is a giant platform-dependent headache, Ancurio decided to implement the behavior Enterbrain thankfully added in VX Ace: loading fonts will automatically search a folder called "Fonts", which obeys the default searchpath behavior (ie. it can be located directly in the game folder, or an RTP).
 
-If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans. WenQuanYi MicroHei is used as the built-in font if the `cjk_fallback_font` option is used.
+If a requested font is not found, no error is generated. Instead, a built-in font is used. By default, this font is Liberation Sans.
 
 ## What doesn't work
 * wma audio files
