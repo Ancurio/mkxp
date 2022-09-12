@@ -58,6 +58,8 @@ public:
 
 	int width() const;
 	int height() const;
+    int displayWidth() const;
+    int displayHeight() const;
 	void resizeScreen(int width, int height);
     void resizeWindow(int width, int height, bool center=false);
 	void drawMovieFrame(const THEORAPLAY_VideoFrame* video, Bitmap *videoBitmap);

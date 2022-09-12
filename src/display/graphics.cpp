@@ -1330,6 +1330,18 @@ int Graphics::width() const { return p->scRes.x; }
 
 int Graphics::height() const { return p->scRes.y; }
 
+int Graphics::displayWidth() const {
+    SDL_DisplayMode dm{};
+    SDL_GetCurrentDisplayMode(SDL_GetWindowDisplayIndex(shState->sdlWindow()), &dm);
+    return dm.w / p->backingScaleFactor;
+}
+
+int Graphics::displayHeight() const {
+    SDL_DisplayMode dm{};
+    SDL_GetCurrentDisplayMode(SDL_GetWindowDisplayIndex(shState->sdlWindow()), &dm);
+    return dm.h / p->backingScaleFactor;
+}
+
 void Graphics::resizeScreen(int width, int height) {
     p->threadData->rqWindowAdjust.wait();
     p->checkResize(true);
