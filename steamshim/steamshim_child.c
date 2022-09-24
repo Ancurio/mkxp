@@ -2,11 +2,10 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
+#include <stdio.h>
 #include <process.h>
-#include <io.h>
-#include <errno.h>
-typedef int PipeType;
-#define NULLPIPE 0
+typedef HANDLE PipeType;
+#define NULLPIPE NULL
 typedef unsigned __int8 uint8;
 typedef __int32 int32;
 typedef unsigned __int64 uint64;
@@ -47,30 +46,25 @@ static int pipeReady(PipeType fd);
 
 static int pipeReady(PipeType fd)
 {
-    return 1;
     DWORD avail = 0;
     return (PeekNamedPipe(fd, NULL, 0, NULL, &avail, NULL) && (avail > 0));
 } /* pipeReady */
 
-static int writePipe(PipeType fd, const void *buf, const unsigned int _len)
-{
-    const ssize_t len = (ssize_t) _len;
-    ssize_t bw;
-    while (((bw = _write(fd, buf, len)) == -1) && (errno == EINTR)) { /*spin*/ }
-    return (bw == len);
-} /* writePipe */
+static int writePipe(PipeType fd, const void *buf, const unsigned int _len) {
+  const DWORD len = (DWORD)_len;
+  DWORD bw = 0;
+  return ((WriteFile(fd, buf, len, &bw, NULL) != 0) && (bw == len));
+} // writePipe
 
-static int readPipe(PipeType fd, void *buf, const unsigned int _len)
-{
-    const ssize_t len = (ssize_t) _len;
-    ssize_t br;
-    while (((br = _read(fd, buf, len)) == 0)) { /*spin*/ }
-    return (int) br;
-} /* readPipe */
+static int readPipe(PipeType fd, void *buf, const unsigned int _len) {
+  const DWORD len = (DWORD)_len;
+  DWORD br = 0;
+  return ReadFile(fd, buf, len, &br, NULL) ? (int)br : -1;
+} // readPipe
 
 static void closePipe(PipeType fd)
 {
-    _close(fd);
+    CloseHandle(fd);
 } /* closePipe */
 
 static char *getEnvVar(const char *key, char *buf, const size_t buflen)
@@ -350,13 +344,6 @@ const STEAMSHIM_Event *STEAMSHIM_pump(void)
         if (br > 0)
             memmove(buf, buf+evlen+1, br);
         return retval;
-    } /* if */
-
-    /* Run Steam event loop. */
-    if (br == 0)
-    {
-        dbgpipe("Child sending SHIMCMD_PUMP().\n");
-        write1ByteCmd(SHIMCMD_PUMP);
     } /* if */
 
     return NULL;
