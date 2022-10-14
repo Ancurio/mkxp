@@ -118,7 +118,7 @@ int rgssThreadFun(void *userdata)
 
 	/* Setup AL context */
 	ALCcontext *alcCtx = alcCreateContext(threadData->alcDev, 0);
-
+/** Not necessary, because may run on device without sound
 	if (!alcCtx)
 	{
 		rgssThreadError(threadData, "Error creating OpenAL context");
@@ -126,7 +126,7 @@ int rgssThreadFun(void *userdata)
 
 		return 0;
 	}
-
+*/
 	alcMakeContextCurrent(alcCtx);
 
 	try
@@ -295,6 +295,7 @@ int main(int argc, char *argv[])
 
 	ALCdevice *alcDev = alcOpenDevice(0);
 
+/** Not necessary, may run on device with no sound device
 	if (!alcDev)
 	{
 		showInitError("Error opening OpenAL device");
@@ -305,7 +306,7 @@ int main(int argc, char *argv[])
 
 		return 0;
 	}
-
+*/
 	SDL_DisplayMode mode;
 	SDL_GetDisplayMode(0, 0, &mode);
 
