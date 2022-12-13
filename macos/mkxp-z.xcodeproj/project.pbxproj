@@ -3417,7 +3417,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12.2;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-fdeclspec";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
@@ -3487,7 +3487,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/lib",
 					"$(PROJECT_DIR)/Dependencies/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12.2;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-fdeclspec";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
