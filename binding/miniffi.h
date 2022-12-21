@@ -2,11 +2,16 @@
 
 #include <cstdint>
 
-#define MINIFFI_MAX_ARGS 10l
+#define MINIFFI_MAX_ARGS 16l
 
 #if defined(__linux__) || defined(__APPLE__)
     typedef unsigned long mffi_value;
+    // Be sure to add more args to the below line if MINIFFI_MAX_ARGS is bumped
+    // in the future.
     typedef mffi_value (*MINIFFI_FUNC)(mffi_value, mffi_value,
+                                       mffi_value, mffi_value,
+                                       mffi_value, mffi_value,
+                                       mffi_value, mffi_value,
                                        mffi_value, mffi_value,
                                        mffi_value, mffi_value,
                                        mffi_value, mffi_value,
