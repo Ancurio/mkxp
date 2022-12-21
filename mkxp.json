@@ -22,6 +22,10 @@
     // "MKXPZ_FOLDER_SELECT"
     //     - Allows the manual selection of the game's folder at startup.
     //       Only works on macOS at the moment.
+    // "MTL_HUD_ENABLED"
+    //     - On macOS 13 (Ventura) and over, provided the Metal backend is used,
+    //       this will enable a full performance HUD containing more details than
+    //       the built-in framerate display.
 
 
     // Specify the RGSS version to run under.

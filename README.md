@@ -10,7 +10,7 @@ Despite the fact that it was made with Essentials games in mind, there is nothin
 
 It supports Windows, Linux and both Intel and Apple Silicon versions of macOS.
 
-Releases are [here](https://github.com/mkxp-z/mkxp-z/releases). Requirements for running them are Windows 8.1+, Ubuntu 20.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.12.2+.
+Releases are [here](https://github.com/mkxp-z/mkxp-z/releases). Requirements for running them are Windows 8.1+, Ubuntu 20.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.13+.
 
 I'd highly recommend [checking the wiki](https://github.com/mkxp-z/mkxp-z/wiki) for more information than this readme contains.
 
