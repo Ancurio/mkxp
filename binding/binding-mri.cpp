@@ -270,6 +270,15 @@ static void mriBindingInit() {
     rb_str_freeze(vers);
     rb_define_const(mod, "VERSION", vers);
     
+    // Automatically load zlib if it's present -- the correct way this time
+    int state;
+    rb_eval_string_protect("require('zlib') if !Kernel.const_defined?(:Zlib)", &state);
+    if (state) {
+        Debug() << "Could not load Zlib. If this is important, make sure Ruby was built with static extensions, or that"
+        << ((MKXPZ_PLATFORM == MKXPZ_PLATFORM_MACOS) ? "zlib.bundle" : "zlib.so")
+        << "is present and reachable by Ruby's loadpath.";
+    }
+    
     // Set $stdout and its ilk accordingly on Windows
     // I regret teaching you that word
 #ifdef __WIN32__
