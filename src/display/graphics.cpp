@@ -21,6 +21,7 @@
 
 #include "graphics.h"
 
+#include "alstream.h"
 #include "audio.h"
 #include "binding.h"
 #include "bitmap.h"
@@ -70,7 +71,8 @@
 
 #define DEF_MAX_VIDEO_FRAMES 30
 #define VIDEO_DELAY 10
-#define AUDIO_DELAY 100
+#define MOVIE_AUDIO_BUFFER_SIZE 2048
+#define AUDIO_BUFFER_LEN_MS 2000
 
 typedef struct AudioQueue
 {
@@ -78,9 +80,6 @@ typedef struct AudioQueue
     int offset;
     struct AudioQueue *next;
 } AudioQueue;
-
-static volatile AudioQueue *movieAudioQueue;
-static volatile AudioQueue *movieAudioQueueTail;
 
 
 static long readMovie(THEORAPLAY_Io *io, void *buf, long buflen)
@@ -108,12 +107,18 @@ struct Movie
     bool skippable;
     Bitmap *videoBitmap;
     SDL_RWops srcOps;
-    static float volume;
+    SDL_Thread *audioThread;
+    AtomicFlag audioThreadTermReq;
+    volatile AudioQueue *audioQueueHead;
+    volatile AudioQueue *audioQueueTail;
+    ALuint audioSource;
+    ALuint alBuffers[STREAM_BUFS];
+    ALshort audioBuffer[MOVIE_AUDIO_BUFFER_SIZE];
+    SDL_mutex *audioMutex;
     
-    Movie(int volume_, bool skippable_)
-    : decoder(0), audio(0), video(0), skippable(skippable_), videoBitmap(0)
+    Movie(bool skippable_)
+    : decoder(0), audio(0), video(0), skippable(skippable_), videoBitmap(0), audioThread(0)
     {
-        volume = volume_ * 0.01f;
     }
     bool preparePlayback()
     {
@@ -173,13 +178,13 @@ struct Movie
             }
         }
         videoBitmap = new Bitmap(video->width, video->height);
-        movieAudioQueue = NULL;
-        movieAudioQueueTail = NULL;
+        audioQueueHead = NULL;
+        audioQueueTail = NULL;
         
         return true;
     }
     
-    static void queueAudioPacket(const THEORAPLAY_AudioPacket *audio) {
+    void queueAudioPacket(const THEORAPLAY_AudioPacket *audio) {
         AudioQueue *item = NULL;
         
         if (!audio) {
@@ -196,96 +201,118 @@ struct Movie
         item->offset = 0;
         item->next = NULL;
         
-        
-        SDL_LockAudio();
-        if (movieAudioQueueTail) {
-            movieAudioQueueTail->next = item;
+        SDL_LockMutex(audioMutex);
+        if (audioQueueTail) {
+            audioQueueTail->next = item;
         } else {
-            movieAudioQueue = item;
+            audioQueueHead = item;
         }
-        movieAudioQueueTail = item;
-        SDL_UnlockAudio();
+        audioQueueTail = item;
+        SDL_UnlockMutex(audioMutex);
     }
     
-    static void queueMoreMovieAudio(THEORAPLAY_Decoder *decoder, const Uint32 now) {
+    void bufferMovieAudio(THEORAPLAY_Decoder *decoder, const Uint32 now) {
         const THEORAPLAY_AudioPacket *audio;
         while ((audio = THEORAPLAY_getAudio(decoder)) != NULL) {
             queueAudioPacket(audio);
-            if (audio->playms >= now + 2000) {  // don't let this get too far ahead.
+            if (audio->playms >= now + AUDIO_BUFFER_LEN_MS) {  // don't let this get too far ahead.
                 break;
             }
         }
     }
-    
-    static void SDLCALL movieAudioCallback(void *userdata, uint8_t *stream, int len) {
-        // !!! FIXME: this should refuse to play if item->playms is in the future.
-        //const Uint32 now = SDL_GetTicks() - baseticks;
-        Sint16 *dst = (Sint16 *) stream;
-        
-        while (movieAudioQueue && (len > 0)) {
-            volatile AudioQueue *item = movieAudioQueue;
-            AudioQueue *next = item->next;
-            const int channels = item->audio->channels;
-            
-            const float *src = item->audio->samples + (item->offset * channels);
-            unsigned int cpy = (item->audio->frames - item->offset) * channels;
-            
-            if (cpy > (len / sizeof (Sint16))) {
-                cpy = len / sizeof (Sint16);
-            }
-            
-            for (unsigned int i = 0; i < cpy; i++) {
-                const float val = (*(src++)) * volume;
-                if (val < -1.0f) {
-                    *(dst++) = -32768;
-                } else if (val > 1.0f) {
-                    *(dst++) = 32767;
-                } else {
-                    *(dst++) = (Sint16) (val * 32767.0f);
+
+    void streamMovieAudio(){
+        ALint state = 0;
+        ALint procBufs = STREAM_BUFS;	    
+        volatile AudioQueue *audioPacketAndOffset;
+        int channels;
+        int sampleRate;
+        float *sourceSamples;
+        ALuint samplesToProcess;
+        ALshort *sampleBuffer;
+        ALuint remainingSamples;
+
+        while(true) {
+            while(procBufs--) {
+                // Quit if audio thread terminate request has been made
+                if (audioThreadTermReq) return;
+
+                remainingSamples = MOVIE_AUDIO_BUFFER_SIZE;
+                sampleBuffer = audioBuffer;
+                SDL_LockMutex(audioMutex);
+
+                while(audioQueueHead && (remainingSamples > 0)) {
+                    audioPacketAndOffset = audioQueueHead;
+                    channels = audioPacketAndOffset->audio->channels;
+                    sampleRate = audioPacketAndOffset->audio->freq;
+                    sourceSamples = audioPacketAndOffset->audio->samples + (audioPacketAndOffset->offset * channels);
+                    samplesToProcess = (audioPacketAndOffset->audio->frames - audioPacketAndOffset->offset) * channels;
+
+                    if (samplesToProcess > remainingSamples) samplesToProcess = remainingSamples;
+
+                    for (ALuint i = 0; i < samplesToProcess; i++) {
+                        const float val = (*(sourceSamples++));
+                        if (val < -1.0f) {
+                            *(sampleBuffer++) = SHRT_MIN;
+                        } else if (val > 1.0f) {
+                            *(sampleBuffer++) = SHRT_MAX;
+                        } else {
+                            *(sampleBuffer++) = (ALshort) (val * SHRT_MAX);
+                        }
+                    }
+
+                    // Necessary to remember position between repeated iterations
+                    audioPacketAndOffset->offset += (samplesToProcess / channels);
+                    remainingSamples -= samplesToProcess;
+
+                    // The current audio packet has been completed
+                    if ((audioPacketAndOffset->offset) >= audioPacketAndOffset->audio->frames) {
+                        audioQueueHead = audioPacketAndOffset->next;
+                        THEORAPLAY_freeAudio(audioPacketAndOffset->audio);
+                        free((void *) audioPacketAndOffset);
+                    }
                 }
+
+                if(!audioQueueHead) audioQueueTail = NULL;
+
+                SDL_UnlockMutex(audioMutex);
+
+                alBufferData(alBuffers[procBufs], channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, audioBuffer,
+                    (MOVIE_AUDIO_BUFFER_SIZE - remainingSamples) * sizeof(ALshort), sampleRate);
+                alSourceQueueBuffers(audioSource, 1, &alBuffers[procBufs]);     
+                alGetSourcei(audioSource, AL_SOURCE_STATE, &state);
+                if(state != AL_PLAYING) alSourcePlay(audioSource);
             }
-            
-            item->offset += (cpy / channels);
-            len -= cpy * sizeof (Sint16);
-            
-            if (item->offset >= item->audio->frames) {
-                THEORAPLAY_freeAudio(item->audio);
-                free((void *) item);
-                movieAudioQueue = next;
+
+            // Periodically check the buffers until one is available
+            while(true) {
+                alGetSourcei(audioSource, AL_BUFFERS_PROCESSED, &procBufs);
+                if(procBufs > 0) break;
+                SDL_Delay(AUDIO_SLEEP);
             }
-        }
-        
-        if (!movieAudioQueue) {
-            movieAudioQueueTail = NULL;
-        }
-        
-        if (len > 0) {
-            memset(dst, '\0', len);
+            alSourceUnqueueBuffers(audioSource, procBufs, alBuffers);
         }
     }
     
-    bool startAudio()
+    bool startAudio(float volume)
     {
-        SDL_AudioSpec spec{};
-        spec.freq = audio->freq;
-        spec.format = AUDIO_S16SYS;
-        spec.channels = audio->channels;
-        spec.samples = 2048;
-        spec.callback = movieAudioCallback;
-        if (SDL_OpenAudio(&spec, NULL) != 0) {
-            return false;
-        }
+        alGenSources(1, &audioSource);
+        alGenBuffers(STREAM_BUFS, alBuffers);
+        alSourcef(audioSource, AL_GAIN, volume);
+
+        audioThreadTermReq.clear();
+        audioMutex = SDL_CreateMutex();
         queueAudioPacket(audio);
         audio = NULL;
-        queueMoreMovieAudio(decoder, 0);
-        SDL_PauseAudio(0);  // Start audio playback
+        bufferMovieAudio(decoder, 0);
+        audioThread = createSDLThread <Movie, Movie::streamMovieAudio>(this, "movieaudio");
+
         return true;
     }
     
-    void play()
+    void play(float volume)
     {
-        // Assuming every frame has the same duration.
-        // Uint32 frameMs = (video->fps == 0.0) ? 0 : ((Uint32) (1000.0 / video->fps));
+        Uint32 frameMs = 0;
         Uint32 baseTicks = SDL_GetTicks();
         bool openedAudio = false;
         while (THEORAPLAY_isDecoding(decoder)) {
@@ -310,7 +337,7 @@ struct Movie
                 }
                 
                 if (audio && !openedAudio) {
-                    if(!startAudio()){
+                    if(!startAudio(volume)){
                         Debug() << "Error opening movie audio!";
                         break;
                     }
@@ -319,16 +346,43 @@ struct Movie
                 
             }
             
-            // Got a video frame, now draw it
-            if (video) {
+            if (video && (video->playms <= now)) {
+                frameMs = (video->fps == 0.0) ? 0 : ((Uint32) (1000.0 / video->fps));
+                if ( frameMs && ((now - video->playms) >= frameMs) )
+                {
+                    // Skip frames to catch up
+                    const THEORAPLAY_VideoFrame *last = video;
+                    while ((video = THEORAPLAY_getVideo(decoder)) != NULL)
+                    {
+                        THEORAPLAY_freeVideo(last);
+                        last = video;
+                        if ((now - video->playms) < frameMs)
+                            break;
+                    } 
+
+                    if (!video)
+                        video = last;
+                }
+
+                // Application is too far behind
+                if (!video) {
+                    Debug() << "WARNING: Video playback cannot keep up!";
+                    break;
+                }
+
+                // Got a video frame, now draw it
                 videoBitmap->replaceRaw(video->pixels, video->width * video->height * 4);
+                shState->graphics().update(false);
                 THEORAPLAY_freeVideo(video);
                 video = NULL;
+
+            } else {
+                // Next video frame not yet ready, let the CPU breathe
+                SDL_Delay(VIDEO_DELAY);
             }
-            shState->graphics().update(false);
             
             if (openedAudio) {
-                queueMoreMovieAudio(decoder, now);
+                bufferMovieAudio(decoder, now);
             }
         }
     }
@@ -336,25 +390,31 @@ struct Movie
     ~Movie()
     {
         if (hasAudio) {
-            if (movieAudioQueueTail) {
-                THEORAPLAY_freeAudio(movieAudioQueueTail->audio);
+            if (audioQueueTail) {
+                THEORAPLAY_freeAudio(audioQueueTail->audio);
             }
-            movieAudioQueueTail = NULL;
+            audioQueueTail = NULL;
             
-            if (movieAudioQueue) {
-                THEORAPLAY_freeAudio(movieAudioQueue->audio);
+            if (audioQueueHead) {
+                THEORAPLAY_freeAudio(audioQueueHead->audio);
             }
-            movieAudioQueue = NULL;
+            audioQueueHead = NULL;
         }
+        SDL_DestroyMutex(audioMutex);
+        audioThreadTermReq.set();
+        if(audioThread) {
+            SDL_WaitThread(audioThread, 0);
+            audioThread = 0;
+        }
+        alSourceStop(audioSource);
+        alDeleteSources(1, &audioSource);
+        alDeleteBuffers(STREAM_BUFS, alBuffers);
         if (video) THEORAPLAY_freeVideo(video);
         if (audio) THEORAPLAY_freeAudio(audio);
         if (decoder) THEORAPLAY_stopDecode(decoder);
-        SDL_CloseAudio();
         delete videoBitmap;
     }
 };
-
-float Movie::volume;
 
 struct MovieOpenHandler : FileSystem::OpenHandler
 {
@@ -1386,20 +1446,13 @@ bool Graphics::updateMovieInput(Movie *movie) {
     return  p->threadData->rqTerm || p->threadData->rqReset;
 }
 
-void Graphics::playMovie(const char *filename, int volume, bool skippable) {
-    Movie *movie = new Movie(volume, skippable);
+void Graphics::playMovie(const char *filename, int volume_, bool skippable) {
+    Movie *movie = new Movie(skippable);
     MovieOpenHandler handler(movie->srcOps);
     shState->fileSystem().openRead(handler, filename);
+    float volume = volume_ * 0.01f;
     
-    if (movie->preparePlayback()) {
-        int limiterDisabled = p->fpsLimiter.disabled;
-        p->fpsLimiter.disabled = false;
-        int oldFPS = getFrameRate();
-        setFrameRate(movie->video->fps);
-        bool oldframeskip = p->useFrameSkip;
-        p->useFrameSkip = false;
-        update();
-        
+    if (movie->preparePlayback()) {        
         Sprite movieSprite;
         
         // Currently this stretches to fit the screen. VX Ace behavior is to center it and let the edges run off
@@ -1418,11 +1471,7 @@ void Graphics::playMovie(const char *filename, int volume, bool skippable) {
         letterboxSprite.setZ(4999);
         movieSprite.setZ(5001);
         
-        movie->play();
-        
-        p->fpsLimiter.disabled = limiterDisabled;
-        setFrameRate(oldFPS);
-        p->useFrameSkip = oldframeskip;
+        movie->play(volume);
     }
     
     delete movie;
