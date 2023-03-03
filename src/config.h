@@ -114,7 +114,7 @@ struct Config {
         std::string title;
     } game;
     
-    // JIT Options
+    // MJIT Options
     struct {
         bool enabled;
         int verboseLevel;
@@ -122,6 +122,11 @@ struct Config {
         int minCalls;
     } jit;
     
+    // YJIT Options
+    struct {
+        bool enabled;
+    } yjit;
+
     // Keybinding action name mappings
     struct {
         std::string a;

@@ -316,32 +316,39 @@
     // "rubyLoadpath": ["/usr/lib64/ruby/",
     //                  "/usr/local/share/ruby/site_ruby"],
 
-    // Determines whether JIT is enabled. This probably
+    // Determines whether MJIT is enabled. This probably
     // won't work unless you also have the header file
     // that it needs. Only works with Ruby 2.6 or higher.
+    // This Ruby feature is experimental.
     // (default: false)
     //
     // "JITEnable": false,
     
     // Determines what level of verbosity to use when
-    // logging JIT events. Starts at 0, which is next
+    // logging MJIT events. Starts at 0, which is next
     // to nothing. Set it higher to see more.
     // (default: 0)
     //
     // "JITVerboseLevel": 0,
     
     // Determines how many compiled methods that Ruby
-    // will keep in its cache.
+    // will keep in its MJIT cache.
     // (default: 100)
     //
     // "JITMaxCache": 100,
     
     // Determines how many times a function has to be
-    // called before it is compiled.
+    // called before it is compiled by MJIT.
     // (default: 10000)
     //
     // "JITMinCalls": 10000,
 
+    // Determines whether YJIT is enabled.
+    // Only works with Ruby 3.1 or higher.
+    // This Ruby feature is experimental.
+    // (default: false)
+    //
+    // "YJITEnable": false,
 
     // SoundFont to use for midi playback (via fluidsynth)
     // (default: none)
