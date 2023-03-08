@@ -41,6 +41,5 @@ If a requested font is not found, no error is generated. Instead, a built-in fon
 
 ## What doesn't work
 * wma audio files
-* Creating Bitmaps with sizes greater than your hardware's texture size limit (around 16384 on modern cards).^
-
-^ There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
+* Creating Bitmaps with sizes greater than your hardware's texture size limit (around 16384 on modern cards).
+  * There is an exception to this, called *mega surface*. When a Bitmap bigger than the texture limit is created from a file, it is not stored in VRAM, but regular RAM. Its sole purpose is to be used as a tileset bitmap. Any other operation to it (besides blitting to a regular Bitmap) will result in an error.
