@@ -713,7 +713,7 @@ RB_METHOD(mkxpSetJSONSetting) {
     
     auto settings = loadUserSettings();
     auto &s = settings.as_object();
-    s.emplace(RSTRING_PTR(sname), rb2json(svalue));
+    s[RSTRING_PTR(sname)] = rb2json(svalue);
     saveUserSettings(settings);
     
     return Qnil;
