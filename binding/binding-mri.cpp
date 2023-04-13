@@ -662,29 +662,27 @@ RB_METHOD(mkxpLaunch) {
     return RUBY_Qnil;
 }
 
-json5pp::value userSettings;
-
-void loadUserSettings() {
-    if (!userSettings.is_null())
-        return;
-    
+json5pp::value loadUserSettings() {
+    json5pp::value ret;
     VALUE cpath = rb_utf8_str_new_cstr(shState->config().userConfPath.c_str());
     
     if (rb_funcall(rb_cFile, rb_intern("exists?"), 1, cpath) == Qtrue) {
         VALUE f = rb_funcall(rb_cFile, rb_intern("open"), 2, cpath, rb_str_new("r", 1));
         VALUE data = rb_funcall(f, rb_intern("read"), 0);
         rb_funcall(f, rb_intern("close"), 0);
-        userSettings = rb2json(data);
+        ret = json5pp::parse5(RSTRING_PTR(data));
     }
     
-    if (!userSettings.is_object())
-        userSettings = json5pp::object({});
+    if (!ret.is_object())
+        ret = json5pp::object({});
+    
+    return ret;
 }
 
-void saveUserSettings() {
+void saveUserSettings(json5pp::value &settings) {
     VALUE cpath = rb_utf8_str_new_cstr(shState->config().userConfPath.c_str());
     VALUE f = rb_funcall(rb_cFile, rb_intern("open"), 2, cpath, rb_str_new("w", 1));
-    rb_funcall(f, rb_intern("write"), 1, rb_utf8_str_new_cstr(userSettings.stringify5(json5pp::rule::space_indent<>()).c_str()));
+    rb_funcall(f, rb_intern("write"), 1, rb_utf8_str_new_cstr(settings.stringify5(json5pp::rule::space_indent<>()).c_str()));
     rb_funcall(f, rb_intern("close"), 0);
 }
 
@@ -695,8 +693,8 @@ RB_METHOD(mkxpGetJSONSetting) {
     rb_scan_args(argc, argv, "1", &sname);
     SafeStringValue(sname);
     
-    loadUserSettings();
-    auto &s = userSettings.as_object();
+    auto settings = loadUserSettings();
+    auto &s = settings.as_object();
     
     if (s[RSTRING_PTR(sname)].is_null()) {
         return json2rb(shState->config().raw.as_object()[RSTRING_PTR(sname)]);
@@ -713,8 +711,10 @@ RB_METHOD(mkxpSetJSONSetting) {
     rb_scan_args(argc, argv, "2", &sname, &svalue);
     SafeStringValue(sname);
     
-    userSettings.as_object()[RSTRING_PTR(sname)] = rb2json(svalue);
-    saveUserSettings();
+    auto settings = loadUserSettings();
+    auto &s = settings.as_object();
+    s.emplace(RSTRING_PTR(sname), rb2json(svalue));
+    saveUserSettings(settings);
     
     return Qnil;
 }

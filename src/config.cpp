@@ -245,7 +245,7 @@ try { exp } catch (...) {}
     readGameINI();
     
     // Now check for an extra mkxp.conf in the user's save directory and merge anything else from that
-    userConfPath = customDataPath + "/" CONF_FILE;
+    userConfPath = mkxp_fs::normalizePath(std::string(customDataPath + "/" CONF_FILE).c_str(), 0, 1);
     json::value userConf = readConfFile(userConfPath.c_str());
     copyObject(optsJ, userConf);
     
@@ -388,7 +388,7 @@ void Config::readGameINI() {
     if (dataPathApp.empty())
         dataPathApp = game.title;
     
-    customDataPath = prefPath(dataPathOrg.c_str(), dataPathApp.c_str());
+    customDataPath = mkxp_fs::normalizePath(prefPath(dataPathOrg.c_str(), dataPathApp.c_str()).c_str(), 0, 1);
     
     if (rgssVersion == 0) {
         /* Try to guess RGSS version based on Data/Scripts extension */
