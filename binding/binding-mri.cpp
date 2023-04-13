@@ -713,10 +713,9 @@ RB_METHOD(mkxpSetJSONSetting) {
     rb_scan_args(argc, argv, "2", &sname, &svalue);
     SafeStringValue(sname);
     
-    loadUserSettings();
     userSettings.as_object()[RSTRING_PTR(sname)] = rb2json(svalue);
-    
     saveUserSettings();
+    
     return Qnil;
 }
 
