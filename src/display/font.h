@@ -103,6 +103,7 @@ public:
 	                           const SharedFontState &sfs);
 
 	static const std::vector<std::string> &getInitialDefaultNames();
+    bool isSolid() const;
 
 	/* Assigns heap allocated objects to object properties;
 	 * using this in pure C++ will cause memory leaks

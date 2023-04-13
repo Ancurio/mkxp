@@ -1546,7 +1546,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
     
     SDL_Surface *txtSurf;
     
-    if (shState->rtData().config.solidFonts)
+    if (p->font->isSolid())
         txtSurf = TTF_RenderUTF8_Solid(font, str, c);
     else
         txtSurf = TTF_RenderUTF8_Blended(font, str, c);
@@ -1567,7 +1567,7 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
         SDL_Surface *outline;
         /* set the next font render to render the outline */
         TTF_SetFontOutline(font, OUTLINE_SIZE);
-        if (shState->rtData().config.solidFonts)
+        if (p->font->isSolid())
             outline = TTF_RenderUTF8_Solid(font, str, co);
         else
             outline = TTF_RenderUTF8_Blended(font, str, co);

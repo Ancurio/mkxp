@@ -141,7 +141,7 @@ void Config::read(int argc, char *argv[]) {
         {"fixedFramerate", 0},
         {"frameSkip", false},
         {"syncToRefreshrate", false},
-        {"solidFonts", false},
+        {"solidFonts", json::array({})},
 #if defined(__APPLE__) && defined(__aarch64__)
         {"preferMetalRenderer", true},
 #else
@@ -262,7 +262,7 @@ try { exp } catch (...) {}
     SET_OPT(fixedFramerate, integer);
     SET_OPT(frameSkip, boolean);
     SET_OPT(syncToRefreshrate, boolean);
-    SET_OPT(solidFonts, boolean);
+    fillStringVec(opts["solidFonts"], solidFonts);
 #ifdef __APPLE__
     SET_OPT(preferMetalRenderer, boolean);
 #endif
@@ -327,6 +327,12 @@ static void setupScreenSize(Config &conf) {
         conf.defScreenH = (conf.rgssVersion == 1 ? 480 : 416);
 }
 
+bool Config::fontIsSolid(const char *fontName) const {
+    for (std::string solidfont : solidFonts)
+        if (!strcmp(solidfont.c_str(), fontName)) return true;
+    
+    return false;
+}
 
 void Config::readGameINI() {
     if (!customScript.empty()) {

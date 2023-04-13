@@ -129,10 +129,10 @@
     // "syncToRefreshrate": false,
 
 
-    // Don't use alpha blending when rendering text
-    // (default: disabled)
+    // A list of fonts to render without alpha blending.
+    // (default: none)
     //
-    // "solidFonts": false,
+    // "solidFonts": ["Arial", "Times New Roman"]
 
 
     // Prefer the use of Metal over OpenGL on macOS.

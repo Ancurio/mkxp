@@ -53,7 +53,7 @@ struct Config {
     bool frameSkip;
     bool syncToRefreshrate;
     
-    bool solidFonts;
+    std::vector<std::string> solidFonts;
     
     bool subImageFix;
     bool enableBlitting;
@@ -147,6 +147,8 @@ struct Config {
     std::string customDataPath;
     
     Config();
+    
+    bool fontIsSolid(const char *fontName) const;
     
     void read(int argc, char *argv[]);
     void readGameINI();
