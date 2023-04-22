@@ -283,20 +283,37 @@ void Audio::bgmPlay(const char *filename,
                     float pos,
                     int channel)
 {
-    // todo: error if the channel is out of range
+    if (channel == -127) {
+        for (auto chan : p->bgmChannels)
+            chan->stop();
+        
+        channel = 0;
+    }
 	p->bgmChannels[clamp(channel, 0, (int)p->bgmChannels.size() - 1)]->play(filename, volume, pitch, pos);
 }
 
-void Audio::bgmStop()
+void Audio::bgmStop(int channel)
 {
-    for (auto chan : p->bgmChannels)
-        chan->stop();
+    if (channel == -127) {
+        for (auto chan : p->bgmChannels)
+            chan->stop();
+        
+        return;
+    }
+    
+    p->bgmChannels[clamp(channel, 0, (int)p->bgmChannels.size() - 1)]->stop();
 }
 
-void Audio::bgmFade(int time)
+void Audio::bgmFade(int time, int channel)
 {
-    for (auto chan : p->bgmChannels)
-        chan->fadeOut(time);
+    if (channel == -127) {
+        for (auto chan : p->bgmChannels)
+            chan->fadeOut(time);
+        
+        return;
+    }
+    
+    p->bgmChannels[clamp(channel, 0, (int)p->bgmChannels.size() - 1)]->fadeOut(time);
 }
 
 int Audio::bgmGetVolume(int channel)

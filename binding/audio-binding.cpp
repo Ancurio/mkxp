@@ -92,7 +92,7 @@ RB_METHOD(audio_bgmPlay)
     int volume = 100;
     int pitch = 100;
     double pos = 0.0;
-    int channel = 0;
+    int channel = -127;
     rb_get_args(argc, argv, "z|iifi", &filename, &volume, &pitch, &pos, &channel RB_ARG_END);
     GUARD_EXC( shState->audio().bgmPlay(filename, volume, pitch, pos, channel); )
     return Qnil;
@@ -101,7 +101,9 @@ RB_METHOD(audio_bgmPlay)
 RB_METHOD(audio_bgmStop)
 {
     RB_UNUSED_PARAM;
-    shState->audio().bgmStop();
+    int channel = -127;
+    rb_get_args(argc, argv, "|i", &channel RB_ARG_END);
+    shState->audio().bgmStop(channel);
     return Qnil;
 }
 
@@ -135,7 +137,17 @@ DEF_PLAY_STOP_POS( bgs )
 
 DEF_PLAY_STOP( me )
 
-DEF_FADE( bgm )
+//DEF_FADE( bgm )
+RB_METHOD(audio_bgmFade)
+{
+    RB_UNUSED_PARAM;
+    int time;
+    int channel = -127;
+    rb_get_args(argc, argv, "i|i", &time, &channel RB_ARG_END);
+    shState->audio().bgmFade(time, channel);
+    return Qnil;
+}
+
 DEF_FADE( bgs )
 DEF_FADE( me )
 

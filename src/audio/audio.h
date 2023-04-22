@@ -42,9 +42,9 @@ public:
 	             int volume = 100,
 	             int pitch = 100,
 	             float pos = 0,
-                 int channel = 0);
-	void bgmStop();
-	void bgmFade(int time);
+                 int channel = -127);
+	void bgmStop(int channel = -127);
+	void bgmFade(int time, int channel = -127);
     int bgmGetVolume(int channel = -127);
     void bgmSetVolume(int volume = 100, int channel = -127);
 
