@@ -1,5 +1,9 @@
 # mkxp-z
 
+I'm usually *very* slow with responding to things on Github, so if you have something you want to say and you want a faster response, you're probably better off asking in [Ancurio's Discord server](https://discord.gg/b2qg8QbV). I don't have my own.
+
+-----------
+
 <p align=center>
     <img src="screenshot.png?raw=true" width=512 height=412>
 </p>
