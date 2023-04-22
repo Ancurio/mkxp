@@ -177,7 +177,7 @@ $(DOWNLOADS)/uchardet/cmakebuild/Makefile: $(DOWNLOADS)/uchardet/CMakeLists.txt
 	$(CMAKE) -DBUILD_SHARED_LIBS=no
 
 $(DOWNLOADS)/uchardet/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/freedesktop/uchardet $(DOWNLOADS)/uchardet
+	$(CLONE) $(GITHUB)/mkxp-z/uchardet $(DOWNLOADS)/uchardet
 
 # SDL2
 sdl2: init_dirs $(LIBDIR)/libSDL2.a
