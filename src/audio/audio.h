@@ -41,9 +41,12 @@ public:
 	void bgmPlay(const char *filename,
 	             int volume = 100,
 	             int pitch = 100,
-	             float pos = 0);
+	             float pos = 0,
+                 int channel = 0);
 	void bgmStop();
 	void bgmFade(int time);
+    int bgmGetVolume(int channel = -127);
+    void bgmSetVolume(int volume = 100, int channel = -127);
 
 	void bgsPlay(const char *filename,
 	             int volume = 100,

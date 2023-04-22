@@ -83,7 +83,54 @@ RB_METHOD(audio_##entity##Fade) \
 		return rb_float_new(shState->audio().entity##Pos()); \
 	}
 
-DEF_PLAY_STOP_POS( bgm )
+// DEF_PLAY_STOP_POS( bgm )
+
+RB_METHOD(audio_bgmPlay)
+{
+    RB_UNUSED_PARAM;
+    const char *filename;
+    int volume = 100;
+    int pitch = 100;
+    double pos = 0.0;
+    int channel = 0;
+    rb_get_args(argc, argv, "z|iifi", &filename, &volume, &pitch, &pos, &channel RB_ARG_END);
+    GUARD_EXC( shState->audio().bgmPlay(filename, volume, pitch, pos, channel); )
+    return Qnil;
+}
+
+RB_METHOD(audio_bgmStop)
+{
+    RB_UNUSED_PARAM;
+    shState->audio().bgmStop();
+    return Qnil;
+}
+
+RB_METHOD(audio_bgmPos)
+{
+    RB_UNUSED_PARAM;
+    return rb_float_new(shState->audio().bgmPos());
+}
+
+RB_METHOD(audio_bgmGetVolume)
+{
+    RB_UNUSED_PARAM;
+    int channel = -127;
+    rb_get_args(argc, argv, "|i", &channel RB_ARG_END);
+    int ret = 0;
+    GUARD_EXC( ret = shState->audio().bgmGetVolume(); )
+    return rb_fix_new(ret);
+}
+
+RB_METHOD(audio_bgmSetVolume)
+{
+    RB_UNUSED_PARAM;
+    int volume;
+    int channel = -127;
+    rb_get_args(argc, argv, "i|i", &volume, &channel RB_ARG_END);
+    GUARD_EXC( shState->audio().bgmSetVolume(volume, channel); )
+    return Qnil;
+}
+
 DEF_PLAY_STOP_POS( bgs )
 
 DEF_PLAY_STOP( me )
@@ -134,6 +181,8 @@ audioBindingInit()
 	VALUE module = rb_define_module("Audio");
 
 	BIND_PLAY_STOP_FADE( bgm );
+    _rb_define_module_function(module, "bgm_volume", audio_bgmGetVolume);
+    _rb_define_module_function(module, "bgm_set_volume", audio_bgmSetVolume);
 	BIND_PLAY_STOP_FADE( bgs );
 	BIND_PLAY_STOP_FADE( me  );
 
