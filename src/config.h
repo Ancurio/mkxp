@@ -90,6 +90,10 @@ struct Config {
         int sourceCount;
     } SE;
     
+    struct {
+        int trackCount;
+    } BGM;
+    
     bool useScriptNames;
     
     std::string customScript;

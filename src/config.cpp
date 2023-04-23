@@ -169,6 +169,7 @@ void Config::read(int argc, char *argv[]) {
         {"midiChorus", false},
         {"midiReverb", false},
         {"SESourceCount", 6},
+        {"BGMTrackCount", 1},
         {"customScript", ""},
         {"pathCache", true},
         {"useScriptNames", 1},
@@ -278,6 +279,7 @@ try { exp } catch (...) {}
     SET_OPT_CUSTOMKEY(midi.chorus, midiChorus, boolean);
     SET_OPT_CUSTOMKEY(midi.reverb, midiReverb, boolean);
     SET_OPT_CUSTOMKEY(SE.sourceCount, SESourceCount, integer);
+    SET_OPT_CUSTOMKEY(BGM.trackCount, BGMTrackCount, integer);
     SET_STRINGOPT(customScript, customScript);
     SET_OPT(useScriptNames, boolean);
     

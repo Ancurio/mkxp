@@ -46,10 +46,13 @@ struct AudioStream
 	enum VolumeType
 	{
 		Base = 0,
+        
+        // BaseRatio should be identical among all BGM tracks.
+        BaseRatio,
+        
 		FadeOut,
 		FadeIn,
-		External,
-
+        External,
 		VolumeTypeCount
 	};
 
