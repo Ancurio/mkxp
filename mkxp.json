@@ -372,6 +372,12 @@
     // this number. Maximum: 64.
     //
     // "SESourceCount": 6
+    
+    // Number of streams to open for BGM tracks. If the game
+    // needs multitrack audio, this should be set to as many
+    // available tracks as the game needs. Maximum: 16.
+    //
+    // "BGMTrackCount": 1
 
 
     // The Windows game executable name minus ".exe". By default

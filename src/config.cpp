@@ -302,6 +302,7 @@ try { exp } catch (...) {}
     
     rgssVersion = clamp(rgssVersion, 0, 3);
     SE.sourceCount = clamp(SE.sourceCount, 1, 64);
+    BGM.trackCount = clamp(BGM.trackCount, 1, 16);
     
     // Determine whether to open a console window on... Windows
     winConsole = getEnvironmentBool("MKXPZ_WINDOWS_CONSOLE", editor.debug);

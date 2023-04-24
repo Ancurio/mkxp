@@ -27,6 +27,7 @@
 #include "sharedmidistate.h"
 #include "eventthread.h"
 #include "sdl-util.h"
+#include "exception.h"
 
 #include <string>
 #include <vector>
@@ -37,9 +38,6 @@
 struct AudioPrivate
 {
     
-    // mkxp-z manages multiple streams of BGM.
-    // play/pause states should be shared between them, so checking the state of the first
-    // one should be enough to know what the rest are doing.
     std::vector<AudioStream*> bgmTracks;
 	AudioStream bgs;
 	AudioStream me;
@@ -94,6 +92,14 @@ struct AudioPrivate
         for (auto track : bgmTracks)
             delete track;
 	}
+    
+    AudioStream *getTrackByIndex(int index) {
+        if (index < 0) index = 0;
+        if (index > bgmTracks.size() - 1) {
+            throw Exception(Exception::MKXPError, "requested BGM track %d out of range (max: %d)", index, bgmTracks.size() - 1);
+        }
+        return bgmTracks[index];
+    }
 
 	void meWatchFun()
 	{
@@ -287,60 +293,59 @@ void Audio::bgmPlay(const char *filename,
                     int volume,
                     int pitch,
                     float pos,
-                    int channel)
+                    int track)
 {
-    if (channel == -127) {
+    if (track == -127) {
         for (auto track : p->bgmTracks)
             track->stop();
         
-        channel = 0;
+        track = 0;
     }
-	p->bgmTracks[clamp(channel, 0, (int)p->bgmTracks.size() - 1)]->play(filename, volume, pitch, pos);
+	p->getTrackByIndex(track)->play(filename, volume, pitch, pos);
 }
 
-void Audio::bgmStop(int channel)
+void Audio::bgmStop(int track)
 {
-    if (channel == -127) {
+    if (track == -127) {
         for (auto track : p->bgmTracks)
             track->stop();
         
         return;
     }
     
-    p->bgmTracks[clamp(channel, 0, (int)p->bgmTracks.size() - 1)]->stop();
+    p->getTrackByIndex(track)->stop();
 }
 
-void Audio::bgmFade(int time, int channel)
+void Audio::bgmFade(int time, int track)
 {
-    if (channel == -127) {
+    if (track == -127) {
         for (auto track : p->bgmTracks)
             track->fadeOut(time);
         
         return;
     }
     
-    p->bgmTracks[clamp(channel, 0, (int)p->bgmTracks.size() - 1)]->fadeOut(time);
+    p->getTrackByIndex(track)->fadeOut(time);
 }
 
-int Audio::bgmGetVolume(int channel)
+int Audio::bgmGetVolume(int track)
 {
-    if (channel == -127)
-        return p->bgmTracks[channel]->getVolume(AudioStream::BaseRatio) * 100;
+    if (track == -127)
+        return p->bgmTracks[0]->getVolume(AudioStream::BaseRatio) * 100;
     
-    return p->bgmTracks[channel]->getVolume(AudioStream::Base) * 100;
+    return p->getTrackByIndex(track)->getVolume(AudioStream::Base) * 100;
 }
 
-void Audio::bgmSetVolume(int volume, int channel)
+void Audio::bgmSetVolume(int volume, int track)
 {
     float vol = volume / 100.0;
-    if (channel == -127) {
+    if (track == -127) {
         for (auto track : p->bgmTracks)
             track->setVolume(AudioStream::BaseRatio, vol);
         
         return;
     }
-    channel = clamp(channel, 0, (int)p->bgmTracks.size() - 1);
-    p->bgmTracks[channel]->setVolume(AudioStream::Base, vol);
+    p->getTrackByIndex(track)->setVolume(AudioStream::Base, vol);
 }
 
 
@@ -398,9 +403,9 @@ void Audio::setupMidi()
 	shState->midiState().initIfNeeded(shState->config());
 }
 
-float Audio::bgmPos()
+float Audio::bgmPos(int track)
 {
-	return p->bgmTracks[0]->playingOffset();
+	return p->getTrackByIndex(track)->playingOffset();
 }
 
 float Audio::bgsPos()

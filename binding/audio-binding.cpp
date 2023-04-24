@@ -92,34 +92,36 @@ RB_METHOD(audio_bgmPlay)
     int volume = 100;
     int pitch = 100;
     double pos = 0.0;
-    int channel = -127;
-    rb_get_args(argc, argv, "z|iifi", &filename, &volume, &pitch, &pos, &channel RB_ARG_END);
-    GUARD_EXC( shState->audio().bgmPlay(filename, volume, pitch, pos, channel); )
+    int track = -127;
+    rb_get_args(argc, argv, "z|iifi", &filename, &volume, &pitch, &pos, &track RB_ARG_END);
+    GUARD_EXC( shState->audio().bgmPlay(filename, volume, pitch, pos, track); )
     return Qnil;
 }
 
 RB_METHOD(audio_bgmStop)
 {
     RB_UNUSED_PARAM;
-    int channel = -127;
-    rb_get_args(argc, argv, "|i", &channel RB_ARG_END);
-    shState->audio().bgmStop(channel);
+    int track = -127;
+    rb_get_args(argc, argv, "|i", &track RB_ARG_END);
+    shState->audio().bgmStop(track);
     return Qnil;
 }
 
 RB_METHOD(audio_bgmPos)
 {
     RB_UNUSED_PARAM;
-    return rb_float_new(shState->audio().bgmPos());
+    int track = 0;
+    rb_get_args(argc, argv, "|i", &track RB_ARG_END);
+    return rb_float_new(shState->audio().bgmPos(track));
 }
 
 RB_METHOD(audio_bgmGetVolume)
 {
     RB_UNUSED_PARAM;
-    int channel = -127;
-    rb_get_args(argc, argv, "|i", &channel RB_ARG_END);
+    int track = -127;
+    rb_get_args(argc, argv, "|i", &track RB_ARG_END);
     int ret = 0;
-    GUARD_EXC( ret = shState->audio().bgmGetVolume(); )
+    GUARD_EXC( ret = shState->audio().bgmGetVolume(track); )
     return rb_fix_new(ret);
 }
 
@@ -127,9 +129,9 @@ RB_METHOD(audio_bgmSetVolume)
 {
     RB_UNUSED_PARAM;
     int volume;
-    int channel = -127;
-    rb_get_args(argc, argv, "i|i", &volume, &channel RB_ARG_END);
-    GUARD_EXC( shState->audio().bgmSetVolume(volume, channel); )
+    int track = -127;
+    rb_get_args(argc, argv, "i|i", &volume, &track RB_ARG_END);
+    GUARD_EXC( shState->audio().bgmSetVolume(volume, track); )
     return Qnil;
 }
 
@@ -142,9 +144,9 @@ RB_METHOD(audio_bgmFade)
 {
     RB_UNUSED_PARAM;
     int time;
-    int channel = -127;
-    rb_get_args(argc, argv, "i|i", &time, &channel RB_ARG_END);
-    shState->audio().bgmFade(time, channel);
+    int track = -127;
+    rb_get_args(argc, argv, "i|i", &time, &track RB_ARG_END);
+    shState->audio().bgmFade(time, track);
     return Qnil;
 }
 
