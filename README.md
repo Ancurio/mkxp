@@ -1,6 +1,13 @@
 # mkxp-z
 
+<p align="center"><b>
+  <a href="https://github.com/mkxp-z/mkxp-z/releases">Downloads</a>
+  ・
+  <a href="https://github.com/mkxp-z/mkxp-z/wiki">Documentation</a>
+</b></p>
+
 I'm usually *very* slow with responding to things on Github, so if you have something you want to say and you want a faster response, you're probably better off asking in [Ancurio's Discord server](https://discord.gg/b2qg8QbV). I don't have my own.
+The place is basically a ghost town haunted by myself and a few others, so expect me to say something if no one else does.
 
 -----------
 
@@ -13,10 +20,6 @@ This is a fork of mkxp intended to be a little more than just a barebones recrea
 Despite the fact that it was made with Essentials games in mind, there is nothing connected to it contained in this repository, and it should still be compatible with anything that runs in the upstream version of MKXP. You can think of it as MKXP but a bit supercharged --  it should be able to run all but the most demanding of RGSS projects, given a bit of porting work.
 
 It supports Windows, Linux and both Intel and Apple Silicon versions of macOS.
-
-Releases are [here](https://github.com/mkxp-z/mkxp-z/releases). Requirements for running them are Windows 8.1+, Ubuntu 20.04+ (Fedora and Manjaro releases that age or newer *should* also be fine), or macOS 10.13+.
-
-I'd highly recommend [checking the wiki](https://github.com/mkxp-z/mkxp-z/wiki) for more information than this readme contains.
 
 ## Bindings
 Bindings provide the glue code for an interpreted language environment to run game scripts in. mkxp-z focuses on MRI and as such the mruby and null bindings are not included.
