@@ -62,6 +62,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <cmath>
+#include <climits>
 
 
 #define DEF_SCREEN_W (rgssVer == 1 ? 640 : 544)
@@ -305,7 +306,7 @@ struct Movie
         queueAudioPacket(audio);
         audio = NULL;
         bufferMovieAudio(decoder, 0);
-        audioThread = createSDLThread <Movie, Movie::streamMovieAudio>(this, "movieaudio");
+        audioThread = createSDLThread <Movie, &Movie::streamMovieAudio>(this, "movieaudio");
 
         return true;
     }
