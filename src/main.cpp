@@ -352,6 +352,23 @@ int main(int argc, char *argv[]) {
       return 0;
     }
     
+#ifdef MKXPZ_BUILD_XCODE
+    {
+        std::string downloadsPath = "/Users/" + mkxp_sys::getUserName() + "/Downloads";
+        
+        if (mkxp_fs::getCurrentDirectory().find(downloadsPath) == 0) {
+            showInitError(conf.game.title +
+                          " cannot run from the Downloads directory.\n\n" +
+                          "Please move the application to the Applications folder (or anywhere else) " +
+                          "and try again.");
+#ifdef MKXPZ_STEAM
+            STEAMSHIM_deinit();
+#endif
+            return 0;
+        }
+    }
+#endif
+    
 #if defined(MKXPZ_BUILD_XCODE)
 #define DEBUG_FSELECT_MSG "Select the folder from which to load game files. This is the folder containing the game's INI."
 #define DEBUG_FSELECT_PROMPT "Load Game"
