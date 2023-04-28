@@ -1082,7 +1082,7 @@ struct InputPrivate
             if (rawButtonStates[i] && rawButtonStatesOld[i])
             {
                 if (buttonRepeating == i)
-                    rawRepeatCount++;
+                    buttonRepeatCount++;
                 else
                 {
                     buttonRepeatCount = 0;
