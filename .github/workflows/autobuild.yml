@@ -1,0 +1,132 @@
+# I have no idea what I'm doing
+name: Automatic Build
+
+on:
+  push:
+    branches: ['autobuild']
+
+jobs:
+  build-windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw64
+          install: >-
+            base-devel
+            git
+            ruby
+            vim
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-meson
+            mingw-w64-x86_64-autotools
+            mingw-w64-x86_64-gcc
+
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build all dependencies
+        shell: msys2 {0}
+        run: |
+          cd windows
+          make
+
+      - name: Build exe
+        shell: msys2 {0}
+        run: |
+          source windows/vars.sh
+          meson build
+          cd build
+          ninja
+          strip ./mkxp-z.exe
+
+      - name: Prepare archive
+        shell: msys2 {0}
+        run: |
+          mkdir build/artifact
+          cd build/artifact
+          cp /mingw64/bin/zlib1.dll .
+          cp ../../windows/build-mingw64/bin/x64-msvcrt-ruby310.dll .
+          cp -r ../../windows/build-mingw64/lib/ruby/3.1.0 .
+          mv ./3.1.0 ./stdlib
+          cp ../mkxp-z.exe .
+          cp ../../mkxp.json .
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mkxp-z.windows.${{github.ref_name}}-${{github.sha}}
+          path: |
+            build/artifact/*.dll
+            build/artifact/*.exe
+            build/artifact/mkxp.json
+            build/artifact/stdlib/
+
+  build-linux:
+    name: Linux x86_64
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install apt dependencies
+        run: sudo apt install git build-essential cmake meson autoconf automake libtool pkg-config ruby bison zlib1g-dev libbz2-dev xorg-dev libgl1-mesa-dev libasound2-dev libpulse-dev -y
+
+      - name: Build everything else
+        run: |
+          cd linux
+          make
+
+      - name: Build executable
+        run: |
+          source linux/vars.sh
+          meson build --bindir=. --prefix=$GITHUB_WORKSPACE/build/local
+          cd build
+          ninja
+          ninja install
+
+      - name: Prepare archive
+        run: |
+          cd build/local
+          cp -r ../../linux/build-x86_64/lib/ruby/3.1.0 .
+          mv ./3.1.0 ./stdlib
+          cp ../../mkxp.json .
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mkxp-z.linux.${{github.ref_name}}-${{github.sha}}
+          path: build/local/
+
+  build-macos:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Homebrew tools
+        run: |
+          cd macos/Dependencies
+          brew bundle
+
+      - name: Build all dependencies
+        run: |
+          cd macos/Dependencies
+          ./setup
+
+      - name: Build app
+        run: |
+          cd macos
+          xcodebuild -project mkxp-z.xcodeproj -configuration "Release" -scheme "Universal" -derivedDataPath "$GITHUB_WORKSPACE/build"
+
+      - name: Compress app
+        run: |
+          cd build/Build/Products/Release
+          ditto -c -k --sequesterRsrc --keepParent Z-universal.app Z-universal.app.zip
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v3
+        with:
+          name: mkxp-z.windows.${{github.ref_name}}-${{github.sha}}
+          path: build/Build/Products/Release/Z-universal.app.zip
