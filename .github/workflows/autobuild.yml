@@ -3,13 +3,18 @@ name: Automatic Build
 
 on:
   push:
-    branches: ['autobuild']
+    branches: ['dev']
 
 jobs:
   build-windows:
     name: Windows
     runs-on: windows-latest
     steps:
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+        with:
+          length: 6
+
       - uses: msys2/setup-msys2@v2
         with:
           msystem: mingw64
@@ -26,6 +31,13 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            windows/build-mingw64
+            windows/downloads
+          key: win-${{ hashFiles('windows/Makefile') }}
 
       - name: Build all dependencies
         shell: msys2 {0}
@@ -56,7 +68,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: mkxp-z.windows.${{github.ref_name}}-${{github.sha}}
+          name: mkxp-z.windows.${{github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: |
             build/artifact/*.dll
             build/artifact/*.exe
@@ -64,11 +76,23 @@ jobs:
             build/artifact/stdlib/
 
   build-linux:
-    name: Linux x86_64
-    runs-on: ubuntu-latest
+    name: Ubuntu 22.04
+    runs-on: ubuntu-22.04
     steps:
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+        with:
+          length: 6
+
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            linux/build-x86_64
+            linux/downloads
+          key: lin-${{ hashFiles('linux/Makefile') }}
 
       - name: Install apt dependencies
         run: sudo apt install git build-essential cmake meson autoconf automake libtool pkg-config ruby bison zlib1g-dev libbz2-dev xorg-dev libgl1-mesa-dev libasound2-dev libpulse-dev -y
@@ -95,15 +119,29 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: mkxp-z.linux.${{github.ref_name}}-${{github.sha}}
+          name: mkxp-z.linux.${{github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/local/
 
   build-macos:
     name: macOS
     runs-on: macos-latest
     steps:
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+        with:
+          length: 6
+
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            macos/Dependencies/build-macosx-x86_64
+            macos/Dependencies/build-macosx-arm64
+            macos/Dependencies/build-macosx-universal
+            macos/Dependencies/downloads
+          key: mac-${{ hashFiles('macos/Dependencies/*.make', 'macos/Dependencies/*.sh') }}
 
       - name: Install Homebrew tools
         run: |
@@ -113,7 +151,7 @@ jobs:
       - name: Build all dependencies
         run: |
           cd macos/Dependencies
-          ./setup
+          ./setup.sh
 
       - name: Build app
         run: |
@@ -128,5 +166,5 @@ jobs:
       - name: Upload archive
         uses: actions/upload-artifact@v3
         with:
-          name: mkxp-z.macos.${{github.ref_name}}-${{github.sha}}
+          name: mkxp-z.macos.${{github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/Build/Products/Release/Z-universal.app.zip

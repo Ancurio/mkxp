@@ -10,20 +10,20 @@ def run_build(arch)
     if `xcodebuild -version`.scan(/Xcode (\d+)/)[0][0].to_i >= 12
         printf("Building libraries for Apple Silicon...\n")
         printf("====================================================\n")
-        code = system("make everything -f .AppleSilicon")
+        code = system("make everything -f arm64.make")
         return code if !code
     end
     printf("====================================================\n")
     printf("Building libraries for Intel...\n")
     printf("====================================================\n")
-    code = (system("make everything -f .Intel"))
+    code = (system("make everything -f x86_64.make"))
     return code if !code
 
     printf("====================================================\n")
     printf("Performing post-setup...\n")
     printf("====================================================\n")
     printf("Creating universal libraries ...\n")
-    return system("./make_macuniversal")
+    return system("./make_macuniversal.sh")
 end
 
 def fix_steam(libpath)

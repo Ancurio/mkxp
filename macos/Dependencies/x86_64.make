@@ -12,4 +12,4 @@ RUBY_FLAGS := ${RUBY_FLAGS}
 
 
 
-include dependencies.make
+include common.make

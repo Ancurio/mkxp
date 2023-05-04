@@ -10,4 +10,4 @@ OPENAL_FLAGS := -DALSOFT_CPUEXT_NEON=no ${OPENAL_FLAGS}
 OPENSSL_FLAGS := darwin64-$(ARCH)-cc
 RUBY_FLAGS := ${RUBY_FLAGS}
 
-include dependencies.make
+include common.make
