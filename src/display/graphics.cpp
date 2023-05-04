@@ -797,7 +797,7 @@ struct GraphicsPrivate {
     int frameCount;
     int brightness;
     
-    unsigned long long last_update;
+    double last_update;
     
     
     FPSLimiter fpsLimiter;
@@ -816,8 +816,8 @@ struct GraphicsPrivate {
     bool integerScaleActive;
     bool integerLastMileScaling;
     
-    std::vector<unsigned long long> avgFPSData;
-    unsigned long long last_avg_update;
+    std::vector<double> avgFPSData;
+    double last_avg_update;
     SDL_mutex *avgFPSLock;
     
     SDL_mutex *glResourceLock;
@@ -837,7 +837,7 @@ struct GraphicsPrivate {
     last_update(0), last_avg_update(0), backingScaleFactor(1), integerScaleFactor(0, 0),
     integerScaleActive(rtData->config.integerScaling.active),
     integerLastMileScaling(rtData->config.integerScaling.lastMileScaling) {
-        avgFPSData = std::vector<unsigned long long>();
+        avgFPSData = std::vector<double>();
         avgFPSLock = SDL_CreateMutex();
         glResourceLock = SDL_CreateMutex();
         
@@ -1079,7 +1079,7 @@ struct GraphicsPrivate {
         if (avgFPSData.size() > 40)
             avgFPSData.erase(avgFPSData.begin());
         
-        unsigned long long time = shState->runTime();
+        double time = shState->runTime();
         avgFPSData.push_back(time - last_avg_update);
         last_avg_update = time;
         SDL_UnlockMutex(avgFPSLock);
@@ -1102,10 +1102,10 @@ struct GraphicsPrivate {
     double averageFPS() {
         double ret = 0;
         SDL_LockMutex(avgFPSLock);
-        for (unsigned long long times : avgFPSData)
+        for (double times : avgFPSData)
             ret += times;
         
-        ret = 1 / (ret / avgFPSData.size() / 1000000);
+        ret = 1 / (ret / avgFPSData.size());
         SDL_UnlockMutex(avgFPSLock);
         return ret;
     }
@@ -1138,11 +1138,11 @@ Graphics::Graphics(RGSSThreadData *data) {
 
 Graphics::~Graphics() { delete p; }
 
-unsigned long long Graphics::getDelta() {
+double Graphics::getDelta() {
     return shState->runTime() - p->last_update;
 }
 
-unsigned long long Graphics::lastUpdate() {
+double Graphics::lastUpdate() {
     return p->last_update;
 }
 

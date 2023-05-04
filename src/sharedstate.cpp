@@ -363,10 +363,10 @@ Font &SharedState::defaultFont() const
 	return *p->defaultFont;
 }
 
-unsigned long long SharedState::runTime() {
+double SharedState::runTime() {
     if (!p) return 0;
     const auto now = std::chrono::steady_clock::now();
-    return std::chrono::duration_cast<std::chrono::microseconds>(now - p->startupTime).count();
+    return std::chrono::duration_cast<std::chrono::microseconds>(now - p->startupTime).count() / 1000.0 / 1000.0;
 }
 
 unsigned int SharedState::genTimeStamp()

@@ -166,12 +166,11 @@ struct BitmapPrivate
         std::vector<TEXFBO> frames;
         float fps;
         int lastFrame;
-        unsigned long long startTime;
-        unsigned long long playTime;
+        double startTime, playTime;
         
         inline unsigned int currentFrameIRaw() {
             if (fps <= 0) return lastFrame;
-            return floor(lastFrame + (playTime / ((1 / fps) * 1000000)));
+            return floor(lastFrame + (playTime / (1 / fps)));
         }
         
         unsigned int currentFrameI() {
@@ -2102,6 +2101,24 @@ void Bitmap::taintArea(const IntRect &rect)
 
 int Bitmap::maxSize(){
     return glState.caps.maxTexSize;
+}
+
+// This might look ridiculous, but apparently, it is possible
+// to encounter seemingly empty bitmaps during Graphics::update,
+// or specifically, during a Sprite's prepare function.
+
+// I have no idea why it happens, but it seems like just skipping
+// them makes it okay, so... that's what this function is for, at
+// least unless the actual source of the problem gets found, at
+// which point I'd get rid of it.
+
+// I get it to happen by trying to beat the first rival fight in
+// Pokemon Flux, on macOS. I don't think I've seen anyone bring up
+// something like this happening anywhere else, so... I dunno.
+// If a game suddenly explodes during Graphics.update, maybe try
+// breakpointing this?
+bool Bitmap::invalid() const {
+    return p == 0;
 }
 
 void Bitmap::releaseResources()

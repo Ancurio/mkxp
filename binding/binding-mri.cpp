@@ -326,8 +326,7 @@ RB_METHOD(mriP) {
 
 RB_METHOD(mkxpDelta) {
     RB_UNUSED_PARAM;
-    
-    return ULL2NUM(shState->runTime());
+    return rb_float_new(shState->runTime());
 }
 
 RB_METHOD(mkxpDataDirectory) {

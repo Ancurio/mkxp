@@ -36,8 +36,8 @@ struct Movie;
 class Graphics
 {
 public:
-    unsigned long long getDelta();
-    unsigned long long lastUpdate();
+    double getDelta();
+    double lastUpdate();
     
 	void update(bool checkForShutdown = true);
 	void freeze();

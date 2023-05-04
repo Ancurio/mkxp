@@ -158,6 +158,8 @@ public:
 	sigslot::signal<> modified;
 
 	static int maxSize();
+    
+    bool invalid() const;
 
 private:
 	void releaseResources();

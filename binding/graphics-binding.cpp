@@ -32,7 +32,7 @@
 RB_METHOD(graphicsDelta) {
     RB_UNUSED_PARAM;
     GFX_LOCK;
-    VALUE ret = ULL2NUM(shState->graphics().getDelta());
+    VALUE ret = rb_float_new(shState->graphics().getDelta());
     GFX_UNLOCK;
     return ret;
 }

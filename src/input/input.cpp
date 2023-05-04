@@ -707,14 +707,12 @@ struct InputPrivate
     unsigned int rawRepeatCount;
     unsigned int buttonRepeatCount;
     
-    unsigned long long repeatTime;
-    unsigned long long rawRepeatTime;
-    unsigned long long buttonRepeatTime;
+    double repeatTime, rawRepeatTime, buttonRepeatTime;
     
     unsigned int repeatStart;
     unsigned int repeatDelay;
     
-    unsigned long long last_update;
+    double last_update;
 
     int vScrollDistance;
     
@@ -1185,7 +1183,7 @@ Input::Input(const RGSSThreadData &rtData)
     p = new InputPrivate(rtData);
 }
 
-unsigned long long Input::getDelta() {
+double Input::getDelta() {
     return shState->runTime() - p->last_update;
 }
 
@@ -1301,7 +1299,7 @@ unsigned int Input::count(int button) {
     return p->repeatCount;
 }
 
-unsigned long long Input::repeatTime(int button) {
+double Input::repeatTime(int button) {
     if (button != p->repeating)
         return 0;
     
@@ -1367,7 +1365,7 @@ unsigned int Input::controllerRepeatcount(int button) {
     return p->buttonRepeatCount;
 }
 
-unsigned long long Input::repeatTimeEx(int code, bool isVKey) {
+double Input::repeatTimeEx(int code, bool isVKey) {
     int c = code;
     if (isVKey) {
         try { c = vKeyToScancode[code]; }
@@ -1380,7 +1378,7 @@ unsigned long long Input::repeatTimeEx(int code, bool isVKey) {
     return shState->runTime() - p->rawRepeatTime;
 }
 
-unsigned long long Input::controllerRepeatTimeEx(int button) {
+double Input::controllerRepeatTimeEx(int button) {
     if (button != p->buttonRepeating)
         return 0;
     

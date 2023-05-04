@@ -34,7 +34,7 @@
 RB_METHOD(inputDelta) {
     RB_UNUSED_PARAM;
     
-    return ULL2NUM(shState->input().getDelta());
+    return rb_float_new(shState->input().getDelta());
 }
 
 RB_METHOD(inputUpdate) {

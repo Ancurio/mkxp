@@ -434,7 +434,11 @@ RB_METHOD(bitmapGetMega){
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    return rb_bool_new(b->isMega());
+    VALUE ret;
+    
+    GFX_GUARD_EXC(ret = rb_bool_new(b->isMega()););
+    
+    return ret;
 }
 
 RB_METHOD(bitmapGetAnimated){
@@ -444,7 +448,11 @@ RB_METHOD(bitmapGetAnimated){
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     
-    return rb_bool_new(b->isAnimated());
+    VALUE ret;
+    
+    GFX_GUARD_EXC(ret = rb_bool_new(b->isAnimated()););
+    
+    return ret;
 }
 
 RB_METHOD(bitmapGetPlaying){
