@@ -13,7 +13,7 @@ jobs:
       - uses: benjlevesque/short-sha@v2.2
         id: short-sha
         with:
-          length: 6
+          length: 7
 
       - uses: msys2/setup-msys2@v2
         with:
