@@ -82,7 +82,7 @@ jobs:
       - uses: benjlevesque/short-sha@v2.2
         id: short-sha
         with:
-          length: 6
+          length: 7
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -129,7 +129,7 @@ jobs:
       - uses: benjlevesque/short-sha@v2.2
         id: short-sha
         with:
-          length: 6
+          length: 7
 
       - name: Checkout repository
         uses: actions/checkout@v3
