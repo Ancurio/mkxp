@@ -128,5 +128,5 @@ jobs:
       - name: Upload archive
         uses: actions/upload-artifact@v3
         with:
-          name: mkxp-z.windows.${{github.ref_name}}-${{github.sha}}
+          name: mkxp-z.macos.${{github.ref_name}}-${{github.sha}}
           path: build/Build/Products/Release/Z-universal.app.zip
