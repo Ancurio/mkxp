@@ -320,7 +320,10 @@ $(BUILD_PREFIX)/$(RB_PREFIX)-ruby310.dll: $(DOWNLOADS)/ruby/Makefile
 
 $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	cd $(DOWNLOADS)/ruby; \
-	$(CONFIGURE) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
+	export $(CONFIGURE_ENV); \
+	export CFLAGS="-flto $$CFLAGS"; \
+	export LDFLAGS="-flto $$LDFLAGS"; \
+	./configure $(CONFIGURE_ARGS) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
 	cd $(DOWNLOADS)/ruby; autoreconf -i
