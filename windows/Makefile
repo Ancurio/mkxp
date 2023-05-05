@@ -10,6 +10,7 @@ RUBY_FLAGS := ${RUBY_FLAGS}
 
 BUILD_PREFIX := ${PWD}/build-$(ARCH)
 LIBDIR := $(BUILD_PREFIX)/lib
+BINDIR := $(BUILD_PREFIX)/bin
 INCLUDEDIR := $(BUILD_PREFIX)/include
 DOWNLOADS := ${PWD}/downloads/$(ARCH)
 NPROC := $(shell nproc)
@@ -312,9 +313,9 @@ $(DOWNLOADS)/openssl/Configure:
 	$(CLONE) $(GITHUB)/openssl/openssl $(DOWNLOADS)/openssl --single-branch --branch OpenSSL_1_1_1i --depth 1
 
 # Standard ruby
-ruby: init_dirs openssl $(LIBDIR)/$(RB_PREFIX)-ruby310.dll
+ruby: init_dirs openssl $(BINDIR)/$(RB_PREFIX)-ruby310.dll
 
-$(LIBDIR)/$(RB_PREFIX)-ruby310.dll: $(DOWNLOADS)/ruby/Makefile
+$(BINDIR)/$(RB_PREFIX)-ruby310.dll: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
 	make -j$(NPROC); make install
 
