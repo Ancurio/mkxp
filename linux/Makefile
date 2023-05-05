@@ -325,9 +325,9 @@ $(DOWNLOADS)/openssl/Configure:
 	$(CLONE) $(GITHUB)/openssl/openssl $(DOWNLOADS)/openssl --single-branch --branch OpenSSL_1_1_1i --depth 1
 
 # Standard ruby
-ruby: init_dirs openssl $(BUILD_PREFIX)/libruby.so.3.1
+ruby: init_dirs openssl $(LIBDIR)/libruby.so.3.1
 
-$(BUILD_PREFIX)/libruby.so.3.1: $(DOWNLOADS)/ruby/Makefile
+$(LIBDIR)/libruby.so.3.1: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
 	make -j$(NPROC); make install
 
