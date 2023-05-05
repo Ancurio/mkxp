@@ -334,8 +334,8 @@ $(BUILD_PREFIX)/libruby.so.3.1: $(DOWNLOADS)/ruby/Makefile
 $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	cd $(DOWNLOADS)/ruby; \
 	export $(CONFIGURE_ENV); \
-	export CFLAGS="-flto=full $$CFLAGS"; \
-	export LDFLAGS="-flto=full $$LDFLAGS"; \
+	export CFLAGS="-flto $$CFLAGS"; \
+	export LDFLAGS="-flto $$LDFLAGS"; \
 	./configure $(CONFIGURE_ARGS) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
 
 $(DOWNLOADS)/ruby/configure: $(DOWNLOADS)/ruby/*.c
