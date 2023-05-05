@@ -73,6 +73,13 @@
     // "smoothScaling": false,
 
 
+    // Apply Lanczos3 interpolation when game screen
+    // is upscaled (typically higher quality than linear)
+    // (default: disabled)
+    //
+    // "lanczos3Scaling": false,
+
+
     // Sync screen redraws to the monitor refresh rate
     // (default: disabled)
     //

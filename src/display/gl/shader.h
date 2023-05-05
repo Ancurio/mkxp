@@ -113,7 +113,7 @@ public:
 
 	void setTexOffsetX(int value);
 
-private:
+protected:
 	GLint u_texOffsetX;
 };
 
@@ -326,6 +326,17 @@ private:
 	GLint u_source, u_destination, u_subRect, u_opacity;
 };
 
+class Lanczos3Shader : public SimpleShader
+{
+public:
+	Lanczos3Shader();
+
+	void setTexSize(const Vec2i &value);
+
+protected:
+	GLint u_sourceSize;
+};
+
 /* Global object containing all available shaders */
 struct ShaderSet
 {
@@ -347,6 +358,7 @@ struct ShaderSet
 	SimpleMatrixShader simpleMatrix;
 	BlurShader blur;
 	TilemapVXShader tilemapVX;
+	Lanczos3Shader lanczos3;
 };
 
 #endif // SHADER_H

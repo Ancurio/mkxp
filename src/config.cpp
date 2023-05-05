@@ -134,6 +134,7 @@ void Config::read(int argc, char *argv[]) {
         {"fullscreen", false},
         {"fixedAspectRatio", true},
         {"smoothScaling", false},
+        {"lanczos3Scaling", false},
         {"vsync", false},
         {"defScreenW", 0},
         {"defScreenH", 0},
@@ -257,6 +258,7 @@ try { exp } catch (...) {}
     SET_OPT(fullscreen, boolean);
     SET_OPT(fixedAspectRatio, boolean);
     SET_OPT(smoothScaling, boolean);
+    SET_OPT(lanczos3Scaling, boolean);
     SET_OPT(winResizable, boolean);
     SET_OPT(vsync, boolean);
     SET_STRINGOPT(windowTitle, windowTitle);

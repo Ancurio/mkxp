@@ -44,6 +44,7 @@
 #include "simpleAlphaUni.frag.xxd"
 #include "tilemap.frag.xxd"
 #include "flashMap.frag.xxd"
+#include "lanczos3.frag.xxd"
 #include "minimal.vert.xxd"
 #include "simple.vert.xxd"
 #include "simpleColor.vert.xxd"
@@ -745,4 +746,20 @@ void BltShader::setSubRect(const FloatRect &value)
 void BltShader::setOpacity(float value)
 {
 	gl.Uniform1f(u_opacity, value);
+}
+
+Lanczos3Shader::Lanczos3Shader()
+{
+	INIT_SHADER(simple, lanczos3, Lanczos3Shader);
+
+	ShaderBase::init();
+
+	GET_U(texOffsetX);
+	GET_U(sourceSize);
+}
+
+void Lanczos3Shader::setTexSize(const Vec2i &value)
+{
+	ShaderBase::setTexSize(value);
+	gl.Uniform2f(u_sourceSize, (float)value.x, (float)value.y);
 }
