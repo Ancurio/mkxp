@@ -981,7 +981,6 @@
 		3B10EE1F2569348E00372D13 /* json5pp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json5pp.hpp; sourceTree = "<group>"; };
 		3B1BC0DF266F7C0C00794D22 /* iniconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iniconfig.h; sourceTree = "<group>"; };
 		3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = iniconfig.cpp; sourceTree = "<group>"; };
-		3B1BC0E6266F8E8700794D22 /* dependencies.make */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = dependencies.make; path = Dependencies/dependencies.make; sourceTree = "<group>"; };
 		3B1BC0EB266F924B00794D22 /* libuchardet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuchardet.a; path = "Dependencies/build-macosx-x86_64/lib/libuchardet.a"; sourceTree = "<group>"; };
 		3B1C230A25A144A10075EF5D /* libruby.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.1.dylib; path = "Dependencies/build-macosx-x86_64/lib/libruby.3.1.dylib"; sourceTree = "<group>"; };
 		3B1C230D25A144BF0075EF5D /* libruby.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.1.dylib; path = "Dependencies/build-macosx-universal/lib/libruby.3.1.dylib"; sourceTree = "<group>"; };
@@ -1297,10 +1296,10 @@
 		3B10EC6C2568E5EA00372D13 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				3B10EDD52568E96A00372D13 /* binding */,
 				3B3F7D1325B19C5A00EA5F1C /* MacOS */,
 				3B10ED342568E95D00372D13 /* src */,
 				3B1C236625A19B780075EF5D /* steamshim */,
-				3B10EDD52568E96A00372D13 /* binding */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1340,26 +1339,26 @@
 		3B10ED342568E95D00372D13 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				3B522DB1259BBFE9003301C4 /* net */,
-				3B10ED362568E95D00372D13 /* crypto */,
-				3B10ED392568E95D00372D13 /* util */,
-				3B10ED442568E95D00372D13 /* input */,
-				3B10ED4A2568E95D00372D13 /* etc */,
-				3B10ED522568E95D00372D13 /* filesystem */,
-				3B10ED582568E95D00372D13 /* system */,
-				3B10ED5D2568E95D00372D13 /* audio */,
-				3B10ED6F2568E95D00372D13 /* display */,
-				9656358D279A5B74003D6A75 /* theoraplay */,
-				3B10ED352568E95D00372D13 /* eventthread.cpp */,
-				3B10ED492568E95D00372D13 /* eventthread.h */,
-				3B10ED432568E95D00372D13 /* config.h */,
 				3B5A84052569B56F00BAF2E5 /* config.cpp */,
-				3B10ED502568E95D00372D13 /* settingsmenu.h */,
-				3B10ED512568E95D00372D13 /* sharedstate.cpp */,
+				3B10ED352568E95D00372D13 /* eventthread.cpp */,
 				3B10ED562568E95D00372D13 /* main.cpp */,
 				3B10ED6E2568E95D00372D13 /* settingsmenu.cpp */,
-				3B10EDA42568E95E00372D13 /* sharedstate.h */,
+				3B10ED512568E95D00372D13 /* sharedstate.cpp */,
 				3B10EDA52568E95E00372D13 /* binding.h */,
+				3B10ED432568E95D00372D13 /* config.h */,
+				3B10ED492568E95D00372D13 /* eventthread.h */,
+				3B10ED502568E95D00372D13 /* settingsmenu.h */,
+				3B10EDA42568E95E00372D13 /* sharedstate.h */,
+				3B10ED5D2568E95D00372D13 /* audio */,
+				3B10ED362568E95D00372D13 /* crypto */,
+				3B10ED6F2568E95D00372D13 /* display */,
+				3B10ED4A2568E95D00372D13 /* etc */,
+				3B10ED522568E95D00372D13 /* filesystem */,
+				3B10ED442568E95D00372D13 /* input */,
+				3B522DB1259BBFE9003301C4 /* net */,
+				3B10ED582568E95D00372D13 /* system */,
+				9656358D279A5B74003D6A75 /* theoraplay */,
+				3B10ED392568E95D00372D13 /* util */,
 			);
 			name = src;
 			path = ../src;
@@ -1368,8 +1367,8 @@
 		3B10ED362568E95D00372D13 /* crypto */ = {
 			isa = PBXGroup;
 			children = (
-				3B10ED372568E95D00372D13 /* rgssad.h */,
 				3B10ED382568E95D00372D13 /* rgssad.cpp */,
+				3B10ED372568E95D00372D13 /* rgssad.h */,
 			);
 			path = crypto;
 			sourceTree = "<group>";
@@ -1378,20 +1377,20 @@
 			isa = PBXGroup;
 			children = (
 				3BFABF53267787940024C7DD /* sigslot */,
+				3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */,
+				3B10ED3C2568E95D00372D13 /* boost-hash.h */,
+				3B10ED422568E95D00372D13 /* debugwriter.h */,
+				3B10ED3E2568E95D00372D13 /* disposable.h */,
+				3B609374268274CE0038E9D6 /* encoding.h */,
+				3B10ED412568E95D00372D13 /* exception.h */,
+				3B1BC0DF266F7C0C00794D22 /* iniconfig.h */,
 				3B10ED3A2568E95D00372D13 /* intrulist.h */,
 				3B10ED3B2568E95D00372D13 /* sdl-util.h */,
-				3B10ED3C2568E95D00372D13 /* boost-hash.h */,
-				3B10ED3D2568E95D00372D13 /* serializable.h */,
-				3B10ED3E2568E95D00372D13 /* disposable.h */,
 				3B10ED3F2568E95D00372D13 /* serial-util.h */,
+				3B10ED3D2568E95D00372D13 /* serializable.h */,
 				3B012198261544A0001E574A /* string-util.h */,
 				3B10ED402568E95D00372D13 /* util.h */,
-				3B10ED412568E95D00372D13 /* exception.h */,
-				3B10ED422568E95D00372D13 /* debugwriter.h */,
 				3B10EE1F2569348E00372D13 /* json5pp.hpp */,
-				3B1BC0DF266F7C0C00794D22 /* iniconfig.h */,
-				3B1BC0E0266F7C0C00794D22 /* iniconfig.cpp */,
-				3B609374268274CE0038E9D6 /* encoding.h */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -1399,9 +1398,9 @@
 		3B10ED442568E95D00372D13 /* input */ = {
 			isa = PBXGroup;
 			children = (
-				3B10ED452568E95D00372D13 /* input.h */,
 				3B10ED462568E95D00372D13 /* input.cpp */,
 				3B10ED472568E95D00372D13 /* keybindings.cpp */,
+				3B10ED452568E95D00372D13 /* input.h */,
 				3B10ED482568E95D00372D13 /* keybindings.h */,
 			);
 			path = input;
@@ -1410,9 +1409,9 @@
 		3B10ED4A2568E95D00372D13 /* etc */ = {
 			isa = PBXGroup;
 			children = (
-				3B10ED4B2568E95D00372D13 /* etc-internal.h */,
-				3B10ED4C2568E95D00372D13 /* table.cpp */,
 				3B10ED4D2568E95D00372D13 /* etc.cpp */,
+				3B10ED4C2568E95D00372D13 /* table.cpp */,
+				3B10ED4B2568E95D00372D13 /* etc-internal.h */,
 				3B10ED4E2568E95D00372D13 /* etc.h */,
 				3B10ED4F2568E95D00372D13 /* table.h */,
 			);
@@ -1422,12 +1421,12 @@
 		3B10ED522568E95D00372D13 /* filesystem */ = {
 			isa = PBXGroup;
 			children = (
-				3B426F6A256B8AC0009EA00F /* ghc */,
-				3B10ED532568E95D00372D13 /* filesystem.h */,
 				3B10ED542568E95D00372D13 /* filesystem.cpp */,
-				3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */,
 				3B5A84132569C28B00BAF2E5 /* filesystemImpl.cpp */,
+				3B10ED532568E95D00372D13 /* filesystem.h */,
 				3B5A84142569C28B00BAF2E5 /* filesystemImpl.h */,
+				3B5A840C2569BE7C00BAF2E5 /* filesystemImplApple.mm */,
+				3B426F6A256B8AC0009EA00F /* ghc */,
 			);
 			path = filesystem;
 			sourceTree = "<group>";
@@ -1435,9 +1434,9 @@
 		3B10ED582568E95D00372D13 /* system */ = {
 			isa = PBXGroup;
 			children = (
+				3B5A845D256A465700BAF2E5 /* systemImpl.cpp */,
 				3B5A845C256A465700BAF2E5 /* system.h */,
 				3B5A8463256A46B200BAF2E5 /* systemImplApple.mm */,
-				3B5A845D256A465700BAF2E5 /* systemImpl.cpp */,
 			);
 			path = system;
 			sourceTree = "<group>";
@@ -1445,22 +1444,22 @@
 		3B10ED5D2568E95D00372D13 /* audio */ = {
 			isa = PBXGroup;
 			children = (
-				3B10ED5E2568E95D00372D13 /* midisource.cpp */,
 				3B10ED5F2568E95D00372D13 /* alstream.cpp */,
-				3B10ED602568E95D00372D13 /* fluid-fun.cpp */,
-				3B10ED612568E95D00372D13 /* soundemitter.h */,
-				3B10ED622568E95D00372D13 /* fluid-fun.h */,
-				3B10ED632568E95D00372D13 /* sdlsoundsource.cpp */,
 				3B10ED642568E95D00372D13 /* audio.cpp */,
-				3B10ED652568E95D00372D13 /* soundemitter.cpp */,
 				3B10ED662568E95D00372D13 /* audiostream.cpp */,
+				3B10ED602568E95D00372D13 /* fluid-fun.cpp */,
+				3B10ED5E2568E95D00372D13 /* midisource.cpp */,
+				3B10ED632568E95D00372D13 /* sdlsoundsource.cpp */,
+				3B10ED652568E95D00372D13 /* soundemitter.cpp */,
+				3B10ED6A2568E95D00372D13 /* vorbissource.cpp */,
+				3B10ED692568E95D00372D13 /* al-util.h */,
+				3B10ED6B2568E95D00372D13 /* aldatasource.h */,
+				3B10ED6D2568E95D00372D13 /* alstream.h */,
 				3B10ED672568E95D00372D13 /* audio.h */,
 				3B10ED682568E95D00372D13 /* audiostream.h */,
-				3B10ED692568E95D00372D13 /* al-util.h */,
-				3B10ED6A2568E95D00372D13 /* vorbissource.cpp */,
-				3B10ED6B2568E95D00372D13 /* aldatasource.h */,
+				3B10ED622568E95D00372D13 /* fluid-fun.h */,
 				3B10ED6C2568E95D00372D13 /* sharedmidistate.h */,
-				3B10ED6D2568E95D00372D13 /* alstream.h */,
+				3B10ED612568E95D00372D13 /* soundemitter.h */,
 			);
 			path = audio;
 			sourceTree = "<group>";
@@ -1468,32 +1467,32 @@
 		3B10ED6F2568E95D00372D13 /* display */ = {
 			isa = PBXGroup;
 			children = (
-				3BA6944D263DAB53004194EB /* libnsgif */,
-				3B10ED7E2568E95D00372D13 /* gl */,
-				3B10ED702568E95D00372D13 /* tilemap.h */,
-				3B10ED712568E95D00372D13 /* tilemap-common.h */,
-				3B10ED722568E95D00372D13 /* windowvx.cpp */,
+				3B10EDA22568E95E00372D13 /* autotiles.cpp */,
+				3B10ED9D2568E95E00372D13 /* autotilesvx.cpp */,
 				3B10ED732568E95D00372D13 /* bitmap.cpp */,
-				3B10ED742568E95D00372D13 /* window.cpp */,
-				3B10ED752568E95D00372D13 /* viewport.h */,
-				3B10ED762568E95D00372D13 /* sprite.cpp */,
 				3B10ED772568E95D00372D13 /* font.cpp */,
-				3B10ED782568E95D00372D13 /* window.h */,
-				3B10ED792568E95D00372D13 /* windowvx.h */,
-				3B10ED7A2568E95D00372D13 /* plane.h */,
 				3B10ED7B2568E95D00372D13 /* graphics.cpp */,
-				3B10ED7C2568E95D00372D13 /* sprite.h */,
+				3B10EDA12568E95E00372D13 /* plane.cpp */,
+				3B10ED762568E95D00372D13 /* sprite.cpp */,
+				3B10ED9C2568E95E00372D13 /* tilemap.cpp */,
 				3B10ED7D2568E95D00372D13 /* tilemapvx.cpp */,
+				3B10ED9E2568E95E00372D13 /* viewport.cpp */,
+				3B10ED742568E95D00372D13 /* window.cpp */,
+				3B10ED722568E95D00372D13 /* windowvx.cpp */,
+				3B10EDA02568E95E00372D13 /* bitmap.h */,
+				3B10ED9F2568E95E00372D13 /* flashable.h */,
 				3B10ED9A2568E95E00372D13 /* font.h */,
 				3B10ED9B2568E95E00372D13 /* graphics.h */,
-				3B10ED9C2568E95E00372D13 /* tilemap.cpp */,
-				3B10ED9D2568E95E00372D13 /* autotilesvx.cpp */,
-				3B10ED9E2568E95E00372D13 /* viewport.cpp */,
-				3B10ED9F2568E95E00372D13 /* flashable.h */,
-				3B10EDA02568E95E00372D13 /* bitmap.h */,
-				3B10EDA12568E95E00372D13 /* plane.cpp */,
-				3B10EDA22568E95E00372D13 /* autotiles.cpp */,
+				3B10ED7A2568E95D00372D13 /* plane.h */,
+				3B10ED7C2568E95D00372D13 /* sprite.h */,
+				3B10ED712568E95D00372D13 /* tilemap-common.h */,
+				3B10ED702568E95D00372D13 /* tilemap.h */,
 				3B10EDA32568E95E00372D13 /* tilemapvx.h */,
+				3B10ED752568E95D00372D13 /* viewport.h */,
+				3B10ED782568E95D00372D13 /* window.h */,
+				3B10ED792568E95D00372D13 /* windowvx.h */,
+				3B10ED7E2568E95D00372D13 /* gl */,
+				3BA6944D263DAB53004194EB /* libnsgif */,
 			);
 			path = display;
 			sourceTree = "<group>";
@@ -1535,50 +1534,42 @@
 		3B10EDD52568E96A00372D13 /* binding */ = {
 			isa = PBXGroup;
 			children = (
-				3B10EDD62568E96A00372D13 /* window-binding.cpp */,
-				3B10EDD72568E96A00372D13 /* filesystem-binding.cpp */,
-				3B10EDD82568E96A00372D13 /* viewportelement-binding.h */,
-				3B10EDD92568E96A00372D13 /* cusl-binding.cpp */,
 				3B10EDDA2568E96A00372D13 /* audio-binding.cpp */,
-				3B10EDDB2568E96A00372D13 /* serializable-binding.h */,
-				3B10EDDC2568E96A00372D13 /* input-binding.cpp */,
-				3B10EDDD2568E96A00372D13 /* windowvx-binding.cpp */,
-				3B10EDDE2568E96A00372D13 /* disposable-binding.h */,
-				3B10EDDF2568E96A00372D13 /* sprite-binding.cpp */,
-				3B10EDE02568E96A00372D13 /* sceneelement-binding.h */,
-				3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */,
-				3B10EDE22568E96A00372D13 /* module_rpg2.rb.xxd */,
+				3B10EDF02568E96A00372D13 /* binding-mri.cpp */,
+				3B10EDEF2568E96A00372D13 /* binding-util.cpp */,
 				3B10EDE42568E96A00372D13 /* bitmap-binding.cpp */,
-				3B10EDE52568E96A00372D13 /* table-binding.cpp */,
+				3B10EDD92568E96A00372D13 /* cusl-binding.cpp */,
 				3B10EDE62568E96A00372D13 /* etc-binding.cpp */,
-				3B10EDE72568E96A00372D13 /* tilemap-binding.cpp */,
+				3B10EDD72568E96A00372D13 /* filesystem-binding.cpp */,
+				3B10EDEC2568E96A00372D13 /* font-binding.cpp */,
+				3B10EDE92568E96A00372D13 /* graphics-binding.cpp */,
+				3B522DDB259C1E53003301C4 /* http-binding.cpp */,
+				3B10EDDC2568E96A00372D13 /* input-binding.cpp */,
 				3B10EDE82568E96A00372D13 /* miniffi-binding.cpp */,
 				3B312842259E7DC1002EAB43 /* miniffi.cpp */,
-				3B312841259E7DC1002EAB43 /* miniffi.h */,
-				3B10EDE92568E96A00372D13 /* graphics-binding.cpp */,
-				3B10EDEA2568E96A00372D13 /* plane-binding.cpp */,
-				3B10EDEB2568E96A00372D13 /* binding-types.h */,
-				3B10EDEC2568E96A00372D13 /* font-binding.cpp */,
-				3B10EDED2568E96A00372D13 /* module_rpg1.rb.xxd */,
-				3B10EDEE2568E96A00372D13 /* binding-util.h */,
-				3B10EDEF2568E96A00372D13 /* binding-util.cpp */,
-				3B10EDF02568E96A00372D13 /* binding-mri.cpp */,
-				3B10EDF12568E96A00372D13 /* flashable-binding.h */,
-				3B10EDF22568E96A00372D13 /* module_rpg3.rb.xxd */,
 				3B10EDF32568E96A00372D13 /* module_rpg.cpp */,
+				3B10EDEA2568E96A00372D13 /* plane-binding.cpp */,
+				3B10EDDF2568E96A00372D13 /* sprite-binding.cpp */,
+				3B10EDE52568E96A00372D13 /* table-binding.cpp */,
+				3B10EDE72568E96A00372D13 /* tilemap-binding.cpp */,
+				3B10EDE12568E96A00372D13 /* tilemapvx-binding.cpp */,
 				3B10EDF42568E96A00372D13 /* viewport-binding.cpp */,
-				3B522DDB259C1E53003301C4 /* http-binding.cpp */,
+				3B10EDD62568E96A00372D13 /* window-binding.cpp */,
+				3B10EDDD2568E96A00372D13 /* windowvx-binding.cpp */,
+				3B10EDEB2568E96A00372D13 /* binding-types.h */,
+				3B10EDEE2568E96A00372D13 /* binding-util.h */,
+				3B10EDDE2568E96A00372D13 /* disposable-binding.h */,
+				3B10EDF12568E96A00372D13 /* flashable-binding.h */,
+				3B312841259E7DC1002EAB43 /* miniffi.h */,
+				3B10EDE02568E96A00372D13 /* sceneelement-binding.h */,
+				3B10EDDB2568E96A00372D13 /* serializable-binding.h */,
+				3B10EDD82568E96A00372D13 /* viewportelement-binding.h */,
+				3B10EDED2568E96A00372D13 /* module_rpg1.rb.xxd */,
+				3B10EDE22568E96A00372D13 /* module_rpg2.rb.xxd */,
+				3B10EDF22568E96A00372D13 /* module_rpg3.rb.xxd */,
 			);
 			name = binding;
 			path = ../binding;
-			sourceTree = "<group>";
-		};
-		3B1BC0E5266F8E2A00794D22 /* Makefiles */ = {
-			isa = PBXGroup;
-			children = (
-				3B1BC0E6266F8E8700794D22 /* dependencies.make */,
-			);
-			name = Makefiles;
 			sourceTree = "<group>";
 		};
 		3B1C231D25A15F8F0075EF5D /* mkxp */ = {
@@ -1595,10 +1586,10 @@
 			isa = PBXGroup;
 			children = (
 				3B1C236925A19B960075EF5D /* steamshim_child.c */,
-				3B1C236825A19B960075EF5D /* steamshim_child.h */,
 				3B1C236725A19B960075EF5D /* steamshim_parent.cpp */,
-				3B1C23FC25A19FB40075EF5D /* steamshim_mac_helpers.mm */,
+				3B1C236825A19B960075EF5D /* steamshim_child.h */,
 				3B1C240025A19FD60075EF5D /* steamshim_mac_helpers.h */,
+				3B1C23FC25A19FB40075EF5D /* steamshim_mac_helpers.mm */,
 			);
 			name = steamshim;
 			sourceTree = "<group>";
@@ -1631,12 +1622,12 @@
 		3B3F7D1325B19C5A00EA5F1C /* MacOS */ = {
 			isa = PBXGroup;
 			children = (
-				3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */,
-				3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */,
-				3B3F7D3025B1A79F00EA5F1C /* SettingsMenuController.h */,
 				3B480E9325DCBDD6001686B4 /* sdl_codes.h */,
-				96573E7A27913B46002C3E77 /* TouchBar.mm */,
+				3B3F7D1725B19DEC00EA5F1C /* settingsmenu.xib */,
+				3B3F7D3025B1A79F00EA5F1C /* SettingsMenuController.h */,
+				3B3F7D2925B1A73A00EA5F1C /* SettingsMenuController.mm */,
 				96573E7B27913B46002C3E77 /* TouchBar.h */,
+				96573E7A27913B46002C3E77 /* TouchBar.mm */,
 				96573E80279152DC002C3E77 /* TouchBar.xcassets */,
 			);
 			name = MacOS;
@@ -1658,11 +1649,11 @@
 		3B522DB1259BBFE9003301C4 /* net */ = {
 			isa = PBXGroup;
 			children = (
-				3B522DBD259BD046003301C4 /* httplib.h */,
-				3B522DB2259BC037003301C4 /* net.h */,
-				3B522DBF259BD072003301C4 /* net.cpp */,
-				3B522DE3259C2017003301C4 /* LUrlParser.h */,
 				3B522DE4259C2039003301C4 /* LUrlParser.cpp */,
+				3B522DBF259BD072003301C4 /* net.cpp */,
+				3B522DBD259BD046003301C4 /* httplib.h */,
+				3B522DE3259C2017003301C4 /* LUrlParser.h */,
+				3B522DB2259BC037003301C4 /* net.h */,
 			);
 			path = net;
 			sourceTree = "<group>";
@@ -1772,7 +1763,6 @@
 			isa = PBXGroup;
 			children = (
 				3B251DA226DA2C8600E5D09B /* Ruby Standard Library */,
-				3B1BC0E5266F8E2A00794D22 /* Makefiles */,
 				3BD2B7272565B343003DAD8A /* README.md */,
 				3BDB23E22564546E00C4A63D /* icon.icns */,
 				3BDB2409256470AE00C4A63D /* Player */,
@@ -1858,9 +1848,9 @@
 		9656358D279A5B74003D6A75 /* theoraplay */ = {
 			isa = PBXGroup;
 			children = (
+				96563592279A5B74003D6A75 /* theoraplay.c */,
 				9656358E279A5B74003D6A75 /* theoraplay_cvtrgb.h */,
 				9656358F279A5B74003D6A75 /* theoraplay.h */,
-				96563592279A5B74003D6A75 /* theoraplay.c */,
 			);
 			path = theoraplay;
 			sourceTree = "<group>";
@@ -3419,10 +3409,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-fdeclspec",
-					"-O3",
-				);
+				OTHER_CFLAGS = "-fdeclspec";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
