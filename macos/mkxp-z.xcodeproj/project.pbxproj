@@ -3419,7 +3419,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-fdeclspec";
+				OTHER_CFLAGS = (
+					"-fdeclspec",
+					"-O3",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3489,7 +3492,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-fdeclspec";
+				OTHER_CFLAGS = (
+					"-fdeclspec",
+					"-O3",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.zoro.mkxp-z";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
