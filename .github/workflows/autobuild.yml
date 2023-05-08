@@ -3,7 +3,7 @@ name: Automatic Build
 
 on:
   push:
-    branches: ['dev']
+    branches: ['autobuild']
 
 jobs:
   build-windows:
@@ -130,6 +130,9 @@ jobs:
         id: short-sha
         with:
           length: 7
+
+      - name: Remove pre-existing homebrew packages
+        run: brew remove --force $(brew list)
 
       - name: Checkout repository
         uses: actions/checkout@v3
