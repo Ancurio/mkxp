@@ -48,6 +48,7 @@ RUBY_CONFIGURE_ARGS := \
 	--with-out-ext=fiddle,gdbm,win32ole,win32 \
 	--with-static-linked-ext \
 	--disable-rubygems \
+	--without-gmp \
 	--disable-install-doc \
 	--build=$(RBUILD) \
 	${EXTRA_RUBY_CONFIG_ARGS}
