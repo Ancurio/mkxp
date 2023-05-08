@@ -395,7 +395,7 @@ int main(int argc, char *argv[]) {
     ALCdevice *alcDev = alcOpenDevice(0);
 
     if (!alcDev) {
-      showInitError("Error opening OpenAL device");
+      showInitError("Could not detect an available audio device.");
       SDL_DestroyWindow(win);
       TTF_Quit();
       IMG_Quit();
@@ -517,7 +517,7 @@ static SDL_GLContext initGL(SDL_Window *win, Config &conf,
   glCtx = SDL_GL_CreateContext(win);
 
   if (!glCtx) {
-    GLINIT_SHOWERROR(std::string("Error creating context: ") + SDL_GetError());
+    GLINIT_SHOWERROR(std::string("Could not create OpenGL context: ") + SDL_GetError());
     return 0;
   }
 

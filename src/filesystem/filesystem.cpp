@@ -282,7 +282,14 @@ struct FileSystemPrivate {
 
 static void throwPhysfsError(const char *desc) {
   PHYSFS_ErrorCode ec = PHYSFS_getLastErrorCode();
-  const char *englishStr = PHYSFS_getErrorByCode(ec);
+  const char *englishStr;
+    if (ec == 0) {
+        // Sometimes on Windows PHYSFS_init can return null
+        // but the error code never changes
+        englishStr = "unknown error";
+    } else {
+        englishStr = PHYSFS_getErrorByCode(ec);
+    }
 
   throw Exception(Exception::PHYSFSError, "%s: %s", desc, englishStr);
 }
