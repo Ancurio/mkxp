@@ -522,6 +522,8 @@
 		FE5204172A08E2880070038A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE5204152A08E27D0070038A /* CoreHaptics.framework */; };
 		FE5204182A08E28F0070038A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE5204152A08E27D0070038A /* CoreHaptics.framework */; };
 		FE5204192A08E2950070038A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE5204152A08E27D0070038A /* CoreHaptics.framework */; };
+		FE52041B2A08E58D0070038A /* lanczos3.frag in Resources */ = {isa = PBXBuildFile; fileRef = FE52041A2A08E58D0070038A /* lanczos3.frag */; };
+		FE52041C2A08E62F0070038A /* lanczos3.frag in CopyFiles */ = {isa = PBXBuildFile; fileRef = FE52041A2A08E58D0070038A /* lanczos3.frag */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -737,6 +739,7 @@
 				3B10ECE12568E83D00372D13 /* simpleColor.frag in CopyFiles */,
 				3B10ECE22568E83D00372D13 /* simpleColor.vert in CopyFiles */,
 				3B10ECE32568E83D00372D13 /* simpleMatrix.vert in CopyFiles */,
+				FE52041C2A08E62F0070038A /* lanczos3.frag in CopyFiles */,
 				3B10ECE42568E83D00372D13 /* sprite.frag in CopyFiles */,
 				3B10ECE52568E83D00372D13 /* sprite.vert in CopyFiles */,
 				3B10ECE62568E83D00372D13 /* tilemap.frag in CopyFiles */,
@@ -1108,6 +1111,7 @@
 		96573E80279152DC002C3E77 /* TouchBar.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = TouchBar.xcassets; path = views/TouchBar.xcassets; sourceTree = "<group>"; };
 		96D8EDD028728DCA00A331EA /* gamecontrollerdb.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = gamecontrollerdb.txt; path = ../assets/gamecontrollerdb.txt; sourceTree = "<group>"; };
 		FE5204152A08E27D0070038A /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
+		FE52041A2A08E58D0070038A /* lanczos3.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = lanczos3.frag; path = ../shader/lanczos3.frag; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1318,29 +1322,30 @@
 			children = (
 				3B10EC942568E7B500372D13 /* bitmapBlit.frag */,
 				3B10EC9B2568E7B500372D13 /* blur.frag */,
-				3B10EC912568E7B500372D13 /* blurH.vert */,
-				3B10EC9A2568E7B500372D13 /* blurV.vert */,
-				3B10ECA32568E7B600372D13 /* common.h */,
 				3B10EC8E2568E7B500372D13 /* flashMap.frag */,
 				3B10EC9F2568E7B500372D13 /* flatColor.frag */,
 				3B10ECA42568E7B600372D13 /* gray.frag */,
 				3B10EC932568E7B500372D13 /* hue.frag */,
-				3B10ECA12568E7B600372D13 /* minimal.vert */,
+				FE52041A2A08E58D0070038A /* lanczos3.frag */,
 				3B10EC9C2568E7B500372D13 /* plane.frag */,
 				3B10EC992568E7B500372D13 /* simple.frag */,
-				3B10EC9E2568E7B500372D13 /* simple.vert */,
 				3B10EC8F2568E7B500372D13 /* simpleAlpha.frag */,
 				3B10EC9D2568E7B500372D13 /* simpleAlphaUni.frag */,
 				3B10EC8D2568E7B400372D13 /* simpleColor.frag */,
-				3B10ECA52568E7B600372D13 /* simpleColor.vert */,
-				3B10EC902568E7B500372D13 /* simpleMatrix.vert */,
 				3B10EC972568E7B500372D13 /* sprite.frag */,
-				3B10EC982568E7B500372D13 /* sprite.vert */,
 				3B10EC952568E7B500372D13 /* tilemap.frag */,
-				3B10ECA02568E7B600372D13 /* tilemap.vert */,
-				3B10EC962568E7B500372D13 /* tilemapvx.vert */,
 				3B10ECA22568E7B600372D13 /* trans.frag */,
 				3B10EC922568E7B500372D13 /* transSimple.frag */,
+				3B10ECA32568E7B600372D13 /* common.h */,
+				3B10EC912568E7B500372D13 /* blurH.vert */,
+				3B10EC9A2568E7B500372D13 /* blurV.vert */,
+				3B10ECA12568E7B600372D13 /* minimal.vert */,
+				3B10EC9E2568E7B500372D13 /* simple.vert */,
+				3B10ECA52568E7B600372D13 /* simpleColor.vert */,
+				3B10EC902568E7B500372D13 /* simpleMatrix.vert */,
+				3B10EC982568E7B500372D13 /* sprite.vert */,
+				3B10ECA02568E7B600372D13 /* tilemap.vert */,
+				3B10EC962568E7B500372D13 /* tilemapvx.vert */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";
@@ -2052,6 +2057,7 @@
 			files = (
 				3B10EC862568E78500372D13 /* icon.png in Resources */,
 				96D8EDD128728DCE00A331EA /* gamecontrollerdb.txt in Resources */,
+				FE52041B2A08E58D0070038A /* lanczos3.frag in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,7 +11,7 @@ float lanczos3(float x)
 {
 	x = max(abs(x), 0.00001);
 	float val = x * 3.141592654;
-	return sin(val) * sin(val / 3) / (val * val);
+	return sin(val) * sin(val / 3.0) / (val * val);
 }
 
 void main()
@@ -19,21 +19,21 @@ void main()
 	vec2 pixel = v_texCoord * sourceSize + 0.5;
 	vec2 frac = fract(pixel);
 	vec2 onePixel = texSizeInv;
-	pixel = floor(pixel) * texSizeInv - onePixel / 2;
+	pixel = floor(pixel) * texSizeInv - onePixel / 2.0;
 
 	float lanczosX[6];
-	float sum = 0;
+	float sum = 0.0;
 	for(int x = 0; x < 6; x++)
 	{
-		lanczosX[x] = lanczos3(x - 2 - frac.x);
+		lanczosX[x] = lanczos3(float(x) - 2.0 - frac.x);
 		sum += lanczosX[x];
 	}
 	for(int x = 0; x < 6; x++) lanczosX[x] /= sum;
-	sum = 0;
+	sum = 0.0;
 	float lanczosY[6];
 	for(int y = 0; y < 6; y++)
 	{
-		lanczosY[y] = lanczos3(y - 2 - frac.y);
+		lanczosY[y] = lanczos3(float(y) - 2.0 - frac.y);
 		sum += lanczosY[y];
 	}
 	for(int y = 0; y < 6; y++) lanczosY[y] /= sum;
@@ -42,7 +42,7 @@ void main()
 	{
 		vec4 colour = vec4(0);
 		for(int x = -2; x <= 3; x++)
-				colour += texture2D(texture, pixel + vec2(x * onePixel.x, y * onePixel.y)).rgba * lanczosX[x + 2];
+				colour += texture2D(texture, pixel + vec2(float(x) * onePixel.x, float(y) * onePixel.y)).rgba * lanczosX[x + 2];
 		gl_FragColor += colour * lanczosY[y + 2];
 	}
 }
