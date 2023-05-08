@@ -307,7 +307,7 @@ $(LIBDIR)/libruby.3.1.dylib: $(DOWNLOADS)/ruby/Makefile
 $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	cd $(DOWNLOADS)/ruby; \
 	export $(CONFIGURE_ENV); \
-	export CFLAGS="-flto=full $$CFLAGS"; \
+	export CFLAGS="-flto=full -DRUBY_FUNCTION_NAME_STRING=__func__ $$CFLAGS"; \
 	export LDFLAGS="-flto=full $$LDFLAGS"; \
 	./configure $(CONFIGURE_ARGS) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
 
