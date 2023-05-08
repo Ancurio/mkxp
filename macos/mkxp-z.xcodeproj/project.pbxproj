@@ -518,6 +518,10 @@
 		96573E83279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
 		96573E84279152DC002C3E77 /* TouchBar.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96573E80279152DC002C3E77 /* TouchBar.xcassets */; };
 		96D8EDD128728DCE00A331EA /* gamecontrollerdb.txt in Resources */ = {isa = PBXBuildFile; fileRef = 96D8EDD028728DCA00A331EA /* gamecontrollerdb.txt */; };
+		FE5204162A08E27D0070038A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE5204152A08E27D0070038A /* CoreHaptics.framework */; };
+		FE5204172A08E2880070038A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE5204152A08E27D0070038A /* CoreHaptics.framework */; };
+		FE5204182A08E28F0070038A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE5204152A08E27D0070038A /* CoreHaptics.framework */; };
+		FE5204192A08E2950070038A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE5204152A08E27D0070038A /* CoreHaptics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1103,6 +1107,7 @@
 		96573E7B27913B46002C3E77 /* TouchBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = TouchBar.h; path = views/TouchBar.h; sourceTree = "<group>"; };
 		96573E80279152DC002C3E77 /* TouchBar.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = TouchBar.xcassets; path = views/TouchBar.xcassets; sourceTree = "<group>"; };
 		96D8EDD028728DCA00A331EA /* gamecontrollerdb.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = gamecontrollerdb.txt; path = ../assets/gamecontrollerdb.txt; sourceTree = "<group>"; };
+		FE5204152A08E27D0070038A /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1118,6 +1123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE5204192A08E2950070038A /* CoreHaptics.framework in Frameworks */,
 				3B1C23C325A19C600075EF5D /* libSDL2_ttf.a in Frameworks */,
 				3B1C23C425A19C600075EF5D /* libvorbisenc.a in Frameworks */,
 				3B1C23C525A19C600075EF5D /* libssl.a in Frameworks */,
@@ -1167,6 +1173,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE5204182A08E28F0070038A /* CoreHaptics.framework in Frameworks */,
 				3BBE880F2705AAFF00A574AE /* libSDL2_ttf.a in Frameworks */,
 				3BBE88102705AB0400A574AE /* libvorbisenc.a in Frameworks */,
 				3BBE88112705AB0900A574AE /* libssl.a in Frameworks */,
@@ -1209,6 +1216,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE5204162A08E27D0070038A /* CoreHaptics.framework in Frameworks */,
 				96563585279A5ADA003D6A75 /* libtheora.a in Frameworks */,
 				3BC65E2C2584F4290063AFF1 /* libvorbisenc.a in Frameworks */,
 				3BC65E2D2584F4290063AFF1 /* libogg.a in Frameworks */,
@@ -1252,6 +1260,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE5204172A08E2880070038A /* CoreHaptics.framework in Frameworks */,
 				3BE0810D256879FE0006849F /* libSDL2_ttf.a in Frameworks */,
 				3BE08119256879FE0006849F /* libvorbisenc.a in Frameworks */,
 				3B522DD6259BFF2D003301C4 /* libssl.a in Frameworks */,
@@ -1801,6 +1810,7 @@
 		3BDB23E5256455A400C4A63D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FE5204152A08E27D0070038A /* CoreHaptics.framework */,
 				3B1C241F25A1A84D0075EF5D /* Steam */,
 				3BC65D792584F3030063AFF1 /* Universal */,
 				3BE080CA256829FE0006849F /* Intel */,
