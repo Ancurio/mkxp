@@ -1,4 +1,3 @@
-SDK := macosx
 ARCH := arm64
 HOST := aarch64-apple-darwin
 MINIMUM_REQUIRED := 11.0
