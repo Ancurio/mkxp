@@ -95,7 +95,7 @@ struct AudioPrivate
     
     AudioStream *getTrackByIndex(int index) {
         if (index < 0) index = 0;
-        if (index > bgmTracks.size() - 1) {
+        if (index > (int)(bgmTracks.size()) - 1) {
             throw Exception(Exception::MKXPError, "requested BGM track %d out of range (max: %d)", index, bgmTracks.size() - 1);
         }
         return bgmTracks[index];
@@ -148,7 +148,7 @@ struct AudioPrivate
                 
                 bool shouldBreak = false;
                 
-                for (int i = 0; i < bgmTracks.size(); i++) {
+                for (int i = 0; i < (int)(bgmTracks.size()); i++) {
                     AudioStream *track = bgmTracks[i];
                     
                     track->lockStream();
@@ -417,7 +417,7 @@ void Audio::reset()
 {
     for (auto track : p->bgmTracks)
         track->stop();
-    
+
 	p->bgs.stop();
 	p->me.stop();
 	p->se.stop();
