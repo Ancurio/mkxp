@@ -8,8 +8,12 @@
     // working directory (when compiled with
     // -DWORKDIR_CURRENT). All other paths are resolved
     // relative to gameFolder and ignoring both RTPs and
-    // encrypted archives.
-    
+    // encrypted archives. Since this is JSON, any
+    // backslashes in paths need to be escaped (i.e. a
+    // single backslash becomes a double backslash). If
+    // that's too much hassle, you can use a single forward
+    // slash instead (even on Windows).
+
     // Some influential environment variables, set them to either "1" or "0":
     // "MKXPZ_WINDOWS_CONSOLE"
     //     - Enables/disables the extra console window on Windows. It appears by
