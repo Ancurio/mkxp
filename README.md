@@ -8,6 +8,8 @@
   <a href="https://github.com/mkxp-z/mkxp-z/wiki">Documentation</a>
 </b></p>
 
+Automated builds are retained for 60 days and require logging in to access.
+
 I'm usually *very* slow with responding to things on Github, so if you have something you want to say and you want a faster response, you're probably better off asking in [Ancurio's Discord server](https://discord.gg/b2qg8QbV). I don't have my own.
 The place is basically a ghost town haunted by myself and a few others, so expect me to say something if no one else does.
 

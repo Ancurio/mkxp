@@ -415,8 +415,9 @@ float Audio::bgsPos()
 
 void Audio::reset()
 {
-    for (auto track : p->bgmTracks)
-        track->stop();
+    for (auto track : p->bgmTracks) {
+    	track->stop();
+    }
 
 	p->bgs.stop();
 	p->me.stop();
