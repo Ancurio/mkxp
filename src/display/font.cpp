@@ -160,10 +160,9 @@ void SharedFontState::initFontSetCB(SDL_RWops &ops,
 _TTF_Font *SharedFontState::getFont(std::string family,
                                     int size)
 {
-    
-    if (family.empty())
-        family = p->defaultFamily;
-    
+	if (family.empty())
+		family = p->defaultFamily;
+
 	/* Check for substitutions */
 	if (p->subs.contains(family))
 		family = p->subs[family];
