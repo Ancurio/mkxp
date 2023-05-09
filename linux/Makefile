@@ -198,17 +198,19 @@ $(DOWNLOADS)/libjpeg/CMakeLists.txt:
 # SDL2
 sdl2: init_dirs $(LIBDIR)/libSDL2.a
 
-$(LIBDIR)/libSDL2.a: $(DOWNLOADS)/sdl2/cmakebuild/Makefile
-	cd $(DOWNLOADS)/sdl2/cmakebuild; \
-	make -j$(NPROC); make install
-
-$(DOWNLOADS)/sdl2/cmakebuild/Makefile: $(DOWNLOADS)/sdl2/CMakeLists.txt
+$(LIBDIR)/libSDL2.a: $(DOWNLOADS)/sdl2/Makefile
 	cd $(DOWNLOADS)/sdl2; \
-	mkdir cmakebuild; cd cmakebuild; \
-	$(CMAKE) -DBUILD_SHARED_LIBS=no
+	make -j$(NPROC); make install;
 
-$(DOWNLOADS)/sdl2/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z-2.26
+$(DOWNLOADS)/sdl2/Makefile: $(DOWNLOADS)/sdl2/configure
+	cd $(DOWNLOADS)/sdl2; \
+	$(CONFIGURE) --enable-static=true --enable-shared=false $(SDL_FLAGS)
+
+$(DOWNLOADS)/sdl2/configure: $(DOWNLOADS)/sdl2/autogen.sh
+	cd $(DOWNLOADS)/sdl2; ./autogen.sh
+
+$(DOWNLOADS)/sdl2/autogen.sh:
+	$(CLONE) $(GITHUB)/mkxp-z/SDL $(DOWNLOADS)/sdl2 -b mkxp-z
 
 # SDL2 (Image)
 sdl2image: init_dirs sdl2 libpng libjpeg $(LIBDIR)/libSDL2_image.a
