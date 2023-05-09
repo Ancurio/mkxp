@@ -52,8 +52,12 @@ disposableAddChild(VALUE disp, VALUE child)
         exists = RTEST(rb_funcall(children, rb_intern("include?"), 1, objID));
     }
 
-	if (!exists)
+    if (!exists) {
         rb_ary_push(children, objID);
+        VALUE objectspace = rb_const_get(rb_cObject, rb_intern("ObjectSpace"));
+        VALUE method = rb_funcall(disp, rb_intern("method"), 1, rb_id2sym(rb_intern("_sprite_finalizer")));
+        rb_funcall(objectspace, rb_intern("define_finalizer"), 2, child, method);
+    }
     GFX_UNLOCK;
 }
 
@@ -77,6 +81,23 @@ disposableRemoveChild(VALUE disp, VALUE child)
     
     rb_funcall(children, rb_intern("delete_at"), 1, index);
     GFX_UNLOCK;
+}
+
+inline void
+disposableForgetChild(VALUE disp, VALUE child)
+{
+    VALUE children = rb_iv_get(disp, "children");
+    
+    if (NIL_P(children)) {
+        return;
+    }
+    
+    VALUE index = rb_funcall(children, rb_intern("index"), 1, child);
+    if (NIL_P(index)) {
+        return;
+    }
+    
+    rb_funcall(children, rb_intern("delete_at"), 1, index);
 }
 
 inline void

@@ -26,7 +26,6 @@
 #include "sharedstate.h"
 #include "binding-util.h"
 #include "binding-types.h"
-#include "debugwriter.h"
 #include "graphics.h"
 
 #include "sceneelement-binding.h"

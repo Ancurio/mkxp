@@ -76,6 +76,21 @@ RB_METHOD(viewportInitialize) {
     return self;
 }
 
+RB_METHOD(viewportSpriteFinalize)
+{
+    RB_UNUSED_PARAM;
+    
+    VALUE objectid;
+    
+    rb_get_args(argc, argv, "o", &objectid RB_ARG_END);
+    
+    if (rgssVer == 1) {
+        disposableForgetChild(self, objectid);
+    }
+    
+    return Qnil;
+}
+
 DEF_GFX_PROP_OBJ_VAL(Viewport, Rect, Rect, "rect")
 DEF_GFX_PROP_OBJ_VAL(Viewport, Color, Color, "color")
 DEF_GFX_PROP_OBJ_VAL(Viewport, Tone, Tone, "tone")
@@ -96,6 +111,7 @@ void viewportBindingInit() {
     sceneElementBindingInit<Viewport>(klass);
     
     _rb_define_method(klass, "initialize", viewportInitialize);
+    _rb_define_method(klass, "_sprite_finalizer", viewportSpriteFinalize);
     
     INIT_PROP_BIND(Viewport, Rect, "rect");
     INIT_PROP_BIND(Viewport, OX, "ox");
