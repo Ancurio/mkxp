@@ -1,7 +1,8 @@
 # mkxp
 
-Read: [Future of mkxp](https://gist.github.com/Ancurio/fc568571eaf7dd62c550dc3a08c0d08f)  
-Official discord community: https://discord.gg/A8xHE8P
+Discord community: https://discord.gg/A8xHE8P  
+Matrix space: https://matrix.to/#/#mkxp:mapleshrine.eu  
+Further links: https://mapleshrine.eu  
 
 mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP", "RPG Maker VX" and "RPG Maker VX Ace" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file.
 
@@ -88,7 +89,7 @@ To run mkxp, you should have a graphics card capable of at least **OpenGL (ES) 2
 
 ## Dependency kit
 
-To facilitate hacking, I have assembled a package containing all dependencies to compile mkxp on a bare-bones Ubuntu 12.04 64bit installation. Compatibility with other distributions has not been tested. You can download it [here](https://www.dropbox.com/s/mtp44ur367m2zts/mkxp-depkit.tar.xz). Read the "README" for instructions.
+To facilitate hacking, I have assembled a package containing all dependencies to compile mkxp on a bare-bones Ubuntu 12.04 64bit installation. Compatibility with other distributions has not been tested. You can download it [here](https://mapleshrine.eu/depkits/linux64.tar.xz). Read the "README" for instructions.
 
 ## Configuration
 
