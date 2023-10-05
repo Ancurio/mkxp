@@ -105,7 +105,7 @@ Example: `./mkxp --gameFolder="my game" --vsync=true --fixedFramerate=60`
 
 mkxp doesn't come with a soundfont by default, so you will have to supply it yourself (set its path in the config). Playback has been tested and should work reasonably well with all RTP assets.
 
-You can use this public domain soundfont: [GMGSx.sf2](https://www.dropbox.com/s/qxdvoxxcexsvn43/GMGSx.sf2?dl=0)
+You can use this public domain soundfont: [GMGSx.sf2](https://mapleshrine.eu/unsorted/GMGSx.sf2)
 
 ## Fonts
 
