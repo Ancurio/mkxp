@@ -1,7 +1,7 @@
 # mkxp
 
 Discord community: https://discord.gg/A8xHE8P  
-Matrix space: https://matrix.to/#/#mkxp:mapleshrine.eu  
+Matrix space: https://matrix.to/#/#rpgmaker:mapleshrine.eu  
 Further links: https://mapleshrine.eu  
 
 mkxp is a project that seeks to provide a fully open source implementation of the Ruby Game Scripting System (RGSS) interface used in the popular game creation software "RPG Maker XP", "RPG Maker VX" and "RPG Maker VX Ace" (trademark by Enterbrain, Inc.), with focus on Linux. The goal is to be able to run games created with the above software natively without changing a single file.
