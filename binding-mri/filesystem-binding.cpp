@@ -25,7 +25,9 @@
 #include "filesystem.h"
 #include "util.h"
 
+#ifndef RUBY_LEGACY_VERSION
 #include "ruby/encoding.h"
+#endif
 #include "ruby/intern.h"
 
 static void
@@ -195,14 +197,21 @@ RB_METHOD(_marshalLoad)
 	rb_get_args(argc, argv, "o|o", &port, &proc RB_ARG_END);
 
 	VALUE utf8Proc;
+	// FIXME: Not implemented for Ruby 1.8
+#ifndef RUBY_LEGACY_VERSION
 	if (NIL_P(proc))
 		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(stringForceUTF8), Qnil);
 	else
 		utf8Proc = rb_proc_new(RUBY_METHOD_FUNC(customProc), proc);
+#endif
 
 	VALUE marsh = rb_const_get(rb_cObject, rb_intern("Marshal"));
 
+#ifndef RUBY_LEGACY_VERSION
 	VALUE v[] = { port, utf8Proc };
+#else
+	VALUE v[] = { port, proc };
+#endif
 	return rb_funcall2(marsh, rb_intern("_mkxp_load_alias"), ARRAY_SIZE(v), v);
 }
 
@@ -214,6 +223,8 @@ fileIntBindingInit()
 
 	_rb_define_method(klass, "read", fileIntRead);
 	_rb_define_method(klass, "getbyte", fileIntGetByte);
+	// Used by Ruby 1.8 Marshaller
+	_rb_define_method(klass, "getc", fileIntGetByte);
 	_rb_define_method(klass, "binmode", fileIntBinmode);
 	_rb_define_method(klass, "close", fileIntClose);
 
