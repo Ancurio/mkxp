@@ -49,7 +49,12 @@ MRB_METHOD(fontInitialize)
 
 	mrb_get_args(mrb, "|zi", &name, &size);
 
-	Font *f = new Font(name, size);
+	Font *f;
+
+	std::vector<std::string> names;
+	names.push_back(name);
+
+	f = new Font(&names, size);
 
 	setPrivateData(self, f, FontType);
 
@@ -86,9 +91,7 @@ MRB_METHOD(fontInitializeCopy)
 
 MRB_METHOD(FontGetName)
 {
-	Font *f = getPrivateData<Font>(mrb, self);
-
-	return mrb_str_new_cstr(mrb, f->getName());
+	return mrb_iv_get(mrb, self, mrb_intern_cstr(mrb, "name"));
 }
 
 MRB_METHOD(FontSetName)
@@ -98,7 +101,11 @@ MRB_METHOD(FontSetName)
 	mrb_value name;
 	mrb_get_args(mrb, "S", &name);
 
-	f->setName(RSTRING_PTR(name));
+	std::vector<std::string> names;
+	names.push_back(RSTRING_PTR(name));
+
+	f->setName(names);
+	mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "name"), name);
 
 	return name;
 }
@@ -135,17 +142,21 @@ DEF_KLASS_PROP(Font, mrb_bool, DefaultItalic,  "b", bool)
 DEF_KLASS_PROP(Font, mrb_bool, DefaultOutline, "b", bool)
 DEF_KLASS_PROP(Font, mrb_bool, DefaultShadow,  "b", bool)
 
-MRB_FUNCTION(FontGetDefaultName)
+MRB_METHOD(FontGetDefaultName)
 {
-	return mrb_str_new_cstr(mrb, Font::getDefaultName());
+	return mrb_iv_get(mrb, self, mrb_intern_cstr(mrb, "default_name"));
 }
 
-MRB_FUNCTION(FontSetDefaultName)
+MRB_METHOD(FontSetDefaultName)
 {
 	mrb_value nameObj;
 	mrb_get_args(mrb, "S", &nameObj);
 
-	Font::setDefaultName(RSTRING_PTR(nameObj));
+	std::vector<std::string> names;
+	names.push_back(RSTRING_PTR(nameObj));
+
+	Font::setDefaultName(names, shState->fontState());
+	mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "default_name"), nameObj);
 
 	return nameObj;
 }
