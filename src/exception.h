@@ -22,6 +22,8 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
+#include "crossplatform.h"
+
 #include <string>
 #include <stdio.h>
 #include <stdarg.h>
