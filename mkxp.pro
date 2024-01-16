@@ -228,6 +228,8 @@ defineReplace(xxdOutput) {
 	return($$basename(1).xxd)
 }
 
+DEFINES += BUNDLED_FONT=liberation
+
 # xxd
 xxd.output_function = xxdOutput
 xxd.commands = xxd -i ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
