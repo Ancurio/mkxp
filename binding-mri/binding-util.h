@@ -227,8 +227,12 @@ rb_float_arg(VALUE arg, double *out, int argPos = 0)
 		*out = FIX2INT(arg);
 		break;
 
+	case RUBY_T_NIL :
+		*out = 0;
+		break;
+
 	default:
-		rb_raise(rb_eTypeError, "Argument %d: Expected float", argPos);
+		rb_raise(rb_eTypeError, "Argument %d: Expected float (got 0x%x)", argPos, rb_type(arg));
 	}
 }
 
@@ -246,8 +250,12 @@ rb_int_arg(VALUE arg, int *out, int argPos = 0)
 		*out = FIX2INT(arg);
 		break;
 
+        case RUBY_T_NIL :
+                *out = 0;
+                break;
+
 	default:
-		rb_raise(rb_eTypeError, "Argument %d: Expected fixnum", argPos);
+		rb_raise(rb_eTypeError, "Argument %d: Expected fixnum (got 0x%x)", argPos, rb_type(arg));
 	}
 }
 
