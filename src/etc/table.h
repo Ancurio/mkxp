@@ -41,6 +41,7 @@ public:
 	int zSize() const { return zs; }
 
 	int16_t get(int x, int y = 0, int z = 0) const;
+	/* Index must be bounds checked beforehand */
 	void set(int16_t value, int x, int y = 0, int z = 0);
 
 	void resize(int x, int y, int z);
@@ -60,6 +61,11 @@ public:
 	inline const int16_t &at(int x, int y = 0, int z = 0) const
 	{
 		return data[xs*ys*z + xs*y + x];
+	}
+
+	inline bool indexValid(int x, int y = 0, int z = 0) const
+	{
+		return x >= 0 && x < xs && y >= 0 && y < ys && z >= 0 && z <= zs;
 	}
 
     sigslot::signal<> modified;

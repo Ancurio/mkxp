@@ -120,7 +120,7 @@ RB_METHOD_GUARD_END
 RB_METHOD_GUARD(tableSetAt) {
   Table *t = getPrivateData<Table>(self);
 
-  int x, y, z, value;
+  int x, y, z;
   x = y = z = 0;
 
   if (argc < 2)
@@ -130,27 +130,30 @@ RB_METHOD_GUARD(tableSetAt) {
   default:
   case 2:
     x = NUM2INT(argv[0]);
-    value = NUM2INT(argv[1]);
 
     break;
   case 3:
     x = NUM2INT(argv[0]);
     y = NUM2INT(argv[1]);
-    value = NUM2INT(argv[2]);
 
     break;
   case 4:
     x = NUM2INT(argv[0]);
     y = NUM2INT(argv[1]);
     z = NUM2INT(argv[2]);
-    value = NUM2INT(argv[3]);
 
     break;
   }
 
-  t->set(value, x, y, z);
+  /* OOB writes are silently ignored */
+  VALUE rbValue = argv[argc - 1];
+  if (!t->indexValid(x, y, z))
+    return rbValue;
 
-  return argv[argc - 1];
+  /* Only tranform the value when indices are in bounds */
+  t->set(NUM2INT(rbValue), x, y, z);
+
+  return rbValue;
 }
 RB_METHOD_GUARD_END
 
